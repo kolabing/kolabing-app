@@ -34,7 +34,7 @@ This project uses an **AI Agent-powered task management system**. All developmen
 
 | Agent | Responsibility |
 |-------|----------------|
-| `@ux-designer` | UI/UX design, user flows, wireframes, component specs, states |
+| `@ui-designer` | UI/UX design, user flows, wireframes, component specs, states |
 | `@flutter-expert` | Flutter implementation, state management, API integration, widgets |
 
 ---
@@ -96,7 +96,7 @@ UI-only tasks without API integration.
 
 1. **Always create a task first** - No direct code changes without a task file
 2. **One task at a time** - Only one task in `inprogress/` at any time
-3. **Follow the agents** - `@ux-designer` designs first, then `@flutter-expert` implements
+3. **Follow the agents** - `@ui-designer` designs first, then `@flutter-expert` implements
 4. **Document everything** - Update task file with progress
 5. **Move tasks properly** - `todo/` → `inprogress/` → `done/`
 6. **Log errors** - Any issues go to `.agent/sop/`
@@ -118,7 +118,7 @@ UI-only tasks without API integration.
 - [ ] METHOD /endpoint
 
 ## Assigned Agents
-- [ ] @ux-designer
+- [ ] @ui-designer
 - [ ] @flutter-expert
 
 ## Progress
