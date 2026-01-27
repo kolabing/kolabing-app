@@ -28,6 +28,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  // API validation errors for specific fields
+  String? _emailApiError;
+  String? _passwordApiError;
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +66,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
   }
 
   String? _validateEmail(String? value) {
+    // Show API error first if present
+    if (_emailApiError != null) {
+      return _emailApiError;
+    }
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
@@ -73,6 +81,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
   }
 
   String? _validatePassword(String? value) {
+    // Show API error first if present
+    if (_passwordApiError != null) {
+      return _passwordApiError;
+    }
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
@@ -80,6 +92,15 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       return 'Password must be at least 8 characters';
     }
     return null;
+  }
+
+  void _clearApiErrors() {
+    if (_emailApiError != null || _passwordApiError != null) {
+      setState(() {
+        _emailApiError = null;
+        _passwordApiError = null;
+      });
+    }
   }
 
   String? _validateConfirmPassword(String? value) {

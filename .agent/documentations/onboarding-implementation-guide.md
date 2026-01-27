@@ -1,7 +1,7 @@
 # Onboarding Flow - Implementation Guide
 
 **For:** @flutter-expert
-**Design by:** @ux-designer
+**Design by:** @ui-designer
 **Date:** 2026-01-25
 
 ---
@@ -921,7 +921,7 @@ Future<void> completeOnboarding() async {
 
 ## Questions? Issues?
 
-Contact @ux-designer for design clarifications or @product-team for business logic questions.
+Contact @ui-designer for design clarifications or @product-team for business logic questions.
 
 ---
 

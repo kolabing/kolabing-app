@@ -24,14 +24,14 @@ Logo URL: https://qcmperlkuujhweikoyru.supabase.co/storage/v1/object/sign/media/
 - Logo min size: 32x32dp, 8dp clear space
 
 ## Assigned Agents
-- [x] @ux-designer - Completed (2026-01-25)
+- [x] @ui-designer - Completed (2026-01-25)
 - [x] @flutter-expert - Completed (2026-01-25)
 
 ## Progress
 
 ### UX Design
 **Status:** Completed
-**Completed by:** @ux-designer
+**Completed by:** @ui-designer
 **Date:** 2026-01-25
 
 ---

@@ -72,7 +72,7 @@ User Type Selection
 - Çözüm: Onboarding verilerini topla, en sonda Google Sign In yap, ardından onboarding endpoint'i çağır
 
 ## Assigned Agents
-- [x] @ux-designer - COMPLETED
+- [x] @ui-designer - COMPLETED
 - [ ] @flutter-expert
 
 ## Progress

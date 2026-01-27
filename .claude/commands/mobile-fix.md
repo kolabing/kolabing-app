@@ -37,7 +37,7 @@ Invoke `@flutter-expert` to:
 - Ensure no side effects
 - Test the fix
 
-If UI changes are needed, invoke `@ux-designer` to:
+If UI changes are needed, invoke `@ui-designer` to:
 - Review UI impact
 - Provide updated design specs if necessary
 
@@ -57,7 +57,8 @@ If UI changes are needed, invoke `@ux-designer` to:
 
 ## Agents
 - `@flutter-expert` - Diagnosis and fix (primary)
-- `@ux-designer` - Only if UI changes needed
+- `@ui-designer` - Only if UI changes needed
+- `@brand-designer` - Only if brand/visual changes needed
 
 ## Task Template
 ```markdown

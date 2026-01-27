@@ -326,7 +326,7 @@ if (imageBytes.length > 5 * 1024 * 1024) {
 
 ## Contact
 
-- Design Questions: @ux-designer
+- Design Questions: @ui-designer
 - Implementation Help: @flutter-expert
 - Business Logic: Product Team
 

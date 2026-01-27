@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/constants/radius.dart';
@@ -24,7 +30,18 @@ class BusinessProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
-  // Profile is auto-loaded by the provider on initialization
+  final ImagePicker _imagePicker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = ref.read(profileProvider);
+      if (!state.isLoading && !state.hasData && state.error == null) {
+        ref.read(profileProvider.notifier).loadProfile();
+      }
+    });
+  }
 
   Future<void> _handleSignOut() async {
     final confirmed = await showDialog<bool>(
@@ -98,6 +115,146 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     }
   }
 
+  Future<void> _handleChangePhoto() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: KolabingColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: KolabingColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+              Text(
+                'Change Profile Photo',
+                style: KolabingTextStyles.titleMedium.copyWith(
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+              ListTile(
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.camera,
+                    color: KolabingColors.primary,
+                  ),
+                ),
+                title: const Text('Take Photo'),
+                subtitle: const Text('Use your camera'),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: KolabingColors.info.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.image,
+                    color: KolabingColors.info,
+                  ),
+                ),
+                title: const Text('Choose from Gallery'),
+                subtitle: const Text('Select an existing photo'),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    try {
+      final pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+
+      if (pickedFile == null) return;
+
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Text('Uploading photo...'),
+              ],
+            ),
+            duration: Duration(seconds: 30),
+          ),
+        );
+      }
+
+      // Read file and convert to base64
+      final bytes = await File(pickedFile.path).readAsBytes();
+      final base64Image = base64Encode(bytes);
+      final mimeType = pickedFile.mimeType ?? 'image/jpeg';
+
+      // Upload
+      final success = await ref
+          .read(profileProvider.notifier)
+          .updateProfilePhoto(base64Image, mimeType);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile photo updated'),
+              backgroundColor: KolabingColors.success,
+            ),
+          );
+        }
+      }
+    } on Exception catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update photo: $e'),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(profileProvider);
@@ -123,17 +280,6 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
-      appBar: AppBar(
-        backgroundColor: KolabingColors.background,
-        elevation: 0,
-        title: Text(
-          'Profile',
-          style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.textPrimary,
-          ),
-        ),
-        centerTitle: false,
-      ),
       body: SafeArea(
         child: _buildBody(state),
       ),
@@ -141,79 +287,191 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   }
 
   Widget _buildBody(ProfileState state) {
-    if (state.isLoading && !state.hasData) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: KolabingColors.primary,
-        ),
-      );
+    // Trigger load if needed
+    if (!state.hasData && !state.isLoading && !state.isInitialized) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(profileProvider.notifier).loadProfile();
+      });
     }
 
+    // Loading state
+    if (state.isLoading && !state.hasData) {
+      return _buildLoadingState();
+    }
+
+    // Error state without data
     if (state.error != null && !state.hasData) {
-      return Center(
+      return _buildErrorState(state.error!);
+    }
+
+    // Profile content
+    if (state.profile != null) {
+      return _buildProfileContent(state);
+    }
+
+    // Initial loading
+    return _buildLoadingState();
+  }
+
+  Widget _buildLoadingState() => SingleChildScrollView(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        child: Column(
+          children: [
+            // Header shimmer
+            Shimmer.fromColors(
+              baseColor: KolabingColors.surfaceVariant,
+              highlightColor: KolabingColors.surface,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: KolabingRadius.borderRadiusLg,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: KolabingSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 150,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: KolabingRadius.borderRadiusSm,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            width: 80,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: KolabingRadius.borderRadiusSm,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            // Section shimmer
+            ...List.generate(
+              3,
+              (index) => Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
+                child: Shimmer.fromColors(
+                  baseColor: KolabingColors.surfaceVariant,
+                  highlightColor: KolabingColors.surface,
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: KolabingRadius.borderRadiusLg,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildErrorState(String error) => Center(
         child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.lg),
+          padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                LucideIcons.alertCircle,
-                size: 48,
-                color: KolabingColors.error,
+              Container(
+                width: 80,
+                height: 80,
+                decoration: const BoxDecoration(
+                  color: KolabingColors.errorBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.alertCircle,
+                  size: 36,
+                  color: KolabingColors.error,
+                ),
               ),
-              const SizedBox(height: KolabingSpacing.md),
+              const SizedBox(height: KolabingSpacing.lg),
               Text(
-                state.error!,
+                'Something went wrong',
+                style: KolabingTextStyles.headlineSmall.copyWith(
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                error,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () =>
                     ref.read(profileProvider.notifier).loadProfile(),
+                icon: const Icon(LucideIcons.rotateCcw, size: 18),
+                label: const Text('TRY AGAIN'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.lg,
+                    vertical: KolabingSpacing.sm,
+                  ),
                 ),
-                child: const Text('Retry'),
               ),
             ],
           ),
         ),
       );
-    }
 
-    final profile = state.profile;
-    if (profile == null) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: KolabingColors.primary,
-        ),
-      );
-    }
-
+  Widget _buildProfileContent(ProfileState state) {
+    final profile = state.profile!;
     final about = profile.businessProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
     final isBusiness = profile.isBusiness;
 
     return RefreshIndicator(
       onRefresh: () => ref.read(profileProvider.notifier).refresh(),
+      color: KolabingColors.primary,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Profile Card
-            _buildProfileCard(profile),
+            // Profile Header Card
+            _buildProfileHeader(profile, state.isUpdating),
 
             const SizedBox(height: KolabingSpacing.md),
 
             // About Section
             if (hasAbout) ...[
               _buildAboutSection(about),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+
+            // Subscription Section (Business only - prominently displayed)
+            if (isBusiness) ...[
+              _buildSubscriptionSection(state.subscription),
               const SizedBox(height: KolabingSpacing.md),
             ],
 
@@ -230,12 +488,6 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
             const SizedBox(height: KolabingSpacing.md),
 
-            // Subscription Section (Business only)
-            if (isBusiness) ...[
-              _buildSubscriptionSection(state.subscription),
-              const SizedBox(height: KolabingSpacing.md),
-            ],
-
             // Account Section
             _buildAccountSection(profile.email, state.isUpdating),
 
@@ -246,14 +498,14 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     );
   }
 
-  Widget _buildProfileCard(UserModel profile) {
+  Widget _buildProfileHeader(UserModel profile, bool isUpdating) {
     final name = profile.businessProfile?.name ?? profile.displayName;
     final businessType = profile.businessProfile?.businessType ?? 'Business';
     final photoUrl =
         profile.businessProfile?.profilePhoto ?? profile.avatarUrl;
 
     return Container(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
@@ -265,354 +517,249 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          // Avatar
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: KolabingColors.surfaceVariant,
-              shape: BoxShape.circle,
-              image: photoUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(photoUrl),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: photoUrl == null
-                ? const Icon(
-                    LucideIcons.building2,
-                    size: 32,
-                    color: KolabingColors.textTertiary,
-                  )
-                : null,
-          ),
-
-          const SizedBox(width: KolabingSpacing.md),
-
-          // Name and Type
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  name,
-                  style: KolabingTextStyles.headlineSmall.copyWith(
-                    color: KolabingColors.textPrimary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: KolabingSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.sm,
-                    vertical: KolabingSpacing.xxs,
-                  ),
+          // Avatar with edit button
+          Stack(
+            children: [
+              GestureDetector(
+                onTap: isUpdating ? null : _handleChangePhoto,
+                child: Container(
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: KolabingColors.softYellow,
-                    borderRadius: KolabingRadius.borderRadiusSm,
-                    border: Border.all(color: KolabingColors.softYellowBorder),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: KolabingColors.primary,
+                      width: 3,
+                    ),
                   ),
-                  child: Text(
-                    businessType.toUpperCase(),
-                    style: KolabingTextStyles.labelSmall.copyWith(
-                      color: KolabingColors.accentOrangeText,
+                  child: ClipOval(
+                    child: photoUrl != null
+                        ? Image.network(
+                            photoUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(name),
+                          )
+                        : _buildAvatarPlaceholder(name),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: isUpdating ? null : _handleChangePhoto,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: KolabingColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: KolabingColors.surface,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      LucideIcons.camera,
+                      size: 16,
+                      color: KolabingColors.onPrimary,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              if (isUpdating)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
 
-          const SizedBox(width: KolabingSpacing.sm),
+          const SizedBox(height: KolabingSpacing.md),
 
-          // Edit Button
-          OutlinedButton(
-            onPressed: () {
-              // TODO: Navigate to edit profile
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
-              side: const BorderSide(color: KolabingColors.border),
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-                vertical: KolabingSpacing.sm,
-              ),
+          // Name
+          Text(
+            name,
+            style: KolabingTextStyles.headlineMedium.copyWith(
+              color: KolabingColors.textPrimary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: KolabingSpacing.xs),
+
+          // Business type badge
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.md,
+              vertical: KolabingSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: KolabingColors.softYellow,
+              borderRadius: KolabingRadius.borderRadiusRound,
+              border: Border.all(color: KolabingColors.softYellowBorder),
             ),
             child: Text(
-              'EDIT',
-              style: KolabingTextStyles.buttonSmall,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAboutSection(String about) {
-    return _SectionCard(
-      title: 'About',
-      child: Text(
-        about,
-        style: KolabingTextStyles.bodyMedium.copyWith(
-          color: KolabingColors.textSecondary,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactInfoSection(UserModel profile) {
-    final email = profile.email;
-    final phone = profile.phoneNumber;
-    final website = profile.businessProfile?.website;
-    final instagram = profile.businessProfile?.instagram;
-    final city = profile.businessProfile?.city?.name;
-
-    return _SectionCard(
-      title: 'Contact Info',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _ContactInfoTile(
-            icon: LucideIcons.mail,
-            label: email,
-          ),
-          if (phone != null && phone.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.phone,
-              label: phone,
-            ),
-          if (city != null && city.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.mapPin,
-              label: city,
-            ),
-          if (website != null && website.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.globe,
-              label: website,
-              onTap: () => launchUrl(Uri.parse(website)),
-            ),
-          if (instagram != null && instagram.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.instagram,
-              label: '@$instagram',
-              onTap: () => launchUrl(
-                Uri.parse('https://instagram.com/$instagram'),
+              businessType.toUpperCase(),
+              style: KolabingTextStyles.labelSmall.copyWith(
+                color: KolabingColors.accentOrangeText,
+                fontWeight: FontWeight.w600,
               ),
             ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildNotificationPreferencesSection(
-    NotificationPreferences? preferences,
-    bool isUpdating,
-  ) {
-    return _SectionCard(
-      title: 'Notification Preferences',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _NotificationToggle(
-            label: 'Email Notifications',
-            value: preferences?.emailNotifications ?? true,
-            isUpdating: isUpdating,
-            onChanged: (value) => ref
-                .read(profileProvider.notifier)
-                .updateNotificationPreference('email_notifications', value),
+  Widget _buildAvatarPlaceholder(String name) => Container(
+        color: KolabingColors.surfaceVariant,
+        child: Center(
+          child: Text(
+            name.isNotEmpty ? name[0].toUpperCase() : '?',
+            style: KolabingTextStyles.displaySmall.copyWith(
+              color: KolabingColors.textTertiary,
+            ),
           ),
-          _NotificationToggle(
-            label: 'WhatsApp Notifications',
-            value: preferences?.whatsappNotifications ?? true,
-            isUpdating: isUpdating,
-            onChanged: (value) => ref
-                .read(profileProvider.notifier)
-                .updateNotificationPreference('whatsapp_notifications', value),
+        ),
+      );
+
+  Widget _buildAboutSection(String about) => _SectionCard(
+        title: 'About',
+        child: Text(
+          about,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textSecondary,
           ),
-          _NotificationToggle(
-            label: 'New Application Alerts',
-            value: preferences?.newApplicationAlerts ?? true,
-            isUpdating: isUpdating,
-            onChanged: (value) => ref
-                .read(profileProvider.notifier)
-                .updateNotificationPreference('new_application_alerts', value),
-          ),
-          _NotificationToggle(
-            label: 'Collaboration Updates',
-            value: preferences?.collaborationUpdates ?? true,
-            isUpdating: isUpdating,
-            onChanged: (value) => ref
-                .read(profileProvider.notifier)
-                .updateNotificationPreference('collaboration_updates', value),
-          ),
-          _NotificationToggle(
-            label: 'Marketing & Tips',
-            value: preferences?.marketingTips ?? false,
-            isUpdating: isUpdating,
-            onChanged: (value) => ref
-                .read(profileProvider.notifier)
-                .updateNotificationPreference('marketing_tips', value),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
 
   Widget _buildSubscriptionSection(Subscription? subscription) {
     final hasSubscription = subscription != null;
     final isActive = subscription?.isActive ?? false;
 
-    Color getStatusColor(SubscriptionStatus? status) {
-      switch (status) {
-        case SubscriptionStatus.active:
-          return KolabingColors.success;
-        case SubscriptionStatus.cancelled:
-          return KolabingColors.warning;
-        case SubscriptionStatus.pastDue:
-          return KolabingColors.error;
-        default:
-          return KolabingColors.textTertiary;
-      }
-    }
-
-    Color getStatusBgColor(SubscriptionStatus? status) {
-      switch (status) {
-        case SubscriptionStatus.active:
-          return KolabingColors.activeBg;
-        case SubscriptionStatus.cancelled:
-          return KolabingColors.pendingBg;
-        case SubscriptionStatus.pastDue:
-          return KolabingColors.errorBg;
-        default:
-          return KolabingColors.completedBg;
-      }
-    }
-
-    String formatDate(DateTime date) {
-      return '${date.day}/${date.month}/${date.year}';
-    }
-
     return _SectionCard(
       title: 'Subscription',
+      titleIcon: LucideIcons.sparkles,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // Status Badge
+          // Status row
           Row(
             children: [
-              Text(
-                'Status:',
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? KolabingColors.success.withValues(alpha: 0.1)
+                      : KolabingColors.surfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isActive ? LucideIcons.crown : LucideIcons.sparkles,
+                  color: isActive
+                      ? KolabingColors.success
+                      : KolabingColors.textTertiary,
+                  size: 24,
                 ),
               ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.sm,
-                  vertical: KolabingSpacing.xxs,
-                ),
-                decoration: BoxDecoration(
-                  color: getStatusBgColor(subscription?.status),
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                ),
-                child: Text(
-                  subscription?.statusLabel ??
-                      subscription?.status.label ??
-                      'No Subscription',
-                  style: KolabingTextStyles.labelSmall.copyWith(
-                    color: getStatusColor(subscription?.status),
-                    fontWeight: FontWeight.w600,
-                  ),
+              const SizedBox(width: KolabingSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isActive ? 'Premium Plan' : 'No Active Plan',
+                      style: KolabingTextStyles.titleMedium.copyWith(
+                        color: KolabingColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    _buildStatusBadge(subscription?.status),
+                  ],
                 ),
               ),
             ],
           ),
 
-          // Period End
-          if (hasSubscription && subscription.currentPeriodEnd != null) ...[
-            const SizedBox(height: KolabingSpacing.sm),
-            Row(
-              children: [
-                const Icon(
-                  LucideIcons.calendar,
-                  size: 16,
-                  color: KolabingColors.textTertiary,
-                ),
-                const SizedBox(width: KolabingSpacing.xs),
-                Text(
-                  'Renews: ${formatDate(subscription.currentPeriodEnd!)}',
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          // Subscription details
+          if (hasSubscription && isActive) ...[
+            const SizedBox(height: KolabingSpacing.md),
+            const Divider(height: 1, color: KolabingColors.border),
+            const SizedBox(height: KolabingSpacing.md),
 
-          // Days Remaining
-          if (hasSubscription && subscription.daysRemaining != null) ...[
-            const SizedBox(height: KolabingSpacing.xxs),
-            Row(
-              children: [
-                const Icon(
-                  LucideIcons.clock,
-                  size: 16,
-                  color: KolabingColors.textTertiary,
-                ),
-                const SizedBox(width: KolabingSpacing.xs),
-                Text(
-                  '${subscription.daysRemaining} days remaining',
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-
-          // Cancel at period end warning
-          if (hasSubscription && subscription.cancelAtPeriodEnd) ...[
-            const SizedBox(height: KolabingSpacing.sm),
-            Container(
-              padding: const EdgeInsets.all(KolabingSpacing.sm),
-              decoration: BoxDecoration(
-                color: KolabingColors.warning.withValues(alpha: 0.1),
-                borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(
-                    color: KolabingColors.warning.withValues(alpha: 0.3)),
+            // Renewal date
+            if (subscription.currentPeriodEnd != null)
+              _buildDetailRow(
+                icon: LucideIcons.calendar,
+                label: 'Renews',
+                value: _formatDate(subscription.currentPeriodEnd!),
               ),
-              child: Row(
-                children: [
-                  const Icon(
-                    LucideIcons.alertTriangle,
-                    size: 16,
-                    color: KolabingColors.warning,
+
+            // Days remaining
+            if (subscription.daysRemaining != null) ...[
+              const SizedBox(height: KolabingSpacing.sm),
+              _buildDetailRow(
+                icon: LucideIcons.clock,
+                label: 'Remaining',
+                value: '${subscription.daysRemaining} days',
+              ),
+            ],
+
+            // Cancel warning
+            if (subscription.cancelAtPeriodEnd) ...[
+              const SizedBox(height: KolabingSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(KolabingSpacing.sm),
+                decoration: BoxDecoration(
+                  color: KolabingColors.warning.withValues(alpha: 0.1),
+                  borderRadius: KolabingRadius.borderRadiusSm,
+                  border: Border.all(
+                    color: KolabingColors.warning.withValues(alpha: 0.3),
                   ),
-                  const SizedBox(width: KolabingSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      'Subscription will end at the current billing period',
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.warning,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      LucideIcons.alertTriangle,
+                      size: 16,
+                      color: KolabingColors.warning,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        'Subscription ends at current billing period',
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.warning,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           ],
 
           const SizedBox(height: KolabingSpacing.md),
 
-          // Action Buttons
+          // Action button
           if (isActive)
             OutlinedButton.icon(
               onPressed: _handleManageSubscription,
@@ -630,7 +777,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             ElevatedButton.icon(
               onPressed: _handleViewPlans,
               icon: const Icon(LucideIcons.sparkles, size: 18),
-              label: const Text('VIEW PLANS'),
+              label: const Text('UPGRADE TO PREMIUM'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
@@ -644,70 +791,222 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     );
   }
 
-  Widget _buildAccountSection(String email, bool isUpdating) {
-    return _SectionCard(
-      title: 'Account',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
+  Widget _buildStatusBadge(SubscriptionStatus? status) {
+    Color bgColor;
+    Color textColor;
+    String label;
+
+    switch (status) {
+      case SubscriptionStatus.active:
+        bgColor = KolabingColors.activeBg;
+        textColor = KolabingColors.success;
+        label = 'Active';
+      case SubscriptionStatus.cancelled:
+        bgColor = KolabingColors.pendingBg;
+        textColor = KolabingColors.warning;
+        label = 'Cancelled';
+      case SubscriptionStatus.pastDue:
+        bgColor = KolabingColors.errorBg;
+        textColor = KolabingColors.error;
+        label = 'Past Due';
+      default:
+        bgColor = KolabingColors.surfaceVariant;
+        textColor = KolabingColors.textTertiary;
+        label = 'Inactive';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: KolabingRadius.borderRadiusSm,
+      ),
+      child: Text(
+        label,
+        style: KolabingTextStyles.labelSmall.copyWith(
+          color: textColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) =>
+      Row(
         children: [
-          // Email
-          Row(
-            children: [
-              const Icon(
-                LucideIcons.mail,
-                size: 20,
-                color: KolabingColors.textTertiary,
-              ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: Text(
-                  email,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: KolabingColors.textPrimary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: KolabingSpacing.lg),
-
-          // Sign Out Button
-          OutlinedButton.icon(
-            onPressed: isUpdating ? null : _handleSignOut,
-            icon: const Icon(LucideIcons.logOut, size: 18),
-            label: const Text('SIGN OUT'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.error,
-              side: const BorderSide(color: KolabingColors.error),
-              padding: const EdgeInsets.symmetric(
-                vertical: KolabingSpacing.sm,
-              ),
+          Icon(icon, size: 16, color: KolabingColors.textTertiary),
+          const SizedBox(width: KolabingSpacing.xs),
+          Text(
+            '$label: ',
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.textSecondary,
             ),
           ),
-
-          const SizedBox(height: KolabingSpacing.sm),
-
-          // Delete Account Button
-          TextButton(
-            onPressed: isUpdating ? null : _handleDeleteAccount,
-            style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.error,
-            ),
-            child: Text(
-              'Delete Account',
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.error,
-                decoration: TextDecoration.underline,
-              ),
+          Text(
+            value,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.textPrimary,
+              fontWeight: FontWeight.w500,
             ),
           ),
+        ],
+      );
+
+  String _formatDate(DateTime date) =>
+      '${date.day}/${date.month}/${date.year}';
+
+  Widget _buildContactInfoSection(UserModel profile) {
+    final email = profile.email;
+    final phone = profile.phoneNumber;
+    final website = profile.businessProfile?.website;
+    final instagram = profile.businessProfile?.instagram;
+    final city = profile.businessProfile?.city?.name;
+
+    return _SectionCard(
+      title: 'Contact Info',
+      child: Column(
+        children: [
+          _ContactInfoTile(icon: LucideIcons.mail, label: email),
+          if (phone != null && phone.isNotEmpty)
+            _ContactInfoTile(icon: LucideIcons.phone, label: phone),
+          if (city != null && city.isNotEmpty)
+            _ContactInfoTile(icon: LucideIcons.mapPin, label: city),
+          if (website != null && website.isNotEmpty)
+            _ContactInfoTile(
+              icon: LucideIcons.globe,
+              label: website,
+              onTap: () => launchUrl(Uri.parse(website)),
+            ),
+          if (instagram != null && instagram.isNotEmpty)
+            _ContactInfoTile(
+              icon: LucideIcons.instagram,
+              label: '@$instagram',
+              onTap: () =>
+                  launchUrl(Uri.parse('https://instagram.com/$instagram')),
+            ),
         ],
       ),
     );
   }
+
+  Widget _buildNotificationPreferencesSection(
+    NotificationPreferences? preferences,
+    bool isUpdating,
+  ) =>
+      _SectionCard(
+        title: 'Notifications',
+        child: Column(
+          children: [
+            _NotificationToggle(
+              label: 'Email Notifications',
+              value: preferences?.emailNotifications ?? true,
+              isUpdating: isUpdating,
+              onChanged: (value) => ref
+                  .read(profileProvider.notifier)
+                  .updateNotificationPreference('email_notifications', value),
+            ),
+            _NotificationToggle(
+              label: 'New Application Alerts',
+              value: preferences?.newApplicationAlerts ?? true,
+              isUpdating: isUpdating,
+              onChanged: (value) => ref
+                  .read(profileProvider.notifier)
+                  .updateNotificationPreference('new_application_alerts', value),
+            ),
+            _NotificationToggle(
+              label: 'Collaboration Updates',
+              value: preferences?.collaborationUpdates ?? true,
+              isUpdating: isUpdating,
+              onChanged: (value) => ref
+                  .read(profileProvider.notifier)
+                  .updateNotificationPreference('collaboration_updates', value),
+            ),
+            _NotificationToggle(
+              label: 'Marketing & Tips',
+              value: preferences?.marketingTips ?? false,
+              isUpdating: isUpdating,
+              onChanged: (value) => ref
+                  .read(profileProvider.notifier)
+                  .updateNotificationPreference('marketing_tips', value),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildAccountSection(String email, bool isUpdating) => _SectionCard(
+        title: 'Account',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Email
+            Row(
+              children: [
+                const Icon(
+                  LucideIcons.mail,
+                  size: 20,
+                  color: KolabingColors.textTertiary,
+                ),
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: Text(
+                    email,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: KolabingColors.textPrimary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: KolabingSpacing.lg),
+
+            // Sign Out Button
+            OutlinedButton.icon(
+              onPressed: isUpdating ? null : _handleSignOut,
+              icon: const Icon(LucideIcons.logOut, size: 18),
+              label: const Text('SIGN OUT'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: KolabingColors.error,
+                side: const BorderSide(color: KolabingColors.error),
+                padding: const EdgeInsets.symmetric(
+                  vertical: KolabingSpacing.sm,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: KolabingSpacing.md),
+
+            // Delete Account
+            GestureDetector(
+              onTap: isUpdating ? null : _handleDeleteAccount,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+                child: Text(
+                  'Delete Account',
+                  textAlign: TextAlign.center,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: isUpdating
+                        ? KolabingColors.textTertiary
+                        : KolabingColors.error,
+                    decoration: TextDecoration.underline,
+                    decorationColor: isUpdating
+                        ? KolabingColors.textTertiary
+                        : KolabingColors.error,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 }
 
 // -----------------------------------------------------------------------------
@@ -718,42 +1017,54 @@ class _SectionCard extends StatelessWidget {
   const _SectionCard({
     required this.title,
     required this.child,
+    this.titleIcon,
   });
 
   final String title;
   final Widget child;
+  final IconData? titleIcon;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: KolabingTextStyles.titleMedium.copyWith(
-              color: KolabingColors.textPrimary,
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.surface,
+          borderRadius: KolabingRadius.borderRadiusLg,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          child,
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                if (titleIcon != null) ...[
+                  Icon(
+                    titleIcon,
+                    size: 20,
+                    color: KolabingColors.primary,
+                  ),
+                  const SizedBox(width: KolabingSpacing.xs),
+                ],
+                Text(
+                  title,
+                  style: KolabingTextStyles.titleMedium.copyWith(
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            child,
+          ],
+        ),
+      );
 }
 
 // -----------------------------------------------------------------------------
@@ -772,41 +1083,35 @@ class _ContactInfoTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: KolabingRadius.borderRadiusSm,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: KolabingColors.textTertiary,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Text(
-                label,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: onTap != null
-                      ? KolabingColors.primary
-                      : KolabingColors.textPrimary,
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        borderRadius: KolabingRadius.borderRadiusSm,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: KolabingColors.textTertiary),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Text(
+                  label,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: onTap != null
+                        ? KolabingColors.info
+                        : KolabingColors.textPrimary,
+                  ),
                 ),
               ),
-            ),
-            if (onTap != null)
-              const Icon(
-                LucideIcons.externalLink,
-                size: 16,
-                color: KolabingColors.textTertiary,
-              ),
-          ],
+              if (onTap != null)
+                const Icon(
+                  LucideIcons.externalLink,
+                  size: 16,
+                  color: KolabingColors.textTertiary,
+                ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 // -----------------------------------------------------------------------------
@@ -827,27 +1132,37 @@ class _NotificationToggle extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textPrimary,
-              ),
+  Widget build(BuildContext context) => Opacity(
+        opacity: isUpdating ? 0.6 : 1.0,
+        child: InkWell(
+          onTap: isUpdating
+              ? null
+              : () {
+                  HapticFeedback.selectionClick();
+                  onChanged(!value);
+                },
+          borderRadius: KolabingRadius.borderRadiusSm,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: KolabingColors.textPrimary,
+                    ),
+                  ),
+                ),
+                Switch(
+                  value: value,
+                  onChanged: isUpdating ? null : onChanged,
+                  activeThumbColor: KolabingColors.primary,
+                  activeTrackColor: KolabingColors.primary.withValues(alpha: 0.5),
+                ),
+              ],
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: isUpdating ? null : onChanged,
-            activeThumbColor: KolabingColors.primary,
-            activeTrackColor: KolabingColors.primary.withValues(alpha: 0.5),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
 }

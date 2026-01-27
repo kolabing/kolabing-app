@@ -33,7 +33,7 @@ Business ve Community kullanıcıları için ayrı bottom navigation menu tasarl
 - `GET /collaborations` - Active collaborations
 
 ## Assigned Agents
-- [x] @ux-designer - Navigation UX design
+- [x] @ui-designer - Navigation UX design
 - [x] @flutter-expert - Implementation
 
 ## Progress

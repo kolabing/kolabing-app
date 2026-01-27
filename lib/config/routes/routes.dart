@@ -5,8 +5,11 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/user_type_selection_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/business/models/collab_request.dart';
 import '../../features/business/screens/business_main_screen.dart';
+import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
+import '../../features/community/screens/create_opportunity_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step1_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
@@ -100,6 +103,9 @@ abstract final class KolabingRoutes {
 
   /// Business subscription plans
   static const String businessPlans = '/business/plans';
+
+  /// Community offer detail (from explore)
+  static const String communityOfferDetail = '/business/explore/offer/:id';
 
   // ---------------------------------------------------------------------------
   // Community Routes
@@ -336,6 +342,18 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) =>
           const _PlaceholderScreen(title: 'Subscription Plans'),
     ),
+    GoRoute(
+      path: KolabingRoutes.communityOfferDetail,
+      name: 'communityOfferDetail',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        final offer = state.extra as CollabRequest?;
+        return CommunityOfferDetailScreen(
+          offerId: id,
+          offer: offer,
+        );
+      },
+    ),
 
     // -------------------------------------------------------------------------
     // Community Routes
@@ -353,7 +371,7 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.communityOpportunitiesNew,
       name: 'communityOpportunitiesNew',
       builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Create Opportunity'),
+          const CreateOpportunityScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.communityOpportunitiesEdit,

@@ -43,7 +43,7 @@ Response:
 ```
 
 ## Assigned Agents
-- [x] @ux-designer
+- [x] @ui-designer
 - [x] @flutter-expert
 
 ## Progress

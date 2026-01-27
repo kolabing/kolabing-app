@@ -22,7 +22,7 @@ For each identified feature:
    - Related API endpoints
    - Data models required
    - Dependencies on other tasks
-   - Assigned agents: `@ux-designer`, `@flutter-expert`
+   - Assigned agents: `@ui-designer`, `@brand-designer`, `@flutter-expert`
 
 ### Phase 3: Task Execution Loop
 For each task (in dependency order):
@@ -32,7 +32,7 @@ For each task (in dependency order):
 - Update task with start timestamp
 
 **3.2 UX Design Phase**
-Invoke `@ux-designer` to:
+Invoke `@ui-designer` to:
 - Define user flow for the feature
 - Create wireframe/mockup specifications
 - Specify UI components needed
@@ -65,7 +65,8 @@ Invoke `@flutter-expert` to:
 - Task remains in `inprogress/` until resolved
 
 ## Agents
-- `@ux-designer` - UI/UX design, user flows, components, states
+- `@ui-designer` - UI/UX design, user flows, components, states
+- `@brand-designer` - Brand identity, colors, typography, visual consistency
 - `@flutter-expert` - Flutter implementation, state management, API integration
 
 ## Task Template
@@ -93,7 +94,8 @@ Invoke `@flutter-expert` to:
 - Blocks: 
 
 ## Assigned Agents
-- [ ] @ux-designer
+- [ ] @ui-designer
+- [ ] @brand-designer
 - [ ] @flutter-expert
 
 ## Progress

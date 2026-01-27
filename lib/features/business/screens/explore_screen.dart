@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
@@ -25,12 +26,9 @@ class ExploreScreen extends ConsumerStatefulWidget {
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   void _onViewRequest(CollabRequest request) {
-    // TODO(developer): Navigate to detail screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Viewing: ${request.title}'),
-        behavior: SnackBarBehavior.floating,
-      ),
+    context.push(
+      '/business/explore/offer/${request.id}',
+      extra: request,
     );
   }
 

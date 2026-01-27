@@ -2,7 +2,7 @@
 
 **Version:** 2.0
 **Date:** 2026-01-25
-**Designer:** @ux-designer
+**Designer:** @ui-designer
 
 ---
 

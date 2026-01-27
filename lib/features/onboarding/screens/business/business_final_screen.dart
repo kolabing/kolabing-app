@@ -28,6 +28,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  // API validation errors for specific fields
+  String? _emailApiError;
+  String? _passwordApiError;
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +66,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   }
 
   String? _validateEmail(String? value) {
+    // Show API error first if present
+    if (_emailApiError != null) {
+      return _emailApiError;
+    }
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
@@ -73,6 +81,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   }
 
   String? _validatePassword(String? value) {
+    // Show API error first if present
+    if (_passwordApiError != null) {
+      return _passwordApiError;
+    }
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
@@ -80,6 +92,15 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       return 'Password must be at least 8 characters';
     }
     return null;
+  }
+
+  void _clearApiErrors() {
+    if (_emailApiError != null || _passwordApiError != null) {
+      setState(() {
+        _emailApiError = null;
+        _passwordApiError = null;
+      });
+    }
   }
 
   String? _validateConfirmPassword(String? value) {
@@ -94,6 +115,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
   Future<void> _handleRegister() async {
     if (_isLoading || _showSuccess) return;
+
+    // Clear any previous API errors before validation
+    _clearApiErrors();
 
     if (!_formKey.currentState!.validate()) return;
 
@@ -121,8 +145,20 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();
     } else {
-      setState(() => _isLoading = false);
-      _showErrorSnackBar(result.displayError);
+      // Check for field-specific validation errors
+      final apiError = result.error;
+      if (apiError != null && apiError.errors != null && apiError.errors!.isNotEmpty) {
+        setState(() {
+          _isLoading = false;
+          _emailApiError = apiError.getFieldError('email');
+          _passwordApiError = apiError.getFieldError('password');
+        });
+        // Trigger form validation to show the errors on fields
+        _formKey.currentState!.validate();
+      } else {
+        setState(() => _isLoading = false);
+        _showErrorSnackBar(result.displayError);
+      }
     }
   }
 
@@ -300,6 +336,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                           autocorrect: false,
                           enabled: !_isLoading,
                           validator: _validateEmail,
+                          onChanged: (_) {
+                            if (_emailApiError != null) {
+                              setState(() => _emailApiError = null);
+                            }
+                          },
                           decoration: InputDecoration(
                             labelText: 'Email',
                             hintText: 'your@email.com',
@@ -336,6 +377,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                           obscureText: _obscurePassword,
                           enabled: !_isLoading,
                           validator: _validatePassword,
+                          onChanged: (_) {
+                            if (_passwordApiError != null) {
+                              setState(() => _passwordApiError = null);
+                            }
+                          },
                           decoration: InputDecoration(
                             labelText: 'Password',
                             hintText: 'Min. 8 characters',

@@ -26,7 +26,7 @@ Implement the complete Business Profile screen with the following features:
 - [x] POST /api/v1/me/subscription/cancel - Cancel subscription
 
 ## Assigned Agents
-- [x] @ux-designer
+- [x] @ui-designer
 - [x] @flutter-expert
 
 ## Progress

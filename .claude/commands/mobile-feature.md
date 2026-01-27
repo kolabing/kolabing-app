@@ -18,14 +18,14 @@ Develop a single mobile feature with specified API endpoints.
 1. Create task file in `.agent/task/todo/<feature-name>.md`
 2. Parse API endpoint from arguments if provided
 3. Define feature scope and requirements
-4. Set assigned agents: `@ux-designer`, `@flutter-expert`
+4. Set assigned agents: `@ui-designer`, `@brand-designer`, `@flutter-expert`
 
 ### Phase 2: Start Task
 - Move task file from `todo/` to `inprogress/`
 - Update task with start timestamp
 
 ### Phase 3: UX Design
-Invoke `@ux-designer` to:
+Invoke `@ui-designer` to:
 - Define user flow for the feature
 - Create component specifications
 - Define all UI states:
@@ -55,7 +55,8 @@ Invoke `@flutter-expert` to:
 - Task remains in `inprogress/` until resolved
 
 ## Agents
-- `@ux-designer` - Design specifications
+- `@ui-designer` - Design specifications
+- `@brand-designer` - Brand identity and visual consistency
 - `@flutter-expert` - Implementation
 
 ## Definition of Done

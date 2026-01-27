@@ -20,14 +20,14 @@ UI-only tasks without API integration.
 ### Phase 1: Task Creation
 1. Create UI task in `.agent/task/todo/ui-<description>.md`
 2. Document UI requirements from `$ARGUMENTS`
-3. Assign agents: `@ux-designer`, `@flutter-expert`
+3. Assign agents: `@ui-designer`, `@brand-designer`, `@flutter-expert`
 
 ### Phase 2: Start Task
 - Move task file from `todo/` to `inprogress/`
 - Update task with start timestamp
 
 ### Phase 3: UX Design
-Invoke `@ux-designer` to:
+Invoke `@ui-designer` to:
 - Define visual specifications
 - Create component design
 - Specify:
@@ -63,7 +63,8 @@ Invoke `@flutter-expert` to:
 - Task remains in `inprogress/` until resolved
 
 ## Agents
-- `@ux-designer` - Visual design and specifications
+- `@ui-designer` - Visual design and specifications
+- `@brand-designer` - Brand identity, colors, typography decisions
 - `@flutter-expert` - Widget implementation
 
 ## Task Template
@@ -81,7 +82,7 @@ $ARGUMENTS
 ## Design Specifications
 
 ### Layout
-(to be filled by @ux-designer)
+(to be filled by @ui-designer)
 
 ### Colors & Typography
 (to be filled)

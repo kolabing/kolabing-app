@@ -46,7 +46,7 @@ Based on provided screenshots:
 - GET /api/v1/collab-requests/{id} - Detail
 
 ## Assigned Agents
-- [x] @ux-designer - UX design and card specifications
+- [x] @ui-designer - UX design and card specifications
 - [x] @ui-engineer - UI implementation
 
 ## Progress

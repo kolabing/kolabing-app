@@ -37,14 +37,14 @@ Welcome Screen
 ```
 
 ## Assigned Agents
-- [ ] @ux-designer
+- [ ] @ui-designer
 - [ ] @flutter-expert
 
 ## Progress
 
 ### UX Design
 **Status:** Completed
-**Designer:** @ux-designer
+**Designer:** @ui-designer
 **Completed:** 2026-01-25
 
 ---

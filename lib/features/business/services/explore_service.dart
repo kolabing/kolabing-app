@@ -1,17 +1,47 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../../auth/models/auth_response.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/collab_request.dart';
 
+/// API configuration
+const String _baseUrl =
+    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+
+/// Mock mode flag - set to true to use mock data instead of real API
+const bool _useMockApi = false;
+
 /// Service for fetching collaboration requests for the Business Explore screen
-///
-/// Currently uses mock data. In production, this would connect to Supabase
-/// to fetch real collaboration requests from communities.
 class ExploreService {
-  ExploreService._();
-  static final ExploreService instance = ExploreService._();
+  ExploreService({
+    AuthService? authService,
+    http.Client? httpClient,
+  })  : _authService = authService ?? AuthService(),
+        _httpClient = httpClient ?? http.Client();
 
-  /// Simulated network delay for realistic loading states
-  static const _networkDelay = Duration(milliseconds: 800);
+  final AuthService _authService;
+  final http.Client _httpClient;
 
-  /// Fetches all available collaboration requests
+  /// Singleton instance for backward compatibility with providers
+  static final ExploreService instance = ExploreService();
+
+  /// Get authorization headers
+  Future<Map<String, String>> _getHeaders() async {
+    final token = await _authService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
+
+  /// Fetches all available opportunities from the API
+  ///
+  /// Business users browse opportunities posted by communities.
+  /// GET /api/v1/opportunities
   ///
   /// [query] - Optional search query to filter results
   /// [collabType] - Optional filter by collaboration type
@@ -21,19 +51,155 @@ class ExploreService {
     CollabType? collabType,
     String? location,
   }) async {
+    if (_useMockApi) {
+      return _getMockCollabRequests(
+        query: query,
+        collabType: collabType,
+        location: location,
+      );
+    }
+
+    // Build query parameters
+    final queryParams = <String, String>{};
+    if (query != null && query.isNotEmpty) {
+      queryParams['search'] = query;
+    }
+    if (collabType != null) {
+      queryParams['type'] = collabType.toApiValue();
+    }
+    if (location != null && location.isNotEmpty) {
+      queryParams['location'] = location;
+    }
+
+    final uri = Uri.parse('$_baseUrl/opportunities').replace(
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+    );
+
+    debugPrint('Explore: GET $uri');
+
+    try {
+      final response = await _httpClient.get(
+        uri,
+        headers: await _getHeaders(),
+      );
+
+      debugPrint('Explore response status: ${response.statusCode}');
+
+      debugPrint('Explore response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final dataList = json['data'] as List<dynamic>? ?? [];
+
+        debugPrint('Explore: Found ${dataList.length} opportunities');
+
+        final results = <CollabRequest>[];
+        for (final item in dataList) {
+          try {
+            results.add(CollabRequest.fromJson(item as Map<String, dynamic>));
+          } catch (e) {
+            debugPrint('Error parsing opportunity: $e');
+            debugPrint('Item data: $item');
+          }
+        }
+        return results;
+      } else if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Get collab requests error: $e');
+      throw NetworkException('Failed to load collaboration requests: $e');
+    }
+  }
+
+  /// Returns a list of available cities for filtering
+  Future<List<String>> getAvailableLocations() async {
+    if (_useMockApi) {
+      return _getMockLocations();
+    }
+
+    try {
+      // Get cities from the lookup endpoint
+      final uri = Uri.parse('$_baseUrl/cities');
+      debugPrint('Explore: GET $uri');
+
+      final response = await _httpClient.get(
+        uri,
+        headers: await _getHeaders(),
+      );
+
+      debugPrint('Cities response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final dataList = json['data'] as List<dynamic>? ?? [];
+
+        final cities = dataList
+            .map((item) {
+              if (item is String) return item;
+              if (item is Map<String, dynamic>) {
+                return item['name'] as String? ?? item['city'] as String? ?? '';
+              }
+              return '';
+            })
+            .where((loc) => loc.isNotEmpty)
+            .toList()
+          ..sort();
+
+        debugPrint('Found ${cities.length} cities');
+        return cities;
+      }
+
+      // If dedicated endpoint doesn't exist, get unique locations from collab requests
+      debugPrint('Cities endpoint failed, extracting from opportunities');
+      final requests = await getCollabRequests();
+      return requests
+          .map((request) => request.location)
+          .where((loc) => loc != 'Unknown')
+          .toSet()
+          .toList()
+        ..sort();
+    } catch (e) {
+      debugPrint('Get locations error: $e');
+      // Return empty list instead of mock
+      return [];
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mock Data (for development and fallback)
+  // ---------------------------------------------------------------------------
+
+  /// Mock implementation for collaboration requests
+  Future<List<CollabRequest>> _getMockCollabRequests({
+    String? query,
+    CollabType? collabType,
+    String? location,
+  }) async {
     // Simulate network delay
-    await Future<void>.delayed(_networkDelay);
+    await Future<void>.delayed(const Duration(milliseconds: 800));
 
     var results = _mockCollabRequests;
 
     // Apply search query filter
     if (query != null && query.isNotEmpty) {
       final lowerQuery = query.toLowerCase();
-      results = results.where((request) =>
-          request.title.toLowerCase().contains(lowerQuery) ||
-          request.description.toLowerCase().contains(lowerQuery) ||
-          request.communityName.toLowerCase().contains(lowerQuery) ||
-          request.location.toLowerCase().contains(lowerQuery)).toList();
+      results = results
+          .where((request) =>
+              request.title.toLowerCase().contains(lowerQuery) ||
+              request.description.toLowerCase().contains(lowerQuery) ||
+              request.communityName.toLowerCase().contains(lowerQuery) ||
+              request.location.toLowerCase().contains(lowerQuery))
+          .toList();
     }
 
     // Apply collab type filter
@@ -46,16 +212,16 @@ class ExploreService {
     if (location != null && location.isNotEmpty) {
       final lowerLocation = location.toLowerCase();
       results = results
-          .where(
-              (request) => request.location.toLowerCase().contains(lowerLocation))
+          .where((request) =>
+              request.location.toLowerCase().contains(lowerLocation))
           .toList();
     }
 
     return results;
   }
 
-  /// Returns a list of unique locations from all collaboration requests
-  Future<List<String>> getAvailableLocations() async {
+  /// Mock locations
+  Future<List<String>> _getMockLocations() async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
     return _mockCollabRequests
         .map((request) => request.location)

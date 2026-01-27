@@ -69,7 +69,9 @@ class ProfileNotifier extends Notifier<ProfileState> {
   /// Load all profile data
   Future<void> loadProfile() async {
     // Prevent multiple simultaneous loads
-    if (state.isLoading && state.isInitialized) return;
+    if (state.isLoading && state.isInitialized) {
+      return;
+    }
 
     state = state.copyWith(isLoading: true, clearError: true);
 
@@ -124,6 +126,75 @@ class ProfileNotifier extends Notifier<ProfileState> {
   /// Refresh profile data
   Future<void> refresh() async {
     await loadProfile();
+  }
+
+  /// Update profile photo
+  Future<bool> updateProfilePhoto(String base64Photo, String mimeType) async {
+    state = state.copyWith(isUpdating: true, clearError: true);
+
+    try {
+      final dataUri = 'data:$mimeType;base64,$base64Photo';
+      final updatedProfile = await _profileService.updateProfile({
+        'profile_photo': dataUri,
+      });
+
+      state = state.copyWith(
+        profile: updatedProfile,
+        isUpdating: false,
+      );
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(
+        isUpdating: false,
+        error: e.error.message,
+      );
+      return false;
+    } on NetworkException catch (e) {
+      state = state.copyWith(
+        isUpdating: false,
+        error: e.message,
+      );
+      return false;
+    } on Exception {
+      state = state.copyWith(
+        isUpdating: false,
+        error: 'Failed to update profile photo',
+      );
+      return false;
+    }
+  }
+
+  /// Update profile data
+  Future<bool> updateProfile(Map<String, dynamic> data) async {
+    state = state.copyWith(isUpdating: true, clearError: true);
+
+    try {
+      final updatedProfile = await _profileService.updateProfile(data);
+
+      state = state.copyWith(
+        profile: updatedProfile,
+        isUpdating: false,
+      );
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(
+        isUpdating: false,
+        error: e.error.message,
+      );
+      return false;
+    } on NetworkException catch (e) {
+      state = state.copyWith(
+        isUpdating: false,
+        error: e.message,
+      );
+      return false;
+    } on Exception {
+      state = state.copyWith(
+        isUpdating: false,
+        error: 'Failed to update profile',
+      );
+      return false;
+    }
   }
 
   /// Update notification preference
