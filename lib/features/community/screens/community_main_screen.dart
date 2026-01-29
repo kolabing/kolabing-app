@@ -4,6 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
+import '../../application/screens/applications_screen.dart';
+import '../../business/screens/explore_screen.dart';
+import '../../dashboard/screens/community_dashboard_screen.dart';
+import 'community_profile_screen.dart';
+import 'my_opportunities_screen.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
 
@@ -116,11 +121,7 @@ class _CommunityHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.home,
-      title: 'Dashboard',
-      subtitle: 'Your community overview',
-    );
+    return const CommunityDashboardScreen();
   }
 }
 
@@ -129,10 +130,10 @@ class _CommunityExploreTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.compass,
-      title: 'Explore Opportunities',
-      subtitle: 'Discover collaboration opportunities',
+    // Reuse the ExploreScreen from business feature
+    // API automatically returns business opportunities for community users
+    return const ExploreScreen(
+      detailRoutePrefix: '/community/explore/offer',
     );
   }
 }
@@ -142,11 +143,7 @@ class _CommunityMyOppsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.star,
-      title: 'My Opportunities',
-      subtitle: 'Manage your opportunities',
-    );
+    return const MyOpportunitiesScreen();
   }
 }
 
@@ -155,11 +152,7 @@ class _CommunityApplicationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.send,
-      title: 'Applications',
-      subtitle: 'Track your sent applications',
-    );
+    return const ApplicationsScreen();
   }
 }
 
@@ -168,77 +161,9 @@ class _CommunityProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.user,
-      title: 'Profile',
-      subtitle: 'Manage your community profile',
-    );
+    return const CommunityProfileScreen();
   }
 }
 
 // -----------------------------------------------------------------------------
-// Shared Placeholder Widget
-// -----------------------------------------------------------------------------
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 40,
-                color: KolabingColors.primary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Coming soon',
-              style: TextStyle(
-                fontSize: 12,
-                color: KolabingColors.textTertiary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// ---------------------------------------------------------------------------

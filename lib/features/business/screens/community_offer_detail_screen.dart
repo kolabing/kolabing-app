@@ -9,17 +9,20 @@ import 'package:shimmer/shimmer.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
-import '../models/collab_request.dart';
-import '../providers/explore_provider.dart';
+import '../../application/widgets/apply_modal.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/providers/opportunity_provider.dart';
 
-/// Detail screen for a community offer/opportunity
+/// Detail screen for an opportunity
 ///
-/// Shows full details of a collaboration request including:
-/// - Community info header
-/// - Event details
-/// - Photos gallery
-/// - Previous collaborations
-/// - Apply action
+/// Shows full details including:
+/// - Creator info header
+/// - Business offer section
+/// - Community deliverables section
+/// - Location & availability details
+/// - Categories
+/// - Apply action (or management actions if own)
 class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
   const CommunityOfferDetailScreen({
     required this.offerId,
@@ -27,11 +30,11 @@ class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
     super.key,
   });
 
-  /// The ID of the offer to display
+  /// The ID of the opportunity to display
   final String offerId;
 
-  /// Optional pre-loaded offer data (for navigation optimization)
-  final CollabRequest? offer;
+  /// Optional pre-loaded opportunity data (for navigation optimization)
+  final Opportunity? offer;
 
   @override
   ConsumerState<CommunityOfferDetailScreen> createState() =>
@@ -40,178 +43,105 @@ class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
 
 class _CommunityOfferDetailScreenState
     extends ConsumerState<CommunityOfferDetailScreen> {
-  late CollabRequest? _offer;
-  bool _isLoading = false;
-  String? _error;
-  int _currentPhotoIndex = 0;
+  Future<void> _handleApply(Opportunity opportunity) async {
+    final result = await ApplyModal.show(context, opportunity);
 
-  // Mock photos for demonstration (API endpoint needed)
-  final List<String> _mockPhotos = [];
-
-  // Mock previous events (API endpoint needed)
-  final List<_PreviousEvent> _mockPreviousEvents = [
-    _PreviousEvent(
-      id: '1',
-      title: 'Summer Music Festival 2025',
-      date: DateTime(2025, 7, 15),
-      attendees: 2500,
-      imageUrl: null,
-    ),
-    _PreviousEvent(
-      id: '2',
-      title: 'Food & Wine Week',
-      date: DateTime(2025, 9, 10),
-      attendees: 1800,
-      imageUrl: null,
-    ),
-    _PreviousEvent(
-      id: '3',
-      title: 'Tech Networking Night',
-      date: DateTime(2025, 11, 20),
-      attendees: 350,
-      imageUrl: null,
-    ),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _offer = widget.offer;
-    if (_offer == null) {
-      _loadOffer();
+    if (result == true && mounted) {
+      // Refresh the opportunity detail to update hasApplied status
+      ref.invalidate(opportunityDetailProvider(widget.offerId));
     }
-  }
-
-  Future<void> _loadOffer() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      // Try to find in cached list first
-      final asyncValue = ref.read(collabRequestsProvider);
-      if (asyncValue.hasValue) {
-        final requests = asyncValue.value;
-        if (requests != null) {
-          final found = requests.where((CollabRequest r) => r.id == widget.offerId).firstOrNull;
-          if (found != null) {
-            setState(() {
-              _offer = found;
-              _isLoading = false;
-            });
-            return;
-          }
-        }
-      }
-
-      // TODO(developer): Implement API call for single offer detail
-      // final offer = await exploreService.getOfferDetail(widget.offerId);
-
-      setState(() {
-        _isLoading = false;
-        _error = 'Offer not found';
-      });
-    } on Exception catch (e) {
-      setState(() {
-        _isLoading = false;
-        _error = e.toString();
-      });
-    }
-  }
-
-  void _handleApply() {
-    if (_offer == null) return;
-
-    // TODO(developer): Navigate to application flow
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Applying to: ${_offer!.title}'),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: KolabingColors.success,
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return _buildLoadingState();
+    // Use pre-loaded data or fetch from API
+    if (widget.offer != null) {
+      return _buildContent(widget.offer!);
     }
 
-    if (_error != null || _offer == null) {
-      return _buildErrorState();
-    }
+    final detailAsync = ref.watch(opportunityDetailProvider(widget.offerId));
 
-    return Scaffold(
-      backgroundColor: KolabingColors.background,
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              // App bar with back button
-              SliverAppBar(
-                backgroundColor: KolabingColors.primary,
-                expandedHeight: 200,
-                pinned: true,
-                leading: IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      LucideIcons.arrowLeft,
-                      color: KolabingColors.textPrimary,
-                      size: 20,
-                    ),
-                  ),
-                  onPressed: () => context.pop(),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: _buildHeroHeader(),
-                ),
-              ),
-
-              // Content
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Event Details Card
-                      _buildDetailsCard(),
-
-                      // Photos Gallery
-                      if (_mockPhotos.isNotEmpty) _buildPhotosGallery(),
-
-                      // Previous Events
-                      _buildPreviousEventsSection(),
-
-                      // Community Profile Section
-                      _buildCommunitySection(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Fixed Apply Button
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildApplyButton(),
-          ),
-        ],
-      ),
+    return detailAsync.when(
+      loading: _buildLoadingState,
+      error: (error, _) => _buildErrorState(error.toString()),
+      data: (opportunity) => _buildContent(opportunity),
     );
   }
 
-  Widget _buildHeroHeader() => Container(
+  Widget _buildContent(Opportunity opportunity) => Scaffold(
+        backgroundColor: KolabingColors.background,
+        body: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                // App bar with back button
+                SliverAppBar(
+                  backgroundColor: KolabingColors.primary,
+                  expandedHeight: 200,
+                  pinned: true,
+                  leading: IconButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        LucideIcons.arrowLeft,
+                        color: KolabingColors.textPrimary,
+                        size: 20,
+                      ),
+                    ),
+                    onPressed: () => context.pop(),
+                  ),
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: _buildHeroHeader(opportunity),
+                  ),
+                ),
+
+                // Content
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Details card
+                        _buildDetailsCard(opportunity),
+
+                        // Categories
+                        if (opportunity.categories.isNotEmpty)
+                          _buildCategoriesSection(opportunity),
+
+                        // Business offer section
+                        if (opportunity.businessOffer.hasAnyOffer)
+                          _buildBusinessOfferSection(opportunity),
+
+                        // Community deliverables section
+                        if (opportunity.communityDeliverables.hasAnyDeliverable)
+                          _buildDeliverablesSection(opportunity),
+
+                        // Location & availability
+                        _buildLocationSection(opportunity),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Fixed bottom button
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _buildBottomAction(opportunity),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildHeroHeader(Opportunity opportunity) => Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -234,12 +164,11 @@ class _CommunityOfferDetailScreenState
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Community avatar and name
                 Row(
                   children: [
-                    _CommunityAvatar(
-                      avatarUrl: _offer!.communityAvatarUrl,
-                      initial: _offer!.communityInitial,
+                    _CreatorAvatar(
+                      avatarUrl: opportunity.creatorProfile?.avatarUrl,
+                      initial: opportunity.creatorProfile?.initial ?? '?',
                       size: 56,
                     ),
                     const SizedBox(width: KolabingSpacing.sm),
@@ -248,7 +177,8 @@ class _CommunityOfferDetailScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _offer!.communityName,
+                            opportunity.creatorProfile?.displayName ??
+                                'Unknown',
                             style: GoogleFonts.rubik(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
@@ -258,7 +188,7 @@ class _CommunityOfferDetailScreenState
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            '@${_offer!.communityUsername}',
+                            opportunity.creatorProfile?.userType ?? '',
                             style: GoogleFonts.openSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -268,8 +198,7 @@ class _CommunityOfferDetailScreenState
                         ],
                       ),
                     ),
-                    // Status badge
-                    _StatusBadge(status: _offer!.status),
+                    _StatusBadge(status: opportunity.status),
                   ],
                 ),
               ],
@@ -278,7 +207,7 @@ class _CommunityOfferDetailScreenState
         ),
       );
 
-  Widget _buildDetailsCard() => Container(
+  Widget _buildDetailsCard(Opportunity opportunity) => Container(
         margin: const EdgeInsets.all(KolabingSpacing.md),
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
@@ -297,7 +226,7 @@ class _CommunityOfferDetailScreenState
           children: [
             // Title
             Text(
-              _offer!.title,
+              opportunity.title,
               style: GoogleFonts.rubik(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
@@ -307,7 +236,7 @@ class _CommunityOfferDetailScreenState
             ),
             const SizedBox(height: KolabingSpacing.sm),
 
-            // Type badge
+            // Availability mode badge
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.sm,
@@ -318,7 +247,7 @@ class _CommunityOfferDetailScreenState
                 borderRadius: KolabingRadius.borderRadiusRound,
               ),
               child: Text(
-                _offer!.collabType.displayName.toUpperCase(),
+                opportunity.availabilityMode.displayName.toUpperCase(),
                 style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -331,7 +260,7 @@ class _CommunityOfferDetailScreenState
 
             // Description
             Text(
-              _offer!.description,
+              opportunity.description,
               style: GoogleFonts.openSans(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -339,79 +268,282 @@ class _CommunityOfferDetailScreenState
                 height: 1.6,
               ),
             ),
-            const SizedBox(height: KolabingSpacing.md),
 
-            // Info rows
-            _buildInfoRow(
-              icon: LucideIcons.mapPin,
-              label: 'Location',
-              value: _offer!.location,
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            _buildInfoRow(
-              icon: LucideIcons.calendar,
-              label: 'Date',
-              value: _formatDateRange(),
-            ),
-
-            // Reward section
-            if (_offer!.hasReward) ...[
+            // Applications count
+            if (opportunity.applicationsCount != null &&
+                opportunity.applicationsCount! > 0) ...[
               const SizedBox(height: KolabingSpacing.md),
-              Container(
-                padding: const EdgeInsets.all(KolabingSpacing.sm),
-                decoration: BoxDecoration(
-                  color: KolabingColors.success.withValues(alpha: 0.1),
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: KolabingColors.success.withValues(alpha: 0.3),
+              Row(
+                children: [
+                  const Icon(LucideIcons.users, size: 16, color: KolabingColors.textTertiary),
+                  const SizedBox(width: KolabingSpacing.xxs),
+                  Text(
+                    '${opportunity.applicationsCount} application${opportunity.applicationsCount == 1 ? '' : 's'}',
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: KolabingColors.textTertiary,
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: KolabingColors.success.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.gift,
-                        size: 20,
-                        color: KolabingColors.activeText,
-                      ),
-                    ),
-                    const SizedBox(width: KolabingSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Reward Included',
-                            style: GoogleFonts.openSans(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: KolabingColors.activeText,
-                            ),
-                          ),
-                          if (_offer!.rewardDescription != null)
-                            Text(
-                              _offer!.rewardDescription!,
-                              style: GoogleFonts.openSans(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                color: KolabingColors.activeText,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ],
           ],
         ),
       );
+
+  Widget _buildCategoriesSection(Opportunity opportunity) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'CATEGORIES',
+              style: GoogleFonts.rubik(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: KolabingColors.textPrimary,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            Wrap(
+              spacing: KolabingSpacing.xs,
+              runSpacing: KolabingSpacing.xs,
+              children: opportunity.categories
+                  .map((cat) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: KolabingSpacing.sm,
+                          vertical: KolabingSpacing.xxs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: KolabingColors.primary.withValues(alpha: 0.1),
+                          borderRadius: KolabingRadius.borderRadiusRound,
+                        ),
+                        child: Text(
+                          cat,
+                          style: GoogleFonts.openSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: KolabingColors.textPrimary,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+          ],
+        ),
+      );
+
+  Widget _buildBusinessOfferSection(Opportunity opportunity) => Container(
+        margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.success.withValues(alpha: 0.05),
+          borderRadius: KolabingRadius.borderRadiusLg,
+          border: Border.all(
+            color: KolabingColors.success.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(LucideIcons.gift, size: 18, color: KolabingColors.activeText),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(
+                  'BUSINESS OFFER',
+                  style: GoogleFonts.rubik(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.activeText,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+
+            if (opportunity.businessOffer.venue)
+              _buildOfferItem(LucideIcons.building2, 'Venue provided'),
+            if (opportunity.businessOffer.foodDrink)
+              _buildOfferItem(LucideIcons.coffee, 'Food & Drink included'),
+            if (opportunity.businessOffer.discount.enabled)
+              _buildOfferItem(
+                LucideIcons.percent,
+                opportunity.businessOffer.discount.percentage != null
+                    ? '${opportunity.businessOffer.discount.percentage}% Discount'
+                    : 'Discount offered',
+              ),
+            if (opportunity.businessOffer.products.isNotEmpty)
+              ...opportunity.businessOffer.products
+                  .map((p) => _buildOfferItem(LucideIcons.box, p)),
+            if (opportunity.businessOffer.other?.isNotEmpty ?? false)
+              _buildOfferItem(
+                  LucideIcons.plus, opportunity.businessOffer.other!),
+          ],
+        ),
+      );
+
+  Widget _buildOfferItem(IconData icon, String text) => Padding(
+        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: KolabingColors.activeText),
+            const SizedBox(width: KolabingSpacing.xs),
+            Expanded(
+              child: Text(
+                text,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildDeliverablesSection(Opportunity opportunity) {
+    final del = opportunity.communityDeliverables;
+    return Container(
+      margin: const EdgeInsets.all(KolabingSpacing.md),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(color: KolabingColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(LucideIcons.checkCircle, size: 18, color: KolabingColors.textPrimary),
+              const SizedBox(width: KolabingSpacing.xs),
+              Text(
+                'EXPECTED DELIVERABLES',
+                style: GoogleFonts.rubik(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.textPrimary,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          if (del.instagramPost)
+            _buildDeliverableItem(LucideIcons.instagram, 'Instagram Post'),
+          if (del.instagramStory)
+            _buildDeliverableItem(LucideIcons.instagram, 'Instagram Story'),
+          if (del.tiktokVideo)
+            _buildDeliverableItem(LucideIcons.video, 'TikTok Video'),
+          if (del.eventMention)
+            _buildDeliverableItem(LucideIcons.megaphone, 'Event Mention'),
+          if (del.attendeeCount != null)
+            _buildDeliverableItem(
+                LucideIcons.users, '${del.attendeeCount} Attendees'),
+          if (del.other?.isNotEmpty ?? false)
+            _buildDeliverableItem(LucideIcons.plus, del.other!),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeliverableItem(IconData icon, String text) => Padding(
+        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: KolabingColors.textTertiary),
+            const SizedBox(width: KolabingSpacing.xs),
+            Expanded(
+              child: Text(
+                text,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildLocationSection(Opportunity opportunity) {
+    final dateFormat = DateFormat('MMM d, yyyy');
+    final dateText =
+        '${dateFormat.format(opportunity.availabilityStart)} - ${dateFormat.format(opportunity.availabilityEnd)}';
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'LOCATION & AVAILABILITY',
+            style: GoogleFonts.rubik(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.textPrimary,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+
+          _buildInfoRow(
+            icon: LucideIcons.mapPin,
+            label: 'City',
+            value: opportunity.preferredCity.isNotEmpty
+                ? opportunity.preferredCity
+                : 'Not specified',
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          _buildInfoRow(
+            icon: LucideIcons.building2,
+            label: 'Venue',
+            value: opportunity.venueMode.displayName,
+          ),
+          if (opportunity.address?.isNotEmpty ?? false) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            _buildInfoRow(
+              icon: LucideIcons.home,
+              label: 'Address',
+              value: opportunity.address!,
+            ),
+          ],
+          const SizedBox(height: KolabingSpacing.sm),
+          _buildInfoRow(
+            icon: LucideIcons.calendar,
+            label: 'Dates',
+            value: dateText,
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          _buildInfoRow(
+            icon: LucideIcons.clock,
+            label: 'Mode',
+            value: opportunity.availabilityMode.displayName,
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildInfoRow({
     required IconData icon,
@@ -420,11 +552,7 @@ class _CommunityOfferDetailScreenState
   }) =>
       Row(
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: KolabingColors.textTertiary,
-          ),
+          Icon(icon, size: 18, color: KolabingColors.textTertiary),
           const SizedBox(width: KolabingSpacing.xs),
           Text(
             '$label: ',
@@ -447,209 +575,13 @@ class _CommunityOfferDetailScreenState
         ],
       );
 
-  Widget _buildPhotosGallery() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-            child: Text(
-              'PHOTOS',
-              style: GoogleFonts.rubik(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          SizedBox(
-            height: 200,
-            child: PageView.builder(
-              itemCount: _mockPhotos.length,
-              onPageChanged: (index) {
-                setState(() => _currentPhotoIndex = index);
-              },
-              itemBuilder: (context, index) => Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-                decoration: BoxDecoration(
-                  borderRadius: KolabingRadius.borderRadiusLg,
-                  image: DecorationImage(
-                    image: NetworkImage(_mockPhotos[index]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          // Page indicators
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _mockPhotos.length,
-              (index) => Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: index == _currentPhotoIndex
-                      ? KolabingColors.primary
-                      : KolabingColors.border,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.md),
-        ],
-      );
-
-  Widget _buildPreviousEventsSection() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'PREVIOUS EVENTS',
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                    letterSpacing: 1,
-                  ),
-                ),
-                Text(
-                  '${_mockPreviousEvents.length} events',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.textTertiary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          SizedBox(
-            height: 140,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-              itemCount: _mockPreviousEvents.length,
-              separatorBuilder: (context, index) =>
-                  const SizedBox(width: KolabingSpacing.sm),
-              itemBuilder: (context, index) =>
-                  _PreviousEventCard(event: _mockPreviousEvents[index]),
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.md),
-        ],
-      );
-
-  Widget _buildCommunitySection() => Container(
-        margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'ABOUT THE COMMUNITY',
-              style: GoogleFonts.rubik(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-                letterSpacing: 1,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            Row(
-              children: [
-                _CommunityAvatar(
-                  avatarUrl: _offer!.communityAvatarUrl,
-                  initial: _offer!.communityInitial,
-                  size: 48,
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _offer!.communityName,
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        '@${_offer!.communityUsername}',
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            // Stats row (placeholder - needs API)
-            Row(
-              children: [
-                _buildStatItem('Events', '${_mockPreviousEvents.length}'),
-                const SizedBox(width: KolabingSpacing.lg),
-                _buildStatItem('Followers', '15K+'),
-                const SizedBox(width: KolabingSpacing.lg),
-                _buildStatItem('Rating', '4.8'),
-              ],
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildStatItem(String label, String value) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            value,
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
-            ),
-          ),
-          Text(
-            label,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: KolabingColors.textTertiary,
-            ),
-          ),
-        ],
-      );
-
-  Widget _buildApplyButton() => Container(
+  Widget _buildBottomAction(Opportunity opportunity) {
+    // If user owns this opportunity, don't show apply button
+    final currentUserId = ref.read(authProvider).user?.id;
+    final isOwn = currentUserId != null &&
+        opportunity.creatorProfile?.id == currentUserId;
+    if (isOwn) {
+      return Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
           color: KolabingColors.surface,
@@ -667,34 +599,119 @@ class _CommunityOfferDetailScreenState
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: _handleApply,
+              onPressed: null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: KolabingColors.surfaceVariant,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: KolabingRadius.borderRadiusMd,
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(LucideIcons.send, size: 18),
-                  const SizedBox(width: KolabingSpacing.xs),
-                  Text(
-                    'APPLY NOW',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ],
+              child: Text(
+                'YOUR OPPORTUNITY',
+                style: GoogleFonts.dmSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1,
+                  color: KolabingColors.textTertiary,
+                ),
               ),
             ),
           ),
         ),
       );
+    }
+
+    // If user has already applied
+    if (opportunity.hasApplied == true) {
+      return Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.surfaceVariant,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: KolabingRadius.borderRadiusMd,
+                ),
+              ),
+              child: Text(
+                'ALREADY APPLIED',
+                style: GoogleFonts.dmSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1,
+                  color: KolabingColors.textTertiary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: () => _handleApply(opportunity),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: KolabingColors.primary,
+              foregroundColor: KolabingColors.onPrimary,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: KolabingRadius.borderRadiusMd,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(LucideIcons.send, size: 18),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(
+                  'APPLY NOW',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildLoadingState() => Scaffold(
         backgroundColor: KolabingColors.background,
@@ -735,7 +752,7 @@ class _CommunityOfferDetailScreenState
         ),
       );
 
-  Widget _buildErrorState() => Scaffold(
+  Widget _buildErrorState(String error) => Scaffold(
         backgroundColor: KolabingColors.background,
         appBar: AppBar(
           backgroundColor: KolabingColors.primary,
@@ -744,7 +761,7 @@ class _CommunityOfferDetailScreenState
             onPressed: () => context.pop(),
           ),
           title: Text(
-            'Offer Details',
+            'Opportunity Details',
             style: GoogleFonts.rubik(
               fontWeight: FontWeight.w600,
               color: KolabingColors.textPrimary,
@@ -774,7 +791,7 @@ class _CommunityOfferDetailScreenState
                 ),
                 const SizedBox(height: KolabingSpacing.lg),
                 Text(
-                  'Offer Not Found',
+                  'Opportunity Not Found',
                   style: GoogleFonts.rubik(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -783,7 +800,7 @@ class _CommunityOfferDetailScreenState
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
-                  _error ?? 'Unable to load offer details',
+                  error,
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     color: KolabingColors.textSecondary,
@@ -792,7 +809,9 @@ class _CommunityOfferDetailScreenState
                 ),
                 const SizedBox(height: KolabingSpacing.lg),
                 ElevatedButton.icon(
-                  onPressed: _loadOffer,
+                  onPressed: () {
+                    ref.invalidate(opportunityDetailProvider(widget.offerId));
+                  },
                   icon: const Icon(LucideIcons.rotateCcw, size: 16),
                   label: const Text('Try Again'),
                   style: ElevatedButton.styleFrom(
@@ -805,19 +824,11 @@ class _CommunityOfferDetailScreenState
           ),
         ),
       );
-
-  String _formatDateRange() {
-    final dateFormat = DateFormat('MMM d, yyyy');
-    if (_offer!.endDate != null) {
-      return '${dateFormat.format(_offer!.startDate)} - ${dateFormat.format(_offer!.endDate!)}';
-    }
-    return 'Starting ${dateFormat.format(_offer!.startDate)}';
-  }
 }
 
-/// Community avatar widget
-class _CommunityAvatar extends StatelessWidget {
-  const _CommunityAvatar({
+/// Creator avatar widget
+class _CreatorAvatar extends StatelessWidget {
+  const _CreatorAvatar({
     required this.avatarUrl,
     required this.initial,
     this.size = 48,
@@ -875,15 +886,18 @@ class _CommunityAvatar extends StatelessWidget {
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
 
-  final CollabStatus status;
+  final OpportunityStatus status;
 
   @override
   Widget build(BuildContext context) {
     final (backgroundColor, textColor) = switch (status) {
-      CollabStatus.active => (KolabingColors.activeBg, KolabingColors.activeText),
-      CollabStatus.published =>
+      OpportunityStatus.published =>
+        (KolabingColors.activeBg, KolabingColors.activeText),
+      OpportunityStatus.draft =>
         (KolabingColors.pendingBg, KolabingColors.pendingText),
-      CollabStatus.closed =>
+      OpportunityStatus.closed =>
+        (KolabingColors.completedBg, KolabingColors.completedText),
+      OpportunityStatus.completed =>
         (KolabingColors.completedBg, KolabingColors.completedText),
     };
 
@@ -904,125 +918,6 @@ class _StatusBadge extends StatelessWidget {
           color: textColor,
           letterSpacing: 0.5,
         ),
-      ),
-    );
-  }
-}
-
-/// Previous event model (placeholder until API)
-class _PreviousEvent {
-  const _PreviousEvent({
-    required this.id,
-    required this.title,
-    required this.date,
-    required this.attendees,
-    this.imageUrl,
-  });
-
-  final String id;
-  final String title;
-  final DateTime date;
-  final int attendees;
-  final String? imageUrl;
-}
-
-/// Previous event card widget
-class _PreviousEventCard extends StatelessWidget {
-  const _PreviousEventCard({required this.event});
-
-  final _PreviousEvent event;
-
-  @override
-  Widget build(BuildContext context) {
-    final dateFormat = DateFormat('MMM yyyy');
-
-    return Container(
-      width: 160,
-      padding: const EdgeInsets.all(KolabingSpacing.sm),
-      decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Event image or placeholder
-          Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.1),
-              borderRadius: KolabingRadius.borderRadiusSm,
-            ),
-            child: event.imageUrl != null
-                ? ClipRRect(
-                    borderRadius: KolabingRadius.borderRadiusSm,
-                    child: Image.network(
-                      event.imageUrl!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  )
-                : Center(
-                    child: Icon(
-                      LucideIcons.calendar,
-                      size: 24,
-                      color: KolabingColors.primary.withValues(alpha: 0.5),
-                    ),
-                  ),
-          ),
-          const SizedBox(height: KolabingSpacing.xs),
-
-          // Title
-          Text(
-            event.title,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const Spacer(),
-
-          // Date and attendees
-          Row(
-            children: [
-              Icon(
-                LucideIcons.calendar,
-                size: 12,
-                color: KolabingColors.textTertiary,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                dateFormat.format(event.date),
-                style: GoogleFonts.openSans(
-                  fontSize: 11,
-                  color: KolabingColors.textTertiary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(
-                LucideIcons.users,
-                size: 12,
-                color: KolabingColors.textTertiary,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${event.attendees} attendees',
-                style: GoogleFonts.openSans(
-                  fontSize: 11,
-                  color: KolabingColors.textTertiary,
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

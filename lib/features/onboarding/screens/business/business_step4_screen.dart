@@ -74,6 +74,13 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
   }
 
   void _handleContinue() {
+    // Validate phone before continuing (if not empty)
+    if (_phoneController.text.isNotEmpty) {
+      _validatePhone(_phoneController.text);
+      if (_phoneError != null) {
+        return; // Don't continue if phone validation fails
+      }
+    }
     _saveData();
     context.push('/onboarding/business/final');
   }
@@ -81,45 +88,76 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
   void _saveData() {
     final notifier = ref.read(onboardingProvider.notifier);
     notifier.updateAbout(_aboutController.text);
-    notifier.updatePhone(_phoneController.text);
+    // Normalize phone to E.164 format before saving
+    final normalizedPhone = _normalizePhoneNumber(_phoneController.text);
+    notifier.updatePhone(normalizedPhone);
     notifier.updateInstagram(_instagramController.text);
     notifier.updateWebsite(_websiteController.text);
   }
 
-  /// Validate phone number format in real-time
+  /// Validate phone number format in real-time for E.164 format
   ///
-  /// Returns null if valid or empty, error message if invalid.
-  /// Allows: digits, +, spaces, dashes, parentheses
-  /// Minimum 9 digits (without country code prefix)
+  /// E.164 format: +[country_code][number] (e.g., +34612345678)
+  /// - Must start with +
+  /// - Followed by 9-14 digits (total 10-15 chars including +)
+  /// - No spaces, dashes, or parentheses
   void _validatePhone(String value) {
     if (value.isEmpty) {
       setState(() => _phoneError = null);
       return;
     }
 
-    // Remove formatting characters for digit counting
-    final digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
-
-    // Check for invalid characters
-    if (!RegExp(r'^[\d\s\+\-\(\)]+$').hasMatch(value)) {
-      setState(() => _phoneError = 'Only numbers, +, -, () and spaces allowed');
+    // Check if starts with +
+    if (!value.startsWith('+')) {
+      setState(() => _phoneError = 'Must start with + (e.g., +34612345678)');
       return;
     }
 
-    // Check minimum digits (9 for Spanish numbers)
-    if (digitsOnly.length < 9) {
-      setState(() => _phoneError = 'Enter at least 9 digits');
+    // Get the part after +
+    final afterPlus = value.substring(1);
+
+    // Check for invalid characters (only digits allowed after +)
+    if (!RegExp(r'^\d*$').hasMatch(afterPlus)) {
+      setState(() => _phoneError = 'Use E.164 format: +34612345678 (no spaces)');
       return;
     }
 
-    // Check maximum length (15 digits is E.164 max)
-    if (digitsOnly.length > 15) {
+    // Check minimum digits (at least 9 digits after +)
+    if (afterPlus.length < 9) {
+      setState(() => _phoneError = 'Enter at least 9 digits after +');
+      return;
+    }
+
+    // Check maximum length (15 digits is E.164 max including country code)
+    if (afterPlus.length > 14) {
       setState(() => _phoneError = 'Phone number too long');
       return;
     }
 
-    // Valid
+    // Valid E.164 format
     setState(() => _phoneError = null);
+  }
+
+  /// Normalize phone number to E.164 format
+  /// Removes spaces, dashes, parentheses and ensures + prefix
+  String _normalizePhoneNumber(String value) {
+    if (value.isEmpty) return '';
+
+    // Remove all non-digit characters except +
+    String normalized = value.replaceAll(RegExp(r'[^\d+]'), '');
+
+    // Ensure it starts with +
+    if (!normalized.startsWith('+')) {
+      // If it starts with 00, replace with +
+      if (normalized.startsWith('00')) {
+        normalized = '+${normalized.substring(2)}';
+      } else {
+        // Assume Spanish number if no country code
+        normalized = '+34$normalized';
+      }
+    }
+
+    return normalized;
   }
 
   @override

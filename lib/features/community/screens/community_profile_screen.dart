@@ -16,20 +16,20 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../auth/models/user_model.dart';
-import '../models/notification_preferences.dart';
-import '../models/subscription.dart';
-import '../providers/profile_provider.dart';
+import '../../business/models/notification_preferences.dart';
+import '../../business/providers/profile_provider.dart';
 
-/// Business profile screen
-class BusinessProfileScreen extends ConsumerStatefulWidget {
-  const BusinessProfileScreen({super.key});
+/// Community profile screen
+class CommunityProfileScreen extends ConsumerStatefulWidget {
+  const CommunityProfileScreen({super.key});
 
   @override
-  ConsumerState<BusinessProfileScreen> createState() =>
-      _BusinessProfileScreenState();
+  ConsumerState<CommunityProfileScreen> createState() =>
+      _CommunityProfileScreenState();
 }
 
-class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
+class _CommunityProfileScreenState
+    extends ConsumerState<CommunityProfileScreen> {
   final ImagePicker _imagePicker = ImagePicker();
 
   @override
@@ -99,14 +99,6 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         context.go(KolabingRoutes.welcome);
       }
     }
-  }
-
-  void _handleManageSubscription() {
-    context.push(KolabingRoutes.businessPlans);
-  }
-
-  void _handleViewPlans() {
-    context.push(KolabingRoutes.businessPlans);
   }
 
   Future<void> _handleChangePhoto() async {
@@ -439,9 +431,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
   Widget _buildProfileContent(ProfileState state) {
     final profile = state.profile!;
-    final about = profile.businessProfile?.about;
+    final about = profile.communityProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
-    final isBusiness = profile.isBusiness;
 
     return RefreshIndicator(
       onRefresh: () => ref.read(profileProvider.notifier).refresh(),
@@ -460,12 +451,6 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             // About Section
             if (hasAbout) ...[
               _buildAboutSection(about),
-              const SizedBox(height: KolabingSpacing.md),
-            ],
-
-            // Subscription Section (Business only - prominently displayed)
-            if (isBusiness) ...[
-              _buildSubscriptionSection(state.subscription),
               const SizedBox(height: KolabingSpacing.md),
             ],
 
@@ -493,10 +478,11 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   }
 
   Widget _buildProfileHeader(UserModel profile, bool isUpdating) {
-    final name = profile.businessProfile?.name ?? profile.displayName;
-    final businessType = profile.businessProfile?.businessType ?? 'Business';
+    final name = profile.communityProfile?.name ?? profile.displayName;
+    final communityType =
+        profile.communityProfile?.communityType ?? 'Community';
     final photoUrl =
-        profile.businessProfile?.profilePhoto ?? profile.avatarUrl;
+        profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -533,7 +519,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                         ? Image.network(
                             photoUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(name),
+                            errorBuilder: (_, __, ___) =>
+                                _buildAvatarPlaceholder(name),
                           )
                         : _buildAvatarPlaceholder(name),
                   ),
@@ -598,21 +585,23 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
           const SizedBox(height: KolabingSpacing.xs),
 
-          // Business type badge
+          // Community type badge
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
               vertical: KolabingSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: KolabingColors.info.withValues(alpha: 0.1),
               borderRadius: KolabingRadius.borderRadiusRound,
-              border: Border.all(color: KolabingColors.softYellowBorder),
+              border: Border.all(
+                color: KolabingColors.info.withValues(alpha: 0.3),
+              ),
             ),
             child: Text(
-              businessType.toUpperCase(),
+              communityType.toUpperCase(),
               style: KolabingTextStyles.labelSmall.copyWith(
-                color: KolabingColors.accentOrangeText,
+                color: KolabingColors.info,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -644,224 +633,13 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         ),
       );
 
-  Widget _buildSubscriptionSection(Subscription? subscription) {
-    final hasSubscription = subscription != null;
-    final isActive = subscription?.isActive ?? false;
-
-    return _SectionCard(
-      title: 'Subscription',
-      titleIcon: LucideIcons.sparkles,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Status row
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: isActive
-                      ? KolabingColors.success.withValues(alpha: 0.1)
-                      : KolabingColors.surfaceVariant,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isActive ? LucideIcons.crown : LucideIcons.sparkles,
-                  color: isActive
-                      ? KolabingColors.success
-                      : KolabingColors.textTertiary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: KolabingSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isActive ? 'Premium Plan' : 'No Active Plan',
-                      style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    _buildStatusBadge(subscription?.status),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          // Subscription details
-          if (hasSubscription && isActive) ...[
-            const SizedBox(height: KolabingSpacing.md),
-            const Divider(height: 1, color: KolabingColors.border),
-            const SizedBox(height: KolabingSpacing.md),
-
-            // Renewal date
-            if (subscription.currentPeriodEnd != null)
-              _buildDetailRow(
-                icon: LucideIcons.calendar,
-                label: 'Renews',
-                value: _formatDate(subscription.currentPeriodEnd!),
-              ),
-
-            // Days remaining
-            if (subscription.daysRemaining != null) ...[
-              const SizedBox(height: KolabingSpacing.sm),
-              _buildDetailRow(
-                icon: LucideIcons.clock,
-                label: 'Remaining',
-                value: '${subscription.daysRemaining} days',
-              ),
-            ],
-
-            // Cancel warning
-            if (subscription.cancelAtPeriodEnd) ...[
-              const SizedBox(height: KolabingSpacing.md),
-              Container(
-                padding: const EdgeInsets.all(KolabingSpacing.sm),
-                decoration: BoxDecoration(
-                  color: KolabingColors.warning.withValues(alpha: 0.1),
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                  border: Border.all(
-                    color: KolabingColors.warning.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      LucideIcons.alertTriangle,
-                      size: 16,
-                      color: KolabingColors.warning,
-                    ),
-                    const SizedBox(width: KolabingSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        'Subscription ends at current billing period',
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.warning,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-
-          const SizedBox(height: KolabingSpacing.md),
-
-          // Action button
-          if (isActive)
-            OutlinedButton.icon(
-              onPressed: _handleManageSubscription,
-              icon: const Icon(LucideIcons.settings, size: 18),
-              label: const Text('MANAGE SUBSCRIPTION'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-              ),
-            )
-          else
-            ElevatedButton.icon(
-              onPressed: _handleViewPlans,
-              icon: const Icon(LucideIcons.sparkles, size: 18),
-              label: const Text('UPGRADE TO PREMIUM'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusBadge(SubscriptionStatus? status) {
-    Color bgColor;
-    Color textColor;
-    String label;
-
-    switch (status) {
-      case SubscriptionStatus.active:
-        bgColor = KolabingColors.activeBg;
-        textColor = KolabingColors.success;
-        label = 'Active';
-      case SubscriptionStatus.cancelled:
-        bgColor = KolabingColors.pendingBg;
-        textColor = KolabingColors.warning;
-        label = 'Cancelled';
-      case SubscriptionStatus.pastDue:
-        bgColor = KolabingColors.errorBg;
-        textColor = KolabingColors.error;
-        label = 'Past Due';
-      default:
-        bgColor = KolabingColors.surfaceVariant;
-        textColor = KolabingColors.textTertiary;
-        label = 'Inactive';
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: KolabingRadius.borderRadiusSm,
-      ),
-      child: Text(
-        label,
-        style: KolabingTextStyles.labelSmall.copyWith(
-          color: textColor,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) =>
-      Row(
-        children: [
-          Icon(icon, size: 16, color: KolabingColors.textTertiary),
-          const SizedBox(width: KolabingSpacing.xs),
-          Text(
-            '$label: ',
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textSecondary,
-            ),
-          ),
-          Text(
-            value,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textPrimary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      );
-
-  String _formatDate(DateTime date) =>
-      '${date.day}/${date.month}/${date.year}';
-
   Widget _buildContactInfoSection(UserModel profile) {
     final email = profile.email;
     final phone = profile.phoneNumber;
-    final website = profile.businessProfile?.website;
-    final instagram = profile.businessProfile?.instagram;
-    final city = profile.businessProfile?.city?.name;
+    final website = profile.communityProfile?.website;
+    final instagram = profile.communityProfile?.instagram;
+    final tiktok = profile.communityProfile?.tiktok;
+    final city = profile.communityProfile?.city?.name;
 
     return _SectionCard(
       title: 'Contact Info',
@@ -884,6 +662,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               label: '@$instagram',
               onTap: () =>
                   launchUrl(Uri.parse('https://instagram.com/$instagram')),
+            ),
+          if (tiktok != null && tiktok.isNotEmpty)
+            _ContactInfoTile(
+              icon: LucideIcons.music2,
+              label: '@$tiktok',
+              onTap: () => launchUrl(Uri.parse('https://tiktok.com/@$tiktok')),
             ),
         ],
       ),
@@ -912,7 +696,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               isUpdating: isUpdating,
               onChanged: (value) => ref
                   .read(profileProvider.notifier)
-                  .updateNotificationPreference('new_application_alerts', value),
+                  .updateNotificationPreference(
+                      'new_application_alerts', value),
             ),
             _NotificationToggle(
               label: 'Collaboration Updates',
@@ -920,7 +705,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               isUpdating: isUpdating,
               onChanged: (value) => ref
                   .read(profileProvider.notifier)
-                  .updateNotificationPreference('collaboration_updates', value),
+                  .updateNotificationPreference(
+                      'collaboration_updates', value),
             ),
             _NotificationToggle(
               label: 'Marketing & Tips',
@@ -982,7 +768,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             GestureDetector(
               onTap: isUpdating ? null : _handleDeleteAccount,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+                padding:
+                    const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
                 child: Text(
                   'Delete Account',
                   textAlign: TextAlign.center,
@@ -1152,7 +939,8 @@ class _NotificationToggle extends StatelessWidget {
                   value: value,
                   onChanged: isUpdating ? null : onChanged,
                   activeThumbColor: KolabingColors.primary,
-                  activeTrackColor: KolabingColors.primary.withValues(alpha: 0.5),
+                  activeTrackColor:
+                      KolabingColors.primary.withValues(alpha: 0.5),
                 ),
               ],
             ),

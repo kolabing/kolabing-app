@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/application/screens/chat_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/user_type_selection_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
-import '../../features/business/models/collab_request.dart';
+import '../../features/opportunity/models/opportunity.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/subscription/screens/subscription_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step1_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
@@ -104,8 +106,11 @@ abstract final class KolabingRoutes {
   /// Business subscription plans
   static const String businessPlans = '/business/plans';
 
-  /// Community offer detail (from explore)
+  /// Community offer detail (from business explore)
   static const String communityOfferDetail = '/business/explore/offer/:id';
+
+  /// Business offer detail (from community explore)
+  static const String businessOfferDetail = '/community/explore/offer/:id';
 
   // ---------------------------------------------------------------------------
   // Community Routes
@@ -155,6 +160,9 @@ abstract final class KolabingRoutes {
 
   /// Application detail screen
   static const String applicationDetails = '/application/:id';
+
+  /// Application chat screen
+  static const String applicationChat = '/application/:id/chat';
 
   // ---------------------------------------------------------------------------
   // Profile Completion
@@ -340,14 +348,14 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.businessPlans,
       name: 'businessPlans',
       builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Subscription Plans'),
+          const SubscriptionScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.communityOfferDetail,
       name: 'communityOfferDetail',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        final offer = state.extra as CollabRequest?;
+        final offer = state.extra as Opportunity?;
         return CommunityOfferDetailScreen(
           offerId: id,
           offer: offer,
@@ -368,6 +376,18 @@ final GoRouter kolabingRouter = GoRouter(
 
     // Community sub-routes (pushed on top of main screen)
     GoRoute(
+      path: KolabingRoutes.businessOfferDetail,
+      name: 'businessOfferDetail',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        final offer = state.extra as Opportunity?;
+        return CommunityOfferDetailScreen(
+          offerId: id,
+          offer: offer,
+        );
+      },
+    ),
+    GoRoute(
       path: KolabingRoutes.communityOpportunitiesNew,
       name: 'communityOpportunitiesNew',
       builder: (BuildContext context, GoRouterState state) =>
@@ -377,8 +397,8 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.communityOpportunitiesEdit,
       name: 'communityOpportunitiesEdit',
       builder: (BuildContext context, GoRouterState state) {
-        final id = state.pathParameters['id'] ?? '';
-        return _PlaceholderScreen(title: 'Edit Opportunity: $id');
+        final opportunity = state.extra as Opportunity?;
+        return CreateOpportunityScreen(editOpportunity: opportunity);
       },
     ),
     GoRoute(
@@ -414,6 +434,14 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         return _PlaceholderScreen(title: 'Application: $id');
+      },
+    ),
+    GoRoute(
+      path: '/application/:id/chat',
+      name: 'applicationChat',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        return ChatScreen(applicationId: id);
       },
     ),
   ],

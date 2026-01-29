@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
@@ -59,8 +60,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
   @override
   ProfileState build() {
-    _profileService = ProfileService();
-    _authService = AuthService();
+    _authService = ref.read(authServiceProvider);
+    _profileService = ProfileService(authService: _authService);
     // Auto-load profile on initialization
     Future.microtask(() => loadProfile());
     return const ProfileState();

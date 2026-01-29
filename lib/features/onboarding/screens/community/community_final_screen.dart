@@ -116,6 +116,9 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
   Future<void> _handleRegister() async {
     if (_isLoading || _showSuccess) return;
 
+    // Clear any previous API errors before validation
+    _clearApiErrors();
+
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
@@ -143,6 +146,24 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       _showNetworkErrorSnackBar();
     } else {
       setState(() => _isLoading = false);
+
+      // Handle validation errors - show under specific fields
+      if (result.error?.isValidationError == true && result.error?.errors != null) {
+        final emailError = result.error!.getFieldError('email');
+        final passwordError = result.error!.getFieldError('password');
+
+        if (emailError != null || passwordError != null) {
+          setState(() {
+            _emailApiError = emailError;
+            _passwordApiError = passwordError;
+          });
+          // Re-validate to show the field errors
+          _formKey.currentState?.validate();
+          return;
+        }
+      }
+
+      // Show generic error in snackbar for non-field errors
       _showErrorSnackBar(result.displayError);
     }
   }
@@ -321,6 +342,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           autocorrect: false,
                           enabled: !_isLoading,
                           validator: _validateEmail,
+                          onChanged: (_) {
+                            if (_emailApiError != null) {
+                              setState(() => _emailApiError = null);
+                            }
+                          },
                           decoration: InputDecoration(
                             labelText: 'Email',
                             hintText: 'your@email.com',
@@ -357,6 +383,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           obscureText: _obscurePassword,
                           enabled: !_isLoading,
                           validator: _validatePassword,
+                          onChanged: (_) {
+                            if (_passwordApiError != null) {
+                              setState(() => _passwordApiError = null);
+                            }
+                          },
                           decoration: InputDecoration(
                             labelText: 'Password',
                             hintText: 'Min. 8 characters',

@@ -6,6 +6,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../application/screens/applications_screen.dart';
+import '../../dashboard/screens/business_dashboard_screen.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import 'business_profile_screen.dart';
 import 'explore_screen.dart';
 
@@ -40,8 +43,11 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     });
   }
 
-  void _onFabPressed() {
-    context.push(KolabingRoutes.businessOffersNew);
+  Future<void> _onFabPressed() async {
+    final canPublish = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (canPublish && mounted) {
+      context.push(KolabingRoutes.businessOffersNew);
+    }
   }
 
   @override
@@ -119,11 +125,7 @@ class _BusinessOffersTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.briefcase,
-      title: 'My Offers',
-      subtitle: 'Manage your collaboration offers',
-    );
+    return const BusinessDashboardScreen();
   }
 }
 
@@ -132,11 +134,7 @@ class _BusinessApplicationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceholderTab(
-      icon: LucideIcons.inbox,
-      title: 'Applications',
-      subtitle: 'Review applications from communities',
-    );
+    return const ApplicationsScreen();
   }
 }
 
@@ -151,67 +149,4 @@ class _BusinessProfileTab extends StatelessWidget {
 
 // -----------------------------------------------------------------------------
 // Shared Placeholder Widget
-// -----------------------------------------------------------------------------
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 40,
-                color: KolabingColors.primary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Coming soon',
-              style: TextStyle(
-                fontSize: 12,
-                color: KolabingColors.textTertiary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// ---------------------------------------------------------------------------

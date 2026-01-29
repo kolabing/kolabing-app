@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,45 +10,95 @@ import 'package:shimmer/shimmer.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
-import '../models/collab_request.dart';
-import '../providers/explore_provider.dart';
-import '../widgets/collab_request_card.dart';
+import '../../application/widgets/apply_modal.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/models/opportunity_filter.dart';
+import '../../opportunity/providers/opportunity_provider.dart';
+import '../widgets/opportunity_card.dart';
 
-/// Business Explore Screen
+/// Explore Screen
 ///
-/// Allows business users to browse collaboration opportunities
-/// from communities. Features filtering and list of opportunity cards.
+/// Allows users to browse collaboration opportunities.
+/// Features search bar, filter chips, paginated list with infinite scroll.
+/// Used by both business and community users.
 class ExploreScreen extends ConsumerStatefulWidget {
-  const ExploreScreen({super.key});
+  const ExploreScreen({
+    super.key,
+    this.detailRoutePrefix = '/business/explore/offer',
+  });
+
+  /// Route prefix for opportunity detail navigation
+  /// Business users: '/business/explore/offer'
+  /// Community users: '/community/explore/offer'
+  final String detailRoutePrefix;
 
   @override
   ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
+  final _scrollController = ScrollController();
+  final _searchController = TextEditingController();
+  Timer? _debounceTimer;
 
-  void _onViewRequest(CollabRequest request) {
+  /// Track if search has text for UI updates
+  bool _hasSearchText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _searchController.addListener(_onSearchTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _scrollController.dispose();
+    _searchController.removeListener(_onSearchTextChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Update UI when search text changes (for clear button visibility)
+  void _onSearchTextChanged() {
+    final hasText = _searchController.text.isNotEmpty;
+    if (hasText != _hasSearchText) {
+      setState(() => _hasSearchText = hasText);
+    }
+  }
+
+  /// Debounced search - waits 400ms after typing stops before API call
+  void _onSearchSubmit(String value) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 400), () {
+      ref.read(opportunityFiltersProvider.notifier).setSearch(value.trim());
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      ref.read(opportunityListProvider.notifier).loadMore();
+    }
+  }
+
+  void _onViewOpportunity(Opportunity opportunity) {
     context.push(
-      '/business/explore/offer/${request.id}',
-      extra: request,
+      '${widget.detailRoutePrefix}/${opportunity.id}',
+      extra: opportunity,
     );
   }
 
-  void _onApplyRequest(CollabRequest request) {
-    // TODO(developer): Navigate to application flow
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Applying to: ${request.title}'),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: KolabingColors.success,
-      ),
-    );
+  void _onApplyOpportunity(Opportunity opportunity) {
+    ApplyModal.show(context, opportunity);
   }
 
   @override
   Widget build(BuildContext context) {
-    final requestsAsync = ref.watch(collabRequestsProvider);
-    final filters = ref.watch(exploreFiltersProvider);
+    final listState = ref.watch(opportunityListProvider);
+    final filters = ref.watch(opportunityFiltersProvider);
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -57,18 +109,21 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             // Header
             _buildHeader(),
 
+            // Search bar
+            _buildSearchBar(),
+
             // Filter chips
             _buildFilterChips(filters),
 
             // Results count and list
             Expanded(
-              child: requestsAsync.when(
-                loading: _buildLoadingState,
-                error: (error, _) => _buildErrorState(error.toString()),
-                data: (requests) => requests.isEmpty
-                    ? _buildEmptyState(filters.hasActiveFilters)
-                    : _buildRequestsList(requests),
-              ),
+              child: listState.isLoading
+                  ? _buildLoadingState()
+                  : listState.error != null
+                      ? _buildErrorState(listState.error!)
+                      : listState.isEmpty
+                          ? _buildEmptyState(filters.hasActiveFilters)
+                          : _buildOpportunityList(listState),
             ),
           ],
         ),
@@ -97,7 +152,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             ),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
-              'Find collaboration opportunities from communities',
+              'Find collaboration opportunities',
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -108,7 +163,71 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ),
       );
 
-  Widget _buildFilterChips(ExploreFilters filters) => SizedBox(
+  Widget _buildSearchBar() => Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.md,
+          vertical: KolabingSpacing.xs,
+        ),
+        child: TextField(
+          controller: _searchController,
+          onChanged: _onSearchSubmit,
+          textInputAction: TextInputAction.search,
+          onSubmitted: (value) {
+            // Immediate search on submit (Enter key)
+            _debounceTimer?.cancel();
+            ref.read(opportunityFiltersProvider.notifier).setSearch(value.trim());
+          },
+          decoration: InputDecoration(
+            hintText: 'Search by title, description, or creator...',
+            hintStyle: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textTertiary,
+            ),
+            prefixIcon: const Icon(
+              LucideIcons.search,
+              size: 18,
+              color: KolabingColors.textTertiary,
+            ),
+            suffixIcon: _hasSearchText
+                ? IconButton(
+                    icon: const Icon(LucideIcons.x, size: 16),
+                    onPressed: () {
+                      _searchController.clear();
+                      _debounceTimer?.cancel();
+                      ref
+                          .read(opportunityFiltersProvider.notifier)
+                          .setSearch('');
+                    },
+                  )
+                : null,
+            filled: true,
+            fillColor: KolabingColors.surface,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.md,
+              vertical: KolabingSpacing.sm,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+              borderSide: const BorderSide(color: KolabingColors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+              borderSide: const BorderSide(color: KolabingColors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+              borderSide:
+                  const BorderSide(color: KolabingColors.primary, width: 1.5),
+            ),
+          ),
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            color: KolabingColors.textPrimary,
+          ),
+        ),
+      );
+
+  Widget _buildFilterChips(OpportunityFilters filters) => SizedBox(
         height: 44,
         child: ListView(
           scrollDirection: Axis.horizontal,
@@ -116,60 +235,74 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             horizontal: KolabingSpacing.md,
           ),
           children: [
-            // All filter chip
+            // All chip
             _FilterChip(
               label: 'All',
               isSelected: !filters.hasActiveFilters,
               onTap: () {
-                ref.read(exploreFiltersProvider.notifier).clearAllFilters();
+                ref.read(opportunityFiltersProvider.notifier).clearAll();
+                _searchController.clear();
               },
             ),
             const SizedBox(width: KolabingSpacing.xs),
 
-            // Type filter chips
-            ...CollabType.values.map((type) => Padding(
+            // Creator type chips
+            _FilterChip(
+              label: 'Business',
+              isSelected: filters.creatorType == 'business',
+              onTap: () {
+                ref
+                    .read(opportunityFiltersProvider.notifier)
+                    .setCreatorType('business');
+              },
+            ),
+            const SizedBox(width: KolabingSpacing.xs),
+            _FilterChip(
+              label: 'Community',
+              isSelected: filters.creatorType == 'community',
+              onTap: () {
+                ref
+                    .read(opportunityFiltersProvider.notifier)
+                    .setCreatorType('community');
+              },
+            ),
+            const SizedBox(width: KolabingSpacing.xs),
+
+            // Venue mode chips
+            ...VenueMode.values.map((mode) => Padding(
                   padding: const EdgeInsets.only(right: KolabingSpacing.xs),
                   child: _FilterChip(
-                    label: type.displayName,
-                    isSelected: filters.selectedType == type,
+                    label: mode.displayName,
+                    icon: LucideIcons.building2,
+                    isSelected: filters.venueMode == mode.toApiValue(),
                     onTap: () {
-                      ref.read(exploreFiltersProvider.notifier).setCollabType(type);
+                      ref
+                          .read(opportunityFiltersProvider.notifier)
+                          .setVenueMode(mode.toApiValue());
                     },
                   ),
                 )),
 
-            // Location filter chips
-            const SizedBox(width: KolabingSpacing.xs),
-            ..._buildLocationChips(filters),
+            // Availability mode chips
+            ...AvailabilityMode.values.map((mode) => Padding(
+                  padding: const EdgeInsets.only(right: KolabingSpacing.xs),
+                  child: _FilterChip(
+                    label: mode.displayName,
+                    icon: LucideIcons.clock,
+                    isSelected:
+                        filters.availabilityMode == mode.toApiValue(),
+                    onTap: () {
+                      ref
+                          .read(opportunityFiltersProvider.notifier)
+                          .setAvailabilityMode(mode.toApiValue());
+                    },
+                  ),
+                )),
           ],
         ),
       );
 
-  List<Widget> _buildLocationChips(ExploreFilters filters) {
-    final locationsAsync = ref.watch(availableLocationsProvider);
-
-    return locationsAsync.when(
-      loading: () => const <Widget>[],
-      error: (_, _) => const <Widget>[],
-      data: (locations) => locations
-          .map((location) => Padding(
-                padding: const EdgeInsets.only(right: KolabingSpacing.xs),
-                child: _FilterChip(
-                  label: location,
-                  icon: LucideIcons.mapPin,
-                  isSelected: filters.selectedLocation == location,
-                  onTap: () {
-                    ref
-                        .read(exploreFiltersProvider.notifier)
-                        .setLocation(location);
-                  },
-                ),
-              ))
-          .toList(),
-    );
-  }
-
-  Widget _buildRequestsList(List<CollabRequest> requests) => Column(
+  Widget _buildOpportunityList(OpportunityListState listState) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Results count
@@ -179,7 +312,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               vertical: KolabingSpacing.sm,
             ),
             child: Text(
-              '${requests.length} ${requests.length == 1 ? 'result' : 'results'} found',
+              '${listState.total} ${listState.total == 1 ? 'result' : 'results'} found',
               style: GoogleFonts.openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -193,24 +326,40 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             child: RefreshIndicator(
               color: KolabingColors.primary,
               onRefresh: () async {
-                await ref.read(collabRequestsProvider.notifier).refresh();
+                await ref.read(opportunityListProvider.notifier).refresh();
               },
               child: ListView.separated(
+                controller: _scrollController,
                 padding: const EdgeInsets.fromLTRB(
                   KolabingSpacing.md,
                   0,
                   KolabingSpacing.md,
                   KolabingSpacing.xxl,
                 ),
-                itemCount: requests.length,
+                itemCount: listState.opportunities.length +
+                    (listState.isLoadingMore ? 1 : 0),
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: KolabingSpacing.sm),
                 itemBuilder: (context, index) {
-                  final request = requests[index];
-                  return CollabRequestCard(
-                    request: request,
-                    onView: () => _onViewRequest(request),
-                    onApply: () => _onApplyRequest(request),
+                  if (index >= listState.opportunities.length) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(KolabingSpacing.md),
+                        child: CircularProgressIndicator(
+                          color: KolabingColors.primary,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    );
+                  }
+                  final opportunity = listState.opportunities[index];
+                  final currentUserId = ref.read(authProvider).user?.id;
+                  final isOwn = currentUserId != null &&
+                      opportunity.creatorProfile?.id == currentUserId;
+                  return OpportunityCard(
+                    opportunity: opportunity,
+                    onView: () => _onViewOpportunity(opportunity),
+                    onApply: isOwn ? null : () => _onApplyOpportunity(opportunity),
                   );
                 },
               ),
@@ -256,9 +405,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                hasFilters
-                    ? 'No results found'
-                    : 'No collaboration requests yet',
+                hasFilters ? 'No results found' : 'No opportunities yet',
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -280,7 +427,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
                 TextButton.icon(
                   onPressed: () {
-                    ref.read(exploreFiltersProvider.notifier).clearAllFilters();
+                    ref.read(opportunityFiltersProvider.notifier).clearAll();
+                    _searchController.clear();
                   },
                   icon: const Icon(LucideIcons.rotateCcw, size: 16),
                   label: const Text('Clear all filters'),
@@ -337,7 +485,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               const SizedBox(height: KolabingSpacing.lg),
               ElevatedButton.icon(
                 onPressed: () {
-                  ref.read(collabRequestsProvider.notifier).refresh();
+                  ref.read(opportunityListProvider.notifier).refresh();
                 },
                 icon: const Icon(LucideIcons.rotateCcw, size: 16),
                 label: const Text('Try again'),

@@ -6,27 +6,22 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
-import '../models/collab_request.dart';
+import '../../opportunity/models/opportunity.dart';
 
-/// Card widget for displaying a collaboration request in the explore list
+/// Card widget for displaying an opportunity in the explore list
 ///
-/// Shows community info, collaboration details, tags, reward indicator,
+/// Shows creator info, opportunity details, category tags, offer summary,
 /// and action buttons.
-class CollabRequestCard extends StatelessWidget {
-  const CollabRequestCard({
-    required this.request,
+class OpportunityCard extends StatelessWidget {
+  const OpportunityCard({
+    required this.opportunity,
     super.key,
     this.onView,
     this.onApply,
   });
 
-  /// The collaboration request to display
-  final CollabRequest request;
-
-  /// Callback when the View button is tapped
+  final Opportunity opportunity;
   final VoidCallback? onView;
-
-  /// Callback when the Apply button is tapped
   final VoidCallback? onApply;
 
   @override
@@ -47,13 +42,13 @@ class CollabRequestCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: Avatar, Name, Username, Status
+              // Header: Avatar, Creator Name, Status
               _buildHeader(),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Title
               Text(
-                request.title,
+                opportunity.title,
                 style: GoogleFonts.openSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -67,7 +62,7 @@ class CollabRequestCard extends StatelessWidget {
 
               // Description
               Text(
-                request.description,
+                opportunity.description,
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -79,13 +74,19 @@ class CollabRequestCard extends StatelessWidget {
               ),
               const SizedBox(height: KolabingSpacing.sm),
 
-              // Tags row
-              _buildTagsRow(),
+              // Category chips
+              if (opportunity.categories.isNotEmpty) ...[
+                _buildCategoryChips(),
+                const SizedBox(height: KolabingSpacing.sm),
+              ],
+
+              // Info tags row (city, venue mode, dates)
+              _buildInfoTags(),
               const SizedBox(height: KolabingSpacing.sm),
 
-              // Reward indicator (if applicable)
-              if (request.hasReward) ...[
-                _buildRewardIndicator(),
+              // Offer summary
+              if (opportunity.businessOffer.hasAnyOffer) ...[
+                _buildOfferSummary(),
                 const SizedBox(height: KolabingSpacing.sm),
               ],
 
@@ -98,20 +99,20 @@ class CollabRequestCard extends StatelessWidget {
 
   Widget _buildHeader() => Row(
         children: [
-          // Avatar
-          _CommunityAvatar(
-            avatarUrl: request.communityAvatarUrl,
-            initial: request.communityInitial,
+          // Creator avatar
+          _CreatorAvatar(
+            avatarUrl: opportunity.creatorProfile?.avatarUrl,
+            initial: opportunity.creatorProfile?.initial ?? '?',
           ),
           const SizedBox(width: KolabingSpacing.sm),
 
-          // Name and username
+          // Creator name and type
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  request.communityName,
+                  opportunity.creatorProfile?.displayName ?? 'Unknown',
                   style: GoogleFonts.openSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -121,7 +122,7 @@ class CollabRequestCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '@${request.communityUsername}',
+                  opportunity.creatorProfile?.userType ?? '',
                   style: GoogleFonts.openSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -135,37 +136,67 @@ class CollabRequestCard extends StatelessWidget {
           ),
 
           // Status badge
-          _StatusBadge(status: request.status),
+          _StatusBadge(status: opportunity.status),
         ],
       );
 
-  Widget _buildTagsRow() {
+  Widget _buildCategoryChips() => Wrap(
+        spacing: KolabingSpacing.xxs,
+        runSpacing: KolabingSpacing.xxs,
+        children: opportunity.categories
+            .take(3)
+            .map((cat) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.xs,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    borderRadius: KolabingRadius.borderRadiusRound,
+                  ),
+                  child: Text(
+                    cat,
+                    style: GoogleFonts.openSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: KolabingColors.textPrimary,
+                    ),
+                  ),
+                ))
+            .toList(),
+      );
+
+  Widget _buildInfoTags() {
     final dateFormat = DateFormat('MMM d');
-    final dateText = request.endDate != null
-        ? '${dateFormat.format(request.startDate)} - ${dateFormat.format(request.endDate!)}'
-        : 'From ${dateFormat.format(request.startDate)}';
+    final dateText =
+        '${dateFormat.format(opportunity.availabilityStart)} - ${dateFormat.format(opportunity.availabilityEnd)}';
 
     return Wrap(
       spacing: KolabingSpacing.xs,
       runSpacing: KolabingSpacing.xs,
       children: [
+        if (opportunity.preferredCity.isNotEmpty)
+          _TagPill(
+            icon: LucideIcons.mapPin,
+            label: opportunity.preferredCity,
+          ),
         _TagPill(
-          icon: LucideIcons.tag,
-          label: request.collabType.displayName,
-        ),
-        _TagPill(
-          icon: LucideIcons.mapPin,
-          label: request.location,
+          icon: LucideIcons.building2,
+          label: opportunity.venueMode.displayName,
         ),
         _TagPill(
           icon: LucideIcons.calendar,
           label: dateText,
         ),
+        _TagPill(
+          icon: LucideIcons.clock,
+          label: opportunity.availabilityMode.displayName,
+        ),
       ],
     );
   }
 
-  Widget _buildRewardIndicator() => Container(
+  Widget _buildOfferSummary() => Container(
         padding: const EdgeInsets.symmetric(
           horizontal: KolabingSpacing.sm,
           vertical: KolabingSpacing.xs,
@@ -188,7 +219,7 @@ class CollabRequestCard extends StatelessWidget {
             const SizedBox(width: KolabingSpacing.xxs),
             Flexible(
               child: Text(
-                request.rewardDescription ?? 'Reward included',
+                opportunity.offerSummary,
                 style: GoogleFonts.openSans(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -262,9 +293,9 @@ class CollabRequestCard extends StatelessWidget {
       );
 }
 
-/// Circular avatar for community with fallback initial
-class _CommunityAvatar extends StatelessWidget {
-  const _CommunityAvatar({
+/// Circular avatar for creator with fallback initial
+class _CreatorAvatar extends StatelessWidget {
+  const _CreatorAvatar({
     required this.avatarUrl,
     required this.initial,
   });
@@ -313,15 +344,18 @@ class _CommunityAvatar extends StatelessWidget {
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
 
-  final CollabStatus status;
+  final OpportunityStatus status;
 
   @override
   Widget build(BuildContext context) {
     final (backgroundColor, textColor) = switch (status) {
-      CollabStatus.active => (KolabingColors.activeBg, KolabingColors.activeText),
-      CollabStatus.published =>
+      OpportunityStatus.published =>
+        (KolabingColors.activeBg, KolabingColors.activeText),
+      OpportunityStatus.draft =>
         (KolabingColors.pendingBg, KolabingColors.pendingText),
-      CollabStatus.closed =>
+      OpportunityStatus.closed =>
+        (KolabingColors.completedBg, KolabingColors.completedText),
+      OpportunityStatus.completed =>
         (KolabingColors.completedBg, KolabingColors.completedText),
     };
 
@@ -347,7 +381,7 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
-/// Tag pill widget for type, location, date
+/// Tag pill widget for info display
 class _TagPill extends StatelessWidget {
   const _TagPill({
     required this.icon,
