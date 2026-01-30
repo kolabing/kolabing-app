@@ -328,6 +328,7 @@ class CreatorProfile {
   const CreatorProfile({
     required this.id,
     required this.userType,
+    this.displayNameValue,
     this.businessName,
     this.avatarUrl,
   });
@@ -335,17 +336,20 @@ class CreatorProfile {
   factory CreatorProfile.fromJson(Map<String, dynamic> json) => CreatorProfile(
         id: json['id']?.toString() ?? '',
         userType: json['user_type'] as String? ?? '',
+        displayNameValue: json['display_name'] as String?,
         businessName: json['business_name'] as String?,
         avatarUrl: json['avatar_url'] as String?,
       );
 
   final String id;
   final String userType;
+  final String? displayNameValue;
   final String? businessName;
   final String? avatarUrl;
 
-  /// Display name - business name or fallback
-  String get displayName => businessName ?? 'Unknown';
+  /// Display name from API, with fallbacks
+  String get displayName =>
+      displayNameValue ?? businessName ?? 'Unknown';
 
   /// Initial letter for avatar fallback
   String get initial =>

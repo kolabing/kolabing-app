@@ -115,7 +115,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
         isInitialized: true,
         error: e.message,
       );
-    } on Exception {
+    } catch (e) {
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,

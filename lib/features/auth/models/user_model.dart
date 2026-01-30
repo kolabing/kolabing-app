@@ -38,7 +38,7 @@ class City {
   });
 
   factory City.fromJson(Map<String, dynamic> json) => City(
-        id: json['id'] as String,
+        id: json['id']?.toString() ?? '',
         name: json['name'] as String,
         country: json['country'] as String?,
       );
@@ -69,7 +69,7 @@ class BusinessProfile {
 
   factory BusinessProfile.fromJson(Map<String, dynamic> json) =>
       BusinessProfile(
-        id: json['id'] as String,
+        id: json['id']?.toString() ?? '',
         name: json['name'] as String,
         about: json['about'] as String?,
         businessType: json['business_type'] as String?,
@@ -118,7 +118,7 @@ class CommunityProfile {
 
   factory CommunityProfile.fromJson(Map<String, dynamic> json) =>
       CommunityProfile(
-        id: json['id'] as String,
+        id: json['id']?.toString() ?? '',
         name: json['name'] as String,
         about: json['about'] as String?,
         communityType: json['community_type'] as String?,
@@ -201,7 +201,7 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json['id'] as String,
+        id: json['id']?.toString() ?? '',
         email: json['email'] as String,
         userType: UserType.fromString(json['user_type'] as String),
         phoneNumber: json['phone_number'] as String?,
