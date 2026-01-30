@@ -8,7 +8,6 @@ import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../dashboard/screens/business_dashboard_screen.dart';
-import '../../subscription/widgets/subscription_paywall.dart';
 import 'business_profile_screen.dart';
 import 'explore_screen.dart';
 
@@ -43,11 +42,8 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     });
   }
 
-  Future<void> _onFabPressed() async {
-    final canPublish = await SubscriptionPaywall.checkAndShow(context, ref);
-    if (canPublish && mounted) {
-      context.push(KolabingRoutes.businessOffersNew);
-    }
+  void _onFabPressed() {
+    context.push(KolabingRoutes.businessOffersNew);
   }
 
   @override

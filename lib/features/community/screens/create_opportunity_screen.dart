@@ -12,6 +12,7 @@ import '../../../config/theme/colors.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
 ///
@@ -129,6 +130,17 @@ class _CreateOpportunityScreenState
     }
   }
 
+  void _showSubscriptionPaywall() {
+    showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const SubscriptionPaywall(),
+    );
+    // Reset the flag so it can trigger again
+    ref.read(opportunityFormProvider.notifier).clearError();
+  }
+
   Future<void> _handleSaveDraft() async {
     final success = await ref.read(opportunityFormProvider.notifier).saveDraft();
     if (success && mounted) {
@@ -227,6 +239,17 @@ class _CreateOpportunityScreenState
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(opportunityFormProvider);
+
+    // Show subscription paywall when API returns requires_subscription
+    ref.listen<OpportunityFormState>(
+      opportunityFormProvider,
+      (previous, next) {
+        if (next.requiresSubscription &&
+            !(previous?.requiresSubscription ?? false)) {
+          _showSubscriptionPaywall();
+        }
+      },
+    );
 
     return PopScope(
       canPop: !formState.isSubmitting && !formState.isPublishing,

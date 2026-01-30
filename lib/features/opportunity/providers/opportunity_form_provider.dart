@@ -20,6 +20,7 @@ class OpportunityFormState {
     this.isSubmitting = false,
     this.isPublishing = false,
     this.isSuccess = false,
+    this.requiresSubscription = false,
     this.error,
     this.fieldErrors = const {},
   });
@@ -30,6 +31,7 @@ class OpportunityFormState {
   final bool isSubmitting;
   final bool isPublishing;
   final bool isSuccess;
+  final bool requiresSubscription;
   final String? error;
   final Map<String, String> fieldErrors;
 
@@ -55,6 +57,7 @@ class OpportunityFormState {
     bool? isSubmitting,
     bool? isPublishing,
     bool? isSuccess,
+    bool? requiresSubscription,
     String? error,
     Map<String, String>? fieldErrors,
     bool clearError = false,
@@ -66,6 +69,8 @@ class OpportunityFormState {
         isSubmitting: isSubmitting ?? this.isSubmitting,
         isPublishing: isPublishing ?? this.isPublishing,
         isSuccess: isSuccess ?? this.isSuccess,
+        requiresSubscription:
+            requiresSubscription ?? this.requiresSubscription,
         error: clearError ? null : (error ?? this.error),
         fieldErrors: fieldErrors ?? this.fieldErrors,
       );
@@ -392,7 +397,11 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
     final opp = state.opportunity;
     if (opp == null) return false;
 
-    state = state.copyWith(isSubmitting: true, clearError: true);
+    state = state.copyWith(
+      isSubmitting: true,
+      clearError: true,
+      requiresSubscription: false,
+    );
 
     try {
       Opportunity result;
@@ -408,6 +417,14 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
       );
       return true;
     } on ApiException catch (e) {
+      if (e.error.requiresSubscription) {
+        state = state.copyWith(
+          isSubmitting: false,
+          requiresSubscription: true,
+          error: e.error.message,
+        );
+        return false;
+      }
       final fieldErrors = <String, String>{};
       if (e.error.errors != null) {
         for (final entry in e.error.errors!.entries) {
@@ -440,7 +457,11 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
     final opp = state.opportunity;
     if (opp == null) return false;
 
-    state = state.copyWith(isPublishing: true, clearError: true);
+    state = state.copyWith(
+      isPublishing: true,
+      clearError: true,
+      requiresSubscription: false,
+    );
 
     try {
       // Set status to published before saving
@@ -482,6 +503,14 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
       );
       return true;
     } on ApiException catch (e) {
+      if (e.error.requiresSubscription) {
+        state = state.copyWith(
+          isPublishing: false,
+          requiresSubscription: true,
+          error: e.error.message,
+        );
+        return false;
+      }
       state = state.copyWith(
         isPublishing: false,
         error: e.error.message,
@@ -511,7 +540,11 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   }
 
   void clearError() {
-    state = state.copyWith(clearError: true, fieldErrors: {});
+    state = state.copyWith(
+      clearError: true,
+      fieldErrors: {},
+      requiresSubscription: false,
+    );
   }
 }
 

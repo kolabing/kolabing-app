@@ -144,11 +144,6 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
   String _parseError(dynamic e) {
     final errorString = e.toString();
-    if (errorString.contains('message')) {
-      if (errorString.contains('50')) {
-        return 'Message must be at least 50 characters';
-      }
-    }
     if (errorString.contains('availability')) {
       if (errorString.contains('20')) {
         return 'Availability must be at least 20 characters';
@@ -306,9 +301,6 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please enter a message';
-                        }
-                        if (value.trim().length < 50) {
-                          return 'Message must be at least 50 characters';
                         }
                         return null;
                       },

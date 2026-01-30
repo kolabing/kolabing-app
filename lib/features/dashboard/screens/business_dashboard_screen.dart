@@ -8,7 +8,6 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
-import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
@@ -200,12 +199,8 @@ class _BusinessDashboardScreenState
           child: SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: () async {
-                final canPublish =
-                    await SubscriptionPaywall.checkAndShow(context, ref);
-                if (canPublish && context.mounted) {
-                  context.push(KolabingRoutes.businessOffersNew);
-                }
+              onPressed: () {
+                context.push(KolabingRoutes.businessOffersNew);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,

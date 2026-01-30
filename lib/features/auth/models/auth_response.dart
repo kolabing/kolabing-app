@@ -114,6 +114,7 @@ class ApiError {
     required this.message,
     this.errors,
     this.statusCode,
+    this.requiresSubscription = false,
   });
 
   factory ApiError.fromJson(Map<String, dynamic> json, {int? statusCode}) =>
@@ -128,11 +129,14 @@ class ApiError {
               )
             : null,
         statusCode: statusCode,
+        requiresSubscription:
+            json['requires_subscription'] as bool? ?? false,
       );
 
   final String message;
   final Map<String, List<String>>? errors;
   final int? statusCode;
+  final bool requiresSubscription;
 
   /// Check if this is a user type mismatch error (409)
   bool get isUserTypeMismatch => statusCode == 409;
