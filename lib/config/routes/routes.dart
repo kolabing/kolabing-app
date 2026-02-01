@@ -10,7 +10,10 @@ import '../../features/opportunity/models/opportunity.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
+import '../../features/business/screens/create_collab_request_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/notification/screens/notifications_screen.dart';
+import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step1_screen.dart';
@@ -163,6 +166,12 @@ abstract final class KolabingRoutes {
 
   /// Application chat screen
   static const String applicationChat = '/application/:id/chat';
+
+  /// Notifications screen
+  static const String notifications = '/notifications';
+
+  /// Public profile preview
+  static const String publicProfile = '/profile/:id';
 
   // ---------------------------------------------------------------------------
   // Profile Completion
@@ -334,7 +343,7 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.businessOffersNew,
       name: 'businessOffersNew',
       builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Create Offer'),
+          const CreateCollabRequestScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.businessOffersEdit,
@@ -442,6 +451,24 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         return ChatScreen(applicationId: id);
+      },
+    ),
+    GoRoute(
+      path: KolabingRoutes.notifications,
+      name: 'notifications',
+      builder: (BuildContext context, GoRouterState state) =>
+          const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: '/profile/:id',
+      name: 'publicProfile',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        final creatorProfile = state.extra as CreatorProfile?;
+        return PublicProfileScreen(
+          profileId: id,
+          creatorProfile: creatorProfile,
+        );
       },
     ),
   ],

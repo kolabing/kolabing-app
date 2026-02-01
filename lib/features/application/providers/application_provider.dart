@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
 import '../services/application_service.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -308,6 +309,8 @@ final applicationDetailProvider =
   final service = ref.watch(applicationServiceProvider);
   try {
     return await service.getApplication(id);
+  } on AuthException {
+    rethrow;
   } catch (e) {
     debugPrint('Get application detail error: $e');
     return null;
@@ -381,6 +384,8 @@ final chatDataProvider =
     // Invalidate unread count to refresh badge
     ref.invalidate(unreadMessagesCountProvider);
     return application;
+  } on AuthException {
+    rethrow;
   } catch (e) {
     debugPrint('Load chat error: $e');
     return null;

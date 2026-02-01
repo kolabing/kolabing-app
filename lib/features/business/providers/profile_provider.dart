@@ -67,12 +67,15 @@ class ProfileNotifier extends Notifier<ProfileState> {
     return const ProfileState();
   }
 
+  bool _isLoadingInProgress = false;
+
   /// Load all profile data
   Future<void> loadProfile() async {
     // Prevent multiple simultaneous loads
-    if (state.isLoading && state.isInitialized) {
+    if (_isLoadingInProgress) {
       return;
     }
+    _isLoadingInProgress = true;
 
     state = state.copyWith(isLoading: true, clearError: true);
 
@@ -121,6 +124,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
         isInitialized: true,
         error: 'An unexpected error occurred',
       );
+    } finally {
+      _isLoadingInProgress = false;
     }
   }
 

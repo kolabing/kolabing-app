@@ -433,9 +433,13 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
           }
         }
       }
+      // Show field-level errors to the user instead of generic "Validation failed"
+      final userMessage = fieldErrors.isNotEmpty
+          ? fieldErrors.values.join('\n')
+          : e.error.message;
       state = state.copyWith(
         isSubmitting: false,
-        error: e.error.message,
+        error: userMessage,
         fieldErrors: fieldErrors,
       );
       return false;
@@ -511,9 +515,22 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
         );
         return false;
       }
+      final fieldErrors = <String, String>{};
+      if (e.error.errors != null) {
+        for (final entry in e.error.errors!.entries) {
+          if (entry.value.isNotEmpty) {
+            fieldErrors[entry.key] = entry.value.first;
+          }
+        }
+      }
+      // Show field-level errors to the user instead of generic "Validation failed"
+      final userMessage = fieldErrors.isNotEmpty
+          ? fieldErrors.values.join('\n')
+          : e.error.message;
       state = state.copyWith(
         isPublishing: false,
-        error: e.error.message,
+        error: userMessage,
+        fieldErrors: fieldErrors,
       );
       return false;
     } on NetworkException catch (e) {
@@ -536,6 +553,14 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   void reset() {
     state = OpportunityFormState(
       opportunity: Opportunity.empty(),
+    );
+  }
+
+  /// Set client-side validation errors with user-friendly messages.
+  void setValidationErrors(Map<String, String> fieldErrors) {
+    state = state.copyWith(
+      error: fieldErrors.values.join('\n'),
+      fieldErrors: fieldErrors,
     );
   }
 

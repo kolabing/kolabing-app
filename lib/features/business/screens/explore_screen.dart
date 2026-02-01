@@ -12,6 +12,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/models/opportunity_filter.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
@@ -135,30 +136,38 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         padding: const EdgeInsets.fromLTRB(
           KolabingSpacing.md,
           KolabingSpacing.md,
-          KolabingSpacing.md,
+          KolabingSpacing.xs,
           KolabingSpacing.xs,
         ),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'EXPLORE',
-              style: GoogleFonts.rubik(
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.2,
-                color: KolabingColors.textPrimary,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'EXPLORE',
+                    style: GoogleFonts.rubik(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                      color: KolabingColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: KolabingSpacing.xxs),
+                  Text(
+                    'Find collaboration opportunities',
+                    style: GoogleFonts.openSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: KolabingColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: KolabingSpacing.xxs),
-            Text(
-              'Find collaboration opportunities',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.textSecondary,
-              ),
-            ),
+            const NotificationBell(),
           ],
         ),
       );

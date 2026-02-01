@@ -54,16 +54,23 @@ class _CommunityOfferDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    // Use pre-loaded data or fetch from API
-    if (widget.offer != null) {
-      return _buildContent(widget.offer!);
-    }
-
     final detailAsync = ref.watch(opportunityDetailProvider(widget.offerId));
 
     return detailAsync.when(
-      loading: _buildLoadingState,
-      error: (error, _) => _buildErrorState(error.toString()),
+      loading: () {
+        // Show pre-loaded data while refreshing, otherwise shimmer
+        if (widget.offer != null) {
+          return _buildContent(widget.offer!);
+        }
+        return _buildLoadingState();
+      },
+      error: (error, _) {
+        // Show pre-loaded data on error, otherwise error state
+        if (widget.offer != null) {
+          return _buildContent(widget.offer!);
+        }
+        return _buildErrorState(error.toString());
+      },
       data: (opportunity) => _buildContent(opportunity),
     );
   }
@@ -166,38 +173,51 @@ class _CommunityOfferDetailScreenState
               children: [
                 Row(
                   children: [
-                    _CreatorAvatar(
-                      avatarUrl: opportunity.creatorProfile?.avatarUrl,
-                      initial: opportunity.creatorProfile?.initial ?? '?',
-                      size: 56,
-                    ),
-                    const SizedBox(width: KolabingSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    GestureDetector(
+                      onTap: opportunity.creatorProfile != null
+                          ? () => context.push(
+                                '/profile/${opportunity.creatorProfile!.id}',
+                                extra: opportunity.creatorProfile,
+                              )
+                          : null,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            opportunity.creatorProfile?.displayName ??
-                                'Unknown',
-                            style: GoogleFonts.rubik(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: KolabingColors.textPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          _CreatorAvatar(
+                            avatarUrl: opportunity.creatorProfile?.avatarUrl,
+                            initial:
+                                opportunity.creatorProfile?.initial ?? '?',
+                            size: 56,
                           ),
-                          Text(
-                            opportunity.creatorProfile?.userType ?? '',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: KolabingColors.textSecondary,
-                            ),
+                          const SizedBox(width: KolabingSpacing.sm),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                opportunity.creatorProfile?.displayName ??
+                                    'Unknown',
+                                style: GoogleFonts.rubik(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: KolabingColors.textPrimary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                opportunity.creatorProfile?.userType ?? '',
+                                style: GoogleFonts.openSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: KolabingColors.textSecondary,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
+                    const Spacer(),
                     _StatusBadge(status: opportunity.status),
                   ],
                 ),

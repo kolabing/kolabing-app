@@ -46,10 +46,12 @@ class ProfileService {
     debugPrint('Profile: GET $url');
 
     try {
-      final response = await _httpClient.get(
-        Uri.parse(url),
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient
+          .get(
+            Uri.parse(url),
+            headers: await _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 15));
 
       debugPrint('Profile response status: ${response.statusCode}');
 
@@ -160,10 +162,12 @@ class ProfileService {
     debugPrint('Profile: GET $url');
 
     try {
-      final response = await _httpClient.get(
-        Uri.parse(url),
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient
+          .get(
+            Uri.parse(url),
+            headers: await _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 15));
 
       debugPrint(
           'Get notification preferences response status: ${response.statusCode}');

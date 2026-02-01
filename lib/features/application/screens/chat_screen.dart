@@ -7,7 +7,9 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
@@ -116,9 +118,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         isLoading: true,
         body: _buildLoadingState(),
       ),
-      error: (error, _) => _buildScaffold(
-        body: _buildErrorState(error.toString()),
-      ),
+      error: (error, _) {
+        if (error is AuthException) {
+          return _buildScaffold(
+            body: _buildAuthErrorState(),
+          );
+        }
+        return _buildScaffold(
+          body: _buildErrorState(error.toString()),
+        );
+      },
       data: (application) {
         if (application == null) {
           return _buildScaffold(
@@ -485,6 +494,52 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 },
                 icon: const Icon(LucideIcons.rotateCcw, size: 16),
                 label: const Text('Retry'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: KolabingColors.primary,
+                  foregroundColor: KolabingColors.onPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _buildAuthErrorState() => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(KolabingSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                LucideIcons.logIn,
+                size: 48,
+                color: KolabingColors.error,
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+              Text(
+                'Session expired',
+                style: GoogleFonts.rubik(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                'Please sign in again to continue.',
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  color: KolabingColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.go(KolabingRoutes.login);
+                },
+                icon: const Icon(LucideIcons.logIn, size: 16),
+                label: const Text('Sign In'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,

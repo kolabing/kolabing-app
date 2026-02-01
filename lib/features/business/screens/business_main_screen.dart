@@ -81,17 +81,17 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       backgroundColor: KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          _BusinessExploreTab(),
-          _BusinessOffersTab(),
-          _BusinessApplicationsTab(),
-          _BusinessProfileTab(),
+        children: [
+          const _BusinessExploreTab(),
+          _BusinessOffersTab(onSwitchTab: _onTabChanged),
+          const _BusinessApplicationsTab(),
+          const _BusinessProfileTab(),
         ],
       ),
       floatingActionButton: _currentIndex != 3 // Hide on profile tab
           ? KolabingFAB(
               onPressed: _onFabPressed,
-              tooltip: 'Create Offer',
+              tooltip: 'Create Collab Request',
             )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(
@@ -117,11 +117,13 @@ class _BusinessExploreTab extends StatelessWidget {
 }
 
 class _BusinessOffersTab extends StatelessWidget {
-  const _BusinessOffersTab();
+  const _BusinessOffersTab({required this.onSwitchTab});
+
+  final ValueChanged<int> onSwitchTab;
 
   @override
   Widget build(BuildContext context) {
-    return const BusinessDashboardScreen();
+    return BusinessDashboardScreen(onSwitchTab: onSwitchTab);
   }
 }
 

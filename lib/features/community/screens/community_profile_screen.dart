@@ -18,6 +18,7 @@ import '../../../config/theme/typography.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../../widgets/gallery/profile_gallery_section.dart';
 
 /// Community profile screen
 class CommunityProfileScreen extends ConsumerStatefulWidget {
@@ -280,7 +281,7 @@ class _CommunityProfileScreenState
       });
     }
 
-    // Loading state
+    // Loading state (only show shimmer when actually loading)
     if (state.isLoading && !state.hasData) {
       return _buildLoadingState();
     }
@@ -295,7 +296,12 @@ class _CommunityProfileScreenState
       return _buildProfileContent(state);
     }
 
-    // Initial loading
+    // Initialized but no data and no error — something went wrong, show retry
+    if (state.isInitialized) {
+      return _buildErrorState('Failed to load profile');
+    }
+
+    // Initial loading (before first load attempt)
     return _buildLoadingState();
   }
 
@@ -453,6 +459,11 @@ class _CommunityProfileScreenState
               _buildAboutSection(about),
               const SizedBox(height: KolabingSpacing.md),
             ],
+
+            // Gallery Section
+            const ProfileGallerySection(),
+
+            const SizedBox(height: KolabingSpacing.md),
 
             // Contact Info Section
             _buildContactInfoSection(profile),

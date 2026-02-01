@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../notification/widgets/notification_bell.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
@@ -103,27 +104,35 @@ class _CommunityDashboardScreenState
   // ---------------------------------------------------------------------------
 
   Widget _buildHeader(String userName) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'COMMUNITY DASHBOARD',
-          style: GoogleFonts.rubik(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
-            letterSpacing: 1.0,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'COMMUNITY DASHBOARD',
+                style: GoogleFonts.rubik(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.textPrimary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xxs),
+              Text(
+                'Welcome back, $userName',
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: KolabingSpacing.xxs),
-        Text(
-          'Welcome back, $userName',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
-          ),
-        ),
+        const NotificationBell(),
       ],
     );
   }

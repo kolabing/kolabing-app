@@ -19,6 +19,7 @@ import '../../auth/models/user_model.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../providers/profile_provider.dart';
+import '../../../widgets/gallery/profile_gallery_section.dart';
 
 /// Business profile screen
 class BusinessProfileScreen extends ConsumerStatefulWidget {
@@ -288,7 +289,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
       });
     }
 
-    // Loading state
+    // Loading state (only show shimmer when actually loading)
     if (state.isLoading && !state.hasData) {
       return _buildLoadingState();
     }
@@ -303,7 +304,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
       return _buildProfileContent(state);
     }
 
-    // Initial loading
+    // Initialized but no data and no error — something went wrong, show retry
+    if (state.isInitialized) {
+      return _buildErrorState('Failed to load profile');
+    }
+
+    // Initial loading (before first load attempt)
     return _buildLoadingState();
   }
 
@@ -468,6 +474,11 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               _buildSubscriptionSection(state.subscription),
               const SizedBox(height: KolabingSpacing.md),
             ],
+
+            // Gallery Section
+            const ProfileGallerySection(),
+
+            const SizedBox(height: KolabingSpacing.md),
 
             // Contact Info Section
             _buildContactInfoSection(profile),

@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../notification/widgets/notification_bell.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
@@ -19,7 +20,10 @@ import '../widgets/upcoming_collaboration_card.dart';
 /// Shows key metrics, quick actions, and upcoming collaborations
 /// for business users.
 class BusinessDashboardScreen extends ConsumerStatefulWidget {
-  const BusinessDashboardScreen({super.key});
+  const BusinessDashboardScreen({super.key, this.onSwitchTab});
+
+  /// Callback to switch tabs in the parent [BusinessMainScreen].
+  final ValueChanged<int>? onSwitchTab;
 
   @override
   ConsumerState<BusinessDashboardScreen> createState() =>
@@ -104,27 +108,35 @@ class _BusinessDashboardScreenState
   // ---------------------------------------------------------------------------
 
   Widget _buildHeader(String userName) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'BUSINESS DASHBOARD',
-          style: GoogleFonts.rubik(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
-            letterSpacing: 1.0,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'BUSINESS DASHBOARD',
+                style: GoogleFonts.rubik(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.textPrimary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xxs),
+              Text(
+                'Welcome back, $userName',
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: KolabingSpacing.xxs),
-        Text(
-          'Welcome back, $userName',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
-          ),
-        ),
+        const NotificationBell(),
       ],
     );
   }
@@ -210,12 +222,16 @@ class _BusinessDashboardScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(
-                'CREATE OFFER',
-                style: GoogleFonts.dmSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'CREATE COLLAB REQUEST',
+                  maxLines: 1,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
             ),
@@ -229,9 +245,8 @@ class _BusinessDashboardScreenState
             height: 48,
             child: OutlinedButton(
               onPressed: () {
-                // Navigate to explore tab (index 0 on business main)
-                // Since we are inside the main screen, this is handled
-                // by the parent tab controller. For now navigate to browse.
+                // Switch to Explore tab (index 0)
+                widget.onSwitchTab?.call(0);
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: KolabingColors.textPrimary,
