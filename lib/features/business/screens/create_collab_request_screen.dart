@@ -9,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
@@ -87,6 +88,16 @@ class _CreateCollabRequestScreenState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(opportunityFormProvider.notifier).reset();
+      // Apply smart defaults after reset
+      final user = ref.read(authProvider).user;
+      final notifier = ref.read(opportunityFormProvider.notifier);
+      // Default venue mode = "I Have a Venue" (businessVenue)
+      notifier.updateVenueMode(VenueMode.businessVenue);
+      // Prefill city from the user's business profile
+      final city = user?.businessProfile?.city?.name ?? '';
+      if (city.isNotEmpty) {
+        notifier.updatePreferredCity(city);
+      }
     });
   }
 
@@ -519,11 +530,19 @@ class _CreateCollabRequestScreenState
   // ===========================================================================
 
   Widget _buildAvailabilitySection() {
-    final dateFormat = DateFormat('MMM d, yyyy');
+    final dateFormat = DateFormat('EEE, MMM d, yyyy');
 
     return _buildSectionCard(
       children: [
         _buildSectionHeader('AVAILABILITY'),
+        const SizedBox(height: KolabingSpacing.xs),
+        Text(
+          'Add up to 3 date & time slots for your collaboration',
+          style: GoogleFonts.openSans(
+            fontSize: 12,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
         const SizedBox(height: KolabingSpacing.md),
 
         // Existing time slots
@@ -532,67 +551,232 @@ class _CreateCollabRequestScreenState
           return Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
             child: Container(
-              padding: const EdgeInsets.all(KolabingSpacing.sm),
               decoration: BoxDecoration(
                 color: KolabingColors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(color: KolabingColors.border),
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      // Date
-                      Expanded(
-                        flex: 2,
-                        child: GestureDetector(
-                          onTap: () => _pickDate(index),
-                          child: _buildPickerField(
-                            icon: LucideIcons.calendar,
-                            label: dateFormat.format(slot.date),
+                  // Slot header row
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: KolabingSpacing.sm,
+                      vertical: KolabingSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: KolabingColors.surface,
+                      borderRadius: BorderRadius.only(
+                        topLeft: KolabingRadius.borderRadiusMd.topLeft,
+                        topRight: KolabingRadius.borderRadiusMd.topRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(color: KolabingColors.border),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          LucideIcons.calendar,
+                          size: 14,
+                          color: KolabingColors.primary,
+                        ),
+                        const SizedBox(width: KolabingSpacing.xs),
+                        Text(
+                          'Slot ${index + 1}',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: KolabingColors.primary,
+                            letterSpacing: 0.3,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      // Start time
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _pickStartTime(index),
-                          child: _buildPickerField(
-                            icon: LucideIcons.clock,
-                            label: _formatTime(slot.startTime),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => _removeTimeSlot(index),
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: KolabingColors.errorBg,
+                              borderRadius: KolabingRadius.borderRadiusSm,
+                            ),
+                            child: const Icon(
+                              LucideIcons.trash2,
+                              size: 14,
+                              color: KolabingColors.error,
+                            ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+
+                  // Date picker row
+                  InkWell(
+                    onTap: () => _pickDate(index),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: KolabingSpacing.sm,
+                        vertical: KolabingSpacing.sm,
                       ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      // End time
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _pickEndTime(index),
-                          child: _buildPickerField(
-                            icon: LucideIcons.clock,
-                            label: _formatTime(slot.endTime),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      // Delete button
-                      GestureDetector(
-                        onTap: () => _removeTimeSlot(index),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: KolabingColors.errorBg,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                          child: const Icon(
-                            LucideIcons.trash2,
+                      child: Row(
+                        children: [
+                          Icon(
+                            LucideIcons.calendarDays,
                             size: 18,
-                            color: KolabingColors.error,
+                            color: KolabingColors.textSecondary,
+                          ),
+                          const SizedBox(width: KolabingSpacing.sm),
+                          Text(
+                            dateFormat.format(slot.date),
+                            style: GoogleFonts.openSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: KolabingColors.textPrimary,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            LucideIcons.chevronRight,
+                            size: 16,
+                            color: KolabingColors.textTertiary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  Divider(height: 1, color: KolabingColors.border),
+
+                  // Time fields
+                  Padding(
+                    padding: const EdgeInsets.all(KolabingSpacing.sm),
+                    child: Row(
+                      children: [
+                        // Start time
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'START TIME',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: KolabingColors.textTertiary,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              GestureDetector(
+                                onTap: () => _pickStartTime(index),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: KolabingSpacing.sm,
+                                    vertical: KolabingSpacing.xs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: KolabingColors.surface,
+                                    borderRadius:
+                                        KolabingRadius.borderRadiusSm,
+                                    border: Border.all(
+                                      color: KolabingColors.border,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        LucideIcons.clock,
+                                        size: 14,
+                                        color: KolabingColors.textSecondary,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        _formatTime(slot.startTime),
+                                        style: GoogleFonts.openSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: KolabingColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+
+                        // Arrow
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                            left: KolabingSpacing.xs,
+                            right: KolabingSpacing.xs,
+                          ),
+                          child: Icon(
+                            LucideIcons.arrowRight,
+                            size: 16,
+                            color: KolabingColors.textTertiary,
+                          ),
+                        ),
+
+                        // End time
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'END TIME',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: KolabingColors.textTertiary,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              GestureDetector(
+                                onTap: () => _pickEndTime(index),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: KolabingSpacing.sm,
+                                    vertical: KolabingSpacing.xs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: KolabingColors.surface,
+                                    borderRadius:
+                                        KolabingRadius.borderRadiusSm,
+                                    border: Border.all(
+                                      color: KolabingColors.border,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        LucideIcons.clock,
+                                        size: 14,
+                                        color: KolabingColors.textSecondary,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        _formatTime(slot.endTime),
+                                        style: GoogleFonts.openSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: KolabingColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -610,9 +794,7 @@ class _CreateCollabRequestScreenState
                 vertical: KolabingSpacing.sm,
               ),
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: KolabingColors.primary,
-                ),
+                border: Border.all(color: KolabingColors.primary),
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
               child: Row(
@@ -640,6 +822,7 @@ class _CreateCollabRequestScreenState
       ],
     );
   }
+
 
   void _addTimeSlot() {
     if (_timeSlots.length >= 3) return;
@@ -1006,6 +1189,22 @@ class _CreateCollabRequestScreenState
                     .updateBusinessOffer(foodDrink: !offer.foodDrink),
               ),
               _buildSelectableChip(
+                label: 'Social Media Exposure',
+                isSelected: offer.socialMediaExposure,
+                onTap: () => ref
+                    .read(opportunityFormProvider.notifier)
+                    .updateBusinessOffer(
+                        socialMediaExposure: !offer.socialMediaExposure),
+              ),
+              _buildSelectableChip(
+                label: 'Content Creation',
+                isSelected: offer.contentCreation,
+                onTap: () => ref
+                    .read(opportunityFormProvider.notifier)
+                    .updateBusinessOffer(
+                        contentCreation: !offer.contentCreation),
+              ),
+              _buildSelectableChip(
                 label: 'Discount',
                 isSelected: offer.discount.enabled,
                 onTap: () => ref
@@ -1193,6 +1392,7 @@ class _CreateCollabRequestScreenState
           children: [
             // Save as Draft
             Expanded(
+              flex: 2,
               child: OutlinedButton(
                 onPressed: isBusy ? null : _handleSaveDraft,
                 style: OutlinedButton.styleFrom(
@@ -1230,7 +1430,7 @@ class _CreateCollabRequestScreenState
             const SizedBox(width: KolabingSpacing.sm),
             // Publish Request
             Expanded(
-              flex: 2,
+              flex: 3,
               child: ElevatedButton(
                 onPressed: isBusy ? null : _handlePublish,
                 style: ElevatedButton.styleFrom(

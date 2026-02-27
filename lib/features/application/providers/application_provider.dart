@@ -256,36 +256,34 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
 
   Future<void> refresh() => load();
 
-  Future<bool> acceptApplication(String id) async {
-    try {
-      final updated = await _service.acceptApplication(id);
-      // Update local list
-      final applications = state.applications.map((a) {
-        if (a.id == id) return updated;
-        return a;
-      }).toList();
-      state = state.copyWith(applications: applications);
-      return true;
-    } catch (e) {
-      debugPrint('Accept application error: $e');
-      return false;
-    }
+  Future<Application> acceptApplication(
+    String id, {
+    required String scheduledDate,
+    required Map<String, String> contactMethods,
+  }) async {
+    final updated = await _service.acceptApplication(
+      id,
+      scheduledDate: scheduledDate,
+      contactMethods: contactMethods,
+    );
+    // Update local list
+    final applications = state.applications.map((a) {
+      if (a.id == id) return updated;
+      return a;
+    }).toList();
+    state = state.copyWith(applications: applications);
+    return updated;
   }
 
-  Future<bool> declineApplication(String id, {String? reason}) async {
-    try {
-      final updated = await _service.declineApplication(id, reason: reason);
-      // Update local list
-      final applications = state.applications.map((a) {
-        if (a.id == id) return updated;
-        return a;
-      }).toList();
-      state = state.copyWith(applications: applications);
-      return true;
-    } catch (e) {
-      debugPrint('Decline application error: $e');
-      return false;
-    }
+  Future<Application> declineApplication(String id, {String? reason}) async {
+    final updated = await _service.declineApplication(id, reason: reason);
+    // Update local list
+    final applications = state.applications.map((a) {
+      if (a.id == id) return updated;
+      return a;
+    }).toList();
+    state = state.copyWith(applications: applications);
+    return updated;
   }
 
   String _getErrorMessage(dynamic e) {

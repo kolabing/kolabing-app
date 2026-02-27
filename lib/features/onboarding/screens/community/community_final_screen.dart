@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../services/permission_service.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/summary_card.dart';
 
@@ -140,7 +141,16 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       await Future<void>.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
 
-      context.go('/community');
+      // Show permission screen on first registration
+      final hasShownPermissions =
+          await PermissionService.instance.hasShownPermissionScreen();
+      if (!mounted) return;
+
+      if (!hasShownPermissions) {
+        context.go('/permissions?destination=${Uri.encodeComponent('/community')}');
+      } else {
+        context.go('/community');
+      }
     } else if (result.isNetworkError) {
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();

@@ -25,17 +25,22 @@ class OpportunityCard extends StatelessWidget {
   final VoidCallback? onApply;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return DecoratedBox(
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -43,7 +48,7 @@ class OpportunityCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header: Avatar, Creator Name, Status
-              _buildHeader(),
+              _buildHeader(isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Title
@@ -52,7 +57,9 @@ class OpportunityCard extends StatelessWidget {
                 style: GoogleFonts.openSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                   height: 1.3,
                 ),
                 maxLines: 2,
@@ -76,12 +83,12 @@ class OpportunityCard extends StatelessWidget {
 
               // Category chips
               if (opportunity.categories.isNotEmpty) ...[
-                _buildCategoryChips(),
+                _buildCategoryChips(isDark),
                 const SizedBox(height: KolabingSpacing.sm),
               ],
 
               // Info tags row (city, venue mode, dates)
-              _buildInfoTags(),
+              _buildInfoTags(isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Offer summary
@@ -91,18 +98,20 @@ class OpportunityCard extends StatelessWidget {
               ],
 
               // Action buttons
-              _buildActionButtons(),
+              _buildActionButtons(isDark),
             ],
           ),
         ),
       );
+  }
 
-  Widget _buildHeader() => Row(
+  Widget _buildHeader(bool isDark) => Row(
         children: [
           // Creator avatar
           _CreatorAvatar(
             avatarUrl: opportunity.creatorProfile?.avatarUrl,
             initial: opportunity.creatorProfile?.initial ?? '?',
+            isDark: isDark,
           ),
           const SizedBox(width: KolabingSpacing.sm),
 
@@ -116,7 +125,9 @@ class OpportunityCard extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: isDark
+                        ? KolabingColors.textOnDark
+                        : KolabingColors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -126,7 +137,9 @@ class OpportunityCard extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    color: KolabingColors.textTertiary,
+                    color: isDark
+                        ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                        : KolabingColors.textTertiary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -140,7 +153,7 @@ class OpportunityCard extends StatelessWidget {
         ],
       );
 
-  Widget _buildCategoryChips() => Wrap(
+  Widget _buildCategoryChips(bool isDark) => Wrap(
         spacing: KolabingSpacing.xxs,
         runSpacing: KolabingSpacing.xxs,
         children: opportunity.categories
@@ -159,14 +172,16 @@ class OpportunityCard extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: isDark
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
                     ),
                   ),
                 ))
             .toList(),
       );
 
-  Widget _buildInfoTags() {
+  Widget _buildInfoTags(bool isDark) {
     final dateFormat = DateFormat('MMM d');
     final dateText =
         '${dateFormat.format(opportunity.availabilityStart)} - ${dateFormat.format(opportunity.availabilityEnd)}';
@@ -179,18 +194,22 @@ class OpportunityCard extends StatelessWidget {
           _TagPill(
             icon: LucideIcons.mapPin,
             label: opportunity.preferredCity,
+            isDark: isDark,
           ),
         _TagPill(
           icon: LucideIcons.building2,
           label: opportunity.venueMode.displayName,
+          isDark: isDark,
         ),
         _TagPill(
           icon: LucideIcons.calendar,
           label: dateText,
+          isDark: isDark,
         ),
         _TagPill(
           icon: LucideIcons.clock,
           label: opportunity.availabilityMode.displayName,
+          isDark: isDark,
         ),
       ],
     );
@@ -233,16 +252,20 @@ class OpportunityCard extends StatelessWidget {
         ),
       );
 
-  Widget _buildActionButtons() => Row(
+  Widget _buildActionButtons(bool isDark) => Row(
         children: [
           // View button (outlined)
           Expanded(
             child: OutlinedButton(
               onPressed: onView,
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(
-                  color: KolabingColors.border,
+                foregroundColor: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
+                side: BorderSide(
+                  color: isDark
+                      ? KolabingColors.darkBorder
+                      : KolabingColors.border,
                   width: 1.5,
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -298,10 +321,12 @@ class _CreatorAvatar extends StatelessWidget {
   const _CreatorAvatar({
     required this.avatarUrl,
     required this.initial,
+    this.isDark = false,
   });
 
   final String? avatarUrl;
   final String initial;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -334,7 +359,9 @@ class _CreatorAvatar extends StatelessWidget {
           style: GoogleFonts.rubik(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color: isDark
+                ? KolabingColors.textOnDark
+                : KolabingColors.textPrimary,
           ),
         ),
       );
@@ -386,10 +413,12 @@ class _TagPill extends StatelessWidget {
   const _TagPill({
     required this.icon,
     required this.label,
+    this.isDark = false,
   });
 
   final IconData icon;
   final String label;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -398,7 +427,8 @@ class _TagPill extends StatelessWidget {
           horizontal: KolabingSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.surfaceVariant,
+          color:
+              isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Row(
@@ -407,7 +437,9 @@ class _TagPill extends StatelessWidget {
             Icon(
               icon,
               size: 12,
-              color: KolabingColors.textTertiary,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                  : KolabingColors.textTertiary,
             ),
             const SizedBox(width: KolabingSpacing.xxs),
             Text(

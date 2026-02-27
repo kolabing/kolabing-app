@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 enum SelectionUserType {
   business,
   community,
+  attendee,
 }
 
 /// Selection card for user type (Business or Community)
@@ -91,16 +92,38 @@ class _SelectionCardState extends State<SelectionCard>
     widget.onTap();
   }
 
-  String get _icon =>
-      widget.userType == SelectionUserType.business ? '\u{1F3E2}' : '\u{1F465}';
+  String get _icon {
+    switch (widget.userType) {
+      case SelectionUserType.business:
+        return '\u{1F3E2}';
+      case SelectionUserType.community:
+        return '\u{1F465}';
+      case SelectionUserType.attendee:
+        return '\u{1F3AF}';
+    }
+  }
 
-  String get _title => widget.userType == SelectionUserType.business
-      ? "I'M A BUSINESS"
-      : "I'M A COMMUNITY";
+  String get _title {
+    switch (widget.userType) {
+      case SelectionUserType.business:
+        return "I'M A BUSINESS";
+      case SelectionUserType.community:
+        return "I'M A COMMUNITY";
+      case SelectionUserType.attendee:
+        return "I'M AN ATTENDEE";
+    }
+  }
 
-  String get _description => widget.userType == SelectionUserType.business
-      ? 'Looking for communities to partner with'
-      : 'Seeking sponsors and collaboration partners';
+  String get _description {
+    switch (widget.userType) {
+      case SelectionUserType.business:
+        return 'Looking for communities to partner with';
+      case SelectionUserType.community:
+        return 'Seeking sponsors and collaboration partners';
+      case SelectionUserType.attendee:
+        return 'Joining events and completing challenges';
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Semantics(

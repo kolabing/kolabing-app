@@ -182,7 +182,7 @@ class _CreateOpportunityScreenState
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              isDraft ? 'Draft Saved!' : 'Opportunity Published!',
+              isDraft ? 'Draft Saved!' : 'Kolab Published!',
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -192,8 +192,8 @@ class _CreateOpportunityScreenState
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               isDraft
-                  ? 'Your opportunity has been saved as a draft. You can edit and publish it later.'
-                  : 'Your collaboration request is now live. Businesses can start applying!',
+                  ? 'Your kolab has been saved as a draft. You can edit and publish it later.'
+                  : 'Your kolab is now live. Businesses can start applying!',
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 color: KolabingColors.textSecondary,
@@ -219,7 +219,7 @@ class _CreateOpportunityScreenState
                 ),
               ),
               child: Text(
-                'VIEW MY OPPORTUNITIES',
+                'VIEW MY KOLABS',
                 style: GoogleFonts.dmSans(
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -267,7 +267,7 @@ class _CreateOpportunityScreenState
                     : _handleBack,
           ),
           title: Text(
-            _isEditMode ? 'Edit Opportunity' : 'Create Opportunity',
+            _isEditMode ? 'Edit Kolab' : 'Create a Kolab',
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -428,7 +428,7 @@ class _CreateOpportunityScreenState
       children: [
         _buildStepHeader(
           title: 'BASIC INFORMATION',
-          subtitle: 'Tell us about your collaboration opportunity',
+          subtitle: 'Describe your collaboration idea',
         ),
         const SizedBox(height: KolabingSpacing.lg),
 

@@ -343,6 +343,9 @@ final authNavigationRouteProvider = Provider<String?>((ref) {
 
   final user = authState.user!;
 
+  // Attendees skip onboarding
+  if (user.isAttendee) return '/attendee';
+
   // New users or incomplete onboarding -> onboarding
   if (authState.isNewUser || !user.onboardingCompleted) {
     return '/onboarding';

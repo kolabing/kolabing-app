@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../providers/application_provider.dart';
 
@@ -39,16 +40,44 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   bool _isSubmitting = false;
   String? _errorMessage;
 
-  // Time slot state
-  final Set<int> _selectedDays = {}; // 0=Mon, 1=Tue, ..., 6=Sun
+  // Availability state — dates from opportunity range
+  final Set<DateTime> _selectedDates = {};
   TimeOfDay _startTime = const TimeOfDay(hour: 10, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 18, minute: 0);
   String? _availabilityError;
 
+  late final List<DateTime> _availableDates;
   static const _dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  static const _dayFullLabels = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+  static const _monthLabels = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Build list of selectable dates from opportunity's availability range
+    _availableDates = _buildAvailableDates();
+  }
+
+  List<DateTime> _buildAvailableDates() {
+    final start = DateUtils.dateOnly(widget.opportunity.availabilityStart);
+    final end = DateUtils.dateOnly(widget.opportunity.availabilityEnd);
+    final today = DateUtils.dateOnly(DateTime.now());
+
+    // Start from today if the opportunity start is in the past
+    final effectiveStart = start.isBefore(today) ? today : start;
+
+    if (effectiveStart.isAfter(end)) return [];
+
+    final dates = <DateTime>[];
+    var current = effectiveStart;
+    while (!current.isAfter(end)) {
+      dates.add(current);
+      current = current.add(const Duration(days: 1));
+    }
+    return dates;
+  }
 
   @override
   void dispose() {
@@ -57,37 +86,24 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     super.dispose();
   }
 
-  /// Build the availability string from selections
+  /// Build the availability string from selected dates
   String _buildAvailabilityString() {
-    if (_selectedDays.isEmpty) return '';
+    if (_selectedDates.isEmpty) return '';
 
-    final sortedDays = _selectedDays.toList()..sort();
+    final sortedDates = _selectedDates.toList()
+      ..sort((a, b) => a.compareTo(b));
 
-    // Check for common patterns
-    String daysPart;
-    final isWeekdays = sortedDays.length == 5 &&
-        sortedDays.every((d) => d < 5);
-    final isWeekends = sortedDays.length == 2 &&
-        sortedDays.contains(5) && sortedDays.contains(6);
-    final isEveryDay = sortedDays.length == 7;
-
-    if (isEveryDay) {
-      daysPart = 'Every day';
-    } else if (isWeekdays) {
-      daysPart = 'Weekdays';
-    } else if (isWeekends) {
-      daysPart = 'Weekends';
-    } else {
-      daysPart = sortedDays.map((d) => _dayFullLabels[d]).join(', ');
-    }
+    final dateStrings = sortedDates.map((d) =>
+      '${_monthLabels[d.month - 1]} ${d.day}, ${d.year}',
+    ).join(', ');
 
     final timePart = '${_formatTime(_startTime)} - ${_formatTime(_endTime)}';
     final notes = _availabilityNotesController.text.trim();
 
     if (notes.isNotEmpty) {
-      return '$daysPart • $timePart\n$notes';
+      return '$dateStrings • $timePart\n$notes';
     }
-    return '$daysPart • $timePart';
+    return '$dateStrings • $timePart';
   }
 
   String _formatTime(TimeOfDay time) {
@@ -98,10 +114,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   }
 
   Future<void> _handleSubmit() async {
-    // Validate time slots
+    // Validate date selection
     setState(() => _availabilityError = null);
-    if (_selectedDays.isEmpty) {
-      setState(() => _availabilityError = 'Please select at least one day');
+    if (_selectedDates.isEmpty) {
+      setState(() => _availabilityError = 'Please select at least one date');
       return;
     }
 
@@ -143,12 +159,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   }
 
   String _parseError(dynamic e) {
-    final errorString = e.toString();
-    if (errorString.contains('availability')) {
-      if (errorString.contains('20')) {
-        return 'Availability must be at least 20 characters';
-      }
+    if (e is ApiException) {
+      return e.error.allErrorMessages;
     }
+    final errorString = e.toString();
     if (errorString.contains('already applied')) {
       return 'You have already applied to this opportunity';
     }
@@ -316,11 +330,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
                     const SizedBox(height: KolabingSpacing.lg),
 
-                    // Availability field — time slot picker
-                    _buildSectionTitle('Your Availability', required: true),
+                    // Availability field — date picker constrained to opportunity range
+                    _buildSectionTitle('Select Date(s)', required: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'When are you available for this collaboration?',
+                      'Pick from the available dates for this collaboration',
                       style: GoogleFonts.openSans(
                         fontSize: 12,
                         color: KolabingColors.textTertiary,
@@ -328,8 +342,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
 
-                    // Day selector
-                    _buildDaySelector(),
+                    // Date selector (horizontal scrollable)
+                    _buildDateSelector(),
                     if (_availabilityError != null) ...[
                       const SizedBox(height: KolabingSpacing.xxs),
                       Text(
@@ -340,10 +354,6 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: KolabingSpacing.md),
-
-                    // Quick select buttons
-                    _buildQuickSelectButtons(),
                     const SizedBox(height: KolabingSpacing.md),
 
                     // Time range picker
@@ -458,26 +468,57 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   // Time Slot Picker Widgets
   // ===========================================================================
 
-  Widget _buildDaySelector() => Wrap(
-        spacing: KolabingSpacing.xs,
-        runSpacing: KolabingSpacing.xs,
-        children: List.generate(7, (index) {
-          final isSelected = _selectedDays.contains(index);
+  Widget _buildDateSelector() {
+    if (_availableDates.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.error.withValues(alpha: 0.05),
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(
+            color: KolabingColors.error.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Text(
+          'No available dates for this collaboration',
+          style: GoogleFonts.openSans(
+            fontSize: 13,
+            color: KolabingColors.error,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 80,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _availableDates.length,
+        separatorBuilder: (_, __) =>
+            const SizedBox(width: KolabingSpacing.xs),
+        itemBuilder: (context, index) {
+          final date = _availableDates[index];
+          final isSelected = _selectedDates.contains(date);
+          final dayLabel = _dayLabels[date.weekday - 1]; // weekday: 1=Mon
+          final dayNum = date.day.toString();
+          final monthLabel = _monthLabels[date.month - 1];
+
           return GestureDetector(
             onTap: () {
               setState(() {
                 if (isSelected) {
-                  _selectedDays.remove(index);
+                  _selectedDates.remove(date);
                 } else {
-                  _selectedDays.add(index);
+                  _selectedDates.add(date);
                 }
                 _availabilityError = null;
               });
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 44,
-              height: 44,
+              width: 56,
               decoration: BoxDecoration(
                 color: isSelected
                     ? KolabingColors.primary
@@ -492,83 +533,48 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                   width: isSelected ? 2 : 1,
                 ),
               ),
-              child: Center(
-                child: Text(
-                  _dayLabels[index],
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.textSecondary,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    dayLabel,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected
+                          ? KolabingColors.onPrimary
+                          : KolabingColors.textTertiary,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 2),
+                  Text(
+                    dayNum,
+                    style: GoogleFonts.rubik(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: isSelected
+                          ? KolabingColors.onPrimary
+                          : KolabingColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    monthLabel,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected
+                          ? KolabingColors.onPrimary.withValues(alpha: 0.8)
+                          : KolabingColors.textTertiary,
+                    ),
+                  ),
+                ],
               ),
             ),
           );
-        }),
-      );
-
-  Widget _buildQuickSelectButtons() => Row(
-        children: [
-          _buildQuickSelectChip(
-            label: 'Weekdays',
-            onTap: () => setState(() {
-              _selectedDays
-                ..clear()
-                ..addAll({0, 1, 2, 3, 4});
-              _availabilityError = null;
-            }),
-          ),
-          const SizedBox(width: KolabingSpacing.xs),
-          _buildQuickSelectChip(
-            label: 'Weekends',
-            onTap: () => setState(() {
-              _selectedDays
-                ..clear()
-                ..addAll({5, 6});
-              _availabilityError = null;
-            }),
-          ),
-          const SizedBox(width: KolabingSpacing.xs),
-          _buildQuickSelectChip(
-            label: 'Every day',
-            onTap: () => setState(() {
-              _selectedDays
-                ..clear()
-                ..addAll({0, 1, 2, 3, 4, 5, 6});
-              _availabilityError = null;
-            }),
-          ),
-        ],
-      );
-
-  Widget _buildQuickSelectChip({
-    required String label,
-    required VoidCallback onTap,
-  }) =>
-      GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.sm,
-            vertical: KolabingSpacing.xxs,
-          ),
-          decoration: BoxDecoration(
-            color: KolabingColors.background,
-            borderRadius: KolabingRadius.borderRadiusRound,
-            border: Border.all(color: KolabingColors.border),
-          ),
-          child: Text(
-            label,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.textSecondary,
-            ),
-          ),
-        ),
-      );
+        },
+      ),
+    );
+  }
 
   Widget _buildTimeRangePicker() => Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),

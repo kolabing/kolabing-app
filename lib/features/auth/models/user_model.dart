@@ -1,7 +1,8 @@
 /// User type enumeration
 enum UserType {
   business,
-  community;
+  community,
+  attendee;
 
   /// Parse user type from string
   static UserType fromString(String value) {
@@ -10,6 +11,8 @@ enum UserType {
         return UserType.business;
       case 'community':
         return UserType.community;
+      case 'attendee':
+        return UserType.attendee;
       default:
         return UserType.community;
     }
@@ -25,6 +28,8 @@ enum UserType {
         return 'BUSINESS';
       case UserType.community:
         return 'COMMUNITY';
+      case UserType.attendee:
+        return 'ATTENDEE';
     }
   }
 }
@@ -185,6 +190,45 @@ class UserSubscription {
       };
 }
 
+/// Attendee profile model for gamification stats
+class AttendeeProfileData {
+  const AttendeeProfileData({
+    required this.id,
+    required this.profileId,
+    this.totalPoints = 0,
+    this.totalChallengesCompleted = 0,
+    this.totalEventsAttended = 0,
+    this.globalRank,
+  });
+
+  factory AttendeeProfileData.fromJson(Map<String, dynamic> json) =>
+      AttendeeProfileData(
+        id: json['id']?.toString() ?? '',
+        profileId: json['profile_id']?.toString() ?? '',
+        totalPoints: json['total_points'] as int? ?? 0,
+        totalChallengesCompleted:
+            json['total_challenges_completed'] as int? ?? 0,
+        totalEventsAttended: json['total_events_attended'] as int? ?? 0,
+        globalRank: json['global_rank'] as int?,
+      );
+
+  final String id;
+  final String profileId;
+  final int totalPoints;
+  final int totalChallengesCompleted;
+  final int totalEventsAttended;
+  final int? globalRank;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'profile_id': profileId,
+        'total_points': totalPoints,
+        'total_challenges_completed': totalChallengesCompleted,
+        'total_events_attended': totalEventsAttended,
+        if (globalRank != null) 'global_rank': globalRank,
+      };
+}
+
 /// Main user model
 class UserModel {
   const UserModel({
@@ -196,6 +240,7 @@ class UserModel {
     this.onboardingCompleted = false,
     this.businessProfile,
     this.communityProfile,
+    this.attendeeProfile,
     this.subscription,
     this.createdAt,
   });
@@ -217,6 +262,11 @@ class UserModel {
                 json['community_profile'] as Map<String, dynamic>,
               )
             : null,
+        attendeeProfile: json['attendee_profile'] != null
+            ? AttendeeProfileData.fromJson(
+                json['attendee_profile'] as Map<String, dynamic>,
+              )
+            : null,
         subscription: json['subscription'] != null
             ? UserSubscription.fromJson(
                 json['subscription'] as Map<String, dynamic>,
@@ -235,6 +285,7 @@ class UserModel {
   final bool onboardingCompleted;
   final BusinessProfile? businessProfile;
   final CommunityProfile? communityProfile;
+  final AttendeeProfileData? attendeeProfile;
   final UserSubscription? subscription;
   final DateTime? createdAt;
 
@@ -243,6 +294,9 @@ class UserModel {
 
   /// Check if user is community type
   bool get isCommunity => userType == UserType.community;
+
+  /// Check if user is attendee type
+  bool get isAttendee => userType == UserType.attendee;
 
   /// Get display name from profile
   String get displayName {
@@ -275,6 +329,8 @@ class UserModel {
           'business_profile': businessProfile!.toJson(),
         if (communityProfile != null)
           'community_profile': communityProfile!.toJson(),
+        if (attendeeProfile != null)
+          'attendee_profile': attendeeProfile!.toJson(),
         if (subscription != null) 'subscription': subscription!.toJson(),
         if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
       };
@@ -288,6 +344,7 @@ class UserModel {
     bool? onboardingCompleted,
     BusinessProfile? businessProfile,
     CommunityProfile? communityProfile,
+    AttendeeProfileData? attendeeProfile,
     UserSubscription? subscription,
     DateTime? createdAt,
   }) =>
@@ -300,6 +357,7 @@ class UserModel {
         onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
         businessProfile: businessProfile ?? this.businessProfile,
         communityProfile: communityProfile ?? this.communityProfile,
+        attendeeProfile: attendeeProfile ?? this.attendeeProfile,
         subscription: subscription ?? this.subscription,
         createdAt: createdAt ?? this.createdAt,
       );

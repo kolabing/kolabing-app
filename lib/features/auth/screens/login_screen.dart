@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../services/permission_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/kolabing_logo.dart';
@@ -198,7 +199,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       await _exitController.forward();
       if (!mounted) return;
 
-      final route = _getNavigationRoute(result);
+      final route = await _getNavigationRoute(result);
+      if (!mounted) return;
       context.go(route);
     } else if (result.isNetworkError) {
       setState(() => _isLoading = false);
@@ -233,7 +235,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       await _exitController.forward();
       if (!mounted) return;
 
-      final route = _getNavigationRoute(result);
+      final route = await _getNavigationRoute(result);
+      if (!mounted) return;
       context.go(route);
     } else if (result.cancelled) {
       setState(() => _isGoogleLoading = false);
@@ -249,11 +252,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     }
   }
 
-  String _getNavigationRoute(AuthResult result) {
-    if (result.isNewUser || !(result.user?.onboardingCompleted ?? false)) {
+  Future<String> _getNavigationRoute(AuthResult result) async {
+    final user = result.user;
+
+    // Attendees skip onboarding entirely
+    if (user?.isAttendee ?? false) {
+      return '/attendee';
+    }
+
+    if (result.isNewUser || !(user?.onboardingCompleted ?? false)) {
       return '/onboarding';
     }
-    return result.user?.isBusiness ?? false ? '/business' : '/community';
+    final dashboard = (user?.isBusiness ?? false) ? '/business' : '/community';
+
+    final hasShownPermissions =
+        await PermissionService.instance.hasShownPermissionScreen();
+    if (!hasShownPermissions) {
+      return '/permissions?destination=${Uri.encodeComponent(dashboard)}';
+    }
+    return dashboard;
   }
 
   void _showUserNotFoundDialog() {
@@ -424,6 +441,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               slideAnimation: _formSlideAnimation,
                               child: Column(
                                 children: [
+                                  // Email label
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Email',
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: KolabingColors.textOnDark,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+
                                   // Email field
                                   TextFormField(
                                     controller: _emailController,
@@ -437,16 +468,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       _passwordFocusNode.requestFocus();
                                     },
                                     style: GoogleFonts.openSans(
-                                      color: KolabingColors.textOnDark,
+                                      color: const Color(0xFF1A1A1A),
                                       fontSize: 16,
                                     ),
                                     decoration: _inputDecoration(
-                                      label: 'Email',
                                       hint: 'your@email.com',
                                       prefixIcon: Icons.email_outlined,
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 20),
+
+                                  // Password label
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Password',
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: KolabingColors.textOnDark,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
 
                                   // Password field
                                   TextFormField(
@@ -458,11 +502,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     textInputAction: TextInputAction.done,
                                     onFieldSubmitted: (_) => _handleEmailLogin(),
                                     style: GoogleFonts.openSans(
-                                      color: KolabingColors.textOnDark,
+                                      color: const Color(0xFF1A1A1A),
                                       fontSize: 16,
                                     ),
                                     decoration: _inputDecoration(
-                                      label: 'Password',
                                       hint: 'Enter your password',
                                       prefixIcon: Icons.lock_outline,
                                       suffixIcon: IconButton(
@@ -470,7 +513,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                           _obscurePassword
                                               ? Icons.visibility_outlined
                                               : Icons.visibility_off_outlined,
-                                          color: KolabingColors.textTertiary,
+                                          color: const Color(0xFFAAAAAA),
                                         ),
                                         onPressed: () {
                                           setState(() {
@@ -531,6 +574,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                                 letterSpacing: 1.0,
                                               ),
                                             ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // Forgot Password link
+                            AnimatedBuilder(
+                              animation: _buttonAnimation,
+                              builder: (context, child) => Opacity(
+                                opacity: _buttonAnimation.value,
+                                child: child,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  onTap: _anyLoading || _showSuccess
+                                      ? null
+                                      : () => context.push('/auth/forgot-password'),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(
+                                      'Forgot Password?',
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: KolabingColors.primary,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -621,31 +694,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       );
 
   InputDecoration _inputDecoration({
-    required String label,
     required String hint,
     required IconData prefixIcon,
     Widget? suffixIcon,
   }) =>
       InputDecoration(
-        labelText: label,
         hintText: hint,
-        labelStyle: GoogleFonts.openSans(
-          color: KolabingColors.textTertiary,
-        ),
         hintStyle: GoogleFonts.openSans(
-          color: KolabingColors.textTertiary.withValues(alpha: 0.6),
+          color: const Color(0xFFAAAAAA),
+          fontSize: 15,
         ),
-        prefixIcon: Icon(prefixIcon, color: KolabingColors.textTertiary),
+        prefixIcon: Icon(prefixIcon, color: const Color(0xFFAAAAAA)),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: KolabingColors.darkSurface,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.darkBorder),
+          borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.darkBorder),
+          borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

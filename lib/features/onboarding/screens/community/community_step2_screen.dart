@@ -89,7 +89,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     // Title
                     Center(
                       child: Text(
-                        'WHAT DESCRIBES YOU BEST?',
+                        'What type of community are you?',
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -103,7 +103,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     // Subtitle
                     Center(
                       child: Text(
-                        'Help businesses find you',
+                        'Help businesses understand your community',
                         style: GoogleFonts.openSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -121,7 +121,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
+                          crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
                           childAspectRatio: 1.0,

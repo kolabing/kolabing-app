@@ -19,6 +19,8 @@ import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
+import '../../event/widgets/past_events_section.dart';
+import '../../settings/widgets/theme_selector_section.dart';
 
 /// Community profile screen
 class CommunityProfileScreen extends ConsumerStatefulWidget {
@@ -36,9 +38,11 @@ class _CommunityProfileScreenState
   @override
   void initState() {
     super.initState();
+    // Profile auto-loads in ProfileNotifier.build()
+    // Only trigger a re-load if we had a previous error
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = ref.read(profileProvider);
-      if (!state.isLoading && !state.hasData && state.error == null) {
+      if (state.error != null && !state.isLoading) {
         ref.read(profileProvider.notifier).loadProfile();
       }
     });
@@ -265,54 +269,55 @@ class _CommunityProfileScreenState
       }
     });
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: isDark
+          ? KolabingColors.darkBackground
+          : KolabingColors.background,
       body: SafeArea(
-        child: _buildBody(state),
+        child: _buildBody(state, isDark),
       ),
     );
   }
 
-  Widget _buildBody(ProfileState state) {
-    // Trigger load if needed
-    if (!state.hasData && !state.isLoading && !state.isInitialized) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(profileProvider.notifier).loadProfile();
-      });
+  Widget _buildBody(ProfileState state, bool isDark) {
+    // Profile content (prioritize rendering data if available)
+    if (state.profile != null) {
+      return _buildProfileContent(state, isDark);
     }
 
-    // Loading state (only show shimmer when actually loading)
-    if (state.isLoading && !state.hasData) {
-      return _buildLoadingState();
+    // Loading state
+    if (state.isLoading) {
+      return _buildLoadingState(isDark);
     }
 
     // Error state without data
-    if (state.error != null && !state.hasData) {
-      return _buildErrorState(state.error!);
-    }
-
-    // Profile content
-    if (state.profile != null) {
-      return _buildProfileContent(state);
+    if (state.error != null) {
+      return _buildErrorState(state.error!, isDark);
     }
 
     // Initialized but no data and no error — something went wrong, show retry
     if (state.isInitialized) {
-      return _buildErrorState('Failed to load profile');
+      return _buildErrorState('Failed to load profile', isDark);
     }
 
-    // Initial loading (before first load attempt)
-    return _buildLoadingState();
+    // Initial state (before first load attempt)
+    return _buildLoadingState(isDark);
   }
 
-  Widget _buildLoadingState() => SingleChildScrollView(
+  Widget _buildLoadingState(bool isDark) => SingleChildScrollView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
           children: [
             // Header shimmer
             Shimmer.fromColors(
-              baseColor: KolabingColors.surfaceVariant,
-              highlightColor: KolabingColors.surface,
+              baseColor: isDark
+                  ? KolabingColors.darkSurface
+                  : KolabingColors.surfaceVariant,
+              highlightColor: isDark
+                  ? KolabingColors.darkBorder
+                  : KolabingColors.surface,
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -365,12 +370,16 @@ class _CommunityProfileScreenState
               (index) => Padding(
                 padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
                 child: Shimmer.fromColors(
-                  baseColor: KolabingColors.surfaceVariant,
-                  highlightColor: KolabingColors.surface,
+                  baseColor: isDark
+                      ? KolabingColors.darkSurface
+                      : KolabingColors.surfaceVariant,
+                  highlightColor: isDark
+                      ? KolabingColors.darkBorder
+                      : KolabingColors.surface,
                   child: Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? KolabingColors.darkSurface : Colors.white,
                       borderRadius: KolabingRadius.borderRadiusLg,
                     ),
                   ),
@@ -381,7 +390,7 @@ class _CommunityProfileScreenState
         ),
       );
 
-  Widget _buildErrorState(String error) => Center(
+  Widget _buildErrorState(String error, bool isDark) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -404,7 +413,9 @@ class _CommunityProfileScreenState
               Text(
                 'Something went wrong',
                 style: KolabingTextStyles.headlineSmall.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -435,7 +446,7 @@ class _CommunityProfileScreenState
         ),
       );
 
-  Widget _buildProfileContent(ProfileState state) {
+  Widget _buildProfileContent(ProfileState state, bool isDark) {
     final profile = state.profile!;
     final about = profile.communityProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
@@ -450,13 +461,13 @@ class _CommunityProfileScreenState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Profile Header Card
-            _buildProfileHeader(profile, state.isUpdating),
+            _buildProfileHeader(profile, state.isUpdating, isDark),
 
             const SizedBox(height: KolabingSpacing.md),
 
             // About Section
             if (hasAbout) ...[
-              _buildAboutSection(about),
+              _buildAboutSection(about, isDark),
               const SizedBox(height: KolabingSpacing.md),
             ],
 
@@ -465,8 +476,13 @@ class _CommunityProfileScreenState
 
             const SizedBox(height: KolabingSpacing.md),
 
+            // Past Events Section
+            const PastEventsSection(),
+
+            const SizedBox(height: KolabingSpacing.md),
+
             // Contact Info Section
-            _buildContactInfoSection(profile),
+            _buildContactInfoSection(profile, isDark),
 
             const SizedBox(height: KolabingSpacing.md),
 
@@ -474,12 +490,18 @@ class _CommunityProfileScreenState
             _buildNotificationPreferencesSection(
               state.notificationPrefs,
               state.isUpdating,
+              isDark,
             ),
 
             const SizedBox(height: KolabingSpacing.md),
 
+            // Theme Selector Section
+            const ThemeSelectorSection(),
+
+            const SizedBox(height: KolabingSpacing.md),
+
             // Account Section
-            _buildAccountSection(profile.email, state.isUpdating),
+            _buildAccountSection(profile.email, state.isUpdating, isDark),
 
             const SizedBox(height: KolabingSpacing.xxl),
           ],
@@ -488,7 +510,7 @@ class _CommunityProfileScreenState
     );
   }
 
-  Widget _buildProfileHeader(UserModel profile, bool isUpdating) {
+  Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final name = profile.communityProfile?.name ?? profile.displayName;
     final communityType =
         profile.communityProfile?.communityType ?? 'Community';
@@ -498,15 +520,17 @@ class _CommunityProfileScreenState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         children: [
@@ -549,7 +573,9 @@ class _CommunityProfileScreenState
                       color: KolabingColors.primary,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: KolabingColors.surface,
+                        color: isDark
+                            ? KolabingColors.darkSurface
+                            : KolabingColors.surface,
                         width: 2,
                       ),
                     ),
@@ -589,7 +615,9 @@ class _CommunityProfileScreenState
           Text(
             name,
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.textPrimary,
+              color: isDark
+                  ? KolabingColors.textOnDark
+                  : KolabingColors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -634,7 +662,7 @@ class _CommunityProfileScreenState
         ),
       );
 
-  Widget _buildAboutSection(String about) => _SectionCard(
+  Widget _buildAboutSection(String about, bool isDark) => _SectionCard(
         title: 'About',
         child: Text(
           about,
@@ -644,7 +672,7 @@ class _CommunityProfileScreenState
         ),
       );
 
-  Widget _buildContactInfoSection(UserModel profile) {
+  Widget _buildContactInfoSection(UserModel profile, bool isDark) {
     final email = profile.email;
     final phone = profile.phoneNumber;
     final website = profile.communityProfile?.website;
@@ -688,6 +716,7 @@ class _CommunityProfileScreenState
   Widget _buildNotificationPreferencesSection(
     NotificationPreferences? preferences,
     bool isUpdating,
+    bool isDark,
   ) =>
       _SectionCard(
         title: 'Notifications',
@@ -731,7 +760,8 @@ class _CommunityProfileScreenState
         ),
       );
 
-  Widget _buildAccountSection(String email, bool isUpdating) => _SectionCard(
+  Widget _buildAccountSection(String email, bool isUpdating, bool isDark) =>
+      _SectionCard(
         title: 'Account',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -739,17 +769,21 @@ class _CommunityProfileScreenState
             // Email
             Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.mail,
                   size: 20,
-                  color: KolabingColors.textTertiary,
+                  color: isDark
+                      ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                      : KolabingColors.textTertiary,
                 ),
                 const SizedBox(width: KolabingSpacing.sm),
                 Expanded(
                   child: Text(
                     email,
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textPrimary,
+                      color: isDark
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -817,46 +851,54 @@ class _SectionCard extends StatelessWidget {
   final IconData? titleIcon;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                if (titleIcon != null) ...[
-                  Icon(
-                    titleIcon,
-                    size: 20,
-                    color: KolabingColors.primary,
-                  ),
-                  const SizedBox(width: KolabingSpacing.xs),
-                ],
-                Text(
-                  title,
-                  style: KolabingTextStyles.titleMedium.copyWith(
-                    color: KolabingColors.textPrimary,
-                  ),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
               ],
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            child,
-          ],
-        ),
-      );
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              if (titleIcon != null) ...[
+                Icon(
+                  titleIcon,
+                  size: 20,
+                  color: KolabingColors.primary,
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+              ],
+              Text(
+                title,
+                style: KolabingTextStyles.titleMedium.copyWith(
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+          child,
+        ],
+      ),
+    );
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -875,35 +917,49 @@ class _ContactInfoTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
-        borderRadius: KolabingRadius.borderRadiusSm,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-          child: Row(
-            children: [
-              Icon(icon, size: 20, color: KolabingColors.textTertiary),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: Text(
-                  label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: onTap != null
-                        ? KolabingColors.info
-                        : KolabingColors.textPrimary,
-                  ),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: KolabingRadius.borderRadiusSm,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                  : KolabingColors.textTertiary,
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: Text(
+                label,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  color: onTap != null
+                      ? KolabingColors.info
+                      : isDark
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
                 ),
               ),
-              if (onTap != null)
-                const Icon(
-                  LucideIcons.externalLink,
-                  size: 16,
-                  color: KolabingColors.textTertiary,
-                ),
-            ],
-          ),
+            ),
+            if (onTap != null)
+              Icon(
+                LucideIcons.externalLink,
+                size: 16,
+                color: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                    : KolabingColors.textTertiary,
+              ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -924,38 +980,44 @@ class _NotificationToggle extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   @override
-  Widget build(BuildContext context) => Opacity(
-        opacity: isUpdating ? 0.6 : 1.0,
-        child: InkWell(
-          onTap: isUpdating
-              ? null
-              : () {
-                  HapticFeedback.selectionClick();
-                  onChanged(!value);
-                },
-          borderRadius: KolabingRadius.borderRadiusSm,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    label,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textPrimary,
-                    ),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Opacity(
+      opacity: isUpdating ? 0.6 : 1.0,
+      child: InkWell(
+        onTap: isUpdating
+            ? null
+            : () {
+                HapticFeedback.selectionClick();
+                onChanged(!value);
+              },
+        borderRadius: KolabingRadius.borderRadiusSm,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: isDark
+                        ? KolabingColors.textOnDark
+                        : KolabingColors.textPrimary,
                   ),
                 ),
-                Switch(
-                  value: value,
-                  onChanged: isUpdating ? null : onChanged,
-                  activeThumbColor: KolabingColors.primary,
-                  activeTrackColor:
-                      KolabingColors.primary.withValues(alpha: 0.5),
-                ),
-              ],
-            ),
+              ),
+              Switch(
+                value: value,
+                onChanged: isUpdating ? null : onChanged,
+                activeThumbColor: KolabingColors.primary,
+                activeTrackColor:
+                    KolabingColors.primary.withValues(alpha: 0.5),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }

@@ -35,18 +35,22 @@ class DashboardStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +63,9 @@ class DashboardStatCard extends StatelessWidget {
               fontSize: 11,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
-              color: KolabingColors.textTertiary,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                  : KolabingColors.textTertiary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -77,7 +83,9 @@ class DashboardStatCard extends StatelessWidget {
                 style: GoogleFonts.rubik(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                 ),
               ),
 

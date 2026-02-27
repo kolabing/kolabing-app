@@ -21,14 +21,18 @@ class UpcomingCollaborationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: KolabingColors.border),
+          border: Border.all(
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          ),
         ),
         child: Row(
           children: [
@@ -47,7 +51,9 @@ class UpcomingCollaborationCard extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: isDark
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -68,7 +74,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
                   const SizedBox(height: KolabingSpacing.xs),
 
                   // Date chip
-                  _DateChip(dateText: collaboration.dateDisplay),
+                  _DateChip(dateText: collaboration.dateDisplay, isDark: isDark),
                 ],
               ),
             ),
@@ -113,9 +119,10 @@ class _PartnerAvatar extends StatelessWidget {
 
 /// Small chip showing the scheduled date
 class _DateChip extends StatelessWidget {
-  const _DateChip({required this.dateText});
+  const _DateChip({required this.dateText, this.isDark = false});
 
   final String dateText;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +132,8 @@ class _DateChip extends StatelessWidget {
         vertical: KolabingSpacing.xxxs,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
+        color:
+            isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
         borderRadius: KolabingRadius.borderRadiusXs,
       ),
       child: Text(

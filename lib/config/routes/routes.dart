@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
+import '../../features/auth/screens/attendee_register_screen.dart';
+import '../../features/collaboration/screens/collaboration_detail_screen.dart';
+import '../../features/auth/screens/forgot_password_screen.dart';
+import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/user_type_selection_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/gamification/gamification.dart';
 import '../../features/opportunity/models/opportunity.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
@@ -25,6 +32,7 @@ import '../../features/onboarding/screens/community/community_step1_screen.dart'
 import '../../features/onboarding/screens/community/community_step2_screen.dart';
 import '../../features/onboarding/screens/community/community_step3_screen.dart';
 import '../../features/onboarding/screens/community/community_step4_screen.dart';
+import '../../features/permission/screens/permission_screen.dart';
 
 /// Kolabing route definitions
 ///
@@ -63,6 +71,9 @@ abstract final class KolabingRoutes {
   static const String communityOnboardingStep4 = '/onboarding/community/step4';
   static const String communityOnboardingFinal = '/onboarding/community/final';
 
+  /// Attendee registration (no onboarding)
+  static const String attendeeRegister = '/auth/register/attendee';
+
   /// Legacy sign in (redirect to login)
   static const String signIn = '/auth/sign-in';
 
@@ -85,7 +96,7 @@ abstract final class KolabingRoutes {
   /// Business browse communities
   static const String businessBrowse = '/business/browse';
 
-  /// Business my offers list
+  /// Business my kollabs list
   static const String businessOffers = '/business/offers';
 
   /// Create new business offer
@@ -173,12 +184,49 @@ abstract final class KolabingRoutes {
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
 
+  /// Event detail screen
+  static const String eventDetail = '/event/:id';
+
+  // ---------------------------------------------------------------------------
+  // Attendee (Gamification) Routes
+  // ---------------------------------------------------------------------------
+
+  /// Attendee dashboard (home)
+  static const String attendeeDashboard = '/attendee';
+
+  /// Attendee profile
+  static const String attendeeProfile = '/attendee/profile';
+
+  /// Event QR code display (for organizers)
+  static const String eventQRCode = '/attendee/events/:eventId/qr';
+
+  /// Event check-ins list (for organizers)
+  static const String eventCheckins = '/attendee/events/:eventId/checkins';
+
+  /// Event challenges list
+  static const String eventChallenges = '/attendee/events/:eventId/challenges';
+
+  /// Create challenge (for organizers)
+  static const String createChallenge =
+      '/attendee/events/:eventId/challenges/create';
+
+  /// Edit challenge (for organizers)
+  static const String editChallenge =
+      '/attendee/events/:eventId/challenges/:challengeId/edit';
+
+  /// Initiate challenge
+  static const String initiateChallenge =
+      '/attendee/events/:eventId/challenges/:challengeId/initiate';
+
   // ---------------------------------------------------------------------------
   // Profile Completion
   // ---------------------------------------------------------------------------
 
   /// Profile completion flow
   static const String profileCompletion = '/profile/complete';
+
+  /// Permission request screen
+  static const String permissions = '/permissions';
 }
 
 /// Kolabing router configuration
@@ -222,6 +270,14 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'login',
       builder: (BuildContext context, GoRouterState state) =>
           const LoginScreen(),
+    ),
+
+    // Attendee registration (no onboarding steps)
+    GoRoute(
+      path: KolabingRoutes.attendeeRegister,
+      name: 'attendeeRegister',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AttendeeRegisterScreen(),
     ),
 
     // -------------------------------------------------------------------------
@@ -310,13 +366,13 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.forgotPassword,
       name: 'forgotPassword',
       builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Forgot Password'),
+          const ForgotPasswordScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.resetPassword,
       name: 'resetPassword',
       builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Reset Password'),
+          const ResetPasswordScreen(),
     ),
 
     // Profile completion
@@ -325,6 +381,16 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'profileCompletion',
       builder: (BuildContext context, GoRouterState state) =>
           const _PlaceholderScreen(title: 'Complete Profile'),
+    ),
+
+    // Permission request screen
+    GoRoute(
+      path: KolabingRoutes.permissions,
+      name: 'permissions',
+      builder: (BuildContext context, GoRouterState state) {
+        final destination = state.uri.queryParameters['destination'] ?? '/business';
+        return PermissionScreen(destination: destination);
+      },
     ),
 
     // -------------------------------------------------------------------------
@@ -434,7 +500,7 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'collaborationDetails',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        return _PlaceholderScreen(title: 'Collaboration: $id');
+        return CollaborationDetailScreen(collaborationId: id);
       },
     ),
     GoRoute(
@@ -442,7 +508,7 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'applicationDetails',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        return _PlaceholderScreen(title: 'Application: $id');
+        return ApplicationReviewScreen(applicationId: id);
       },
     ),
     GoRoute(
@@ -468,6 +534,75 @@ final GoRouter kolabingRouter = GoRouter(
         return PublicProfileScreen(
           profileId: id,
           creatorProfile: creatorProfile,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/event/:id',
+      name: 'eventDetail',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        return EventDetailScreen(eventId: id);
+      },
+    ),
+
+    // -------------------------------------------------------------------------
+    // Attendee (Gamification) Routes
+    // -------------------------------------------------------------------------
+
+    GoRoute(
+      path: KolabingRoutes.attendeeDashboard,
+      name: 'attendeeDashboard',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AttendeeMainScreen(),
+    ),
+
+    GoRoute(
+      path: KolabingRoutes.eventQRCode,
+      name: 'eventQRCode',
+      builder: (BuildContext context, GoRouterState state) {
+        final eventId = state.pathParameters['eventId'] ?? '';
+        final eventName = state.uri.queryParameters['name'];
+        return EventQRCodeScreen(eventId: eventId, eventName: eventName);
+      },
+    ),
+
+    GoRoute(
+      path: KolabingRoutes.eventChallenges,
+      name: 'eventChallenges',
+      builder: (BuildContext context, GoRouterState state) {
+        final eventId = state.pathParameters['eventId'] ?? '';
+        final eventName = state.uri.queryParameters['name'];
+        final isOrganizer =
+            state.uri.queryParameters['organizer'] == 'true';
+        return EventChallengesScreen(
+          eventId: eventId,
+          eventName: eventName,
+          isOrganizer: isOrganizer,
+        );
+      },
+    ),
+
+    GoRoute(
+      path: KolabingRoutes.createChallenge,
+      name: 'createChallenge',
+      builder: (BuildContext context, GoRouterState state) {
+        final eventId = state.pathParameters['eventId'] ?? '';
+        return CreateChallengeScreen(eventId: eventId);
+      },
+    ),
+
+    GoRoute(
+      path: KolabingRoutes.initiateChallenge,
+      name: 'initiateChallenge',
+      builder: (BuildContext context, GoRouterState state) {
+        final eventId = state.pathParameters['eventId'] ?? '';
+        final challengeId = state.pathParameters['challengeId'] ?? '';
+        final challenge = state.extra as Challenge?;
+        return InitiateChallengeScreen(
+          eventId: eventId,
+          challengeId: challengeId,
+          challenge: challenge,
         );
       },
     ),

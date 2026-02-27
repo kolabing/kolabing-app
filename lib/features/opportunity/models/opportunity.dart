@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 // =============================================================================
@@ -168,9 +170,25 @@ class DiscountOffer {
   });
 
   factory DiscountOffer.fromJson(Map<String, dynamic> json) => DiscountOffer(
-        enabled: json['enabled'] as bool? ?? false,
-        percentage: json['percentage'] as int?,
+        enabled: _parseBool(json['enabled']),
+        percentage: _parseInt(json['percentage']),
       );
+
+  static bool _parseBool(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is int) return value != 0;
+    if (value is String) return value == '1' || value.toLowerCase() == 'true';
+    return false;
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
 
   final bool enabled;
   final int? percentage;
@@ -197,26 +215,39 @@ class BusinessOffer {
   const BusinessOffer({
     this.venue = false,
     this.foodDrink = false,
+    this.socialMediaExposure = false,
+    this.contentCreation = false,
     this.discount = const DiscountOffer(),
     this.products = const [],
     this.other,
   });
 
   factory BusinessOffer.fromJson(Map<String, dynamic> json) => BusinessOffer(
-        venue: json['venue'] as bool? ?? false,
-        foodDrink: json['food_drink'] as bool? ?? false,
+        venue: _parseBool(json['venue']),
+        foodDrink: _parseBool(json['food_drink']),
+        socialMediaExposure: _parseBool(json['social_media_exposure']),
+        contentCreation: _parseBool(json['content_creation']),
         discount: json['discount'] is Map<String, dynamic>
             ? DiscountOffer.fromJson(json['discount'] as Map<String, dynamic>)
             : const DiscountOffer(),
-        products: (json['products'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            const [],
-        other: json['other'] as String?,
+        products: json['products'] is List
+                ? (json['products'] as List).map((e) => e.toString()).toList()
+                : const [],
+        other: json['other']?.toString(),
       );
+
+  static bool _parseBool(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is int) return value != 0;
+    if (value is String) return value == '1' || value.toLowerCase() == 'true';
+    return false;
+  }
 
   final bool venue;
   final bool foodDrink;
+  final bool socialMediaExposure;
+  final bool contentCreation;
   final DiscountOffer discount;
   final List<String> products;
   final String? other;
@@ -225,6 +256,8 @@ class BusinessOffer {
   bool get hasAnyOffer =>
       venue ||
       foodDrink ||
+      socialMediaExposure ||
+      contentCreation ||
       discount.enabled ||
       products.isNotEmpty ||
       (other?.isNotEmpty ?? false);
@@ -232,6 +265,8 @@ class BusinessOffer {
   Map<String, dynamic> toJson() => {
         'venue': venue,
         'food_drink': foodDrink,
+        'social_media_exposure': socialMediaExposure,
+        'content_creation': contentCreation,
         'discount': discount.toJson(),
         if (products.isNotEmpty) 'products': products,
         if (other != null && other!.isNotEmpty) 'other': other,
@@ -240,6 +275,8 @@ class BusinessOffer {
   BusinessOffer copyWith({
     bool? venue,
     bool? foodDrink,
+    bool? socialMediaExposure,
+    bool? contentCreation,
     DiscountOffer? discount,
     List<String>? products,
     String? other,
@@ -248,6 +285,8 @@ class BusinessOffer {
       BusinessOffer(
         venue: venue ?? this.venue,
         foodDrink: foodDrink ?? this.foodDrink,
+        socialMediaExposure: socialMediaExposure ?? this.socialMediaExposure,
+        contentCreation: contentCreation ?? this.contentCreation,
         discount: discount ?? this.discount,
         products: products ?? this.products,
         other: clearOther ? null : (other ?? this.other),
@@ -268,13 +307,29 @@ class CommunityDeliverables {
 
   factory CommunityDeliverables.fromJson(Map<String, dynamic> json) =>
       CommunityDeliverables(
-        instagramPost: json['instagram_post'] as bool? ?? false,
-        instagramStory: json['instagram_story'] as bool? ?? false,
-        tiktokVideo: json['tiktok_video'] as bool? ?? false,
-        eventMention: json['event_mention'] as bool? ?? false,
-        attendeeCount: json['attendee_count'] as int?,
-        other: json['other'] as String?,
+        instagramPost: _parseBool(json['instagram_post']),
+        instagramStory: _parseBool(json['instagram_story']),
+        tiktokVideo: _parseBool(json['tiktok_video']),
+        eventMention: _parseBool(json['event_mention']),
+        attendeeCount: _parseInt(json['attendee_count']),
+        other: json['other']?.toString(),
       );
+
+  static bool _parseBool(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is int) return value != 0;
+    if (value is String) return value == '1' || value.toLowerCase() == 'true';
+    return false;
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
 
   final bool instagramPost;
   final bool instagramStory;
@@ -335,10 +390,10 @@ class CreatorProfile {
 
   factory CreatorProfile.fromJson(Map<String, dynamic> json) => CreatorProfile(
         id: json['id']?.toString() ?? '',
-        userType: json['user_type'] as String? ?? '',
-        displayNameValue: json['display_name'] as String?,
-        businessName: json['business_name'] as String?,
-        avatarUrl: json['avatar_url'] as String?,
+        userType: json['user_type']?.toString() ?? '',
+        displayNameValue: json['display_name']?.toString(),
+        businessName: json['business_name']?.toString(),
+        avatarUrl: json['avatar_url']?.toString(),
       );
 
   final String id;
@@ -371,10 +426,10 @@ class MyApplication {
 
   factory MyApplication.fromJson(Map<String, dynamic> json) => MyApplication(
         id: json['id']?.toString() ?? '',
-        status: json['status'] as String? ?? 'pending',
-        message: json['message'] as String?,
+        status: json['status']?.toString() ?? 'pending',
+        message: json['message']?.toString(),
         createdAt: json['created_at'] != null
-            ? DateTime.tryParse(json['created_at'] as String)
+            ? DateTime.tryParse(json['created_at'].toString())
             : null,
       );
 
@@ -417,13 +472,32 @@ class Opportunity {
   });
 
   factory Opportunity.fromJson(Map<String, dynamic> json) {
-    final rawId = json['id'];
-    final id = rawId is int ? rawId.toString() : rawId as String?;
+    final id = json['id']?.toString();
+
+    // categories may be a List or a JSON-encoded String like '["Art", "Community"]'
+    List<String> categories;
+    final rawCats = json['categories'];
+    if (rawCats is List) {
+      categories = rawCats.map((e) => e.toString()).toList();
+    } else if (rawCats is String && rawCats.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(rawCats);
+        if (decoded is List) {
+          categories = decoded.map((e) => e.toString()).toList();
+        } else {
+          categories = rawCats.split(',').map((e) => e.trim()).toList();
+        }
+      } catch (_) {
+        categories = rawCats.split(',').map((e) => e.trim()).toList();
+      }
+    } else {
+      categories = const [];
+    }
 
     return Opportunity(
       id: id,
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
       businessOffer: json['business_offer'] is Map<String, dynamic>
           ? BusinessOffer.fromJson(
               json['business_offer'] as Map<String, dynamic>)
@@ -433,21 +507,18 @@ class Opportunity {
               ? CommunityDeliverables.fromJson(
                   json['community_deliverables'] as Map<String, dynamic>)
               : const CommunityDeliverables(),
-      categories: (json['categories'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          const [],
+      categories: categories,
       availabilityMode: AvailabilityMode.fromString(
-          json['availability_mode'] as String? ?? 'flexible'),
+          json['availability_mode']?.toString() ?? 'flexible'),
       availabilityStart: _parseDate(json['availability_start']),
       availabilityEnd: _parseDate(json['availability_end']),
       venueMode:
-          VenueMode.fromString(json['venue_mode'] as String? ?? 'no_venue'),
-      address: json['address'] as String?,
-      preferredCity: json['preferred_city'] as String? ?? '',
-      offerPhoto: json['offer_photo'] as String?,
+          VenueMode.fromString(json['venue_mode']?.toString() ?? 'no_venue'),
+      address: json['address']?.toString(),
+      preferredCity: json['preferred_city']?.toString() ?? '',
+      offerPhoto: json['offer_photo']?.toString(),
       status: OpportunityStatus.fromString(
-          json['status'] as String? ?? 'draft'),
+          json['status']?.toString() ?? 'draft'),
       createdAt: _parseDateTimeNullable(json['created_at']),
       updatedAt: _parseDateTimeNullable(json['updated_at']),
       publishedAt: _parseDateTimeNullable(json['published_at']),
@@ -455,9 +526,9 @@ class Opportunity {
           ? CreatorProfile.fromJson(
               json['creator_profile'] as Map<String, dynamic>)
           : null,
-      applicationsCount: json['applications_count'] as int?,
-      isOwn: json['is_own'] as bool?,
-      hasApplied: json['has_applied'] as bool?,
+      applicationsCount: _parseInt(json['applications_count']),
+      isOwn: _parseBool(json['is_own']),
+      hasApplied: _parseBool(json['has_applied']),
       myApplication: json['my_application'] is Map<String, dynamic>
           ? MyApplication.fromJson(
               json['my_application'] as Map<String, dynamic>)
@@ -619,7 +690,7 @@ class Opportunity {
       'Opportunity(id: $id, title: $title, status: $status)';
 
   // ---------------------------------------------------------------------------
-  // Date parsing helpers
+  // Type-safe parsing helpers
   // ---------------------------------------------------------------------------
 
   static DateTime _parseDate(dynamic value) {
@@ -633,6 +704,22 @@ class Opportunity {
     if (value == null) return null;
     if (value is DateTime) return value;
     if (value is String) return DateTime.tryParse(value);
+    return null;
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  static bool? _parseBool(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value;
+    if (value is int) return value != 0;
+    if (value is String) return value == '1' || value.toLowerCase() == 'true';
     return null;
   }
 }

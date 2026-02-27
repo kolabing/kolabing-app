@@ -66,9 +66,9 @@ class SenderProfile {
   factory SenderProfile.fromJson(Map<String, dynamic> json) {
     return SenderProfile(
       id: json['id']?.toString() ?? '',
-      name: json['name'] as String? ?? 'Unknown',
-      profilePhoto: json['profile_photo'] as String?,
-      userType: json['user_type'] as String?,
+      name: json['name']?.toString() ?? 'Unknown',
+      profilePhoto: json['profile_photo']?.toString(),
+      userType: json['user_type']?.toString(),
     );
   }
 }
@@ -117,22 +117,30 @@ class ChatMessage {
       // Fallback for old format
       senderProfile = SenderProfile(
         id: json['sender_id']?.toString() ?? '',
-        name: json['sender_name'] as String? ?? 'Unknown',
+        name: json['sender_name']?.toString() ?? 'Unknown',
       );
+    }
+
+    // Safe bool parser (API may return 0/1, "true"/"false", or actual bool)
+    bool parseBool(dynamic v) {
+      if (v is bool) return v;
+      if (v is int) return v != 0;
+      if (v is String) return v.toLowerCase() == 'true' || v == '1';
+      return false;
     }
 
     return ChatMessage(
       id: json['id']?.toString() ?? '',
       applicationId: json['application_id']?.toString() ?? '',
       senderProfile: senderProfile,
-      content: json['content'] as String? ?? '',
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
-                 DateTime.tryParse(json['timestamp'] as String? ?? '') ??
+      content: json['content']?.toString() ?? '',
+      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ??
+                 DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
                  DateTime.now(),
-      isOwn: json['is_own'] as bool? ?? false,
-      isRead: json['is_read'] as bool? ?? false,
+      isOwn: parseBool(json['is_own']),
+      isRead: parseBool(json['is_read']),
       readAt: json['read_at'] != null
-          ? DateTime.tryParse(json['read_at'] as String)
+          ? DateTime.tryParse(json['read_at'].toString())
           : null,
     );
   }
@@ -185,7 +193,7 @@ class ApplicantProfile {
     if (rawCity is String) {
       city = rawCity;
     } else if (rawCity is Map<String, dynamic>) {
-      city = rawCity['name'] as String?;
+      city = rawCity['name']?.toString();
     }
 
     // category can be a String or a Map with 'name' key
@@ -194,13 +202,13 @@ class ApplicantProfile {
     if (rawCategory is String) {
       category = rawCategory;
     } else if (rawCategory is Map<String, dynamic>) {
-      category = rawCategory['name'] as String?;
+      category = rawCategory['name']?.toString();
     }
 
     return ApplicantProfile(
       id: json['id']?.toString() ?? '',
-      displayName: json['display_name'] as String? ?? 'Unknown',
-      avatarUrl: json['avatar_url'] as String?,
+      displayName: json['display_name']?.toString() ?? 'Unknown',
+      avatarUrl: json['avatar_url']?.toString(),
       city: city,
       category: category,
     );
@@ -305,31 +313,46 @@ class Application {
       availability = rawAvailability;
     } else if (rawAvailability is Map<String, dynamic>) {
       // Extract readable text from structured availability
-      availability = rawAvailability['text'] as String? ??
+      availability = rawAvailability['text']?.toString() ??
           rawAvailability.toString();
     } else {
       availability = '';
+    }
+
+    // Safe int parser
+    int parseInt(dynamic v) {
+      if (v is int) return v;
+      if (v is double) return v.toInt();
+      if (v is String) return int.tryParse(v) ?? 0;
+      return 0;
+    }
+
+    // Parse messages list safely
+    List<ChatMessage> messages = const [];
+    final rawMessages = json['messages'];
+    if (rawMessages is List) {
+      messages = rawMessages
+          .whereType<Map<String, dynamic>>()
+          .map((m) => ChatMessage.fromJson(m))
+          .toList();
     }
 
     return Application(
       id: json['id']?.toString() ?? '',
       opportunityId: json['collab_opportunity_id']?.toString() ??
                      json['opportunity_id']?.toString() ?? '',
-      message: json['message'] as String? ?? '',
+      message: json['message']?.toString() ?? '',
       availability: availability,
-      status: ApplicationStatus.fromString(json['status'] as String? ?? 'pending'),
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+      status: ApplicationStatus.fromString(json['status']?.toString() ?? 'pending'),
+      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
       updatedAt: json['updated_at'] != null
-          ? DateTime.tryParse(json['updated_at'] as String)
+          ? DateTime.tryParse(json['updated_at'].toString())
           : null,
-      declineReason: json['decline_reason'] as String?,
+      declineReason: json['decline_reason']?.toString(),
       applicantProfile: applicantProfile,
       opportunity: opportunity,
-      messages: (json['messages'] as List<dynamic>?)
-              ?.map((m) => ChatMessage.fromJson(m as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      unreadCount: json['unread_count'] as int? ?? 0,
+      messages: messages,
+      unreadCount: parseInt(json['unread_count']),
     );
   }
 
@@ -381,11 +404,34 @@ class UnreadMessagesCount {
   final Map<String, int> byApplication;
 
   factory UnreadMessagesCount.fromJson(Map<String, dynamic> json) {
-    final byAppRaw = json['by_application'] as Map<String, dynamic>? ?? {};
-    final byApp = byAppRaw.map((key, value) => MapEntry(key, value as int? ?? 0));
+    Map<String, int> byApp = {};
+    final rawByApp = json['by_application'];
+    if (rawByApp is Map<String, dynamic>) {
+      byApp = rawByApp.map((key, value) {
+        int intVal = 0;
+        if (value is int) {
+          intVal = value;
+        } else if (value is double) {
+          intVal = value.toInt();
+        } else if (value is String) {
+          intVal = int.tryParse(value) ?? 0;
+        }
+        return MapEntry(key, intVal);
+      });
+    }
+
+    int total = 0;
+    final rawTotal = json['total'];
+    if (rawTotal is int) {
+      total = rawTotal;
+    } else if (rawTotal is double) {
+      total = rawTotal.toInt();
+    } else if (rawTotal is String) {
+      total = int.tryParse(rawTotal) ?? 0;
+    }
 
     return UnreadMessagesCount(
-      total: json['total'] as int? ?? 0,
+      total: total,
       byApplication: byApp,
     );
   }

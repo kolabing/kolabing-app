@@ -50,6 +50,11 @@ class OpportunityFiltersNotifier extends Notifier<OpportunityFilters> {
     }
   }
 
+  /// Sets creator type without toggling — used when the filter is locked (e.g. community explore)
+  void setCreatorTypeLocked(String type) {
+    state = state.copyWith(creatorType: type);
+  }
+
   void toggleCategory(String category) {
     final current = List<String>.from(state.selectedCategories);
     if (current.contains(category)) {

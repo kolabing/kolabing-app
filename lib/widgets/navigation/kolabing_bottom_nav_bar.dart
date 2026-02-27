@@ -37,22 +37,26 @@ class KolabingBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        border: const Border(
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        border: Border(
           top: BorderSide(
-            color: KolabingColors.border,
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
             width: 1,
           ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
       ),
       child: SafeArea(
         top: false,
@@ -66,6 +70,7 @@ class KolabingBottomNavBar extends StatelessWidget {
                 item: items[index],
                 isSelected: currentIndex == index,
                 onTap: () => onTap(index),
+                isDark: isDark,
               ),
             ),
           ),
@@ -80,20 +85,26 @@ class _NavBarItem extends StatelessWidget {
     required this.item,
     required this.isSelected,
     required this.onTap,
+    this.isDark = false,
   });
 
   final NavItem item;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     final color = isSelected
         ? KolabingColors.primary
-        : const Color(0xFF9CA3AF); // Gray-400
+        : isDark
+            ? const Color(0xFF6B7280)
+            : const Color(0xFF9CA3AF); // Gray-400
     final labelColor = isSelected
-        ? KolabingColors.textPrimary
-        : const Color(0xFF9CA3AF);
+        ? (isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary)
+        : isDark
+            ? const Color(0xFF6B7280)
+            : const Color(0xFF9CA3AF);
 
     return Expanded(
       child: Material(
@@ -181,6 +192,7 @@ class _NumericBadge extends StatelessWidget {
 class _DotBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 8,
       height: 8,
@@ -188,7 +200,7 @@ class _DotBadge extends StatelessWidget {
         color: KolabingColors.primary,
         shape: BoxShape.circle,
         border: Border.all(
-          color: KolabingColors.surface,
+          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
           width: 2,
         ),
       ),

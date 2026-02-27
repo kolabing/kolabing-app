@@ -4,22 +4,24 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
+import '../../../config/theme/colors.dart';
+import '../../../widgets/navigation/navigation.dart';
+import '../../application/providers/application_provider.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../business/screens/explore_screen.dart';
+import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
-import '../../../config/theme/colors.dart';
-import '../../../widgets/navigation/navigation.dart';
 
 /// Community user main screen with bottom navigation
 ///
 /// This is the main container for community users after login.
-/// Contains 5 tabs: Home, Explore, My Opps, Applications, Profile
+/// Contains 5 tabs: Home, Explore, My Kolabs, Applications, Profile
 class CommunityMainScreen extends ConsumerStatefulWidget {
   const CommunityMainScreen({
     super.key,
-    this.initialTab = 0,
+    this.initialTab = 1,
   });
 
   final int initialTab;
@@ -44,14 +46,23 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
     });
   }
 
-  void _onFabPressed() {
-    context.push(KolabingRoutes.communityOpportunitiesNew);
+  Future<void> _onFabPressed() async {
+    await context.push(KolabingRoutes.communityOpportunitiesNew);
+    if (mounted) {
+      ref.read(dashboardProvider.notifier).refresh();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Replace with actual badge counts from providers
-    const int unreadApplicationUpdates = 0;
+    // Badge counts from providers
+    final dashboardState = ref.watch(dashboardProvider);
+    final pendingSentCount =
+        dashboardState.communityData?.applicationsSent.pending ?? 0;
+    final pendingReceivedCount =
+        dashboardState.communityData?.applicationsReceived.pending ?? 0;
+    final totalUnread = ref.watch(totalUnreadCountProvider);
+    final badgeCount = pendingSentCount + pendingReceivedCount + totalUnread;
     const bool hasIncompleteProfile = false;
 
     final navItems = [
@@ -68,14 +79,13 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
       const NavItem(
         icon: LucideIcons.star,
         activeIcon: LucideIcons.star,
-        label: 'My Opps',
+        label: 'My Kolabs',
       ),
       NavItem(
         icon: LucideIcons.send,
         activeIcon: LucideIcons.send,
         label: 'Applications',
-        badgeCount:
-            unreadApplicationUpdates > 0 ? unreadApplicationUpdates : null,
+        badgeCount: badgeCount > 0 ? badgeCount : null,
       ),
       NavItem(
         icon: LucideIcons.user,
@@ -85,16 +95,19 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
       ),
     ];
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor:
+          isDark ? KolabingColors.darkBackground : KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          _CommunityHomeTab(),
-          _CommunityExploreTab(),
-          _CommunityMyOppsTab(),
-          _CommunityApplicationsTab(),
-          _CommunityProfileTab(),
+        children: [
+          _CommunityHomeTab(onSwitchTab: _onTabChanged),
+          const _CommunityExploreTab(),
+          const _CommunityMyOppsTab(),
+          const _CommunityApplicationsTab(),
+          const _CommunityProfileTab(),
         ],
       ),
       floatingActionButton: _currentIndex != 4 // Hide on profile tab
@@ -117,11 +130,13 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 // -----------------------------------------------------------------------------
 
 class _CommunityHomeTab extends StatelessWidget {
-  const _CommunityHomeTab();
+  const _CommunityHomeTab({required this.onSwitchTab});
+
+  final ValueChanged<int> onSwitchTab;
 
   @override
   Widget build(BuildContext context) {
-    return const CommunityDashboardScreen();
+    return CommunityDashboardScreen(onSwitchTab: onSwitchTab);
   }
 }
 
@@ -131,9 +146,10 @@ class _CommunityExploreTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Reuse the ExploreScreen from business feature
-    // API automatically returns business opportunities for community users
+    // Lock to business creator type so community users only see business offers
     return const ExploreScreen(
       detailRoutePrefix: '/community/explore/offer',
+      lockedCreatorType: 'business',
     );
   }
 }

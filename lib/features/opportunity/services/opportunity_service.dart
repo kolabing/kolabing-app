@@ -497,9 +497,9 @@ class OpportunityService {
     Map<String, dynamic>? meta;
 
     if (rawData is List) {
-      // data is directly a list
+      // data is directly a list — pagination info may be in "meta" or at root level
       dataList = rawData;
-      meta = json['meta'] as Map<String, dynamic>?;
+      meta = json['meta'] as Map<String, dynamic>? ?? json;
     } else if (rawData is Map<String, dynamic>) {
       // data is a Laravel paginator object
       dataList = rawData['data'] as List<dynamic>? ?? [];
@@ -509,16 +509,24 @@ class OpportunityService {
       meta = json['meta'] as Map<String, dynamic>?;
     }
 
-    debugPrint('Parse: rawData type=${rawData.runtimeType}, dataList length=${dataList.length}');
+    debugPrint('Parse: rawData type=${rawData.runtimeType}, dataList length=${dataList.length}, meta current_page=${meta?['current_page']}, last_page=${meta?['last_page']}, total=${meta?['total']}');
 
     final opportunities = <Opportunity>[];
-    for (final item in dataList) {
+    for (var i = 0; i < dataList.length; i++) {
       try {
-        opportunities
-            .add(Opportunity.fromJson(item as Map<String, dynamic>));
+        final item = dataList[i];
+        if (item is Map<String, dynamic>) {
+          opportunities.add(Opportunity.fromJson(item));
+        } else {
+          debugPrint('Item $i is not a Map: ${item.runtimeType} => $item');
+        }
       } catch (e, st) {
-        debugPrint('Error parsing opportunity: $e');
+        final item = dataList[i];
+        final title = item is Map ? item['title'] : 'unknown';
+        final id = item is Map ? item['id'] : 'unknown';
+        debugPrint('Error parsing opportunity[$i] (id=$id, title=$title): $e');
         debugPrint('Stack: $st');
+        debugPrint('Raw item keys: ${item is Map ? item.keys.toList() : 'N/A'}');
       }
     }
 
@@ -526,10 +534,18 @@ class OpportunityService {
 
     return PaginatedResponse<Opportunity>(
       data: opportunities,
-      currentPage: meta?['current_page'] as int? ?? 1,
-      lastPage: meta?['last_page'] as int? ?? 1,
-      total: meta?['total'] as int? ?? opportunities.length,
+      currentPage: _safeInt(meta?['current_page']) ?? 1,
+      lastPage: _safeInt(meta?['last_page']) ?? 1,
+      total: _safeInt(meta?['total']) ?? opportunities.length,
     );
+  }
+
+  static int? _safeInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   ApiException _parseApiError(http.Response response) {

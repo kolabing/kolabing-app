@@ -19,7 +19,10 @@ import '../widgets/upcoming_collaboration_card.dart';
 /// Shows key metrics, quick actions, and upcoming collaborations
 /// for community users.
 class CommunityDashboardScreen extends ConsumerStatefulWidget {
-  const CommunityDashboardScreen({super.key});
+  const CommunityDashboardScreen({super.key, this.onSwitchTab});
+
+  /// Callback to switch tabs in the parent [CommunityMainScreen].
+  final ValueChanged<int>? onSwitchTab;
 
   @override
   ConsumerState<CommunityDashboardScreen> createState() =>
@@ -49,17 +52,18 @@ class _CommunityDashboardScreenState
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
     final userName = authState.user?.displayName ?? 'Community';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         color: KolabingColors.primary,
-        child: _buildBody(dashboardState, userName),
+        child: _buildBody(dashboardState, userName, isDark),
       ),
     );
   }
 
-  Widget _buildBody(DashboardState dashboardState, String userName) {
+  Widget _buildBody(DashboardState dashboardState, String userName, bool isDark) {
     // Loading state
     if (dashboardState.isLoading && !dashboardState.isInitialized) {
       return const DashboardShimmer();
@@ -67,21 +71,21 @@ class _CommunityDashboardScreenState
 
     // Error state
     if (dashboardState.error != null && !dashboardState.hasData) {
-      return _buildErrorState(dashboardState.error!);
+      return _buildErrorState(dashboardState.error!, isDark);
     }
 
     final data = dashboardState.communityData;
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState('Unable to load dashboard data');
+      return _buildErrorState('Unable to load dashboard data', isDark);
     }
 
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
         // Header
-        _buildHeader(userName),
+        _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
         // Stats grid 2x2
@@ -89,11 +93,11 @@ class _CommunityDashboardScreenState
         const SizedBox(height: KolabingSpacing.lg),
 
         // Quick actions
-        _buildQuickActions(),
+        _buildQuickActions(isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
         // Upcoming collaborations
-        _buildUpcomingSection(data),
+        _buildUpcomingSection(data, isDark),
         const SizedBox(height: KolabingSpacing.lg),
       ],
     );
@@ -103,7 +107,7 @@ class _CommunityDashboardScreenState
   // Header
   // ---------------------------------------------------------------------------
 
-  Widget _buildHeader(String userName) {
+  Widget _buildHeader(String userName, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -116,7 +120,9 @@ class _CommunityDashboardScreenState
                 style: GoogleFonts.rubik(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -199,18 +205,17 @@ class _CommunityDashboardScreenState
   // Quick Actions
   // ---------------------------------------------------------------------------
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(bool isDark) {
     return Row(
       children: [
-        // Primary button: BROWSE OPPORTUNITIES
+        // Primary button: FIND A COLLAB
         Expanded(
           child: SizedBox(
             height: 48,
             child: ElevatedButton(
               onPressed: () {
-                // Navigate to explore tab - this would be handled by
-                // the parent tab controller in the main screen.
-                // For standalone navigation, we could go to explore route.
+                // Switch to Explore tab (index 1)
+                widget.onSwitchTab?.call(1);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
@@ -221,7 +226,7 @@ class _CommunityDashboardScreenState
                 ),
               ),
               child: Text(
-                'BROWSE OPPS',
+                'FIND A COLLAB',
                 style: GoogleFonts.dmSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -239,21 +244,31 @@ class _CommunityDashboardScreenState
             height: 48,
             child: OutlinedButton(
               onPressed: () {
-                // Navigate to applications tab in the parent main screen
+                // Switch to Applications tab (index 3)
+                widget.onSwitchTab?.call(3);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
+                foregroundColor: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
+                side: BorderSide(
+                  color:
+                      isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(
-                'APPLICATIONS',
-                style: GoogleFonts.dmSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'MY APPLICATIONS',
+                  maxLines: 1,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
             ),
@@ -267,7 +282,7 @@ class _CommunityDashboardScreenState
   // Upcoming Collaborations
   // ---------------------------------------------------------------------------
 
-  Widget _buildUpcomingSection(CommunityDashboard data) {
+  Widget _buildUpcomingSection(CommunityDashboard data, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -276,14 +291,15 @@ class _CommunityDashboardScreenState
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color:
+                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
             letterSpacing: 0.8,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
         if (data.upcomingCollaborations.isEmpty)
-          _buildEmptyUpcoming()
+          _buildEmptyUpcoming(isDark)
         else
           ...data.upcomingCollaborations.map<Widget>(
             (collab) => Padding(
@@ -300,7 +316,7 @@ class _CommunityDashboardScreenState
     );
   }
 
-  Widget _buildEmptyUpcoming() {
+  Widget _buildEmptyUpcoming(bool isDark) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
@@ -309,7 +325,9 @@ class _CommunityDashboardScreenState
           Icon(
             LucideIcons.calendar,
             size: 40,
-            color: KolabingColors.textTertiary,
+            color: isDark
+                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                : KolabingColors.textTertiary,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
@@ -317,7 +335,9 @@ class _CommunityDashboardScreenState
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: KolabingColors.textTertiary,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                  : KolabingColors.textTertiary,
             ),
           ),
         ],
@@ -329,7 +349,7 @@ class _CommunityDashboardScreenState
   // Error State
   // ---------------------------------------------------------------------------
 
-  Widget _buildErrorState(String message) {
+  Widget _buildErrorState(String message, bool isDark) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),

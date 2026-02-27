@@ -11,6 +11,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
+import '../../event/widgets/past_events_section.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/public_profile.dart';
 import '../providers/public_profile_provider.dart';
@@ -93,6 +94,10 @@ class PublicProfileScreen extends ConsumerWidget {
                 PublicGallerySection(photos: profile.gallery),
                 const SizedBox(height: KolabingSpacing.md),
               ],
+
+              // Past Events
+              PastEventsSection(profileId: profileId),
+              const SizedBox(height: KolabingSpacing.md),
 
               // Past collaborations
               _buildCollaborationsSection(profile),

@@ -237,31 +237,48 @@ class ApplicationService {
 
   /// POST /api/v1/applications/{id}/accept
   /// Accept an application (for opportunity owners)
-  Future<Application> acceptApplication(String id) async {
+  /// Requires scheduled_date and contact_methods (object with whatsapp/email/instagram)
+  Future<Application> acceptApplication(
+    String id, {
+    required String scheduledDate,
+    required Map<String, String> contactMethods,
+  }) async {
     final uri = Uri.parse('$_baseUrl/applications/$id/accept');
+    final body = jsonEncode({
+      'scheduled_date': scheduledDate,
+      'contact_methods': contactMethods,
+    });
+
     debugPrint('ApplicationService: POST $uri');
+    debugPrint('Accept request body: $body');
 
     try {
       final response = await _httpClient.post(
         uri,
         headers: await _getHeaders(),
+        body: body,
       );
 
       debugPrint('Accept application response status: ${response.statusCode}');
+      debugPrint('Accept application response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final data = json['data'] as Map<String, dynamic>?;
-        if (data != null) {
+        final data = json['data'];
+        if (data is Map<String, dynamic>) {
+          // Response nests under data.application
+          final appJson = data['application'];
+          if (appJson is Map<String, dynamic>) {
+            return Application.fromJson(appJson);
+          }
+          // Fallback: data itself is the application
           return Application.fromJson(data);
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
-        throw const ApiException(
-          error: ApiError(message: 'You are not authorized to accept this application.'),
-        );
+        throw _parseApiError(response);
       } else {
         throw _parseApiError(response);
       }
@@ -492,8 +509,11 @@ class ApplicationService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final data = json['data'] as Map<String, dynamic>?;
-        return data?['marked_count'] as int? ?? 0;
+        final data = json['data'];
+        if (data is Map<String, dynamic>) {
+          return _safeInt(data['marked_count'], 0);
+        }
+        return 0;
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
       } else {
@@ -571,22 +591,32 @@ class ApplicationService {
     debugPrint('Parse applications: dataList length=${dataList.length}');
 
     final applications = <Application>[];
-    for (final item in dataList) {
+    for (var i = 0; i < dataList.length; i++) {
       try {
-        applications.add(Application.fromJson(item as Map<String, dynamic>));
+        final item = dataList[i];
+        if (item is Map<String, dynamic>) {
+          applications.add(Application.fromJson(item));
+        } else {
+          debugPrint('Application item $i is not a Map: ${item.runtimeType}');
+        }
       } catch (e, st) {
-        debugPrint('Error parsing application: $e');
+        final item = dataList[i];
+        final id = item is Map ? item['id'] : 'unknown';
+        debugPrint('Error parsing application[$i] (id=$id): $e');
         debugPrint('Stack: $st');
       }
     }
 
     debugPrint('Parsed ${applications.length} / ${dataList.length} applications');
 
+    // Use meta if available, otherwise fall back to root json
+    final paginationSource = meta ?? json;
+
     return PaginatedResponse<Application>(
       data: applications,
-      currentPage: meta?['current_page'] as int? ?? 1,
-      lastPage: meta?['last_page'] as int? ?? 1,
-      total: meta?['total'] as int? ?? applications.length,
+      currentPage: _safeInt(paginationSource['current_page'], 1),
+      lastPage: _safeInt(paginationSource['last_page'], 1),
+      total: _safeInt(paginationSource['total'], applications.length),
     );
   }
 
@@ -612,23 +642,37 @@ class ApplicationService {
     debugPrint('Parse messages: dataList length=${dataList.length}');
 
     final messages = <ChatMessage>[];
-    for (final item in dataList) {
+    for (var i = 0; i < dataList.length; i++) {
       try {
-        messages.add(ChatMessage.fromJson(item as Map<String, dynamic>));
+        final item = dataList[i];
+        if (item is Map<String, dynamic>) {
+          messages.add(ChatMessage.fromJson(item));
+        } else {
+          debugPrint('Message item $i is not a Map: ${item.runtimeType}');
+        }
       } catch (e, st) {
-        debugPrint('Error parsing message: $e');
+        debugPrint('Error parsing message[$i]: $e');
         debugPrint('Stack: $st');
       }
     }
 
     debugPrint('Parsed ${messages.length} / ${dataList.length} messages');
 
+    final paginationSource = meta ?? json;
+
     return PaginatedResponse<ChatMessage>(
       data: messages,
-      currentPage: meta?['current_page'] as int? ?? 1,
-      lastPage: meta?['last_page'] as int? ?? 1,
-      total: meta?['total'] as int? ?? messages.length,
+      currentPage: _safeInt(paginationSource['current_page'], 1),
+      lastPage: _safeInt(paginationSource['last_page'], 1),
+      total: _safeInt(paginationSource['total'], messages.length),
     );
+  }
+
+  static int _safeInt(dynamic value, int defaultValue) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? defaultValue;
+    return defaultValue;
   }
 
   ApiException _parseApiError(http.Response response) {

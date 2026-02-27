@@ -284,11 +284,13 @@ class BusinessDashboard {
 class CommunityDashboard {
   const CommunityDashboard({
     this.applicationsSent = const ApplicationsSentStats(),
+    this.applicationsReceived = const ApplicationsReceivedStats(),
     this.collaborations = const CollaborationStats(),
     this.upcomingCollaborations = const [],
   });
 
   final ApplicationsSentStats applicationsSent;
+  final ApplicationsReceivedStats applicationsReceived;
   final CollaborationStats collaborations;
   final List<UpcomingCollaboration> upcomingCollaborations;
 
@@ -308,6 +310,12 @@ class CommunityDashboard {
               json['applications_sent'] as Map<String, dynamic>,
             )
           : const ApplicationsSentStats(),
+      applicationsReceived:
+          json['applications_received'] is Map<String, dynamic>
+              ? ApplicationsReceivedStats.fromJson(
+                  json['applications_received'] as Map<String, dynamic>,
+                )
+              : const ApplicationsReceivedStats(),
       collaborations: json['collaborations'] is Map<String, dynamic>
           ? CollaborationStats.fromJson(
               json['collaborations'] as Map<String, dynamic>,

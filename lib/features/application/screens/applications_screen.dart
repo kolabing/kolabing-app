@@ -11,116 +11,152 @@ import '../../../config/theme/colors.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
-/// Applications list screen showing user's sent applications
-class ApplicationsScreen extends ConsumerWidget {
+/// Applications list screen showing both sent and received applications
+/// via a tabbed interface.
+class ApplicationsScreen extends ConsumerStatefulWidget {
   const ApplicationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(myApplicationsProvider);
+  ConsumerState<ApplicationsScreen> createState() => _ApplicationsScreenState();
+}
+
+class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor:
+          isDark ? KolabingColors.darkBackground : KolabingColors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.surface,
+        backgroundColor:
+            isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'My Applications',
+          'APPLICATIONS',
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color:
+                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Column(
+            children: [
+              TabBar(
+                controller: _tabController,
+                indicatorColor: KolabingColors.primary,
+                indicatorWeight: 3,
+                labelColor: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
+                unselectedLabelColor: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                    : KolabingColors.textTertiary,
+                labelStyle: GoogleFonts.dmSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+                unselectedLabelStyle: GoogleFonts.dmSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                tabs: const [
+                  Tab(text: 'SENT'),
+                  Tab(text: 'RECEIVED'),
+                ],
+              ),
+              Divider(
+                height: 1,
+                color:
+                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
+              ),
+            ],
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(myApplicationsProvider.notifier).refresh(),
-        color: KolabingColors.primary,
-        child: _buildBody(context, state),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Tab 1: Sent applications
+          _SentApplicationsTab(),
+          // Tab 2: Received applications
+          _ReceivedApplicationsTab(),
+        ],
       ),
     );
   }
+}
 
-  Widget _buildBody(BuildContext context, ApplicationsState state) {
+// =============================================================================
+// Sent Applications Tab
+// =============================================================================
+
+class _SentApplicationsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(myApplicationsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(myApplicationsProvider.notifier).refresh(),
+      color: KolabingColors.primary,
+      child: _buildBody(context, state, isDark: isDark),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    ApplicationsState state, {
+    required bool isDark,
+  }) {
     if (state.isLoading) {
-      return _buildLoadingState();
+      return _buildLoadingState(isDark);
     }
 
     if (state.error != null) {
-      return _buildErrorState(state.error!);
+      return _buildErrorState(state.error!, isDark);
     }
 
     if (state.isEmpty) {
-      return _buildEmptyState();
+      return _buildSentEmptyState(isDark);
     }
 
     return ListView.separated(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       itemCount: state.applications.length,
-      separatorBuilder: (_, __) => const SizedBox(height: KolabingSpacing.sm),
+      separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
       itemBuilder: (context, index) {
         final application = state.applications[index];
         return _ApplicationCard(
           application: application,
+          isReceived: false,
+          isDark: isDark,
           onTap: () => context.push('/application/${application.id}/chat'),
         );
       },
     );
   }
 
-  Widget _buildLoadingState() => Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
-        child: ListView.separated(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          itemCount: 5,
-          separatorBuilder: (_, __) => const SizedBox(height: KolabingSpacing.sm),
-          itemBuilder: (_, __) => Container(
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-          ),
-        ),
-      );
-
-  Widget _buildErrorState(String error) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.alertCircle,
-                size: 48,
-                color: KolabingColors.error,
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(
-                'Something went wrong',
-                style: GoogleFonts.rubik(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      );
-
-  Widget _buildEmptyState() => Center(
+  Widget _buildSentEmptyState(bool isDark) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -145,7 +181,9 @@ class ApplicationsScreen extends ConsumerWidget {
                 style: GoogleFonts.rubik(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -163,33 +201,203 @@ class ApplicationsScreen extends ConsumerWidget {
       );
 }
 
-/// Application card widget
+// =============================================================================
+// Received Applications Tab
+// =============================================================================
+
+class _ReceivedApplicationsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(receivedApplicationsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return RefreshIndicator(
+      onRefresh: () =>
+          ref.read(receivedApplicationsProvider.notifier).refresh(),
+      color: KolabingColors.primary,
+      child: _buildBody(context, state, isDark),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, ApplicationsState state, bool isDark) {
+    if (state.isLoading) {
+      return _buildLoadingState(isDark);
+    }
+
+    if (state.error != null) {
+      return _buildErrorState(state.error!, isDark);
+    }
+
+    if (state.isEmpty) {
+      return _buildReceivedEmptyState(isDark);
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      itemCount: state.applications.length,
+      separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
+      itemBuilder: (context, index) {
+        final application = state.applications[index];
+        return _ApplicationCard(
+          application: application,
+          isReceived: true,
+          isDark: isDark,
+          onTap: () {
+            // Pending → review screen, accepted → chat
+            if (application.status.isPending) {
+              context.push('/application/${application.id}');
+            } else {
+              context.push('/application/${application.id}/chat');
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildReceivedEmptyState(bool isDark) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(KolabingSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: KolabingColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.inbox,
+                  size: 36,
+                  color: KolabingColors.primary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+              Text(
+                'No Received Applications',
+                style: GoogleFonts.rubik(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                "When someone applies to your opportunities, they'll appear here.",
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  color: KolabingColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+// =============================================================================
+// Shared helpers
+// =============================================================================
+
+Widget _buildLoadingState(bool isDark) => Shimmer.fromColors(
+      baseColor:
+          isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
+      highlightColor:
+          isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        itemCount: 5,
+        separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
+        itemBuilder: (_, _) => Container(
+          height: 100,
+          decoration: BoxDecoration(
+            color: isDark ? KolabingColors.darkSurface : Colors.white,
+            borderRadius: KolabingRadius.borderRadiusMd,
+          ),
+        ),
+      ),
+    );
+
+Widget _buildErrorState(String error, bool isDark) => Center(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              LucideIcons.alertCircle,
+              size: 48,
+              color: KolabingColors.error,
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(
+              'Something went wrong',
+              style: GoogleFonts.rubik(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              error,
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                color: KolabingColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+
+// =============================================================================
+// Application Card Widget
+// =============================================================================
+
+/// Application card widget supporting both sent and received display modes.
+///
+/// When [isReceived] is true, the card shows applicant info (From: name)
+/// instead of recipient info (To: name).
 class _ApplicationCard extends StatelessWidget {
   const _ApplicationCard({
     required this.application,
     required this.onTap,
+    this.isReceived = false,
+    this.isDark = false,
   });
 
   final Application application;
   final VoidCallback onTap;
+  final bool isReceived;
+  final bool isDark;
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget build(BuildContext context) => InkWell(
       onTap: onTap,
       borderRadius: KolabingRadius.borderRadiusMd,
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +420,9 @@ class _ApplicationCard extends StatelessWidget {
                           style: GoogleFonts.rubik(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: isDark
+                                ? KolabingColors.textOnDark
+                                : KolabingColors.textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -223,9 +433,11 @@ class _ApplicationCard extends StatelessWidget {
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
 
-                  // Recipient name
+                  // Name label: "From:" for received, "To:" for sent
                   Text(
-                    'To: ${application.recipientName}',
+                    isReceived
+                        ? 'From: ${application.applicantName}'
+                        : 'To: ${application.recipientName}',
                     style: GoogleFonts.openSans(
                       fontSize: 13,
                       color: KolabingColors.textSecondary,
@@ -249,7 +461,7 @@ class _ApplicationCard extends StatelessWidget {
                   Row(
                     children: [
                       // Created time
-                      Icon(
+                      const Icon(
                         LucideIcons.clock,
                         size: 12,
                         color: KolabingColors.textTertiary,
@@ -301,31 +513,41 @@ class _ApplicationCard extends StatelessWidget {
         ),
       ),
     );
+
+  Widget _buildAvatar() {
+    final String? avatarUrl;
+    final String name;
+
+    if (isReceived) {
+      avatarUrl = application.applicantAvatar;
+      name = application.applicantName;
+    } else {
+      avatarUrl = application.recipientAvatar;
+      name = application.recipientName;
+    }
+
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: KolabingColors.primary.withValues(alpha: 0.1),
+        shape: BoxShape.circle,
+      ),
+      child: avatarUrl != null
+          ? ClipOval(
+              child: Image.network(
+                avatarUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => _avatarPlaceholder(name),
+              ),
+            )
+          : _avatarPlaceholder(name),
+    );
   }
 
-  Widget _buildAvatar() => Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
-        ),
-        child: application.recipientAvatar != null
-            ? ClipOval(
-                child: Image.network(
-                  application.recipientAvatar!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _avatarPlaceholder(),
-                ),
-              )
-            : _avatarPlaceholder(),
-      );
-
-  Widget _avatarPlaceholder() => Center(
+  Widget _avatarPlaceholder(String name) => Center(
         child: Text(
-          application.recipientName.isNotEmpty
-              ? application.recipientName[0].toUpperCase()
-              : '?',
+          name.isNotEmpty ? name[0].toUpperCase() : '?',
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,

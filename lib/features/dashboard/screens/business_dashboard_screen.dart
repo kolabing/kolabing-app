@@ -53,17 +53,18 @@ class _BusinessDashboardScreenState
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
     final userName = authState.user?.displayName ?? 'Business';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         color: KolabingColors.primary,
-        child: _buildBody(dashboardState, userName),
+        child: _buildBody(dashboardState, userName, isDark),
       ),
     );
   }
 
-  Widget _buildBody(DashboardState dashboardState, String userName) {
+  Widget _buildBody(DashboardState dashboardState, String userName, bool isDark) {
     // Loading state
     if (dashboardState.isLoading && !dashboardState.isInitialized) {
       return const DashboardShimmer();
@@ -71,21 +72,21 @@ class _BusinessDashboardScreenState
 
     // Error state
     if (dashboardState.error != null && !dashboardState.hasData) {
-      return _buildErrorState(dashboardState.error!);
+      return _buildErrorState(dashboardState.error!, isDark);
     }
 
     final data = dashboardState.businessData;
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState('Unable to load dashboard data');
+      return _buildErrorState('Unable to load dashboard data', isDark);
     }
 
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
         // Header
-        _buildHeader(userName),
+        _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
         // Stats grid 2x2
@@ -93,11 +94,11 @@ class _BusinessDashboardScreenState
         const SizedBox(height: KolabingSpacing.lg),
 
         // Quick actions
-        _buildQuickActions(),
+        _buildQuickActions(isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
         // Upcoming collaborations
-        _buildUpcomingSection(data),
+        _buildUpcomingSection(data, isDark),
         const SizedBox(height: KolabingSpacing.lg),
       ],
     );
@@ -107,7 +108,7 @@ class _BusinessDashboardScreenState
   // Header
   // ---------------------------------------------------------------------------
 
-  Widget _buildHeader(String userName) {
+  Widget _buildHeader(String userName, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -120,7 +121,9 @@ class _BusinessDashboardScreenState
                 style: GoogleFonts.rubik(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -152,11 +155,11 @@ class _BusinessDashboardScreenState
           children: [
             Expanded(
               child: DashboardStatCard(
-                title: 'Published Opportunities',
+                title: 'Published',
                 count: data.opportunities.published,
                 icon: LucideIcons.megaphone,
                 accentColor: KolabingColors.primary,
-                subtitle: '${data.opportunities.total} total',
+                subtitle: '${data.opportunities.total} total requests',
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -203,7 +206,7 @@ class _BusinessDashboardScreenState
   // Quick Actions
   // ---------------------------------------------------------------------------
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(bool isDark) {
     return Row(
       children: [
         // Primary button: CREATE COLLAB REQUEST
@@ -211,8 +214,12 @@ class _BusinessDashboardScreenState
           child: SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: () {
-                context.push(KolabingRoutes.businessOffersNew);
+              onPressed: () async {
+                await context.push(KolabingRoutes.businessOffersNew);
+                // Refresh dashboard stats when returning from create form
+                if (mounted) {
+                  ref.read(dashboardProvider.notifier).refresh();
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
@@ -245,12 +252,17 @@ class _BusinessDashboardScreenState
             height: 48,
             child: OutlinedButton(
               onPressed: () {
-                // Switch to Explore tab (index 0)
-                widget.onSwitchTab?.call(0);
+                // Switch to Explore tab (index 1)
+                widget.onSwitchTab?.call(1);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
+                foregroundColor: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
+                side: BorderSide(
+                  color:
+                      isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -274,7 +286,7 @@ class _BusinessDashboardScreenState
   // Upcoming Collaborations
   // ---------------------------------------------------------------------------
 
-  Widget _buildUpcomingSection(BusinessDashboard data) {
+  Widget _buildUpcomingSection(BusinessDashboard data, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -283,14 +295,15 @@ class _BusinessDashboardScreenState
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color:
+                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
             letterSpacing: 0.8,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
         if (data.upcomingCollaborations.isEmpty)
-          _buildEmptyUpcoming()
+          _buildEmptyUpcoming(isDark)
         else
           ...data.upcomingCollaborations.map<Widget>(
             (collab) => Padding(
@@ -307,7 +320,7 @@ class _BusinessDashboardScreenState
     );
   }
 
-  Widget _buildEmptyUpcoming() {
+  Widget _buildEmptyUpcoming(bool isDark) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
@@ -316,7 +329,9 @@ class _BusinessDashboardScreenState
           Icon(
             LucideIcons.calendar,
             size: 40,
-            color: KolabingColors.textTertiary,
+            color: isDark
+                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                : KolabingColors.textTertiary,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
@@ -324,7 +339,9 @@ class _BusinessDashboardScreenState
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: KolabingColors.textTertiary,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                  : KolabingColors.textTertiary,
             ),
           ),
         ],
@@ -336,7 +353,7 @@ class _BusinessDashboardScreenState
   // Error State
   // ---------------------------------------------------------------------------
 
-  Widget _buildErrorState(String message) {
+  Widget _buildErrorState(String message, bool isDark) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),

@@ -32,6 +32,7 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
   late final Animation<double> _subtitleAnimation;
   late final Animation<double> _businessCardAnimation;
   late final Animation<double> _communityCardAnimation;
+  late final Animation<double> _attendeeCardAnimation;
   late final Animation<double> _bottomLinkAnimation;
 
   // Slide animations
@@ -39,6 +40,7 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
   late final Animation<Offset> _subtitleSlideAnimation;
   late final Animation<Offset> _businessCardSlideAnimation;
   late final Animation<Offset> _communityCardSlideAnimation;
+  late final Animation<Offset> _attendeeCardSlideAnimation;
   late final Animation<Offset> _bottomLinkSlideAnimation;
 
   /// Selected user type (null = none selected)
@@ -72,16 +74,18 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
     // Staggered opacity animations
     _headlineAnimation = _createOpacityAnimation(0.0, 0.4);
     _subtitleAnimation = _createOpacityAnimation(0.1, 0.5);
-    _businessCardAnimation = _createOpacityAnimation(0.2, 0.6);
-    _communityCardAnimation = _createOpacityAnimation(0.3, 0.7);
-    _bottomLinkAnimation = _createOpacityAnimation(0.4, 0.8);
+    _businessCardAnimation = _createOpacityAnimation(0.2, 0.55);
+    _communityCardAnimation = _createOpacityAnimation(0.3, 0.65);
+    _attendeeCardAnimation = _createOpacityAnimation(0.4, 0.75);
+    _bottomLinkAnimation = _createOpacityAnimation(0.5, 0.85);
 
     // Staggered slide animations
     _headlineSlideAnimation = _createSlideAnimation(0.0, 0.4);
     _subtitleSlideAnimation = _createSlideAnimation(0.1, 0.5);
-    _businessCardSlideAnimation = _createSlideAnimation(0.2, 0.6);
-    _communityCardSlideAnimation = _createSlideAnimation(0.3, 0.7);
-    _bottomLinkSlideAnimation = _createSlideAnimation(0.4, 0.8);
+    _businessCardSlideAnimation = _createSlideAnimation(0.2, 0.55);
+    _communityCardSlideAnimation = _createSlideAnimation(0.3, 0.65);
+    _attendeeCardSlideAnimation = _createSlideAnimation(0.4, 0.75);
+    _bottomLinkSlideAnimation = _createSlideAnimation(0.5, 0.85);
   }
 
   Animation<double> _createOpacityAnimation(double begin, double end) =>
@@ -123,17 +127,16 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
     // Brief delay to show selection, then navigate
     Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) {
-        // Initialize onboarding with the selected user type
-        final userType = type == SelectionUserType.business
-            ? UserType.business
-            : UserType.community;
-        ref.read(onboardingProvider.notifier).initialize(userType);
-
-        // Navigate directly to onboarding step 1
-        if (type == SelectionUserType.business) {
-          context.push('/onboarding/business/step1');
-        } else {
-          context.push('/onboarding/community/step1');
+        switch (type) {
+          case SelectionUserType.business:
+            ref.read(onboardingProvider.notifier).initialize(UserType.business);
+            context.push('/onboarding/business/step1');
+          case SelectionUserType.community:
+            ref.read(onboardingProvider.notifier).initialize(UserType.community);
+            context.push('/onboarding/community/step1');
+          case SelectionUserType.attendee:
+            // Attendee has no onboarding steps, go directly to registration
+            context.push('/auth/register/attendee');
         }
       }
     });
@@ -221,6 +224,20 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
                           isSelected:
                               _selectedType == SelectionUserType.community,
                           onTap: () => _handleCardTap(SelectionUserType.community),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Attendee Card
+                      _AnimatedElement(
+                        opacityAnimation: _attendeeCardAnimation,
+                        slideAnimation: _attendeeCardSlideAnimation,
+                        child: SelectionCard(
+                          userType: SelectionUserType.attendee,
+                          isSelected:
+                              _selectedType == SelectionUserType.attendee,
+                          onTap: () => _handleCardTap(SelectionUserType.attendee),
                         ),
                       ),
 

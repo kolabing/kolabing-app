@@ -183,6 +183,8 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   void updateBusinessOffer({
     bool? venue,
     bool? foodDrink,
+    bool? socialMediaExposure,
+    bool? contentCreation,
     DiscountOffer? discount,
     List<String>? products,
     String? other,
@@ -195,6 +197,8 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
         businessOffer: opp.businessOffer.copyWith(
           venue: venue,
           foodDrink: foodDrink,
+          socialMediaExposure: socialMediaExposure,
+          contentCreation: contentCreation,
           discount: discount,
           products: products,
           other: other,

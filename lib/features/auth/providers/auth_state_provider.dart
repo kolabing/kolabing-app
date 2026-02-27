@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../services/permission_service.dart';
+import '../services/auth_service.dart';
 
 /// Key for storing onboarding completion status
 const String _onboardingCompletedKey = 'onboarding_completed';
@@ -18,6 +20,9 @@ enum SplashNavigationTarget {
 
   /// User is authenticated as community
   communityDashboard,
+
+  /// User is authenticated as attendee
+  attendeeDashboard,
 }
 
 /// State for splash screen initialization
@@ -77,10 +82,11 @@ class SplashStateNotifier extends Notifier<SplashState> {
         return '/onboarding';
       }
 
-      // Check authentication status
-      final session = Supabase.instance.client.auth.currentSession;
+      // Check authentication status via stored token
+      final authService = AuthService();
+      final token = await authService.getToken();
 
-      if (session == null) {
+      if (token == null) {
         state = state.copyWith(
           isLoading: false,
           navigationTarget: SplashNavigationTarget.signIn,
@@ -88,22 +94,39 @@ class SplashStateNotifier extends Notifier<SplashState> {
         return '/auth/sign-in';
       }
 
-      // Get user type from profile
-      final userType = await _getUserType(session.user.id);
+      // Get user type from stored user data
+      final user = await authService.getStoredUser();
 
-      if (userType == 'business') {
-        state = state.copyWith(
-          isLoading: false,
-          navigationTarget: SplashNavigationTarget.businessDashboard,
-        );
-        return '/business';
+      final String dashboard;
+      final SplashNavigationTarget navTarget;
+      if (user?.isAttendee ?? false) {
+        dashboard = '/attendee';
+        navTarget = SplashNavigationTarget.attendeeDashboard;
+      } else if (user?.isBusiness ?? false) {
+        dashboard = '/business';
+        navTarget = SplashNavigationTarget.businessDashboard;
       } else {
+        dashboard = '/community';
+        navTarget = SplashNavigationTarget.communityDashboard;
+      }
+
+      // Check if the permission screen needs to be shown
+      final hasShownPermissions =
+          await PermissionService.instance.hasShownPermissionScreen();
+
+      if (!hasShownPermissions) {
         state = state.copyWith(
           isLoading: false,
-          navigationTarget: SplashNavigationTarget.communityDashboard,
+          navigationTarget: navTarget,
         );
-        return '/community';
+        return '/permissions?destination=${Uri.encodeComponent(dashboard)}';
       }
+
+      state = state.copyWith(
+        isLoading: false,
+        navigationTarget: navTarget,
+      );
+      return dashboard;
     } on Exception catch (e) {
       // On error, default to sign in
       state = state.copyWith(
@@ -126,22 +149,6 @@ class SplashStateNotifier extends Notifier<SplashState> {
     }
   }
 
-  /// Get user type from Supabase profile
-  Future<String> _getUserType(String userId) async {
-    try {
-      final response = await Supabase.instance.client
-          .from('profiles')
-          .select('user_type')
-          .eq('id', userId)
-          .single();
-
-      final userType = response['user_type'];
-      return userType is String ? userType : 'community';
-    } on Exception {
-      // Default to community if profile fetch fails
-      return 'community';
-    }
-  }
 }
 
 /// Provider for splash screen state and initialization logic

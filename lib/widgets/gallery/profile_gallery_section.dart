@@ -37,19 +37,22 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   @override
   Widget build(BuildContext context) {
     final galleryState = ref.watch(galleryProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -67,7 +70,9 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               Text(
                 'Gallery',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                 ),
               ),
               if (!galleryState.isLoading && galleryState.photos.isNotEmpty)
@@ -96,10 +101,12 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.plus,
                           size: 14,
-                          color: KolabingColors.textPrimary,
+                          color: isDark
+                              ? KolabingColors.textOnDark
+                              : KolabingColors.textPrimary,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -107,7 +114,9 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                           style: GoogleFonts.dmSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: isDark
+                                ? KolabingColors.textOnDark
+                                : KolabingColors.textPrimary,
                           ),
                         ),
                       ],
@@ -120,13 +129,13 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
 
           // Gallery content
           if (galleryState.isLoading)
-            _buildLoadingState()
+            _buildLoadingState(isDark)
           else if (galleryState.isUploading)
-            _buildUploadingIndicator()
+            _buildUploadingIndicator(isDark)
           else if (galleryState.isEmpty)
-            _buildEmptyState(context)
+            _buildEmptyState(context, isDark)
           else
-            _buildPhotoGrid(context, galleryState),
+            _buildPhotoGrid(context, galleryState, isDark),
 
           // Error message
           if (galleryState.error != null) ...[
@@ -219,10 +228,12 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
     });
   }
 
-  Widget _buildLoadingState() => Container(
+  Widget _buildLoadingState(bool isDark) => Container(
         height: 120,
         decoration: BoxDecoration(
-          color: KolabingColors.surfaceVariant,
+          color: isDark
+              ? KolabingColors.darkBorder
+              : KolabingColors.surfaceVariant,
           borderRadius: KolabingRadius.borderRadiusMd,
         ),
         child: const Center(
@@ -237,17 +248,19 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
         ),
       );
 
-  Widget _buildUploadingIndicator() => Container(
+  Widget _buildUploadingIndicator(bool isDark) => Container(
         height: 120,
         decoration: BoxDecoration(
-          color: KolabingColors.surfaceVariant,
+          color: isDark
+              ? KolabingColors.darkBorder
+              : KolabingColors.surfaceVariant,
           borderRadius: KolabingRadius.borderRadiusMd,
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
@@ -255,21 +268,28 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   color: KolabingColors.primary,
                 ),
               ),
-              SizedBox(height: 8),
-              Text('Uploading photo...'),
+              const SizedBox(height: 8),
+              Text(
+                'Uploading photo...',
+                style: TextStyle(
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
+                ),
+              ),
             ],
           ),
         ),
       );
 
-  Widget _buildEmptyState(BuildContext context) => GestureDetector(
+  Widget _buildEmptyState(BuildContext context, bool isDark) => GestureDetector(
         onTap: () => _showAddPhotoSheet(context),
         child: Container(
           height: 120,
           decoration: BoxDecoration(
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
-              color: KolabingColors.border,
+              color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
               width: 1.5,
               strokeAlign: BorderSide.strokeAlignInside,
             ),
@@ -281,13 +301,17 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 Icon(
                   LucideIcons.camera,
                   size: 32,
-                  color: KolabingColors.textTertiary,
+                  color: isDark
+                      ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                      : KolabingColors.textTertiary,
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Add your first photo',
                   style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: KolabingColors.textTertiary,
+                    color: isDark
+                        ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                        : KolabingColors.textTertiary,
                   ),
                 ),
               ],
@@ -299,6 +323,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   Widget _buildPhotoGrid(
     BuildContext context,
     GalleryState galleryState,
+    bool isDark,
   ) {
     final photos = galleryState.photos;
 
@@ -315,6 +340,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
         final photo = photos[index];
         return _GalleryThumbnail(
           photo: photo,
+          isDark: isDark,
           onTap: () => PhotoViewerDialog.show(
             context,
             photos: photos,
@@ -362,11 +388,13 @@ class _GalleryThumbnail extends StatelessWidget {
     required this.photo,
     required this.onTap,
     required this.onDelete,
+    this.isDark = false,
   });
 
   final GalleryPhoto photo;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -379,11 +407,15 @@ class _GalleryThumbnail extends StatelessWidget {
               // Photo
               if (photo.url.isEmpty)
                 Container(
-                  color: KolabingColors.surfaceVariant,
-                  child: const Icon(
+                  color: isDark
+                      ? KolabingColors.darkBorder
+                      : KolabingColors.surfaceVariant,
+                  child: Icon(
                     LucideIcons.imageOff,
                     size: 24,
-                    color: KolabingColors.textTertiary,
+                    color: isDark
+                        ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                        : KolabingColors.textTertiary,
                   ),
                 )
               else
@@ -393,7 +425,9 @@ class _GalleryThumbnail extends StatelessWidget {
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
-                      color: KolabingColors.surfaceVariant,
+                      color: isDark
+                          ? KolabingColors.darkBorder
+                          : KolabingColors.surfaceVariant,
                       child: const Center(
                         child: SizedBox(
                           width: 16,
@@ -409,11 +443,15 @@ class _GalleryThumbnail extends StatelessWidget {
                   errorBuilder: (_, error, __) {
                     debugPrint('Gallery thumbnail error for ${photo.url}: $error');
                     return Container(
-                      color: KolabingColors.surfaceVariant,
-                      child: const Icon(
+                      color: isDark
+                          ? KolabingColors.darkBorder
+                          : KolabingColors.surfaceVariant,
+                      child: Icon(
                         LucideIcons.imageOff,
                         size: 24,
-                        color: KolabingColors.textTertiary,
+                        color: isDark
+                            ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                            : KolabingColors.textTertiary,
                       ),
                     );
                   },

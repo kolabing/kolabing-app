@@ -73,7 +73,7 @@ class _MyOpportunitiesScreenState
       final errorMessage = state.error ?? 'Failed to publish';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Opportunity published!' : errorMessage),
+          content: Text(success ? 'Kolab published!' : errorMessage),
           behavior: SnackBarBehavior.floating,
           backgroundColor:
               success ? KolabingColors.success : KolabingColors.error,
@@ -90,7 +90,7 @@ class _MyOpportunitiesScreenState
       final errorMessage = state.error ?? 'Failed to close';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Opportunity closed' : errorMessage),
+          content: Text(success ? 'Kolab closed' : errorMessage),
           behavior: SnackBarBehavior.floating,
           backgroundColor:
               success ? KolabingColors.success : KolabingColors.error,
@@ -103,9 +103,9 @@ class _MyOpportunitiesScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Opportunity'),
+        title: const Text('Delete Kolab'),
         content: const Text(
-            'Are you sure you want to delete this opportunity? This action cannot be undone.'),
+            'Are you sure you want to delete this kolab? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -129,7 +129,7 @@ class _MyOpportunitiesScreenState
         final errorMessage = state.error ?? 'Failed to delete';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(success ? 'Opportunity deleted' : errorMessage),
+            content: Text(success ? 'Kolab deleted' : errorMessage),
             behavior: SnackBarBehavior.floating,
             backgroundColor:
                 success ? KolabingColors.success : KolabingColors.error,
@@ -189,7 +189,7 @@ class _MyOpportunitiesScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'MY OPPORTUNITIES',
+              'MY KOLABS',
               style: GoogleFonts.rubik(
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
@@ -199,7 +199,7 @@ class _MyOpportunitiesScreenState
             ),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
-              'Manage your collaboration opportunities',
+              'Create and manage your kolabs',
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -274,7 +274,7 @@ class _MyOpportunitiesScreenState
               vertical: KolabingSpacing.sm,
             ),
             child: Text(
-              '${listState.total} ${listState.total == 1 ? 'opportunity' : 'opportunities'}',
+              '${listState.total} ${listState.total == 1 ? 'kolab' : 'kolabs'}',
               style: GoogleFonts.openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -379,7 +379,7 @@ class _MyOpportunitiesScreenState
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'No opportunities yet',
+                'No kolabs yet',
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -388,7 +388,7 @@ class _MyOpportunitiesScreenState
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'Create your first opportunity to start connecting with businesses',
+                'Create your first kolab and start connecting.',
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   color: KolabingColors.textSecondary,
@@ -399,7 +399,7 @@ class _MyOpportunitiesScreenState
               ElevatedButton.icon(
                 onPressed: _onCreateNew,
                 icon: const Icon(LucideIcons.plus, size: 18),
-                label: const Text('Create Opportunity'),
+                label: const Text('Create Kolab'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,

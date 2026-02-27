@@ -6,15 +6,18 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../application/providers/application_provider.dart';
 import '../../application/screens/applications_screen.dart';
+import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/business_dashboard_screen.dart';
 import 'business_profile_screen.dart';
 import 'explore_screen.dart';
+import 'my_kollabs_screen.dart';
 
 /// Business user main screen with bottom navigation
 ///
 /// This is the main container for business users after login.
-/// Contains 4 tabs: Explore, My Offers, Applications, Profile
+/// Contains 5 tabs: Home, Explore, My Kollabs, Applications, Profile
 class BusinessMainScreen extends ConsumerStatefulWidget {
   const BusinessMainScreen({
     super.key,
@@ -42,17 +45,30 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     });
   }
 
-  void _onFabPressed() {
-    context.push(KolabingRoutes.businessOffersNew);
+  Future<void> _onFabPressed() async {
+    await context.push(KolabingRoutes.businessOffersNew);
+    // Refresh dashboard stats when returning from create form
+    if (mounted) {
+      ref.read(dashboardProvider.notifier).refresh();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Replace with actual badge counts from providers
-    const int pendingApplicationsCount = 0;
+    // Badge counts from providers
+    final dashboardState = ref.watch(dashboardProvider);
+    final pendingApplicationsCount =
+        dashboardState.businessData?.applicationsReceived.pending ?? 0;
+    final totalUnread = ref.watch(totalUnreadCountProvider);
+    final badgeCount = pendingApplicationsCount + totalUnread;
     const bool hasIncompleteProfile = false;
 
     final navItems = [
+      const NavItem(
+        icon: LucideIcons.home,
+        activeIcon: LucideIcons.home,
+        label: 'Home',
+      ),
       const NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
@@ -61,13 +77,13 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       const NavItem(
         icon: LucideIcons.briefcase,
         activeIcon: LucideIcons.briefcase,
-        label: 'My Offers',
+        label: 'My Kollabs',
       ),
       NavItem(
         icon: LucideIcons.inbox,
         activeIcon: LucideIcons.inbox,
         label: 'Applications',
-        badgeCount: pendingApplicationsCount > 0 ? pendingApplicationsCount : null,
+        badgeCount: badgeCount > 0 ? badgeCount : null,
       ),
       NavItem(
         icon: LucideIcons.user,
@@ -77,18 +93,22 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       ),
     ];
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor:
+          isDark ? KolabingColors.darkBackground : KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex,
         children: [
+          _BusinessHomeTab(onSwitchTab: _onTabChanged),
           const _BusinessExploreTab(),
-          _BusinessOffersTab(onSwitchTab: _onTabChanged),
+          const _BusinessKollabsTab(),
           const _BusinessApplicationsTab(),
           const _BusinessProfileTab(),
         ],
       ),
-      floatingActionButton: _currentIndex != 3 // Hide on profile tab
+      floatingActionButton: _currentIndex != 4 // Hide on profile tab
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: 'Create Collab Request',
@@ -104,8 +124,19 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
 }
 
 // -----------------------------------------------------------------------------
-// Tab Screens (Placeholders)
+// Tab Screens
 // -----------------------------------------------------------------------------
+
+class _BusinessHomeTab extends StatelessWidget {
+  const _BusinessHomeTab({required this.onSwitchTab});
+
+  final ValueChanged<int> onSwitchTab;
+
+  @override
+  Widget build(BuildContext context) {
+    return BusinessDashboardScreen(onSwitchTab: onSwitchTab);
+  }
+}
 
 class _BusinessExploreTab extends StatelessWidget {
   const _BusinessExploreTab();
@@ -116,14 +147,12 @@ class _BusinessExploreTab extends StatelessWidget {
   }
 }
 
-class _BusinessOffersTab extends StatelessWidget {
-  const _BusinessOffersTab({required this.onSwitchTab});
-
-  final ValueChanged<int> onSwitchTab;
+class _BusinessKollabsTab extends StatelessWidget {
+  const _BusinessKollabsTab();
 
   @override
   Widget build(BuildContext context) {
-    return BusinessDashboardScreen(onSwitchTab: onSwitchTab);
+    return const MyKollabsScreen();
   }
 }
 
@@ -144,7 +173,3 @@ class _BusinessProfileTab extends StatelessWidget {
     return const BusinessProfileScreen();
   }
 }
-
-// -----------------------------------------------------------------------------
-// Shared Placeholder Widget
-// ---------------------------------------------------------------------------

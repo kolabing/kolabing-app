@@ -9,6 +9,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
@@ -153,66 +154,85 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     required Widget body,
     Application? application,
     bool isLoading = false,
-  }) =>
-      Scaffold(
-        backgroundColor: KolabingColors.background,
-        appBar: AppBar(
-          backgroundColor: KolabingColors.surface,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(LucideIcons.arrowLeft),
-            onPressed: () => context.pop(),
-            color: KolabingColors.textPrimary,
-          ),
-          title: application != null
-              ? Row(
-                  children: [
-                    _buildAvatar(application.recipientName),
-                    const SizedBox(width: KolabingSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            application.recipientName,
-                            style: GoogleFonts.rubik(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            application.status.displayName,
-                            style: GoogleFonts.openSans(
-                              fontSize: 12,
-                              color: KolabingColors.textTertiary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              : isLoading
-                  ? const Text('Loading...')
-                  : null,
-          actions: application != null
-              ? [
-                  IconButton(
-                    icon: const Icon(LucideIcons.moreVertical),
-                    onPressed: () => _showOptionsMenu(context),
-                    color: KolabingColors.textSecondary,
-                  ),
-                ]
-              : null,
-        ),
-        body: body,
-      );
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  Widget _buildAvatar(String name) => Container(
+    return Scaffold(
+      backgroundColor:
+          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+      appBar: AppBar(
+        backgroundColor:
+            isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrowLeft),
+          onPressed: () => context.pop(),
+          color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+        ),
+        title: application != null
+            ? Row(
+                children: [
+                  _buildAvatar(application.recipientName, isDark: isDark),
+                  const SizedBox(width: KolabingSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          application.recipientName,
+                          style: GoogleFonts.rubik(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? KolabingColors.textOnDark
+                                : KolabingColors.textPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          application.status.displayName,
+                          style: GoogleFonts.openSans(
+                            fontSize: 12,
+                            color: isDark
+                                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                                : KolabingColors.textTertiary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : isLoading
+                ? Text(
+                    'Loading...',
+                    style: TextStyle(
+                      color: isDark
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
+                    ),
+                  )
+                : null,
+        actions: application != null
+            ? [
+                IconButton(
+                  icon: const Icon(LucideIcons.moreVertical),
+                  onPressed: () =>
+                      _showOptionsMenu(context, application: application),
+                  color: isDark
+                      ? KolabingColors.textOnDark.withValues(alpha: 0.7)
+                      : KolabingColors.textSecondary,
+                ),
+              ]
+            : null,
+      ),
+      body: body,
+    );
+  }
+
+  Widget _buildAvatar(String name, {bool isDark = false}) => Container(
         width: 36,
         height: 36,
         decoration: BoxDecoration(
@@ -231,37 +251,45 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
       );
 
-  Widget _buildApplicationHeader(Application application) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.1),
-          border: const Border(
-            bottom: BorderSide(color: KolabingColors.border),
+  Widget _buildApplicationHeader(Application application) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: KolabingColors.primary.withValues(alpha: 0.1),
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
           ),
         ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.briefcase,
-              size: 16,
-              color: KolabingColors.primary,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                application.opportunityTitle,
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            LucideIcons.briefcase,
+            size: 16,
+            color: KolabingColors.primary,
+          ),
+          const SizedBox(width: KolabingSpacing.xs),
+          Expanded(
+            child: Text(
+              application.opportunityTitle,
+              style: GoogleFonts.openSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildMessagesList(ChatState chatState) {
     if (chatState.isLoading) {
@@ -326,6 +354,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       a.year == b.year && a.month == b.month && a.day == b.day;
 
   Widget _buildDateDivider(DateTime date) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final now = DateTime.now();
     final isToday = _isSameDay(date, now);
     final isYesterday = _isSameDay(date, now.subtract(const Duration(days: 1)));
@@ -339,132 +368,159 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       label = '${date.day}/${date.month}/${date.year}';
     }
 
+    final dividerColor =
+        isDark ? KolabingColors.darkBorder : KolabingColors.border;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
       child: Row(
         children: [
-          const Expanded(child: Divider(color: KolabingColors.border)),
+          Expanded(child: Divider(color: dividerColor)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
             child: Text(
               label,
               style: GoogleFonts.openSans(
                 fontSize: 12,
-                color: KolabingColors.textTertiary,
+                color: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                    : KolabingColors.textTertiary,
               ),
             ),
           ),
-          const Expanded(child: Divider(color: KolabingColors.border)),
+          Expanded(child: Divider(color: dividerColor)),
         ],
       ),
     );
   }
 
-  Widget _buildInputField(bool isSending) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
+  Widget _buildInputField(bool isSending) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? KolabingColors.darkBackground
+                      : KolabingColors.background,
+                  borderRadius: KolabingRadius.borderRadiusRound,
+                  border: Border.all(
+                    color: isDark
+                        ? KolabingColors.darkBorder
+                        : KolabingColors.border,
+                  ),
+                ),
+                child: TextField(
+                  controller: _messageController,
+                  maxLines: 4,
+                  minLines: 1,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                    hintText: 'Type a message...',
+                    hintStyle: GoogleFonts.openSans(
+                      fontSize: 14,
+                      color: isDark
+                          ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                          : KolabingColors.textTertiary,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: KolabingSpacing.md,
+                      vertical: KolabingSpacing.sm,
+                    ),
+                  ),
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    color: isDark
+                        ? KolabingColors.textOnDark
+                        : KolabingColors.textPrimary,
+                  ),
+                  onSubmitted: (_) => _handleSend(),
+                ),
+              ),
+            ),
+            const SizedBox(width: KolabingSpacing.xs),
+            Material(
+              color: KolabingColors.primary,
+              borderRadius: BorderRadius.circular(24),
+              child: InkWell(
+                onTap: isSending ? null : _handleSend,
+                borderRadius: BorderRadius.circular(24),
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: isSending
+                      ? const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: KolabingColors.onPrimary,
+                            ),
+                          ),
+                        )
+                      : const Icon(
+                          LucideIcons.send,
+                          size: 20,
+                          color: KolabingColors.onPrimary,
+                        ),
+                ),
+              ),
             ),
           ],
         ),
-        child: SafeArea(
-          top: false,
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: KolabingColors.background,
-                    borderRadius: KolabingRadius.borderRadiusRound,
-                    border: Border.all(color: KolabingColors.border),
-                  ),
-                  child: TextField(
-                    controller: _messageController,
-                    maxLines: 4,
-                    minLines: 1,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      hintStyle: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.textTertiary,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: KolabingSpacing.md,
-                        vertical: KolabingSpacing.sm,
-                      ),
-                    ),
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textPrimary,
-                    ),
-                    onSubmitted: (_) => _handleSend(),
-                  ),
-                ),
-              ),
-              const SizedBox(width: KolabingSpacing.xs),
-              Material(
-                color: KolabingColors.primary,
-                borderRadius: BorderRadius.circular(24),
-                child: InkWell(
-                  onTap: isSending ? null : _handleSend,
-                  borderRadius: BorderRadius.circular(24),
-                  child: SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: isSending
-                        ? const Center(
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: KolabingColors.onPrimary,
-                              ),
-                            ),
-                          )
-                        : const Icon(
-                            LucideIcons.send,
-                            size: 20,
-                            color: KolabingColors.onPrimary,
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+      ),
+    );
+  }
 
-  Widget _buildLoadingState() => Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          itemCount: 5,
-          itemBuilder: (_, index) {
-            final isOwn = index % 2 == 0;
-            return Align(
-              alignment: isOwn ? Alignment.centerRight : Alignment.centerLeft,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-                width: 200,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
+  Widget _buildLoadingState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor:
+          isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
+      highlightColor:
+          isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        itemCount: 5,
+        itemBuilder: (_, index) {
+          final isOwn = index % 2 == 0;
+          return Align(
+            alignment: isOwn ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+              width: 200,
+              height: 60,
+              decoration: BoxDecoration(
+                color: isDark ? KolabingColors.darkSurface : Colors.white,
+                borderRadius: KolabingRadius.borderRadiusMd,
               ),
-            );
-          },
-        ),
-      );
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   Widget _buildErrorState(String error) => Center(
         child: Padding(
@@ -504,95 +560,107 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
       );
 
-  Widget _buildAuthErrorState() => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.logIn,
-                size: 48,
-                color: KolabingColors.error,
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(
-                'Session expired',
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                'Please sign in again to continue.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.go(KolabingRoutes.login);
-                },
-                icon: const Icon(LucideIcons.logIn, size: 16),
-                label: const Text('Sign In'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+  Widget _buildAuthErrorState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  Widget _buildEmptyState() => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  LucideIcons.messageCircle,
-                  size: 28,
-                  color: KolabingColors.primary,
-                ),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              LucideIcons.logIn,
+              size: 48,
+              color: KolabingColors.error,
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(
+              'Session expired',
+              style: GoogleFonts.rubik(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
               ),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(
-                'Start the conversation',
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              'Please sign in again to continue.',
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                color: KolabingColors.textSecondary,
               ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                'Send a message to begin discussing this collaboration',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.go(KolabingRoutes.login);
+              },
+              icon: const Icon(LucideIcons.logIn, size: 16),
+              label: const Text('Sign In'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.primary,
+                foregroundColor: KolabingColors.onPrimary,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 
-  void _showOptionsMenu(BuildContext context) {
+  Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: KolabingColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                LucideIcons.messageCircle,
+                size: 28,
+                color: KolabingColors.primary,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(
+              'Start the conversation',
+              style: GoogleFonts.rubik(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? KolabingColors.textOnDark
+                    : KolabingColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              'Send a message to begin discussing this collaboration',
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                color: KolabingColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showOptionsMenu(BuildContext context, {Application? application}) {
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
@@ -604,7 +672,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               title: const Text('View Opportunity'),
               onTap: () {
                 Navigator.pop(ctx);
-                // TODO: Navigate to opportunity detail
+                if (application != null) {
+                  final authState = ref.read(authProvider);
+                  final isBusiness = authState.user?.isBusiness ?? false;
+                  final routePrefix = isBusiness
+                      ? '/business/explore/offer'
+                      : '/community/explore/offer';
+                  context.push(
+                    '$routePrefix/${application.opportunityId}',
+                    extra: application.opportunity,
+                  );
+                }
               },
             ),
             ListTile(
@@ -672,6 +750,7 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isOwn = message.isOwn;
     final senderProfile = message.senderProfile;
 
@@ -698,20 +777,26 @@ class _MessageBubble extends StatelessWidget {
                 vertical: KolabingSpacing.sm,
               ),
               decoration: BoxDecoration(
-                color: isOwn ? KolabingColors.primary : KolabingColors.surface,
+                color: isOwn
+                    ? KolabingColors.primary
+                    : isDark
+                        ? KolabingColors.darkSurface
+                        : KolabingColors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
                   bottomLeft: isOwn ? const Radius.circular(16) : Radius.zero,
                   bottomRight: isOwn ? Radius.zero : const Radius.circular(16),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: isDark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
               child: Column(
                 crossAxisAlignment:
@@ -736,7 +821,9 @@ class _MessageBubble extends StatelessWidget {
                       fontSize: 14,
                       color: isOwn
                           ? KolabingColors.onPrimary
-                          : KolabingColors.textPrimary,
+                          : isDark
+                              ? KolabingColors.textOnDark
+                              : KolabingColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -750,7 +837,10 @@ class _MessageBubble extends StatelessWidget {
                           fontSize: 11,
                           color: isOwn
                               ? KolabingColors.onPrimary.withValues(alpha: 0.7)
-                              : KolabingColors.textTertiary,
+                              : isDark
+                                  ? KolabingColors.textOnDark
+                                      .withValues(alpha: 0.5)
+                                  : KolabingColors.textTertiary,
                         ),
                       ),
                       // Read receipts for own messages

@@ -27,12 +27,17 @@ class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
     super.key,
     this.detailRoutePrefix = '/business/explore/offer',
+    this.lockedCreatorType,
   });
 
   /// Route prefix for opportunity detail navigation
   /// Business users: '/business/explore/offer'
   /// Community users: '/community/explore/offer'
   final String detailRoutePrefix;
+
+  /// When set, filters are locked to this creator type (e.g. 'business').
+  /// Community users should only see business offers.
+  final String? lockedCreatorType;
 
   @override
   ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
@@ -51,6 +56,14 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _searchController.addListener(_onSearchTextChanged);
+    // Apply locked creator type filter after first frame
+    if (widget.lockedCreatorType != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(opportunityFiltersProvider.notifier)
+            .setCreatorTypeLocked(widget.lockedCreatorType!);
+      });
+    }
   }
 
   @override
@@ -100,31 +113,30 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   Widget build(BuildContext context) {
     final listState = ref.watch(opportunityListProvider);
     final filters = ref.watch(opportunityFiltersProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor:
+          isDark ? KolabingColors.darkBackground : KolabingColors.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            _buildHeader(),
+            _buildHeader(isDark),
 
             // Search bar
-            _buildSearchBar(),
-
-            // Filter chips
-            _buildFilterChips(filters),
+            _buildSearchBar(isDark),
 
             // Results count and list
             Expanded(
               child: listState.isLoading
-                  ? _buildLoadingState()
+                  ? _buildLoadingState(isDark)
                   : listState.error != null
-                      ? _buildErrorState(listState.error!)
+                      ? _buildErrorState(listState.error!, isDark)
                       : listState.isEmpty
-                          ? _buildEmptyState(filters.hasActiveFilters)
-                          : _buildOpportunityList(listState),
+                          ? _buildEmptyState(filters.searchQuery.isNotEmpty, isDark)
+                          : _buildOpportunityList(listState, isDark),
             ),
           ],
         ),
@@ -132,7 +144,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
-  Widget _buildHeader() => Padding(
+  Widget _buildHeader(bool isDark) => Padding(
         padding: const EdgeInsets.fromLTRB(
           KolabingSpacing.md,
           KolabingSpacing.md,
@@ -152,12 +164,14 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
-                      color: KolabingColors.textPrimary,
+                      color: isDark
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
-                    'Find collaboration opportunities',
+                    'Find your next collab!',
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -172,7 +186,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ),
       );
 
-  Widget _buildSearchBar() => Padding(
+  Widget _buildSearchBar(bool isDark) => Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: KolabingSpacing.md,
           vertical: KolabingSpacing.xs,
@@ -192,14 +206,22 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               fontSize: 14,
               color: KolabingColors.textTertiary,
             ),
-            prefixIcon: const Icon(
+            prefixIcon: Icon(
               LucideIcons.search,
               size: 18,
-              color: KolabingColors.textTertiary,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                  : KolabingColors.textTertiary,
             ),
             suffixIcon: _hasSearchText
                 ? IconButton(
-                    icon: const Icon(LucideIcons.x, size: 16),
+                    icon: Icon(
+                      LucideIcons.x,
+                      size: 16,
+                      color: isDark
+                          ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                          : null,
+                    ),
                     onPressed: () {
                       _searchController.clear();
                       _debounceTimer?.cancel();
@@ -210,18 +232,25 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   )
                 : null,
             filled: true,
-            fillColor: KolabingColors.surface,
+            fillColor:
+                isDark ? KolabingColors.darkSurface : KolabingColors.surface,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
               vertical: KolabingSpacing.sm,
             ),
             border: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: BorderSide(
+                color:
+                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: BorderSide(
+                color:
+                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -231,12 +260,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           ),
           style: GoogleFonts.openSans(
             fontSize: 14,
-            color: KolabingColors.textPrimary,
+            color:
+                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
           ),
         ),
       );
 
-  Widget _buildFilterChips(OpportunityFilters filters) => SizedBox(
+  Widget _buildFilterChips(OpportunityFilters filters, bool isDark) => SizedBox(
         height: 44,
         child: ListView(
           scrollDirection: Axis.horizontal,
@@ -248,31 +278,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             _FilterChip(
               label: 'All',
               isSelected: !filters.hasActiveFilters,
+              isDark: isDark,
               onTap: () {
                 ref.read(opportunityFiltersProvider.notifier).clearAll();
                 _searchController.clear();
-              },
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-
-            // Creator type chips
-            _FilterChip(
-              label: 'Business',
-              isSelected: filters.creatorType == 'business',
-              onTap: () {
-                ref
-                    .read(opportunityFiltersProvider.notifier)
-                    .setCreatorType('business');
-              },
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            _FilterChip(
-              label: 'Community',
-              isSelected: filters.creatorType == 'community',
-              onTap: () {
-                ref
-                    .read(opportunityFiltersProvider.notifier)
-                    .setCreatorType('community');
               },
             ),
             const SizedBox(width: KolabingSpacing.xs),
@@ -284,6 +293,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                     label: mode.displayName,
                     icon: LucideIcons.building2,
                     isSelected: filters.venueMode == mode.toApiValue(),
+                    isDark: isDark,
                     onTap: () {
                       ref
                           .read(opportunityFiltersProvider.notifier)
@@ -300,6 +310,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                     icon: LucideIcons.clock,
                     isSelected:
                         filters.availabilityMode == mode.toApiValue(),
+                    isDark: isDark,
                     onTap: () {
                       ref
                           .read(opportunityFiltersProvider.notifier)
@@ -311,7 +322,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ),
       );
 
-  Widget _buildOpportunityList(OpportunityListState listState) => Column(
+  Widget _buildOpportunityList(OpportunityListState listState, bool isDark) =>
+      Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Results count
@@ -325,7 +337,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               style: GoogleFonts.openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.textTertiary,
+                color: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                    : KolabingColors.textTertiary,
               ),
             ),
           ),
@@ -368,7 +382,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   return OpportunityCard(
                     opportunity: opportunity,
                     onView: () => _onViewOpportunity(opportunity),
-                    onApply: isOwn ? null : () => _onApplyOpportunity(opportunity),
+                    onApply:
+                        isOwn ? null : () => _onApplyOpportunity(opportunity),
                   );
                 },
               ),
@@ -377,20 +392,20 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ],
       );
 
-  Widget _buildLoadingState() => SingleChildScrollView(
+  Widget _buildLoadingState(bool isDark) => SingleChildScrollView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
           children: List.generate(
             3,
-            (index) => const Padding(
-              padding: EdgeInsets.only(bottom: KolabingSpacing.sm),
-              child: _ShimmerCard(),
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+              child: _ShimmerCard(isDark: isDark),
             ),
           ),
         ),
       );
 
-  Widget _buildEmptyState(bool hasFilters) => Center(
+  Widget _buildEmptyState(bool hasFilters, bool isDark) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -398,8 +413,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               DecoratedBox(
-                decoration: const BoxDecoration(
-                  color: KolabingColors.surfaceVariant,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? KolabingColors.darkSurface
+                      : KolabingColors.surfaceVariant,
                   shape: BoxShape.circle,
                 ),
                 child: SizedBox(
@@ -408,7 +425,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   child: Icon(
                     hasFilters ? LucideIcons.searchX : LucideIcons.search,
                     size: 36,
-                    color: KolabingColors.textTertiary,
+                    color: isDark
+                        ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                        : KolabingColors.textTertiary,
                   ),
                 ),
               ),
@@ -418,7 +437,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -451,7 +472,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ),
       );
 
-  Widget _buildErrorState(String error) => Center(
+  Widget _buildErrorState(String error, bool isDark) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -479,7 +500,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -516,12 +539,14 @@ class _FilterChip extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     this.icon,
+    this.isDark = false,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
   final IconData? icon;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -538,12 +563,16 @@ class _FilterChip extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? KolabingColors.primary
-                  : KolabingColors.surface,
+                  : isDark
+                      ? KolabingColors.darkSurface
+                      : KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusRound,
               border: Border.all(
                 color: isSelected
                     ? KolabingColors.primary
-                    : KolabingColors.border,
+                    : isDark
+                        ? KolabingColors.darkBorder
+                        : KolabingColors.border,
               ),
             ),
             child: Row(
@@ -566,7 +595,9 @@ class _FilterChip extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     color: isSelected
                         ? KolabingColors.onPrimary
-                        : KolabingColors.textPrimary,
+                        : isDark
+                            ? KolabingColors.textOnDark
+                            : KolabingColors.textPrimary,
                   ),
                 ),
               ],
@@ -578,12 +609,16 @@ class _FilterChip extends StatelessWidget {
 
 /// Shimmer loading card placeholder
 class _ShimmerCard extends StatelessWidget {
-  const _ShimmerCard();
+  const _ShimmerCard({this.isDark = false});
+
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) => Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
+        baseColor:
+            isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
+        highlightColor:
+            isDark ? KolabingColors.darkBorder : KolabingColors.surface,
         child: Container(
           padding: const EdgeInsets.all(KolabingSpacing.md),
           decoration: BoxDecoration(

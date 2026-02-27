@@ -40,6 +40,8 @@ class _DashboardShimmerState extends State<DashboardShimmer>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (BuildContext context, Widget? _) {
@@ -50,25 +52,25 @@ class _DashboardShimmerState extends State<DashboardShimmer>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header placeholder
-              _ShimmerBox(width: 200, height: 24, opacity: opacity),
+              _ShimmerBox(width: 200, height: 24, opacity: opacity, isDark: isDark),
               const SizedBox(height: KolabingSpacing.xs),
-              _ShimmerBox(width: 160, height: 16, opacity: opacity),
+              _ShimmerBox(width: 160, height: 16, opacity: opacity, isDark: isDark),
               const SizedBox(height: KolabingSpacing.lg),
 
               // Stats grid 2x2
               Row(
                 children: [
-                  Expanded(child: _ShimmerStatCard(opacity: opacity)),
+                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
                   const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(child: _ShimmerStatCard(opacity: opacity)),
+                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
                 ],
               ),
               const SizedBox(height: KolabingSpacing.sm),
               Row(
                 children: [
-                  Expanded(child: _ShimmerStatCard(opacity: opacity)),
+                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
                   const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(child: _ShimmerStatCard(opacity: opacity)),
+                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
                 ],
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -77,24 +79,24 @@ class _DashboardShimmerState extends State<DashboardShimmer>
               Row(
                 children: [
                   Expanded(
-                    child: _ShimmerBox(height: 48, opacity: opacity),
+                    child: _ShimmerBox(height: 48, opacity: opacity, isDark: isDark),
                   ),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
-                    child: _ShimmerBox(height: 48, opacity: opacity),
+                    child: _ShimmerBox(height: 48, opacity: opacity, isDark: isDark),
                   ),
                 ],
               ),
               const SizedBox(height: KolabingSpacing.lg),
 
               // Section title
-              _ShimmerBox(width: 180, height: 18, opacity: opacity),
+              _ShimmerBox(width: 180, height: 18, opacity: opacity, isDark: isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Upcoming items
-              _ShimmerListItem(opacity: opacity),
+              _ShimmerListItem(opacity: opacity, isDark: isDark),
               const SizedBox(height: KolabingSpacing.sm),
-              _ShimmerListItem(opacity: opacity),
+              _ShimmerListItem(opacity: opacity, isDark: isDark),
             ],
           ),
         );
@@ -108,11 +110,13 @@ class _ShimmerBox extends StatelessWidget {
     this.width,
     required this.height,
     required this.opacity,
+    this.isDark = false,
   });
 
   final double? width;
   final double height;
   final double opacity;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +124,9 @@ class _ShimmerBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: KolabingColors.border.withValues(alpha: opacity),
+        color: isDark
+            ? KolabingColors.darkBorder.withValues(alpha: opacity)
+            : KolabingColors.border.withValues(alpha: opacity),
         borderRadius: KolabingRadius.borderRadiusSm,
       ),
     );
@@ -128,9 +134,10 @@ class _ShimmerBox extends StatelessWidget {
 }
 
 class _ShimmerStatCard extends StatelessWidget {
-  const _ShimmerStatCard({required this.opacity});
+  const _ShimmerStatCard({required this.opacity, this.isDark = false});
 
   final double opacity;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -138,30 +145,34 @@ class _ShimmerStatCard extends StatelessWidget {
       height: 110,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ShimmerBox(width: 80, height: 12, opacity: opacity),
+          _ShimmerBox(width: 80, height: 12, opacity: opacity, isDark: isDark),
           const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _ShimmerBox(width: 40, height: 28, opacity: opacity),
+              _ShimmerBox(width: 40, height: 28, opacity: opacity, isDark: isDark),
               Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border.withValues(alpha: opacity),
+                  color: isDark
+                      ? KolabingColors.darkBorder.withValues(alpha: opacity)
+                      : KolabingColors.border.withValues(alpha: opacity),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -174,18 +185,21 @@ class _ShimmerStatCard extends StatelessWidget {
 }
 
 class _ShimmerListItem extends StatelessWidget {
-  const _ShimmerListItem({required this.opacity});
+  const _ShimmerListItem({required this.opacity, this.isDark = false});
 
   final double opacity;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+        ),
       ),
       child: Row(
         children: [
@@ -193,7 +207,9 @@ class _ShimmerListItem extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: KolabingColors.border.withValues(alpha: opacity),
+              color: isDark
+                  ? KolabingColors.darkBorder.withValues(alpha: opacity)
+                  : KolabingColors.border.withValues(alpha: opacity),
               shape: BoxShape.circle,
             ),
           ),
@@ -202,16 +218,16 @@ class _ShimmerListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _ShimmerBox(width: 120, height: 14, opacity: opacity),
+                _ShimmerBox(width: 120, height: 14, opacity: opacity, isDark: isDark),
                 const SizedBox(height: KolabingSpacing.xxs),
-                _ShimmerBox(width: 180, height: 12, opacity: opacity),
+                _ShimmerBox(width: 180, height: 12, opacity: opacity, isDark: isDark),
                 const SizedBox(height: KolabingSpacing.xs),
-                _ShimmerBox(width: 80, height: 16, opacity: opacity),
+                _ShimmerBox(width: 80, height: 16, opacity: opacity, isDark: isDark),
               ],
             ),
           ),
           const SizedBox(width: KolabingSpacing.xs),
-          _ShimmerBox(width: 60, height: 22, opacity: opacity),
+          _ShimmerBox(width: 60, height: 22, opacity: opacity, isDark: isDark),
         ],
       ),
     );

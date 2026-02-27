@@ -240,6 +240,62 @@ class AuthService {
     return 'data:$mimeType;base64,${data.photoBase64}';
   }
 
+  /// Register attendee user (minimal payload)
+  ///
+  /// POST /api/v1/auth/register/attendee
+  Future<AuthResponse> registerAttendee({
+    required String email,
+    required String password,
+  }) async {
+    if (_useMockApi) {
+      return _mockRegister(email, password, UserType.attendee);
+    }
+
+    final url = '$_baseUrl/auth/register/attendee';
+    debugPrint('🔐 Register Attendee: POST $url');
+
+    try {
+      final body = {
+        'email': email,
+        'password': password,
+        'password_confirmation': password,
+      };
+
+      debugPrint('🔐 Request body keys: ${body.keys.toList()}');
+
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      debugPrint('🔐 Response status: ${response.statusCode}');
+      debugPrint(
+          '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final authResponse = AuthResponse.fromJson(json);
+        await _saveAuthData(authResponse);
+        return authResponse;
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } catch (e) {
+      if (e is ApiException || e is NetworkException) {
+        rethrow;
+      }
+      debugPrint('🔐 Register attendee error: $e');
+      throw NetworkException('Failed to connect to server: $e');
+    }
+  }
+
   /// Mock registration for development
   Future<AuthResponse> _mockRegister(
     String email,
@@ -267,6 +323,92 @@ class AuthService {
 
     await _saveAuthData(authResponse);
     return authResponse;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Password Reset APIs
+  // ---------------------------------------------------------------------------
+
+  /// Send password reset email
+  ///
+  /// POST /api/v1/auth/forgot-password
+  Future<void> forgotPassword({required String email}) async {
+    final url = '$_baseUrl/auth/forgot-password';
+    debugPrint('🔐 Forgot Password: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'email': email}),
+      );
+
+      debugPrint('🔐 Forgot password response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } catch (e) {
+      if (e is ApiException || e is NetworkException) {
+        rethrow;
+      }
+      debugPrint('🔐 Forgot password error: $e');
+      throw NetworkException('Failed to connect to server: $e');
+    }
+  }
+
+  /// Reset password with token from email
+  ///
+  /// POST /api/v1/auth/reset-password
+  Future<void> resetPassword({
+    required String email,
+    required String token,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final url = '$_baseUrl/auth/reset-password';
+    debugPrint('🔐 Reset Password: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'token': token,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        }),
+      );
+
+      debugPrint('🔐 Reset password response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } catch (e) {
+      if (e is ApiException || e is NetworkException) {
+        rethrow;
+      }
+      debugPrint('🔐 Reset password error: $e');
+      throw NetworkException('Failed to connect to server: $e');
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -594,6 +736,23 @@ class AuthService {
 
   /// Get cached user
   UserModel? get cachedUser => _cachedUser;
+
+  /// Get stored user from secure storage
+  Future<UserModel?> getStoredUser() async {
+    if (_cachedUser != null) return _cachedUser;
+
+    try {
+      final userJson = await _secureStorage.read(key: _userKey);
+      if (userJson != null) {
+        final json = jsonDecode(userJson) as Map<String, dynamic>;
+        _cachedUser = UserModel.fromJson(json);
+        return _cachedUser;
+      }
+    } on Exception catch (e) {
+      debugPrint('Get stored user error: $e');
+    }
+    return null;
+  }
 }
 
 /// Exception thrown when authentication is cancelled by user
