@@ -1,15 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
-import 'features/settings/providers/theme_provider.dart';
+import 'services/notification_service.dart';
 
 /// Application entry point
 void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Firebase initialization
+  await Firebase.initializeApp();
+
+  // Initialize push notifications
+  await NotificationService.instance.initialize();
 
   // Set preferred orientations (portrait only for mobile)
   await SystemChrome.setPreferredOrientations([
@@ -26,13 +33,11 @@ void main() async {
 }
 
 /// Main application widget
-class KolabingApp extends ConsumerWidget {
+class KolabingApp extends StatelessWidget {
   const KolabingApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeState = ref.watch(themeProvider);
-
+  Widget build(BuildContext context) {
     return MaterialApp.router(
       // App configuration
       title: 'Kolabing',
@@ -40,22 +45,10 @@ class KolabingApp extends ConsumerWidget {
 
       // Theme configuration
       theme: KolabingTheme.lightTheme,
-      darkTheme: KolabingTheme.darkTheme,
-      themeMode: themeState.themeMode,
+      themeMode: ThemeMode.light,
 
       // Router configuration
       routerConfig: kolabingRouter,
-
-      // Localization (to be configured later)
-      // localizationsDelegates: const [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   GlobalCupertinoLocalizations.delegate,
-      // ],
-      // supportedLocales: const [
-      //   Locale('en', 'US'),
-      //   Locale('es', 'ES'),
-      // ],
     );
   }
 }

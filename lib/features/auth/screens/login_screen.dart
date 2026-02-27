@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/apple_sign_in_button.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/kolabing_logo.dart';
 
@@ -52,6 +53,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   bool _isLoading = false;
   bool _isGoogleLoading = false;
+  bool _isAppleLoading = false;
   bool _showSuccess = false;
   bool _obscurePassword = true;
 
@@ -252,6 +254,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     }
   }
 
+  Future<void> _handleAppleSignIn() async {
+    if (_isLoading || _isGoogleLoading || _isAppleLoading || _showSuccess) return;
+
+    FocusScope.of(context).unfocus();
+    setState(() => _isAppleLoading = true);
+
+    final result = await ref.read(authProvider.notifier).signInWithApple();
+
+    if (!mounted) return;
+
+    if (result.success) {
+      setState(() {
+        _isAppleLoading = false;
+        _showSuccess = true;
+      });
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      await _exitController.forward();
+      if (!mounted) return;
+      final route = await _getNavigationRoute(result);
+      if (!mounted) return;
+      context.go(route);
+    } else if (result.cancelled) {
+      setState(() => _isAppleLoading = false);
+    } else if (result.isUserNotFound) {
+      setState(() => _isAppleLoading = false);
+      _showUserNotFoundDialog();
+    } else if (result.isNetworkError) {
+      setState(() => _isAppleLoading = false);
+      _showNetworkErrorSnackBar(isGoogle: false);
+    } else {
+      setState(() => _isAppleLoading = false);
+      _showErrorSnackBar(result.displayError);
+    }
+  }
+
   Future<String> _getNavigationRoute(AuthResult result) async {
     final user = result.user;
 
@@ -339,7 +377,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
-  bool get _anyLoading => _isLoading || _isGoogleLoading;
+  bool get _anyLoading => _isLoading || _isGoogleLoading || _isAppleLoading;
 
   @override
   Widget build(BuildContext context) => PopScope(
@@ -660,6 +698,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 onPressed: _handleGoogleSignIn,
                                 buttonText: 'Continue with Google',
                                 isLoading: _isGoogleLoading,
+                                showSuccess: _showSuccess,
+                                isEnabled: !_anyLoading && !_showSuccess,
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            // Apple Sign In Button
+                            AnimatedBuilder(
+                              animation: _googleAnimation,
+                              builder: (context, child) => Opacity(
+                                opacity: _googleAnimation.value,
+                                child: child,
+                              ),
+                              child: AppleSignInButton(
+                                onPressed: _handleAppleSignIn,
+                                buttonText: 'Continue with Apple',
+                                isLoading: _isAppleLoading,
                                 showSuccess: _showSuccess,
                                 isEnabled: !_anyLoading && !_showSuccess,
                               ),

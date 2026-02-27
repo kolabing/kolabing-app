@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
@@ -82,6 +84,41 @@ class AuthService {
       await _googleSignIn.signOut();
     } on Exception catch (e) {
       debugPrint('Google Sign Out error: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // FCM Device Token
+  // ---------------------------------------------------------------------------
+
+  /// Register FCM device token with backend.
+  ///
+  /// POST /api/v1/me/device-token
+  /// Call after successful login (any method).
+  Future<void> registerDeviceToken(String fcmToken) async {
+    final token = await getToken();
+    if (token == null) return;
+
+    final url = '$_baseUrl/me/device-token';
+    debugPrint('[FCM] Registering device token: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'token': fcmToken,
+          'platform': Platform.isIOS ? 'ios' : 'android',
+        }),
+      );
+      debugPrint('[FCM] Register token response: ${response.statusCode}');
+    } on Exception catch (e) {
+      debugPrint('[FCM] Register token error: $e');
+      // Non-fatal: don't throw, just log
     }
   }
 
@@ -604,6 +641,107 @@ class AuthService {
 
     await _saveAuthData(authResponse);
     return authResponse;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Apple Sign In
+  // ---------------------------------------------------------------------------
+
+  /// Sign in with Apple and get identity token.
+  Future<({String identityToken, String? fullName})> getAppleCredential() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      if (credential.identityToken == null) {
+        throw const AuthException('Failed to get Apple identity token');
+      }
+
+      final fullName = [
+        credential.givenName,
+        credential.familyName,
+      ].where((n) => n != null && n.isNotEmpty).join(' ');
+
+      return (
+        identityToken: credential.identityToken!,
+        fullName: fullName.isEmpty ? null : fullName,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw const AuthCancelledException();
+      }
+      throw AuthException('Apple Sign In failed: ${e.message}');
+    } on AuthCancelledException {
+      rethrow;
+    } on Exception catch (e) {
+      throw AuthException('Apple Sign In failed: $e');
+    }
+  }
+
+  /// Login with Apple.
+  ///
+  /// POST /api/v1/auth/apple
+  Future<AuthResponse> loginWithApple() async {
+    try {
+      final credential = await getAppleCredential();
+      return await _authenticateWithApple(
+        credential.identityToken,
+        credential.fullName,
+      );
+    } on AuthCancelledException {
+      rethrow;
+    } on Exception catch (e) {
+      if (e is ApiException || e is NetworkException) {
+        rethrow;
+      }
+      debugPrint('Apple login error: $e');
+      throw AuthException('Apple login failed: $e');
+    }
+  }
+
+  Future<AuthResponse> _authenticateWithApple(
+    String identityToken,
+    String? fullName,
+  ) async {
+    final url = '$_baseUrl/auth/apple';
+    debugPrint('[Apple] Login: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'identity_token': identityToken,
+          if (fullName != null) 'name': fullName,
+        }),
+      );
+
+      debugPrint('[Apple] Login response: ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final authResponse = AuthResponse.fromJson(json);
+        await _saveAuthData(authResponse);
+        return authResponse;
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } catch (e) {
+      if (e is ApiException || e is NetworkException) {
+        rethrow;
+      }
+      throw NetworkException('Failed to connect to server: $e');
+    }
   }
 
   // ---------------------------------------------------------------------------

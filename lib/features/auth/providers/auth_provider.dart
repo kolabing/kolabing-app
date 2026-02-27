@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../services/notification_service.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -83,7 +86,12 @@ enum AuthStatus {
 /// Auth state notifier for managing authentication
 class AuthNotifier extends Notifier<AuthState> {
   @override
-  AuthState build() => const AuthState();
+  AuthState build() {
+    NotificationService.instance.onTokenRefresh((token) {
+      _authService.registerDeviceToken(token);
+    });
+    return const AuthState();
+  }
 
   AuthService get _authService => ref.read(authServiceProvider);
 
@@ -108,6 +116,8 @@ class AuthNotifier extends Notifier<AuthState> {
         token: response.token,
         isNewUser: false,
       );
+
+      unawaited(_registerFcmToken());
 
       return AuthResult(
         success: true,
@@ -161,6 +171,8 @@ class AuthNotifier extends Notifier<AuthState> {
         token: response.token,
         isNewUser: false,
       );
+
+      unawaited(_registerFcmToken());
 
       return AuthResult(
         success: true,
@@ -247,6 +259,76 @@ class AuthNotifier extends Notifier<AuthState> {
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
         error: null,
+      );
+    }
+  }
+
+  Future<void> _registerFcmToken() async {
+    try {
+      final fcmToken = await NotificationService.instance.getToken();
+      if (fcmToken != null) {
+        await _authService.registerDeviceToken(fcmToken);
+      }
+    } on Exception catch (e) {
+      debugPrint('[FCM] Token registration error: $e');
+    }
+  }
+
+  /// Sign in with Apple (existing users only)
+  Future<AuthResult> signInWithApple() async {
+    state = state.copyWith(status: AuthStatus.loading, error: null);
+
+    try {
+      final response = await _authService.loginWithApple();
+
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: response.user,
+        token: response.token,
+        isNewUser: response.isNewUser,
+      );
+
+      unawaited(_registerFcmToken());
+
+      return AuthResult(
+        success: true,
+        isNewUser: response.isNewUser,
+        user: response.user,
+      );
+    } on AuthCancelledException {
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+      return const AuthResult(
+        success: false,
+        cancelled: true,
+      );
+    } on ApiException catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: e.error.message,
+      );
+      return AuthResult(
+        success: false,
+        error: e.error,
+      );
+    } on NetworkException catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: e.message,
+      );
+      return AuthResult(
+        success: false,
+        errorMessage: e.message,
+        isNetworkError: true,
+      );
+    } on Exception catch (e) {
+      debugPrint('Apple sign in error: $e');
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: 'An unexpected error occurred',
+      );
+      return const AuthResult(
+        success: false,
+        errorMessage: 'An unexpected error occurred',
       );
     }
   }
