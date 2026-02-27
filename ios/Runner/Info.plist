@@ -51,5 +51,16 @@
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.729026342484-2hnsoraikrr6cdtot0bl5a7hlhg57r3p</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
