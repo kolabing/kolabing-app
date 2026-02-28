@@ -1,9 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/// Key for storing whether the permission screen has been shown
-const String _permissionScreenShownKey = 'permission_screen_shown';
 
 /// Service for managing app permissions (location & notifications).
 class PermissionService {
@@ -16,25 +12,23 @@ class PermissionService {
   // Permission Screen Gate
   // ---------------------------------------------------------------------------
 
-  /// Whether the permission screen has already been shown to the user.
+  /// Whether the permission screen should be skipped.
+  ///
+  /// Returns true only when both location and notification permissions are
+  /// already granted — i.e. there is nothing left to request.
   Future<bool> hasShownPermissionScreen() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getBool(_permissionScreenShownKey) ?? false;
+      final locationStatus = await Permission.locationWhenInUse.status;
+      final notificationStatus = await Permission.notification.status;
+      return locationStatus.isGranted && notificationStatus.isGranted;
     } on Exception {
       return false;
     }
   }
 
-  /// Mark the permission screen as shown.
-  Future<void> markPermissionScreenShown() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_permissionScreenShownKey, true);
-    } on Exception {
-      // Silently fail
-    }
-  }
+  /// No-op kept for API compatibility. The screen is now shown whenever
+  /// permissions are not yet granted rather than relying on a stored flag.
+  Future<void> markPermissionScreenShown() async {}
 
   // ---------------------------------------------------------------------------
   // Location Permission

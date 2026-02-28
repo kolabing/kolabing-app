@@ -47,7 +47,6 @@ class _CreateOpportunityScreenState
   final _businessOfferOtherController = TextEditingController();
 
   // Community deliverables
-  final _attendeeCountController = TextEditingController();
   final _deliverablesOtherController = TextEditingController();
 
   // Location
@@ -77,10 +76,6 @@ class _CreateOpportunityScreenState
                 : '';
         _businessOfferOtherController.text =
             opp.businessOffer.other ?? '';
-        _attendeeCountController.text =
-            (opp.communityDeliverables.attendeeCount ?? 0) > 0
-                ? opp.communityDeliverables.attendeeCount.toString()
-                : '';
         _deliverablesOtherController.text =
             opp.communityDeliverables.other ?? '';
         _addressController.text = opp.address ?? '';
@@ -101,7 +96,6 @@ class _CreateOpportunityScreenState
     _descriptionController.dispose();
     _discountPercentageController.dispose();
     _businessOfferOtherController.dispose();
-    _attendeeCountController.dispose();
     _deliverablesOtherController.dispose();
     _addressController.dispose();
     for (final c in _productControllers) {
@@ -781,10 +775,6 @@ class _CreateOpportunityScreenState
     final deliverables = opp.communityDeliverables;
 
     _syncController(
-      _attendeeCountController,
-      deliverables.attendeeCount?.toString() ?? '',
-    );
-    _syncController(
       _deliverablesOtherController,
       deliverables.other ?? '',
     );
@@ -802,98 +792,74 @@ class _CreateOpportunityScreenState
         ],
         const SizedBox(height: KolabingSpacing.lg),
 
-        // Instagram Post
+        // Social Media Content
         _buildToggleCard(
-          icon: LucideIcons.image,
-          title: 'Instagram Post',
-          subtitle: 'Community posts about the collaboration on Instagram',
-          value: deliverables.instagramPost,
+          icon: LucideIcons.instagram,
+          title: 'Social Media Content',
+          subtitle:
+              'Instagram Post, Instagram Story, Reel / Short Video, TikTok Video, Photo Content (UGC for brand use)',
+          value: deliverables.socialMediaContent,
           onChanged: (val) => ref
               .read(opportunityFormProvider.notifier)
-              .updateDeliverables(instagramPost: val),
+              .updateDeliverables(socialMediaContent: val),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
-        // Instagram Story
-        _buildToggleCard(
-          icon: LucideIcons.clapperboard,
-          title: 'Instagram Story',
-          subtitle: 'Community shares an Instagram Story',
-          value: deliverables.instagramStory,
-          onChanged: (val) => ref
-              .read(opportunityFormProvider.notifier)
-              .updateDeliverables(instagramStory: val),
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-
-        // TikTok Video
-        _buildToggleCard(
-          icon: LucideIcons.video,
-          title: 'TikTok Video',
-          subtitle: 'Community creates a TikTok video',
-          value: deliverables.tiktokVideo,
-          onChanged: (val) => ref
-              .read(opportunityFormProvider.notifier)
-              .updateDeliverables(tiktokVideo: val),
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-
-        // Event Mention
+        // Event Activation
         _buildToggleCard(
           icon: LucideIcons.megaphone,
-          title: 'Event Mention',
-          subtitle: 'Business is mentioned during the event',
-          value: deliverables.eventMention,
+          title: 'Event Activation',
+          subtitle: 'Brand integration or mention during our event',
+          value: deliverables.eventActivation,
           onChanged: (val) => ref
               .read(opportunityFormProvider.notifier)
-              .updateDeliverables(eventMention: val),
+              .updateDeliverables(eventActivation: val),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
-        // Attendee Count
+        // Product Placement
+        _buildToggleCard(
+          icon: LucideIcons.package,
+          title: 'Product Placement',
+          subtitle: 'Product showcase or visibility during our event',
+          value: deliverables.productPlacement,
+          onChanged: (val) => ref
+              .read(opportunityFormProvider.notifier)
+              .updateDeliverables(productPlacement: val),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+
+        // Community Reach
         _buildToggleCard(
           icon: LucideIcons.users,
-          title: 'Attendee Count',
-          subtitle: 'Guaranteed minimum number of attendees',
-          value: deliverables.attendeeCount != null,
-          onChanged: (val) {
-            if (val) {
-              ref
-                  .read(opportunityFormProvider.notifier)
-                  .updateDeliverables(attendeeCount: 0);
-            } else {
-              ref
-                  .read(opportunityFormProvider.notifier)
-                  .updateDeliverables(clearAttendeeCount: true);
-            }
-          },
+          title: 'Community Reach',
+          subtitle:
+              'Minimum attendee guarantee, access to our members, feature, community discount code',
+          value: deliverables.communityReach,
+          onChanged: (val) => ref
+              .read(opportunityFormProvider.notifier)
+              .updateDeliverables(communityReach: val),
         ),
-        if (deliverables.attendeeCount != null) ...[
-          const SizedBox(height: KolabingSpacing.sm),
-          Padding(
-            padding: const EdgeInsets.only(left: KolabingSpacing.xl),
-            child: _buildTextField(
-              label: 'Expected Attendees',
-              hint: 'e.g., 200',
-              controller: _attendeeCountController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onChanged: (value) {
-                final count = int.tryParse(value);
-                ref
-                    .read(opportunityFormProvider.notifier)
-                    .updateDeliverables(attendeeCount: count ?? 0);
-              },
-            ),
-          ),
-        ],
+        const SizedBox(height: KolabingSpacing.sm),
+
+        // Review & Feedback
+        _buildToggleCard(
+          icon: LucideIcons.star,
+          title: 'Review & Feedback',
+          subtitle:
+              'Google/social reviews, testimonials or member feedback',
+          value: deliverables.reviewFeedback,
+          onChanged: (val) => ref
+              .read(opportunityFormProvider.notifier)
+              .updateDeliverables(reviewFeedback: val),
+        ),
         const SizedBox(height: KolabingSpacing.sm),
 
         // Other
         _buildToggleCard(
           icon: LucideIcons.moreHorizontal,
           title: 'Other',
-          subtitle: 'Any other deliverables from the community',
+          subtitle: 'Write your own deliverable',
           value: deliverables.other != null,
           onChanged: (val) {
             if (val) {
@@ -943,7 +909,7 @@ class _CreateOpportunityScreenState
       children: [
         _buildStepHeader(
           title: 'LOCATION & AVAILABILITY',
-          subtitle: 'When and where will this collaboration happen?',
+          subtitle: 'When is your community available for this kolab?',
         ),
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -980,7 +946,7 @@ class _CreateOpportunityScreenState
           children: [
             Expanded(
               child: _buildDatePicker(
-                label: 'Start Date',
+                label: 'Available From',
                 value: opp.availabilityStart,
                 error: formState.fieldErrors['availability_start'],
                 onChanged: (date) => ref

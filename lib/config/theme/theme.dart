@@ -153,9 +153,12 @@ abstract final class KolabingTheme {
             ),
           ),
           hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textTertiary,
+            color: KolabingColors.textSecondary,
           ),
           labelStyle: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textSecondary,
+          ),
+          floatingLabelStyle: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.textSecondary,
           ),
           errorStyle: KolabingTextStyles.bodySmall.copyWith(
@@ -358,6 +361,9 @@ abstract final class KolabingTheme {
             color: KolabingColors.textTertiary,
           ),
           labelStyle: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textOnDark,
+          ),
+          floatingLabelStyle: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.textOnDark,
           ),
           errorStyle: KolabingTextStyles.bodySmall.copyWith(

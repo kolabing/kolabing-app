@@ -456,17 +456,16 @@ class _CommunityOfferDetailScreenState
             ],
           ),
           const SizedBox(height: KolabingSpacing.sm),
-          if (del.instagramPost)
-            _buildDeliverableItem(LucideIcons.instagram, 'Instagram Post'),
-          if (del.instagramStory)
-            _buildDeliverableItem(LucideIcons.instagram, 'Instagram Story'),
-          if (del.tiktokVideo)
-            _buildDeliverableItem(LucideIcons.video, 'TikTok Video'),
-          if (del.eventMention)
-            _buildDeliverableItem(LucideIcons.megaphone, 'Event Mention'),
-          if (del.attendeeCount != null)
-            _buildDeliverableItem(
-                LucideIcons.users, '${del.attendeeCount} Attendees'),
+          if (del.socialMediaContent)
+            _buildDeliverableItem(LucideIcons.instagram, 'Social Media Content'),
+          if (del.eventActivation)
+            _buildDeliverableItem(LucideIcons.megaphone, 'Event Activation'),
+          if (del.productPlacement)
+            _buildDeliverableItem(LucideIcons.package, 'Product Placement'),
+          if (del.communityReach)
+            _buildDeliverableItem(LucideIcons.users, 'Community Reach'),
+          if (del.reviewFeedback)
+            _buildDeliverableItem(LucideIcons.star, 'Review & Feedback'),
           if (del.other?.isNotEmpty ?? false)
             _buildDeliverableItem(LucideIcons.plus, del.other!),
         ],

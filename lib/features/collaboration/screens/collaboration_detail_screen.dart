@@ -514,23 +514,20 @@ class _DeliverablesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = <_CheckItem>[];
 
-    if (deliverables.instagramPost) {
-      items.add(const _CheckItem('Instagram Post', true));
+    if (deliverables.socialMediaContent) {
+      items.add(const _CheckItem('Social Media Content', true));
     }
-    if (deliverables.instagramStory) {
-      items.add(const _CheckItem('Instagram Story', true));
+    if (deliverables.eventActivation) {
+      items.add(const _CheckItem('Event Activation', true));
     }
-    if (deliverables.tiktokVideo) {
-      items.add(const _CheckItem('TikTok Video', true));
+    if (deliverables.productPlacement) {
+      items.add(const _CheckItem('Product Placement', true));
     }
-    if (deliverables.eventMention) {
-      items.add(const _CheckItem('Event Mention', true));
+    if (deliverables.communityReach) {
+      items.add(const _CheckItem('Community Reach', true));
     }
-    if (deliverables.attendeeCount != null) {
-      items.add(_CheckItem(
-        '~${deliverables.attendeeCount} attendees',
-        true,
-      ));
+    if (deliverables.reviewFeedback) {
+      items.add(const _CheckItem('Review & Feedback', true));
     }
     if (deliverables.other != null && deliverables.other!.isNotEmpty) {
       items.add(_CheckItem(deliverables.other!, true));

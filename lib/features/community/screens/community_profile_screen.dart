@@ -20,7 +20,6 @@ import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../event/widgets/past_events_section.dart';
-import '../../settings/widgets/theme_selector_section.dart';
 
 /// Community profile screen
 class CommunityProfileScreen extends ConsumerStatefulWidget {
@@ -492,11 +491,6 @@ class _CommunityProfileScreenState
               state.isUpdating,
               isDark,
             ),
-
-            const SizedBox(height: KolabingSpacing.md),
-
-            // Theme Selector Section
-            const ThemeSelectorSection(),
 
             const SizedBox(height: KolabingSpacing.md),
 

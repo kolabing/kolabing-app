@@ -245,6 +245,8 @@ class AuthNotifier extends Notifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading);
 
     try {
+      // Delete FCM token so this device stops receiving notifications
+      await NotificationService.instance.deleteToken();
       await _authService.logout();
     } on Exception catch (e) {
       debugPrint('Logout error: $e');

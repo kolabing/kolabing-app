@@ -66,7 +66,9 @@ class _PermissionScreenState extends State<PermissionScreen> {
       _locationGranted = status.isGranted;
       _isRequestingLocation = false;
     });
-    if (status.isPermanentlyDenied) _showSettingsDialog('Location');
+    if (status.isPermanentlyDenied || status.isDenied) {
+      _showSettingsDialog('Location');
+    }
   }
 
   Future<void> _requestNotification() async {
@@ -77,7 +79,9 @@ class _PermissionScreenState extends State<PermissionScreen> {
       _notificationGranted = status.isGranted;
       _isRequestingNotification = false;
     });
-    if (status.isPermanentlyDenied) _showSettingsDialog('Notification');
+    if (status.isPermanentlyDenied || status.isDenied) {
+      _showSettingsDialog('Notification');
+    }
   }
 
   void _showSettingsDialog(String permissionName) {

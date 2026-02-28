@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../services/notification_service.dart';
+
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
@@ -229,10 +231,43 @@ abstract final class KolabingRoutes {
   static const String permissions = '/permissions';
 }
 
+/// Navigator key for programmatic navigation (e.g. from push notifications)
+final GlobalKey<NavigatorState> kolabingNavigatorKey =
+    GlobalKey<NavigatorState>();
+
+/// Connect push notification taps to GoRouter.
+///
+/// Call once in main() after the app widget is running.
+/// Maps FCM `type` → app route and navigates accordingly.
+void connectNotificationRouter() {
+  NotificationService.instance.connectRouter((String type, String? id) {
+    switch (type) {
+      case 'new_message':
+        if (id != null) kolabingRouter.push('/application/$id/chat');
+
+      case 'application_received':
+      case 'application_accepted':
+      case 'application_declined':
+        if (id != null) kolabingRouter.push('/application/$id');
+
+      case 'badge_awarded':
+        // No badge screen yet — navigate to attendee dashboard
+
+      case 'challenge_verified':
+      case 'reward_won':
+        // No rewards screen yet — navigate to attendee dashboard
+
+      default:
+        debugPrint('[FCM] Unknown notification type: $type');
+    }
+  });
+}
+
 /// Kolabing router configuration
 ///
 /// GoRouter setup with all application routes.
 final GoRouter kolabingRouter = GoRouter(
+  navigatorKey: kolabingNavigatorKey,
   initialLocation: KolabingRoutes.splash,
   debugLogDiagnostics: true,
   routes: [

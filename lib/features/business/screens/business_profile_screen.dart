@@ -21,7 +21,6 @@ import '../models/subscription.dart';
 import '../providers/profile_provider.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../event/widgets/past_events_section.dart';
-import '../../settings/widgets/theme_selector_section.dart';
 
 /// Business profile screen
 class BusinessProfileScreen extends ConsumerStatefulWidget {
@@ -505,11 +504,6 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               state.isUpdating,
               isDark,
             ),
-
-            const SizedBox(height: KolabingSpacing.md),
-
-            // Theme Selector Section
-            const ThemeSelectorSection(),
 
             const SizedBox(height: KolabingSpacing.md),
 

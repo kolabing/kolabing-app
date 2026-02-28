@@ -297,21 +297,21 @@ class BusinessOffer {
 @immutable
 class CommunityDeliverables {
   const CommunityDeliverables({
-    this.instagramPost = false,
-    this.instagramStory = false,
-    this.tiktokVideo = false,
-    this.eventMention = false,
-    this.attendeeCount,
+    this.socialMediaContent = false,
+    this.eventActivation = false,
+    this.productPlacement = false,
+    this.communityReach = false,
+    this.reviewFeedback = false,
     this.other,
   });
 
   factory CommunityDeliverables.fromJson(Map<String, dynamic> json) =>
       CommunityDeliverables(
-        instagramPost: _parseBool(json['instagram_post']),
-        instagramStory: _parseBool(json['instagram_story']),
-        tiktokVideo: _parseBool(json['tiktok_video']),
-        eventMention: _parseBool(json['event_mention']),
-        attendeeCount: _parseInt(json['attendee_count']),
+        socialMediaContent: _parseBool(json['social_media_content']),
+        eventActivation: _parseBool(json['event_activation']),
+        productPlacement: _parseBool(json['product_placement']),
+        communityReach: _parseBool(json['community_reach']),
+        reviewFeedback: _parseBool(json['review_feedback']),
         other: json['other']?.toString(),
       );
 
@@ -323,56 +323,46 @@ class CommunityDeliverables {
     return false;
   }
 
-  static int? _parseInt(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    if (value is String) return int.tryParse(value);
-    return null;
-  }
-
-  final bool instagramPost;
-  final bool instagramStory;
-  final bool tiktokVideo;
-  final bool eventMention;
-  final int? attendeeCount;
+  final bool socialMediaContent;
+  final bool eventActivation;
+  final bool productPlacement;
+  final bool communityReach;
+  final bool reviewFeedback;
   final String? other;
 
   /// Whether any deliverable is configured
   bool get hasAnyDeliverable =>
-      instagramPost ||
-      instagramStory ||
-      tiktokVideo ||
-      eventMention ||
-      attendeeCount != null ||
+      socialMediaContent ||
+      eventActivation ||
+      productPlacement ||
+      communityReach ||
+      reviewFeedback ||
       (other?.isNotEmpty ?? false);
 
   Map<String, dynamic> toJson() => {
-        'instagram_post': instagramPost,
-        'instagram_story': instagramStory,
-        'tiktok_video': tiktokVideo,
-        'event_mention': eventMention,
-        if (attendeeCount != null) 'attendee_count': attendeeCount,
+        'social_media_content': socialMediaContent,
+        'event_activation': eventActivation,
+        'product_placement': productPlacement,
+        'community_reach': communityReach,
+        'review_feedback': reviewFeedback,
         if (other != null && other!.isNotEmpty) 'other': other,
       };
 
   CommunityDeliverables copyWith({
-    bool? instagramPost,
-    bool? instagramStory,
-    bool? tiktokVideo,
-    bool? eventMention,
-    int? attendeeCount,
+    bool? socialMediaContent,
+    bool? eventActivation,
+    bool? productPlacement,
+    bool? communityReach,
+    bool? reviewFeedback,
     String? other,
-    bool clearAttendeeCount = false,
     bool clearOther = false,
   }) =>
       CommunityDeliverables(
-        instagramPost: instagramPost ?? this.instagramPost,
-        instagramStory: instagramStory ?? this.instagramStory,
-        tiktokVideo: tiktokVideo ?? this.tiktokVideo,
-        eventMention: eventMention ?? this.eventMention,
-        attendeeCount:
-            clearAttendeeCount ? null : (attendeeCount ?? this.attendeeCount),
+        socialMediaContent: socialMediaContent ?? this.socialMediaContent,
+        eventActivation: eventActivation ?? this.eventActivation,
+        productPlacement: productPlacement ?? this.productPlacement,
+        communityReach: communityReach ?? this.communityReach,
+        reviewFeedback: reviewFeedback ?? this.reviewFeedback,
         other: clearOther ? null : (other ?? this.other),
       );
 }
@@ -666,13 +656,12 @@ class Opportunity {
   /// Summary of community deliverables (for card display)
   String get deliverablesSummary {
     final parts = <String>[];
-    if (communityDeliverables.instagramPost) parts.add('IG Post');
-    if (communityDeliverables.instagramStory) parts.add('IG Story');
-    if (communityDeliverables.tiktokVideo) parts.add('TikTok');
-    if (communityDeliverables.eventMention) parts.add('Event Mention');
-    if (communityDeliverables.attendeeCount != null) {
-      parts.add('${communityDeliverables.attendeeCount} Attendees');
-    }
+    if (communityDeliverables.socialMediaContent) parts.add('Social Media');
+    if (communityDeliverables.eventActivation) parts.add('Event Activation');
+    if (communityDeliverables.productPlacement) parts.add('Product Placement');
+    if (communityDeliverables.communityReach) parts.add('Community Reach');
+    if (communityDeliverables.reviewFeedback) parts.add('Review & Feedback');
+    if (communityDeliverables.other?.isNotEmpty ?? false) parts.add('Other');
     return parts.isEmpty ? 'No deliverables specified' : parts.join(' · ');
   }
 

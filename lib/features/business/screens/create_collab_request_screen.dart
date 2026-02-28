@@ -1293,36 +1293,44 @@ class _CreateCollabRequestScreenState
             runSpacing: KolabingSpacing.xs,
             children: [
               _buildSelectableChip(
-                label: 'Instagram Post',
-                isSelected: deliverables.instagramPost,
+                label: 'Social Media Content',
+                isSelected: deliverables.socialMediaContent,
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        instagramPost: !deliverables.instagramPost),
+                        socialMediaContent: !deliverables.socialMediaContent),
               ),
               _buildSelectableChip(
-                label: 'Instagram Story',
-                isSelected: deliverables.instagramStory,
+                label: 'Event Activation',
+                isSelected: deliverables.eventActivation,
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        instagramStory: !deliverables.instagramStory),
+                        eventActivation: !deliverables.eventActivation),
               ),
               _buildSelectableChip(
-                label: 'TikTok Video',
-                isSelected: deliverables.tiktokVideo,
+                label: 'Product Placement',
+                isSelected: deliverables.productPlacement,
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        tiktokVideo: !deliverables.tiktokVideo),
+                        productPlacement: !deliverables.productPlacement),
               ),
               _buildSelectableChip(
-                label: 'Event Mention',
-                isSelected: deliverables.eventMention,
+                label: 'Community Reach',
+                isSelected: deliverables.communityReach,
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        eventMention: !deliverables.eventMention),
+                        communityReach: !deliverables.communityReach),
+              ),
+              _buildSelectableChip(
+                label: 'Review & Feedback',
+                isSelected: deliverables.reviewFeedback,
+                onTap: () => ref
+                    .read(opportunityFormProvider.notifier)
+                    .updateDeliverables(
+                        reviewFeedback: !deliverables.reviewFeedback),
               ),
               _buildSelectableChip(
                 label: 'Other',
@@ -1331,7 +1339,7 @@ class _CreateCollabRequestScreenState
                   if (deliverables.other == null) {
                     ref
                         .read(opportunityFormProvider.notifier)
-                        .updateDeliverables(other: 'Other');
+                        .updateDeliverables(other: '');
                   } else {
                     ref
                         .read(opportunityFormProvider.notifier)

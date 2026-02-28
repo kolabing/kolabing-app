@@ -14,6 +14,17 @@
         android:label="kolabing_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- FCM: Default notification channel (Android 8+) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="kolabing_default"/>
+
+        <!-- FCM: Default notification icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

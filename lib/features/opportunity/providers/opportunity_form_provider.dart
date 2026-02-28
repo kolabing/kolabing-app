@@ -239,13 +239,12 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   // ---------------------------------------------------------------------------
 
   void updateDeliverables({
-    bool? instagramPost,
-    bool? instagramStory,
-    bool? tiktokVideo,
-    bool? eventMention,
-    int? attendeeCount,
+    bool? socialMediaContent,
+    bool? eventActivation,
+    bool? productPlacement,
+    bool? communityReach,
+    bool? reviewFeedback,
     String? other,
-    bool clearAttendeeCount = false,
     bool clearOther = false,
   }) {
     final opp = state.opportunity;
@@ -253,13 +252,12 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
     state = state.copyWith(
       opportunity: opp.copyWith(
         communityDeliverables: opp.communityDeliverables.copyWith(
-          instagramPost: instagramPost,
-          instagramStory: instagramStory,
-          tiktokVideo: tiktokVideo,
-          eventMention: eventMention,
-          attendeeCount: attendeeCount,
+          socialMediaContent: socialMediaContent,
+          eventActivation: eventActivation,
+          productPlacement: productPlacement,
+          communityReach: communityReach,
+          reviewFeedback: reviewFeedback,
           other: other,
-          clearAttendeeCount: clearAttendeeCount,
           clearOther: clearOther,
         ),
       ),
