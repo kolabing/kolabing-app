@@ -378,6 +378,38 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
+  /// Reactivate subscription (undo cancellation)
+  Future<bool> reactivateSubscription() async {
+    state = state.copyWith(isUpdating: true, clearError: true);
+
+    try {
+      final updated = await _profileService.reactivateSubscription();
+      state = state.copyWith(
+        subscription: updated,
+        isUpdating: false,
+      );
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(
+        isUpdating: false,
+        error: e.error.message,
+      );
+      return false;
+    } on NetworkException catch (e) {
+      state = state.copyWith(
+        isUpdating: false,
+        error: e.message,
+      );
+      return false;
+    } on Exception {
+      state = state.copyWith(
+        isUpdating: false,
+        error: 'Failed to reactivate subscription',
+      );
+      return false;
+    }
+  }
+
   /// Clear error
   void clearError() {
     state = state.copyWith(clearError: true);

@@ -27,6 +27,7 @@ class SubscriptionScreen extends ConsumerStatefulWidget {
 
 class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   bool _isCancelling = false;
+  bool _isReactivating = false;
 
   @override
   void initState() {
@@ -55,6 +56,22 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       if (mounted) {
         await Future<void>.delayed(const Duration(seconds: 2));
         ref.read(profileProvider.notifier).refreshSubscription();
+      }
+    }
+  }
+
+  Future<void> _handleReactivate() async {
+    setState(() => _isReactivating = true);
+    final success = await ref.read(profileProvider.notifier).reactivateSubscription();
+    if (mounted) {
+      setState(() => _isReactivating = false);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Subscription reactivated successfully'),
+            backgroundColor: KolabingColors.success,
+          ),
+        );
       }
     }
   }
@@ -532,18 +549,24 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Subscribe / Resubscribe button
-        if (!isActive || isCancelPending)
+        // Reactivate button (active but scheduled to cancel)
+        if (isCancelPending) ...[
           SizedBox(
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: _handleSubscribe,
-              icon: Icon(
-                isCancelPending ? LucideIcons.rotateCcw : LucideIcons.sparkles,
-                size: 20,
-              ),
+              onPressed: _isReactivating ? null : _handleReactivate,
+              icon: _isReactivating
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: KolabingColors.onPrimary,
+                      ),
+                    )
+                  : const Icon(LucideIcons.rotateCcw, size: 20),
               label: Text(
-                isCancelPending ? 'RESUBSCRIBE' : 'SUBSCRIBE FOR 75 EUR/MONTH',
+                'REACTIVATE SUBSCRIPTION',
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onPrimary,
                 ),
@@ -558,6 +581,32 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
             ),
           ),
+        ],
+
+        // Subscribe button (no active subscription)
+        if (!isActive) ...[
+          SizedBox(
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: _handleSubscribe,
+              icon: const Icon(LucideIcons.sparkles, size: 20),
+              label: Text(
+                'SUBSCRIBE FOR 75 EUR/MONTH',
+                style: KolabingTextStyles.buttonSmall.copyWith(
+                  color: KolabingColors.onPrimary,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.primary,
+                foregroundColor: KolabingColors.onPrimary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
 
         // Update Payment Method (past due)
         if (isPastDue) ...[

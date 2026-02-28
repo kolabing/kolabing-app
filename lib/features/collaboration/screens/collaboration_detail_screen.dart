@@ -292,9 +292,9 @@ class _EventInfoCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.sm),
           _InfoRow(
             icon: LucideIcons.users,
-            label: 'Expected Attendees',
-            value: collaboration.communityDeliverables.attendeeCount != null
-                ? '~${collaboration.communityDeliverables.attendeeCount}'
+            label: 'Community Reach',
+            value: collaboration.communityDeliverables.communityReach
+                ? 'Included'
                 : 'Not specified',
           ),
         ],

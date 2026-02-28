@@ -401,4 +401,41 @@ class ProfileService {
       throw NetworkException('Failed to cancel subscription: $e');
     }
   }
+
+  /// Reactivate subscription (undo scheduled cancellation)
+  ///
+  /// POST /api/v1/me/subscription/reactivate
+  Future<Subscription> reactivateSubscription() async {
+    final url = '$_baseUrl/me/subscription/reactivate';
+    debugPrint('Profile: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: await _getHeaders(),
+      );
+
+      debugPrint('Reactivate subscription response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as Map<String, dynamic>;
+        return Subscription.fromJson(data);
+      } else if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Reactivate subscription error: $e');
+      throw NetworkException('Failed to reactivate subscription: $e');
+    }
+  }
 }
