@@ -544,10 +544,16 @@ class AuthService {
   /// Login with Google (existing users only)
   ///
   /// POST /api/v1/auth/google
-  Future<AuthResponse> loginWithGoogle() async {
+  Future<AuthResponse> loginWithGoogle({String? userType}) async {
     try {
       final idToken = await getGoogleIdToken();
-      return await _authenticateWithGoogle(idToken);
+
+      // If userType not provided, try to resolve from stored user data.
+      final resolvedUserType =
+          userType ?? (await getStoredUser())?.userType.toApiValue();
+
+      return await _authenticateWithGoogle(idToken,
+          userType: resolvedUserType);
     } on AuthCancelledException {
       rethrow;
     } catch (e) {
@@ -559,7 +565,8 @@ class AuthService {
   }
 
   /// Authenticate with backend using Google ID token
-  Future<AuthResponse> _authenticateWithGoogle(String idToken) async {
+  Future<AuthResponse> _authenticateWithGoogle(String idToken,
+      {String? userType}) async {
     if (_useMockApi) {
       return _mockAuthenticateWithGoogle(idToken);
     }
@@ -568,15 +575,16 @@ class AuthService {
     debugPrint('🔐 Google Login: POST $url');
 
     try {
+      final body = <String, dynamic>{'id_token': idToken};
+      if (userType != null) body['user_type'] = userType;
+
       final response = await _httpClient.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
-          'id_token': idToken,
-        }),
+        body: jsonEncode(body),
       );
 
       debugPrint('🔐 Google login response status: ${response.statusCode}');

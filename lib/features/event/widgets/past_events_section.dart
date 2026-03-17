@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -316,17 +317,18 @@ class PastEventsSection extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
-          ElevatedButton.icon(
+          TextButton.icon(
             onPressed: () => _showAddEventModal(context, ref),
-            icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('ADD YOUR FIRST EVENT'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.lg,
-                vertical: KolabingSpacing.sm,
+            icon: const Icon(LucideIcons.plus, size: 16),
+            label: Text(
+              '+ Add a past event',
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
               ),
+            ),
+            style: TextButton.styleFrom(
+              foregroundColor: KolabingColors.textSecondary,
             ),
           ),
         ],

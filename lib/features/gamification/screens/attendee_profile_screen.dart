@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../widgets/stat_card.dart';
@@ -297,7 +298,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
     if (confirmed ?? false) {
       await ref.read(authProvider.notifier).logout();
       if (context.mounted) {
-        context.go('/auth');
+        context.go(KolabingRoutes.login);
       }
     }
   }

@@ -307,7 +307,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
-                  'Add your first photo',
+                  'Showcase your community\nAdd photos to attract collaborations',
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: isDark
                         ? KolabingColors.textOnDark.withValues(alpha: 0.6)

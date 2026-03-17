@@ -596,7 +596,8 @@ class _CommunityOfferDetailScreenState
 
   Widget _buildBottomAction(Opportunity opportunity) {
     // If user owns this opportunity, don't show apply button
-    final currentUserId = ref.read(authProvider).user?.id;
+    final currentUser = ref.read(authProvider).user;
+    final currentUserId = currentUser?.id;
     final isOwn = currentUserId != null &&
         opportunity.creatorProfile?.id == currentUserId;
     if (isOwn) {
@@ -639,6 +640,11 @@ class _CommunityOfferDetailScreenState
           ),
         ),
       );
+    }
+
+    // Business users cannot apply to opportunities
+    if (currentUser?.isBusiness == true) {
+      return const SizedBox.shrink();
     }
 
     // If user has already applied

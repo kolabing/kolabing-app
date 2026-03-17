@@ -122,7 +122,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                           crossAxisCount: 3,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 1.0,
+                          childAspectRatio: 0.9,
                         ),
                         itemCount: types.length,
                         itemBuilder: (context, index) {

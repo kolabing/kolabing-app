@@ -14,6 +14,7 @@ import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import '../../../widgets/time_picker.dart';
 
 // =============================================================================
 // Local state for time slot management
@@ -32,7 +33,7 @@ class _TimeSlot {
   TimeOfDay endTime;
 }
 
-/// Single-page scrollable form for creating a collaboration request.
+/// Single-page scrollable form for creating or editing a collaboration request.
 ///
 /// Sections:
 ///   1 - Basic Information (title, description)
@@ -43,7 +44,10 @@ class _TimeSlot {
 ///   6 - What You Expect From Community (select or write your own)
 ///   7 - Bottom sticky action bar (Save Draft / Publish)
 class CreateCollabRequestScreen extends ConsumerStatefulWidget {
-  const CreateCollabRequestScreen({super.key});
+  const CreateCollabRequestScreen({super.key, this.editOpportunity});
+
+  /// If provided, opens the form in edit mode pre-populated with this opportunity.
+  final Opportunity? editOpportunity;
 
   @override
   ConsumerState<CreateCollabRequestScreen> createState() =>
@@ -87,16 +91,61 @@ class _CreateCollabRequestScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(opportunityFormProvider.notifier).reset();
-      // Apply smart defaults after reset
-      final user = ref.read(authProvider).user;
       final notifier = ref.read(opportunityFormProvider.notifier);
-      // Default venue mode = "I Have a Venue" (businessVenue)
-      notifier.updateVenueMode(VenueMode.businessVenue);
-      // Prefill city from the user's business profile
-      final city = user?.businessProfile?.city?.name ?? '';
-      if (city.isNotEmpty) {
-        notifier.updatePreferredCity(city);
+      final opp = widget.editOpportunity;
+
+      if (opp != null) {
+        // Edit mode: load existing opportunity into provider and controllers
+        notifier.initForEdit(opp);
+
+        _titleController.text = opp.title;
+        _descriptionController.text = opp.description;
+        _preferredAreaController.text = opp.address ?? '';
+
+        // Photo: if opportunity has a custom photo, deselect "use profile photo"
+        if (opp.offerPhoto != null) {
+          setState(() => _useProfilePhoto = false);
+        }
+
+        // Availability: restore first time slot from saved dates
+        final start = opp.availabilityStart;
+        setState(() {
+          _timeSlots.add(_TimeSlot(
+            date: start,
+            startTime: TimeOfDay(hour: start.hour, minute: start.minute),
+            endTime: TimeOfDay(
+              hour: opp.availabilityEnd.hour,
+              minute: opp.availabilityEnd.minute,
+            ),
+          ));
+        });
+
+        // Offering mode: switch to "Write my own" if other text is set
+        if (opp.businessOffer.other != null) {
+          setState(() {
+            _offeringSelectMode = false;
+            _businessOfferOtherController.text = opp.businessOffer.other!;
+          });
+        }
+
+        // Deliverables mode: switch to "Write my own" if other text is set
+        if (opp.communityDeliverables.other != null) {
+          setState(() {
+            _expectSelectMode = false;
+            _deliverablesOtherController.text = opp.communityDeliverables.other!;
+          });
+        }
+      } else {
+        // Create mode: reset to blank form with smart defaults
+        notifier.reset();
+        final user = ref.read(authProvider).user;
+        // Default venue mode = "I Have a Venue" (businessVenue)
+        notifier.updateVenueMode(VenueMode.businessVenue);
+        // Prefill city from the user's business profile
+        final city = user?.businessProfile?.city?.name ?? '';
+        if (city.isNotEmpty) {
+          notifier.updatePreferredCity(city);
+        }
       }
     });
   }
@@ -327,7 +376,9 @@ class _CreateCollabRequestScreenState
             onPressed: isBusy ? null : () => context.pop(),
           ),
           title: Text(
-            'Create Collab Request',
+            widget.editOpportunity != null
+                ? 'Edit Collab Request'
+                : 'Create Collab Request',
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -867,44 +918,22 @@ class _CreateCollabRequestScreenState
   }
 
   Future<void> _pickStartTime(int index) async {
-    final time = await showTimePicker(
-      context: context,
+    final time = await KolabingTimePicker.show(
+      context,
       initialTime: _timeSlots[index].startTime,
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: KolabingColors.primary,
-            onPrimary: KolabingColors.onPrimary,
-          ),
-        ),
-        child: child!,
-      ),
     );
     if (time != null) {
-      setState(() {
-        _timeSlots[index].startTime = time;
-      });
+      setState(() => _timeSlots[index].startTime = time);
     }
   }
 
   Future<void> _pickEndTime(int index) async {
-    final time = await showTimePicker(
-      context: context,
+    final time = await KolabingTimePicker.show(
+      context,
       initialTime: _timeSlots[index].endTime,
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: KolabingColors.primary,
-            onPrimary: KolabingColors.onPrimary,
-          ),
-        ),
-        child: child!,
-      ),
     );
     if (time != null) {
-      setState(() {
-        _timeSlots[index].endTime = time;
-      });
+      setState(() => _timeSlots[index].endTime = time);
     }
   }
 

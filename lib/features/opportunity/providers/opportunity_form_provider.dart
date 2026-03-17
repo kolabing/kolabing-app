@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/models/auth_response.dart';
@@ -273,7 +274,12 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
     final opp = state.opportunity;
     if (opp == null) return;
     state = state.copyWith(
-      opportunity: opp.copyWith(availabilityMode: mode),
+      opportunity: opp.copyWith(
+        availabilityMode: mode,
+        // Clear mode-specific fields when switching
+        clearRecurringDays: mode != AvailabilityMode.recurring,
+        clearSelectedTime: mode == AvailabilityMode.flexible,
+      ),
       clearError: true,
     );
   }
@@ -292,6 +298,34 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
     if (opp == null) return;
     state = state.copyWith(
       opportunity: opp.copyWith(availabilityEnd: date),
+      clearError: true,
+    );
+  }
+
+  void updateSelectedTime(TimeOfDay? time) {
+    final opp = state.opportunity;
+    if (opp == null) return;
+    state = state.copyWith(
+      opportunity: opp.copyWith(
+        selectedTime: time,
+        clearSelectedTime: time == null,
+      ),
+      clearError: true,
+    );
+  }
+
+  void toggleRecurringDay(int day) {
+    final opp = state.opportunity;
+    if (opp == null) return;
+    final days = List<int>.from(opp.recurringDays);
+    if (days.contains(day)) {
+      days.remove(day);
+    } else {
+      days.add(day);
+      days.sort();
+    }
+    state = state.copyWith(
+      opportunity: opp.copyWith(recurringDays: days),
       clearError: true,
     );
   }
@@ -366,11 +400,25 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
         }
 
       case 3: // Location & Availability
-        if (opp.availabilityStart.isBefore(DateTime.now())) {
-          errors['availability_start'] = 'Start date must be in the future';
-        }
-        if (opp.availabilityEnd.isBefore(opp.availabilityStart)) {
-          errors['availability_end'] = 'End date must be after start date';
+        if (opp.availabilityMode == AvailabilityMode.recurring) {
+          if (opp.recurringDays.isEmpty) {
+            errors['recurring_day'] = 'Select at least one day';
+          }
+          if (opp.selectedTime == null) {
+            errors['selected_time'] = 'Select a time';
+          }
+        } else {
+          // oneTime and flexible both need date range
+          if (opp.availabilityStart.isBefore(DateTime.now())) {
+            errors['availability_start'] = 'Start date must be in the future';
+          }
+          if (opp.availabilityEnd.isBefore(opp.availabilityStart)) {
+            errors['availability_end'] = 'End date must be after start date';
+          }
+          if (opp.availabilityMode == AvailabilityMode.oneTime &&
+              opp.selectedTime == null) {
+            errors['selected_time'] = 'Select a time';
+          }
         }
         if (opp.venueMode.requiresAddress &&
             (opp.address?.isEmpty ?? true)) {

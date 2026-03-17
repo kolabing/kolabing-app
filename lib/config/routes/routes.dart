@@ -270,6 +270,26 @@ final GoRouter kolabingRouter = GoRouter(
   navigatorKey: kolabingNavigatorKey,
   initialLocation: KolabingRoutes.splash,
   debugLogDiagnostics: true,
+
+  // Handle deep link: kolabing://reset-password?token=TOKEN&email=EMAIL
+  //
+  // GoRouter parses this custom-scheme URI as path='/' with the query params,
+  // because `reset-password` is the URI host, not the path. We detect the
+  // presence of both token+email params on the root and redirect to the
+  // reset-password screen.
+  redirect: (BuildContext context, GoRouterState state) {
+    if (state.matchedLocation == '/') {
+      final token = state.uri.queryParameters['token'];
+      final email = state.uri.queryParameters['email'];
+      if (token != null && email != null) {
+        return '/auth/reset-password'
+            '?token=${Uri.encodeComponent(token)}'
+            '&email=${Uri.encodeComponent(email)}';
+      }
+    }
+    return null;
+  },
+
   routes: [
     // -------------------------------------------------------------------------
     // Auth Routes
@@ -443,8 +463,10 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.businessOffersNew,
       name: 'businessOffersNew',
-      builder: (BuildContext context, GoRouterState state) =>
-          const CreateCollabRequestScreen(),
+      builder: (BuildContext context, GoRouterState state) {
+        final opportunity = state.extra as Opportunity?;
+        return CreateCollabRequestScreen(editOpportunity: opportunity);
+      },
     ),
     GoRoute(
       path: KolabingRoutes.businessOffersEdit,

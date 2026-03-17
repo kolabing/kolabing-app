@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../providers/application_provider.dart';
@@ -65,10 +66,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     final end = DateUtils.dateOnly(widget.opportunity.availabilityEnd);
     final today = DateUtils.dateOnly(DateTime.now());
 
-    // Start from today if the opportunity start is in the past
-    final effectiveStart = start.isBefore(today) ? today : start;
-
-    if (effectiveStart.isAfter(end)) return [];
+    // If some future dates exist, start from today to hide past dates.
+    // Otherwise show the full original range so users can still apply.
+    final effectiveStart =
+        end.isBefore(today) ? start : (start.isBefore(today) ? today : start);
 
     final dates = <DateTime>[];
     var current = effectiveStart;
@@ -354,34 +355,33 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: KolabingSpacing.md),
-
-                    // Time range picker
-                    _buildTimeRangePicker(),
-                    const SizedBox(height: KolabingSpacing.md),
-
-                    // Optional notes
-                    Text(
-                      'Additional notes (optional)',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        color: KolabingColors.textTertiary,
+                    // Time range picker + notes — only when dates exist
+                    if (_availableDates.isNotEmpty) ...[
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildTimeRangePicker(),
+                      const SizedBox(height: KolabingSpacing.md),
+                      Text(
+                        'Additional notes (optional)',
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          color: KolabingColors.textTertiary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: KolabingSpacing.xs),
-                    TextFormField(
-                      controller: _availabilityNotesController,
-                      maxLength: 200,
-                      maxLines: 2,
-                      minLines: 1,
-                      decoration: _buildInputDecoration(
-                        hintText: 'e.g., Flexible on timing, prefer mornings...',
+                      const SizedBox(height: KolabingSpacing.xs),
+                      TextFormField(
+                        controller: _availabilityNotesController,
+                        maxLength: 200,
+                        maxLines: 2,
+                        minLines: 1,
+                        decoration: _buildInputDecoration(
+                          hintText: 'e.g., Flexible on timing, prefer mornings...',
+                        ),
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.textPrimary,
+                        ),
                       ),
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.textPrimary,
-                      ),
-                    ),
+                    ],
 
                     const SizedBox(height: KolabingSpacing.lg),
 
@@ -661,18 +661,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
   Future<void> _pickTime({required bool isStart}) async {
     final initialTime = isStart ? _startTime : _endTime;
-    final picked = await showTimePicker(
-      context: context,
+    final picked = await KolabingTimePicker.show(
+      context,
       initialTime: initialTime,
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: KolabingColors.primary,
-            onPrimary: KolabingColors.onPrimary,
-          ),
-        ),
-        child: child!,
-      ),
     );
 
     if (picked != null) {
