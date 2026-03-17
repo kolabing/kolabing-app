@@ -366,7 +366,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '75 ',
+                      text: '29 ',
                       style: KolabingTextStyles.displaySmall.copyWith(
                         color: KolabingColors.textPrimary,
                       ),
@@ -419,7 +419,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
             _DetailRow(
               label: 'Price',
-              value: '75 EUR/month',
+              value: '29 EUR/month',
               icon: LucideIcons.creditCard,
             ),
             if (subscription.currentPeriodStart != null)
@@ -591,7 +591,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               onPressed: _handleSubscribe,
               icon: const Icon(LucideIcons.sparkles, size: 20),
               label: Text(
-                'SUBSCRIBE FOR 75 EUR/MONTH',
+                'SUBSCRIBE FOR 29 EUR/MONTH',
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onPrimary,
                 ),

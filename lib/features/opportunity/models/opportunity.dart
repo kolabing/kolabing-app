@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 // =============================================================================
 // Enums
@@ -26,11 +27,11 @@ enum AvailabilityMode {
   String get description {
     switch (this) {
       case AvailabilityMode.oneTime:
-        return 'A single event or collaboration';
+        return 'Available for one occasion';
       case AvailabilityMode.recurring:
-        return 'Repeated collaborations over time';
+        return 'Open to multiple sessions';
       case AvailabilityMode.flexible:
-        return 'Open to discussion on timing';
+        return 'Anytime — let the business pick';
     }
   }
 
@@ -446,6 +447,8 @@ class Opportunity {
     required this.availabilityMode,
     required this.availabilityStart,
     required this.availabilityEnd,
+    this.selectedTime,
+    this.recurringDays = const [],
     required this.venueMode,
     this.address,
     required this.preferredCity,
@@ -502,6 +505,8 @@ class Opportunity {
           json['availability_mode']?.toString() ?? 'flexible'),
       availabilityStart: _parseDate(json['availability_start']),
       availabilityEnd: _parseDate(json['availability_end']),
+      selectedTime: _parseTimeOfDay(json['selected_time']?.toString()),
+      recurringDays: _parseIntList(json['recurring_days'] ?? json['recurring_day']),
       venueMode:
           VenueMode.fromString(json['venue_mode']?.toString() ?? 'no_venue'),
       address: json['address']?.toString(),
@@ -533,9 +538,10 @@ class Opportunity {
         businessOffer: const BusinessOffer(),
         communityDeliverables: const CommunityDeliverables(),
         categories: const [],
-        availabilityMode: AvailabilityMode.flexible,
+        availabilityMode: AvailabilityMode.oneTime,
         availabilityStart: DateTime.now().add(const Duration(days: 7)),
-        availabilityEnd: DateTime.now().add(const Duration(days: 37)),
+        availabilityEnd: DateTime.now().add(const Duration(days: 67)),
+        selectedTime: const TimeOfDay(hour: 10, minute: 0),
         venueMode: VenueMode.noVenue,
         preferredCity: '',
       );
@@ -550,6 +556,8 @@ class Opportunity {
   final AvailabilityMode availabilityMode;
   final DateTime availabilityStart;
   final DateTime availabilityEnd;
+  final TimeOfDay? selectedTime;
+  final List<int> recurringDays; // 1=Monday .. 7=Sunday
   final VenueMode venueMode;
   final String? address;
   final String preferredCity;
@@ -577,6 +585,10 @@ class Opportunity {
         'availability_start':
             availabilityStart.toIso8601String().split('T').first,
         'availability_end': availabilityEnd.toIso8601String().split('T').first,
+        if (selectedTime != null)
+          'selected_time':
+              '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}',
+        if (recurringDays.isNotEmpty) 'recurring_days': recurringDays,
         'venue_mode': venueMode.toApiValue(),
         if (address != null && address!.isNotEmpty) 'address': address,
         'preferred_city': preferredCity,
@@ -595,6 +607,10 @@ class Opportunity {
     AvailabilityMode? availabilityMode,
     DateTime? availabilityStart,
     DateTime? availabilityEnd,
+    TimeOfDay? selectedTime,
+    List<int>? recurringDays,
+    bool clearSelectedTime = false,
+    bool clearRecurringDays = false,
     VenueMode? venueMode,
     String? address,
     String? preferredCity,
@@ -622,6 +638,12 @@ class Opportunity {
         availabilityMode: availabilityMode ?? this.availabilityMode,
         availabilityStart: availabilityStart ?? this.availabilityStart,
         availabilityEnd: availabilityEnd ?? this.availabilityEnd,
+        selectedTime: clearSelectedTime
+            ? null
+            : (selectedTime ?? this.selectedTime),
+        recurringDays: clearRecurringDays
+            ? const []
+            : (recurringDays ?? this.recurringDays),
         venueMode: venueMode ?? this.venueMode,
         address: clearAddress ? null : (address ?? this.address),
         preferredCity: preferredCity ?? this.preferredCity,
@@ -687,6 +709,26 @@ class Opportunity {
     if (value is DateTime) return value;
     if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
     return DateTime.now();
+  }
+
+  static List<int> _parseIntList(dynamic value) {
+    if (value == null) return const [];
+    if (value is List) {
+      return value.map((e) => int.tryParse(e.toString()) ?? 0).toList();
+    }
+    // Single int from legacy `recurring_day` field
+    final single = int.tryParse(value.toString());
+    return single != null ? [single] : const [];
+  }
+
+  static TimeOfDay? _parseTimeOfDay(String? value) {
+    if (value == null || value.isEmpty) return null;
+    final parts = value.split(':');
+    if (parts.length < 2) return null;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null) return null;
+    return TimeOfDay(hour: h, minute: m);
   }
 
   static DateTime? _parseDateTimeNullable(dynamic value) {

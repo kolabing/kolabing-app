@@ -13,6 +13,7 @@ import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import '../../../widgets/time_picker.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
 ///
@@ -545,8 +546,8 @@ class _CreateOpportunityScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepHeader(
-          title: 'BUSINESS OFFER',
-          subtitle: 'What will businesses provide in this collaboration?',
+          title: 'WHAT DO YOU NEED FROM THE BUSINESS?',
+          subtitle: 'Select what your community expects in this kolab',
         ),
         if (formState.fieldErrors['business_offer'] != null) ...[
           const SizedBox(height: KolabingSpacing.sm),
@@ -558,7 +559,7 @@ class _CreateOpportunityScreenState
         _buildToggleCard(
           icon: LucideIcons.building,
           title: 'Venue',
-          subtitle: 'Business provides a venue for the event',
+          subtitle: 'You need a venue for the event',
           value: offer.venue,
           onChanged: (val) =>
               ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
@@ -571,7 +572,7 @@ class _CreateOpportunityScreenState
         _buildToggleCard(
           icon: LucideIcons.utensils,
           title: 'Food & Drink',
-          subtitle: 'Business provides food and/or beverages',
+          subtitle: 'You\'d like food or beverages provided',
           value: offer.foodDrink,
           onChanged: (val) =>
               ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
@@ -584,7 +585,7 @@ class _CreateOpportunityScreenState
         _buildToggleCard(
           icon: LucideIcons.percent,
           title: 'Discount',
-          subtitle: 'Business offers a discount on products or services',
+          subtitle: 'Special discount for your community',
           value: offer.discount.enabled,
           onChanged: (val) =>
               ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
@@ -623,7 +624,7 @@ class _CreateOpportunityScreenState
         _buildToggleCard(
           icon: LucideIcons.packageOpen,
           title: 'Products',
-          subtitle: 'Business provides specific products',
+          subtitle: 'You\'d like products or samples',
           value: offer.products.isNotEmpty,
           onChanged: (val) {
             if (val) {
@@ -731,7 +732,7 @@ class _CreateOpportunityScreenState
         _buildToggleCard(
           icon: LucideIcons.moreHorizontal,
           title: 'Other',
-          subtitle: 'Any other offerings from the business',
+          subtitle: 'Other support from the business',
           value: offer.other != null,
           onChanged: (val) {
             if (val) {
@@ -941,33 +942,8 @@ class _CreateOpportunityScreenState
         ),
         const SizedBox(height: KolabingSpacing.lg),
 
-        // Date pickers
-        Row(
-          children: [
-            Expanded(
-              child: _buildDatePicker(
-                label: 'Available From',
-                value: opp.availabilityStart,
-                error: formState.fieldErrors['availability_start'],
-                onChanged: (date) => ref
-                    .read(opportunityFormProvider.notifier)
-                    .updateStartDate(date),
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: _buildDatePicker(
-                label: 'End Date',
-                value: opp.availabilityEnd,
-                error: formState.fieldErrors['availability_end'],
-                minDate: opp.availabilityStart,
-                onChanged: (date) => ref
-                    .read(opportunityFormProvider.notifier)
-                    .updateEndDate(date),
-              ),
-            ),
-          ],
-        ),
+        // Mode-specific fields
+        ..._buildAvailabilityFields(opp, formState),
         const SizedBox(height: KolabingSpacing.lg),
 
         // Venue Mode
@@ -1179,18 +1155,27 @@ class _CreateOpportunityScreenState
                 const SizedBox(height: KolabingSpacing.xs),
               ],
 
-              // Date range
+              // Availability mode + details
               _buildReviewInfoRow(
-                LucideIcons.calendar,
-                '${dateFormat.format(opp.availabilityStart)} - ${dateFormat.format(opp.availabilityEnd)}',
+                _availabilityModeIcon(opp.availabilityMode),
+                opp.availabilityMode.displayName,
               ),
               const SizedBox(height: KolabingSpacing.xs),
 
-              // Availability mode
-              _buildReviewInfoRow(
-                LucideIcons.clock,
-                opp.availabilityMode.displayName,
-              ),
+              if (opp.availabilityMode == AvailabilityMode.recurring) ...[
+                _buildReviewInfoRow(
+                  LucideIcons.calendar,
+                  'Every ${opp.recurringDays.isNotEmpty ? opp.recurringDays.map((d) => _dayNames[d - 1]).join(', ') : '—'}'
+                  '${opp.selectedTime != null ? ' at ${opp.selectedTime!.format(context)}' : ''}',
+                ),
+              ] else ...[
+                _buildReviewInfoRow(
+                  LucideIcons.calendar,
+                  '${dateFormat.format(opp.availabilityStart)} – ${dateFormat.format(opp.availabilityEnd)}'
+                  '${opp.availabilityMode == AvailabilityMode.oneTime && opp.selectedTime != null ? ' at ${opp.selectedTime!.format(context)}' : ''}'
+                  '${opp.availabilityMode == AvailabilityMode.flexible ? ' (flexible time)' : ''}',
+                ),
+              ],
               const SizedBox(height: KolabingSpacing.xs),
 
               // Venue mode
@@ -1602,7 +1587,7 @@ class _CreateOpportunityScreenState
             ),
             filled: true,
             fillColor: KolabingColors.surface,
-            counterText: '',
+            counterText: maxLength != null ? null : '',
             suffixText: suffixText,
             suffixStyle: GoogleFonts.openSans(
               fontSize: 15,
@@ -1695,6 +1680,323 @@ class _CreateOpportunityScreenState
           ],
         ),
       );
+
+  // ---------------------------------------------------------------------------
+  // Availability mode-specific fields
+  // ---------------------------------------------------------------------------
+
+  static const _dayNames = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+
+  List<Widget> _buildAvailabilityFields(
+    Opportunity opp,
+    OpportunityFormState formState,
+  ) {
+    switch (opp.availabilityMode) {
+      case AvailabilityMode.oneTime:
+        return _buildOneTimeFields(opp, formState);
+      case AvailabilityMode.recurring:
+        return _buildRecurringFields(opp, formState);
+      case AvailabilityMode.flexible:
+        return _buildFlexibleFields(opp, formState);
+    }
+  }
+
+  /// A) Date Range (Same Time) — Available From, Available Until, Time
+  List<Widget> _buildOneTimeFields(
+    Opportunity opp,
+    OpportunityFormState formState,
+  ) {
+    return [
+      Row(
+        children: [
+          Expanded(
+            child: _buildDatePicker(
+              label: 'Available From',
+              value: opp.availabilityStart,
+              error: formState.fieldErrors['availability_start'],
+              onChanged: (date) => ref
+                  .read(opportunityFormProvider.notifier)
+                  .updateStartDate(date),
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: _buildDatePicker(
+              label: 'Available Until',
+              value: opp.availabilityEnd,
+              error: formState.fieldErrors['availability_end'],
+              minDate: opp.availabilityStart,
+              onChanged: (date) => ref
+                  .read(opportunityFormProvider.notifier)
+                  .updateEndDate(date),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: KolabingSpacing.sm),
+      _buildTimePicker(
+        label: 'Time',
+        value: opp.selectedTime,
+        error: formState.fieldErrors['selected_time'],
+        onChanged: (time) =>
+            ref.read(opportunityFormProvider.notifier).updateSelectedTime(time),
+      ),
+      const SizedBox(height: KolabingSpacing.xs),
+      Text(
+        'e.g. Any day from ${DateFormat('MMM d').format(opp.availabilityStart)} '
+        'to ${DateFormat('MMM d').format(opp.availabilityEnd)} '
+        'at ${opp.selectedTime != null ? opp.selectedTime!.format(context) : '—'}',
+        style: GoogleFonts.openSans(
+          fontSize: 12,
+          color: KolabingColors.textTertiary,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+    ];
+  }
+
+  /// B) Recurring — Days of week (multi-select), Time
+  List<Widget> _buildRecurringFields(
+    Opportunity opp,
+    OpportunityFormState formState,
+  ) {
+    final selectedDaysSummary = opp.recurringDays.isNotEmpty
+        ? opp.recurringDays
+            .map((d) => _dayNames[d - 1])
+            .join(', ')
+        : '—';
+
+    return [
+      _buildLabel('Day of Week'),
+      const SizedBox(height: KolabingSpacing.xxs),
+      if (formState.fieldErrors['recurring_day'] != null) ...[
+        _buildFieldError(formState.fieldErrors['recurring_day']!),
+        const SizedBox(height: KolabingSpacing.xxs),
+      ],
+      Row(
+        children: List.generate(7, (i) {
+          final dayIndex = i + 1;
+          final isSelected = opp.recurringDays.contains(dayIndex);
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: i < 6 ? 6 : 0,
+              ),
+              child: GestureDetector(
+                onTap: () => ref
+                    .read(opportunityFormProvider.notifier)
+                    .toggleRecurringDay(dayIndex),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? KolabingColors.softYellow
+                        : KolabingColors.surface,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected
+                          ? KolabingColors.primary
+                          : KolabingColors.border,
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Text(
+                    _dayNames[i].substring(0, 3),
+                    style: GoogleFonts.openSans(
+                      fontSize: 12,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w400,
+                      color: isSelected
+                          ? KolabingColors.textPrimary
+                          : KolabingColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+      const SizedBox(height: KolabingSpacing.sm),
+      _buildTimePicker(
+        label: 'Time',
+        value: opp.selectedTime,
+        error: formState.fieldErrors['selected_time'],
+        onChanged: (time) =>
+            ref.read(opportunityFormProvider.notifier).updateSelectedTime(time),
+      ),
+      const SizedBox(height: KolabingSpacing.xs),
+      Text(
+        'e.g. Every $selectedDaysSummary '
+        'at ${opp.selectedTime != null ? opp.selectedTime!.format(context) : '—'}',
+        style: GoogleFonts.openSans(
+          fontSize: 12,
+          color: KolabingColors.textTertiary,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+    ];
+  }
+
+  /// C) Flexible Window — Available From, Available Until, no fixed time
+  List<Widget> _buildFlexibleFields(
+    Opportunity opp,
+    OpportunityFormState formState,
+  ) {
+    return [
+      Row(
+        children: [
+          Expanded(
+            child: _buildDatePicker(
+              label: 'Available From',
+              value: opp.availabilityStart,
+              error: formState.fieldErrors['availability_start'],
+              onChanged: (date) => ref
+                  .read(opportunityFormProvider.notifier)
+                  .updateStartDate(date),
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: _buildDatePicker(
+              label: 'Available Until',
+              value: opp.availabilityEnd,
+              error: formState.fieldErrors['availability_end'],
+              minDate: opp.availabilityStart,
+              onChanged: (date) => ref
+                  .read(opportunityFormProvider.notifier)
+                  .updateEndDate(date),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: KolabingSpacing.sm),
+      Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.sm,
+          vertical: KolabingSpacing.xs + 2,
+        ),
+        decoration: BoxDecoration(
+          color: KolabingColors.softYellow.withValues(alpha: 0.5),
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(color: KolabingColors.primary.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              LucideIcons.clock,
+              size: 16,
+              color: KolabingColors.textSecondary,
+            ),
+            const SizedBox(width: KolabingSpacing.xs),
+            Text(
+              'Time: Flexible — no fixed time',
+              style: GoogleFonts.openSans(
+                fontSize: 13,
+                color: KolabingColors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: KolabingSpacing.xs),
+      Text(
+        'Businesses will propose a specific date and time within this window.',
+        style: GoogleFonts.openSans(
+          fontSize: 12,
+          color: KolabingColors.textTertiary,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Time picker helper
+  // ---------------------------------------------------------------------------
+
+  Widget _buildTimePicker({
+    required String label,
+    required TimeOfDay? value,
+    String? error,
+    required ValueChanged<TimeOfDay?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(label),
+        const SizedBox(height: KolabingSpacing.xxs),
+        GestureDetector(
+          onTap: () async {
+            final picked = await KolabingTimePicker.show(
+              context,
+              initialTime: value ?? const TimeOfDay(hour: 10, minute: 0),
+            );
+            if (picked != null) {
+              onChanged(picked);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.sm,
+              vertical: KolabingSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              color: KolabingColors.surface,
+              borderRadius: KolabingRadius.borderRadiusMd,
+              border: Border.all(
+                color: error != null
+                    ? KolabingColors.error
+                    : KolabingColors.border,
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  LucideIcons.clock,
+                  size: 18,
+                  color: KolabingColors.textTertiary,
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(
+                  value != null
+                      ? value.format(context)
+                      : 'Select time',
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    color: value != null
+                        ? KolabingColors.textPrimary
+                        : KolabingColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (error != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            error,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              color: KolabingColors.error,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
 
   Widget _buildDatePicker({
     required String label,

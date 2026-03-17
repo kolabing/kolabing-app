@@ -119,7 +119,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Title
               Text(
-                'Subscription Required',
+                'Upgrade to Premium',
                 style: KolabingTextStyles.headlineMedium.copyWith(
                   color: KolabingColors.textPrimary,
                 ),
@@ -128,7 +128,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Description
               Text(
-                'To publish collaboration opportunities and connect with communities, you need an active subscription.',
+                'You\'ve used your 1 free kollab request. Subscribe to create unlimited requests and connect with more communities.',
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textSecondary,
                 ),
@@ -138,8 +138,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Benefits
               _buildBenefitRow(
-                LucideIcons.megaphone,
-                'Publish unlimited opportunities',
+                LucideIcons.infinity,
+                'Publish unlimited kollab requests',
               ),
               _buildBenefitRow(
                 LucideIcons.users,
@@ -164,7 +164,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '75 EUR',
+                      '29 EUR',
                       style: KolabingTextStyles.headlineLarge.copyWith(
                         color: KolabingColors.textPrimary,
                       ),

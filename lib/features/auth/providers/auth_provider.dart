@@ -384,12 +384,37 @@ class AuthResult {
         error!.message.toLowerCase().contains('no account');
   }
 
-  /// Get error message to display
+  /// Get user-friendly error message to display
   String get displayError {
     if (error != null) {
-      return error!.message;
+      return _toFriendlyMessage(error!.message);
     }
-    return errorMessage ?? 'An unexpected error occurred';
+    return errorMessage != null
+        ? _toFriendlyMessage(errorMessage!)
+        : 'Something went wrong. Please try again.';
+  }
+
+  /// Maps technical API messages to user-friendly copy.
+  static String _toFriendlyMessage(String raw) {
+    final lower = raw.toLowerCase();
+    if (lower.contains('invalid credentials') ||
+        lower.contains('credentials are incorrect') ||
+        lower.contains('unauthorized')) {
+      return 'Incorrect email or password. Please check and try again.';
+    }
+    if (lower.contains('too many') || lower.contains('throttle')) {
+      return 'Too many attempts. Please wait a moment and try again.';
+    }
+    if (lower.contains('not found') || lower.contains('no account')) {
+      return 'No account found with this email. Would you like to sign up?';
+    }
+    if (lower.contains('already exists') || lower.contains('already taken')) {
+      return 'An account with this email already exists. Try signing in.';
+    }
+    if (lower.contains('email') && lower.contains('verified')) {
+      return 'Please verify your email before signing in.';
+    }
+    return raw;
   }
 
   /// Get the existing user type from mismatch error

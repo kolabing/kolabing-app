@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,18 +8,20 @@ import 'package:shimmer/shimmer.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/explore_detail_sheet.dart';
+import '../../../widgets/explore_filter_sheet.dart';
+import '../../../widgets/explore_swipe_card.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/models/opportunity_filter.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
-import '../widgets/opportunity_card.dart';
 
-/// Explore Screen
+/// Explore Screen - Full-screen swipeable card experience
 ///
-/// Allows users to browse collaboration opportunities.
-/// Features search bar, filter chips, paginated list with infinite scroll.
+/// Allows users to browse collaboration opportunities with vertical swipe cards.
+/// Features a filter pill at the top and full-screen Tinder-style card navigation.
 /// Used by both business and community users.
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
@@ -31,12 +31,9 @@ class ExploreScreen extends ConsumerStatefulWidget {
   });
 
   /// Route prefix for opportunity detail navigation
-  /// Business users: '/business/explore/offer'
-  /// Community users: '/community/explore/offer'
   final String detailRoutePrefix;
 
-  /// When set, filters are locked to this creator type (e.g. 'business').
-  /// Community users should only see business offers.
+  /// When set, filters are locked to this creator type
   final String? lockedCreatorType;
 
   @override
@@ -44,18 +41,12 @@ class ExploreScreen extends ConsumerStatefulWidget {
 }
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
-  final _scrollController = ScrollController();
-  final _searchController = TextEditingController();
-  Timer? _debounceTimer;
-
-  /// Track if search has text for UI updates
-  bool _hasSearchText = false;
+  late final PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
-    _searchController.addListener(_onSearchTextChanged);
+    _pageController = PageController();
     // Apply locked creator type filter after first frame
     if (widget.lockedCreatorType != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,75 +59,72 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   @override
   void dispose() {
-    _debounceTimer?.cancel();
-    _scrollController.dispose();
-    _searchController.removeListener(_onSearchTextChanged);
-    _searchController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
-  /// Update UI when search text changes (for clear button visibility)
-  void _onSearchTextChanged() {
-    final hasText = _searchController.text.isNotEmpty;
-    if (hasText != _hasSearchText) {
-      setState(() => _hasSearchText = hasText);
-    }
-  }
-
-  /// Debounced search - waits 400ms after typing stops before API call
-  void _onSearchSubmit(String value) {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 400), () {
-      ref.read(opportunityFiltersProvider.notifier).setSearch(value.trim());
-    });
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+  void _onPageChanged(int index) {
+    // Preload more when reaching the last 2 cards
+    final listState = ref.read(opportunityListProvider);
+    if (index >= listState.opportunities.length - 2) {
       ref.read(opportunityListProvider.notifier).loadMore();
     }
   }
 
-  void _onViewOpportunity(Opportunity opportunity) {
-    context.push(
-      '${widget.detailRoutePrefix}/${opportunity.id}',
-      extra: opportunity,
+  void _onCardTap(Opportunity opportunity) {
+    final currentUser = ref.read(authProvider).user;
+    final isOwn = currentUser?.id != null &&
+        opportunity.creatorProfile?.id == currentUser?.id;
+    final canApply = !isOwn && (currentUser?.isBusiness != true);
+
+    ExploreDetailSheet.show(
+      context,
+      opportunity: opportunity,
+      canApply: canApply,
+      onApply: canApply
+          ? () {
+              Navigator.of(context).pop(); // Close detail sheet
+              ApplyModal.show(context, opportunity);
+            }
+          : null,
+      onView: () {
+        Navigator.of(context).pop(); // Close detail sheet
+        context.push(
+          '${widget.detailRoutePrefix}/${opportunity.id}',
+          extra: opportunity,
+        );
+      },
     );
   }
 
-  void _onApplyOpportunity(Opportunity opportunity) {
-    ApplyModal.show(context, opportunity);
+  void _openFilterSheet() {
+    final listState = ref.read(opportunityListProvider);
+    ExploreFilterSheet.show(context, totalResults: listState.total);
   }
 
   @override
   Widget build(BuildContext context) {
     final listState = ref.watch(opportunityListProvider);
     final filters = ref.watch(opportunityFiltersProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+      backgroundColor: KolabingColors.background,
       body: SafeArea(
+        bottom: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            _buildHeader(isDark),
+            // Top bar: filter pill + notification bell
+            _buildTopBar(filters, listState),
 
-            // Search bar
-            _buildSearchBar(isDark),
-
-            // Results count and list
+            // Main content
             Expanded(
               child: listState.isLoading
-                  ? _buildLoadingState(isDark)
+                  ? _buildLoadingState()
                   : listState.error != null
-                      ? _buildErrorState(listState.error!, isDark)
+                      ? _buildErrorState(listState.error!)
                       : listState.isEmpty
-                          ? _buildEmptyState(filters.searchQuery.isNotEmpty, isDark)
-                          : _buildOpportunityList(listState, isDark),
+                          ? _buildEmptyState(filters.hasActiveFilters)
+                          : _buildCardPageView(listState),
             ),
           ],
         ),
@@ -144,268 +132,279 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
-  Widget _buildHeader(bool isDark) => Padding(
-        padding: const EdgeInsets.fromLTRB(
-          KolabingSpacing.md,
-          KolabingSpacing.md,
-          KolabingSpacing.xs,
-          KolabingSpacing.xs,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'EXPLORE',
-                    style: GoogleFonts.rubik(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.2,
-                      color: isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
-                    ),
+  // ---------------------------------------------------------------------------
+  // Top bar
+  // ---------------------------------------------------------------------------
+
+  /// Whether user has explicitly set filters (excluding locked creatorType).
+  bool _hasUserFilters(OpportunityFilters filters) =>
+      filters.searchQuery.isNotEmpty ||
+      filters.selectedCategories.isNotEmpty ||
+      filters.selectedCity != null ||
+      filters.venueMode != null ||
+      filters.availabilityMode != null;
+
+  Widget _buildTopBar(
+      OpportunityFilters filters, OpportunityListState listState) {
+    final filterLabel = _buildFilterLabel(filters, listState.total);
+    final hasFilters = _hasUserFilters(filters);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.xs,
+        KolabingSpacing.xs,
+        KolabingSpacing.xs,
+      ),
+      child: Row(
+        children: [
+          // Filter pill
+          Expanded(
+            child: GestureDetector(
+              onTap: _openFilterSheet,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                  vertical: KolabingSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: KolabingColors.surface,
+                  borderRadius: BorderRadius.circular(KolabingRadius.round),
+                  border: Border.all(
+                    color: hasFilters
+                        ? KolabingColors.primary
+                        : KolabingColors.border,
                   ),
-                  const SizedBox(height: KolabingSpacing.xxs),
-                  Text(
-                    'Find your next collab!',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      hasFilters
+                          ? LucideIcons.filterX
+                          : LucideIcons.search,
+                      size: 16,
+                      color: hasFilters
+                          ? KolabingColors.primary
+                          : KolabingColors.textTertiary,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        filterLabel,
+                        style: GoogleFonts.openSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: hasFilters
+                              ? KolabingColors.textPrimary
+                              : KolabingColors.textTertiary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: KolabingSpacing.xs),
+
+          // Notification bell
+          const NotificationBell(),
+        ],
+      ),
+    );
+  }
+
+  String _buildFilterLabel(OpportunityFilters filters, int total) {
+    // Check for user-visible filters (exclude lockedCreatorType which is implicit)
+    final hasUserFilters = filters.searchQuery.isNotEmpty ||
+        filters.selectedCategories.isNotEmpty ||
+        filters.selectedCity != null ||
+        filters.venueMode != null ||
+        filters.availabilityMode != null;
+
+    if (!hasUserFilters) {
+      return 'Find your next collab!';
+    }
+
+    final parts = <String>[];
+    if (filters.searchQuery.isNotEmpty) {
+      parts.add('"${filters.searchQuery}"');
+    }
+    if (filters.venueMode != null) {
+      final mode = VenueMode.fromString(filters.venueMode!);
+      parts.add(mode.displayName);
+    }
+    if (filters.availabilityMode != null) {
+      final mode = AvailabilityMode.fromString(filters.availabilityMode!);
+      parts.add(mode.displayName);
+    }
+    if (filters.selectedCity != null) {
+      parts.add(filters.selectedCity!);
+    }
+
+    return parts.join(' · ');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Card PageView
+  // ---------------------------------------------------------------------------
+
+  Widget _buildCardPageView(OpportunityListState listState) {
+    // Client-side filter: hide expired kolabs (availabilityEnd in the past)
+    final today = DateTime.now();
+    final activeOpportunities = listState.opportunities
+        .where((o) => !o.availabilityEnd.isBefore(
+              DateTime(today.year, today.month, today.day),
+            ))
+        .toList();
+
+    final itemCount = activeOpportunities.length +
+        (listState.isLoadingMore ? 1 : 0);
+
+    return PageView.builder(
+      controller: _pageController,
+      scrollDirection: Axis.vertical,
+      onPageChanged: _onPageChanged,
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        // Loading more indicator at end
+        if (index >= activeOpportunities.length) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: KolabingColors.primary,
+              strokeWidth: 2,
+            ),
+          );
+        }
+
+        final opportunity = activeOpportunities[index];
+        return ExploreSwipeCard(
+          opportunity: opportunity,
+          onTap: () => _onCardTap(opportunity),
+        );
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Loading state
+  // ---------------------------------------------------------------------------
+
+  Widget _buildLoadingState() => Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.md,
+          vertical: KolabingSpacing.xs,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(KolabingRadius.xl),
+          child: Shimmer.fromColors(
+            baseColor: KolabingColors.surfaceVariant,
+            highlightColor: KolabingColors.surface,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: KolabingColors.surfaceVariant,
+                borderRadius: BorderRadius.circular(KolabingRadius.xl),
+              ),
+              child: Stack(
+                children: [
+                  // Fake gradient overlay
+                  Positioned(
+                    left: KolabingSpacing.md,
+                    right: KolabingSpacing.md,
+                    bottom: KolabingSpacing.xl,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: KolabingColors.border,
+                            borderRadius: KolabingRadius.borderRadiusSm,
+                          ),
+                        ),
+                        const SizedBox(height: KolabingSpacing.xs),
+                        Container(
+                          width: 200,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: KolabingColors.border,
+                            borderRadius: KolabingRadius.borderRadiusSm,
+                          ),
+                        ),
+                        const SizedBox(height: KolabingSpacing.sm),
+                        Row(
+                          children: List.generate(
+                            3,
+                            (i) => Padding(
+                              padding: const EdgeInsets.only(
+                                  right: KolabingSpacing.xxs),
+                              child: Container(
+                                width: 60,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  color: KolabingColors.border,
+                                  borderRadius: BorderRadius.circular(
+                                      KolabingRadius.round),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: KolabingSpacing.sm),
+                        Container(
+                          width: double.infinity,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: KolabingColors.border,
+                            borderRadius: KolabingRadius.borderRadiusSm,
+                          ),
+                        ),
+                        const SizedBox(height: KolabingSpacing.xxs),
+                        Container(
+                          width: 180,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: KolabingColors.border,
+                            borderRadius: KolabingRadius.borderRadiusSm,
+                          ),
+                        ),
+                        const SizedBox(height: KolabingSpacing.sm),
+                        Row(
+                          children: List.generate(
+                            7,
+                            (i) => Padding(
+                              padding: EdgeInsets.only(
+                                  right: i < 6 ? 6.0 : 0),
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: const BoxDecoration(
+                                  color: KolabingColors.border,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            const NotificationBell(),
-          ],
-        ),
-      );
-
-  Widget _buildSearchBar(bool isDark) => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.xs,
-        ),
-        child: TextField(
-          controller: _searchController,
-          onChanged: _onSearchSubmit,
-          textInputAction: TextInputAction.search,
-          onSubmitted: (value) {
-            // Immediate search on submit (Enter key)
-            _debounceTimer?.cancel();
-            ref.read(opportunityFiltersProvider.notifier).setSearch(value.trim());
-          },
-          decoration: InputDecoration(
-            hintText: 'Search by title, description, or creator...',
-            hintStyle: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textTertiary,
-            ),
-            prefixIcon: Icon(
-              LucideIcons.search,
-              size: 18,
-              color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                  : KolabingColors.textTertiary,
-            ),
-            suffixIcon: _hasSearchText
-                ? IconButton(
-                    icon: Icon(
-                      LucideIcons.x,
-                      size: 16,
-                      color: isDark
-                          ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                          : null,
-                    ),
-                    onPressed: () {
-                      _searchController.clear();
-                      _debounceTimer?.cancel();
-                      ref
-                          .read(opportunityFiltersProvider.notifier)
-                          .setSearch('');
-                    },
-                  )
-                : null,
-            filled: true,
-            fillColor:
-                isDark ? KolabingColors.darkSurface : KolabingColors.surface,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.sm,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(
-                color:
-                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(
-                color:
-                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide:
-                  const BorderSide(color: KolabingColors.primary, width: 1.5),
-            ),
-          ),
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
           ),
         ),
       );
 
-  Widget _buildFilterChips(OpportunityFilters filters, bool isDark) => SizedBox(
-        height: 44,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.md,
-          ),
-          children: [
-            // All chip
-            _FilterChip(
-              label: 'All',
-              isSelected: !filters.hasActiveFilters,
-              isDark: isDark,
-              onTap: () {
-                ref.read(opportunityFiltersProvider.notifier).clearAll();
-                _searchController.clear();
-              },
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
+  // ---------------------------------------------------------------------------
+  // Empty state
+  // ---------------------------------------------------------------------------
 
-            // Venue mode chips
-            ...VenueMode.values.map((mode) => Padding(
-                  padding: const EdgeInsets.only(right: KolabingSpacing.xs),
-                  child: _FilterChip(
-                    label: mode.displayName,
-                    icon: LucideIcons.building2,
-                    isSelected: filters.venueMode == mode.toApiValue(),
-                    isDark: isDark,
-                    onTap: () {
-                      ref
-                          .read(opportunityFiltersProvider.notifier)
-                          .setVenueMode(mode.toApiValue());
-                    },
-                  ),
-                )),
-
-            // Availability mode chips
-            ...AvailabilityMode.values.map((mode) => Padding(
-                  padding: const EdgeInsets.only(right: KolabingSpacing.xs),
-                  child: _FilterChip(
-                    label: mode.displayName,
-                    icon: LucideIcons.clock,
-                    isSelected:
-                        filters.availabilityMode == mode.toApiValue(),
-                    isDark: isDark,
-                    onTap: () {
-                      ref
-                          .read(opportunityFiltersProvider.notifier)
-                          .setAvailabilityMode(mode.toApiValue());
-                    },
-                  ),
-                )),
-          ],
-        ),
-      );
-
-  Widget _buildOpportunityList(OpportunityListState listState, bool isDark) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Results count
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.sm,
-            ),
-            child: Text(
-              '${listState.total} ${listState.total == 1 ? 'result' : 'results'} found',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                    : KolabingColors.textTertiary,
-              ),
-            ),
-          ),
-
-          // List
-          Expanded(
-            child: RefreshIndicator(
-              color: KolabingColors.primary,
-              onRefresh: () async {
-                await ref.read(opportunityListProvider.notifier).refresh();
-              },
-              child: ListView.separated(
-                controller: _scrollController,
-                padding: const EdgeInsets.fromLTRB(
-                  KolabingSpacing.md,
-                  0,
-                  KolabingSpacing.md,
-                  KolabingSpacing.xxl,
-                ),
-                itemCount: listState.opportunities.length +
-                    (listState.isLoadingMore ? 1 : 0),
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: KolabingSpacing.sm),
-                itemBuilder: (context, index) {
-                  if (index >= listState.opportunities.length) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(KolabingSpacing.md),
-                        child: CircularProgressIndicator(
-                          color: KolabingColors.primary,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    );
-                  }
-                  final opportunity = listState.opportunities[index];
-                  final currentUserId = ref.read(authProvider).user?.id;
-                  final isOwn = currentUserId != null &&
-                      opportunity.creatorProfile?.id == currentUserId;
-                  return OpportunityCard(
-                    opportunity: opportunity,
-                    onView: () => _onViewOpportunity(opportunity),
-                    onApply:
-                        isOwn ? null : () => _onApplyOpportunity(opportunity),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      );
-
-  Widget _buildLoadingState(bool isDark) => SingleChildScrollView(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        child: Column(
-          children: List.generate(
-            3,
-            (index) => Padding(
-              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-              child: _ShimmerCard(isDark: isDark),
-            ),
-          ),
-        ),
-      );
-
-  Widget _buildEmptyState(bool hasFilters, bool isDark) => Center(
+  Widget _buildEmptyState(bool hasFilters) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -413,10 +412,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               DecoratedBox(
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? KolabingColors.darkSurface
-                      : KolabingColors.surfaceVariant,
+                decoration: const BoxDecoration(
+                  color: KolabingColors.surfaceVariant,
                   shape: BoxShape.circle,
                 ),
                 child: SizedBox(
@@ -425,9 +422,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   child: Icon(
                     hasFilters ? LucideIcons.searchX : LucideIcons.search,
                     size: 36,
-                    color: isDark
-                        ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                        : KolabingColors.textTertiary,
+                    color: KolabingColors.textTertiary,
                   ),
                 ),
               ),
@@ -437,9 +432,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                  color: KolabingColors.textPrimary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -458,7 +451,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 TextButton.icon(
                   onPressed: () {
                     ref.read(opportunityFiltersProvider.notifier).clearAll();
-                    _searchController.clear();
                   },
                   icon: const Icon(LucideIcons.rotateCcw, size: 16),
                   label: const Text('Clear all filters'),
@@ -472,7 +464,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ),
       );
 
-  Widget _buildErrorState(String error, bool isDark) => Center(
+  // ---------------------------------------------------------------------------
+  // Error state
+  // ---------------------------------------------------------------------------
+
+  Widget _buildErrorState(String error) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -500,9 +496,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                  color: KolabingColors.textPrimary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -525,244 +519,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
-}
-
-/// Filter chip widget for horizontal scroll
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-    this.icon,
-    this.isDark = false,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final IconData? icon;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: KolabingRadius.borderRadiusRound,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? KolabingColors.primary
-                  : isDark
-                      ? KolabingColors.darkSurface
-                      : KolabingColors.surface,
-              borderRadius: KolabingRadius.borderRadiusRound,
-              border: Border.all(
-                color: isSelected
-                    ? KolabingColors.primary
-                    : isDark
-                        ? KolabingColors.darkBorder
-                        : KolabingColors.border,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (icon != null) ...[
-                  Icon(
-                    icon,
-                    size: 14,
-                    color: isSelected
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.textSecondary,
-                  ),
-                  const SizedBox(width: KolabingSpacing.xxs),
-                ],
-                Text(
-                  label,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: isSelected
-                        ? KolabingColors.onPrimary
-                        : isDark
-                            ? KolabingColors.textOnDark
-                            : KolabingColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-}
-
-/// Shimmer loading card placeholder
-class _ShimmerCard extends StatelessWidget {
-  const _ShimmerCard({this.isDark = false});
-
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) => Shimmer.fromColors(
-        baseColor:
-            isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
-        highlightColor:
-            isDark ? KolabingColors.darkBorder : KolabingColors.surface,
-        child: Container(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          decoration: BoxDecoration(
-            color: KolabingColors.surface,
-            borderRadius: KolabingRadius.borderRadiusLg,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header placeholder
-              Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                        ),
-                        const SizedBox(height: KolabingSpacing.xxs),
-                        Container(
-                          width: 80,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 60,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: KolabingRadius.borderRadiusRound,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Title placeholder
-              Container(
-                width: double.infinity,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-
-              // Description placeholder
-              Container(
-                width: double.infinity,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xxs),
-              Container(
-                width: 200,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Tags placeholder
-              Row(
-                children: [
-                  Container(
-                    width: 70,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: KolabingRadius.borderRadiusRound,
-                    ),
-                  ),
-                  const SizedBox(width: KolabingSpacing.xs),
-                  Container(
-                    width: 80,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: KolabingRadius.borderRadiusRound,
-                    ),
-                  ),
-                  const SizedBox(width: KolabingSpacing.xs),
-                  Container(
-                    width: 90,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: KolabingRadius.borderRadiusRound,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Buttons placeholder
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: KolabingRadius.borderRadiusMd,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: KolabingRadius.borderRadiusMd,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

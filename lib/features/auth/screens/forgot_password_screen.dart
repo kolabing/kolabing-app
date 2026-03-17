@@ -130,35 +130,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       await _authService.forgotPassword(
         email: _emailController.text.trim(),
       );
-
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-        _emailSent = true;
-      });
-    } on ApiException catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-
-      // For 422 validation errors, show field-specific error
-      if (e.error.isValidationError) {
-        final emailError = e.error.getFieldError('email');
-        if (emailError != null) {
-          _showErrorSnackBar(emailError);
-          return;
-        }
-      }
-      _showErrorSnackBar(e.error.message);
+    } on ApiException {
+      // Per API spec: always show generic success to avoid email enumeration.
+      // Do NOT reveal whether the email exists or not.
     } on NetworkException {
       if (!mounted) return;
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();
+      return;
     } on Exception {
       if (!mounted) return;
       setState(() => _isLoading = false);
       _showErrorSnackBar('An unexpected error occurred');
+      return;
     }
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+      _emailSent = true;
+    });
   }
 
   void _showErrorSnackBar(String message) {

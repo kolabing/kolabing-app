@@ -11,6 +11,8 @@ import '../../../config/theme/colors.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../community/widgets/my_opportunity_card.dart';
+import '../providers/profile_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 
 /// My Kollabs screen for business users
 ///
@@ -55,6 +57,22 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
   }
 
   void _onCreateNew() {
+    final profileState = ref.read(profileProvider);
+    final listState = ref.read(myOpportunitiesProvider);
+
+    // Free tier: 1 kollab allowed without subscription.
+    // If no active subscription and already has 1+ kollab, show paywall.
+    final hasSubscription = profileState.subscription?.isActive ?? false;
+    if (!hasSubscription && !listState.isLoading && listState.total >= 1) {
+      showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const SubscriptionPaywall(),
+      );
+      return;
+    }
+
     context.push('/business/offers/new');
   }
 
