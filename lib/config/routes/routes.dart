@@ -21,6 +21,11 @@ import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/business/screens/create_collab_request_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/kolab/screens/intent_selection_screen.dart';
+import '../../features/kolab/screens/kolab_flow_screen.dart';
+import '../../features/rewards/screens/referral_screen.dart';
+import '../../features/rewards/screens/wallet_screen.dart';
+import '../../features/rewards/screens/withdrawal_request_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
@@ -104,6 +109,12 @@ abstract final class KolabingRoutes {
   /// Create new business offer
   static const String businessOffersNew = '/business/offers/new';
 
+  /// New Kolab creation (unified entry)
+  static const String kolabNew = '/kolab/new';
+
+  /// Kolab creation flow (step-based)
+  static const String kolabFlow = '/kolab/flow';
+
   /// Edit business offer
   static const String businessOffersEdit = '/business/offers/:id/edit';
 
@@ -163,6 +174,15 @@ abstract final class KolabingRoutes {
 
   /// Community referrals
   static const String communityReferrals = '/community/referrals';
+
+  /// Community wallet (rewards)
+  static const String communityWallet = '/community/wallet';
+
+  /// Community withdrawal request
+  static const String communityWalletWithdraw = '/community/wallet/withdraw';
+
+  /// Business referrals
+  static const String businessReferrals = '/business/referrals';
 
   // ---------------------------------------------------------------------------
   // Shared Routes
@@ -459,6 +479,20 @@ final GoRouter kolabingRouter = GoRouter(
           const BusinessMainScreen(),
     ),
 
+    // Kolab creation flow (new unified flow)
+    GoRoute(
+      path: KolabingRoutes.kolabNew,
+      name: 'kolabNew',
+      builder: (BuildContext context, GoRouterState state) =>
+          const IntentSelectionScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.kolabFlow,
+      name: 'kolabFlow',
+      builder: (BuildContext context, GoRouterState state) =>
+          const KolabFlowScreen(),
+    ),
+
     // Business sub-routes (pushed on top of main screen)
     GoRoute(
       path: KolabingRoutes.businessOffersNew,
@@ -472,8 +506,8 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.businessOffersEdit,
       name: 'businessOffersEdit',
       builder: (BuildContext context, GoRouterState state) {
-        final id = state.pathParameters['id'] ?? '';
-        return _PlaceholderScreen(title: 'Edit Offer: $id');
+        final opportunity = state.extra as Opportunity?;
+        return CreateCollabRequestScreen(editOpportunity: opportunity);
       },
     ),
     GoRoute(
@@ -537,7 +571,25 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.communityReferrals,
       name: 'communityReferrals',
       builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Referrals'),
+          const ReferralScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.communityWallet,
+      name: 'communityWallet',
+      builder: (BuildContext context, GoRouterState state) =>
+          const WalletScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.communityWalletWithdraw,
+      name: 'communityWalletWithdraw',
+      builder: (BuildContext context, GoRouterState state) =>
+          const WithdrawalRequestScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.businessReferrals,
+      name: 'businessReferrals',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ReferralScreen(),
     ),
 
     // -------------------------------------------------------------------------
@@ -549,7 +601,11 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'opportunityDetails',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        return _PlaceholderScreen(title: 'Opportunity: $id');
+        final offer = state.extra as Opportunity?;
+        return CommunityOfferDetailScreen(
+          offerId: id,
+          offer: offer,
+        );
       },
     ),
     GoRoute(

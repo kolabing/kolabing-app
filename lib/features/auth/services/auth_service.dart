@@ -12,14 +12,14 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../../onboarding/models/onboarding_state.dart';
+import '../../../config/constants/api.dart';
 
 /// Storage keys for auth data
 const String _tokenKey = 'auth_token';
 const String _userKey = 'auth_user';
 
 /// API configuration
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Mock mode flag - set to false to use real API
 const bool _useMockApi = false;

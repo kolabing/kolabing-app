@@ -7,10 +7,10 @@ import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../../application/services/application_service.dart';
 import '../models/app_notification.dart';
+import '../../../config/constants/api.dart';
 
 /// API base URL
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for notification API operations.
 class NotificationService {

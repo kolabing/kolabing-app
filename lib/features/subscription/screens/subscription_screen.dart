@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -10,6 +12,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../business/models/subscription.dart';
 import '../../business/providers/profile_provider.dart';
+import '../providers/iap_provider.dart';
 
 /// Subscription management screen for business users.
 ///
@@ -38,24 +41,38 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   }
 
   Future<void> _handleSubscribe() async {
-    final url = await ref.read(profileProvider.notifier).getCheckoutUrl();
-    if (url != null) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      // Refresh subscription status after returning from Stripe
-      if (mounted) {
-        await Future<void>.delayed(const Duration(seconds: 2));
-        ref.read(profileProvider.notifier).refreshSubscription();
+    if (Platform.isIOS) {
+      // iOS: Use Apple IAP
+      await ref.read(iapProvider.notifier).purchase();
+    } else {
+      // Android: Use Stripe
+      final url = await ref.read(profileProvider.notifier).getCheckoutUrl();
+      if (url != null) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+        if (mounted) {
+          await Future<void>.delayed(const Duration(seconds: 2));
+          ref.read(profileProvider.notifier).refreshSubscription();
+        }
       }
     }
   }
 
   Future<void> _handleManageBilling() async {
-    final url = await ref.read(profileProvider.notifier).getBillingPortalUrl();
-    if (url != null) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      if (mounted) {
-        await Future<void>.delayed(const Duration(seconds: 2));
-        ref.read(profileProvider.notifier).refreshSubscription();
+    if (Platform.isIOS) {
+      // iOS: Open iOS Settings > Subscriptions (Apple-approved method)
+      await launchUrl(
+        Uri.parse('https://apps.apple.com/account/subscriptions'),
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      // Android: Open Stripe billing portal
+      final url = await ref.read(profileProvider.notifier).getBillingPortalUrl();
+      if (url != null) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+        if (mounted) {
+          await Future<void>.delayed(const Duration(seconds: 2));
+          ref.read(profileProvider.notifier).refreshSubscription();
+        }
       }
     }
   }
@@ -77,6 +94,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   }
 
   Future<void> _handleCancel() async {
+    final subscription = ref.read(profileProvider).subscription;
+
+    // iOS with Apple IAP: redirect to App Store subscriptions
+    if (Platform.isIOS && (subscription?.isAppleIAP ?? false)) {
+      await launchUrl(
+        Uri.parse('https://apps.apple.com/account/subscriptions'),
+        mode: LaunchMode.externalApplication,
+      );
+      return;
+    }
+
+    // Android / Stripe: cancel via API
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -151,7 +180,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       body: SafeArea(
         child: state.isLoading && !state.isInitialized
             ? _buildLoadingState()
-            : _buildContent(state.subscription),
+            : _buildContent(state.subscription, state.isSubscribed),
       ),
     );
   }
@@ -179,8 +208,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ),
       );
 
-  Widget _buildContent(Subscription? subscription) {
-    final isActive = subscription?.isActive ?? false;
+  Widget _buildContent(Subscription? subscription, bool isSubscribed) {
+    final isActive = isSubscribed;
     final isPastDue = subscription?.status == SubscriptionStatus.pastDue;
     final isCancelPending = subscription?.cancelAtPeriodEnd ?? false;
 
@@ -362,24 +391,36 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             const Divider(height: 1, color: KolabingColors.border),
             const SizedBox(height: KolabingSpacing.md),
             Center(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '29 ',
-                      style: KolabingTextStyles.displaySmall.copyWith(
-                        color: KolabingColors.textPrimary,
+              child: Platform.isIOS
+                  ? Consumer(
+                      builder: (context, ref, _) {
+                        final price = ref.watch(iapProvider).priceString;
+                        return Text(
+                          '$price/month',
+                          style: KolabingTextStyles.displaySmall.copyWith(
+                            color: KolabingColors.textPrimary,
+                          ),
+                        );
+                      },
+                    )
+                  : RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '29 ',
+                            style: KolabingTextStyles.displaySmall.copyWith(
+                              color: KolabingColors.textPrimary,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'EUR/month',
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              color: KolabingColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    TextSpan(
-                      text: 'EUR/month',
-                      style: KolabingTextStyles.bodyLarge.copyWith(
-                        color: KolabingColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ],
         ),
@@ -591,7 +632,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               onPressed: _handleSubscribe,
               icon: const Icon(LucideIcons.sparkles, size: 20),
               label: Text(
-                'SUBSCRIBE FOR 29 EUR/MONTH',
+                Platform.isIOS ? 'SUBSCRIBE' : 'SUBSCRIBE FOR 29 EUR/MONTH',
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onPrimary,
                 ),

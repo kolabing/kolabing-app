@@ -479,7 +479,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
             // Subscription Section (Business only - prominently displayed)
             if (isBusiness) ...[
-              _buildSubscriptionSection(state.subscription, isDark),
+              _buildSubscriptionSection(state.subscription, isDark, state.isSubscribed),
               const SizedBox(height: KolabingSpacing.md),
             ],
 
@@ -675,9 +675,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         ),
       );
 
-  Widget _buildSubscriptionSection(Subscription? subscription, bool isDark) {
+  Widget _buildSubscriptionSection(Subscription? subscription, bool isDark, bool isSubscribed) {
     final hasSubscription = subscription != null;
-    final isActive = subscription?.isActive ?? false;
+    final isActive = isSubscribed;
 
     return _SectionCard(
       title: 'Subscription',

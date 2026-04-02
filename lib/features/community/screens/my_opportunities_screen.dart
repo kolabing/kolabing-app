@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
@@ -55,7 +56,7 @@ class _MyOpportunitiesScreenState
   }
 
   void _onCreateNew() {
-    context.push('/community/opportunities/new');
+    context.push(KolabingRoutes.kolabNew);
   }
 
   void _onEdit(Opportunity opportunity) {

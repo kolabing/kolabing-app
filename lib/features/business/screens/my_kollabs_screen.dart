@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
@@ -62,7 +63,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
 
     // Free tier: 1 kollab allowed without subscription.
     // If no active subscription and already has 1+ kollab, show paywall.
-    final hasSubscription = profileState.subscription?.isActive ?? false;
+    final hasSubscription = profileState.isSubscribed;
     if (!hasSubscription && !listState.isLoading && listState.total >= 1) {
       showModalBottomSheet<bool>(
         context: context,
@@ -73,12 +74,12 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       return;
     }
 
-    context.push('/business/offers/new');
+    context.push(KolabingRoutes.kolabNew);
   }
 
   void _onEdit(Opportunity opportunity) {
     context.push(
-      '/business/offers/new',
+      KolabingRoutes.kolabNew,
       extra: opportunity,
     );
   }

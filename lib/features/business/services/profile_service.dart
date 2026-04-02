@@ -8,10 +8,10 @@ import '../../auth/models/user_model.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
+import '../../../config/constants/api.dart';
 
 /// API configuration
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Profile service for managing user profile, notifications, and subscription
 class ProfileService {
@@ -436,6 +436,98 @@ class ProfileService {
     } catch (e) {
       debugPrint('Reactivate subscription error: $e');
       throw NetworkException('Failed to reactivate subscription: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Apple IAP APIs
+  // ---------------------------------------------------------------------------
+
+  /// Verify Apple IAP transaction with backend
+  ///
+  /// POST /api/v1/me/subscription/apple-verify
+  Future<Subscription> verifyApplePurchase({
+    required String transactionId,
+    required String originalTransactionId,
+    required String productId,
+  }) async {
+    final url = '$_baseUrl/me/subscription/apple-verify';
+    debugPrint('Profile: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: await _getHeaders(),
+        body: jsonEncode({
+          'transaction_id': transactionId,
+          'original_transaction_id': originalTransactionId,
+          'product_id': productId,
+        }),
+      );
+
+      debugPrint('Apple verify response status: ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 409) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as Map<String, dynamic>;
+        return Subscription.fromJson(data);
+      } else if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Apple verify error: $e');
+      throw NetworkException('Failed to verify Apple purchase: $e');
+    }
+  }
+
+  /// Restore Apple purchases
+  ///
+  /// POST /api/v1/me/subscription/apple-restore
+  Future<Subscription?> restoreApplePurchases({
+    required List<Map<String, String>> transactions,
+  }) async {
+    final url = '$_baseUrl/me/subscription/apple-restore';
+    debugPrint('Profile: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: await _getHeaders(),
+        body: jsonEncode({'transactions': transactions}),
+      );
+
+      debugPrint('Apple restore response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as Map<String, dynamic>;
+        return Subscription.fromJson(data);
+      } else if (response.statusCode == 404) {
+        return null;
+      } else if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Apple restore error: $e');
+      throw NetworkException('Failed to restore Apple purchases: $e');
     }
   }
 }

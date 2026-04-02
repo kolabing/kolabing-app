@@ -2,7 +2,7 @@ name: kolabing_app
 description: "Kolabing - Collaboration marketplace connecting businesses and communities"
 publish_to: 'none'
 
-version: 1.2.1+4
+version: 1.2.5+5
 
 environment:
   sdk: ^3.10.7
@@ -58,6 +58,9 @@ dependencies:
   # Apple Sign In
   sign_in_with_apple: ^7.0.1
 
+  # In-App Purchase (iOS subscription)
+  in_app_purchase: ^3.2.0
+
   # Utils
   intl: any
   url_launcher: ^6.2.2
@@ -67,6 +70,10 @@ dependencies:
   # QR Code
   qr_flutter: ^4.1.0
   mobile_scanner: ^6.0.2
+
+  # Gamification / Rewards
+  share_plus: ^10.1.4
+  confetti: ^0.8.0
 
 dev_dependencies:
   flutter_test:

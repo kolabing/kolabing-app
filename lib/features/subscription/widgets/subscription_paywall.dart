@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -8,6 +10,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../business/providers/profile_provider.dart';
+import '../providers/iap_provider.dart';
 
 /// Subscription paywall shown when business users try to publish
 /// without an active subscription.
@@ -24,10 +27,7 @@ class SubscriptionPaywall extends ConsumerStatefulWidget {
   /// Returns true if user has an active subscription and can publish.
   static Future<bool> checkAndShow(BuildContext context, WidgetRef ref) async {
     final profileState = ref.read(profileProvider);
-    final subscription = profileState.subscription;
-    final isActive = subscription?.isActive ?? false;
-
-    if (isActive) return true;
+    if (profileState.isSubscribed) return true;
 
     // Show paywall
     final result = await showModalBottomSheet<bool>(
@@ -49,6 +49,22 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   bool _isLoading = false;
 
   Future<void> _handleSubscribe() async {
+    if (Platform.isIOS) {
+      await _handleAppleSubscribe();
+    } else {
+      await _handleStripeSubscribe();
+    }
+  }
+
+  /// iOS: Use Apple IAP
+  Future<void> _handleAppleSubscribe() async {
+    final iapNotifier = ref.read(iapProvider.notifier);
+    await iapNotifier.purchase();
+    // Purchase result handled by listener in build method
+  }
+
+  /// Android/Other: Use Stripe (existing flow)
+  Future<void> _handleStripeSubscribe() async {
     setState(() => _isLoading = true);
 
     final url = await ref.read(profileProvider.notifier).getCheckoutUrl();
@@ -59,7 +75,6 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
     if (url != null) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      // After returning from Stripe, refresh subscription and close
       if (mounted) {
         await Future<void>.delayed(const Duration(seconds: 2));
         await ref.read(profileProvider.notifier).refreshSubscription();
@@ -73,6 +88,27 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
   @override
   Widget build(BuildContext context) {
+    // Always watch/listen unconditionally (Riverpod hooks must be stable)
+    final iapState = ref.watch(iapProvider);
+
+    ref.listen<IAPState>(iapProvider, (prev, next) {
+      if (!Platform.isIOS) return;
+      if ((prev?.isPurchasing ?? false) &&
+          !next.isPurchasing &&
+          next.error == null) {
+        // Purchase succeeded — close paywall
+        final subscription = ref.read(profileProvider).subscription;
+        if (mounted) {
+          Navigator.of(context).pop(subscription?.isActive ?? true);
+        }
+      }
+    });
+
+    // Use IAP loading state on iOS
+    if (Platform.isIOS && (iapState.isPurchasing || iapState.isRestoring)) {
+      _isLoading = true;
+    }
+
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
@@ -164,7 +200,9 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '29 EUR',
+                      Platform.isIOS
+                          ? ref.watch(iapProvider).priceString
+                          : '29 EUR',
                       style: KolabingTextStyles.headlineLarge.copyWith(
                         color: KolabingColors.textPrimary,
                       ),
@@ -226,6 +264,40 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                   ),
                 ),
               ),
+
+              // Restore Purchases (iOS only — Apple requires this)
+              if (Platform.isIOS) ...[
+                TextButton(
+                  onPressed: _isLoading
+                      ? null
+                      : () => ref.read(iapProvider.notifier).restore(),
+                  child: Text(
+                    'Restore Purchases',
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.textTertiary,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+
+              // IAP error message
+              if (Platform.isIOS) ...[
+                Builder(builder: (context) {
+                  final iapError = ref.watch(iapProvider).error;
+                  if (iapError == null) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: KolabingSpacing.xs),
+                    child: Text(
+                      iapError,
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: KolabingColors.error,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }),
+              ],
             ],
           ),
         ),

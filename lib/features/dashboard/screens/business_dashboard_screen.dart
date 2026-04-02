@@ -9,6 +9,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
+import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
@@ -91,6 +92,10 @@ class _BusinessDashboardScreenState
 
         // Stats grid 2x2
         _buildStatsGrid(data),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // Referral banner (rewards)
+        const ReferralBannerCard(),
         const SizedBox(height: KolabingSpacing.lg),
 
         // Quick actions
@@ -215,10 +220,10 @@ class _BusinessDashboardScreenState
             height: 48,
             child: ElevatedButton(
               onPressed: () async {
-                await context.push(KolabingRoutes.businessOffersNew);
-                // Refresh dashboard stats when returning from create form
+                await context.push(KolabingRoutes.kolabNew);
                 if (mounted) {
-                  ref.read(dashboardProvider.notifier).refresh();
+                  await Future<void>.delayed(const Duration(milliseconds: 300));
+                  if (mounted) ref.invalidate(dashboardProvider);
                 }
               },
               style: ElevatedButton.styleFrom(

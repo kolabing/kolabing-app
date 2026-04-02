@@ -35,6 +35,13 @@ class ProfileState {
 
   bool get hasData => profile != null;
 
+  /// Whether the user has an active subscription.
+  /// Checks both the subscription object AND the backend's has_active_subscription flag
+  /// (which covers test users who bypass subscription requirements).
+  bool get isSubscribed =>
+      subscription?.isActive == true ||
+      profile?.hasActiveSubscription == true;
+
   ProfileState copyWith({
     UserModel? profile,
     NotificationPreferences? notificationPrefs,

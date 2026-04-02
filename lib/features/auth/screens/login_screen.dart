@@ -69,9 +69,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: KolabingColors.darkBackground,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
   }
@@ -383,7 +383,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Widget build(BuildContext context) => PopScope(
         canPop: !_anyLoading,
         child: Scaffold(
-          backgroundColor: KolabingColors.darkBackground,
+          backgroundColor: Colors.white,
           body: AnimatedBuilder(
             animation: _exitController,
             builder: (context, child) => Opacity(
@@ -429,7 +429,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 size: KolabingLogoSize.medium,
                                 variant: KolabingLogoVariant.yellowCircle,
                                 showText: true,
-                                onDarkBackground: true,
+                                onDarkBackground: false,
                               ),
                             ),
 
@@ -444,7 +444,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 style: GoogleFonts.rubik(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w800,
-                                  color: KolabingColors.textOnDark,
+                                  color: KolabingColors.textPrimary,
                                   letterSpacing: 1.2,
                                 ),
                                 textAlign: TextAlign.center,
@@ -487,7 +487,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       style: GoogleFonts.openSans(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
-                                        color: KolabingColors.textOnDark,
+                                        color: KolabingColors.textPrimary,
                                       ),
                                     ),
                                   ),
@@ -524,7 +524,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       style: GoogleFonts.openSans(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
-                                        color: KolabingColors.textOnDark,
+                                        color: KolabingColors.textPrimary,
                                       ),
                                     ),
                                   ),
@@ -660,7 +660,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   Expanded(
                                     child: Container(
                                       height: 1,
-                                      color: KolabingColors.darkBorder,
+                                      color: KolabingColors.border,
                                     ),
                                   ),
                                   Padding(
@@ -678,7 +678,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   Expanded(
                                     child: Container(
                                       height: 1,
-                                      color: KolabingColors.darkBorder,
+                                      color: KolabingColors.border,
                                     ),
                                   ),
                                 ],
@@ -763,7 +763,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         prefixIcon: Icon(prefixIcon, color: const Color(0xFFAAAAAA)),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: KolabingColors.surfaceVariant,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
@@ -856,10 +856,10 @@ class _BackButtonState extends State<_BackButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 20,
-                  color: KolabingColors.textOnDark,
+                  color: KolabingColors.textPrimary,
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -867,7 +867,7 @@ class _BackButtonState extends State<_BackButton> {
                   style: GoogleFonts.openSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: KolabingColors.textOnDark,
+                    color: KolabingColors.textPrimary,
                   ),
                 ),
               ],
@@ -918,9 +918,9 @@ class _SignUpLinkState extends State<_SignUpLink> {
               style: GoogleFonts.openSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textOnDark,
+                color: KolabingColors.textPrimary,
                 decoration: _isPressed ? TextDecoration.underline : null,
-                decorationColor: KolabingColors.textOnDark,
+                decorationColor: KolabingColors.textPrimary,
               ),
             ),
           ),
@@ -1009,7 +1009,7 @@ class _UserNotFoundDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-        backgroundColor: KolabingColors.darkSurface,
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -1025,7 +1025,7 @@ class _UserNotFoundDialog extends StatelessWidget {
               Text(
                 'Account Not Found',
                 style: KolabingTextStyles.headlineMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: KolabingColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -1033,7 +1033,7 @@ class _UserNotFoundDialog extends StatelessWidget {
               Text(
                 'No account exists with this Google email. Please create an account first.',
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFFCCCCCC),
+                  color: KolabingColors.textSecondary,
                   height: 1.6,
                 ),
                 textAlign: TextAlign.center,

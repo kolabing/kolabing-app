@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/dashboard_model.dart';
+import '../../../config/constants/api.dart';
 
 /// API base URL
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Dashboard API response that holds either business or community data
 class DashboardResponse {

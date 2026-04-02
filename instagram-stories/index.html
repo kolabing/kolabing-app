@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kolabing - Instagram Stories</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;700;800&family=Open+Sans:wght@400;600;700&family=DM+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #0a0a0a;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── iPhone Frame ─── */
+  .iphone-wrapper {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .iphone-frame {
+    width: 440px;
+    height: 900px;
+    background: #1c1c1e;
+    border-radius: 56px;
+    padding: 14px;
+    box-shadow:
+      0 0 0 3px #333,
+      0 0 0 6px #1c1c1e,
+      0 40px 80px rgba(0,0,0,0.6),
+      inset 0 0 4px rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .iphone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+  }
+  /* Notch */
+  .iphone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 160px; height: 34px;
+    background: #1c1c1e;
+    border-radius: 0 0 20px 20px;
+    z-index: 200;
+  }
+  .iphone-notch::after {
+    content: '';
+    position: absolute;
+    top: 10px; right: 22px;
+    width: 12px; height: 12px;
+    background: #0d2d44;
+    border-radius: 50%;
+    box-shadow: inset 0 0 3px rgba(0,100,200,0.3);
+  }
+  /* Home indicator */
+  .iphone-home {
+    position: absolute;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 140px; height: 5px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 3px;
+    z-index: 200;
+  }
+
+  /* ─── Stories viewport inside screen ─── */
+  .stories-viewport {
+    width: 412px;
+    height: 872px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .story {
+    width: 412px; height: 872px;
+    position: absolute; top: 0; left: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+  }
+  .story.active { opacity: 1; visibility: visible; }
+
+  /* Progress bar */
+  .progress-bar {
+    position: absolute;
+    top: 48px; left: 16px; right: 16px;
+    display: flex; gap: 6px; z-index: 100;
+  }
+  .progress-seg {
+    flex: 1; height: 3px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-seg .fill {
+    height: 100%; width: 0%;
+    background: #FFD861; border-radius: 2px;
+  }
+  .progress-seg.done .fill { width: 100%; }
+
+  /* ═══════════════════════════════════════
+     STORY 1 — Brand Intro
+     ═══════════════════════════════════════ */
+  .story-1 { background: #000; }
+  .s1-glow {
+    position: absolute;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,216,97,0.2) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  .s1-ring {
+    position: absolute;
+    border: 2px solid rgba(255,216,97,0.1);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  .s1-ring-1 { width: 220px; height: 220px; }
+  .s1-ring-2 { width: 310px; height: 310px; }
+  .s1-ring-3 { width: 400px; height: 400px; }
+  .s1-logo {
+    width: 120px; height: 120px;
+    background: #FFD861; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 2;
+    transform: scale(0);
+  }
+  .s1-logo span {
+    font-family: 'Rubik', sans-serif;
+    font-size: 68px; font-weight: 800; color: #000;
+  }
+  .s1-name {
+    font-family: 'Rubik', sans-serif;
+    font-size: 42px; font-weight: 800; color: #FFD861;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 24px; position: relative; z-index: 2;
+    opacity: 0; transform: translateY(30px);
+  }
+  .s1-tagline {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px; color: rgba(255,255,255,0.6);
+    margin-top: 12px; text-align: center; max-width: 300px;
+    line-height: 1.45; position: relative; z-index: 2;
+    opacity: 0; transform: translateY(20px);
+  }
+  .s1-particle {
+    position: absolute;
+    width: 5px; height: 5px;
+    background: #FFD861; border-radius: 50%;
+    opacity: 0;
+  }
+
+  /* ═══════════════════════════════════════
+     STORY 2 — Connect & Collaborate
+     ═══════════════════════════════════════ */
+  .story-2 { background: #FFD861; }
+  .s2-corner {
+    position: absolute;
+    width: 90px; height: 90px;
+    border: 3px solid rgba(0,0,0,0.07);
+    border-radius: 20px; opacity: 0;
+  }
+  .s2-corner-tl { top: -14px; left: -14px; }
+  .s2-corner-br { bottom: -14px; right: -14px; }
+  .s2-dots {
+    position: absolute; top: 70px; right: 30px;
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+  }
+  .s2-dot {
+    width: 6px; height: 6px;
+    background: rgba(0,0,0,0.1); border-radius: 50%;
+    transform: scale(0);
+  }
+  .s2-word {
+    font-family: 'Rubik', sans-serif;
+    font-size: 44px; font-weight: 800; color: #000;
+    text-transform: uppercase; line-height: 1.05;
+    text-align: center;
+    opacity: 0; transform: translateY(60px);
+  }
+  .s2-sub {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px; color: rgba(0,0,0,0.55);
+    text-align: center; max-width: 320px;
+    line-height: 1.5; margin-top: 20px;
+    opacity: 0; transform: translateY(20px);
+  }
+  .s2-icons {
+    display: flex; gap: 24px; margin-top: 36px;
+    position: relative; z-index: 2;
+  }
+  .s2-icon {
+    width: 72px; height: 72px;
+    background: #000; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 3px;
+    transform: scale(0);
+  }
+  .s2-icon svg {
+    width: 26px; height: 26px;
+    stroke: #FFD861; fill: none; stroke-width: 2;
+  }
+  .s2-icon-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8px; font-weight: 600;
+    color: #FFD861; text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ═══════════════════════════════════════
+     STORY 3 — Discover Opportunities
+     ═══════════════════════════════════════ */
+  .story-3 { background: linear-gradient(180deg, #000 0%, #111 100%); }
+  .s3-glow {
+    position: absolute; width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,216,97,0.1) 0%, transparent 70%);
+    bottom: -40px; right: -40px;
+  }
+  .s3-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; color: #FFD861;
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 12px;
+    opacity: 0; transform: translateX(-40px);
+  }
+  .s3-headline {
+    font-family: 'Rubik', sans-serif;
+    font-size: 36px; font-weight: 800; color: #fff;
+    text-align: center; line-height: 1.15;
+    text-transform: uppercase;
+    opacity: 0; transform: translateY(40px) scale(0.85);
+  }
+  .s3-cards {
+    margin-top: 36px; position: relative;
+    width: 360px; height: 340px;
+  }
+  .s3-card {
+    position: absolute;
+    width: 340px; left: 50%;
+    background: #FFF6D8; border: 1.5px solid #F9E9AC;
+    border-radius: 16px; padding: 22px;
+    transform: translateX(-50%) translateY(200px);
+    opacity: 0;
+  }
+  .s3-card-1 { z-index: 3; }
+  .s3-card-2 { z-index: 2; }
+  .s3-card-3 { z-index: 1; }
+  .s3-badge {
+    display: inline-block; background: #D4EDDA; color: #155724;
+    font-family: 'DM Sans', sans-serif; font-size: 10px;
+    font-weight: 600; padding: 4px 12px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .s3-card-title {
+    font-family: 'Rubik', sans-serif;
+    font-size: 19px; font-weight: 700; color: #232323;
+    margin-top: 10px; line-height: 1.2;
+  }
+  .s3-card-meta {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px; color: #606060; margin-top: 6px;
+  }
+  .s3-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .s3-tag {
+    background: #FFDDAC; color: #D8910B;
+    font-family: 'DM Sans', sans-serif; font-size: 10px;
+    font-weight: 600; padding: 4px 10px; border-radius: 999px;
+    transform: scale(0);
+  }
+
+  /* ═══════════════════════════════════════
+     STORY 4 — How It Works
+     ═══════════════════════════════════════ */
+  .story-4 { background: #FFD861; }
+  .s4-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.4);
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px;
+    opacity: 0; transform: translateY(-20px);
+  }
+  .s4-headline {
+    font-family: 'Rubik', sans-serif;
+    font-size: 38px; font-weight: 800; color: #000;
+    text-transform: uppercase; text-align: center; line-height: 1.05;
+    opacity: 0; transform: scale(0.5);
+  }
+  .s4-steps {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0; margin-top: 32px;
+  }
+  .s4-step {
+    display: flex; align-items: center; gap: 18px; width: 360px;
+    opacity: 0; transform: translateX(40px);
+  }
+  .s4-num {
+    width: 48px; height: 48px; min-width: 48px;
+    background: #000; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Rubik', sans-serif;
+    font-size: 22px; font-weight: 800; color: #FFD861;
+  }
+  .s4-step-title {
+    font-family: 'Rubik', sans-serif;
+    font-size: 19px; font-weight: 700; color: #000;
+    text-transform: uppercase;
+  }
+  .s4-step-desc {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px; color: rgba(0,0,0,0.5);
+    margin-top: 3px; line-height: 1.35;
+  }
+  .s4-line {
+    width: 2px; height: 20px;
+    background: rgba(0,0,0,0.1);
+    margin: 6px 0 6px 23px;
+    transform: scaleY(0); transform-origin: top;
+  }
+
+  /* ═══════════════════════════════════════
+     STORY 5 — Early Ambassador CTA
+     ═══════════════════════════════════════ */
+  .story-5 { background: #000; }
+  .s5-ring {
+    position: absolute;
+    border: 2px solid rgba(255,216,97,0.12);
+    border-radius: 50%; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0); opacity: 0;
+  }
+  .s5-ring-1 { width: 200px; height: 200px; }
+  .s5-ring-2 { width: 300px; height: 300px; }
+  .s5-ring-3 { width: 400px; height: 400px; }
+  .s5-exclusive {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    color: #000; background: #FFD861;
+    padding: 6px 20px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 30px;
+    opacity: 0; transform: translateY(-20px);
+  }
+  .s5-logo {
+    width: 100px; height: 100px;
+    background: #FFD861; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px;
+    transform: scale(0) translateY(-80px);
+  }
+  .s5-logo span {
+    font-family: 'Rubik', sans-serif;
+    font-size: 56px; font-weight: 800; color: #000;
+  }
+  .s5-headline {
+    font-family: 'Rubik', sans-serif;
+    font-size: 34px; font-weight: 800; color: #fff;
+    text-transform: uppercase; text-align: center; line-height: 1.15;
+    max-width: 360px;
+    opacity: 0; transform: translateY(30px);
+  }
+  .s5-highlight { color: #FFD861; }
+  .s5-sub {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px; color: rgba(255,255,255,0.5);
+    text-align: center; margin-top: 20px; max-width: 320px;
+    line-height: 1.5; opacity: 0; transform: translateY(20px);
+  }
+  .s5-perks {
+    margin-top: 28px;
+    display: flex; flex-direction: column; gap: 10px;
+    width: 340px;
+  }
+  .s5-perk {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,216,97,0.08);
+    border: 1px solid rgba(255,216,97,0.15);
+    border-radius: 12px; padding: 12px 16px;
+    opacity: 0; transform: translateX(-30px);
+  }
+  .s5-perk-icon {
+    width: 36px; height: 36px; min-width: 36px;
+    background: #FFD861; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .s5-perk-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8);
+  }
+  .s5-btn {
+    margin-top: 28px; background: #FFD861; color: #000;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    padding: 14px 44px; border-radius: 12px;
+    border: none; transform: scale(0);
+  }
+  .s5-limited {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px; color: rgba(255,255,255,0.3);
+    margin-top: 14px; text-align: center;
+    opacity: 0;
+  }
+  .s5-bottom {
+    position: absolute; bottom: 28px;
+    display: flex; gap: 10px; align-items: center;
+    opacity: 0; transform: translateY(15px);
+  }
+  .s5-bottom span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- iPhone Frame -->
+<div class="iphone-wrapper">
+  <div class="iphone-frame">
+    <div class="iphone-notch"></div>
+    <div class="iphone-screen">
+      <div class="stories-viewport">
+        <!-- Progress bar -->
+        <div class="progress-bar">
+          <div class="progress-seg" id="prog-0"><div class="fill"></div></div>
+          <div class="progress-seg" id="prog-1"><div class="fill"></div></div>
+          <div class="progress-seg" id="prog-2"><div class="fill"></div></div>
+          <div class="progress-seg" id="prog-3"><div class="fill"></div></div>
+          <div class="progress-seg" id="prog-4"><div class="fill"></div></div>
+        </div>
+
+        <!-- STORY 1: Brand Intro -->
+        <div class="story story-1 active" id="story-0">
+          <div class="s1-glow"></div>
+          <div class="s1-ring s1-ring-1"></div>
+          <div class="s1-ring s1-ring-2"></div>
+          <div class="s1-ring s1-ring-3"></div>
+          <div class="s1-particle" style="top:14%;left:18%"></div>
+          <div class="s1-particle" style="top:22%;right:14%"></div>
+          <div class="s1-particle" style="top:68%;left:10%"></div>
+          <div class="s1-particle" style="top:73%;right:18%"></div>
+          <div class="s1-particle" style="top:32%;left:7%"></div>
+          <div class="s1-particle" style="top:58%;right:9%"></div>
+          <div class="s1-logo"><span>K</span></div>
+          <div class="s1-name">Kolabing</div>
+          <div class="s1-tagline">Where businesses & communities create magic together</div>
+        </div>
+
+        <!-- STORY 2: Connect & Collaborate -->
+        <div class="story story-2" id="story-1">
+          <div class="s2-corner s2-corner-tl"></div>
+          <div class="s2-corner s2-corner-br"></div>
+          <div class="s2-dots">
+            <div class="s2-dot"></div><div class="s2-dot"></div><div class="s2-dot"></div><div class="s2-dot"></div>
+            <div class="s2-dot"></div><div class="s2-dot"></div><div class="s2-dot"></div><div class="s2-dot"></div>
+            <div class="s2-dot"></div><div class="s2-dot"></div><div class="s2-dot"></div><div class="s2-dot"></div>
+          </div>
+          <div class="s2-word">Connect</div>
+          <div class="s2-word">&</div>
+          <div class="s2-word">Collaborate</div>
+          <div class="s2-sub">Kolabing brings businesses and communities together for meaningful partnerships</div>
+          <div class="s2-icons">
+            <div class="s2-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="s2-icon-label">Chat</span>
+            </div>
+            <div class="s2-icon">
+              <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="s2-icon-label">Team</span>
+            </div>
+            <div class="s2-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              <span class="s2-icon-label">Build</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STORY 3: Discover Opportunities -->
+        <div class="story story-3" id="story-2">
+          <div class="s3-glow"></div>
+          <div class="s3-label">Find your match</div>
+          <div class="s3-headline">Discover<br>Opportunities</div>
+          <div class="s3-cards">
+            <div class="s3-card s3-card-3">
+              <div class="s3-badge">Active</div>
+              <div class="s3-card-title">Tech Meetup Sponsor</div>
+              <div class="s3-card-meta">San Francisco, CA</div>
+            </div>
+            <div class="s3-card s3-card-2">
+              <div class="s3-badge">Active</div>
+              <div class="s3-card-title">Community Workshop</div>
+              <div class="s3-card-meta">Austin, TX</div>
+            </div>
+            <div class="s3-card s3-card-1">
+              <div class="s3-badge">Active</div>
+              <div class="s3-card-title">Brand Partnership</div>
+              <div class="s3-card-meta">New York, NY</div>
+              <div class="s3-tags">
+                <span class="s3-tag">Marketing</span>
+                <span class="s3-tag">Events</span>
+                <span class="s3-tag">Social</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STORY 4: How It Works -->
+        <div class="story story-4" id="story-3">
+          <div class="s4-label">How it works</div>
+          <div class="s4-headline">Apply<br>With Ease</div>
+          <div class="s4-steps">
+            <div class="s4-step">
+              <div class="s4-num">1</div>
+              <div><div class="s4-step-title">Browse</div><div class="s4-step-desc">Discover opportunities by location & category</div></div>
+            </div>
+            <div class="s4-line"></div>
+            <div class="s4-step">
+              <div class="s4-num">2</div>
+              <div><div class="s4-step-title">Apply</div><div class="s4-step-desc">Submit applications with just a few taps</div></div>
+            </div>
+            <div class="s4-line"></div>
+            <div class="s4-step">
+              <div class="s4-num">3</div>
+              <div><div class="s4-step-title">Collaborate</div><div class="s4-step-desc">Manage partnerships and grow together</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STORY 5: Early Ambassador -->
+        <div class="story story-5" id="story-4">
+          <div class="s5-ring s5-ring-1"></div>
+          <div class="s5-ring s5-ring-2"></div>
+          <div class="s5-ring s5-ring-3"></div>
+
+          <div class="s5-exclusive">Early Ambassador</div>
+          <div class="s5-logo"><span>K</span></div>
+          <div class="s5-headline">Be Among The<br><span class="s5-highlight">First Businesses</span><br>On Kolabing</div>
+          <div class="s5-sub">Join as an early ambassador and shape the future of collaboration</div>
+
+          <div class="s5-perks">
+            <div class="s5-perk">
+              <div class="s5-perk-icon">&#9733;</div>
+              <div class="s5-perk-text">Priority listing & verified badge</div>
+            </div>
+            <div class="s5-perk">
+              <div class="s5-perk-icon">&#128142;</div>
+              <div class="s5-perk-text">Free premium features for 6 months</div>
+            </div>
+            <div class="s5-perk">
+              <div class="s5-perk-icon">&#127793;</div>
+              <div class="s5-perk-text">Direct access to top communities</div>
+            </div>
+          </div>
+
+          <div class="s5-btn">Apply Now</div>
+          <div class="s5-limited">Limited spots available</div>
+
+          <div class="s5-bottom">
+            <span>Swipe up to apply</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="iphone-home"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+const STORY_DURATION = 5;
+const STORIES = 5;
+let currentStory = 0;
+let storyTimeout = null;
+
+// ─── Story Animations ───
+function animateStory0() {
+  const tl = gsap.timeline();
+  tl.to('.s1-glow', { scale: 1, duration: 1, ease: 'power2.out' })
+    .to('.s1-logo', { scale: 1, duration: 0.7, ease: 'back.out(1.7)' }, 0.1)
+    .to('.s1-ring', { scale: 1, stagger: 0.12, duration: 0.6, ease: 'power2.out' }, 0.25)
+    .to('.s1-name', { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 0.6)
+    .to('.s1-tagline', { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out' }, 0.8)
+    .to('.s1-particle', { opacity: 0.6, stagger: { each: 0.05, from: 'random' }, duration: 0.3 }, 0.9)
+    .to('.s1-particle', { y: '-=20', x: 'random(-15,15)', duration: 1.5, stagger: 0.06, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 1.1);
+  return tl;
+}
+
+function animateStory1() {
+  const tl = gsap.timeline();
+  tl.to('.s2-word', { y: 0, opacity: 1, stagger: 0.15, duration: 0.5, ease: 'power4.out' })
+    .to('.s2-sub', { y: 0, opacity: 1, duration: 0.4 }, 0.6)
+    .to('.s2-icon', { scale: 1, stagger: 0.12, duration: 0.5, ease: 'back.out(1.4)' }, 0.8)
+    .to('.s2-dot', { scale: 1, stagger: { each: 0.02, from: 'random' }, duration: 0.2 }, 0.7)
+    .to('.s2-corner-tl', { opacity: 1, duration: 0.5 }, 0.4)
+    .to('.s2-corner-br', { opacity: 1, duration: 0.5 }, 0.4);
+  return tl;
+}
+
+function animateStory2() {
+  const tl = gsap.timeline();
+  tl.to('.s3-label', { x: 0, opacity: 1, duration: 0.4 })
+    .to('.s3-headline', { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: 'power3.out' }, 0.15)
+    .to('.s3-card-3', { y: 60, opacity: 1, rotation: 2, duration: 0.5 }, 0.4)
+    .to('.s3-card-2', { y: 30, opacity: 1, rotation: -1.5, duration: 0.5 }, 0.55)
+    .to('.s3-card-1', { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.7)
+    .to('.s3-tag', { scale: 1, stagger: 0.08, duration: 0.3, ease: 'back.out(2)' }, 1);
+  return tl;
+}
+
+function animateStory3() {
+  const tl = gsap.timeline();
+  tl.to('.s4-label', { y: 0, opacity: 1, duration: 0.35 })
+    .to('.s4-headline', { scale: 1, opacity: 1, duration: 0.6, ease: 'power3.out' }, 0.1);
+  document.querySelectorAll('.s4-step').forEach((step, i) => {
+    tl.to(step, { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0.5 + i * 0.3);
+  });
+  document.querySelectorAll('.s4-line').forEach((line, i) => {
+    tl.to(line, { scaleY: 1, duration: 0.25 }, 0.7 + i * 0.3);
+  });
+  return tl;
+}
+
+function animateStory4() {
+  const tl = gsap.timeline();
+  tl.to('.s5-ring', { scale: 1, opacity: 1, stagger: 0.15, duration: 0.7 })
+    .to('.s5-exclusive', { y: 0, opacity: 1, duration: 0.4 }, 0.2)
+    .to('.s5-logo', { scale: 1, y: 0, duration: 0.6, ease: 'bounce.out' }, 0.3)
+    .to('.s5-headline', { y: 0, opacity: 1, duration: 0.5 }, 0.6)
+    .to('.s5-sub', { y: 0, opacity: 1, duration: 0.4 }, 0.85)
+    .to('.s5-perk', { x: 0, opacity: 1, stagger: 0.12, duration: 0.4, ease: 'power2.out' }, 1)
+    .to('.s5-btn', { scale: 1, duration: 0.4, ease: 'back.out(2)' }, 1.4)
+    .to('.s5-limited', { opacity: 1, duration: 0.3 }, 1.6)
+    .to('.s5-bottom', { y: 0, opacity: 1, duration: 0.3 }, 1.7)
+    .to('.s5-btn', { scale: 1.06, duration: 0.35, yoyo: true, repeat: 4, ease: 'sine.inOut' }, 2);
+  return tl;
+}
+
+const animators = [animateStory0, animateStory1, animateStory2, animateStory3, animateStory4];
+
+function showStory(index) {
+  if (storyTimeout) clearTimeout(storyTimeout);
+  currentStory = index;
+
+  document.querySelectorAll('.story').forEach((s, i) => {
+    s.classList.toggle('active', i === index);
+  });
+
+  // Reset future progress bars
+  for (let i = index; i < STORIES; i++) {
+    const seg = document.getElementById(`prog-${i}`);
+    seg.classList.remove('done');
+    gsap.set(seg.querySelector('.fill'), { width: '0%' });
+  }
+  // Mark past as done
+  for (let i = 0; i < index; i++) {
+    document.getElementById(`prog-${i}`).classList.add('done');
+  }
+
+  // Animate current progress
+  const fill = document.querySelector(`#prog-${index} .fill`);
+  gsap.fromTo(fill, { width: '0%' }, { width: '100%', duration: STORY_DURATION, ease: 'none' });
+
+  animators[index]();
+
+  if (index < STORIES - 1) {
+    storyTimeout = setTimeout(() => showStory(index + 1), STORY_DURATION * 1000);
+  }
+}
+
+// Click to navigate
+document.querySelector('.stories-viewport').addEventListener('click', (e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x > rect.width / 2 && currentStory < STORIES - 1) {
+    showStory(currentStory + 1);
+  } else if (x <= rect.width / 2 && currentStory > 0) {
+    showStory(currentStory - 1);
+  }
+});
+
+showStory(0);
+</script>
+</body>
+</html>

@@ -38,6 +38,7 @@ class Subscription {
     required this.id,
     required this.status,
     this.statusLabel,
+    this.source = 'stripe',
     this.currentPeriodStart,
     this.currentPeriodEnd,
     this.cancelAtPeriodEnd = false,
@@ -49,6 +50,7 @@ class Subscription {
         id: json['id'] as String,
         status: SubscriptionStatus.fromString(json['status'] as String),
         statusLabel: json['status_label'] as String?,
+        source: json['source'] as String? ?? 'stripe',
         currentPeriodStart: json['current_period_start'] != null
             ? DateTime.parse(json['current_period_start'] as String)
             : null,
@@ -63,6 +65,13 @@ class Subscription {
   final String id;
   final SubscriptionStatus status;
   final String? statusLabel;
+  final String source;
+
+  /// Whether this subscription is managed by Apple IAP
+  bool get isAppleIAP => source == 'apple_iap';
+
+  /// Whether this subscription is managed by Stripe
+  bool get isStripe => source == 'stripe';
   final DateTime? currentPeriodStart;
   final DateTime? currentPeriodEnd;
   final bool cancelAtPeriodEnd;
@@ -72,6 +81,7 @@ class Subscription {
   Map<String, dynamic> toJson() => {
         'id': id,
         'status': status.name,
+        'source': source,
         if (statusLabel != null) 'status_label': statusLabel,
         if (currentPeriodStart != null)
           'current_period_start': currentPeriodStart!.toIso8601String(),
@@ -86,6 +96,7 @@ class Subscription {
     String? id,
     SubscriptionStatus? status,
     String? statusLabel,
+    String? source,
     DateTime? currentPeriodStart,
     DateTime? currentPeriodEnd,
     bool? cancelAtPeriodEnd,
@@ -96,6 +107,7 @@ class Subscription {
         id: id ?? this.id,
         status: status ?? this.status,
         statusLabel: statusLabel ?? this.statusLabel,
+        source: source ?? this.source,
         currentPeriodStart: currentPeriodStart ?? this.currentPeriodStart,
         currentPeriodEnd: currentPeriodEnd ?? this.currentPeriodEnd,
         cancelAtPeriodEnd: cancelAtPeriodEnd ?? this.cancelAtPeriodEnd,

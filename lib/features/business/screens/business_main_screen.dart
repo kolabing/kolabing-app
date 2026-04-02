@@ -46,10 +46,14 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
-    await context.push(KolabingRoutes.businessOffersNew);
+    await context.push(KolabingRoutes.kolabNew);
     // Refresh dashboard stats when returning from create form
     if (mounted) {
-      ref.read(dashboardProvider.notifier).refresh();
+      // Small delay to ensure dashboard widget is mounted after pop
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      if (mounted) {
+        ref.invalidate(dashboardProvider);
+      }
     }
   }
 

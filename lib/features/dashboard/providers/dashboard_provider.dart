@@ -50,7 +50,7 @@ class DashboardState {
 
 /// Dashboard notifier for managing dashboard state
 class DashboardNotifier extends Notifier<DashboardState> {
-  late final DashboardService _dashboardService;
+  late DashboardService _dashboardService;
 
   @override
   DashboardState build() {

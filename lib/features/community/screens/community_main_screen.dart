@@ -47,9 +47,12 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
-    await context.push(KolabingRoutes.communityOpportunitiesNew);
+    await context.push(KolabingRoutes.kolabNew);
     if (mounted) {
-      ref.read(dashboardProvider.notifier).refresh();
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      if (mounted) {
+        ref.invalidate(dashboardProvider);
+      }
     }
   }
 

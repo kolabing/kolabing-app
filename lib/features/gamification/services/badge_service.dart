@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 
 import '../../auth/services/auth_service.dart';
 import '../models/badge.dart';
+import '../../../config/constants/api.dart';
 
 /// API configuration
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling badge operations
 class BadgeService {

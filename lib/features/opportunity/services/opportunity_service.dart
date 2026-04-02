@@ -8,10 +8,10 @@ import '../../auth/services/auth_service.dart';
 import '../../onboarding/models/city.dart';
 import '../models/opportunity.dart';
 import '../models/opportunity_filter.dart';
+import '../../../config/constants/api.dart';
 
 /// API base URL
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for all opportunity API operations
 class OpportunityService {

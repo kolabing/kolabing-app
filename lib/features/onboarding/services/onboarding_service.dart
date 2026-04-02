@@ -8,10 +8,10 @@ import '../models/business_type.dart';
 import '../models/city.dart';
 import '../models/community_type.dart';
 import '../models/onboarding_state.dart';
+import '../../../config/constants/api.dart';
 
 /// API configuration
-const String _baseUrl =
-    'https://kolabing-v2-master-tgxggi.laravel.cloud/api/v1';
+const String _baseUrl = ApiConfig.baseUrl;
 
 /// Mock mode flag - set to false to use real API
 const bool _useMockApi = false;

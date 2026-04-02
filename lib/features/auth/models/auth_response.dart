@@ -155,11 +155,78 @@ class ApiError {
 
   /// Get all error messages as a single string
   String get allErrorMessages {
-    if (errors == null || errors!.isEmpty) return message;
+    if (errors == null || errors!.isEmpty) return _friendlyMessage(message);
 
     return errors!.entries
-        .expand((entry) => entry.value)
+        .expand((entry) => entry.value.map(_friendlyMessage))
         .join('\n');
+  }
+
+  /// Get user-friendly first error for a field
+  String? getFriendlyFieldError(String field) {
+    final raw = errors?[field]?.firstOrNull;
+    return raw != null ? _friendlyMessage(raw) : null;
+  }
+
+  /// Convert raw Laravel validation messages to user-friendly text
+  static String _friendlyMessage(String raw) {
+    // Field required patterns
+    if (raw.contains('field is required')) {
+      final field = _humanizeField(raw.split(' field is required').first.replaceAll('The ', ''));
+      return '$field is required.';
+    }
+    // "required unless" pattern
+    if (raw.contains('is required unless')) {
+      final field = _humanizeField(raw.split(' field is required').first.replaceAll('The ', '').split(' is required').first.replaceAll('The ', ''));
+      return '$field is required.';
+    }
+    // "must be" patterns
+    if (raw.contains('must be a string')) {
+      final field = _humanizeField(raw.split(' must be').first.replaceAll('The ', ''));
+      return '$field must be text.';
+    }
+    if (raw.contains('must be an integer') || raw.contains('must be a number')) {
+      final field = _humanizeField(raw.split(' must be').first.replaceAll('The ', ''));
+      return '$field must be a number.';
+    }
+    if (raw.contains('must not be greater than')) {
+      final field = _humanizeField(raw.split(' must not').first.replaceAll('The ', ''));
+      return '$field is too long.';
+    }
+    if (raw.contains('must be at least')) {
+      final field = _humanizeField(raw.split(' must be').first.replaceAll('The ', ''));
+      return '$field is too short.';
+    }
+    // "is invalid" / "format" patterns
+    if (raw.contains('is not a valid') || raw.contains('format is invalid') || raw.contains('is invalid')) {
+      final field = _humanizeField(raw.split(' is ').first.split(' format').first.replaceAll('The ', ''));
+      return 'Please enter a valid $field.';
+    }
+    // Date patterns
+    if (raw.contains('must be a date after')) {
+      return 'Please select a future date.';
+    }
+    if (raw.contains('must be a date')) {
+      return 'Please enter a valid date.';
+    }
+    // Already exists
+    if (raw.contains('has already been taken')) {
+      final field = _humanizeField(raw.split(' has already').first.replaceAll('The ', ''));
+      return 'This $field is already in use.';
+    }
+    // Return cleaned up version of raw message
+    return raw.replaceAll(RegExp(r'_'), ' ').replaceFirst(RegExp(r'^The '), '');
+  }
+
+  /// Convert snake_case field name to human-readable
+  static String _humanizeField(String field) {
+    return field
+        .replaceAll('_', ' ')
+        .replaceAll('.', ' ')
+        .split(' ')
+        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ')
+        .trim();
   }
 
   @override
