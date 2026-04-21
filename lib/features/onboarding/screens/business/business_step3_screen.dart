@@ -1,16 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
 import '../../providers/onboarding_provider.dart';
-import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
 
-/// Business Onboarding Step 3: City Selection
+/// Business onboarding step 3: collect reusable venue photos.
 class BusinessStep3Screen extends ConsumerStatefulWidget {
   const BusinessStep3Screen({super.key});
 
@@ -19,8 +22,8 @@ class BusinessStep3Screen extends ConsumerStatefulWidget {
 }
 
 class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
-  final _searchController = TextEditingController();
-  String _searchQuery = '';
+  final _picker = ImagePicker();
+  bool _isPicking = false;
 
   @override
   void initState() {
@@ -39,10 +42,25 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
     );
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  Future<void> _pickPhoto() async {
+    if (_isPicking) return;
+
+    setState(() => _isPicking = true);
+    try {
+      final image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+      if (image != null && mounted) {
+        await ref.read(onboardingProvider.notifier).addVenuePhoto(File(image.path));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPicking = false);
+      }
+    }
   }
 
   void _handleBack() {
@@ -51,10 +69,10 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
 
   void _handleContinue() {
     final data = ref.read(onboardingProvider);
-    if (data?.cityId == null) {
+    if (data == null || data.venuePhotos.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select a city'),
+          content: Text('Add at least one venue photo to continue'),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -64,210 +82,78 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
     context.push('/onboarding/business/step4');
   }
 
-  void _handleCitySelected(String id, String name) {
-    ref.read(onboardingProvider.notifier).updateCity(id, name);
-  }
-
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(onboardingProvider);
-    final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
-    final canContinue = data?.cityId != null;
+    final photos = data?.venuePhotos ?? const [];
+    final notifier = ref.read(onboardingProvider.notifier);
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             OnboardingHeader(
               currentStep: 3,
               onBack: _handleBack,
               showSkip: false,
             ),
-
-            // Content
             Expanded(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 32),
-
-                        // Title
-                        Text(
-                          'WHERE ARE YOU LOCATED?',
-                          style: GoogleFonts.rubik(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Subtitle
-                        Text(
-                          'Select your city to connect with local communities',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Search field
-                        TextField(
-                          controller: _searchController,
-                          onChanged: (value) {
-                            setState(() {
-                              _searchQuery = value;
-                            });
-                          },
-                          style: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textPrimary,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Search cities...',
-                            hintStyle: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.textTertiary,
-                            ),
-                            prefixIcon: const Icon(
-                              LucideIcons.search,
-                              size: 20,
-                              color: KolabingColors.textTertiary,
-                            ),
-                            suffixIcon: _searchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(
-                                      LucideIcons.x,
-                                      size: 20,
-                                      color: KolabingColors.textTertiary,
-                                    ),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() {
-                                        _searchQuery = '';
-                                      });
-                                    },
-                                  )
-                                : null,
-                            filled: true,
-                            fillColor: KolabingColors.surfaceVariant,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Section label
-                        if (_searchQuery.isEmpty)
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Popular Cities:',
-                              style: GoogleFonts.openSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: KolabingColors.textTertiary,
-                              ),
-                            ),
-                          ),
-                      ],
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    Text(
+                      'ADD VENUE PHOTOS',
+                      style: GoogleFonts.rubik(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: KolabingColors.textPrimary,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Cities list
-                  Expanded(
-                    child: filteredCities.when(
-                      data: (cities) {
-                        if (cities.isEmpty) {
-                          return Center(
-                            child: Text(
-                              'No cities found',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                color: KolabingColors.textSecondary,
-                              ),
-                            ),
-                          );
-                        }
-                        return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount: cities.length,
-                          itemBuilder: (context, index) {
-                            final city = cities[index];
-                            return CityListItem(
-                              id: city.id,
-                              name: city.name,
-                              country: city.country,
-                              isSelected: data?.cityId == city.id,
-                              onTap: () =>
-                                  _handleCitySelected(city.id, city.name),
-                            );
-                          },
-                        );
-                      },
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(
+                    const SizedBox(height: 8),
+                    Text(
+                      'These become your reusable venue gallery, so you won’t need to upload them again every time you create a venue Kolab.',
+                      style: GoogleFonts.openSans(
+                        fontSize: 14,
+                        color: KolabingColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    if (_isPicking)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: LinearProgressIndicator(
                           color: KolabingColors.primary,
                         ),
                       ),
-                      error: (error, stack) => Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              color: KolabingColors.error,
-                              size: 48,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Failed to load cities',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                color: KolabingColors.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextButton(
-                              onPressed: () => ref.invalidate(citiesProvider),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      ),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        for (int i = 0; i < photos.length; i++)
+                          _VenuePhotoTile(
+                            base64: photos[i].base64,
+                            onRemove: () => notifier.removeVenuePhoto(i),
+                          ),
+                        if (photos.length < 5)
+                          _AddPhotoTile(onTap: _pickPhoto),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-
-            // Bottom button
             Padding(
               padding: const EdgeInsets.all(24),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: canContinue ? _handleContinue : null,
+                  onPressed: photos.isNotEmpty ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
@@ -283,7 +169,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                     style: GoogleFonts.dmSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0,
+                      letterSpacing: 1,
                     ),
                   ),
                 ),
@@ -294,4 +180,86 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
       ),
     );
   }
+}
+
+class _AddPhotoTile extends StatelessWidget {
+  const _AddPhotoTile({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 104,
+          height: 104,
+          decoration: BoxDecoration(
+            color: KolabingColors.surfaceVariant,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: KolabingColors.border),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                LucideIcons.plus,
+                color: KolabingColors.textSecondary,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Add Photo',
+                style: GoogleFonts.openSans(
+                  fontSize: 12,
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+class _VenuePhotoTile extends StatelessWidget {
+  const _VenuePhotoTile({
+    required this.base64,
+    required this.onRemove,
+  });
+
+  final String base64;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.memory(
+              base64Decode(base64),
+              width: 104,
+              height: 104,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned(
+            top: 6,
+            right: 6,
+            child: GestureDetector(
+              onTap: onRemove,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: const BoxDecoration(
+                  color: KolabingColors.error,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.x,
+                  size: 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
 }

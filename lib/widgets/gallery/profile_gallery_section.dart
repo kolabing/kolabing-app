@@ -29,9 +29,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   void initState() {
     super.initState();
     // Load gallery when section first appears
-    Future.microtask(
-      () => ref.read(galleryProvider.notifier).loadGallery(),
-    );
+    Future.microtask(() => ref.read(galleryProvider.notifier).loadGallery());
   }
 
   @override
@@ -229,15 +227,34 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   }
 
   Widget _buildLoadingState(bool isDark) => Container(
-        height: 120,
-        decoration: BoxDecoration(
-          color: isDark
-              ? KolabingColors.darkBorder
-              : KolabingColors.surfaceVariant,
-          borderRadius: KolabingRadius.borderRadiusMd,
+    height: 120,
+    decoration: BoxDecoration(
+      color: isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
+      borderRadius: KolabingRadius.borderRadiusMd,
+    ),
+    child: const Center(
+      child: SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: KolabingColors.primary,
         ),
-        child: const Center(
-          child: SizedBox(
+      ),
+    ),
+  );
+
+  Widget _buildUploadingIndicator(bool isDark) => Container(
+    height: 120,
+    decoration: BoxDecoration(
+      color: isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
+      borderRadius: KolabingRadius.borderRadiusMd,
+    ),
+    child: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(
             width: 24,
             height: 24,
             child: CircularProgressIndicator(
@@ -245,80 +262,57 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               color: KolabingColors.primary,
             ),
           ),
-        ),
-      );
-
-  Widget _buildUploadingIndicator(bool isDark) => Container(
-        height: 120,
-        decoration: BoxDecoration(
-          color: isDark
-              ? KolabingColors.darkBorder
-              : KolabingColors.surfaceVariant,
-          borderRadius: KolabingRadius.borderRadiusMd,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: KolabingColors.primary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Uploading photo...',
-                style: TextStyle(
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
-                ),
-              ),
-            ],
+          const SizedBox(height: 8),
+          Text(
+            'Uploading photo...',
+            style: TextStyle(
+              color: isDark
+                  ? KolabingColors.textOnDark
+                  : KolabingColors.textPrimary,
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 
   Widget _buildEmptyState(BuildContext context, bool isDark) => GestureDetector(
-        onTap: () => _showAddPhotoSheet(context),
-        child: Container(
-          height: 120,
-          decoration: BoxDecoration(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(
-              color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
-              width: 1.5,
-              strokeAlign: BorderSide.strokeAlignInside,
-            ),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  LucideIcons.camera,
-                  size: 32,
-                  color: isDark
-                      ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                      : KolabingColors.textTertiary,
-                ),
-                const SizedBox(height: KolabingSpacing.xs),
-                Text(
-                  'Showcase your community\nAdd photos to attract collaborations',
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: isDark
-                        ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                        : KolabingColors.textTertiary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+    onTap: () => _showAddPhotoSheet(context),
+    child: Container(
+      height: 120,
+      decoration: BoxDecoration(
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          width: 1.5,
+          strokeAlign: BorderSide.strokeAlignInside,
         ),
-      );
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              LucideIcons.camera,
+              size: 32,
+              color: isDark
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                  : KolabingColors.textTertiary,
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              'Showcase your community\nAdd photos from your events to attract collaborations.',
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                    : KolabingColors.textTertiary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   Widget _buildPhotoGrid(
     BuildContext context,
@@ -398,15 +392,51 @@ class _GalleryThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: ClipRRect(
-          borderRadius: KolabingRadius.borderRadiusSm,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Photo
-              if (photo.url.isEmpty)
-                Container(
+    onTap: onTap,
+    child: ClipRRect(
+      borderRadius: KolabingRadius.borderRadiusSm,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Photo
+          if (photo.url.isEmpty)
+            Container(
+              color: isDark
+                  ? KolabingColors.darkBorder
+                  : KolabingColors.surfaceVariant,
+              child: Icon(
+                LucideIcons.imageOff,
+                size: 24,
+                color: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
+                    : KolabingColors.textTertiary,
+              ),
+            )
+          else
+            Image.network(
+              photo.url,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  color: isDark
+                      ? KolabingColors.darkBorder
+                      : KolabingColors.surfaceVariant,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: KolabingColors.primary,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              errorBuilder: (_, error, __) {
+                debugPrint('Gallery thumbnail error for ${photo.url}: $error');
+                return Container(
                   color: isDark
                       ? KolabingColors.darkBorder
                       : KolabingColors.surfaceVariant,
@@ -417,69 +447,29 @@ class _GalleryThumbnail extends StatelessWidget {
                         ? KolabingColors.textOnDark.withValues(alpha: 0.6)
                         : KolabingColors.textTertiary,
                   ),
-                )
-              else
-                Image.network(
-                  photo.url,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      color: isDark
-                          ? KolabingColors.darkBorder
-                          : KolabingColors.surfaceVariant,
-                      child: const Center(
-                        child: SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: KolabingColors.primary,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  errorBuilder: (_, error, __) {
-                    debugPrint('Gallery thumbnail error for ${photo.url}: $error');
-                    return Container(
-                      color: isDark
-                          ? KolabingColors.darkBorder
-                          : KolabingColors.surfaceVariant,
-                      child: Icon(
-                        LucideIcons.imageOff,
-                        size: 24,
-                        color: isDark
-                            ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                            : KolabingColors.textTertiary,
-                      ),
-                    );
-                  },
-                ),
+                );
+              },
+            ),
 
-              // Delete button
-              Positioned(
-                top: 4,
-                right: 4,
-                child: GestureDetector(
-                  onTap: onDelete,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      LucideIcons.x,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                  ),
+          // Delete button
+          Positioned(
+            top: 4,
+            right: 4,
+            child: GestureDetector(
+              onTap: onDelete,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.6),
+                  shape: BoxShape.circle,
                 ),
+                child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
               ),
-            ],
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

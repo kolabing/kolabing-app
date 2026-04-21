@@ -166,13 +166,6 @@ class KolabReviewCard extends ConsumerWidget {
                 const SizedBox(height: KolabingSpacing.xs),
                 _ReviewField(label: 'Area', value: kolab.area!),
               ],
-              if (kolab.venuePreference != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Venue',
-                  value: kolab.venuePreference!.displayName,
-                ),
-              ],
             ],
           ),
         ),
@@ -186,17 +179,27 @@ class KolabReviewCard extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   List<Widget> _buildVenuePromotionSections() => [
-        // Step 0 -- Venue Info
+        // Step 0 -- Campaign & Venue
         _ReviewSection(
           icon: LucideIcons.building2,
-          title: 'Venue Info',
+          title: 'Campaign & Venue',
           step: 0,
           onEdit: onEditSection,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _ReviewField(
-                label: 'Name',
+                label: 'Title',
+                value: kolab.title.isNotEmpty ? kolab.title : '--',
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              _ReviewField(
+                label: 'Description',
+                value: kolab.description.isNotEmpty ? kolab.description : '--',
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              _ReviewField(
+                label: 'Venue',
                 value: kolab.venueName ?? '--',
               ),
               if (kolab.venueType != null) ...[
@@ -211,6 +214,14 @@ class KolabReviewCard extends ConsumerWidget {
                 _ReviewField(
                   label: 'Capacity',
                   value: '${kolab.capacity}',
+                ),
+              ],
+              if (kolab.venueAddress != null &&
+                  kolab.venueAddress!.isNotEmpty) ...[
+                const SizedBox(height: KolabingSpacing.xs),
+                _ReviewField(
+                  label: 'Address',
+                  value: kolab.venueAddress!,
                 ),
               ],
             ],

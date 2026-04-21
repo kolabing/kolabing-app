@@ -10,7 +10,9 @@ import '../../auth/providers/auth_provider.dart';
 import '../models/business_type.dart';
 import '../models/city.dart';
 import '../models/community_type.dart';
+import '../models/onboarding_photo.dart';
 import '../models/onboarding_state.dart';
+import '../models/place_suggestion.dart';
 import '../services/onboarding_service.dart';
 
 /// Onboarding service provider
@@ -36,6 +38,17 @@ final citiesProvider =
     FutureProvider.autoDispose<List<OnboardingCity>>((ref) async {
   final service = ref.watch(onboardingServiceProvider);
   return service.getCities();
+});
+
+/// Place suggestions for the business location step.
+final placeSuggestionsProvider =
+    FutureProvider.autoDispose.family<List<PlaceSuggestion>, String>(
+        (ref, query) async {
+  if (query.trim().length < 2) {
+    return const [];
+  }
+  final service = ref.watch(onboardingServiceProvider);
+  return service.searchPlaces(query.trim());
 });
 
 /// Filtered cities based on search query
@@ -87,30 +100,10 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       final base64 = base64Encode(bytes);
       final fileName = file.path.split('/').last;
 
-      // Determine MIME type from file extension
-      final extension = fileName.split('.').last.toLowerCase();
-      String mimeType;
-      switch (extension) {
-        case 'png':
-          mimeType = 'image/png';
-          break;
-        case 'gif':
-          mimeType = 'image/gif';
-          break;
-        case 'webp':
-          mimeType = 'image/webp';
-          break;
-        case 'jpg':
-        case 'jpeg':
-        default:
-          mimeType = 'image/jpeg';
-          break;
-      }
-
       state = state!.copyWith(
         photoBase64: base64,
         photoFileName: fileName,
-        photoMimeType: mimeType,
+        photoMimeType: _inferMimeType(fileName),
       );
     } catch (e) {
       debugPrint('Error encoding photo: $e');
@@ -136,6 +129,72 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   void updateCity(String cityId, String cityName) {
     if (state == null) return;
     state = state!.copyWith(cityId: cityId, cityName: cityName);
+  }
+
+  /// Select the primary business location from autocomplete.
+  void updateLocation(PlaceSuggestion location) {
+    if (state == null) return;
+    state = state!.copyWith(
+      location: location,
+      cityId: location.cityId ?? state!.cityId,
+      cityName: location.city,
+    );
+  }
+
+  /// Update primary venue name.
+  void updateVenueName(String? name) {
+    if (state == null) return;
+    if (name == null || name.trim().isEmpty) {
+      state = state!.copyWith(clearVenueName: true);
+    } else {
+      state = state!.copyWith(venueName: name.trim());
+    }
+  }
+
+  /// Update primary venue type.
+  void updateVenueType(String? venueType) {
+    if (state == null) return;
+    if (venueType == null || venueType.trim().isEmpty) {
+      state = state!.copyWith(clearVenueType: true);
+    } else {
+      state = state!.copyWith(venueType: venueType);
+    }
+  }
+
+  /// Update primary venue capacity.
+  void updateVenueCapacity(int? capacity) {
+    if (state == null) return;
+    state = state!.copyWith(
+      venueCapacity: capacity,
+      clearVenueCapacity: capacity == null,
+    );
+  }
+
+  /// Add a venue photo.
+  Future<void> addVenuePhoto(File file) async {
+    if (state == null) return;
+
+    try {
+      final bytes = await file.readAsBytes();
+      final photo = OnboardingPhoto(
+        base64: base64Encode(bytes),
+        fileName: file.path.split('/').last,
+        mimeType: _inferMimeType(file.path),
+      );
+      state = state!.copyWith(venuePhotos: [...state!.venuePhotos, photo]);
+    } catch (e) {
+      debugPrint('Error encoding venue photo: $e');
+    }
+  }
+
+  /// Remove a venue photo.
+  void removeVenuePhoto(int index) {
+    if (state == null || index < 0 || index >= state!.venuePhotos.length) {
+      return;
+    }
+    final photos = List<OnboardingPhoto>.from(state!.venuePhotos)
+      ..removeAt(index);
+    state = state!.copyWith(venuePhotos: photos);
   }
 
   /// Update about (step 4)
@@ -194,6 +253,22 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     }
   }
 
+  String _inferMimeType(String fileNameOrPath) {
+    final extension = fileNameOrPath.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'jpg':
+      case 'jpeg':
+      default:
+        return 'image/jpeg';
+    }
+  }
+
   /// Go to next step
   void nextStep() {
     if (state == null) return;
@@ -230,7 +305,7 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       case 3:
         return state!.isStep3Complete;
       case 4:
-        return true; // Step 4 is all optional
+        return state!.isStep4Complete;
       default:
         return false;
     }
@@ -271,7 +346,7 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       }
 
       // Update auth state
-      ref.read(authProvider.notifier).checkAuthStatus();
+      await ref.read(authProvider.notifier).checkAuthStatus();
 
       return OnboardingResult(
         success: true,

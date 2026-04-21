@@ -42,11 +42,20 @@ class ExploreScreen extends ConsumerStatefulWidget {
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   late final PageController _pageController;
+  ProviderSubscription<OpportunityFilters>? _filtersSubscription;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _filtersSubscription = ref.listenManual<OpportunityFilters>(
+      opportunityFiltersProvider,
+      (previous, next) {
+        if (previous != next) {
+          ref.read(opportunityListProvider.notifier).refresh();
+        }
+      },
+    );
     // Apply locked creator type filter after first frame
     if (widget.lockedCreatorType != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -59,6 +68,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   @override
   void dispose() {
+    _filtersSubscription?.close();
     _pageController.dispose();
     super.dispose();
   }
@@ -73,7 +83,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   void _onCardTap(Opportunity opportunity) {
     final currentUser = ref.read(authProvider).user;
-    final isOwn = currentUser?.id != null &&
+    final isOwn =
+        currentUser?.id != null &&
         opportunity.creatorProfile?.id == currentUser?.id;
     final canApply = !isOwn && (currentUser?.isBusiness != true);
 
@@ -121,10 +132,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               child: listState.isLoading
                   ? _buildLoadingState()
                   : listState.error != null
-                      ? _buildErrorState(listState.error!)
-                      : listState.isEmpty
-                          ? _buildEmptyState(filters.hasActiveFilters)
-                          : _buildCardPageView(listState),
+                  ? _buildErrorState(listState.error!)
+                  : listState.isEmpty
+                  ? _buildEmptyState(filters.hasActiveFilters)
+                  : _buildCardPageView(listState),
             ),
           ],
         ),
@@ -145,7 +156,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       filters.availabilityMode != null;
 
   Widget _buildTopBar(
-      OpportunityFilters filters, OpportunityListState listState) {
+    OpportunityFilters filters,
+    OpportunityListState listState,
+  ) {
     final filterLabel = _buildFilterLabel(filters, listState.total);
     final hasFilters = _hasUserFilters(filters);
 
@@ -179,9 +192,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 child: Row(
                   children: [
                     Icon(
-                      hasFilters
-                          ? LucideIcons.filterX
-                          : LucideIcons.search,
+                      hasFilters ? LucideIcons.filterX : LucideIcons.search,
                       size: 16,
                       color: hasFilters
                           ? KolabingColors.primary
@@ -219,7 +230,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   String _buildFilterLabel(OpportunityFilters filters, int total) {
     // Check for user-visible filters (exclude lockedCreatorType which is implicit)
-    final hasUserFilters = filters.searchQuery.isNotEmpty ||
+    final hasUserFilters =
+        filters.searchQuery.isNotEmpty ||
         filters.selectedCategories.isNotEmpty ||
         filters.selectedCity != null ||
         filters.venueMode != null ||
@@ -256,13 +268,15 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     // Client-side filter: hide expired kolabs (availabilityEnd in the past)
     final today = DateTime.now();
     final activeOpportunities = listState.opportunities
-        .where((o) => !o.availabilityEnd.isBefore(
-              DateTime(today.year, today.month, today.day),
-            ))
+        .where(
+          (o) => !o.availabilityEnd.isBefore(
+            DateTime(today.year, today.month, today.day),
+          ),
+        )
         .toList();
 
-    final itemCount = activeOpportunities.length +
-        (listState.isLoadingMore ? 1 : 0);
+    final itemCount =
+        activeOpportunities.length + (listState.isLoadingMore ? 1 : 0);
 
     return PageView.builder(
       controller: _pageController,
@@ -294,234 +308,235 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _buildLoadingState() => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.xs,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(KolabingRadius.xl),
-          child: Shimmer.fromColors(
-            baseColor: KolabingColors.surfaceVariant,
-            highlightColor: KolabingColors.surface,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
-                borderRadius: BorderRadius.circular(KolabingRadius.xl),
-              ),
-              child: Stack(
-                children: [
-                  // Fake gradient overlay
-                  Positioned(
-                    left: KolabingSpacing.md,
-                    right: KolabingSpacing.md,
-                    bottom: KolabingSpacing.xl,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: KolabingColors.border,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                        ),
-                        const SizedBox(height: KolabingSpacing.xs),
-                        Container(
-                          width: 200,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            color: KolabingColors.border,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                        ),
-                        const SizedBox(height: KolabingSpacing.sm),
-                        Row(
-                          children: List.generate(
-                            3,
-                            (i) => Padding(
-                              padding: const EdgeInsets.only(
-                                  right: KolabingSpacing.xxs),
-                              child: Container(
-                                width: 60,
-                                height: 22,
-                                decoration: BoxDecoration(
-                                  color: KolabingColors.border,
-                                  borderRadius: BorderRadius.circular(
-                                      KolabingRadius.round),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: KolabingSpacing.sm),
-                        Container(
-                          width: double.infinity,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: KolabingColors.border,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                        ),
-                        const SizedBox(height: KolabingSpacing.xxs),
-                        Container(
-                          width: 180,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: KolabingColors.border,
-                            borderRadius: KolabingRadius.borderRadiusSm,
-                          ),
-                        ),
-                        const SizedBox(height: KolabingSpacing.sm),
-                        Row(
-                          children: List.generate(
-                            7,
-                            (i) => Padding(
-                              padding: EdgeInsets.only(
-                                  right: i < 6 ? 6.0 : 0),
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: const BoxDecoration(
-                                  color: KolabingColors.border,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.md,
+      vertical: KolabingSpacing.xs,
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(KolabingRadius.xl),
+      child: Shimmer.fromColors(
+        baseColor: KolabingColors.surfaceVariant,
+        highlightColor: KolabingColors.surface,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: KolabingColors.surfaceVariant,
+            borderRadius: BorderRadius.circular(KolabingRadius.xl),
+          ),
+          child: Stack(
+            children: [
+              // Fake gradient overlay
+              Positioned(
+                left: KolabingSpacing.md,
+                right: KolabingSpacing.md,
+                bottom: KolabingSpacing.xl,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: KolabingColors.border,
+                        borderRadius: KolabingRadius.borderRadiusSm,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: KolabingSpacing.xs),
+                    Container(
+                      width: 200,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: KolabingColors.border,
+                        borderRadius: KolabingRadius.borderRadiusSm,
+                      ),
+                    ),
+                    const SizedBox(height: KolabingSpacing.sm),
+                    Row(
+                      children: List.generate(
+                        3,
+                        (i) => Padding(
+                          padding: const EdgeInsets.only(
+                            right: KolabingSpacing.xxs,
+                          ),
+                          child: Container(
+                            width: 60,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: KolabingColors.border,
+                              borderRadius: BorderRadius.circular(
+                                KolabingRadius.round,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: KolabingSpacing.sm),
+                    Container(
+                      width: double.infinity,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: KolabingColors.border,
+                        borderRadius: KolabingRadius.borderRadiusSm,
+                      ),
+                    ),
+                    const SizedBox(height: KolabingSpacing.xxs),
+                    Container(
+                      width: 180,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: KolabingColors.border,
+                        borderRadius: KolabingRadius.borderRadiusSm,
+                      ),
+                    ),
+                    const SizedBox(height: KolabingSpacing.sm),
+                    Row(
+                      children: List.generate(
+                        7,
+                        (i) => Padding(
+                          padding: EdgeInsets.only(right: i < 6 ? 6.0 : 0),
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: KolabingColors.border,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Empty state
   // ---------------------------------------------------------------------------
 
   Widget _buildEmptyState(bool hasFilters) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DecoratedBox(
-                decoration: const BoxDecoration(
-                  color: KolabingColors.surfaceVariant,
-                  shape: BoxShape.circle,
-                ),
-                child: SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: Icon(
-                    hasFilters ? LucideIcons.searchX : LucideIcons.search,
-                    size: 36,
-                    color: KolabingColors.textTertiary,
-                  ),
-                ),
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: KolabingColors.surfaceVariant,
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox(
+              width: 80,
+              height: 80,
+              child: Icon(
+                hasFilters ? LucideIcons.searchX : LucideIcons.search,
+                size: 36,
+                color: KolabingColors.textTertiary,
               ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                hasFilters ? 'No results found' : 'No opportunities yet',
-                style: GoogleFonts.rubik(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                hasFilters
-                    ? 'Try adjusting your filters or search terms'
-                    : 'Check back later for new opportunities',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              if (hasFilters) ...[
-                const SizedBox(height: KolabingSpacing.lg),
-                TextButton.icon(
-                  onPressed: () {
-                    ref.read(opportunityFiltersProvider.notifier).clearAll();
-                  },
-                  icon: const Icon(LucideIcons.rotateCcw, size: 16),
-                  label: const Text('Clear all filters'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: KolabingColors.primary,
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            hasFilters ? 'No results found' : 'No opportunities yet',
+            style: GoogleFonts.rubik(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            hasFilters
+                ? 'Try adjusting your filters or search terms'
+                : 'Check back later for new opportunities',
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if (hasFilters) ...[
+            const SizedBox(height: KolabingSpacing.lg),
+            TextButton.icon(
+              onPressed: () {
+                ref.read(opportunityFiltersProvider.notifier).clearAll();
+              },
+              icon: const Icon(LucideIcons.rotateCcw, size: 16),
+              label: const Text('Clear all filters'),
+              style: TextButton.styleFrom(
+                foregroundColor: KolabingColors.primary,
+              ),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Error state
   // ---------------------------------------------------------------------------
 
   Widget _buildErrorState(String error) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  color: KolabingColors.errorBg,
-                  shape: BoxShape.circle,
-                ),
-                child: SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: Icon(
-                    LucideIcons.alertCircle,
-                    size: 36,
-                    color: KolabingColors.error,
-                  ),
-                ),
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              color: KolabingColors.errorBg,
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox(
+              width: 80,
+              height: 80,
+              child: Icon(
+                LucideIcons.alertCircle,
+                size: 36,
+                color: KolabingColors.error,
               ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                'Something went wrong',
-                style: GoogleFonts.rubik(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton.icon(
-                onPressed: () {
-                  ref.read(opportunityListProvider.notifier).refresh();
-                },
-                icon: const Icon(LucideIcons.rotateCcw, size: 16),
-                label: const Text('Try again'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            'Something went wrong',
+            style: GoogleFonts.rubik(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            error,
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: KolabingSpacing.lg),
+          ElevatedButton.icon(
+            onPressed: () {
+              ref.read(opportunityListProvider.notifier).refresh();
+            },
+            icon: const Icon(LucideIcons.rotateCcw, size: 16),
+            label: const Text('Try again'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: KolabingColors.primary,
+              foregroundColor: KolabingColors.onPrimary,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

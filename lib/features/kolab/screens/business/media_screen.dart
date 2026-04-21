@@ -55,42 +55,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       notifier.addMedia(
         KolabMedia(
           url: url,
-          type: 'image',
-          sortOrder: kolab.media.where((m) => m.type == 'image').length,
+          type: 'photo',
+          sortOrder: kolab.media.where((m) => m.type == 'photo').length,
         ),
-      );
-    } on Exception catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e'), backgroundColor: KolabingColors.error),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isUploading = false);
-    }
-  }
-
-  Future<void> _pickAndUploadVideo() async {
-    final video = await _picker.pickVideo(
-      source: ImageSource.gallery,
-      maxDuration: const Duration(seconds: 30),
-    );
-    if (video == null) return;
-
-    setState(() => _isUploading = true);
-    try {
-      final uploadService = ref.read(uploadServiceProvider);
-      final url = await uploadService.upload(
-        filePath: video.path,
-        folder: 'kolabs',
-      );
-      final notifier = ref.read(kolabFormProvider.notifier);
-      final kolab = ref.read(kolabFormProvider).kolab;
-      // Remove old video if exists
-      final oldVideoIndex = kolab.media.indexWhere((m) => m.type == 'video');
-      if (oldVideoIndex >= 0) notifier.removeMedia(oldVideoIndex);
-      notifier.addMedia(
-        KolabMedia(url: url, type: 'video', sortOrder: kolab.media.length),
       );
     } on Exception catch (e) {
       if (mounted) {
@@ -154,24 +121,6 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
           onRemove: notifier.removeMedia,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-
-        Text(
-          'VIDEO (OPTIONAL)',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: KolabingSpacing.xs),
-
-        _VideoPlaceholder(
-          hasVideo: kolab.media.any((m) => m.type == 'video'),
-          onTap: _isUploading ? () {} : _pickAndUploadVideo,
-        ),
-
-        const SizedBox(height: KolabingSpacing.lg),
       ],
     );
   }
@@ -194,7 +143,7 @@ class _PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photos = media.where((m) => m.type == 'image').toList();
+    final photos = media.where((m) => m.type == 'photo').toList();
     final canAdd = photos.length < 5;
 
     return Wrap(
@@ -285,14 +234,16 @@ class _PhotoSlot extends StatelessWidget {
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildPlaceholder(),
                   )
                 : Image.network(
                     url,
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildPlaceholder(),
                   ),
           ),
         ),
@@ -332,74 +283,4 @@ class _PhotoSlot extends StatelessWidget {
           ],
         ),
       );
-}
-
-// =============================================================================
-// Video Placeholder
-// =============================================================================
-
-class _VideoPlaceholder extends StatelessWidget {
-  const _VideoPlaceholder({
-    required this.hasVideo,
-    required this.onTap,
-  });
-
-  final bool hasVideo;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: hasVideo ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.lg),
-        decoration: BoxDecoration(
-          color: hasVideo ? KolabingColors.softYellow : KolabingColors.surfaceVariant,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: hasVideo
-                ? KolabingColors.softYellowBorder
-                : KolabingColors.border,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              hasVideo ? LucideIcons.checkCircle : LucideIcons.film,
-              size: 28,
-              color: hasVideo
-                  ? KolabingColors.success
-                  : KolabingColors.textSecondary,
-            ),
-            const SizedBox(width: KolabingSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hasVideo
-                        ? 'Video added'
-                        : 'Add a short video tour',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    hasVideo
-                        ? 'Tap to replace'
-                        : 'Max 30 seconds / 50MB',
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
 }

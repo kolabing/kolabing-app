@@ -9,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../onboarding/widgets/photo_upload_widget.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
@@ -73,10 +74,9 @@ class _CreateOpportunityScreenState
         _descriptionController.text = opp.description;
         _discountPercentageController.text =
             (opp.businessOffer.discount.percentage ?? 0) > 0
-                ? opp.businessOffer.discount.percentage.toString()
-                : '';
-        _businessOfferOtherController.text =
-            opp.businessOffer.other ?? '';
+            ? opp.businessOffer.discount.percentage.toString()
+            : '';
+        _businessOfferOtherController.text = opp.businessOffer.other ?? '';
         _deliverablesOtherController.text =
             opp.communityDeliverables.other ?? '';
         _addressController.text = opp.address ?? '';
@@ -137,15 +137,18 @@ class _CreateOpportunityScreenState
   }
 
   Future<void> _handleSaveDraft() async {
-    final success = await ref.read(opportunityFormProvider.notifier).saveDraft();
+    final success = await ref
+        .read(opportunityFormProvider.notifier)
+        .saveDraft();
     if (success && mounted) {
       _showSuccessDialog(isDraft: true);
     }
   }
 
   Future<void> _handlePublish() async {
-    final success =
-        await ref.read(opportunityFormProvider.notifier).saveAndPublish();
+    final success = await ref
+        .read(opportunityFormProvider.notifier)
+        .saveAndPublish();
     if (success && mounted) {
       _showSuccessDialog(isDraft: false);
     }
@@ -236,15 +239,12 @@ class _CreateOpportunityScreenState
     final formState = ref.watch(opportunityFormProvider);
 
     // Show subscription paywall when API returns requires_subscription
-    ref.listen<OpportunityFormState>(
-      opportunityFormProvider,
-      (previous, next) {
-        if (next.requiresSubscription &&
-            !(previous?.requiresSubscription ?? false)) {
-          _showSubscriptionPaywall();
-        }
-      },
-    );
+    ref.listen<OpportunityFormState>(opportunityFormProvider, (previous, next) {
+      if (next.requiresSubscription &&
+          !(previous?.requiresSubscription ?? false)) {
+        _showSubscriptionPaywall();
+      }
+    });
 
     return PopScope(
       canPop: !formState.isSubmitting && !formState.isPublishing,
@@ -256,10 +256,9 @@ class _CreateOpportunityScreenState
           leading: IconButton(
             icon: const Icon(LucideIcons.arrowLeft),
             color: KolabingColors.textPrimary,
-            onPressed:
-                formState.isSubmitting || formState.isPublishing
-                    ? null
-                    : _handleBack,
+            onPressed: formState.isSubmitting || formState.isPublishing
+                ? null
+                : _handleBack,
           ),
           title: Text(
             _isEditMode ? 'Edit Kolab' : 'Create a Kolab',
@@ -271,18 +270,22 @@ class _CreateOpportunityScreenState
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            _buildStepIndicator(formState),
-            if (formState.error != null) _buildErrorBanner(formState.error!),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(KolabingSpacing.md),
-                child: _buildCurrentStep(formState),
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              _buildStepIndicator(formState),
+              if (formState.error != null) _buildErrorBanner(formState.error!),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(KolabingSpacing.md),
+                  child: _buildCurrentStep(formState),
+                ),
               ),
-            ),
-            _buildBottomButtons(formState),
-          ],
+              _buildBottomButtons(formState),
+            ],
+          ),
         ),
       ),
     );
@@ -300,9 +303,7 @@ class _CreateOpportunityScreenState
       ),
       decoration: const BoxDecoration(
         color: KolabingColors.surface,
-        border: Border(
-          bottom: BorderSide(color: KolabingColors.border),
-        ),
+        border: Border(bottom: BorderSide(color: KolabingColors.border)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -315,8 +316,8 @@ class _CreateOpportunityScreenState
             child: GestureDetector(
               onTap: isCompleted
                   ? () => ref
-                      .read(opportunityFormProvider.notifier)
-                      .goToStep(index)
+                        .read(opportunityFormProvider.notifier)
+                        .goToStep(index)
                   : null,
               child: Container(
                 width: isActive ? 28 : 12,
@@ -325,8 +326,8 @@ class _CreateOpportunityScreenState
                   color: isActive
                       ? KolabingColors.primary
                       : isCompleted
-                          ? KolabingColors.primary
-                          : Colors.transparent,
+                      ? KolabingColors.primary
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isActive || isCompleted
@@ -516,6 +517,29 @@ class _CreateOpportunityScreenState
             );
           }).toList(),
         ),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        _buildLabel('Kolab Photo'),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'Optional, but recommended for Explore.',
+          style: GoogleFonts.openSans(
+            fontSize: 12,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        PhotoUploadWidget(
+          photoBase64: opp.offerPhoto,
+          onPhotoSelected: (file) async {
+            await ref
+                .read(opportunityFormProvider.notifier)
+                .updateOfferPhotoFile(file);
+          },
+          onPhotoRemoved: () {
+            ref.read(opportunityFormProvider.notifier).updateOfferPhoto(null);
+          },
+        ),
       ],
     );
   }
@@ -534,10 +558,7 @@ class _CreateOpportunityScreenState
       _discountPercentageController,
       offer.discount.percentage?.toString() ?? '',
     );
-    _syncController(
-      _businessOfferOtherController,
-      offer.other ?? '',
-    );
+    _syncController(_businessOfferOtherController, offer.other ?? '');
 
     // Sync product controllers
     _syncProductControllers(offer.products);
@@ -561,10 +582,9 @@ class _CreateOpportunityScreenState
           title: 'Venue',
           subtitle: 'You need a venue for the event',
           value: offer.venue,
-          onChanged: (val) =>
-              ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
-                    venue: val,
-                  ),
+          onChanged: (val) => ref
+              .read(opportunityFormProvider.notifier)
+              .updateBusinessOffer(venue: val),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -574,10 +594,9 @@ class _CreateOpportunityScreenState
           title: 'Food & Drink',
           subtitle: 'You\'d like food or beverages provided',
           value: offer.foodDrink,
-          onChanged: (val) =>
-              ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
-                    foodDrink: val,
-                  ),
+          onChanged: (val) => ref
+              .read(opportunityFormProvider.notifier)
+              .updateBusinessOffer(foodDrink: val),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -587,13 +606,14 @@ class _CreateOpportunityScreenState
           title: 'Discount',
           subtitle: 'Special discount for your community',
           value: offer.discount.enabled,
-          onChanged: (val) =>
-              ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
-                    discount: offer.discount.copyWith(
-                      enabled: val,
-                      clearPercentage: !val,
-                    ),
-                  ),
+          onChanged: (val) => ref
+              .read(opportunityFormProvider.notifier)
+              .updateBusinessOffer(
+                discount: offer.discount.copyWith(
+                  enabled: val,
+                  clearPercentage: !val,
+                ),
+              ),
         ),
         if (offer.discount.enabled) ...[
           const SizedBox(height: KolabingSpacing.sm),
@@ -610,7 +630,9 @@ class _CreateOpportunityScreenState
               ],
               onChanged: (value) {
                 final pct = int.tryParse(value);
-                ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
+                ref
+                    .read(opportunityFormProvider.notifier)
+                    .updateBusinessOffer(
                       discount: offer.discount.copyWith(percentage: pct),
                     );
               },
@@ -630,9 +652,9 @@ class _CreateOpportunityScreenState
             if (val) {
               ref.read(opportunityFormProvider.notifier).addProduct('');
             } else {
-              ref.read(opportunityFormProvider.notifier).updateBusinessOffer(
-                    products: [],
-                  );
+              ref
+                  .read(opportunityFormProvider.notifier)
+                  .updateBusinessOffer(products: []);
             }
           },
         ),
@@ -644,8 +666,7 @@ class _CreateOpportunityScreenState
               children: [
                 ...List.generate(offer.products.length, (index) {
                   return Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: KolabingSpacing.xs),
+                    padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
                     child: Row(
                       children: [
                         Expanded(
@@ -655,9 +676,7 @@ class _CreateOpportunityScreenState
                               fontSize: 15,
                               color: KolabingColors.textPrimary,
                             ),
-                            decoration: _inputDecoration(
-                              hint: 'Product name',
-                            ),
+                            decoration: _inputDecoration(hint: 'Product name'),
                             onChanged: (value) => ref
                                 .read(opportunityFormProvider.notifier)
                                 .updateProduct(index, value),
@@ -775,10 +794,7 @@ class _CreateOpportunityScreenState
 
     final deliverables = opp.communityDeliverables;
 
-    _syncController(
-      _deliverablesOtherController,
-      deliverables.other ?? '',
-    );
+    _syncController(_deliverablesOtherController, deliverables.other ?? '');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -847,8 +863,7 @@ class _CreateOpportunityScreenState
         _buildToggleCard(
           icon: LucideIcons.star,
           title: 'Review & Feedback',
-          subtitle:
-              'Google/social reviews, testimonials or member feedback',
+          subtitle: 'Google/social reviews, testimonials or member feedback',
           value: deliverables.reviewFeedback,
           onChanged: (val) => ref
               .read(opportunityFormProvider.notifier)
@@ -955,8 +970,7 @@ class _CreateOpportunityScreenState
             return Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
-                  right:
-                      mode != VenueMode.values.last ? KolabingSpacing.xs : 0,
+                  right: mode != VenueMode.values.last ? KolabingSpacing.xs : 0,
                 ),
                 child: _buildSelectionCard(
                   icon: _venueModeIcon(mode),
@@ -1013,10 +1027,12 @@ class _CreateOpportunityScreenState
             value: opp.preferredCity.isNotEmpty ? opp.preferredCity : null,
             decoration: _inputDecoration(hint: 'Select city'),
             items: cities
-                .map((city) => DropdownMenuItem(
-                      value: city.name,
-                      child: Text(city.name),
-                    ))
+                .map(
+                  (city) => DropdownMenuItem(
+                    value: city.name,
+                    child: Text(city.name),
+                  ),
+                )
                 .toList(),
             onChanged: (value) {
               if (value != null) {
@@ -1093,24 +1109,26 @@ class _CreateOpportunityScreenState
                   spacing: KolabingSpacing.xxs,
                   runSpacing: KolabingSpacing.xxs,
                   children: opp.categories
-                      .map((cat) => Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: KolabingSpacing.xs,
-                              vertical: 2,
+                      .map(
+                        (cat) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: KolabingSpacing.xs,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: KolabingColors.softYellow,
+                            borderRadius: KolabingRadius.borderRadiusSm,
+                          ),
+                          child: Text(
+                            cat,
+                            style: GoogleFonts.openSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: KolabingColors.textPrimary,
                             ),
-                            decoration: BoxDecoration(
-                              color: KolabingColors.softYellow,
-                              borderRadius: KolabingRadius.borderRadiusSm,
-                            ),
-                            child: Text(
-                              cat,
-                              style: GoogleFonts.openSans(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: KolabingColors.textPrimary,
-                              ),
-                            ),
-                          ))
+                          ),
+                        ),
+                      )
                       .toList(),
                 ),
                 const SizedBox(height: KolabingSpacing.md),
@@ -1148,10 +1166,7 @@ class _CreateOpportunityScreenState
               const SizedBox(height: KolabingSpacing.xs),
 
               if (opp.address?.isNotEmpty == true) ...[
-                _buildReviewInfoRow(
-                  LucideIcons.navigation,
-                  opp.address!,
-                ),
+                _buildReviewInfoRow(LucideIcons.navigation, opp.address!),
                 const SizedBox(height: KolabingSpacing.xs),
               ],
 
@@ -1191,8 +1206,7 @@ class _CreateOpportunityScreenState
         // Edit hint
         Center(
           child: GestureDetector(
-            onTap: () =>
-                ref.read(opportunityFormProvider.notifier).goToStep(0),
+            onTap: () => ref.read(opportunityFormProvider.notifier).goToStep(0),
             child: Text(
               'Tap any section above to edit',
               style: GoogleFonts.openSans(
@@ -1268,8 +1282,9 @@ class _CreateOpportunityScreenState
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
-              disabledBackgroundColor:
-                  KolabingColors.primary.withValues(alpha: 0.7),
+              disabledBackgroundColor: KolabingColors.primary.withValues(
+                alpha: 0.7,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -1300,8 +1315,9 @@ class _CreateOpportunityScreenState
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
-              disabledBackgroundColor:
-                  KolabingColors.primary.withValues(alpha: 0.7),
+              disabledBackgroundColor: KolabingColors.primary.withValues(
+                alpha: 0.7,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -1394,10 +1410,7 @@ class _CreateOpportunityScreenState
   // Shared UI Components
   // ===========================================================================
 
-  Widget _buildStepHeader({
-    required String title,
-    required String subtitle,
-  }) {
+  Widget _buildStepHeader({required String title, required String subtitle}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1511,8 +1524,7 @@ class _CreateOpportunityScreenState
               : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color:
-                isSelected ? KolabingColors.primary : KolabingColors.border,
+            color: isSelected ? KolabingColors.primary : KolabingColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1582,9 +1594,7 @@ class _CreateOpportunityScreenState
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.openSans(
-              color: KolabingColors.textTertiary,
-            ),
+            hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
             filled: true,
             fillColor: KolabingColors.surface,
             counterText: maxLength != null ? null : '',
@@ -1604,8 +1614,10 @@ class _CreateOpportunityScreenState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide:
-                  const BorderSide(color: KolabingColors.primary, width: 2),
+              borderSide: const BorderSide(
+                color: KolabingColors.primary,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -1621,9 +1633,7 @@ class _CreateOpportunityScreenState
   InputDecoration _inputDecoration({required String hint}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        color: KolabingColors.textTertiary,
-      ),
+      hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
       filled: true,
       fillColor: KolabingColors.surface,
       border: OutlineInputBorder(
@@ -1636,50 +1646,49 @@ class _CreateOpportunityScreenState
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusMd,
-        borderSide:
-            const BorderSide(color: KolabingColors.primary, width: 2),
+        borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
       ),
     );
   }
 
   Widget _buildLabel(String label) => Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
-        ),
-      );
+    label,
+    style: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: KolabingColors.textPrimary,
+    ),
+  );
 
   Widget _buildFieldError(String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.errorBg,
+      borderRadius: KolabingRadius.borderRadiusSm,
+    ),
+    child: Row(
+      children: [
+        const Icon(
+          LucideIcons.alertCircle,
+          size: 14,
+          color: KolabingColors.error,
         ),
-        decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.alertCircle,
-              size: 14,
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
+            error,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
               color: KolabingColors.error,
             ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Availability mode-specific fields
@@ -1769,9 +1778,7 @@ class _CreateOpportunityScreenState
     OpportunityFormState formState,
   ) {
     final selectedDaysSummary = opp.recurringDays.isNotEmpty
-        ? opp.recurringDays
-            .map((d) => _dayNames[d - 1])
-            .join(', ')
+        ? opp.recurringDays.map((d) => _dayNames[d - 1]).join(', ')
         : '—';
 
     return [
@@ -1787,9 +1794,7 @@ class _CreateOpportunityScreenState
           final isSelected = opp.recurringDays.contains(dayIndex);
           return Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                right: i < 6 ? 6 : 0,
-              ),
+              padding: EdgeInsets.only(right: i < 6 ? 6 : 0),
               child: GestureDetector(
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
@@ -1814,8 +1819,9 @@ class _CreateOpportunityScreenState
                     _dayNames[i].substring(0, 3),
                     style: GoogleFonts.openSans(
                       fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w400,
                       color: isSelected
                           ? KolabingColors.textPrimary
                           : KolabingColors.textSecondary,
@@ -1889,7 +1895,9 @@ class _CreateOpportunityScreenState
         decoration: BoxDecoration(
           color: KolabingColors.softYellow.withValues(alpha: 0.5),
           borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: KolabingColors.primary.withValues(alpha: 0.3)),
+          border: Border.all(
+            color: KolabingColors.primary.withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           children: [
@@ -1970,9 +1978,7 @@ class _CreateOpportunityScreenState
                 ),
                 const SizedBox(width: KolabingSpacing.xs),
                 Text(
-                  value != null
-                      ? value.format(context)
-                      : 'Select time',
+                  value != null ? value.format(context) : 'Select time',
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     color: value != null

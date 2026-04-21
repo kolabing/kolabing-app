@@ -76,98 +76,106 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
 
     _syncControllersFromState(kolab);
 
-    return ListView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: KolabingSpacing.lg,
-      ),
-      children: [
-        // -- Section header
-        Text(
-          'IDEAL COMMUNITY',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.md,
+          vertical: KolabingSpacing.lg,
         ),
-        const SizedBox(height: KolabingSpacing.xs),
-
-        Text(
-          'What kind of communities would be a great fit?',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Community type chips
-        MultiSelectChips<String>(
-          items: _communityTypes,
-          selected: kolab.seekingCommunities,
-          labelBuilder: (t) => t,
-          onToggle: notifier.toggleSeekingCommunity,
-          maxSelect: 5,
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // -- Minimum Community Size
-        Text(
-          'MINIMUM COMMUNITY SIZE (OPTIONAL)',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: KolabingSpacing.xs),
-
-        TextField(
-          controller: _minSizeController,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: _inputDecoration(
-            hint: 'e.g. 500',
-            error: errors['min_community_size'],
-          ),
-          style: _inputTextStyle,
-          onChanged: (v) {
-            final parsed = int.tryParse(v);
-            notifier.updateMinCommunitySize(parsed);
-          },
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // -- What you expect from the community
-        Text(
-          'WHAT DO YOU EXPECT FROM THE COMMUNITY?',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        ...DeliverableType.values.map((deliverable) {
-          final isSelected = kolab.expects.contains(deliverable);
-          return Padding(
-            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-            child: _ToggleCard(
-              title: deliverable.displayName,
-              subtitle: deliverable.subtitle,
-              isSelected: isSelected,
-              onTap: () => notifier.toggleExpect(deliverable),
+        children: [
+          // -- Section header
+          Text(
+            'IDEAL COMMUNITY',
+            style: GoogleFonts.rubik(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.0,
+              color: KolabingColors.textSecondary,
             ),
-          );
-        }),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
 
-        const SizedBox(height: KolabingSpacing.lg),
-      ],
+          Text(
+            'What kind of communities would be a great fit?',
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+
+          // -- Community type chips
+          MultiSelectChips<String>(
+            items: _communityTypes,
+            selected: kolab.seekingCommunities,
+            labelBuilder: (t) => t,
+            onToggle: notifier.toggleSeekingCommunity,
+            maxSelect: 5,
+          ),
+          const SizedBox(height: KolabingSpacing.lg),
+
+          // -- Minimum Community Size
+          Text(
+            'MINIMUM COMMUNITY SIZE (OPTIONAL)',
+            style: GoogleFonts.rubik(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.0,
+              color: KolabingColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+
+          TextField(
+            controller: _minSizeController,
+            keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: _inputDecoration(
+              hint: 'e.g. 500',
+              error: errors['min_community_size'],
+            ),
+            style: _inputTextStyle,
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
+            onSubmitted: (_) => FocusScope.of(context).unfocus(),
+            onChanged: (v) {
+              final parsed = int.tryParse(v);
+              notifier.updateMinCommunitySize(parsed);
+            },
+          ),
+          const SizedBox(height: KolabingSpacing.lg),
+
+          // -- What you expect from the community
+          Text(
+            'WHAT DO YOU EXPECT FROM THE COMMUNITY?',
+            style: GoogleFonts.rubik(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.0,
+              color: KolabingColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+
+          ...DeliverableType.values.map((deliverable) {
+            final isSelected = kolab.expects.contains(deliverable);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+              child: _ToggleCard(
+                title: deliverable.displayName,
+                subtitle: deliverable.subtitle,
+                isSelected: isSelected,
+                onTap: () => notifier.toggleExpect(deliverable),
+              ),
+            );
+          }),
+
+          const SizedBox(height: KolabingSpacing.lg),
+        ],
+      ),
     );
   }
 }

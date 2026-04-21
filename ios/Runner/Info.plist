@@ -47,6 +47,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Kolabing needs camera access to scan QR codes for event check-in.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Kolabing needs access to your photo library so you can upload images for your profile, kolabs, and past events.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Kolabing needs permission to save and manage selected media for your profile, kolabs, and past events.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

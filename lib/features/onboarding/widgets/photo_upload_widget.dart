@@ -35,7 +35,6 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _scaleAnimation;
-  bool _isPressed = false;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -48,10 +47,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
   @override
@@ -60,12 +56,12 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImageFromSource(ImageSource source) async {
     HapticFeedback.mediumImpact();
 
     try {
       final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 800,
         maxHeight: 800,
         imageQuality: 85,
@@ -103,9 +99,51 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
     }
   }
 
+  void _showSourcePicker() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(LucideIcons.image),
+              title: const Text('Choose from Library'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImageFromSource(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.camera),
+              title: const Text('Take Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImageFromSource(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ImageProvider<Object>? _buildImageProvider() {
+    final value = widget.photoBase64;
+    if (value == null || value.isEmpty) return null;
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return NetworkImage(value);
+    }
+
+    final rawBase64 = value.startsWith('data:')
+        ? value.substring(value.indexOf(',') + 1)
+        : value;
+    return MemoryImage(base64Decode(rawBase64));
+  }
+
   void _showOptions() {
     if (widget.photoBase64 == null) {
-      _pickImage();
+      _showSourcePicker();
       return;
     }
 
@@ -120,11 +158,14 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
               title: const Text('Change Photo'),
               onTap: () {
                 Navigator.pop(context);
-                _pickImage();
+                _showSourcePicker();
               },
             ),
             ListTile(
-              leading: const Icon(LucideIcons.trash2, color: KolabingColors.error),
+              leading: const Icon(
+                LucideIcons.trash2,
+                color: KolabingColors.error,
+              ),
               title: const Text(
                 'Remove Photo',
                 style: TextStyle(color: KolabingColors.error),
@@ -142,26 +183,24 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) {
-          setState(() => _isPressed = true);
-          _controller.forward();
-        },
-        onTapUp: (_) {
-          setState(() => _isPressed = false);
-          _controller.reverse();
-        },
-        onTapCancel: () {
-          setState(() => _isPressed = false);
-          _controller.reverse();
-        },
-        onTap: _showOptions,
-        child: AnimatedBuilder(
-          animation: _scaleAnimation,
-          builder: (context, child) => Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          ),
-          child: Container(
+    onTapDown: (_) {
+      _controller.forward();
+    },
+    onTapUp: (_) {
+      _controller.reverse();
+    },
+    onTapCancel: () {
+      _controller.reverse();
+    },
+    onTap: _showOptions,
+    child: AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) =>
+          Transform.scale(scale: _scaleAnimation.value, child: child),
+      child: Builder(
+        builder: (context) {
+          final imageProvider = _buildImageProvider();
+          return Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -194,11 +233,9 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                           ? BorderStyle.solid
                           : BorderStyle.none,
                     ),
-                    image: widget.photoBase64 != null
+                    image: imageProvider != null
                         ? DecorationImage(
-                            image: MemoryImage(
-                              base64Decode(widget.photoBase64!),
-                            ),
+                            image: imageProvider,
                             fit: BoxFit.cover,
                           )
                         : null,
@@ -215,7 +252,9 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
 
                 // Label
                 Text(
-                  widget.photoBase64 == null ? 'Add photo (optional)' : 'Tap to change',
+                  widget.photoBase64 == null
+                      ? 'Add photo (optional)'
+                      : 'Tap to change',
                   style: GoogleFonts.openSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -224,7 +263,9 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                 ),
               ],
             ),
-          ),
-        ),
-      );
+          );
+        },
+      ),
+    ),
+  );
 }

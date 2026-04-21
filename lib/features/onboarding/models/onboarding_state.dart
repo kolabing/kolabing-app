@@ -1,4 +1,6 @@
 import '../../auth/models/user_model.dart';
+import 'onboarding_photo.dart';
+import 'place_suggestion.dart';
 
 /// Onboarding data state
 class OnboardingData {
@@ -13,6 +15,11 @@ class OnboardingData {
     this.typeName,
     this.cityId,
     this.cityName,
+    this.location,
+    this.venueName,
+    this.venueType,
+    this.venueCapacity,
+    this.venuePhotos = const [],
     this.about,
     this.phone,
     this.instagram,
@@ -51,6 +58,21 @@ class OnboardingData {
   /// City display name for summary
   final String? cityName;
 
+  /// Selected business place from autocomplete
+  final PlaceSuggestion? location;
+
+  /// Primary venue name (business only)
+  final String? venueName;
+
+  /// Primary venue type API value (business only)
+  final String? venueType;
+
+  /// Primary venue capacity (business only)
+  final int? venueCapacity;
+
+  /// Primary venue photos (business only)
+  final List<OnboardingPhoto> venuePhotos;
+
   /// About text (optional)
   final String? about;
 
@@ -70,16 +92,46 @@ class OnboardingData {
   final int currentStep;
 
   /// Check if step 1 is complete (name is required)
-  bool get isStep1Complete => name != null && name!.trim().isNotEmpty;
+  bool get isStep1Complete {
+    if (isBusiness) {
+      return location != null &&
+          location!.city.trim().isNotEmpty &&
+          location!.formattedAddress.trim().isNotEmpty;
+    }
+    return name != null && name!.trim().isNotEmpty;
+  }
 
   /// Check if step 2 is complete (type is required)
-  bool get isStep2Complete => type != null && type!.isNotEmpty;
+  bool get isStep2Complete {
+    if (isBusiness) {
+      return venueName != null &&
+          venueName!.trim().isNotEmpty &&
+          venueType != null &&
+          venueType!.trim().isNotEmpty &&
+          venueCapacity != null &&
+          venueCapacity! > 0;
+    }
+    return type != null && type!.isNotEmpty;
+  }
 
   /// Check if step 3 is complete (city is required)
-  bool get isStep3Complete => cityId != null && cityId!.isNotEmpty;
+  bool get isStep3Complete {
+    if (isBusiness) {
+      return venuePhotos.isNotEmpty;
+    }
+    return cityId != null && cityId!.isNotEmpty;
+  }
 
-  /// Check if step 4 is complete (always complete - all optional)
-  bool get isStep4Complete => true;
+  /// Check if step 4 is complete
+  bool get isStep4Complete {
+    if (isBusiness) {
+      return name != null &&
+          name!.trim().isNotEmpty &&
+          type != null &&
+          type!.trim().isNotEmpty;
+    }
+    return true;
+  }
 
   /// Check if all required fields are complete
   bool get isComplete => isStep1Complete && isStep2Complete && isStep3Complete;
@@ -101,6 +153,11 @@ class OnboardingData {
     String? typeName,
     String? cityId,
     String? cityName,
+    PlaceSuggestion? location,
+    String? venueName,
+    String? venueType,
+    int? venueCapacity,
+    List<OnboardingPhoto>? venuePhotos,
     String? about,
     String? phone,
     String? instagram,
@@ -113,6 +170,10 @@ class OnboardingData {
     bool clearInstagram = false,
     bool clearTiktok = false,
     bool clearWebsite = false,
+    bool clearLocation = false,
+    bool clearVenueName = false,
+    bool clearVenueType = false,
+    bool clearVenueCapacity = false,
   }) =>
       OnboardingData(
         userType: userType ?? this.userType,
@@ -127,6 +188,13 @@ class OnboardingData {
         typeName: typeName ?? this.typeName,
         cityId: cityId ?? this.cityId,
         cityName: cityName ?? this.cityName,
+        location: clearLocation ? null : (location ?? this.location),
+        venueName: clearVenueName ? null : (venueName ?? this.venueName),
+        venueType: clearVenueType ? null : (venueType ?? this.venueType),
+        venueCapacity: clearVenueCapacity
+            ? null
+            : (venueCapacity ?? this.venueCapacity),
+        venuePhotos: venuePhotos ?? this.venuePhotos,
         about: clearAbout ? null : (about ?? this.about),
         phone: clearPhone ? null : (phone ?? this.phone),
         instagram: clearInstagram ? null : (instagram ?? this.instagram),
@@ -143,17 +211,37 @@ class OnboardingData {
   }
 
   /// Convert to business onboarding API payload
-  Map<String, dynamic> toBusinessPayload() => {
-        'name': name?.trim(),
-        if (_profilePhotoDataUri != null) 'profile_photo': _profilePhotoDataUri,
-        'business_type': typeSlug,
-        'city_id': cityId,
-        if (about != null && about!.isNotEmpty) 'about': about?.trim(),
-        if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
-        if (instagram != null && instagram!.isNotEmpty)
-          'instagram': instagram?.trim(),
-        if (website != null && website!.isNotEmpty) 'website': website?.trim(),
-      };
+  Map<String, dynamic> toBusinessPayload() {
+    final resolvedCityId = location?.cityId ?? cityId;
+    final resolvedCityName = location?.city.isNotEmpty == true ? location!.city : cityName;
+
+    return {
+      'name': name?.trim(),
+      if (_profilePhotoDataUri != null) 'profile_photo': _profilePhotoDataUri,
+      'business_type': typeSlug,
+      if (resolvedCityId != null && resolvedCityId.isNotEmpty)
+        'city_id': resolvedCityId,
+      if (resolvedCityName != null && resolvedCityName.isNotEmpty)
+        'city_name': resolvedCityName,
+      if (about != null && about!.isNotEmpty) 'about': about?.trim(),
+      if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
+      if (instagram != null && instagram!.isNotEmpty) 'instagram': instagram?.trim(),
+      if (website != null && website!.isNotEmpty) 'website': website?.trim(),
+      'primary_venue': {
+        'name': venueName?.trim(),
+        'venue_type': venueType,
+        'capacity': venueCapacity,
+        'place_id': location?.placeId,
+        'formatted_address': location?.formattedAddress,
+        'city': location?.city,
+        if (location?.country != null) 'country': location?.country,
+        if (location?.latitude != null) 'latitude': location?.latitude,
+        if (location?.longitude != null) 'longitude': location?.longitude,
+        if (venuePhotos.isNotEmpty)
+          'photos': venuePhotos.map((photo) => photo.dataUri).toList(),
+      },
+    };
+  }
 
   /// Convert to community onboarding API payload
   Map<String, dynamic> toCommunityPayload() => {
@@ -171,5 +259,5 @@ class OnboardingData {
 
   @override
   String toString() =>
-      'OnboardingData(userType: $userType, name: $name, type: $type, cityId: $cityId, step: $currentStep)';
+      'OnboardingData(userType: $userType, name: $name, type: $type, cityId: $cityId, place: ${location?.placeId}, step: $currentStep)';
 }

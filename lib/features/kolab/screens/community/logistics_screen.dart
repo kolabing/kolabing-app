@@ -16,7 +16,7 @@ import '../../providers/kolab_form_provider.dart';
 /// Community step 3: "AVAILABILITY" + "LOCATION"
 ///
 /// Lets the user select availability mode (one-time, recurring, flexible),
-/// dates/times, venue preference, city, and optional area.
+/// dates/times, city, and optional area.
 class LogisticsScreen extends ConsumerStatefulWidget {
   const LogisticsScreen({super.key});
 
@@ -129,35 +129,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           _buildSectionHeader('LOCATION'),
           const SizedBox(height: KolabingSpacing.md),
 
-          // Venue preference cards
-          _buildLabel('Venue Preference'),
-          const SizedBox(height: KolabingSpacing.xs),
-          Row(
-            children: VenuePreference.values.map((pref) {
-              final isSelected = kolab.venuePreference == pref;
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    right: pref != VenuePreference.values.last
-                        ? KolabingSpacing.xs
-                        : 0,
-                  ),
-                  child: _buildSelectionCard(
-                    icon: _venuePreferenceIcon(pref),
-                    title: pref.displayName,
-                    description: pref.description,
-                    isSelected: isSelected,
-                    onTap: () => ref
-                        .read(kolabFormProvider.notifier)
-                        .updateVenuePreference(pref),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-
-          const SizedBox(height: KolabingSpacing.md),
-
           // City dropdown
           _buildLabel('Preferred City'),
           const SizedBox(height: KolabingSpacing.xxs),
@@ -178,7 +149,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               ),
             ),
             data: (cities) => DropdownButtonFormField<String>(
-              value: kolab.preferredCity.isNotEmpty
+              initialValue: kolab.preferredCity.isNotEmpty
                   ? kolab.preferredCity
                   : null,
               decoration: _inputDecoration(hint: 'Select city'),
@@ -715,14 +686,4 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     }
   }
 
-  IconData _venuePreferenceIcon(VenuePreference pref) {
-    switch (pref) {
-      case VenuePreference.businessProvides:
-        return LucideIcons.store;
-      case VenuePreference.communityProvides:
-        return LucideIcons.users;
-      case VenuePreference.noVenue:
-        return LucideIcons.globe;
-    }
-  }
 }

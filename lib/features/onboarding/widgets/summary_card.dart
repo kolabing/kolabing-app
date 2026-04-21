@@ -85,7 +85,7 @@ class SummaryCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${data.typeName ?? 'Unknown type'} \u2022 ${data.cityName ?? 'Unknown city'}',
+                        '${data.typeName ?? 'Unknown type'} \u2022 ${data.location?.city ?? data.cityName ?? 'Unknown city'}',
                         style: GoogleFonts.openSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -100,6 +100,7 @@ class SummaryCard extends StatelessWidget {
 
             // Divider
             if (data.about != null ||
+                data.venueName != null ||
                 data.phone != null ||
                 data.instagram != null ||
                 data.tiktok != null ||
@@ -107,6 +108,30 @@ class SummaryCard extends StatelessWidget {
               const SizedBox(height: 16),
               const Divider(color: KolabingColors.border, height: 1),
               const SizedBox(height: 16),
+
+              if (data.isBusiness &&
+                  data.venueName != null &&
+                  data.venueName!.isNotEmpty) ...[
+                _ContactItem(
+                  icon: LucideIcons.building2,
+                  text: data.venueName!,
+                ),
+                if (data.location != null)
+                  _ContactItem(
+                    icon: LucideIcons.mapPin,
+                    text: data.location!.city,
+                  ),
+                if (data.venueCapacity != null)
+                  _ContactItem(
+                    icon: LucideIcons.users,
+                    text: 'Capacity ${data.venueCapacity}',
+                  ),
+                if (data.venuePhotos.isNotEmpty)
+                  _ContactItem(
+                    icon: LucideIcons.image,
+                    text: '${data.venuePhotos.length} venue photo(s)',
+                  ),
+              ],
 
               // About
               if (data.about != null && data.about!.isNotEmpty) ...[

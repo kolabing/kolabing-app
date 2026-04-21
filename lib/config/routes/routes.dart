@@ -359,6 +359,13 @@ final GoRouter kolabingRouter = GoRouter(
     // Onboarding Routes
     // -------------------------------------------------------------------------
 
+    GoRoute(
+      path: KolabingRoutes.onboarding,
+      name: 'onboarding',
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.userTypeSelection,
+    ),
+
     // Business Onboarding
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep1,

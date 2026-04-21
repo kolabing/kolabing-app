@@ -10,6 +10,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../onboarding/widgets/photo_upload_widget.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
@@ -110,14 +111,16 @@ class _CreateCollabRequestScreenState
         // Availability: restore first time slot from saved dates
         final start = opp.availabilityStart;
         setState(() {
-          _timeSlots.add(_TimeSlot(
-            date: start,
-            startTime: TimeOfDay(hour: start.hour, minute: start.minute),
-            endTime: TimeOfDay(
-              hour: opp.availabilityEnd.hour,
-              minute: opp.availabilityEnd.minute,
+          _timeSlots.add(
+            _TimeSlot(
+              date: start,
+              startTime: TimeOfDay(hour: start.hour, minute: start.minute),
+              endTime: TimeOfDay(
+                hour: opp.availabilityEnd.hour,
+                minute: opp.availabilityEnd.minute,
+              ),
             ),
-          ));
+          );
         });
 
         // Offering mode: switch to "Write my own" if other text is set
@@ -132,7 +135,8 @@ class _CreateCollabRequestScreenState
         if (opp.communityDeliverables.other != null) {
           setState(() {
             _expectSelectMode = false;
-            _deliverablesOtherController.text = opp.communityDeliverables.other!;
+            _deliverablesOtherController.text =
+                opp.communityDeliverables.other!;
           });
         }
       } else {
@@ -177,7 +181,9 @@ class _CreateCollabRequestScreenState
 
   Future<void> _handleSaveDraft() async {
     _syncFormToProvider();
-    final success = await ref.read(opportunityFormProvider.notifier).saveDraft();
+    final success = await ref
+        .read(opportunityFormProvider.notifier)
+        .saveDraft();
     if (success && mounted) {
       _showSuccessDialog(isDraft: true);
     }
@@ -196,8 +202,9 @@ class _CreateCollabRequestScreenState
       return;
     }
 
-    final success =
-        await ref.read(opportunityFormProvider.notifier).saveAndPublish();
+    final success = await ref
+        .read(opportunityFormProvider.notifier)
+        .saveAndPublish();
     if (success && mounted) {
       _showSuccessDialog(isDraft: false);
     }
@@ -228,7 +235,8 @@ class _CreateCollabRequestScreenState
       errors['business_offer'] = 'Please select what you are offering';
     }
     if (!opp.communityDeliverables.hasAnyDeliverable) {
-      errors['deliverables'] = 'Please select what you expect from the community';
+      errors['deliverables'] =
+          'Please select what you expect from the community';
     }
     return errors;
   }
@@ -349,17 +357,15 @@ class _CreateCollabRequestScreenState
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(opportunityFormProvider);
+    final opp = formState.opportunity;
 
     // Show subscription paywall when API returns requires_subscription
-    ref.listen<OpportunityFormState>(
-      opportunityFormProvider,
-      (previous, next) {
-        if (next.requiresSubscription &&
-            !(previous?.requiresSubscription ?? false)) {
-          _showSubscriptionPaywall();
-        }
-      },
-    );
+    ref.listen<OpportunityFormState>(opportunityFormProvider, (previous, next) {
+      if (next.requiresSubscription &&
+          !(previous?.requiresSubscription ?? false)) {
+        _showSubscriptionPaywall();
+      }
+    });
 
     final isBusy = formState.isSubmitting || formState.isPublishing;
 
@@ -387,36 +393,39 @@ class _CreateCollabRequestScreenState
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            if (formState.error != null) _buildErrorBanner(formState.error!),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(KolabingSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildBasicInfoSection(formState),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _buildCategoriesSection(formState),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _buildAvailabilitySection(),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _buildLocationSection(formState),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _buildRequestPhotoSection(),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _buildOfferingSection(formState),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _buildExpectSection(formState),
-                    // Bottom padding for action bar
-                    const SizedBox(height: KolabingSpacing.lg),
-                  ],
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              if (formState.error != null) _buildErrorBanner(formState.error!),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(KolabingSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBasicInfoSection(formState),
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildCategoriesSection(formState),
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildAvailabilitySection(),
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildLocationSection(formState),
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildRequestPhotoSection(opp?.offerPhoto),
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildOfferingSection(formState),
+                      const SizedBox(height: KolabingSpacing.md),
+                      _buildExpectSection(formState),
+                      const SizedBox(height: KolabingSpacing.lg),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            _buildBottomActionBar(formState, isBusy),
-          ],
+              _buildBottomActionBar(formState, isBusy),
+            ],
+          ),
         ),
       ),
     );
@@ -561,8 +570,7 @@ class _CreateCollabRequestScreenState
                   category,
                   style: GoogleFonts.openSans(
                     fontSize: 13,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected
                         ? KolabingColors.textPrimary
                         : KolabingColors.textSecondary,
@@ -729,8 +737,7 @@ class _CreateCollabRequestScreenState
                                   ),
                                   decoration: BoxDecoration(
                                     color: KolabingColors.surface,
-                                    borderRadius:
-                                        KolabingRadius.borderRadiusSm,
+                                    borderRadius: KolabingRadius.borderRadiusSm,
                                     border: Border.all(
                                       color: KolabingColors.border,
                                     ),
@@ -797,8 +804,7 @@ class _CreateCollabRequestScreenState
                                   ),
                                   decoration: BoxDecoration(
                                     color: KolabingColors.surface,
-                                    borderRadius:
-                                        KolabingRadius.borderRadiusSm,
+                                    borderRadius: KolabingRadius.borderRadiusSm,
                                     border: Border.all(
                                       color: KolabingColors.border,
                                     ),
@@ -841,9 +847,7 @@ class _CreateCollabRequestScreenState
             onTap: _addTimeSlot,
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                vertical: KolabingSpacing.sm,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
               decoration: BoxDecoration(
                 border: Border.all(color: KolabingColors.primary),
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -873,7 +877,6 @@ class _CreateCollabRequestScreenState
       ],
     );
   }
-
 
   void _addTimeSlot() {
     if (_timeSlots.length >= 3) return;
@@ -965,8 +968,7 @@ class _CreateCollabRequestScreenState
             return Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
-                  right:
-                      mode != VenueMode.values.last ? KolabingSpacing.xs : 0,
+                  right: mode != VenueMode.values.last ? KolabingSpacing.xs : 0,
                 ),
                 child: _buildSelectionCard(
                   icon: _venueModeIcon(mode),
@@ -1007,10 +1009,12 @@ class _CreateCollabRequestScreenState
                 : null,
             decoration: _inputDecoration(hint: 'Select city'),
             items: cities
-                .map((city) => DropdownMenuItem(
-                      value: city.name,
-                      child: Text(city.name),
-                    ))
+                .map(
+                  (city) => DropdownMenuItem(
+                    value: city.name,
+                    child: Text(city.name),
+                  ),
+                )
                 .toList(),
             onChanged: (value) {
               if (value != null) {
@@ -1060,7 +1064,7 @@ class _CreateCollabRequestScreenState
   // Section 4 - Request Photo
   // ===========================================================================
 
-  Widget _buildRequestPhotoSection() {
+  Widget _buildRequestPhotoSection(String? offerPhoto) {
     return _buildSectionCard(
       children: [
         _buildSectionHeader('REQUEST PHOTO'),
@@ -1068,7 +1072,10 @@ class _CreateCollabRequestScreenState
 
         // Radio: Use profile photo
         GestureDetector(
-          onTap: () => setState(() => _useProfilePhoto = true),
+          onTap: () {
+            setState(() => _useProfilePhoto = true);
+            ref.read(opportunityFormProvider.notifier).updateOfferPhoto(null);
+          },
           child: Container(
             padding: const EdgeInsets.all(KolabingSpacing.sm),
             decoration: BoxDecoration(
@@ -1112,61 +1119,19 @@ class _CreateCollabRequestScreenState
         const SizedBox(height: KolabingSpacing.sm),
 
         // Upload area
-        GestureDetector(
-          onTap: () {
-            setState(() => _useProfilePhoto = false);
-            // Image picker integration can be added later
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              vertical: KolabingSpacing.xl,
-              horizontal: KolabingSpacing.md,
-            ),
-            decoration: BoxDecoration(
-              color: _useProfilePhoto
-                  ? KolabingColors.surfaceVariant
-                  : KolabingColors.softYellow,
-              borderRadius: KolabingRadius.borderRadiusMd,
-              border: Border.all(
-                color: _useProfilePhoto
-                    ? KolabingColors.border
-                    : KolabingColors.primary,
-                width: _useProfilePhoto ? 1 : 2,
-                strokeAlign: BorderSide.strokeAlignInside,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  LucideIcons.camera,
-                  size: 32,
-                  color: _useProfilePhoto
-                      ? KolabingColors.textTertiary
-                      : KolabingColors.primary,
-                ),
-                const SizedBox(height: KolabingSpacing.xs),
-                Text(
-                  'Upload Photo',
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _useProfilePhoto
-                        ? KolabingColors.textSecondary
-                        : KolabingColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: KolabingSpacing.xxs),
-                Text(
-                  'Max 5MB',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.textTertiary,
-                  ),
-                ),
-              ],
-            ),
+        Opacity(
+          opacity: _useProfilePhoto ? 0.75 : 1,
+          child: PhotoUploadWidget(
+            photoBase64: offerPhoto,
+            onPhotoSelected: (file) async {
+              setState(() => _useProfilePhoto = false);
+              await ref
+                  .read(opportunityFormProvider.notifier)
+                  .updateOfferPhotoFile(file);
+            },
+            onPhotoRemoved: () {
+              ref.read(opportunityFormProvider.notifier).updateOfferPhoto(null);
+            },
           ),
         ),
       ],
@@ -1223,7 +1188,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateBusinessOffer(
-                        socialMediaExposure: !offer.socialMediaExposure),
+                      socialMediaExposure: !offer.socialMediaExposure,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Content Creation',
@@ -1231,7 +1197,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateBusinessOffer(
-                        contentCreation: !offer.contentCreation),
+                      contentCreation: !offer.contentCreation,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Discount',
@@ -1327,7 +1294,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        socialMediaContent: !deliverables.socialMediaContent),
+                      socialMediaContent: !deliverables.socialMediaContent,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Event Activation',
@@ -1335,7 +1303,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        eventActivation: !deliverables.eventActivation),
+                      eventActivation: !deliverables.eventActivation,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Product Placement',
@@ -1343,7 +1312,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        productPlacement: !deliverables.productPlacement),
+                      productPlacement: !deliverables.productPlacement,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Community Reach',
@@ -1351,7 +1321,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        communityReach: !deliverables.communityReach),
+                      communityReach: !deliverables.communityReach,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Review & Feedback',
@@ -1359,7 +1330,8 @@ class _CreateCollabRequestScreenState
                 onTap: () => ref
                     .read(opportunityFormProvider.notifier)
                     .updateDeliverables(
-                        reviewFeedback: !deliverables.reviewFeedback),
+                      reviewFeedback: !deliverables.reviewFeedback,
+                    ),
               ),
               _buildSelectableChip(
                 label: 'Other',
@@ -1473,8 +1445,9 @@ class _CreateCollabRequestScreenState
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,
-                  disabledBackgroundColor:
-                      KolabingColors.primary.withValues(alpha: 0.7),
+                  disabledBackgroundColor: KolabingColors.primary.withValues(
+                    alpha: 0.7,
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: KolabingRadius.borderRadiusMd,
@@ -1540,43 +1513,43 @@ class _CreateCollabRequestScreenState
   }
 
   Widget _buildLabel(String label) => Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
-        ),
-      );
+    label,
+    style: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: KolabingColors.textPrimary,
+    ),
+  );
 
   Widget _buildFieldError(String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.errorBg,
+      borderRadius: KolabingRadius.borderRadiusSm,
+    ),
+    child: Row(
+      children: [
+        const Icon(
+          LucideIcons.alertCircle,
+          size: 14,
+          color: KolabingColors.error,
         ),
-        decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.alertCircle,
-              size: 14,
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
+            error,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
               color: KolabingColors.error,
             ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   Widget _buildTextField({
     required String label,
@@ -1608,9 +1581,7 @@ class _CreateCollabRequestScreenState
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.openSans(
-              color: KolabingColors.textTertiary,
-            ),
+            hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
             filled: true,
             fillColor: KolabingColors.surface,
             counterText: '',
@@ -1630,8 +1601,10 @@ class _CreateCollabRequestScreenState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide:
-                  const BorderSide(color: KolabingColors.primary, width: 2),
+              borderSide: const BorderSide(
+                color: KolabingColors.primary,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -1647,9 +1620,7 @@ class _CreateCollabRequestScreenState
   InputDecoration _inputDecoration({required String hint}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        color: KolabingColors.textTertiary,
-      ),
+      hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
       filled: true,
       fillColor: KolabingColors.surface,
       border: OutlineInputBorder(
@@ -1662,16 +1633,12 @@ class _CreateCollabRequestScreenState
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusMd,
-        borderSide:
-            const BorderSide(color: KolabingColors.primary, width: 2),
+        borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
       ),
     );
   }
 
-  Widget _buildPickerField({
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _buildPickerField({required IconData icon, required String label}) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.xs,
@@ -1684,11 +1651,7 @@ class _CreateCollabRequestScreenState
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: KolabingColors.textTertiary,
-          ),
+          Icon(icon, size: 14, color: KolabingColors.textTertiary),
           const SizedBox(width: KolabingSpacing.xxs),
           Expanded(
             child: Text(
@@ -1725,8 +1688,7 @@ class _CreateCollabRequestScreenState
               : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color:
-                isSelected ? KolabingColors.primary : KolabingColors.border,
+            color: isSelected ? KolabingColors.primary : KolabingColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1853,8 +1815,7 @@ class _CreateCollabRequestScreenState
               : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusRound,
           border: Border.all(
-            color:
-                isSelected ? KolabingColors.primary : KolabingColors.border,
+            color: isSelected ? KolabingColors.primary : KolabingColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),

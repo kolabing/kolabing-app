@@ -146,21 +146,7 @@ class AuthService {
         'email': email,
         'password': password,
         'password_confirmation': password,
-        'name': onboardingData.name?.trim(),
-        'business_type': onboardingData.typeSlug,
-        'city_id': onboardingData.cityId,
-        if (onboardingData.about != null && onboardingData.about!.isNotEmpty)
-          'about': onboardingData.about,
-        if (onboardingData.phone != null && onboardingData.phone!.isNotEmpty)
-          'phone_number': onboardingData.phone,
-        if (onboardingData.instagram != null &&
-            onboardingData.instagram!.isNotEmpty)
-          'instagram': onboardingData.instagram,
-        if (onboardingData.website != null &&
-            onboardingData.website!.isNotEmpty)
-          'website': onboardingData.website,
-        if (onboardingData.photoBase64 != null)
-          'profile_photo': _buildProfilePhotoDataUri(onboardingData),
+        ...onboardingData.toBusinessPayload(),
       };
 
       debugPrint('🔐 Request body keys: ${body.keys.toList()}');
@@ -783,10 +769,10 @@ class AuthService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
         final user = UserModel.fromJson(data);
+        await _saveUser(user);
         _cachedUser = user;
         return user;
       } else if (response.statusCode == 401) {
-        await logout();
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -870,15 +856,40 @@ class AuthService {
     return token != null;
   }
 
+  /// Restore the best available authenticated user without destroying
+  /// persisted auth on transient refresh failures.
+  Future<UserModel?> restoreSessionUser() async {
+    final token = await getToken();
+    if (token == null) {
+      return null;
+    }
+
+    final storedUser = await getStoredUser();
+    if (storedUser == null) {
+      return null;
+    }
+
+    try {
+      return await getCurrentUser();
+    } on AuthException {
+      return storedUser;
+    } on NetworkException {
+      return storedUser;
+    }
+  }
+
   /// Save auth data to secure storage
   Future<void> _saveAuthData(AuthResponse response) async {
     _cachedToken = response.token;
-    _cachedUser = response.user;
-
     await _secureStorage.write(key: _tokenKey, value: response.token);
+    await _saveUser(response.user);
+  }
+
+  Future<void> _saveUser(UserModel user) async {
+    _cachedUser = user;
     await _secureStorage.write(
       key: _userKey,
-      value: jsonEncode(response.user.toJson()),
+      value: jsonEncode(user.toJson()),
     );
   }
 

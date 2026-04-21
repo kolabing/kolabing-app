@@ -57,14 +57,22 @@ class ReviewScreen extends ConsumerWidget {
         // -- Step 0: Venue or Product details
         if (isVenue)
           _ReviewSection(
-            title: 'Venue Details',
+            title: 'Campaign & Venue',
             icon: LucideIcons.building2,
             onTap: () => notifier.goToStep(0),
             rows: [
-              _ReviewRow('Name', kolab.venueName ?? '-'),
+              _ReviewRow(
+                'Title',
+                kolab.title.isNotEmpty ? kolab.title : '-',
+              ),
+              _ReviewRow('Venue', kolab.venueName ?? '-'),
               _ReviewRow(
                 'Type',
                 kolab.venueType?.displayName ?? '-',
+              ),
+              _ReviewRow(
+                'Description',
+                kolab.description.isNotEmpty ? kolab.description : '-',
               ),
               _ReviewRow(
                 'Capacity',
@@ -86,6 +94,10 @@ class ReviewScreen extends ConsumerWidget {
             icon: LucideIcons.package,
             onTap: () => notifier.goToStep(0),
             rows: [
+              _ReviewRow(
+                'Title',
+                kolab.title.isNotEmpty ? kolab.title : '-',
+              ),
               _ReviewRow('Name', kolab.productName ?? '-'),
               _ReviewRow(
                 'Type',
@@ -113,11 +125,7 @@ class ReviewScreen extends ConsumerWidget {
           rows: [
             _ReviewRow(
               'Photos',
-              '${kolab.media.where((m) => m.type == 'image').length} photo(s)',
-            ),
-            _ReviewRow(
-              'Video',
-              kolab.media.any((m) => m.type == 'video') ? 'Added' : 'None',
+              '${kolab.media.where((m) => m.type == 'photo').length} photo(s)',
             ),
           ],
         ),

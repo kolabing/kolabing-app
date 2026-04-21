@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../auth/models/auth_response.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
+import '../../auth/models/auth_response.dart';
+import '../../auth/models/user_model.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
 import '../enums/deliverable_type.dart';
 import '../enums/intent_type.dart';
 import '../enums/need_type.dart';
@@ -102,12 +104,60 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
 
   /// Select an intent type and reset the form for that flow.
   void selectIntent(IntentType intent) {
+    final initialKolab = _buildInitialKolab(intent);
     state = KolabFormState(
       intentType: intent,
       currentStep: 0,
       totalSteps: intent.totalSteps,
-      kolab: Kolab.empty(intent),
+      kolab: initialKolab,
     );
+  }
+
+  Kolab _buildInitialKolab(IntentType intent) {
+    final onboardingState = ref.read(onboardingProvider);
+    final businessProfile = _readBusinessProfile();
+    final primaryVenue = businessProfile?.primaryVenue;
+
+    var kolab = Kolab.empty(intent);
+
+    final preferredCity = primaryVenue?.city ??
+        businessProfile?.city?.name ??
+        onboardingState?.location?.city ??
+        onboardingState?.cityName ??
+        '';
+
+    kolab = kolab.copyWith(preferredCity: preferredCity);
+
+    if (intent == IntentType.venuePromotion) {
+      kolab = kolab.copyWith(
+        venueName: primaryVenue?.name ?? onboardingState?.venueName,
+        venueType: _resolveVenueType(
+          primaryVenue?.venueType ?? onboardingState?.venueType,
+        ),
+        capacity: primaryVenue?.capacity ?? onboardingState?.venueCapacity,
+        venueAddress: primaryVenue?.formattedAddress ??
+            onboardingState?.location?.formattedAddress,
+      );
+    }
+
+    return kolab;
+  }
+
+  BusinessProfile? _readBusinessProfile() {
+    try {
+      return ref.read(authProvider).user?.businessProfile;
+    } on Exception {
+      return null;
+    }
+  }
+
+  VenueType? _resolveVenueType(String? rawType) {
+    if (rawType == null || rawType.isEmpty) return null;
+    try {
+      return VenueType.fromString(rawType);
+    } on Exception {
+      return null;
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -339,16 +389,6 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   void updateOffersInReturn(List<DeliverableType> offers) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(offersInReturn: offers),
-      clearError: true,
-    );
-  }
-
-  void updateVenuePreference(VenuePreference? preference) {
-    state = state.copyWith(
-      kolab: state.kolab.copyWith(
-        venuePreference: preference,
-        clearVenuePreference: preference == null,
-      ),
       clearError: true,
     );
   }
@@ -612,20 +652,22 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   ) {
     switch (step) {
       case 0: // Venue details
-        if (kolab.venueName == null || kolab.venueName!.isEmpty) {
-          errors['venue_name'] = 'Venue name is required';
+        if (kolab.title.isEmpty) {
+          errors['title'] = 'Title is required';
         }
-        if (kolab.venueType == null) {
-          errors['venue_type'] = 'Select a venue type';
+        if (kolab.description.isEmpty) {
+          errors['description'] = 'Description is required';
         }
-        if (kolab.capacity == null || kolab.capacity! <= 0) {
-          errors['capacity'] = 'Capacity must be greater than 0';
-        }
-        if (kolab.venueAddress == null || kolab.venueAddress!.isEmpty) {
-          errors['venue_address'] = 'Venue address is required';
-        }
-        if (kolab.preferredCity.isEmpty) {
-          errors['preferred_city'] = 'Preferred city is required';
+        if (kolab.venueName == null ||
+            kolab.venueName!.isEmpty ||
+            kolab.venueType == null ||
+            kolab.capacity == null ||
+            kolab.capacity! <= 0 ||
+            kolab.venueAddress == null ||
+            kolab.venueAddress!.isEmpty ||
+            kolab.preferredCity.isEmpty) {
+          errors['primary_venue'] =
+              'Complete your business onboarding venue profile before promoting it.';
         }
       case 1: // Media
         if (kolab.media.isEmpty) {
@@ -645,6 +687,14 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
         }
+        if (kolab.availabilityMode != AvailabilityMode.flexible &&
+            kolab.availabilityStart != null) {
+          final today = DateUtils.dateOnly(DateTime.now());
+          final start = DateUtils.dateOnly(kolab.availabilityStart!);
+          if (!start.isAfter(today)) {
+            errors['availability_start'] = 'Start date must be in the future';
+          }
+        }
       case 6: // Review
         // Review step has no additional validation
         break;
@@ -658,6 +708,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   ) {
     switch (step) {
       case 0: // Product details
+        if (kolab.title.isEmpty) {
+          errors['title'] = 'Title is required';
+        }
         if (kolab.productName == null || kolab.productName!.isEmpty) {
           errors['product_name'] = 'Product name is required';
         }
@@ -687,6 +740,14 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 5: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
+        }
+        if (kolab.availabilityMode != AvailabilityMode.flexible &&
+            kolab.availabilityStart != null) {
+          final today = DateUtils.dateOnly(DateTime.now());
+          final start = DateUtils.dateOnly(kolab.availabilityStart!);
+          if (!start.isAfter(today)) {
+            errors['availability_start'] = 'Start date must be in the future';
+          }
         }
       case 6: // Review
         // Review step has no additional validation

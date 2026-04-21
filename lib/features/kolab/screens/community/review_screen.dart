@@ -231,13 +231,6 @@ class ReviewScreen extends ConsumerWidget {
                           kolab.area!,
                         ),
                       ],
-                      if (kolab.venuePreference != null) ...[
-                        const SizedBox(height: KolabingSpacing.xxs),
-                        _buildReviewInfoRow(
-                          LucideIcons.building2,
-                          kolab.venuePreference!.displayName,
-                        ),
-                      ],
                     ],
                   ),
                 ),

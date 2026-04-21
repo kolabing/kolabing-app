@@ -17,13 +17,59 @@ import '../../providers/kolab_form_provider.dart';
 ///
 /// Lets the user choose to use their community profile photo or upload a new
 /// one. The uploaded photo will appear on the kolab card in Explore.
-class PhotoScreen extends ConsumerWidget {
+class PhotoScreen extends ConsumerStatefulWidget {
   const PhotoScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PhotoScreen> createState() => _PhotoScreenState();
+}
+
+class _PhotoScreenState extends ConsumerState<PhotoScreen> {
+  final ImagePicker _picker = ImagePicker();
+  bool _isUploading = false;
+
+  Future<void> _pickAndUploadPhoto() async {
+    final image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 85,
+    );
+    if (image == null) return;
+
+    setState(() => _isUploading = true);
+    try {
+      final uploadService = ref.read(uploadServiceProvider);
+      final url = await uploadService.upload(
+        filePath: image.path,
+        folder: 'kolabs',
+      );
+      ref.read(kolabFormProvider.notifier).updateMedia([
+            KolabMedia(url: url, type: 'photo', sortOrder: 0),
+          ]);
+    } on Exception catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Upload failed: $e'),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(kolabFormProvider);
     final useProfilePhoto = state.kolab.media.isEmpty;
+    final uploadedPhoto = state.kolab.media.isNotEmpty
+        ? state.kolab.media.first
+        : null;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -138,92 +184,177 @@ class PhotoScreen extends ConsumerWidget {
 
           const SizedBox(height: KolabingSpacing.md),
 
+          if (_isUploading) ...[
+            const LinearProgressIndicator(color: KolabingColors.primary),
+            const SizedBox(height: KolabingSpacing.md),
+          ],
+
           // Option 2: Upload a photo
-          GestureDetector(
-            onTap: () async {
-              final picker = ImagePicker();
-              final image = await picker.pickImage(
-                source: ImageSource.gallery,
-                maxWidth: 1920,
-                maxHeight: 1920,
-                imageQuality: 85,
-              );
-              if (image == null) return;
-              try {
-                final uploadService = ref.read(uploadServiceProvider);
-                final url = await uploadService.upload(
-                  filePath: image.path,
-                  folder: 'kolabs',
-                );
-                ref.read(kolabFormProvider.notifier).addMedia(
-                  KolabMedia(url: url, type: 'image', sortOrder: 0),
-                );
-              } on Exception catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Upload failed: $e')),
-                  );
-                }
-              }
-            },
-            child: Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                color: KolabingColors.surface,
-                borderRadius: KolabingRadius.borderRadiusMd,
-                border: Border.all(
-                  color: KolabingColors.border,
-                  width: 1,
-                  // Dashed border simulated with dash pattern in CustomPaint
+          if (uploadedPhoto == null)
+            GestureDetector(
+              onTap: _isUploading ? null : _pickAndUploadPhoto,
+              child: Container(
+                width: double.infinity,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: KolabingColors.surface,
+                  borderRadius: KolabingRadius.borderRadiusMd,
+                  border: Border.all(
+                    color: KolabingColors.border,
+                    width: 1,
+                  ),
+                ),
+                child: CustomPaint(
+                  painter: _DashedBorderPainter(
+                    color: KolabingColors.textTertiary,
+                    borderRadius: KolabingRadius.md,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(KolabingSpacing.md),
+                        decoration: const BoxDecoration(
+                          color: KolabingColors.surfaceVariant,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          LucideIcons.camera,
+                          size: 32,
+                          color: KolabingColors.textTertiary,
+                        ),
+                      ),
+                      const SizedBox(height: KolabingSpacing.sm),
+                      Text(
+                        'Upload a photo',
+                        style: GoogleFonts.openSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: KolabingColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: KolabingSpacing.xxs),
+                      Text(
+                        'Max 5MB',
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          color: KolabingColors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: CustomPaint(
-                painter: _DashedBorderPainter(
-                  color: KolabingColors.textTertiary,
-                  borderRadius: KolabingRadius.md,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(KolabingSpacing.md),
-                      decoration: const BoxDecoration(
-                        color: KolabingColors.surfaceVariant,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        LucideIcons.camera,
-                        size: 32,
-                        color: KolabingColors.textTertiary,
-                      ),
-                    ),
-                    const SizedBox(height: KolabingSpacing.sm),
-                    Text(
-                      'Upload a photo',
-                      style: GoogleFonts.openSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: KolabingSpacing.xxs),
-                    Text(
-                      'Max 5MB',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        color: KolabingColors.textTertiary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            )
+          else
+            _UploadedPhotoCard(
+              photo: uploadedPhoto,
+              isUploading: _isUploading,
+              onReplace: _pickAndUploadPhoto,
+              onRemove: () {
+                ref.read(kolabFormProvider.notifier).updateMedia([]);
+              },
             ),
-          ),
         ],
       ),
     );
   }
+}
+
+class _UploadedPhotoCard extends StatelessWidget {
+  const _UploadedPhotoCard({
+    required this.photo,
+    required this.isUploading,
+    required this.onReplace,
+    required this.onRemove,
+  });
+
+  final KolabMedia photo;
+  final bool isUploading;
+  final VoidCallback onReplace;
+  final VoidCallback onRemove;
+
+  bool get _isLocalFile => photo.url.isNotEmpty && !photo.url.startsWith('http');
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(KolabingSpacing.sm),
+        decoration: BoxDecoration(
+          color: KolabingColors.surface,
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(color: KolabingColors.primary, width: 1.5),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: KolabingRadius.borderRadiusMd,
+              child: AspectRatio(
+                aspectRatio: 16 / 10,
+                child: _isLocalFile
+                    ? Image.file(
+                        File(photo.url),
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(
+                        photo.url,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Container(
+                          color: KolabingColors.surfaceVariant,
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            LucideIcons.imageOff,
+                            color: KolabingColors.textTertiary,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              'Uploaded photo selected',
+              style: GoogleFonts.openSans(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: KolabingColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.xxs),
+            Text(
+              'This image will appear on your kolab card in Explore.',
+              style: GoogleFonts.openSans(
+                fontSize: 13,
+                color: KolabingColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: isUploading ? null : onRemove,
+                    child: const Text('Use profile photo'),
+                  ),
+                ),
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: isUploading ? null : onReplace,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: KolabingColors.primary,
+                      foregroundColor: KolabingColors.onPrimary,
+                    ),
+                    child: const Text('Replace photo'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
 }
 
 /// Paints a dashed rounded rectangle border.

@@ -15,11 +15,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for all opportunity API operations
 class OpportunityService {
-  OpportunityService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  OpportunityService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -58,14 +56,18 @@ class OpportunityService {
 
     var uriString = '$_baseUrl/opportunities?';
     uriString += queryParams.entries
-        .map((e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
     if (categoryParams.isNotEmpty) {
       uriString += '&';
       uriString += categoryParams
-          .map((e) =>
-              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+          )
           .join('&');
     }
 
@@ -79,7 +81,9 @@ class OpportunityService {
       final response = await _httpClient.get(uri, headers: headers);
 
       debugPrint('Browse response status: ${response.statusCode}');
-      debugPrint('Browse response body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+      debugPrint(
+        'Browse response body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+      );
 
       if (response.statusCode == 200) {
         return _parsePaginatedResponse(response.body);
@@ -117,16 +121,13 @@ class OpportunityService {
       if (status != null) 'status': status,
     };
 
-    final uri = Uri.parse('$_baseUrl/me/opportunities').replace(
-      queryParameters: queryParams,
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/me/opportunities',
+    ).replace(queryParameters: queryParams);
     debugPrint('OpportunityService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('My opportunities response status: ${response.statusCode}');
 
@@ -157,10 +158,7 @@ class OpportunityService {
     debugPrint('OpportunityService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Opportunity detail response status: ${response.statusCode}');
 
@@ -175,7 +173,9 @@ class OpportunityService {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(
-          error: ApiError(message: 'You are not authorized to view this opportunity.'),
+          error: ApiError(
+            message: 'You are not authorized to view this opportunity.',
+          ),
         );
       } else if (response.statusCode == 404) {
         throw const ApiException(
@@ -262,7 +262,9 @@ class OpportunityService {
       );
 
       debugPrint('Update response status: ${response.statusCode}');
-      debugPrint('Update response body: ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+      debugPrint(
+        'Update response body: ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -317,9 +319,13 @@ class OpportunityService {
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
-      } else if (response.statusCode == 403) {
-        // Publish endpoint returned 403 — try updating status via PUT as fallback
-        debugPrint('Publish endpoint returned 403, trying status update via PUT...');
+      } else if (response.statusCode == 403 ||
+          response.statusCode == 404 ||
+          response.statusCode == 405) {
+        // Some environments expose only inline status updates.
+        debugPrint(
+          'Publish endpoint returned ${response.statusCode}, trying status update via PUT...',
+        );
         return _publishViaStatusUpdate(id);
       } else {
         throw _parseApiError(response);
@@ -350,9 +356,18 @@ class OpportunityService {
       );
 
       debugPrint('Status update response status: ${response.statusCode}');
-      debugPrint('Status update response body: ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+      debugPrint(
+        'Status update response body: ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+      );
 
       if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as Map<String, dynamic>?;
+        if (data != null) {
+          return Opportunity.fromJson(data);
+        }
+        throw const NetworkException('Invalid response format');
+      } else if (response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>?;
         if (data != null) {
@@ -457,17 +472,15 @@ class OpportunityService {
     debugPrint('OpportunityService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final dataList = json['data'] as List<dynamic>? ?? [];
         return dataList
-            .map((item) =>
-                OnboardingCity.fromJson(item as Map<String, dynamic>))
+            .map(
+              (item) => OnboardingCity.fromJson(item as Map<String, dynamic>),
+            )
             .toList();
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
@@ -509,7 +522,9 @@ class OpportunityService {
       meta = json['meta'] as Map<String, dynamic>?;
     }
 
-    debugPrint('Parse: rawData type=${rawData.runtimeType}, dataList length=${dataList.length}, meta current_page=${meta?['current_page']}, last_page=${meta?['last_page']}, total=${meta?['total']}');
+    debugPrint(
+      'Parse: rawData type=${rawData.runtimeType}, dataList length=${dataList.length}, meta current_page=${meta?['current_page']}, last_page=${meta?['last_page']}, total=${meta?['total']}',
+    );
 
     final opportunities = <Opportunity>[];
     for (var i = 0; i < dataList.length; i++) {
@@ -526,11 +541,15 @@ class OpportunityService {
         final id = item is Map ? item['id'] : 'unknown';
         debugPrint('Error parsing opportunity[$i] (id=$id, title=$title): $e');
         debugPrint('Stack: $st');
-        debugPrint('Raw item keys: ${item is Map ? item.keys.toList() : 'N/A'}');
+        debugPrint(
+          'Raw item keys: ${item is Map ? item.keys.toList() : 'N/A'}',
+        );
       }
     }
 
-    debugPrint('Parsed ${opportunities.length} / ${dataList.length} opportunities');
+    debugPrint(
+      'Parsed ${opportunities.length} / ${dataList.length} opportunities',
+    );
 
     return PaginatedResponse<Opportunity>(
       data: opportunities,

@@ -8,6 +8,7 @@ import '../models/business_type.dart';
 import '../models/city.dart';
 import '../models/community_type.dart';
 import '../models/onboarding_state.dart';
+import '../models/place_suggestion.dart';
 import '../../../config/constants/api.dart';
 
 /// API configuration
@@ -178,6 +179,59 @@ class OnboardingService {
       // Fallback to mock data on error
       return _mockCities();
     }
+  }
+
+  /// Search places for the business location autocomplete.
+  ///
+  /// GET /places/autocomplete?query={query}
+  /// Falls back to city search until backend Google Places proxy is ready.
+  Future<List<PlaceSuggestion>> searchPlaces(String query) async {
+    if (_useMockApi) {
+      final cities = await _mockCities();
+      return cities
+          .where((city) =>
+              city.name.toLowerCase().contains(query.toLowerCase()) ||
+              (city.country?.toLowerCase().contains(query.toLowerCase()) ??
+                  false))
+          .map(PlaceSuggestion.fromCity)
+          .toList();
+    }
+
+    final url = '$_baseUrl/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
+    debugPrint('📍 Place autocomplete request: GET $url');
+
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as List<dynamic>? ?? const [];
+        final suggestions = data
+            .map((item) => PlaceSuggestion.fromJson(item as Map<String, dynamic>))
+            .where((item) => item.placeId.isNotEmpty && item.city.isNotEmpty)
+            .toList();
+
+        if (suggestions.isNotEmpty) {
+          return suggestions;
+        }
+      }
+    } catch (e) {
+      debugPrint('📍 Place autocomplete fallback: $e');
+    }
+
+    final cities = await getCities();
+    return cities
+        .where((city) =>
+            city.name.toLowerCase().contains(query.toLowerCase()) ||
+            (city.country?.toLowerCase().contains(query.toLowerCase()) ??
+                false))
+        .map(PlaceSuggestion.fromCity)
+        .toList();
   }
 
   // ---------------------------------------------------------------------------

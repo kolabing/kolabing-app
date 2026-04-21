@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../providers/auth_state_provider.dart';
 
 /// Animation durations as per UX spec
 const Duration _fadeInDuration = Duration(milliseconds: 200);
@@ -63,10 +64,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   void _configureSystemUI() {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.edgeToEdge,
-      overlays: [],
-    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -94,31 +92,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _opacityAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _entryController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
 
     // Scale animation (0.9 -> 1.0)
     _scaleAnimation = Tween<double>(
       begin: 0.9,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _entryController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
 
     // Exit fade animation (1 -> 0)
     _exitOpacityAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _exitController,
-      curve: Curves.easeIn,
-    ));
+    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
   }
 
   Future<void> _startSplashSequence() async {
+    final initializationFuture = ref
+        .read(splashStateProvider.notifier)
+        .initialize();
+
     // Phase 1: Entry animation (0-200ms)
     await _entryController.forward();
 
@@ -136,8 +129,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     if (!mounted) return;
 
-    // Navigate to Welcome Screen
-    context.go('/auth/welcome');
+    final route = await initializationFuture;
+    if (!mounted) return;
+    context.go(route);
   }
 
   @override
@@ -149,61 +143,61 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) => PopScope(
-        canPop: false,
-        child: Scaffold(
-          backgroundColor: KolabingColors.primary,
-          body: AnimatedBuilder(
-            animation: Listenable.merge([_entryController, _exitController]),
-            builder: (context, child) => Opacity(
-              opacity: _phase == _SplashPhase.exiting
-                  ? _exitOpacityAnimation.value
-                  : _opacityAnimation.value,
-              child: Transform.scale(
-                scale: _phase == _SplashPhase.entering
-                    ? _scaleAnimation.value
-                    : 1.0,
-                child: child,
-              ),
-            ),
-            child: Semantics(
-              label: 'Kolabing - Loading application',
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Black "K" logo
-                    SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: Center(
-                        child: Text(
-                          'K',
-                          style: GoogleFonts.rubik(
-                            fontSize: 80,
-                            fontWeight: FontWeight.w800,
-                            color: KolabingColors.onPrimary,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // "Kolabing" text
-                    Text(
-                      'Kolabing',
+    canPop: false,
+    child: Scaffold(
+      backgroundColor: KolabingColors.primary,
+      body: AnimatedBuilder(
+        animation: Listenable.merge([_entryController, _exitController]),
+        builder: (context, child) => Opacity(
+          opacity: _phase == _SplashPhase.exiting
+              ? _exitOpacityAnimation.value
+              : _opacityAnimation.value,
+          child: Transform.scale(
+            scale: _phase == _SplashPhase.entering
+                ? _scaleAnimation.value
+                : 1.0,
+            child: child,
+          ),
+        ),
+        child: Semantics(
+          label: 'Kolabing - Loading application',
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Black "K" logo
+                SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Center(
+                    child: Text(
+                      'K',
                       style: GoogleFonts.rubik(
-                        fontSize: 24,
+                        fontSize: 80,
                         fontWeight: FontWeight.w800,
                         color: KolabingColors.onPrimary,
-                        letterSpacing: 1.0,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 16),
+
+                // "Kolabing" text
+                Text(
+                  'Kolabing',
+                  style: GoogleFonts.rubik(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: KolabingColors.onPrimary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

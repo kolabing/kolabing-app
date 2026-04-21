@@ -1,58 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
+import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
-import '../../../opportunity/providers/opportunity_provider.dart';
-import '../../enums/venue_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
-/// Step 0 for the venue promotion flow: "YOUR VENUE"
+/// Step 0 for the venue promotion flow.
 ///
-/// Collects venue name, venue type, capacity, address, and city.
-/// This is a plain widget -- the parent provides Scaffold, AppBar, step
-/// indicator, and action bar.
+/// The venue itself is now inherited from the business onboarding profile,
+/// so this screen only captures campaign-specific copy and shows the linked
+/// venue summary.
 class VenueDetailsScreen extends ConsumerStatefulWidget {
   const VenueDetailsScreen({super.key});
 
   @override
-  ConsumerState<VenueDetailsScreen> createState() =>
-      _VenueDetailsScreenState();
+  ConsumerState<VenueDetailsScreen> createState() => _VenueDetailsScreenState();
 }
 
 class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
-  final _nameController = TextEditingController();
-  final _capacityController = TextEditingController();
-  final _addressController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   bool _didInit = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _capacityController.dispose();
-    _addressController.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
-  void _syncControllersFromState(Kolab kolab) {
+  void _syncControllers() {
     if (_didInit) return;
+    final kolab = ref.read(kolabFormProvider).kolab;
     _didInit = true;
-
-    _nameController.text = kolab.venueName ?? '';
-    _capacityController.text =
-        kolab.capacity != null ? kolab.capacity.toString() : '';
-    _addressController.text = kolab.venueAddress ?? '';
+    _titleController.text = kolab.title;
+    _descriptionController.text = kolab.description;
   }
-
-  // ---------------------------------------------------------------------------
-  // Build
-  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +51,16 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
     final errors = formState.fieldErrors;
     final notifier = ref.read(kolabFormProvider.notifier);
 
-    _syncControllersFromState(kolab);
+    _syncControllers();
 
-    final citiesAsync = ref.watch(citiesProvider);
+    final hasVenueProfile = kolab.venueName != null &&
+        kolab.venueName!.isNotEmpty &&
+        kolab.venueType != null &&
+        kolab.capacity != null &&
+        kolab.capacity! > 0 &&
+        kolab.venueAddress != null &&
+        kolab.venueAddress!.isNotEmpty &&
+        kolab.preferredCity.isNotEmpty;
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -71,183 +68,178 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         vertical: KolabingSpacing.lg,
       ),
       children: [
-        // -- Section header
-        const _SectionHeader(label: 'YOUR VENUE'),
+        const _SectionHeader(label: 'PROMOTION DETAILS'),
         const SizedBox(height: KolabingSpacing.lg),
-
-        // -- Venue Name
-        const _FieldLabel(label: 'Venue Name'),
-        const SizedBox(height: KolabingSpacing.xs),
-        TextField(
-          controller: _nameController,
-          maxLength: 255,
-          decoration: _inputDecoration(
-            hint: 'e.g. The Rooftop Bar',
-            error: errors['venue_name'],
+        if (!hasVenueProfile) ...[
+          Container(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            decoration: BoxDecoration(
+              color: KolabingColors.error.withValues(alpha: 0.08),
+              borderRadius: KolabingRadius.borderRadiusMd,
+              border: Border.all(
+                color: KolabingColors.error.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your primary venue profile is missing',
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.error,
+                  ),
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+                Text(
+                  'Complete business onboarding once to save your venue, then come back here and we will reuse it automatically.',
+                  style: GoogleFonts.openSans(
+                    fontSize: 13,
+                    color: KolabingColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: KolabingSpacing.sm),
+                TextButton(
+                  onPressed: () => context.go(KolabingRoutes.businessOnboardingStep1),
+                  child: const Text('Complete onboarding'),
+                ),
+              ],
+            ),
           ),
-          style: _inputTextStyle,
-          onChanged: notifier.updateVenueName,
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Venue Type
-        const _FieldLabel(label: 'Venue Type'),
-        const SizedBox(height: KolabingSpacing.xs),
-        if (errors.containsKey('venue_type'))
+          const SizedBox(height: KolabingSpacing.md),
+        ] else ...[
+          _VenueSummaryCard(kolab: kolab),
+          const SizedBox(height: KolabingSpacing.md),
+        ],
+        if (errors.containsKey('primary_venue'))
           Padding(
-            padding: const EdgeInsets.only(bottom: KolabingSpacing.xxs),
+            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
             child: Text(
-              errors['venue_type']!,
+              errors['primary_venue']!,
               style: GoogleFonts.openSans(
                 fontSize: 12,
                 color: KolabingColors.error,
               ),
             ),
           ),
-        Wrap(
-          spacing: KolabingSpacing.xs,
-          runSpacing: KolabingSpacing.xs,
-          children: VenueType.values.map((type) {
-            final isSelected = kolab.venueType == type;
-            return GestureDetector(
-              onTap: () {
-                notifier.updateVenueType(isSelected ? null : type);
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.surface,
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                  border: Border.all(
-                    color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.border,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      type.icon,
-                      size: 16,
-                      color: isSelected
-                          ? KolabingColors.onPrimary
-                          : KolabingColors.textPrimary,
-                    ),
-                    const SizedBox(width: KolabingSpacing.xxs),
-                    Text(
-                      type.displayName,
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
-                            ? KolabingColors.onPrimary
-                            : KolabingColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Capacity
-        const _FieldLabel(label: 'Capacity'),
+        const _FieldLabel(label: 'Listing Title'),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
-          controller: _capacityController,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          controller: _titleController,
+          maxLength: 255,
           decoration: _inputDecoration(
-            hint: 'e.g. 100',
-            error: errors['capacity'],
+            hint: 'e.g. Sunset rooftop social for local creators',
+            error: errors['title'],
           ),
           style: _inputTextStyle,
-          onChanged: (v) {
-            final parsed = int.tryParse(v);
-            notifier.updateCapacity(parsed);
-          },
+          onChanged: notifier.updateTitle,
         ),
         const SizedBox(height: KolabingSpacing.md),
-
-        // -- Address
-        const _FieldLabel(label: 'Address'),
+        const _FieldLabel(label: 'Campaign Description'),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
-          controller: _addressController,
+          controller: _descriptionController,
+          maxLength: 2000,
+          maxLines: 5,
           decoration: _inputDecoration(
-            hint: 'Street address',
-            error: errors['venue_address'],
+            hint: 'Tell communities what kind of experience you want to host and why your venue is a great fit.',
+            error: errors['description'],
           ),
           style: _inputTextStyle,
-          onChanged: notifier.updateVenueAddress,
+          onChanged: notifier.updateDescription,
         ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- City dropdown
-        const _FieldLabel(label: 'City'),
-        const SizedBox(height: KolabingSpacing.xs),
-        citiesAsync.when(
-          data: (cities) => DropdownButtonFormField<String>(
-              initialValue: kolab.preferredCity.isNotEmpty
-                  ? kolab.preferredCity
-                  : null,
-              decoration: _inputDecoration(
-                hint: 'Select city',
-                error: errors['preferred_city'],
-              ),
-              style: _inputTextStyle,
-              icon: const Icon(
-                LucideIcons.chevronDown,
-                size: 20,
-                color: KolabingColors.textSecondary,
-              ),
-              items: cities
-                  .map(
-                    (c) => DropdownMenuItem(
-                      value: c.name,
-                      child: Text(
-                        c.name,
-                        style: _inputTextStyle,
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) {
-                if (v != null) notifier.updatePreferredCity(v);
-              },
-            ),
-          loading: () => const LinearProgressIndicator(
-            color: KolabingColors.primary,
-            backgroundColor: KolabingColors.border,
-          ),
-          error: (_, _) => Text(
-            'Failed to load cities',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.error,
-            ),
-          ),
-        ),
-
-        const SizedBox(height: KolabingSpacing.lg),
       ],
     );
   }
 }
 
-// =============================================================================
-// Shared helpers (file-private)
-// =============================================================================
+class _VenueSummaryCard extends StatelessWidget {
+  const _VenueSummaryCard({required this.kolab});
+
+  final Kolab kolab;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.softYellow,
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(color: KolabingColors.softYellowBorder),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'PRIMARY VENUE',
+              style: GoogleFonts.rubik(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+                color: KolabingColors.primaryDark,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            _SummaryRow(
+              icon: LucideIcons.building2,
+              title: kolab.venueName ?? '--',
+              subtitle:
+                  '${kolab.venueType?.displayName ?? 'Venue'} • Capacity ${kolab.capacity ?? '--'}',
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            _SummaryRow(
+              icon: LucideIcons.mapPin,
+              title: kolab.venueAddress ?? '--',
+              subtitle: kolab.preferredCity,
+            ),
+          ],
+        ),
+      );
+}
+
+class _SummaryRow extends StatelessWidget {
+  const _SummaryRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: KolabingColors.primaryDark),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.openSans(
+                    fontSize: 13,
+                    color: KolabingColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+}
 
 InputDecoration _inputDecoration({
   required String hint,
@@ -281,50 +273,48 @@ InputDecoration _inputDecoration({
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderError),
+        borderSide: const BorderSide(color: KolabingColors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderError, width: 1.5),
+        borderSide: const BorderSide(color: KolabingColors.error, width: 1.5),
       ),
     );
 
-TextStyle get _inputTextStyle => GoogleFonts.openSans(
-      fontSize: 14,
-      color: KolabingColors.textPrimary,
-    );
-
-// ---------------------------------------------------------------------------
-// Reusable small widgets
-// ---------------------------------------------------------------------------
+final _inputTextStyle = GoogleFonts.openSans(
+  fontSize: 15,
+  color: KolabingColors.textPrimary,
+);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});
+
   final String label;
 
   @override
   Widget build(BuildContext context) => Text(
-      label,
-      style: GoogleFonts.rubik(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 1.0,
-        color: KolabingColors.textSecondary,
-      ),
-    );
+        label,
+        style: GoogleFonts.rubik(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1,
+          color: KolabingColors.textSecondary,
+        ),
+      );
 }
 
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel({required this.label});
+
   final String label;
 
   @override
   Widget build(BuildContext context) => Text(
-      label,
-      style: GoogleFonts.openSans(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: KolabingColors.textPrimary,
-      ),
-    );
+        label,
+        style: GoogleFonts.openSans(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: KolabingColors.textPrimary,
+        ),
+      );
 }

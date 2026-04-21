@@ -25,6 +25,7 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
+  final _titleController = TextEditingController();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -32,6 +33,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
   @override
   void dispose() {
+    _titleController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
@@ -41,6 +43,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     if (_didInit) return;
     _didInit = true;
 
+    _titleController.text = kolab.title;
     _nameController.text = kolab.productName ?? '';
     _descriptionController.text = kolab.description;
   }
@@ -65,6 +68,21 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Section header
         const _SectionHeader(label: 'YOUR PRODUCT OR SERVICE'),
         const SizedBox(height: KolabingSpacing.lg),
+
+        // -- Listing Title
+        const _FieldLabel(label: 'Listing Title'),
+        const SizedBox(height: KolabingSpacing.xs),
+        TextField(
+          controller: _titleController,
+          maxLength: 255,
+          decoration: _inputDecoration(
+            hint: 'e.g. Organic Cold Brew - Perfect for Community Events',
+            error: errors['title'],
+          ),
+          style: _inputTextStyle,
+          onChanged: notifier.updateTitle,
+        ),
+        const SizedBox(height: KolabingSpacing.md),
 
         // -- Product Name
         const _FieldLabel(label: 'Product Name'),

@@ -60,6 +60,63 @@ class City {
 }
 
 /// Business profile model
+class PrimaryVenueProfile {
+  const PrimaryVenueProfile({
+    required this.name,
+    required this.formattedAddress,
+    required this.city,
+    this.placeId,
+    this.country,
+    this.latitude,
+    this.longitude,
+    this.venueType,
+    this.capacity,
+    this.photos = const [],
+  });
+
+  factory PrimaryVenueProfile.fromJson(Map<String, dynamic> json) =>
+      PrimaryVenueProfile(
+        name: json['name']?.toString() ?? '',
+        formattedAddress: json['formatted_address']?.toString() ??
+            json['address']?.toString() ??
+            '',
+        city: json['city']?.toString() ?? '',
+        placeId: json['place_id']?.toString(),
+        country: json['country']?.toString(),
+        latitude: _parseDouble(json['latitude']),
+        longitude: _parseDouble(json['longitude']),
+        venueType: json['venue_type']?.toString(),
+        capacity: _parseInt(json['capacity']),
+        photos: json['photos'] is List
+            ? (json['photos'] as List).map((e) => e.toString()).toList()
+            : const [],
+      );
+
+  final String name;
+  final String formattedAddress;
+  final String city;
+  final String? placeId;
+  final String? country;
+  final double? latitude;
+  final double? longitude;
+  final String? venueType;
+  final int? capacity;
+  final List<String> photos;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'formatted_address': formattedAddress,
+        'city': city,
+        if (placeId != null) 'place_id': placeId,
+        if (country != null) 'country': country,
+        if (latitude != null) 'latitude': latitude,
+        if (longitude != null) 'longitude': longitude,
+        if (venueType != null) 'venue_type': venueType,
+        if (capacity != null) 'capacity': capacity,
+        if (photos.isNotEmpty) 'photos': photos,
+      };
+}
+
 class BusinessProfile {
   const BusinessProfile({
     required this.id,
@@ -70,6 +127,7 @@ class BusinessProfile {
     this.instagram,
     this.website,
     this.profilePhoto,
+    this.primaryVenue,
   });
 
   factory BusinessProfile.fromJson(Map<String, dynamic> json) =>
@@ -84,6 +142,11 @@ class BusinessProfile {
         instagram: json['instagram'] as String?,
         website: json['website'] as String?,
         profilePhoto: json['profile_photo'] as String?,
+        primaryVenue: json['primary_venue'] != null
+            ? PrimaryVenueProfile.fromJson(
+                json['primary_venue'] as Map<String, dynamic>,
+              )
+            : null,
       );
 
   final String id;
@@ -94,6 +157,7 @@ class BusinessProfile {
   final String? instagram;
   final String? website;
   final String? profilePhoto;
+  final PrimaryVenueProfile? primaryVenue;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -104,7 +168,23 @@ class BusinessProfile {
         if (instagram != null) 'instagram': instagram,
         if (website != null) 'website': website,
         if (profilePhoto != null) 'profile_photo': profilePhoto,
+        if (primaryVenue != null) 'primary_venue': primaryVenue!.toJson(),
       };
+}
+
+int? _parseInt(Object? value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) return int.tryParse(value);
+  return null;
+}
+
+double? _parseDouble(Object? value) {
+  if (value == null) return null;
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
 }
 
 /// Community profile model

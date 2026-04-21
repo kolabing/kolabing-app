@@ -40,15 +40,22 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   ];
 
   Future<void> _pickDateRange(KolabFormNotifier notifier, Kolab kolab) async {
-    final now = DateTime.now();
-    final initialStart = kolab.availabilityStart ?? now;
-    final initialEnd =
-        kolab.availabilityEnd ?? now.add(const Duration(days: 30));
+    final today = DateUtils.dateOnly(DateTime.now());
+    final firstAllowedDate = today.add(const Duration(days: 1));
+    final initialStart = kolab.availabilityStart != null &&
+            !DateUtils.dateOnly(kolab.availabilityStart!)
+                .isBefore(firstAllowedDate)
+        ? kolab.availabilityStart!
+        : firstAllowedDate;
+    final initialEnd = kolab.availabilityEnd != null &&
+            !DateUtils.dateOnly(kolab.availabilityEnd!).isBefore(initialStart)
+        ? kolab.availabilityEnd!
+        : initialStart.add(const Duration(days: 30));
 
     final picked = await showDateRangePicker(
       context: context,
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 365)),
+      firstDate: firstAllowedDate,
+      lastDate: firstAllowedDate.add(const Duration(days: 365)),
       initialDateRange: DateTimeRange(
         start: initialStart,
         end: initialEnd,
@@ -139,7 +146,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
 
         // -- Conditional sub-fields
         if (kolab.availabilityMode == AvailabilityMode.oneTime) ...[
-          _buildDateRangeSection(kolab, notifier),
+          _buildDateRangeSection(kolab, notifier, errors),
           const SizedBox(height: KolabingSpacing.md),
           _buildTimeSection(kolab, notifier),
         ],
@@ -149,7 +156,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           const SizedBox(height: KolabingSpacing.md),
           _buildTimeSection(kolab, notifier),
           const SizedBox(height: KolabingSpacing.md),
-          _buildDateRangeSection(kolab, notifier),
+          _buildDateRangeSection(kolab, notifier, errors),
         ],
 
         if (kolab.availabilityMode == AvailabilityMode.flexible)
@@ -192,7 +199,11 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   // Sub-section builders
   // ---------------------------------------------------------------------------
 
-  Widget _buildDateRangeSection(Kolab kolab, KolabFormNotifier notifier) {
+  Widget _buildDateRangeSection(
+    Kolab kolab,
+    KolabFormNotifier notifier,
+    Map<String, String> errors,
+  ) {
     final dateFormat = DateFormat('MMM d, yyyy');
     final hasRange =
         kolab.availabilityStart != null && kolab.availabilityEnd != null;
@@ -248,6 +259,17 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             ),
           ),
         ),
+        if (errors['availability_start'] != null)
+          Padding(
+            padding: const EdgeInsets.only(top: KolabingSpacing.xs),
+            child: Text(
+              errors['availability_start']!,
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                color: KolabingColors.error,
+              ),
+            ),
+          ),
       ],
     );
   }

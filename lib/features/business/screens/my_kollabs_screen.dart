@@ -9,11 +9,11 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../community/widgets/my_opportunity_card.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
-import '../../community/widgets/my_opportunity_card.dart';
-import '../providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import '../providers/profile_provider.dart';
 
 /// My Kollabs screen for business users
 ///
@@ -78,8 +78,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
   }
 
   void _onEdit(Opportunity opportunity) {
+    final id = opportunity.id;
+    if (id == null || id.isEmpty) {
+      return;
+    }
+
     context.push(
-      KolabingRoutes.kolabNew,
+      KolabingRoutes.businessOffersEdit.replaceFirst(':id', id),
       extra: opportunity,
     );
   }
@@ -140,7 +145,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       final success =
           await ref.read(myOpportunitiesProvider.notifier).delete(id);
       if (mounted) {

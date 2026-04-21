@@ -37,7 +37,8 @@ class AuthState {
   final String? error;
 
   /// Whether user is authenticated
-  bool get isAuthenticated => status == AuthStatus.authenticated && user != null;
+  bool get isAuthenticated =>
+      status == AuthStatus.authenticated && user != null;
 
   /// Whether authentication is in progress
   bool get isLoading => status == AuthStatus.loading;
@@ -51,14 +52,13 @@ class AuthState {
     String? token,
     bool? isNewUser,
     String? error,
-  }) =>
-      AuthState(
-        status: status ?? this.status,
-        user: user ?? this.user,
-        token: token ?? this.token,
-        isNewUser: isNewUser ?? this.isNewUser,
-        error: error,
-      );
+  }) => AuthState(
+    status: status ?? this.status,
+    user: user ?? this.user,
+    token: token ?? this.token,
+    isNewUser: isNewUser ?? this.isNewUser,
+    error: error,
+  );
 
   @override
   String toString() =>
@@ -119,25 +119,12 @@ class AuthNotifier extends Notifier<AuthState> {
 
       unawaited(_registerFcmToken());
 
-      return AuthResult(
-        success: true,
-        isNewUser: false,
-        user: response.user,
-      );
+      return AuthResult(success: true, isNewUser: false, user: response.user);
     } on ApiException catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: e.error.message,
-      );
-      return AuthResult(
-        success: false,
-        error: e.error,
-      );
+      state = state.copyWith(status: AuthStatus.error, error: e.error.message);
+      return AuthResult(success: false, error: e.error);
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: e.message,
-      );
+      state = state.copyWith(status: AuthStatus.error, error: e.message);
       return AuthResult(
         success: false,
         errorMessage: e.message,
@@ -174,32 +161,16 @@ class AuthNotifier extends Notifier<AuthState> {
 
       unawaited(_registerFcmToken());
 
-      return AuthResult(
-        success: true,
-        isNewUser: false,
-        user: response.user,
-      );
+      return AuthResult(success: true, isNewUser: false, user: response.user);
     } on AuthCancelledException {
       // User cancelled, return to previous state
       state = state.copyWith(status: AuthStatus.unauthenticated);
-      return const AuthResult(
-        success: false,
-        cancelled: true,
-      );
+      return const AuthResult(success: false, cancelled: true);
     } on ApiException catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: e.error.message,
-      );
-      return AuthResult(
-        success: false,
-        error: e.error,
-      );
+      state = state.copyWith(status: AuthStatus.error, error: e.error.message);
+      return AuthResult(success: false, error: e.error);
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: e.message,
-      );
+      state = state.copyWith(status: AuthStatus.error, error: e.message);
       return AuthResult(
         success: false,
         errorMessage: e.message,
@@ -226,11 +197,17 @@ class AuthNotifier extends Notifier<AuthState> {
       final isAuthenticated = await _authService.isAuthenticated();
 
       if (isAuthenticated) {
-        final user = await _authService.getCurrentUser();
-        state = state.copyWith(
-          status: AuthStatus.authenticated,
-          user: user,
-        );
+        final token = await _authService.getToken();
+        final user = await _authService.restoreSessionUser();
+        if (user != null) {
+          state = state.copyWith(
+            status: AuthStatus.authenticated,
+            user: user,
+            token: token,
+          );
+        } else {
+          state = state.copyWith(status: AuthStatus.unauthenticated);
+        }
       } else {
         state = state.copyWith(status: AuthStatus.unauthenticated);
       }
@@ -258,10 +235,7 @@ class AuthNotifier extends Notifier<AuthState> {
   /// Clear any error state
   void clearError() {
     if (state.hasError) {
-      state = state.copyWith(
-        status: AuthStatus.unauthenticated,
-        error: null,
-      );
+      state = state.copyWith(status: AuthStatus.unauthenticated, error: null);
     }
   }
 
@@ -299,24 +273,12 @@ class AuthNotifier extends Notifier<AuthState> {
       );
     } on AuthCancelledException {
       state = state.copyWith(status: AuthStatus.unauthenticated);
-      return const AuthResult(
-        success: false,
-        cancelled: true,
-      );
+      return const AuthResult(success: false, cancelled: true);
     } on ApiException catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: e.error.message,
-      );
-      return AuthResult(
-        success: false,
-        error: e.error,
-      );
+      state = state.copyWith(status: AuthStatus.error, error: e.error.message);
+      return AuthResult(success: false, error: e.error);
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: e.message,
-      );
+      state = state.copyWith(status: AuthStatus.error, error: e.message);
       return AuthResult(
         success: false,
         errorMessage: e.message,
@@ -337,7 +299,9 @@ class AuthNotifier extends Notifier<AuthState> {
 }
 
 /// Provider for authentication state
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
 
 /// Result of authentication attempt
 class AuthResult {

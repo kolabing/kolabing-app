@@ -13,11 +13,7 @@ import '../features/opportunity/models/opportunity.dart';
 /// overlaid creator info, category chips, description, and availability row.
 /// Designed to be placed inside a vertical PageView.
 class ExploreSwipeCard extends StatefulWidget {
-  const ExploreSwipeCard({
-    required this.opportunity,
-    this.onTap,
-    super.key,
-  });
+  const ExploreSwipeCard({required this.opportunity, this.onTap, super.key});
 
   final Opportunity opportunity;
   final VoidCallback? onTap;
@@ -61,34 +57,34 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: widget.onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.md,
-            vertical: KolabingSpacing.xs,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(KolabingRadius.xl),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                // Layer 1 -- Image slideshow or gradient fallback
-                _buildImageArea(),
+    onTap: widget.onTap,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.md,
+        vertical: KolabingSpacing.xs,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(KolabingRadius.xl),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Layer 1 -- Image slideshow or gradient fallback
+            _buildImageArea(),
 
-                // Layer 2 -- Bottom gradient overlay
-                _buildGradientOverlay(),
+            // Layer 2 -- Bottom gradient overlay
+            _buildGradientOverlay(),
 
-                // Layer 3 -- Overlaid content
-                _buildOverlaidContent(),
+            // Layer 3 -- Overlaid content
+            _buildOverlaidContent(),
 
-                // Layer 4 -- Dot indicators (only when multiple images)
-                if (_imageUrls.length > 1) _buildDotIndicators(),
-              ],
-            ),
-          ),
+            // Layer 4 -- Dot indicators (only when multiple images)
+            if (_imageUrls.length > 1) _buildDotIndicators(),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Image area
@@ -221,28 +217,34 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildDotIndicators() {
     final count = _imageUrls.length;
     return Positioned(
-      left: 0,
-      right: 0,
-      // Place dots at roughly the 65% mark (above the gradient content area)
-      child: Align(
-        alignment: const Alignment(0, 0.25),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(count, (index) {
-            final isActive = index == _currentImagePage;
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: isActive ? 8 : 6,
-              height: isActive ? 8 : 6,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isActive
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: 0.4),
-              ),
-            );
-          }),
+      left: KolabingSpacing.md,
+      right: KolabingSpacing.md,
+      bottom: 118,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.28),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(count, (index) {
+              final isActive = index == _currentImagePage;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: isActive ? 9 : 7,
+                height: isActive ? 9 : 7,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: 0.45),
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -253,35 +255,34 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   // ---------------------------------------------------------------------------
 
   Widget _buildOverlaidContent() => Positioned(
-        left: KolabingSpacing.md,
-        right: KolabingSpacing.md,
-        bottom: KolabingSpacing.md +
-            MediaQuery.of(context).padding.bottom * 0.2,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Creator type badge
-            _buildCreatorTypeBadge(),
-            const SizedBox(height: KolabingSpacing.xs),
+    left: KolabingSpacing.md,
+    right: KolabingSpacing.md,
+    bottom: KolabingSpacing.md + MediaQuery.of(context).padding.bottom * 0.2,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Creator type badge
+        _buildCreatorTypeBadge(),
+        const SizedBox(height: KolabingSpacing.xs),
 
-            // Creator name
-            _buildCreatorName(),
-            const SizedBox(height: KolabingSpacing.xs),
+        // Creator name
+        _buildCreatorName(),
+        const SizedBox(height: KolabingSpacing.xs),
 
-            // Category chips
-            _buildCategoryChips(),
-            const SizedBox(height: KolabingSpacing.xs),
+        // Category chips
+        _buildCategoryChips(),
+        const SizedBox(height: KolabingSpacing.xs),
 
-            // Description
-            _buildDescription(),
-            const SizedBox(height: KolabingSpacing.xs),
+        // Description
+        _buildDescription(),
+        const SizedBox(height: KolabingSpacing.xs),
 
-            // Availability row
-            _buildAvailabilityRow(),
-          ],
-        ),
-      );
+        // Availability row
+        _buildAvailabilityRow(),
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Creator type badge
@@ -334,21 +335,25 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     return Wrap(
       spacing: 6,
       runSpacing: 6,
-      children: visible.map((category) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: KolabingColors.primary,
-          borderRadius: BorderRadius.circular(KolabingRadius.round),
-        ),
-        child: Text(
-          category,
-          style: GoogleFonts.dmSans(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-        ),
-      )).toList(),
+      children: visible
+          .map(
+            (category) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: KolabingColors.primary,
+                borderRadius: BorderRadius.circular(KolabingRadius.round),
+              ),
+              child: Text(
+                category,
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -453,15 +458,15 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   /// Date range text for one-time or flexible availability.
   Widget _buildDateRangeText() => Text(
-        '${DateFormat('MMM d').format(_opp.availabilityStart)}'
-        ' - '
-        '${DateFormat('MMM d').format(_opp.availabilityEnd)}'
-        '  ·  '
-        '${_opp.availabilityMode.displayName}',
-        style: GoogleFonts.openSans(
-          fontSize: 13,
-          fontWeight: FontWeight.w400,
-          color: Colors.white.withValues(alpha: 0.7),
-        ),
-      );
+    '${DateFormat('MMM d').format(_opp.availabilityStart)}'
+    ' - '
+    '${DateFormat('MMM d').format(_opp.availabilityEnd)}'
+    '  ·  '
+    '${_opp.availabilityMode.displayName}',
+    style: GoogleFonts.openSans(
+      fontSize: 13,
+      fontWeight: FontWeight.w400,
+      color: Colors.white.withValues(alpha: 0.7),
+    ),
+  );
 }

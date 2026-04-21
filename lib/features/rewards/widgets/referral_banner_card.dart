@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -67,7 +68,8 @@ class ReferralBannerCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
                 OutlinedButton(
-                  onPressed: () => _shareReferralLink(referralCode, ref),
+                  onPressed: () =>
+                      _shareReferralLink(context, referralCode, ref),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: KolabingColors.textPrimary,
                     side: const BorderSide(color: KolabingColors.textPrimary),
@@ -117,11 +119,50 @@ class ReferralBannerCard extends ConsumerWidget {
   // Share
   // ---------------------------------------------------------------------------
 
-  Future<void> _shareReferralLink(String code, WidgetRef ref) async {
-    final link = ref.read(walletProvider).referralLink ?? 'https://kolabing.com/ref/$code';
+  Future<void> _shareReferralLink(
+    BuildContext context,
+    String code,
+    WidgetRef ref,
+  ) async {
+    final link =
+        ref.read(walletProvider).referralLink ??
+        'https://kolabing.com/ref/$code';
     final message =
         'Join Kolabing and start earning rewards! '
         'Use my referral code $code when you sign up.\n$link';
-    await Share.share(message);
+
+    final box = context.findRenderObject() as RenderBox?;
+    final shareOrigin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
+
+    try {
+      final result = await Share.share(
+        message,
+        sharePositionOrigin: shareOrigin,
+      );
+
+      if (result.status == ShareResultStatus.unavailable && context.mounted) {
+        await Clipboard.setData(ClipboardData(text: link));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sharing is unavailable. Referral link copied.'),
+              backgroundColor: KolabingColors.textPrimary,
+            ),
+          );
+        }
+      }
+    } on Exception {
+      await Clipboard.setData(ClipboardData(text: link));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open share sheet. Referral link copied.'),
+            backgroundColor: KolabingColors.textPrimary,
+          ),
+        );
+      }
+    }
   }
 }

@@ -96,7 +96,8 @@ class OpportunityFiltersNotifier extends Notifier<OpportunityFilters> {
 
 final opportunityFiltersProvider =
     NotifierProvider<OpportunityFiltersNotifier, OpportunityFilters>(
-        OpportunityFiltersNotifier.new);
+      OpportunityFiltersNotifier.new,
+    );
 
 // =============================================================================
 // Browse Opportunities List (with pagination)
@@ -135,16 +136,15 @@ class OpportunityListState {
     bool? isLoadingMore,
     String? error,
     bool clearError = false,
-  }) =>
-      OpportunityListState(
-        opportunities: opportunities ?? this.opportunities,
-        currentPage: currentPage ?? this.currentPage,
-        lastPage: lastPage ?? this.lastPage,
-        total: total ?? this.total,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        error: clearError ? null : (error ?? this.error),
-      );
+  }) => OpportunityListState(
+    opportunities: opportunities ?? this.opportunities,
+    currentPage: currentPage ?? this.currentPage,
+    lastPage: lastPage ?? this.lastPage,
+    total: total ?? this.total,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    error: clearError ? null : (error ?? this.error),
+  );
 }
 
 class OpportunityListNotifier extends Notifier<OpportunityListState> {
@@ -164,22 +164,25 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
   }
 
   Future<void> _load(OpportunityFilters filters) async {
-    debugPrint('[OpportunityList] _load called, filters: search=${filters.searchQuery}, creator=${filters.creatorType}');
+    debugPrint(
+      '[OpportunityList] _load called, filters: search=${filters.searchQuery}, creator=${filters.creatorType}',
+    );
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
-      final result = await _service.getOpportunities(
-        filters: filters,
-        page: 1,
+      final result = await _service.getOpportunities(filters: filters, page: 1);
+      debugPrint(
+        '[OpportunityList] Loaded ${result.data.length} items, total=${result.total}',
       );
-      debugPrint('[OpportunityList] Loaded ${result.data.length} items, total=${result.total}');
       state = OpportunityListState(
         opportunities: result.data,
         currentPage: result.currentPage,
         lastPage: result.lastPage,
         total: result.total,
       );
-      debugPrint('[OpportunityList] State updated: isEmpty=${state.isEmpty}, isLoading=${state.isLoading}, error=${state.error}');
+      debugPrint(
+        '[OpportunityList] State updated: isEmpty=${state.isEmpty}, isLoading=${state.isLoading}, error=${state.error}',
+      );
     } on AuthException catch (e) {
       debugPrint('[OpportunityList] AuthException: ${e.message}');
       state = state.copyWith(isLoading: false, error: e.message);
@@ -192,12 +195,16 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
     } on Exception catch (e) {
       debugPrint('[OpportunityList] Unknown Exception: $e');
       state = state.copyWith(
-          isLoading: false, error: 'Failed to load opportunities');
+        isLoading: false,
+        error: 'Failed to load opportunities',
+      );
     } catch (e, st) {
       debugPrint('[OpportunityList] Uncaught error: $e');
       debugPrint('[OpportunityList] Stack: $st');
       state = state.copyWith(
-          isLoading: false, error: 'Failed to load opportunities');
+        isLoading: false,
+        error: 'Failed to load opportunities',
+      );
     }
   }
 
@@ -233,7 +240,8 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
 
 final opportunityListProvider =
     NotifierProvider<OpportunityListNotifier, OpportunityListState>(
-        OpportunityListNotifier.new);
+      OpportunityListNotifier.new,
+    );
 
 // =============================================================================
 // My Opportunities List (with pagination)
@@ -251,7 +259,8 @@ class MyOpportunitiesStatusNotifier extends Notifier<String?> {
 
 final myOpportunitiesStatusProvider =
     NotifierProvider<MyOpportunitiesStatusNotifier, String?>(
-        MyOpportunitiesStatusNotifier.new);
+      MyOpportunitiesStatusNotifier.new,
+    );
 
 class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   late OpportunityService _service;
@@ -271,10 +280,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
-      final result = await _service.getMyOpportunities(
-        status: status,
-        page: 1,
-      );
+      final result = await _service.getMyOpportunities(status: status, page: 1);
       state = OpportunityListState(
         opportunities: result.data,
         currentPage: result.currentPage,
@@ -290,7 +296,9 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
     } on Exception catch (e) {
       debugPrint('Load my opportunities error: $e');
       state = state.copyWith(
-          isLoading: false, error: 'Failed to load your opportunities');
+        isLoading: false,
+        error: 'Failed to load your opportunities',
+      );
     }
   }
 
@@ -328,6 +336,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
     try {
       final updated = await _service.publishOpportunity(id);
       _replaceInList(id, updated);
+      await refresh();
       return true;
     } on ApiException catch (e) {
       debugPrint('Publish error: ${e.error.message}');
@@ -345,6 +354,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
     try {
       final updated = await _service.closeOpportunity(id);
       _replaceInList(id, updated);
+      await refresh();
       return true;
     } on ApiException catch (e) {
       debugPrint('Close error: ${e.error.message}');
@@ -361,12 +371,8 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   Future<bool> delete(String id) async {
     try {
       await _service.deleteOpportunity(id);
-      final updated =
-          state.opportunities.where((o) => o.id != id).toList();
-      state = state.copyWith(
-        opportunities: updated,
-        total: state.total - 1,
-      );
+      final updated = state.opportunities.where((o) => o.id != id).toList();
+      state = state.copyWith(opportunities: updated, total: state.total - 1);
       return true;
     } on ApiException catch (e) {
       debugPrint('Delete error: ${e.error.message}');
@@ -390,14 +396,17 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
 
 final myOpportunitiesProvider =
     NotifierProvider<MyOpportunitiesNotifier, OpportunityListState>(
-        MyOpportunitiesNotifier.new);
+      MyOpportunitiesNotifier.new,
+    );
 
 // =============================================================================
 // Single Opportunity Detail
 // =============================================================================
 
-final opportunityDetailProvider =
-    FutureProvider.family<Opportunity, String>((ref, id) async {
+final opportunityDetailProvider = FutureProvider.family<Opportunity, String>((
+  ref,
+  id,
+) async {
   final service = ref.watch(opportunityServiceProvider);
   return service.getOpportunity(id);
 });

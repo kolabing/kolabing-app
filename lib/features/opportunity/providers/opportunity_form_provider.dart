@@ -1,4 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,19 +64,17 @@ class OpportunityFormState {
     String? error,
     Map<String, String>? fieldErrors,
     bool clearError = false,
-  }) =>
-      OpportunityFormState(
-        currentStep: currentStep ?? this.currentStep,
-        opportunity: opportunity ?? this.opportunity,
-        isEditing: isEditing ?? this.isEditing,
-        isSubmitting: isSubmitting ?? this.isSubmitting,
-        isPublishing: isPublishing ?? this.isPublishing,
-        isSuccess: isSuccess ?? this.isSuccess,
-        requiresSubscription:
-            requiresSubscription ?? this.requiresSubscription,
-        error: clearError ? null : (error ?? this.error),
-        fieldErrors: fieldErrors ?? this.fieldErrors,
-      );
+  }) => OpportunityFormState(
+    currentStep: currentStep ?? this.currentStep,
+    opportunity: opportunity ?? this.opportunity,
+    isEditing: isEditing ?? this.isEditing,
+    isSubmitting: isSubmitting ?? this.isSubmitting,
+    isPublishing: isPublishing ?? this.isPublishing,
+    isSuccess: isSuccess ?? this.isSuccess,
+    requiresSubscription: requiresSubscription ?? this.requiresSubscription,
+    error: clearError ? null : (error ?? this.error),
+    fieldErrors: fieldErrors ?? this.fieldErrors,
+  );
 }
 
 // =============================================================================
@@ -87,17 +87,12 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   @override
   OpportunityFormState build() {
     _service = ref.read(opportunityServiceProvider);
-    return OpportunityFormState(
-      opportunity: Opportunity.empty(),
-    );
+    return OpportunityFormState(opportunity: Opportunity.empty());
   }
 
   /// Initialize for editing an existing opportunity
   void initForEdit(Opportunity opportunity) {
-    state = OpportunityFormState(
-      opportunity: opportunity,
-      isEditing: true,
-    );
+    state = OpportunityFormState(opportunity: opportunity, isEditing: true);
   }
 
   // ---------------------------------------------------------------------------
@@ -169,12 +164,23 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
     final opp = state.opportunity;
     if (opp == null) return;
     state = state.copyWith(
-      opportunity: opp.copyWith(
-        offerPhoto: url,
-        clearOfferPhoto: url == null,
-      ),
+      opportunity: opp.copyWith(offerPhoto: url, clearOfferPhoto: url == null),
       clearError: true,
     );
+  }
+
+  Future<void> updateOfferPhotoFile(File file) async {
+    final bytes = await file.readAsBytes();
+    final base64 = base64Encode(bytes);
+    final extension = file.path.split('.').last.toLowerCase();
+    final mimeType = switch (extension) {
+      'png' => 'image/png',
+      'gif' => 'image/gif',
+      'webp' => 'image/webp',
+      _ => 'image/jpeg',
+    };
+
+    updateOfferPhoto('data:$mimeType;base64,$base64');
   }
 
   // ---------------------------------------------------------------------------
@@ -420,8 +426,7 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
             errors['selected_time'] = 'Select a time';
           }
         }
-        if (opp.venueMode.requiresAddress &&
-            (opp.address?.isEmpty ?? true)) {
+        if (opp.venueMode.requiresAddress && (opp.address?.isEmpty ?? true)) {
           errors['address'] = 'Address is required for this venue mode';
         }
         if (opp.preferredCity.isEmpty) {
@@ -446,6 +451,7 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   Future<bool> saveDraft() async {
     final opp = state.opportunity;
     if (opp == null) return false;
+    final draftOpportunity = opp.copyWith(status: OpportunityStatus.draft);
 
     state = state.copyWith(
       isSubmitting: true,
@@ -455,10 +461,13 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
 
     try {
       Opportunity result;
-      if (state.isEditing && opp.id != null) {
-        result = await _service.updateOpportunity(opp.id!, opp);
+      if (state.isEditing && draftOpportunity.id != null) {
+        result = await _service.updateOpportunity(
+          draftOpportunity.id!,
+          draftOpportunity,
+        );
       } else {
-        result = await _service.createOpportunity(opp);
+        result = await _service.createOpportunity(draftOpportunity);
       }
       state = state.copyWith(
         opportunity: result,
@@ -541,7 +550,6 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
           return true;
         } on ApiException catch (publishError) {
           debugPrint('Publish endpoint failed: ${publishError.error.message}');
-          // If publish endpoint also fails, report the error
           state = state.copyWith(
             isPublishing: false,
             error: publishError.error.message,
@@ -601,9 +609,7 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
   // ---------------------------------------------------------------------------
 
   void reset() {
-    state = OpportunityFormState(
-      opportunity: Opportunity.empty(),
-    );
+    state = OpportunityFormState(opportunity: Opportunity.empty());
   }
 
   /// Set client-side validation errors with user-friendly messages.
@@ -626,4 +632,5 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
 /// Provider for opportunity form
 final opportunityFormProvider =
     NotifierProvider<OpportunityFormNotifier, OpportunityFormState>(
-        OpportunityFormNotifier.new);
+      OpportunityFormNotifier.new,
+    );

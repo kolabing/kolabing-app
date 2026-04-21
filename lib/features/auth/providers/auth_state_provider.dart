@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../config/routes/routes.dart';
 import '../../../services/permission_service.dart';
 import '../services/auth_service.dart';
 
@@ -52,12 +53,11 @@ class SplashState {
     bool? isLoading,
     SplashNavigationTarget? navigationTarget,
     String? errorMessage,
-  }) =>
-      SplashState(
-        isLoading: isLoading ?? this.isLoading,
-        navigationTarget: navigationTarget ?? this.navigationTarget,
-        errorMessage: errorMessage,
-      );
+  }) => SplashState(
+    isLoading: isLoading ?? this.isLoading,
+    navigationTarget: navigationTarget ?? this.navigationTarget,
+    errorMessage: errorMessage,
+  );
 }
 
 /// Notifier for managing splash screen state
@@ -79,7 +79,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
           isLoading: false,
           navigationTarget: SplashNavigationTarget.onboarding,
         );
-        return '/onboarding';
+        return KolabingRoutes.onboarding;
       }
 
       // Check authentication status via stored token
@@ -91,7 +91,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
           isLoading: false,
           navigationTarget: SplashNavigationTarget.signIn,
         );
-        return '/auth/sign-in';
+        return KolabingRoutes.login;
       }
 
       // Get user type from stored user data
@@ -100,32 +100,27 @@ class SplashStateNotifier extends Notifier<SplashState> {
       final String dashboard;
       final SplashNavigationTarget navTarget;
       if (user?.isAttendee ?? false) {
-        dashboard = '/attendee';
+        dashboard = KolabingRoutes.attendeeDashboard;
         navTarget = SplashNavigationTarget.attendeeDashboard;
       } else if (user?.isBusiness ?? false) {
-        dashboard = '/business';
+        dashboard = KolabingRoutes.businessDashboard;
         navTarget = SplashNavigationTarget.businessDashboard;
       } else {
-        dashboard = '/community';
+        dashboard = KolabingRoutes.communityDashboard;
         navTarget = SplashNavigationTarget.communityDashboard;
       }
 
       // Check if the permission screen needs to be shown
-      final hasShownPermissions =
-          await PermissionService.instance.hasShownPermissionScreen();
+      final hasShownPermissions = await PermissionService.instance
+          .hasShownPermissionScreen();
 
       if (!hasShownPermissions) {
-        state = state.copyWith(
-          isLoading: false,
-          navigationTarget: navTarget,
-        );
-        return '/permissions?destination=${Uri.encodeComponent(dashboard)}';
+        state = state.copyWith(isLoading: false, navigationTarget: navTarget);
+        return '${KolabingRoutes.permissions}?destination='
+            '${Uri.encodeComponent(dashboard)}';
       }
 
-      state = state.copyWith(
-        isLoading: false,
-        navigationTarget: navTarget,
-      );
+      state = state.copyWith(isLoading: false, navigationTarget: navTarget);
       return dashboard;
     } on Exception catch (e) {
       // On error, default to sign in
@@ -134,7 +129,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
         navigationTarget: SplashNavigationTarget.signIn,
         errorMessage: 'Failed to initialize: $e',
       );
-      return '/auth/sign-in';
+      return KolabingRoutes.login;
     }
   }
 
@@ -148,16 +143,17 @@ class SplashStateNotifier extends Notifier<SplashState> {
       return false;
     }
   }
-
 }
 
 /// Provider for splash screen state and initialization logic
-final splashStateProvider =
-    NotifierProvider<SplashStateNotifier, SplashState>(SplashStateNotifier.new);
+final splashStateProvider = NotifierProvider<SplashStateNotifier, SplashState>(
+  SplashStateNotifier.new,
+);
 
 /// Provider for checking and setting onboarding status
-final onboardingStatusProvider =
-    Provider<OnboardingStatus>((ref) => OnboardingStatus());
+final onboardingStatusProvider = Provider<OnboardingStatus>(
+  (ref) => OnboardingStatus(),
+);
 
 /// Utility class for managing onboarding status
 class OnboardingStatus {
