@@ -638,6 +638,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 3: // Availability & Location
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
+        } else if (kolab.availabilityStart == null) {
+          errors['availability_start'] =
+              'Pick a start date for your availability window';
         }
         if (kolab.preferredCity.isEmpty) {
           errors['preferred_city'] = 'Preferred city is required';
@@ -692,9 +695,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 5: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
-        }
-        if (kolab.availabilityMode != AvailabilityMode.flexible &&
-            kolab.availabilityStart != null) {
+        } else if (kolab.availabilityStart == null) {
+          errors['availability_start'] =
+              'Pick a start date for your availability window';
+        } else {
           final today = DateUtils.dateOnly(DateTime.now());
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
           if (!start.isAfter(today)) {
@@ -746,9 +750,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 5: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
-        }
-        if (kolab.availabilityMode != AvailabilityMode.flexible &&
-            kolab.availabilityStart != null) {
+        } else if (kolab.availabilityStart == null) {
+          errors['availability_start'] =
+              'Pick a start date for your availability window';
+        } else {
           final today = DateUtils.dateOnly(DateTime.now());
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
           if (!start.isAfter(today)) {
