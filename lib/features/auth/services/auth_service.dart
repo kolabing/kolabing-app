@@ -16,6 +16,7 @@ import '../../../config/constants/api.dart';
 
 /// Storage keys for auth data
 const String _tokenKey = 'auth_token';
+const String _refreshTokenKey = 'auth_refresh_token';
 const String _userKey = 'auth_user';
 
 /// API configuration
@@ -30,14 +31,15 @@ class AuthService {
     FlutterSecureStorage? secureStorage,
     GoogleSignIn? googleSignIn,
     http.Client? httpClient,
-  })  : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
-        _googleSignIn = googleSignIn ??
-            GoogleSignIn(
-              clientId:
-                  '729026342484-2hnsoraikrr6cdtot0bl5a7hlhg57r3p.apps.googleusercontent.com',
-              scopes: ['email', 'profile'],
-            ),
-        _httpClient = httpClient ?? http.Client();
+  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+       _googleSignIn =
+           googleSignIn ??
+           GoogleSignIn(
+             clientId:
+                 '729026342484-2hnsoraikrr6cdtot0bl5a7hlhg57r3p.apps.googleusercontent.com',
+             scopes: ['email', 'profile'],
+           ),
+       _httpClient = httpClient ?? http.Client();
 
   final FlutterSecureStorage _secureStorage;
   final GoogleSignIn _googleSignIn;
@@ -48,6 +50,11 @@ class AuthService {
 
   /// Cached user
   UserModel? _cachedUser;
+
+  /// Cached refresh token
+  String? _cachedRefreshToken;
+
+  Future<String>? _refreshRequest;
 
   // ---------------------------------------------------------------------------
   // Google Sign In
@@ -162,7 +169,8 @@ class AuthService {
 
       debugPrint('🔐 Response status: ${response.statusCode}');
       debugPrint(
-          '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -236,7 +244,8 @@ class AuthService {
 
       debugPrint('🔐 Response status: ${response.statusCode}');
       debugPrint(
-          '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -299,7 +308,8 @@ class AuthService {
 
       debugPrint('🔐 Response status: ${response.statusCode}');
       debugPrint(
-          '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -461,10 +471,7 @@ class AuthService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
       debugPrint('🔐 Login response status: ${response.statusCode}');
@@ -499,7 +506,7 @@ class AuthService {
         error: ApiError(
           message: 'Invalid credentials',
           errors: {
-            'email': ['The provided credentials are incorrect.']
+            'email': ['The provided credentials are incorrect.'],
           },
           statusCode: 401,
         ),
@@ -538,8 +545,7 @@ class AuthService {
       final resolvedUserType =
           userType ?? (await getStoredUser())?.userType.toApiValue();
 
-      return await _authenticateWithGoogle(idToken,
-          userType: resolvedUserType);
+      return await _authenticateWithGoogle(idToken, userType: resolvedUserType);
     } on AuthCancelledException {
       rethrow;
     } catch (e) {
@@ -551,8 +557,10 @@ class AuthService {
   }
 
   /// Authenticate with backend using Google ID token
-  Future<AuthResponse> _authenticateWithGoogle(String idToken,
-      {String? userType}) async {
+  Future<AuthResponse> _authenticateWithGoogle(
+    String idToken, {
+    String? userType,
+  }) async {
     if (_useMockApi) {
       return _mockAuthenticateWithGoogle(idToken);
     }
@@ -607,7 +615,7 @@ class AuthService {
           message: 'User not found',
           errors: {
             'email': [
-              'No account found with this Google email. Please register first.'
+              'No account found with this Google email. Please register first.',
             ],
           },
           statusCode: 404,
@@ -642,7 +650,8 @@ class AuthService {
   // ---------------------------------------------------------------------------
 
   /// Sign in with Apple and get identity token.
-  Future<({String identityToken, String? fullName})> getAppleCredential() async {
+  Future<({String identityToken, String? fullName})>
+  getAppleCredential() async {
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -746,6 +755,10 @@ class AuthService {
   ///
   /// GET /api/v1/auth/me
   Future<UserModel> getCurrentUser() async {
+    return _getCurrentUser(allowRefresh: true);
+  }
+
+  Future<UserModel> _getCurrentUser({required bool allowRefresh}) async {
     final token = await getToken();
 
     if (token == null) {
@@ -773,6 +786,10 @@ class AuthService {
         _cachedUser = user;
         return user;
       } else if (response.statusCode == 401) {
+        if (allowRefresh) {
+          await refreshSession();
+          return _getCurrentUser(allowRefresh: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -816,9 +833,11 @@ class AuthService {
       await signOutGoogle();
 
       _cachedToken = null;
+      _cachedRefreshToken = null;
       _cachedUser = null;
 
       await _secureStorage.delete(key: _tokenKey);
+      await _secureStorage.delete(key: _refreshTokenKey);
       await _secureStorage.delete(key: _userKey);
 
       if (_useMockApi || token == null) {
@@ -850,6 +869,17 @@ class AuthService {
     return _cachedToken = await _secureStorage.read(key: _tokenKey);
   }
 
+  /// Get stored refresh token.
+  Future<String?> getRefreshToken() async {
+    if (_cachedRefreshToken != null) {
+      return _cachedRefreshToken;
+    }
+
+    return _cachedRefreshToken = await _secureStorage.read(
+      key: _refreshTokenKey,
+    );
+  }
+
   /// Check if user is authenticated
   Future<bool> isAuthenticated() async {
     final token = await getToken();
@@ -872,25 +902,118 @@ class AuthService {
     try {
       return await getCurrentUser();
     } on AuthException {
-      return storedUser;
+      try {
+        await refreshSession();
+        return await _getCurrentUser(allowRefresh: false);
+      } on AuthException {
+        return storedUser;
+      } on NetworkException {
+        return storedUser;
+      } on ApiException {
+        return storedUser;
+      }
     } on NetworkException {
       return storedUser;
     }
   }
 
+  /// Refresh the access token using the persisted refresh token.
+  Future<String> refreshSession() async {
+    final existingRequest = _refreshRequest;
+    if (existingRequest != null) {
+      return existingRequest;
+    }
+
+    final refreshRequest = _performRefreshSession();
+    _refreshRequest = refreshRequest;
+
+    try {
+      return await refreshRequest;
+    } finally {
+      _refreshRequest = null;
+    }
+  }
+
+  Future<String> _performRefreshSession() async {
+    final refreshToken = await getRefreshToken();
+    if (refreshToken == null || refreshToken.isEmpty) {
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+
+    final url = '$_baseUrl/auth/refresh';
+    debugPrint('🔐 Refresh Session: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: const {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'refresh_token': refreshToken}),
+      );
+
+      debugPrint('🔐 Refresh response status: ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final refreshResponse = SessionRefreshResponse.fromJson(json);
+        await _saveSessionRefreshData(refreshResponse);
+        return refreshResponse.token;
+      }
+
+      if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      }
+
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      throw ApiException(
+        error: ApiError.fromJson(json, statusCode: response.statusCode),
+      );
+    } catch (e) {
+      if (e is ApiException || e is NetworkException || e is AuthException) {
+        rethrow;
+      }
+      debugPrint('🔐 Refresh session error: $e');
+      throw NetworkException('Failed to refresh session: $e');
+    }
+  }
+
   /// Save auth data to secure storage
   Future<void> _saveAuthData(AuthResponse response) async {
-    _cachedToken = response.token;
-    await _secureStorage.write(key: _tokenKey, value: response.token);
+    await _saveTokens(
+      token: response.token,
+      refreshToken: response.refreshToken,
+    );
     await _saveUser(response.user);
+  }
+
+  Future<void> _saveSessionRefreshData(SessionRefreshResponse response) async {
+    await _saveTokens(
+      token: response.token,
+      refreshToken: response.refreshToken,
+    );
+    if (response.user != null) {
+      await _saveUser(response.user!);
+    }
+  }
+
+  Future<void> _saveTokens({
+    required String token,
+    String? refreshToken,
+  }) async {
+    _cachedToken = token;
+    await _secureStorage.write(key: _tokenKey, value: token);
+
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      _cachedRefreshToken = refreshToken;
+      await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+    }
   }
 
   Future<void> _saveUser(UserModel user) async {
     _cachedUser = user;
-    await _secureStorage.write(
-      key: _userKey,
-      value: jsonEncode(user.toJson()),
-    );
+    await _secureStorage.write(key: _userKey, value: jsonEncode(user.toJson()));
   }
 
   /// Get cached user

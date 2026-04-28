@@ -45,6 +45,20 @@ class OpportunityService {
     int page = 1,
     int perPage = 15,
   }) async {
+    return _getOpportunities(
+      filters: filters,
+      page: page,
+      perPage: perPage,
+      allowRetry: true,
+    );
+  }
+
+  Future<PaginatedResponse<Opportunity>> _getOpportunities({
+    required OpportunityFilters filters,
+    required int page,
+    required int perPage,
+    required bool allowRetry,
+  }) async {
     final queryParams = <String, String>{
       'page': page.toString(),
       'per_page': perPage.toString(),
@@ -88,6 +102,15 @@ class OpportunityService {
       if (response.statusCode == 200) {
         return _parsePaginatedResponse(response.body);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _getOpportunities(
+            filters: filters,
+            page: page,
+            perPage: perPage,
+            allowRetry: false,
+          );
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -115,6 +138,20 @@ class OpportunityService {
     int page = 1,
     int perPage = 15,
   }) async {
+    return _getMyOpportunities(
+      status: status,
+      page: page,
+      perPage: perPage,
+      allowRetry: true,
+    );
+  }
+
+  Future<PaginatedResponse<Opportunity>> _getMyOpportunities({
+    String? status,
+    required int page,
+    required int perPage,
+    required bool allowRetry,
+  }) async {
     final queryParams = <String, String>{
       'page': page.toString(),
       'per_page': perPage.toString(),
@@ -134,6 +171,15 @@ class OpportunityService {
       if (response.statusCode == 200) {
         return _parsePaginatedResponse(response.body);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _getMyOpportunities(
+            status: status,
+            page: page,
+            perPage: perPage,
+            allowRetry: false,
+          );
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -154,6 +200,13 @@ class OpportunityService {
 
   /// GET /api/v1/opportunities/{id}
   Future<Opportunity> getOpportunity(String id) async {
+    return _getOpportunity(id, allowRetry: true);
+  }
+
+  Future<Opportunity> _getOpportunity(
+    String id, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/opportunities/$id');
     debugPrint('OpportunityService: GET $uri');
 
@@ -170,6 +223,10 @@ class OpportunityService {
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _getOpportunity(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(
@@ -200,6 +257,13 @@ class OpportunityService {
 
   /// POST /api/v1/opportunities
   Future<Opportunity> createOpportunity(Opportunity opportunity) async {
+    return _createOpportunity(opportunity, allowRetry: true);
+  }
+
+  Future<Opportunity> _createOpportunity(
+    Opportunity opportunity, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/opportunities');
     final body = jsonEncode(opportunity.toJson());
     debugPrint('OpportunityService: POST $uri');
@@ -226,6 +290,10 @@ class OpportunityService {
           status: OpportunityStatus.draft,
         );
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _createOpportunity(opportunity, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -249,6 +317,14 @@ class OpportunityService {
     String id,
     Opportunity opportunity,
   ) async {
+    return _updateOpportunity(id, opportunity, allowRetry: true);
+  }
+
+  Future<Opportunity> _updateOpportunity(
+    String id,
+    Opportunity opportunity, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/opportunities/$id');
     final body = jsonEncode(opportunity.toJson());
     debugPrint('OpportunityService: PUT $uri');
@@ -274,6 +350,10 @@ class OpportunityService {
         }
         return opportunity;
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _updateOpportunity(id, opportunity, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -297,6 +377,13 @@ class OpportunityService {
   /// Tries the dedicated publish endpoint first.
   /// Falls back to updating status via PUT if the publish endpoint returns 403.
   Future<Opportunity> publishOpportunity(String id) async {
+    return _publishOpportunity(id, allowRetry: true);
+  }
+
+  Future<Opportunity> _publishOpportunity(
+    String id, {
+    required bool allowRetry,
+  }) async {
     // First try the dedicated publish endpoint
     final uri = Uri.parse('$_baseUrl/opportunities/$id/publish');
     debugPrint('OpportunityService: POST $uri');
@@ -318,6 +405,10 @@ class OpportunityService {
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _publishOpportunity(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403 ||
           response.statusCode == 404 ||
@@ -326,7 +417,7 @@ class OpportunityService {
         debugPrint(
           'Publish endpoint returned ${response.statusCode}, trying status update via PUT...',
         );
-        return _publishViaStatusUpdate(id);
+        return _publishViaStatusUpdate(id, allowRetry: allowRetry);
       } else {
         throw _parseApiError(response);
       }
@@ -343,7 +434,10 @@ class OpportunityService {
   }
 
   /// Fallback: publish by updating the status field via PUT
-  Future<Opportunity> _publishViaStatusUpdate(String id) async {
+  Future<Opportunity> _publishViaStatusUpdate(
+    String id, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/opportunities/$id');
     final body = jsonEncode({'status': 'published'});
     debugPrint('OpportunityService: PUT $uri (status update fallback)');
@@ -375,6 +469,10 @@ class OpportunityService {
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _publishViaStatusUpdate(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -395,6 +493,13 @@ class OpportunityService {
 
   /// POST /api/v1/opportunities/{id}/close
   Future<Opportunity> closeOpportunity(String id) async {
+    return _closeOpportunity(id, allowRetry: true);
+  }
+
+  Future<Opportunity> _closeOpportunity(
+    String id, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/opportunities/$id/close');
     debugPrint('OpportunityService: POST $uri');
 
@@ -414,6 +519,10 @@ class OpportunityService {
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _closeOpportunity(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -434,6 +543,10 @@ class OpportunityService {
 
   /// DELETE /api/v1/opportunities/{id}
   Future<void> deleteOpportunity(String id) async {
+    return _deleteOpportunity(id, allowRetry: true);
+  }
+
+  Future<void> _deleteOpportunity(String id, {required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/opportunities/$id');
     debugPrint('OpportunityService: DELETE $uri');
 
@@ -448,6 +561,10 @@ class OpportunityService {
       if (response.statusCode == 200 || response.statusCode == 204) {
         return;
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _deleteOpportunity(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -468,6 +585,10 @@ class OpportunityService {
 
   /// GET /api/v1/cities
   Future<List<OnboardingCity>> getCities() async {
+    return _getCities(allowRetry: true);
+  }
+
+  Future<List<OnboardingCity>> _getCities({required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/cities');
     debugPrint('OpportunityService: GET $uri');
 
@@ -483,6 +604,10 @@ class OpportunityService {
             )
             .toList();
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _getCities(allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw const NetworkException('Failed to load cities');

@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/user_model.dart';
 import '../providers/auth_provider.dart';
+import '../utils/auth_navigation.dart';
 import '../widgets/auth_link.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/kolabing_logo.dart';
@@ -72,10 +74,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
     _exitAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _exitController,
-      curve: Curves.easeIn,
-    ));
+    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
   }
 
   Animation<double> _createStaggeredAnimation(double begin, double end) =>
@@ -161,11 +160,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   }
 
   String _getNavigationRoute(AuthResult result) {
-    if (result.isNewUser || !(result.user?.onboardingCompleted ?? false)) {
-      return '/onboarding';
+    final user = result.user;
+    if (user == null) {
+      return KolabingRoutes.welcome;
     }
 
-    return result.user?.isBusiness ?? false ? '/business' : '/community';
+    return resolveAuthDestination(user, isNewUser: result.isNewUser);
   }
 
   void _showUserTypeMismatchDialog(UserType? existingType) {
@@ -242,103 +242,101 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   }
 
   void _navigateToSignUp() {
-    context.go('/auth/sign-up');
+    context.go(KolabingRoutes.signUp);
   }
 
   @override
   Widget build(BuildContext context) => PopScope(
-        canPop: !_isLoading,
-        child: Scaffold(
-          backgroundColor: KolabingColors.darkBackground,
-          body: AnimatedBuilder(
-            animation: _exitController,
-            builder: (context, child) => Opacity(
-              opacity: _exitAnimation.value,
-              child: child,
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    const Spacer(flex: 2),
+    canPop: !_isLoading,
+    child: Scaffold(
+      backgroundColor: KolabingColors.darkBackground,
+      body: AnimatedBuilder(
+        animation: _exitController,
+        builder: (context, child) =>
+            Opacity(opacity: _exitAnimation.value, child: child),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                const Spacer(flex: 2),
 
-                    // Logo
-                    _AnimatedElement(
-                      animation: _logoAnimation,
-                      child: const KolabingLogo(
-                        size: KolabingLogoSize.large,
-                        showText: true,
-                        onDarkBackground: true,
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Title
-                    _AnimatedElement(
-                      animation: _titleAnimation,
-                      slideUp: true,
-                      child: Text(
-                        'WELCOME BACK',
-                        style: KolabingTextStyles.displayLarge.copyWith(
-                          color: KolabingColors.textOnDark,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Subtitle
-                    _AnimatedElement(
-                      animation: _subtitleAnimation,
-                      slideUp: true,
-                      child: Text(
-                        'Sign in to continue',
-                        style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: KolabingColors.textTertiary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                    const SizedBox(height: 48),
-
-                    // Google Sign In Button
-                    _AnimatedElement(
-                      animation: _buttonAnimation,
-                      slideUp: true,
-                      child: GoogleSignInButton(
-                        onPressed: _handleGoogleSignIn,
-                        buttonText: 'Sign in with Google',
-                        isLoading: _isLoading,
-                        showSuccess: _showSuccess,
-                        isEnabled: !_isLoading && !_showSuccess,
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Sign Up Link
-                    _AnimatedElement(
-                      animation: _linkAnimation,
-                      child: AuthLink(
-                        leadingText: "Don't have an account?",
-                        actionText: 'Sign Up',
-                        onTap: _navigateToSignUp,
-                        isEnabled: !_isLoading && !_showSuccess,
-                      ),
-                    ),
-
-                    const Spacer(flex: 3),
-                  ],
+                // Logo
+                _AnimatedElement(
+                  animation: _logoAnimation,
+                  child: const KolabingLogo(
+                    size: KolabingLogoSize.large,
+                    showText: true,
+                    onDarkBackground: true,
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 32),
+
+                // Title
+                _AnimatedElement(
+                  animation: _titleAnimation,
+                  slideUp: true,
+                  child: Text(
+                    'WELCOME BACK',
+                    style: KolabingTextStyles.displayLarge.copyWith(
+                      color: KolabingColors.textOnDark,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Subtitle
+                _AnimatedElement(
+                  animation: _subtitleAnimation,
+                  slideUp: true,
+                  child: Text(
+                    'Sign in to continue',
+                    style: KolabingTextStyles.bodyLarge.copyWith(
+                      color: KolabingColors.textTertiary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+                const SizedBox(height: 48),
+
+                // Google Sign In Button
+                _AnimatedElement(
+                  animation: _buttonAnimation,
+                  slideUp: true,
+                  child: GoogleSignInButton(
+                    onPressed: _handleGoogleSignIn,
+                    buttonText: 'Sign in with Google',
+                    isLoading: _isLoading,
+                    showSuccess: _showSuccess,
+                    isEnabled: !_isLoading && !_showSuccess,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Sign Up Link
+                _AnimatedElement(
+                  animation: _linkAnimation,
+                  child: AuthLink(
+                    leadingText: "Don't have an account?",
+                    actionText: 'Sign Up',
+                    onTap: _navigateToSignUp,
+                    isEnabled: !_isLoading && !_showSuccess,
+                  ),
+                ),
+
+                const Spacer(flex: 3),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// Animated wrapper for staggered entry
@@ -355,16 +353,13 @@ class _AnimatedElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: animation,
-        builder: (context, child) => Transform.translate(
-          offset: slideUp ? Offset(0, 20 * (1 - animation.value)) : Offset.zero,
-          child: Opacity(
-            opacity: animation.value,
-            child: child,
-          ),
-        ),
-        child: child,
-      );
+    animation: animation,
+    builder: (context, child) => Transform.translate(
+      offset: slideUp ? Offset(0, 20 * (1 - animation.value)) : Offset.zero,
+      child: Opacity(opacity: animation.value, child: child),
+    ),
+    child: child,
+  );
 }
 
 /// Dialog for user type mismatch error
@@ -379,52 +374,52 @@ class _UserTypeMismatchDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-        backgroundColor: KolabingColors.darkSurface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Account Type Mismatch',
-                style: KolabingTextStyles.headlineMedium.copyWith(
-                  color: KolabingColors.textOnDark,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'This Google account is registered as a ${existingType?.label ?? 'different'} user. Please sign in from the correct screen.',
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFFCCCCCC),
-                  height: 1.6,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: onGotIt,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Got it',
-                    style: KolabingTextStyles.button.copyWith(
-                      color: KolabingColors.onPrimary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    backgroundColor: KolabingColors.darkSurface,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Account Type Mismatch',
+            style: KolabingTextStyles.headlineMedium.copyWith(
+              color: KolabingColors.textOnDark,
+            ),
+            textAlign: TextAlign.center,
           ),
-        ),
-      );
+          const SizedBox(height: 12),
+          Text(
+            'This Google account is registered as a ${existingType?.label ?? 'different'} user. Please sign in from the correct screen.',
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: const Color(0xFFCCCCCC),
+              height: 1.6,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: onGotIt,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.primary,
+                foregroundColor: KolabingColors.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Got it',
+                style: KolabingTextStyles.button.copyWith(
+                  color: KolabingColors.onPrimary,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

@@ -79,12 +79,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         if (canAdd)
           GestureDetector(
             onTap: () {
-              notifier.addPastEvent(
-                PastEvent(
-                  name: '',
-                  date: DateTime.now(),
-                ),
-              );
+              notifier.addPastEvent(PastEvent(name: '', date: DateTime.now()));
             },
             child: Container(
               padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -153,8 +148,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.event.name);
-    _partnerController =
-        TextEditingController(text: widget.event.partnerName ?? '');
+    _partnerController = TextEditingController(
+      text: widget.event.partnerName ?? '',
+    );
   }
 
   @override
@@ -171,14 +167,14 @@ class _PastEventEntryState extends State<_PastEventEntry> {
       firstDate: DateTime(2015),
       lastDate: DateTime.now(),
       builder: (context, child) => Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: KolabingColors.primary,
-                  onPrimary: KolabingColors.onPrimary,
-                ),
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: KolabingColors.primary,
+            onPrimary: KolabingColors.onPrimary,
           ),
-          child: child!,
         ),
+        child: child!,
+      ),
     );
     if (picked != null) {
       widget.onUpdate(widget.event.copyWith(date: picked));
@@ -268,12 +264,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      dateFormatted,
-                      style: _inputTextStyle,
-                    ),
-                  ),
+                  Expanded(child: Text(dateFormatted, style: _inputTextStyle)),
                   const Icon(
                     LucideIcons.calendar,
                     size: 18,
@@ -342,9 +333,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 widget.onUpdate(widget.event.copyWith(photos: updated));
               } on Exception catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Upload failed: $e')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
                 }
               }
             },
@@ -352,6 +343,50 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               final updated = List<String>.from(widget.event.photos)
                 ..removeAt(photoIndex);
               widget.onUpdate(widget.event.copyWith(photos: updated));
+            },
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+
+          // -- Videos (max 1 per event)
+          Text(
+            'Recap Video (max 1)',
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: KolabingColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          _EventVideoRow(
+            videos: widget.event.videos,
+            onAdd: () async {
+              if (widget.event.videos.isNotEmpty) return;
+              final picker = ImagePicker();
+              final video = await picker.pickVideo(
+                source: ImageSource.gallery,
+                maxDuration: const Duration(seconds: 90),
+              );
+              if (video == null) return;
+              try {
+                final uploadService = UploadService();
+                final url = await uploadService.upload(
+                  filePath: video.path,
+                  folder: 'kolabs',
+                );
+                final updated = [...widget.event.videos, url];
+                widget.onUpdate(widget.event.copyWith(videos: updated));
+              } on Exception catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+                }
+              }
+            },
+            onRemove: (videoIndex) {
+              final updated = List<String>.from(widget.event.videos)
+                ..removeAt(videoIndex);
+              widget.onUpdate(widget.event.copyWith(videos: updated));
             },
           ),
         ],
@@ -404,19 +439,19 @@ class _EventPhotoRow extends StatelessWidget {
                           fit: BoxFit.cover,
                         )
                       : photos[i].startsWith('http')
-                          ? Image.network(
-                              photos[i],
-                              width: 72,
-                              height: 72,
-                              fit: BoxFit.cover,
-                            )
-                          : const Center(
-                              child: Icon(
-                                LucideIcons.image,
-                                size: 20,
-                                color: KolabingColors.textSecondary,
-                              ),
-                            ),
+                      ? Image.network(
+                          photos[i],
+                          width: 72,
+                          height: 72,
+                          fit: BoxFit.cover,
+                        )
+                      : const Center(
+                          child: Icon(
+                            LucideIcons.image,
+                            size: 20,
+                            color: KolabingColors.textSecondary,
+                          ),
+                        ),
                 ),
               ),
               Positioned(
@@ -466,6 +501,87 @@ class _EventPhotoRow extends StatelessWidget {
   }
 }
 
+class _EventVideoRow extends StatelessWidget {
+  const _EventVideoRow({
+    required this.videos,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  final List<String> videos;
+  final VoidCallback onAdd;
+  final void Function(int) onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final canAdd = videos.isEmpty;
+
+    return Wrap(
+      spacing: KolabingSpacing.xs,
+      runSpacing: KolabingSpacing.xs,
+      children: [
+        for (int i = 0; i < videos.length; i++)
+          Container(
+            width: 180,
+            padding: const EdgeInsets.all(KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              color: KolabingColors.surfaceVariant,
+              borderRadius: KolabingRadius.borderRadiusSm,
+              border: Border.all(color: KolabingColors.border),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  LucideIcons.video,
+                  size: 18,
+                  color: KolabingColors.textSecondary,
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+                Expanded(
+                  child: Text(
+                    'Recap video',
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      color: KolabingColors.textPrimary,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => onRemove(i),
+                  child: const Icon(
+                    LucideIcons.x,
+                    size: 16,
+                    color: KolabingColors.error,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (canAdd)
+          GestureDetector(
+            onTap: onAdd,
+            child: Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: KolabingColors.surfaceVariant,
+                borderRadius: KolabingRadius.borderRadiusSm,
+                border: Border.all(color: KolabingColors.border),
+              ),
+              child: const Center(
+                child: Icon(
+                  LucideIcons.video,
+                  size: 20,
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 // =============================================================================
 // Shared helpers (file-private)
 // =============================================================================
@@ -473,50 +589,41 @@ class _EventPhotoRow extends StatelessWidget {
 InputDecoration _inputDecoration({
   required String hint,
   String? error,
-}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textTertiary,
-      ),
-      errorText: error,
-      errorStyle: GoogleFonts.openSans(fontSize: 12),
-      filled: true,
-      fillColor: KolabingColors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: 14,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(
-          color: KolabingColors.borderFocus,
-          width: 1.5,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderError),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(
-          color: KolabingColors.borderError,
-          width: 1.5,
-        ),
-      ),
-    );
+}) => InputDecoration(
+  hintText: hint,
+  hintStyle: GoogleFonts.openSans(
+    fontSize: 14,
+    color: KolabingColors.textTertiary,
+  ),
+  errorText: error,
+  errorStyle: GoogleFonts.openSans(fontSize: 12),
+  filled: true,
+  fillColor: KolabingColors.surface,
+  contentPadding: const EdgeInsets.symmetric(
+    horizontal: KolabingSpacing.md,
+    vertical: 14,
+  ),
+  border: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.borderFocus, width: 1.5),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.borderError),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.borderError, width: 1.5),
+  ),
+);
 
-TextStyle get _inputTextStyle => GoogleFonts.openSans(
-      fontSize: 14,
-      color: KolabingColors.textPrimary,
-    );
+TextStyle get _inputTextStyle =>
+    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.textPrimary);

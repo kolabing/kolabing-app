@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/permission_service.dart';
 import '../../providers/onboarding_provider.dart';
@@ -20,6 +21,9 @@ class CommunityFinalScreen extends ConsumerStatefulWidget {
 
 class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -41,6 +45,9 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
   @override
   void dispose() {
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -124,11 +131,12 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
     setState(() => _isLoading = true);
 
-    final result =
-        await ref.read(onboardingProvider.notifier).completeWithEmail(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            );
+    final result = await ref
+        .read(onboardingProvider.notifier)
+        .completeWithEmail(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
 
     if (!mounted) return;
 
@@ -142,14 +150,17 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       if (!mounted) return;
 
       // Show permission screen on first registration
-      final hasShownPermissions =
-          await PermissionService.instance.hasShownPermissionScreen();
+      final hasShownPermissions = await PermissionService.instance
+          .hasShownPermissionScreen();
       if (!mounted) return;
 
       if (!hasShownPermissions) {
-        context.go('/permissions?destination=${Uri.encodeComponent('/community')}');
+        context.go(
+          '${KolabingRoutes.permissions}?destination='
+          '${Uri.encodeComponent(KolabingRoutes.communityDashboard)}',
+        );
       } else {
-        context.go('/community');
+        context.go(KolabingRoutes.communityDashboard);
       }
     } else if (result.isNetworkError) {
       setState(() => _isLoading = false);
@@ -158,7 +169,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       setState(() => _isLoading = false);
 
       // Handle validation errors - show under specific fields
-      if (result.error?.isValidationError == true && result.error?.errors != null) {
+      if (result.error?.isValidationError == true &&
+          result.error?.errors != null) {
         final emailError = result.error!.getFieldError('email');
         final passwordError = result.error!.getFieldError('password');
 
@@ -183,8 +195,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.wifi_off_rounded,
-                color: KolabingColors.textOnDark, size: 20),
+            const Icon(
+              Icons.wifi_off_rounded,
+              color: KolabingColors.textOnDark,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -241,323 +256,365 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       return const SizedBox.shrink();
     }
 
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+
     return PopScope(
       canPop: !_isLoading,
       child: Scaffold(
         backgroundColor: KolabingColors.background,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: _isLoading ? null : _handleBack,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.arrow_back_ios_rounded,
-                              size: 20,
-                              color: KolabingColors.textPrimary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Back',
-                              style: GoogleFonts.openSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: KolabingColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-
-                        // Title
-                        Text(
-                          'CREATE YOUR ACCOUNT',
-                          style: GoogleFonts.rubik(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Subtitle
-                        Text(
-                          'Enter your email and password to complete registration',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Summary card (collapsed)
-                        SummaryCard(data: data),
-                        const SizedBox(height: 8),
-
-                        // Edit button
-                        TextButton(
-                          onPressed: _isLoading ? null : _handleEdit,
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _isLoading ? null : _handleBack,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
-                                Icons.edit_outlined,
-                                size: 16,
-                                color: KolabingColors.primary,
+                                Icons.arrow_back_ios_rounded,
+                                size: 20,
+                                color: KolabingColors.textPrimary,
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Edit',
+                                'Back',
                                 style: GoogleFonts.openSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: KolabingColors.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: KolabingColors.textPrimary,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                      ),
+                    ],
+                  ),
+                ),
 
-                        // Email field
-                        TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          autocorrect: false,
-                          enabled: !_isLoading,
-                          validator: _validateEmail,
-                          onChanged: (_) {
-                            if (_emailApiError != null) {
-                              setState(() => _emailApiError = null);
-                            }
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            hintText: 'your@email.com',
-                            prefixIcon: const Icon(Icons.email_outlined),
-                            filled: true,
-                            fillColor: KolabingColors.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.border),
+                // Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: EdgeInsets.fromLTRB(24, 0, 24, keyboardInset + 24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 16),
+
+                          // Title
+                          Text(
+                            'CREATE YOUR ACCOUNT',
+                            style: GoogleFonts.rubik(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: KolabingColors.textPrimary,
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.border),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Subtitle
+                          Text(
+                            'Enter your email and password to complete registration',
+                            style: GoogleFonts.openSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: KolabingColors.textSecondary,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                  color: KolabingColors.primary, width: 2),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.error),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Summary card (collapsed)
+                          SummaryCard(data: data),
+                          const SizedBox(height: 8),
+
+                          // Edit button
+                          TextButton(
+                            onPressed: _isLoading ? null : _handleEdit,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.edit_outlined,
+                                  size: 16,
+                                  color: KolabingColors.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Edit',
+                                  style: GoogleFonts.openSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: KolabingColors.primary,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 24),
 
-                        // Password field
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          enabled: !_isLoading,
-                          validator: _validatePassword,
-                          onChanged: (_) {
-                            if (_passwordApiError != null) {
-                              setState(() => _passwordApiError = null);
-                            }
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            hintText: 'Min. 8 characters',
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
+                          // Email field
+                          TextFormField(
+                            controller: _emailController,
+                            focusNode: _emailFocusNode,
+                            keyboardType: TextInputType.emailAddress,
+                            autocorrect: false,
+                            enabled: !_isLoading,
+                            validator: _validateEmail,
+                            textInputAction: TextInputAction.next,
+                            onChanged: (_) {
+                              if (_emailApiError != null) {
+                                setState(() => _emailApiError = null);
+                              }
+                            },
+                            onFieldSubmitted: (_) {
+                              _passwordFocusNode.requestFocus();
+                            },
+                            scrollPadding: const EdgeInsets.only(bottom: 160),
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              hintText: 'your@email.com',
+                              prefixIcon: const Icon(Icons.email_outlined),
+                              filled: true,
+                              fillColor: KolabingColors.surface,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.border,
+                                ),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                            filled: true,
-                            fillColor: KolabingColors.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.border),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.border),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                  color: KolabingColors.primary, width: 2),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.error),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Confirm Password field
-                        TextFormField(
-                          controller: _confirmPasswordController,
-                          obscureText: _obscureConfirmPassword,
-                          enabled: !_isLoading,
-                          validator: _validateConfirmPassword,
-                          decoration: InputDecoration(
-                            labelText: 'Confirm Password',
-                            hintText: 'Re-enter your password',
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.border,
+                                ),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureConfirmPassword =
-                                      !_obscureConfirmPassword;
-                                });
-                              },
-                            ),
-                            filled: true,
-                            fillColor: KolabingColors.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.border),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.border),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                  color: KolabingColors.primary, width: 2),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide:
-                                  const BorderSide(color: KolabingColors.error),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.primary,
+                                  width: 2,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.error,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                      ],
+                          const SizedBox(height: 16),
+
+                          // Password field
+                          TextFormField(
+                            controller: _passwordController,
+                            focusNode: _passwordFocusNode,
+                            obscureText: _obscurePassword,
+                            enabled: !_isLoading,
+                            validator: _validatePassword,
+                            textInputAction: TextInputAction.next,
+                            onChanged: (_) {
+                              if (_passwordApiError != null) {
+                                setState(() => _passwordApiError = null);
+                              }
+                            },
+                            onFieldSubmitted: (_) {
+                              _confirmPasswordFocusNode.requestFocus();
+                            },
+                            scrollPadding: const EdgeInsets.only(bottom: 160),
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              hintText: 'Min. 8 characters',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                              filled: true,
+                              fillColor: KolabingColors.surface,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.border,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.border,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.primary,
+                                  width: 2,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.error,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Confirm Password field
+                          TextFormField(
+                            controller: _confirmPasswordController,
+                            focusNode: _confirmPasswordFocusNode,
+                            obscureText: _obscureConfirmPassword,
+                            enabled: !_isLoading,
+                            validator: _validateConfirmPassword,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) => _handleRegister(),
+                            scrollPadding: const EdgeInsets.only(bottom: 160),
+                            decoration: InputDecoration(
+                              labelText: 'Confirm Password',
+                              hintText: 'Re-enter your password',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword;
+                                  });
+                                },
+                              ),
+                              filled: true,
+                              fillColor: KolabingColors.surface,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.border,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.border,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.primary,
+                                  width: 2,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: KolabingColors.error,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              // Bottom section
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    // Register button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleRegister,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: KolabingColors.primary,
-                          foregroundColor: KolabingColors.onPrimary,
-                          disabledBackgroundColor:
-                              KolabingColors.primary.withValues(alpha: 0.7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                // Bottom section
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      // Register button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _handleRegister,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: KolabingColors.primary,
+                            foregroundColor: KolabingColors.onPrimary,
+                            disabledBackgroundColor: KolabingColors.primary
+                                .withValues(alpha: 0.7),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
                           ),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    KolabingColors.onPrimary,
-                                  ),
-                                ),
-                              )
-                            : _showSuccess
-                                ? const Icon(
-                                    Icons.check_rounded,
-                                    size: 24,
-                                    color: KolabingColors.onPrimary,
-                                  )
-                                : Text(
-                                    'CREATE ACCOUNT',
-                                    style: GoogleFonts.dmSans(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.0,
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      KolabingColors.onPrimary,
                                     ),
                                   ),
+                                )
+                              : _showSuccess
+                              ? const Icon(
+                                  Icons.check_rounded,
+                                  size: 24,
+                                  color: KolabingColors.onPrimary,
+                                )
+                              : Text(
+                                  'CREATE ACCOUNT',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    // Terms text
-                    Text(
-                      'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.textTertiary,
+                      // Terms text
+                      Text(
+                        'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: KolabingColors.textTertiary,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

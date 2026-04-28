@@ -18,7 +18,8 @@ class BusinessStep3Screen extends ConsumerStatefulWidget {
   const BusinessStep3Screen({super.key});
 
   @override
-  ConsumerState<BusinessStep3Screen> createState() => _BusinessStep3ScreenState();
+  ConsumerState<BusinessStep3Screen> createState() =>
+      _BusinessStep3ScreenState();
 }
 
 class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
@@ -54,8 +55,20 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
         imageQuality: 85,
       );
       if (image != null && mounted) {
-        await ref.read(onboardingProvider.notifier).addVenuePhoto(File(image.path));
+        await ref
+            .read(onboardingProvider.notifier)
+            .addVenuePhoto(File(image.path));
       }
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      final message = switch (e.code) {
+        'photo_access_denied' || 'photo_access_restricted' =>
+          'Please allow Photos access in Settings to add venue images.',
+        _ => 'We could not open your photo library. Please try again.',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: KolabingColors.error),
+      );
     } finally {
       if (mounted) {
         setState(() => _isPicking = false);
@@ -139,8 +152,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                             base64: photos[i].base64,
                             onRemove: () => notifier.removeVenuePhoto(i),
                           ),
-                        if (photos.length < 5)
-                          _AddPhotoTile(onTap: _pickPhoto),
+                        if (photos.length < 5) _AddPhotoTile(onTap: _pickPhoto),
                       ],
                     ),
                   ],
@@ -157,8 +169,11 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(alpha: 0.5),
-                    disabledForegroundColor: KolabingColors.onPrimary.withValues(alpha: 0.5),
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                      alpha: 0.5,
+                    ),
+                    disabledForegroundColor: KolabingColors.onPrimary
+                        .withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -189,77 +204,67 @@ class _AddPhotoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 104,
-          height: 104,
-          decoration: BoxDecoration(
-            color: KolabingColors.surfaceVariant,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: KolabingColors.border),
+    onTap: onTap,
+    child: Container(
+      width: 104,
+      height: 104,
+      decoration: BoxDecoration(
+        color: KolabingColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: KolabingColors.border),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(LucideIcons.plus, color: KolabingColors.textSecondary),
+          const SizedBox(height: 8),
+          Text(
+            'Add Photo',
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              color: KolabingColors.textSecondary,
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                LucideIcons.plus,
-                color: KolabingColors.textSecondary,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Add Photo',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 class _VenuePhotoTile extends StatelessWidget {
-  const _VenuePhotoTile({
-    required this.base64,
-    required this.onRemove,
-  });
+  const _VenuePhotoTile({required this.base64, required this.onRemove});
 
   final String base64;
   final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) => Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.memory(
-              base64Decode(base64),
-              width: 104,
-              height: 104,
-              fit: BoxFit.cover,
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Image.memory(
+          base64Decode(base64),
+          width: 104,
+          height: 104,
+          fit: BoxFit.cover,
+        ),
+      ),
+      Positioned(
+        top: 6,
+        right: 6,
+        child: GestureDetector(
+          onTap: onRemove,
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: KolabingColors.error,
+              shape: BoxShape.circle,
             ),
+            child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
           ),
-          Positioned(
-            top: 6,
-            right: 6,
-            child: GestureDetector(
-              onTap: onRemove,
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  color: KolabingColors.error,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  LucideIcons.x,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }

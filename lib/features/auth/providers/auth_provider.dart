@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../services/notification_service.dart';
+import '../utils/auth_navigation.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -415,15 +416,5 @@ final authNavigationRouteProvider = Provider<String?>((ref) {
   }
 
   final user = authState.user!;
-
-  // Attendees skip onboarding
-  if (user.isAttendee) return '/attendee';
-
-  // New users or incomplete onboarding -> onboarding
-  if (authState.isNewUser || !user.onboardingCompleted) {
-    return '/onboarding';
-  }
-
-  // Existing users -> dashboard based on type
-  return user.isBusiness ? '/business' : '/community';
+  return resolveAuthDestination(user, isNewUser: authState.isNewUser);
 });

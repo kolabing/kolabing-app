@@ -14,11 +14,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for Kolab CRUD operations via REST API.
 class KolabService {
-  KolabService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  KolabService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -38,6 +36,10 @@ class KolabService {
 
   /// POST /api/v1/kolabs
   Future<Kolab> create(Kolab kolab) async {
+    return _create(kolab, allowRetry: true);
+  }
+
+  Future<Kolab> _create(Kolab kolab, {required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/kolabs');
     final body = jsonEncode(kolab.toJson());
     debugPrint('KolabService: POST $uri');
@@ -56,12 +58,14 @@ class KolabService {
         final data = json['data'] as Map<String, dynamic>;
         return Kolab.fromJson(data);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _create(kolab, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 402) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: 402),
-        );
+        throw ApiException(error: ApiError.fromJson(json, statusCode: 402));
       } else {
         throw _parseApiError(response);
       }
@@ -81,6 +85,14 @@ class KolabService {
 
   /// PUT /api/v1/kolabs/{id}
   Future<Kolab> update(String id, Kolab kolab) async {
+    return _update(id, kolab, allowRetry: true);
+  }
+
+  Future<Kolab> _update(
+    String id,
+    Kolab kolab, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/kolabs/$id');
     final body = jsonEncode(kolab.toJson());
     debugPrint('KolabService: PUT $uri');
@@ -99,6 +111,10 @@ class KolabService {
         final data = json['data'] as Map<String, dynamic>;
         return Kolab.fromJson(data);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _update(id, kolab, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -119,6 +135,14 @@ class KolabService {
 
   /// POST /api/v1/kolabs/{id}/publish
   Future<Kolab> publish(String id, Kolab kolab) async {
+    return _publish(id, kolab, allowRetry: true);
+  }
+
+  Future<Kolab> _publish(
+    String id,
+    Kolab kolab, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/kolabs/$id/publish');
     debugPrint('KolabService: POST $uri');
 
@@ -135,12 +159,14 @@ class KolabService {
         final data = json['data'] as Map<String, dynamic>;
         return Kolab.fromJson(data);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _publish(id, kolab, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 402) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: 402),
-        );
+        throw ApiException(error: ApiError.fromJson(json, statusCode: 402));
       } else {
         throw _parseApiError(response);
       }
@@ -160,6 +186,14 @@ class KolabService {
 
   /// POST /api/v1/kolabs/{id}/close
   Future<Kolab> close(String id, Kolab kolab) async {
+    return _close(id, kolab, allowRetry: true);
+  }
+
+  Future<Kolab> _close(
+    String id,
+    Kolab kolab, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/kolabs/$id/close');
     debugPrint('KolabService: POST $uri');
 
@@ -176,6 +210,10 @@ class KolabService {
         final data = json['data'] as Map<String, dynamic>;
         return Kolab.fromJson(data);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _close(id, kolab, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -196,20 +234,22 @@ class KolabService {
 
   /// GET /api/v1/kolabs/me
   Future<List<Kolab>> getMyKolabs({String? status}) async {
-    final queryParams = <String, String>{
-      if (status != null) 'status': status,
-    };
+    return _getMyKolabs(status: status, allowRetry: true);
+  }
 
-    final uri = Uri.parse('$_baseUrl/kolabs/me').replace(
-      queryParameters: queryParams.isNotEmpty ? queryParams : null,
-    );
+  Future<List<Kolab>> _getMyKolabs({
+    String? status,
+    required bool allowRetry,
+  }) async {
+    final queryParams = <String, String>{if (status != null) 'status': status};
+
+    final uri = Uri.parse(
+      '$_baseUrl/kolabs/me',
+    ).replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
     debugPrint('KolabService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('My kolabs response: ${response.statusCode}');
 
@@ -220,6 +260,10 @@ class KolabService {
             .map((e) => Kolab.fromJson(e as Map<String, dynamic>))
             .toList();
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _getMyKolabs(status: status, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         throw _parseApiError(response);
@@ -240,14 +284,15 @@ class KolabService {
 
   /// GET /api/v1/kolabs/{id}
   Future<Kolab> getDetail(String id) async {
+    return _getDetail(id, allowRetry: true);
+  }
+
+  Future<Kolab> _getDetail(String id, {required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/kolabs/$id');
     debugPrint('KolabService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Kolab detail response: ${response.statusCode}');
 
@@ -256,11 +301,13 @@ class KolabService {
         final data = json['data'] as Map<String, dynamic>;
         return Kolab.fromJson(data);
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _getDetail(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 404) {
-        throw const ApiException(
-          error: ApiError(message: 'Kolab not found.'),
-        );
+        throw const ApiException(error: ApiError(message: 'Kolab not found.'));
       } else {
         throw _parseApiError(response);
       }
@@ -280,6 +327,10 @@ class KolabService {
 
   /// DELETE /api/v1/kolabs/{id}
   Future<void> delete(String id) async {
+    return _delete(id, allowRetry: true);
+  }
+
+  Future<void> _delete(String id, {required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/kolabs/$id');
     debugPrint('KolabService: DELETE $uri');
 
@@ -294,6 +345,10 @@ class KolabService {
       if (response.statusCode == 200 || response.statusCode == 204) {
         return;
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _delete(id, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(

@@ -1,20 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../services/permission_service.dart';
 import '../services/auth_service.dart';
-
-/// Key for storing onboarding completion status
-const String _onboardingCompletedKey = 'onboarding_completed';
+import '../utils/auth_navigation.dart';
 
 /// Represents the navigation destination after splash screen
 enum SplashNavigationTarget {
-  /// User has not completed onboarding
-  onboarding,
+  /// User is not authenticated yet
+  welcome,
 
-  /// User is not authenticated
-  signIn,
+  /// User needs to complete business onboarding
+  businessOnboarding,
+
+  /// User needs to complete community onboarding
+  communityOnboarding,
 
   /// User is authenticated as business
   businessDashboard,
@@ -71,38 +71,54 @@ class SplashStateNotifier extends Notifier<SplashState> {
   /// Returns the navigation target route path.
   Future<String> initialize() async {
     try {
-      // Check onboarding status
-      final hasCompletedOnboarding = await _checkOnboardingStatus();
-
-      if (!hasCompletedOnboarding) {
-        state = state.copyWith(
-          isLoading: false,
-          navigationTarget: SplashNavigationTarget.onboarding,
-        );
-        return KolabingRoutes.onboarding;
-      }
-
-      // Check authentication status via stored token
       final authService = AuthService();
       final token = await authService.getToken();
+      final storedUser = await authService.getStoredUser();
 
+      // Fresh launches should land on the welcome chooser, not jump straight
+      // into onboarding, unless we already know there is an authenticated user
+      // who needs to continue onboarding.
       if (token == null) {
         state = state.copyWith(
           isLoading: false,
-          navigationTarget: SplashNavigationTarget.signIn,
+          navigationTarget: SplashNavigationTarget.welcome,
         );
-        return KolabingRoutes.login;
+        return KolabingRoutes.welcome;
       }
 
-      // Get user type from stored user data
-      final user = await authService.getStoredUser();
+      final user = await authService.restoreSessionUser() ?? storedUser;
+      if (user == null) {
+        state = state.copyWith(
+          isLoading: false,
+          navigationTarget: SplashNavigationTarget.welcome,
+        );
+        return KolabingRoutes.welcome;
+      }
+
+      final destination = resolveAuthDestination(user);
+
+      if (destination == KolabingRoutes.businessOnboardingStep1) {
+        state = state.copyWith(
+          isLoading: false,
+          navigationTarget: SplashNavigationTarget.businessOnboarding,
+        );
+        return destination;
+      }
+
+      if (destination == KolabingRoutes.communityOnboardingStep1) {
+        state = state.copyWith(
+          isLoading: false,
+          navigationTarget: SplashNavigationTarget.communityOnboarding,
+        );
+        return destination;
+      }
 
       final String dashboard;
       final SplashNavigationTarget navTarget;
-      if (user?.isAttendee ?? false) {
+      if (user.isAttendee) {
         dashboard = KolabingRoutes.attendeeDashboard;
         navTarget = SplashNavigationTarget.attendeeDashboard;
-      } else if (user?.isBusiness ?? false) {
+      } else if (user.isBusiness) {
         dashboard = KolabingRoutes.businessDashboard;
         navTarget = SplashNavigationTarget.businessDashboard;
       } else {
@@ -123,24 +139,13 @@ class SplashStateNotifier extends Notifier<SplashState> {
       state = state.copyWith(isLoading: false, navigationTarget: navTarget);
       return dashboard;
     } on Exception catch (e) {
-      // On error, default to sign in
+      // On error, default to the safe welcome chooser.
       state = state.copyWith(
         isLoading: false,
-        navigationTarget: SplashNavigationTarget.signIn,
+        navigationTarget: SplashNavigationTarget.welcome,
         errorMessage: 'Failed to initialize: $e',
       );
-      return KolabingRoutes.login;
-    }
-  }
-
-  /// Check if user has completed onboarding
-  Future<bool> _checkOnboardingStatus() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getBool(_onboardingCompletedKey) ?? false;
-    } on Exception {
-      // If we cannot read preferences, assume onboarding not completed
-      return false;
+      return KolabingRoutes.welcome;
     }
   }
 }
@@ -149,41 +154,3 @@ class SplashStateNotifier extends Notifier<SplashState> {
 final splashStateProvider = NotifierProvider<SplashStateNotifier, SplashState>(
   SplashStateNotifier.new,
 );
-
-/// Provider for checking and setting onboarding status
-final onboardingStatusProvider = Provider<OnboardingStatus>(
-  (ref) => OnboardingStatus(),
-);
-
-/// Utility class for managing onboarding status
-class OnboardingStatus {
-  /// Check if onboarding has been completed
-  Future<bool> hasCompleted() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getBool(_onboardingCompletedKey) ?? false;
-    } on Exception {
-      return false;
-    }
-  }
-
-  /// Mark onboarding as completed
-  Future<void> markCompleted() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_onboardingCompletedKey, true);
-    } on Exception {
-      // Silently fail - user will see onboarding again
-    }
-  }
-
-  /// Reset onboarding status (for testing/development)
-  Future<void> reset() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_onboardingCompletedKey);
-    } on Exception {
-      // Silently fail
-    }
-  }
-}

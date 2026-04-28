@@ -49,7 +49,43 @@ void main() {
     expect(primaryVenue['name'], 'Sol Studio Rooftop');
     expect(primaryVenue['venue_type'], 'restaurant');
     expect(primaryVenue['place_id'], 'place-123');
-    expect(primaryVenue['formatted_address'], 'Carrer de Mallorca 1, Barcelona');
+    expect(
+      primaryVenue['formatted_address'],
+      'Carrer de Mallorca 1, Barcelona',
+    );
     expect(photos, ['data:image/jpeg;base64,abc123']);
+  });
+
+  test('business payload keeps up to three business categories', () {
+    const data = OnboardingData(
+      userType: UserType.business,
+      name: 'Sol Studio',
+      businessTypeIds: ['1', '2', '3'],
+      businessTypeSlugs: ['cafe', 'coworking', 'events'],
+      businessTypeNames: ['Cafe', 'Coworking', 'Events'],
+      location: PlaceSuggestion(
+        placeId: 'place-123',
+        title: 'Sol Studio',
+        formattedAddress: 'Carrer de Mallorca 1, Barcelona',
+        city: 'Barcelona',
+      ),
+      venueName: 'Sol Studio Rooftop',
+      venueType: 'restaurant',
+      venueCapacity: 120,
+      venuePhotos: [
+        OnboardingPhoto(
+          base64: 'abc123',
+          fileName: 'venue.jpg',
+          mimeType: 'image/jpeg',
+        ),
+      ],
+    );
+
+    final payload = data.toBusinessPayload();
+
+    expect(payload['business_types'], ['cafe', 'coworking', 'events']);
+    expect(payload['business_type'], 'cafe');
+    expect(data.isStep4Complete, isTrue);
+    expect(data.isComplete, isTrue);
   });
 }

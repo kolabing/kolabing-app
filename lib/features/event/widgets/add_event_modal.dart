@@ -29,6 +29,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
 
   DateTime _selectedDate = DateTime.now().subtract(const Duration(days: 30));
   final List<XFile> _selectedPhotos = [];
+  final List<XFile> _selectedVideos = [];
   bool _isLoading = false;
 
   final ImagePicker _imagePicker = ImagePicker();
@@ -92,6 +93,31 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
     setState(() => _selectedPhotos.removeAt(index));
   }
 
+  Future<void> _pickVideo() async {
+    if (_selectedVideos.length >= 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Maximum 1 video allowed'),
+          backgroundColor: KolabingColors.warning,
+        ),
+      );
+      return;
+    }
+
+    final picked = await _imagePicker.pickVideo(
+      source: ImageSource.gallery,
+      maxDuration: const Duration(seconds: 90),
+    );
+
+    if (picked != null) {
+      setState(() => _selectedVideos.add(picked));
+    }
+  }
+
+  void _removeVideo(int index) {
+    setState(() => _selectedVideos.removeAt(index));
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -115,6 +141,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         date: _selectedDate,
         attendeeCount: int.tryParse(_attendeeCountController.text) ?? 0,
         photoPaths: _selectedPhotos.map((p) => p.path).toList(),
+        videoPaths: _selectedVideos.map((video) => video.path).toList(),
       );
 
       final success = await ref.read(eventsProvider.notifier).addEvent(request);
@@ -275,6 +302,11 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                     // Photos
                     _buildPhotosPicker(),
 
+                    const SizedBox(height: KolabingSpacing.md),
+
+                    // Videos
+                    _buildVideoPicker(),
+
                     const SizedBox(height: KolabingSpacing.lg),
 
                     // Submit Button
@@ -340,7 +372,11 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             hintStyle: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.textTertiary,
             ),
-            prefixIcon: Icon(icon, color: KolabingColors.textTertiary, size: 20),
+            prefixIcon: Icon(
+              icon,
+              color: KolabingColors.textTertiary,
+              size: 20,
+            ),
             filled: true,
             fillColor: KolabingColors.surfaceVariant,
             border: OutlineInputBorder(
@@ -360,9 +396,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(
-                color: KolabingColors.error,
-              ),
+              borderSide: const BorderSide(color: KolabingColors.error),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
@@ -536,6 +570,92 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildVideoPicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recap Video (Optional)',
+          style: KolabingTextStyles.labelMedium.copyWith(
+            color: KolabingColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        Text(
+          'Add one short video to show how the event felt.',
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        if (_selectedVideos.isEmpty)
+          OutlinedButton.icon(
+            onPressed: _pickVideo,
+            icon: const Icon(LucideIcons.video, size: 18),
+            label: const Text('ADD VIDEO'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KolabingColors.textPrimary,
+              side: const BorderSide(color: KolabingColors.border),
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: KolabingRadius.borderRadiusMd,
+              ),
+            ),
+          )
+        else
+          Column(
+            children: List.generate(_selectedVideos.length, (index) {
+              final video = _selectedVideos[index];
+              final fileName = video.name.isNotEmpty
+                  ? video.name
+                  : video.path.split('/').last;
+              return Container(
+                margin: EdgeInsets.only(
+                  bottom: index == _selectedVideos.length - 1
+                      ? 0
+                      : KolabingSpacing.sm,
+                ),
+                padding: const EdgeInsets.all(KolabingSpacing.sm),
+                decoration: BoxDecoration(
+                  color: KolabingColors.surfaceVariant,
+                  borderRadius: KolabingRadius.borderRadiusMd,
+                  border: Border.all(color: KolabingColors.border),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      LucideIcons.video,
+                      size: 18,
+                      color: KolabingColors.textSecondary,
+                    ),
+                    const SizedBox(width: KolabingSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        fileName,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          color: KolabingColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => _removeVideo(index),
+                      icon: const Icon(
+                        LucideIcons.trash2,
+                        size: 18,
+                        color: KolabingColors.error,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
       ],
     );
   }

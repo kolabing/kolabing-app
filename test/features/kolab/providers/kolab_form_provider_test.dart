@@ -1,84 +1,48 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:kolabing_app/features/auth/models/user_model.dart';
+import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
-import 'package:kolabing_app/features/kolab/enums/venue_type.dart';
+import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/models/kolab.dart';
 import 'package:kolabing_app/features/kolab/providers/kolab_form_provider.dart';
-import 'package:kolabing_app/features/onboarding/models/place_suggestion.dart';
-import 'package:kolabing_app/features/onboarding/providers/onboarding_provider.dart';
+import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
 void main() {
-  test('venue promotion step 0 requires title and description', () {
+  test('initForEdit loads an existing kolab into the form state', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    final notifier = container.read(kolabFormProvider.notifier)
-      ..selectIntent(IntentType.venuePromotion)
-      ..updateVenueName('Cafe Montjuic')
-      ..updateVenueType(VenueType.cafe)
-      ..updateCapacity(80)
-      ..updateVenueAddress('Carrer de Montjuic 42')
-      ..updatePreferredCity('Barcelona');
-
-    final isValid = notifier.validateCurrentStep();
-    final state = container.read(kolabFormProvider);
-
-    expect(isValid, isFalse);
-    expect(state.fieldErrors['title'], 'Title is required');
-    expect(state.fieldErrors['description'], 'Description is required');
-  });
-
-  test('kolab media serializes using the api photo type', () {
-    final kolab = Kolab.empty(IntentType.venuePromotion).copyWith(
+    final kolab = Kolab(
+      id: 'kolab-42',
+      intentType: IntentType.communitySeeking,
+      status: 'draft',
+      title: 'Barcelona Brunch Club',
+      description: 'Looking for a coffee partner for our founder meetup.',
+      preferredCity: 'Barcelona',
+      needs: const [NeedType.sponsor],
+      communityTypes: const ['Founders'],
+      communitySize: 120,
+      typicalAttendance: 45,
+      offersInReturn: const [DeliverableType.socialMedia],
       media: const [
-        KolabMedia(
-          url: 'https://storage.kolabing.com/kolabs/img1.jpg',
-          type: 'photo',
-          sortOrder: 0,
-        ),
+        KolabMedia(url: 'https://example.com/photo.jpg', type: 'photo'),
       ],
+      availabilityMode: AvailabilityMode.oneTime,
+      availabilityStart: DateTime(2026, 5, 10),
+      availabilityEnd: DateTime(2026, 5, 10),
+      selectedTime: const TimeOfDay(hour: 19, minute: 30),
     );
 
-    final json = kolab.toJson();
-    final media = json['media'] as List<dynamic>;
-    final first = media.first as Map<String, dynamic>;
-
-    expect(first['type'], 'photo');
-  });
-
-  test('venue promotion prefills primary venue from business onboarding', () {
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
-
-    final onboarding = container.read(onboardingProvider.notifier)
-      ..initialize(UserType.business)
-      ..updateLocation(
-        const PlaceSuggestion(
-          placeId: 'place-123',
-          title: 'Sol Studio',
-          formattedAddress: 'Carrer de Mallorca 1, Barcelona',
-          city: 'Barcelona',
-          country: 'Spain',
-        ),
-      )
-      ..updateVenueName('Sol Studio Rooftop')
-      ..updateVenueType('cafe')
-      ..updateVenueCapacity(120);
-
-    expect(onboarding, isNotNull);
-
-    container.read(kolabFormProvider.notifier).selectIntent(
-          IntentType.venuePromotion,
-        );
+    container.read(kolabFormProvider.notifier).initForEdit(kolab);
 
     final state = container.read(kolabFormProvider);
-
-    expect(state.kolab.venueName, 'Sol Studio Rooftop');
-    expect(state.kolab.venueType, VenueType.cafe);
-    expect(state.kolab.capacity, 120);
-    expect(state.kolab.venueAddress, 'Carrer de Mallorca 1, Barcelona');
-    expect(state.kolab.preferredCity, 'Barcelona');
+    expect(state.isEditing, isTrue);
+    expect(state.intentType, IntentType.communitySeeking);
+    expect(state.totalSteps, IntentType.communitySeeking.totalSteps);
+    expect(state.currentStep, 0);
+    expect(state.kolab.id, 'kolab-42');
+    expect(state.kolab.title, 'Barcelona Brunch Club');
+    expect(state.kolab.media.single.url, 'https://example.com/photo.jpg');
   });
 }

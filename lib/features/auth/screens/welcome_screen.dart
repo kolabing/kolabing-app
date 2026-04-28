@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../widgets/kolabing_logo.dart';
 
@@ -88,10 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       );
 
   Animation<Offset> _createSlideAnimation(double begin, double end) =>
-      Tween<Offset>(
-        begin: const Offset(0, 20),
-        end: Offset.zero,
-      ).animate(
+      Tween<Offset>(begin: const Offset(0, 20), end: Offset.zero).animate(
         CurvedAnimation(
           parent: _entryController,
           curve: Interval(begin, end, curve: Curves.easeOut),
@@ -110,123 +108,120 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   void _navigateToLogin() {
     HapticFeedback.lightImpact();
-    context.push('/auth/login');
+    context.push(KolabingRoutes.login);
   }
 
   void _navigateToUserTypeSelection() {
     HapticFeedback.lightImpact();
-    context.push('/auth/user-type');
+    context.push(KolabingRoutes.userTypeSelection);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: KolabingColors.background,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
+    backgroundColor: KolabingColors.background,
+    body: SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            const Spacer(flex: 2),
 
-                // Logo
-                _AnimatedElement(
-                  opacityAnimation: _logoAnimation,
-                  slideAnimation: _logoSlideAnimation,
-                  child: const KolabingLogo(
-                    size: KolabingLogoSize.xLarge,
-                    variant: KolabingLogoVariant.yellowCircle,
-                    showText: false,
-                    onDarkBackground: false,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // App name
-                _AnimatedElement(
-                  opacityAnimation: _appNameAnimation,
-                  slideAnimation: _appNameSlideAnimation,
-                  child: Text(
-                    'Kolabing',
-                    style: GoogleFonts.rubik(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Headline
-                _AnimatedElement(
-                  opacityAnimation: _headlineAnimation,
-                  slideAnimation: _headlineSlideAnimation,
-                  child: Text(
-                    'WHERE BRANDS MEET\nCOMMUNITIES',
-                    style: GoogleFonts.rubik(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: KolabingColors.textPrimary,
-                      letterSpacing: 1.5,
-                      height: 1.3,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Description
-                _AnimatedElement(
-                  opacityAnimation: _descriptionAnimation,
-                  slideAnimation: _descriptionSlideAnimation,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      'Connect with the perfect collaboration partner to grow your business or community together',
-                      style: GoogleFonts.openSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.textSecondary,
-                        height: 1.6,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-
-                const Spacer(flex: 3),
-
-                // Buttons
-                _AnimatedElement(
-                  opacityAnimation: _buttonsAnimation,
-                  slideAnimation: _buttonsSlideAnimation,
-                  child: Column(
-                    children: [
-                      // Login Button (Primary)
-                      _PrimaryButton(
-                        text: 'LOGIN',
-                        onPressed: _navigateToLogin,
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Create Account Button (Secondary)
-                      _SecondaryButton(
-                        text: 'CREATE ACCOUNT',
-                        onPressed: _navigateToUserTypeSelection,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-              ],
+            // Logo
+            _AnimatedElement(
+              opacityAnimation: _logoAnimation,
+              slideAnimation: _logoSlideAnimation,
+              child: const KolabingLogo(
+                size: KolabingLogoSize.xLarge,
+                variant: KolabingLogoVariant.yellowCircle,
+                showText: false,
+                onDarkBackground: false,
+              ),
             ),
-          ),
+
+            const SizedBox(height: 12),
+
+            // App name
+            _AnimatedElement(
+              opacityAnimation: _appNameAnimation,
+              slideAnimation: _appNameSlideAnimation,
+              child: Text(
+                'Kolabing',
+                style: GoogleFonts.rubik(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Headline
+            _AnimatedElement(
+              opacityAnimation: _headlineAnimation,
+              slideAnimation: _headlineSlideAnimation,
+              child: Text(
+                'WHERE BRANDS MEET\nCOMMUNITIES',
+                style: GoogleFonts.rubik(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: KolabingColors.textPrimary,
+                  letterSpacing: 1.5,
+                  height: 1.3,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Description
+            _AnimatedElement(
+              opacityAnimation: _descriptionAnimation,
+              slideAnimation: _descriptionSlideAnimation,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'Connect with the perfect collaboration partner to grow your business or community together',
+                  style: GoogleFonts.openSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: KolabingColors.textSecondary,
+                    height: 1.6,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+
+            const Spacer(flex: 3),
+
+            // Buttons
+            _AnimatedElement(
+              opacityAnimation: _buttonsAnimation,
+              slideAnimation: _buttonsSlideAnimation,
+              child: Column(
+                children: [
+                  // Login Button (Primary)
+                  _PrimaryButton(text: 'LOGIN', onPressed: _navigateToLogin),
+
+                  const SizedBox(height: 12),
+
+                  // Create Account Button (Secondary)
+                  _SecondaryButton(
+                    text: 'CREATE ACCOUNT',
+                    onPressed: _navigateToUserTypeSelection,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 48),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// Animated wrapper for staggered entry
@@ -243,24 +238,18 @@ class _AnimatedElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: opacityAnimation,
-        builder: (context, child) => Transform.translate(
-          offset: slideAnimation.value,
-          child: Opacity(
-            opacity: opacityAnimation.value,
-            child: child,
-          ),
-        ),
-        child: child,
-      );
+    animation: opacityAnimation,
+    builder: (context, child) => Transform.translate(
+      offset: slideAnimation.value,
+      child: Opacity(opacity: opacityAnimation.value, child: child),
+    ),
+    child: child,
+  );
 }
 
 /// Primary yellow button
 class _PrimaryButton extends StatefulWidget {
-  const _PrimaryButton({
-    required this.text,
-    required this.onPressed,
-  });
+  const _PrimaryButton({required this.text, required this.onPressed});
 
   final String text;
   final VoidCallback onPressed;
@@ -274,51 +263,48 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: widget.onPressed,
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 100),
-          scale: _isPressed ? 0.98 : 1.0,
-          child: Container(
-            width: double.infinity,
-            height: 52,
-            decoration: BoxDecoration(
-              color: _isPressed
-                  ? KolabingColors.primaryDark
-                  : KolabingColors.primary,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF374957).withValues(alpha: 0.11),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1.5),
-                ),
-              ],
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: widget.onPressed,
+    child: AnimatedScale(
+      duration: const Duration(milliseconds: 100),
+      scale: _isPressed ? 0.98 : 1.0,
+      child: Container(
+        width: double.infinity,
+        height: 52,
+        decoration: BoxDecoration(
+          color: _isPressed
+              ? KolabingColors.primaryDark
+              : KolabingColors.primary,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF374957).withValues(alpha: 0.11),
+              blurRadius: 4,
+              offset: const Offset(0, 1.5),
             ),
-            child: Center(
-              child: Text(
-                widget.text,
-                style: GoogleFonts.dmSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.onPrimary,
-                  letterSpacing: 1.0,
-                ),
-              ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            widget.text,
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.onPrimary,
+              letterSpacing: 1.0,
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// Secondary outlined button
 class _SecondaryButton extends StatefulWidget {
-  const _SecondaryButton({
-    required this.text,
-    required this.onPressed,
-  });
+  const _SecondaryButton({required this.text, required this.onPressed});
 
   final String text;
   final VoidCallback onPressed;
@@ -332,38 +318,35 @@ class _SecondaryButtonState extends State<_SecondaryButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: widget.onPressed,
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 100),
-          scale: _isPressed ? 0.98 : 1.0,
-          child: Container(
-            width: double.infinity,
-            height: 48,
-            decoration: BoxDecoration(
-              color: _isPressed
-                  ? KolabingColors.surfaceVariant
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: KolabingColors.border,
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                widget.text,
-                style: GoogleFonts.dmSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                  letterSpacing: 1.0,
-                ),
-              ),
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: widget.onPressed,
+    child: AnimatedScale(
+      duration: const Duration(milliseconds: 100),
+      scale: _isPressed ? 0.98 : 1.0,
+      child: Container(
+        width: double.infinity,
+        height: 48,
+        decoration: BoxDecoration(
+          color: _isPressed
+              ? KolabingColors.surfaceVariant
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: KolabingColors.border, width: 1.5),
+        ),
+        child: Center(
+          child: Text(
+            widget.text,
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textPrimary,
+              letterSpacing: 1.0,
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

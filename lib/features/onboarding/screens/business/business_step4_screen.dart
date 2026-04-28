@@ -16,7 +16,8 @@ class BusinessStep4Screen extends ConsumerStatefulWidget {
   const BusinessStep4Screen({super.key});
 
   @override
-  ConsumerState<BusinessStep4Screen> createState() => _BusinessStep4ScreenState();
+  ConsumerState<BusinessStep4Screen> createState() =>
+      _BusinessStep4ScreenState();
 }
 
 class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
@@ -134,6 +135,7 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
     final businessTypes = ref.watch(businessTypesProvider);
     final notifier = ref.read(onboardingProvider.notifier);
     final canContinue = data?.isStep4Complete == true && _phoneError == null;
+    final selectedTypeIds = data?.selectedBusinessTypeIds ?? const <String>[];
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -187,10 +189,20 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
                       controller: _nameController,
                       maxLength: 255,
                       onChanged: notifier.updateName,
-                      decoration: _inputDecoration(hint: 'Enter your business name'),
+                      decoration: _inputDecoration(
+                        hint: 'Enter your business name',
+                      ),
                     ),
                     const SizedBox(height: 20),
                     _FieldLabel(label: 'Business Type'),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Select up to 3 categories that describe your business.',
+                      style: GoogleFonts.openSans(
+                        fontSize: 13,
+                        color: KolabingColors.textSecondary,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     businessTypes.when(
                       data: (types) => GridView.builder(
@@ -198,11 +210,11 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.9,
-                        ),
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.9,
+                            ),
                         itemCount: types.length,
                         itemBuilder: (context, index) {
                           final type = types[index];
@@ -210,9 +222,8 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
                             id: type.id,
                             name: type.name,
                             icon: type.icon,
-                            isSelected: data?.type == type.id,
-                            onTap: () =>
-                                notifier.updateType(type.id, type.slug, type.name),
+                            isSelected: selectedTypeIds.contains(type.id),
+                            onTap: () => notifier.toggleBusinessType(type),
                           );
                         },
                       ),
@@ -295,8 +306,11 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(alpha: 0.5),
-                    disabledForegroundColor: KolabingColors.onPrimary.withValues(alpha: 0.5),
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                      alpha: 0.5,
+                    ),
+                    disabledForegroundColor: KolabingColors.onPrimary
+                        .withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -327,59 +341,55 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
-      );
+    label,
+    style: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      color: KolabingColors.textPrimary,
+    ),
+  );
 }
 
 InputDecoration _inputDecoration({
   required String hint,
   IconData? prefixIcon,
   String? errorText,
-}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: KolabingColors.textTertiary,
-      ),
-      prefixIcon: prefixIcon == null
-          ? null
-          : Icon(prefixIcon, size: 20, color: KolabingColors.textTertiary),
-      errorText: errorText,
-      errorStyle: GoogleFonts.openSans(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: KolabingColors.error,
-      ),
-      filled: true,
-      fillColor: KolabingColors.surfaceVariant,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: KolabingColors.primary,
-          width: 1.5,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.error, width: 1.5),
-      ),
-    );
+}) => InputDecoration(
+  hintText: hint,
+  hintStyle: GoogleFonts.openSans(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: KolabingColors.textTertiary,
+  ),
+  prefixIcon: prefixIcon == null
+      ? null
+      : Icon(prefixIcon, size: 20, color: KolabingColors.textTertiary),
+  errorText: errorText,
+  errorStyle: GoogleFonts.openSans(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    color: KolabingColors.error,
+  ),
+  filled: true,
+  fillColor: KolabingColors.surfaceVariant,
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.primary, width: 1.5),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.error),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.error, width: 1.5),
+  ),
+);

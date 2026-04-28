@@ -47,6 +47,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
     'Art',
     'Travel',
     'Networking',
+    'Business / Coworking',
     'Fitness',
     'Social',
     'Gaming',
@@ -187,53 +188,44 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
 InputDecoration _inputDecoration({
   required String hint,
   String? error,
-}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textTertiary,
-      ),
-      errorText: error,
-      errorStyle: GoogleFonts.openSans(fontSize: 12),
-      filled: true,
-      fillColor: KolabingColors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: 14,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(
-          color: KolabingColors.borderFocus,
-          width: 1.5,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderError),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(
-          color: KolabingColors.borderError,
-          width: 1.5,
-        ),
-      ),
-    );
+}) => InputDecoration(
+  hintText: hint,
+  hintStyle: GoogleFonts.openSans(
+    fontSize: 14,
+    color: KolabingColors.textTertiary,
+  ),
+  errorText: error,
+  errorStyle: GoogleFonts.openSans(fontSize: 12),
+  filled: true,
+  fillColor: KolabingColors.surface,
+  contentPadding: const EdgeInsets.symmetric(
+    horizontal: KolabingSpacing.md,
+    vertical: 14,
+  ),
+  border: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.borderFocus, width: 1.5),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.borderError),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: const BorderSide(color: KolabingColors.borderError, width: 1.5),
+  ),
+);
 
-TextStyle get _inputTextStyle => GoogleFonts.openSans(
-      fontSize: 14,
-      color: KolabingColors.textPrimary,
-    );
+TextStyle get _inputTextStyle =>
+    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.textPrimary);
 
 // =============================================================================
 // Toggle Card
@@ -254,74 +246,70 @@ class _ToggleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color:
-              isSelected ? KolabingColors.softYellow : KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color:
-                isSelected ? KolabingColors.primary : KolabingColors.border,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Checkbox
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? KolabingColors.primary
-                    : Colors.transparent,
-                borderRadius: KolabingRadius.borderRadiusXs,
-                border: Border.all(
-                  color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.border,
-                  width: 1.5,
-                ),
-              ),
-              child: isSelected
-                  ? const Icon(
-                      LucideIcons.check,
-                      size: 14,
-                      color: KolabingColors.onPrimary,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Title + subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: isSelected ? KolabingColors.primary : KolabingColors.border,
         ),
       ),
-    );
+      child: Row(
+        children: [
+          // Checkbox
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isSelected ? KolabingColors.primary : Colors.transparent,
+              borderRadius: KolabingRadius.borderRadiusXs,
+              border: Border.all(
+                color: isSelected
+                    ? KolabingColors.primary
+                    : KolabingColors.border,
+                width: 1.5,
+              ),
+            ),
+            child: isSelected
+                ? const Icon(
+                    LucideIcons.check,
+                    size: 14,
+                    color: KolabingColors.onPrimary,
+                  )
+                : null,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Title + subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

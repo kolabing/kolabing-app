@@ -13,11 +13,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for gallery API operations
 class GalleryService {
-  GalleryService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  GalleryService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -43,6 +41,18 @@ class GalleryService {
     };
   }
 
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
+
   // ---------------------------------------------------------------------------
   // GET /api/v1/me/gallery - List own gallery photos
   // ---------------------------------------------------------------------------
@@ -52,12 +62,14 @@ class GalleryService {
     debugPrint('GalleryService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getJsonHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getJsonHeaders()),
+        allowRetry: true,
       );
 
-      debugPrint('GalleryService: getMyGallery response ${response.statusCode}: ${response.body}');
+      debugPrint(
+        'GalleryService: getMyGallery response ${response.statusCode}: ${response.body}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -91,6 +103,14 @@ class GalleryService {
     required String filePath,
     String? caption,
   }) async {
+    return _uploadPhoto(filePath: filePath, caption: caption, allowRetry: true);
+  }
+
+  Future<GalleryPhoto> _uploadPhoto({
+    required String filePath,
+    String? caption,
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/me/gallery');
     debugPrint('GalleryService: POST $uri (multipart)');
 
@@ -102,9 +122,7 @@ class GalleryService {
       request.headers.addAll(headers);
 
       // Add photo file
-      request.files.add(
-        await http.MultipartFile.fromPath('photo', filePath),
-      );
+      request.files.add(await http.MultipartFile.fromPath('photo', filePath));
 
       // Add optional caption
       if (caption != null && caption.isNotEmpty) {
@@ -114,7 +132,9 @@ class GalleryService {
       final streamedResponse = await _httpClient.send(request);
       final response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint('GalleryService: upload response ${response.statusCode}: ${response.body}');
+      debugPrint(
+        'GalleryService: upload response ${response.statusCode}: ${response.body}',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -127,6 +147,14 @@ class GalleryService {
         final gallery = await getMyGallery();
         return gallery.last;
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _uploadPhoto(
+            filePath: filePath,
+            caption: caption,
+            allowRetry: false,
+          );
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 422) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -158,9 +186,9 @@ class GalleryService {
     debugPrint('GalleryService: DELETE $uri');
 
     try {
-      final response = await _httpClient.delete(
-        uri,
-        headers: await _getJsonHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.delete(uri, headers: await _getJsonHeaders()),
+        allowRetry: true,
       );
 
       if (response.statusCode == 200 || response.statusCode == 204) {
@@ -192,9 +220,9 @@ class GalleryService {
     debugPrint('GalleryService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getJsonHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getJsonHeaders()),
+        allowRetry: true,
       );
 
       if (response.statusCode == 200) {

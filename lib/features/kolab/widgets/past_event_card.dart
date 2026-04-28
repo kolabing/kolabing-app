@@ -39,44 +39,44 @@ class PastEventCard extends StatelessWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildAddCard() => GestureDetector(
-      onTap: onAdd,
-      child: CustomPaint(
-        painter: const _DashedBorderPainter(
-          color: KolabingColors.border,
-          radius: KolabingRadius.md,
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.lg),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: KolabingColors.background,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  LucideIcons.plus,
-                  size: 20,
-                  color: KolabingColors.textTertiary,
-                ),
+    onTap: onAdd,
+    child: CustomPaint(
+      painter: const _DashedBorderPainter(
+        color: KolabingColors.border,
+        radius: KolabingRadius.md,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.lg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: KolabingColors.background,
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                'Add a past event',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: KolabingColors.textSecondary,
-                ),
+              child: const Icon(
+                LucideIcons.plus,
+                size: 20,
+                color: KolabingColors.textTertiary,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              'Add a past event',
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: KolabingColors.textSecondary,
+              ),
+            ),
+          ],
         ),
       ),
-    );
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Existing event card
@@ -189,6 +189,37 @@ class PastEventCard extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (e.videos.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.xxs),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: KolabingSpacing.xs,
+                      vertical: KolabingSpacing.xxxs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: KolabingColors.background,
+                      borderRadius: KolabingRadius.borderRadiusXs,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          LucideIcons.video,
+                          size: 12,
+                          color: KolabingColors.textTertiary,
+                        ),
+                        const SizedBox(width: KolabingSpacing.xxs),
+                        Text(
+                          '${e.videos.length} video${e.videos.length == 1 ? '' : 's'}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 11,
+                            color: KolabingColors.textTertiary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -223,10 +254,7 @@ class PastEventCard extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({
-    required this.color,
-    required this.radius,
-  });
+  const _DashedBorderPainter({required this.color, required this.radius});
 
   final Color color;
   final double radius;

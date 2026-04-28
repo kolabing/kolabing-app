@@ -9,6 +9,7 @@ import '../../auth/services/auth_service.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../notification/providers/notification_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../kolab/providers/my_kolabs_provider.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../services/profile_service.dart';
@@ -39,8 +40,7 @@ class ProfileState {
   /// Checks both the subscription object AND the backend's has_active_subscription flag
   /// (which covers test users who bypass subscription requirements).
   bool get isSubscribed =>
-      subscription?.isActive == true ||
-      profile?.hasActiveSubscription == true;
+      subscription?.isActive == true || profile?.hasActiveSubscription == true;
 
   ProfileState copyWith({
     UserModel? profile,
@@ -52,17 +52,17 @@ class ProfileState {
     String? error,
     bool clearError = false,
     bool clearSubscription = false,
-  }) =>
-      ProfileState(
-        profile: profile ?? this.profile,
-        notificationPrefs: notificationPrefs ?? this.notificationPrefs,
-        subscription:
-            clearSubscription ? subscription : (subscription ?? this.subscription),
-        isLoading: isLoading ?? this.isLoading,
-        isInitialized: isInitialized ?? this.isInitialized,
-        isUpdating: isUpdating ?? this.isUpdating,
-        error: clearError ? null : (error ?? this.error),
-      );
+  }) => ProfileState(
+    profile: profile ?? this.profile,
+    notificationPrefs: notificationPrefs ?? this.notificationPrefs,
+    subscription: clearSubscription
+        ? subscription
+        : (subscription ?? this.subscription),
+    isLoading: isLoading ?? this.isLoading,
+    isInitialized: isInitialized ?? this.isInitialized,
+    isUpdating: isUpdating ?? this.isUpdating,
+    error: clearError ? null : (error ?? this.error),
+  );
 }
 
 /// Profile notifier for managing profile state
@@ -96,7 +96,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
       final profile = await _profileService.getProfile();
 
       // Fetch notification preferences
-      final notificationPrefs = await _profileService.getNotificationPreferences();
+      final notificationPrefs = await _profileService
+          .getNotificationPreferences();
 
       // Fetch subscription (only for business users)
       Subscription? subscription;
@@ -156,22 +157,13 @@ class ProfileNotifier extends Notifier<ProfileState> {
         'profile_photo': dataUri,
       });
 
-      state = state.copyWith(
-        profile: updatedProfile,
-        isUpdating: false,
-      );
+      state = state.copyWith(profile: updatedProfile, isUpdating: false);
       return true;
     } on ApiException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.error.message);
       return false;
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.message);
       return false;
     } on Exception {
       state = state.copyWith(
@@ -189,22 +181,13 @@ class ProfileNotifier extends Notifier<ProfileState> {
     try {
       final updatedProfile = await _profileService.updateProfile(data);
 
-      state = state.copyWith(
-        profile: updatedProfile,
-        isUpdating: false,
-      );
+      state = state.copyWith(profile: updatedProfile, isUpdating: false);
       return true;
     } on ApiException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.error.message);
       return false;
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.message);
       return false;
     } on Exception {
       state = state.copyWith(
@@ -226,20 +209,11 @@ class ProfileNotifier extends Notifier<ProfileState> {
         key: value,
       });
 
-      state = state.copyWith(
-        notificationPrefs: updated,
-        isUpdating: false,
-      );
+      state = state.copyWith(notificationPrefs: updated, isUpdating: false);
     } on ApiException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.error.message);
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.message);
     } on Exception {
       state = state.copyWith(
         isUpdating: false,
@@ -270,6 +244,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
     ref.invalidate(unreadMessagesCountProvider);
     ref.invalidate(opportunityListProvider);
     ref.invalidate(myOpportunitiesProvider);
+    ref.invalidate(myKolabsProvider);
     ref.invalidate(notificationProvider);
 
     // Reset own state last
@@ -286,16 +261,10 @@ class ProfileNotifier extends Notifier<ProfileState> {
       state = const ProfileState();
       return true;
     } on ApiException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.error.message);
       return false;
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.message);
       return false;
     } on Exception {
       state = state.copyWith(
@@ -310,7 +279,10 @@ class ProfileNotifier extends Notifier<ProfileState> {
   Future<void> refreshSubscription() async {
     try {
       final subscription = await _profileService.getSubscription();
-      state = state.copyWith(subscription: subscription, clearSubscription: true);
+      state = state.copyWith(
+        subscription: subscription,
+        clearSubscription: true,
+      );
     } on Exception {
       // Silently fail subscription refresh
     }
@@ -359,22 +331,13 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
     try {
       final updated = await _profileService.cancelSubscription();
-      state = state.copyWith(
-        subscription: updated,
-        isUpdating: false,
-      );
+      state = state.copyWith(subscription: updated, isUpdating: false);
       return true;
     } on ApiException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.error.message);
       return false;
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.message);
       return false;
     } on Exception {
       state = state.copyWith(
@@ -391,22 +354,13 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
     try {
       final updated = await _profileService.reactivateSubscription();
-      state = state.copyWith(
-        subscription: updated,
-        isUpdating: false,
-      );
+      state = state.copyWith(subscription: updated, isUpdating: false);
       return true;
     } on ApiException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.error.message);
       return false;
     } on NetworkException catch (e) {
-      state = state.copyWith(
-        isUpdating: false,
-        error: e.message,
-      );
+      state = state.copyWith(isUpdating: false, error: e.message);
       return false;
     } on Exception {
       state = state.copyWith(
@@ -424,5 +378,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
 }
 
 /// Profile provider
-final profileProvider =
-    NotifierProvider<ProfileNotifier, ProfileState>(ProfileNotifier.new);
+final profileProvider = NotifierProvider<ProfileNotifier, ProfileState>(
+  ProfileNotifier.new,
+);

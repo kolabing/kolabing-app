@@ -15,11 +15,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 /// Uploads a file to `POST /api/v1/uploads` and returns the CDN URL.
 /// Used by kolab media, event photos, profile photos, etc.
 class UploadService {
-  UploadService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  UploadService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -44,6 +42,14 @@ class UploadService {
     required String filePath,
     required String folder,
   }) async {
+    return _upload(filePath: filePath, folder: folder, allowRetry: true);
+  }
+
+  Future<String> _upload({
+    required String filePath,
+    required String folder,
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/uploads');
     debugPrint('UploadService: POST $uri (folder: $folder)');
 
@@ -51,9 +57,7 @@ class UploadService {
       final request = http.MultipartRequest('POST', uri);
       request.headers.addAll(await _getHeaders());
       request.fields['folder'] = folder;
-      request.files.add(
-        await http.MultipartFile.fromPath('file', filePath),
-      );
+      request.files.add(await http.MultipartFile.fromPath('file', filePath));
 
       final streamedResponse = await _httpClient.send(request);
       final response = await http.Response.fromStream(streamedResponse);
@@ -67,12 +71,14 @@ class UploadService {
         debugPrint('Upload success: $url');
         return url;
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _upload(filePath: filePath, folder: folder, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 422) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: 422),
-        );
+        throw ApiException(error: ApiError.fromJson(json, statusCode: 422));
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw ApiException(
@@ -90,6 +96,4 @@ class UploadService {
   }
 }
 
-final uploadServiceProvider = Provider<UploadService>(
-  (ref) => UploadService(),
-);
+final uploadServiceProvider = Provider<UploadService>((ref) => UploadService());

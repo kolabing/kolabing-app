@@ -23,6 +23,7 @@ import '../../features/business/screens/create_collab_request_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
+import '../../features/kolab/models/kolab.dart';
 import '../../features/rewards/screens/referral_screen.dart';
 import '../../features/rewards/screens/wallet_screen.dart';
 import '../../features/rewards/screens/withdrawal_request_screen.dart';
@@ -271,11 +272,11 @@ void connectNotificationRouter() {
         if (id != null) kolabingRouter.push('/application/$id');
 
       case 'badge_awarded':
-        // No badge screen yet — navigate to attendee dashboard
+      // No badge screen yet — navigate to attendee dashboard
 
       case 'challenge_verified':
       case 'reward_won':
-        // No rewards screen yet — navigate to attendee dashboard
+      // No rewards screen yet — navigate to attendee dashboard
 
       default:
         debugPrint('[FCM] Unknown notification type: $type');
@@ -358,7 +359,6 @@ final GoRouter kolabingRouter = GoRouter(
     // -------------------------------------------------------------------------
     // Onboarding Routes
     // -------------------------------------------------------------------------
-
     GoRoute(
       path: KolabingRoutes.onboarding,
       name: 'onboarding',
@@ -470,7 +470,8 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.permissions,
       name: 'permissions',
       builder: (BuildContext context, GoRouterState state) {
-        final destination = state.uri.queryParameters['destination'] ?? '/business';
+        final destination =
+            state.uri.queryParameters['destination'] ?? '/business';
         return PermissionScreen(destination: destination);
       },
     ),
@@ -478,7 +479,6 @@ final GoRouter kolabingRouter = GoRouter(
     // -------------------------------------------------------------------------
     // Business Routes
     // -------------------------------------------------------------------------
-
     GoRoute(
       path: KolabingRoutes.businessDashboard,
       name: 'businessDashboard',
@@ -496,8 +496,10 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.kolabFlow,
       name: 'kolabFlow',
-      builder: (BuildContext context, GoRouterState state) =>
-          const KolabFlowScreen(),
+      builder: (BuildContext context, GoRouterState state) {
+        final kolab = state.extra is Kolab ? state.extra! as Kolab : null;
+        return KolabFlowScreen(editKolab: kolab);
+      },
     ),
 
     // Business sub-routes (pushed on top of main screen)
@@ -529,17 +531,13 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         final offer = state.extra as Opportunity?;
-        return CommunityOfferDetailScreen(
-          offerId: id,
-          offer: offer,
-        );
+        return CommunityOfferDetailScreen(offerId: id, offer: offer);
       },
     ),
 
     // -------------------------------------------------------------------------
     // Community Routes
     // -------------------------------------------------------------------------
-
     GoRoute(
       path: KolabingRoutes.communityDashboard,
       name: 'communityDashboard',
@@ -554,10 +552,7 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         final offer = state.extra as Opportunity?;
-        return CommunityOfferDetailScreen(
-          offerId: id,
-          offer: offer,
-        );
+        return CommunityOfferDetailScreen(offerId: id, offer: offer);
       },
     ),
     GoRoute(
@@ -602,17 +597,13 @@ final GoRouter kolabingRouter = GoRouter(
     // -------------------------------------------------------------------------
     // Shared Detail Routes
     // -------------------------------------------------------------------------
-
     GoRoute(
       path: '/opportunity/:id',
       name: 'opportunityDetails',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         final offer = state.extra as Opportunity?;
-        return CommunityOfferDetailScreen(
-          offerId: id,
-          offer: offer,
-        );
+        return CommunityOfferDetailScreen(offerId: id, offer: offer);
       },
     ),
     GoRoute(
@@ -669,7 +660,6 @@ final GoRouter kolabingRouter = GoRouter(
     // -------------------------------------------------------------------------
     // Attendee (Gamification) Routes
     // -------------------------------------------------------------------------
-
     GoRoute(
       path: KolabingRoutes.attendeeDashboard,
       name: 'attendeeDashboard',
@@ -693,8 +683,7 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final eventId = state.pathParameters['eventId'] ?? '';
         final eventName = state.uri.queryParameters['name'];
-        final isOrganizer =
-            state.uri.queryParameters['organizer'] == 'true';
+        final isOrganizer = state.uri.queryParameters['organizer'] == 'true';
         return EventChallengesScreen(
           eventId: eventId,
           eventName: eventName,
@@ -731,49 +720,43 @@ final GoRouter kolabingRouter = GoRouter(
   // Error page
   errorBuilder: (BuildContext context, GoRouterState state) =>
       _PlaceholderScreen(
-    title: 'Page Not Found',
-    subtitle: state.uri.toString(),
-  ),
+        title: 'Page Not Found',
+        subtitle: state.uri.toString(),
+      ),
 );
 
 /// Placeholder screen for routes that are not yet implemented
 class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({
-    required this.title,
-    this.subtitle,
-  });
+  const _PlaceholderScreen({required this.title, this.subtitle});
 
   final String title;
   final String? subtitle;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineMedium,
+    appBar: AppBar(title: Text(title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(title, style: Theme.of(context).textTheme.headlineMedium),
+          if (subtitle != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                subtitle!,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-              if (subtitle != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    subtitle!,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              const SizedBox(height: 24),
-              Text(
-                'Screen not yet implemented',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-              ),
-            ],
+            ),
+          const SizedBox(height: 24),
+          Text(
+            'Screen not yet implemented',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

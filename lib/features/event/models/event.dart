@@ -6,6 +6,7 @@ class Event {
   final DateTime date;
   final int attendeeCount;
   final List<EventPhoto> photos;
+  final List<EventVideo> videos;
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -16,6 +17,7 @@ class Event {
     required this.date,
     required this.attendeeCount,
     required this.photos,
+    this.videos = const [],
     required this.createdAt,
     this.updatedAt,
   });
@@ -41,8 +43,14 @@ class Event {
       partner: partner,
       date: DateTime.parse(json['date'] as String),
       attendeeCount: (json['attendee_count'] as num?)?.toInt() ?? 0,
-      photos: (json['photos'] as List<dynamic>?)
+      photos:
+          (json['photos'] as List<dynamic>?)
               ?.map((e) => EventPhoto.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      videos:
+          (json['videos'] as List<dynamic>?)
+              ?.map((e) => EventVideo.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -53,15 +61,16 @@ class Event {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'partner': partner.toJson(),
-        'date': date.toIso8601String().split('T').first,
-        'attendee_count': attendeeCount,
-        'photos': photos.map((e) => e.toJson()).toList(),
-        'created_at': createdAt.toIso8601String(),
-        if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
-      };
+    'id': id,
+    'name': name,
+    'partner': partner.toJson(),
+    'date': date.toIso8601String().split('T').first,
+    'attendee_count': attendeeCount,
+    'photos': photos.map((e) => e.toJson()).toList(),
+    if (videos.isNotEmpty) 'videos': videos.map((e) => e.toJson()).toList(),
+    'created_at': createdAt.toIso8601String(),
+    if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
+  };
 
   Event copyWith({
     String? id,
@@ -70,28 +79,41 @@ class Event {
     DateTime? date,
     int? attendeeCount,
     List<EventPhoto>? photos,
+    List<EventVideo>? videos,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) =>
-      Event(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        partner: partner ?? this.partner,
-        date: date ?? this.date,
-        attendeeCount: attendeeCount ?? this.attendeeCount,
-        photos: photos ?? this.photos,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => Event(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    partner: partner ?? this.partner,
+    date: date ?? this.date,
+    attendeeCount: attendeeCount ?? this.attendeeCount,
+    photos: photos ?? this.photos,
+    videos: videos ?? this.videos,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 
-  /// Returns the cover photo URL (first photo) or null
-  String? get coverPhotoUrl => photos.isNotEmpty ? photos.first.url : null;
+  /// Returns the best available cover media thumbnail.
+  String? get coverPhotoUrl => photos.isNotEmpty
+      ? photos.first.url
+      : (videos.isNotEmpty ? videos.first.thumbnailUrl : null);
 
   /// Returns formatted date string
   String get formattedDate {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -121,28 +143,25 @@ class EventPartner {
   });
 
   factory EventPartner.fromJson(Map<String, dynamic> json) => EventPartner(
-        id: json['id'] as String?,
-        name: (json['name'] as String?) ?? '',
-        profilePhoto: json['profile_photo'] as String?,
-        type: PartnerType.values.firstWhere(
-          (e) => e.name == json['type'],
-          orElse: () => PartnerType.community,
-        ),
-      );
+    id: json['id'] as String?,
+    name: (json['name'] as String?) ?? '',
+    profilePhoto: json['profile_photo'] as String?,
+    type: PartnerType.values.firstWhere(
+      (e) => e.name == json['type'],
+      orElse: () => PartnerType.community,
+    ),
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'profile_photo': profilePhoto,
-        'type': type.name,
-      };
+    'id': id,
+    'name': name,
+    'profile_photo': profilePhoto,
+    'type': type.name,
+  };
 }
 
 /// Type of partner (business or community)
-enum PartnerType {
-  business,
-  community,
-}
+enum PartnerType { business, community }
 
 /// Photo associated with an event
 class EventPhoto {
@@ -150,23 +169,40 @@ class EventPhoto {
   final String url;
   final String? thumbnailUrl;
 
-  const EventPhoto({
-    required this.id,
-    required this.url,
-    this.thumbnailUrl,
-  });
+  const EventPhoto({required this.id, required this.url, this.thumbnailUrl});
 
   factory EventPhoto.fromJson(Map<String, dynamic> json) => EventPhoto(
-        id: (json['id'] as String?) ?? '',
-        url: json['url'] as String,
-        thumbnailUrl: json['thumbnail_url'] as String?,
-      );
+    id: (json['id'] as String?) ?? '',
+    url: json['url'] as String,
+    thumbnailUrl: json['thumbnail_url'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'url': url,
-        'thumbnail_url': thumbnailUrl,
-      };
+    'id': id,
+    'url': url,
+    'thumbnail_url': thumbnailUrl,
+  };
+}
+
+/// Video associated with an event
+class EventVideo {
+  final String id;
+  final String url;
+  final String? thumbnailUrl;
+
+  const EventVideo({required this.id, required this.url, this.thumbnailUrl});
+
+  factory EventVideo.fromJson(Map<String, dynamic> json) => EventVideo(
+    id: (json['id'] as String?) ?? '',
+    url: json['url'] as String,
+    thumbnailUrl: json['thumbnail_url'] as String?,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'url': url,
+    'thumbnail_url': thumbnailUrl,
+  };
 }
 
 /// Request model for creating an event (with photo files)
@@ -177,6 +213,7 @@ class EventCreateRequest {
   final DateTime date;
   final int attendeeCount;
   final List<String> photoPaths;
+  final List<String> videoPaths;
 
   const EventCreateRequest({
     required this.name,
@@ -185,6 +222,7 @@ class EventCreateRequest {
     required this.date,
     required this.attendeeCount,
     required this.photoPaths,
+    this.videoPaths = const [],
   });
 }
 

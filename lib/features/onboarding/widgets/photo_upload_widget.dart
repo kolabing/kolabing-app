@@ -86,6 +86,16 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
 
         widget.onPhotoSelected(file);
       }
+    } on PlatformException catch (e) {
+      debugPrint('Error picking image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_friendlyPickerError(e)),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      }
     } catch (e) {
       debugPrint('Error picking image: $e');
       if (mounted) {
@@ -96,6 +106,19 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
           ),
         );
       }
+    }
+  }
+
+  String _friendlyPickerError(PlatformException error) {
+    switch (error.code) {
+      case 'photo_access_denied':
+      case 'photo_access_restricted':
+        return 'Please allow Photos access in Settings to upload an image.';
+      case 'camera_access_denied':
+      case 'camera_access_restricted':
+        return 'Please allow Camera access in Settings to take a photo.';
+      default:
+        return 'Failed to select image. Please try again.';
     }
   }
 

@@ -16,64 +16,70 @@ import '../models/place_suggestion.dart';
 import '../services/onboarding_service.dart';
 
 /// Onboarding service provider
-final onboardingServiceProvider =
-    Provider<OnboardingService>((ref) => OnboardingService());
+final onboardingServiceProvider = Provider<OnboardingService>(
+  (ref) => OnboardingService(),
+);
 
 /// Business types provider
-final businessTypesProvider =
-    FutureProvider.autoDispose<List<BusinessType>>((ref) async {
+final businessTypesProvider = FutureProvider.autoDispose<List<BusinessType>>((
+  ref,
+) async {
   final service = ref.watch(onboardingServiceProvider);
   return service.getBusinessTypes();
 });
 
 /// Community types provider
-final communityTypesProvider =
-    FutureProvider.autoDispose<List<CommunityType>>((ref) async {
+final communityTypesProvider = FutureProvider.autoDispose<List<CommunityType>>((
+  ref,
+) async {
   final service = ref.watch(onboardingServiceProvider);
   return service.getCommunityTypes();
 });
 
 /// Cities provider
-final citiesProvider =
-    FutureProvider.autoDispose<List<OnboardingCity>>((ref) async {
+final citiesProvider = FutureProvider.autoDispose<List<OnboardingCity>>((
+  ref,
+) async {
   final service = ref.watch(onboardingServiceProvider);
   return service.getCities();
 });
 
 /// Place suggestions for the business location step.
-final placeSuggestionsProvider =
-    FutureProvider.autoDispose.family<List<PlaceSuggestion>, String>(
-        (ref, query) async {
-  if (query.trim().length < 2) {
-    return const [];
-  }
-  final service = ref.watch(onboardingServiceProvider);
-  return service.searchPlaces(query.trim());
-});
+final placeSuggestionsProvider = FutureProvider.autoDispose
+    .family<List<PlaceSuggestion>, String>((ref, query) async {
+      if (query.trim().length < 2) {
+        return const [];
+      }
+      final service = ref.watch(onboardingServiceProvider);
+      return service.searchPlaces(query.trim());
+    });
 
 /// Filtered cities based on search query
-final filteredCitiesProvider =
-    Provider.autoDispose.family<AsyncValue<List<OnboardingCity>>, String>(
-        (ref, query) {
-  final citiesAsync = ref.watch(citiesProvider);
+final filteredCitiesProvider = Provider.autoDispose
+    .family<AsyncValue<List<OnboardingCity>>, String>((ref, query) {
+      final citiesAsync = ref.watch(citiesProvider);
 
-  return citiesAsync.when(
-    data: (cities) {
-      if (query.isEmpty) {
-        return AsyncValue.data(cities);
-      }
-      final filtered = cities
-          .where((city) =>
-              city.name.toLowerCase().contains(query.toLowerCase()) ||
-              (city.country?.toLowerCase().contains(query.toLowerCase()) ??
-                  false))
-          .toList();
-      return AsyncValue.data(filtered);
-    },
-    loading: () => const AsyncValue.loading(),
-    error: (error, stack) => AsyncValue.error(error, stack),
-  );
-});
+      return citiesAsync.when(
+        data: (cities) {
+          if (query.isEmpty) {
+            return AsyncValue.data(cities);
+          }
+          final filtered = cities
+              .where(
+                (city) =>
+                    city.name.toLowerCase().contains(query.toLowerCase()) ||
+                    (city.country?.toLowerCase().contains(
+                          query.toLowerCase(),
+                        ) ??
+                        false),
+              )
+              .toList();
+          return AsyncValue.data(filtered);
+        },
+        loading: () => const AsyncValue.loading(),
+        error: (error, stack) => AsyncValue.error(error, stack),
+      );
+    });
 
 /// Onboarding state notifier using modern Riverpod 3.x Notifier
 class OnboardingNotifier extends Notifier<OnboardingData?> {
@@ -122,7 +128,41 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   /// [typeName] - The display name for UI
   void updateType(String typeId, String typeSlug, String typeName) {
     if (state == null) return;
-    state = state!.copyWith(type: typeId, typeSlug: typeSlug, typeName: typeName);
+    state = state!.copyWith(
+      type: typeId,
+      typeSlug: typeSlug,
+      typeName: typeName,
+    );
+  }
+
+  /// Toggle a business category selection (max 3).
+  void toggleBusinessType(BusinessType type) {
+    if (state == null) return;
+
+    final currentIds = List<String>.from(state!.selectedBusinessTypeIds);
+    final currentSlugs = List<String>.from(state!.selectedBusinessTypeSlugs);
+    final currentNames = List<String>.from(state!.selectedBusinessTypeNames);
+    final existingIndex = currentIds.indexOf(type.id);
+
+    if (existingIndex >= 0) {
+      currentIds.removeAt(existingIndex);
+      currentSlugs.removeAt(existingIndex);
+      currentNames.removeAt(existingIndex);
+    } else if (currentIds.length < 3) {
+      currentIds.add(type.id);
+      currentSlugs.add(type.slug);
+      currentNames.add(type.name);
+    }
+
+    state = state!.copyWith(
+      type: currentIds.isNotEmpty ? currentIds.first : null,
+      typeSlug: currentSlugs.isNotEmpty ? currentSlugs.first : null,
+      typeName: currentNames.isNotEmpty ? currentNames.first : null,
+      businessTypeIds: currentIds,
+      businessTypeSlugs: currentSlugs,
+      businessTypeNames: currentNames,
+      clearTypeSelection: currentIds.isEmpty,
+    );
   }
 
   /// Update city (step 3)
@@ -348,15 +388,9 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       // Update auth state
       await ref.read(authProvider.notifier).checkAuthStatus();
 
-      return OnboardingResult(
-        success: true,
-        user: authResponse.user,
-      );
+      return OnboardingResult(success: true, user: authResponse.user);
     } on ApiException catch (e) {
-      return OnboardingResult(
-        success: false,
-        error: e.error,
-      );
+      return OnboardingResult(success: false, error: e.error);
     } on NetworkException catch (e) {
       return OnboardingResult(
         success: false,
@@ -381,8 +415,8 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
 /// Onboarding state provider using modern NotifierProvider
 final onboardingProvider =
     NotifierProvider<OnboardingNotifier, OnboardingData?>(
-  OnboardingNotifier.new,
-);
+      OnboardingNotifier.new,
+    );
 
 /// Result of onboarding attempt
 class OnboardingResult {

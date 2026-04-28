@@ -6,8 +6,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../business/providers/profile_provider.dart';
 import '../enums/intent_type.dart';
+import '../models/kolab.dart';
 import '../providers/kolab_form_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../widgets/kolab_action_bar.dart';
 import '../widgets/kolab_step_indicator.dart';
 import 'business/availability_screen.dart';
@@ -28,11 +31,31 @@ import 'community/review_screen.dart' as community_review;
 /// Shell screen that wraps the step-based kolab creation flow.
 /// Provides Scaffold, AppBar, step indicator, and action bar.
 /// Switches content based on intentType + currentStep.
-class KolabFlowScreen extends ConsumerWidget {
-  const KolabFlowScreen({super.key});
+class KolabFlowScreen extends ConsumerStatefulWidget {
+  const KolabFlowScreen({super.key, this.editKolab});
+
+  final Kolab? editKolab;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<KolabFlowScreen> createState() => _KolabFlowScreenState();
+}
+
+class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
+  bool _isShowingSubscriptionPaywall = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final editKolab = widget.editKolab;
+      if (editKolab != null) {
+        ref.read(kolabFormProvider.notifier).initForEdit(editKolab);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final formState = ref.watch(kolabFormProvider);
     final notifier = ref.read(kolabFormProvider.notifier);
     final intentType = formState.intentType;
@@ -42,18 +65,31 @@ class KolabFlowScreen extends ConsumerWidget {
       if (next.isSuccess && !(prev?.isSuccess ?? false)) {
         _showSuccessDialog(context, ref, next.isPublishing);
       }
+
+      final shouldShowPaywall =
+          next.requiresSubscription &&
+          !(prev?.requiresSubscription ?? false) &&
+          !_isShowingSubscriptionPaywall;
+      if (shouldShowPaywall) {
+        _handleSubscriptionRequirement(
+          context,
+          ref,
+          shouldRetryPublish: prev?.isPublishing ?? false,
+        );
+      }
     });
 
     if (intentType == null) {
-      return const Scaffold(
-        body: Center(child: Text('No intent selected')),
-      );
+      return const Scaffold(body: Center(child: Text('No intent selected')));
     }
 
     final isReviewStep = formState.currentStep == formState.totalSteps - 1;
 
     return PopScope(
-      canPop: formState.currentStep == 0 && !formState.isSubmitting && !formState.isPublishing,
+      canPop:
+          formState.currentStep == 0 &&
+          !formState.isSubmitting &&
+          !formState.isPublishing,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
           if (formState.isSubmitting || formState.isPublishing) return;
@@ -66,7 +102,10 @@ class KolabFlowScreen extends ConsumerWidget {
           backgroundColor: KolabingColors.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(LucideIcons.arrowLeft, color: KolabingColors.textPrimary),
+            icon: const Icon(
+              LucideIcons.arrowLeft,
+              color: KolabingColors.textPrimary,
+            ),
             onPressed: () {
               if (formState.isSubmitting || formState.isPublishing) return;
               if (formState.currentStep == 0) {
@@ -87,73 +126,75 @@ class KolabFlowScreen extends ConsumerWidget {
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            // Step indicator
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-                vertical: KolabingSpacing.sm,
-              ),
-              child: KolabStepIndicator(
-                currentStep: formState.currentStep,
-                totalSteps: formState.totalSteps,
-                onStepTap: (step) {
-                  if (step < formState.currentStep) {
-                    notifier.goToStep(step);
-                  }
-                },
-              ),
-            ),
-
-            // Error banner
-            if (formState.error != null)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-                padding: const EdgeInsets.all(KolabingSpacing.sm),
-                decoration: BoxDecoration(
-                  color: KolabingColors.error.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              // Step indicator
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                  vertical: KolabingSpacing.sm,
                 ),
-                child: Row(
-                  children: [
-                    const Icon(LucideIcons.alertCircle, color: KolabingColors.error, size: 18),
-                    const SizedBox(width: KolabingSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        formState.error!,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          color: KolabingColors.error,
+                child: KolabStepIndicator(
+                  currentStep: formState.currentStep,
+                  totalSteps: formState.totalSteps,
+                  onStepTap: (step) {
+                    if (step < formState.currentStep) {
+                      notifier.goToStep(step);
+                    }
+                  },
+                ),
+              ),
+
+              // Error banner
+              if (formState.error != null)
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.md,
+                  ),
+                  padding: const EdgeInsets.all(KolabingSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: KolabingColors.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        LucideIcons.alertCircle,
+                        color: KolabingColors.error,
+                        size: 18,
+                      ),
+                      const SizedBox(width: KolabingSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          formState.error!,
+                          style: GoogleFonts.openSans(
+                            fontSize: 13,
+                            color: KolabingColors.error,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+
+              // Step content
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _buildStepContent(intentType, formState.currentStep),
                 ),
               ),
-
-            // Step content
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: _buildStepContent(intentType, formState.currentStep),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         bottomNavigationBar: KolabActionBar(
-          onBack: formState.currentStep > 0
-              ? () => notifier.previousStep()
-              : null,
-          onNext: !isReviewStep
-              ? () => notifier.nextStep()
-              : null,
-          onSaveDraft: isReviewStep
-              ? () => notifier.saveDraft()
-              : null,
-          onPublish: isReviewStep
-              ? () => notifier.saveAndPublish()
-              : null,
+          onBack: formState.currentStep > 0 ? notifier.previousStep : null,
+          onNext: !isReviewStep ? notifier.nextStep : null,
+          onSaveDraft: isReviewStep ? notifier.saveDraft : null,
+          onPublish: isReviewStep ? notifier.saveAndPublish : null,
           isLastStep: isReviewStep,
           isFirstStep: formState.currentStep == 0,
           isSubmitting: formState.isSubmitting,
@@ -161,6 +202,34 @@ class KolabFlowScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleSubscriptionRequirement(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool shouldRetryPublish,
+  }) async {
+    _isShowingSubscriptionPaywall = true;
+    ref.read(kolabFormProvider.notifier).clearSubscriptionRequirement();
+
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const SubscriptionPaywall(),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    await ref.read(profileProvider.notifier).refreshSubscription();
+    final profileState = ref.read(profileProvider);
+    if ((result ?? false) && profileState.isSubscribed && shouldRetryPublish) {
+      await ref.read(kolabFormProvider.notifier).saveAndPublish();
+    }
+
+    _isShowingSubscriptionPaywall = false;
   }
 
   String _getTitle(IntentType type) {
@@ -211,8 +280,12 @@ class KolabFlowScreen extends ConsumerWidget {
     }
   }
 
-  void _showSuccessDialog(BuildContext context, WidgetRef ref, bool wasPublished) {
-    showDialog(
+  void _showSuccessDialog(
+    BuildContext context,
+    WidgetRef ref,
+    bool wasPublished,
+  ) {
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
@@ -227,7 +300,11 @@ class KolabFlowScreen extends ConsumerWidget {
                 color: KolabingColors.success,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.check, color: Colors.white, size: 32),
+              child: const Icon(
+                LucideIcons.check,
+                color: Colors.white,
+                size: 32,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(

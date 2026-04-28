@@ -77,9 +77,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
             // Layer 3 -- Overlaid content
             _buildOverlaidContent(),
-
-            // Layer 4 -- Dot indicators (only when multiple images)
-            if (_imageUrls.length > 1) _buildDotIndicators(),
           ],
         ),
       ),
@@ -216,36 +213,29 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   Widget _buildDotIndicators() {
     final count = _imageUrls.length;
-    return Positioned(
-      left: KolabingSpacing.md,
-      right: KolabingSpacing.md,
-      bottom: 118,
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.28),
-            borderRadius: BorderRadius.circular(999),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(count, (index) {
-              final isActive = index == _currentImagePage;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: isActive ? 9 : 7,
-                height: isActive ? 9 : 7,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isActive
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: 0.45),
-                ),
-              );
-            }),
-          ),
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(count, (index) {
+          final isActive = index == _currentImagePage;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            width: isActive ? 9 : 7,
+            height: isActive ? 9 : 7,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isActive
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.45),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -265,6 +255,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         // Creator type badge
         _buildCreatorTypeBadge(),
         const SizedBox(height: KolabingSpacing.xs),
+
+        if (_imageUrls.length > 1) ...[
+          _buildDotIndicators(),
+          const SizedBox(height: KolabingSpacing.xs),
+        ],
 
         // Creator name
         _buildCreatorName(),

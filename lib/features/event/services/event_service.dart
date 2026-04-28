@@ -13,11 +13,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for managing past events via the API
 class EventService {
-  EventService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  EventService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -43,6 +41,18 @@ class EventService {
     };
   }
 
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
+
   // ---------------------------------------------------------------------------
   // List Events
   // ---------------------------------------------------------------------------
@@ -55,21 +65,35 @@ class EventService {
     int page = 1,
     int limit = 10,
   }) async {
+    return _getEvents(
+      profileId: profileId,
+      page: page,
+      limit: limit,
+      allowRetry: true,
+    );
+  }
+
+  Future<({List<Event> events, EventPagination pagination})> _getEvents({
+    String? profileId,
+    required int page,
+    required int limit,
+    required bool allowRetry,
+  }) async {
     final queryParams = <String, String>{
       'page': page.toString(),
       'limit': limit.toString(),
       if (profileId != null) 'profile_id': profileId,
     };
 
-    final uri = Uri.parse('$_baseUrl/events').replace(
-      queryParameters: queryParams,
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/events',
+    ).replace(queryParameters: queryParams);
     debugPrint('EventService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
       );
 
       debugPrint('List events response status: ${response.statusCode}');
@@ -97,7 +121,8 @@ class EventService {
         for (var i = 0; i < eventsRaw.length; i++) {
           try {
             eventsList.add(
-                Event.fromJson(eventsRaw[i] as Map<String, dynamic>));
+              Event.fromJson(eventsRaw[i] as Map<String, dynamic>),
+            );
           } catch (e) {
             debugPrint('Error parsing event[$i]: $e');
             debugPrint('Raw event data: ${eventsRaw[i]}');
@@ -135,13 +160,17 @@ class EventService {
 
   /// GET /api/v1/events/{id}
   Future<Event> getEvent(String eventId) async {
+    return _getEvent(eventId, allowRetry: true);
+  }
+
+  Future<Event> _getEvent(String eventId, {required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/events/$eventId');
     debugPrint('EventService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
       );
 
       debugPrint('Get event response status: ${response.statusCode}');
@@ -153,9 +182,7 @@ class EventService {
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 404) {
-        throw const ApiException(
-          error: ApiError(message: 'Event not found.'),
-        );
+        throw const ApiException(error: ApiError(message: 'Event not found.'));
       } else {
         throw _parseApiError(response);
       }
@@ -176,6 +203,13 @@ class EventService {
   /// POST /api/v1/events
   /// Creates a new event with photo files via multipart/form-data.
   Future<Event> createEvent(EventCreateRequest request) async {
+    return _createEvent(request, allowRetry: true);
+  }
+
+  Future<Event> _createEvent(
+    EventCreateRequest request, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/events');
     debugPrint('EventService: POST $uri');
 
@@ -190,14 +224,22 @@ class EventService {
       multipartRequest.fields['name'] = request.name;
       multipartRequest.fields['partner_name'] = request.partnerName;
       multipartRequest.fields['partner_type'] = request.partnerType.name;
-      multipartRequest.fields['date'] =
-          request.date.toIso8601String().split('T').first;
-      multipartRequest.fields['attendee_count'] =
-          request.attendeeCount.toString();
+      multipartRequest.fields['date'] = request.date
+          .toIso8601String()
+          .split('T')
+          .first;
+      multipartRequest.fields['attendee_count'] = request.attendeeCount
+          .toString();
 
       // Add photo files
       for (final path in request.photoPaths) {
         final file = await http.MultipartFile.fromPath('photos[]', path);
+        multipartRequest.files.add(file);
+      }
+
+      // Add optional video files
+      for (final path in request.videoPaths) {
+        final file = await http.MultipartFile.fromPath('videos[]', path);
         multipartRequest.files.add(file);
       }
 
@@ -224,9 +266,14 @@ class EventService {
           date: request.date,
           attendeeCount: request.attendeeCount,
           photos: const [],
+          videos: const [],
           createdAt: DateTime.now(),
         );
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _createEvent(request, allowRetry: false);
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 422) {
         throw _parseApiError(response);
@@ -249,10 +296,15 @@ class EventService {
 
   /// PUT /api/v1/events/{id}
   /// Updates an event. Only the owner can update. Photos cannot be updated.
-  Future<Event> updateEvent(
+  Future<Event> updateEvent(String eventId, EventUpdateRequest request) async {
+    return _updateEvent(eventId, request, allowRetry: true);
+  }
+
+  Future<Event> _updateEvent(
     String eventId,
-    EventUpdateRequest request,
-  ) async {
+    EventUpdateRequest request, {
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/events/$eventId');
     final body = jsonEncode(request.toJson());
 
@@ -260,10 +312,10 @@ class EventService {
     debugPrint('Update event body: $body');
 
     try {
-      final response = await _httpClient.put(
-        uri,
-        headers: await _getJsonHeaders(),
-        body: body,
+      final response = await _sendWithRefresh(
+        () async =>
+            _httpClient.put(uri, headers: await _getJsonHeaders(), body: body),
+        allowRetry: allowRetry,
       );
 
       debugPrint('Update event response status: ${response.statusCode}');
@@ -277,12 +329,11 @@ class EventService {
       } else if (response.statusCode == 403) {
         throw const ApiException(
           error: ApiError(
-              message: 'You are not authorized to update this event.'),
+            message: 'You are not authorized to update this event.',
+          ),
         );
       } else if (response.statusCode == 404) {
-        throw const ApiException(
-          error: ApiError(message: 'Event not found.'),
-        );
+        throw const ApiException(error: ApiError(message: 'Event not found.'));
       } else if (response.statusCode == 422) {
         throw _parseApiError(response);
       } else {
@@ -305,13 +356,17 @@ class EventService {
   /// DELETE /api/v1/events/{id}
   /// Deletes an event. Only the owner can delete.
   Future<void> deleteEvent(String eventId) async {
+    return _deleteEvent(eventId, allowRetry: true);
+  }
+
+  Future<void> _deleteEvent(String eventId, {required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/events/$eventId');
     debugPrint('EventService: DELETE $uri');
 
     try {
-      final response = await _httpClient.delete(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.delete(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
       );
 
       debugPrint('Delete event response status: ${response.statusCode}');
@@ -323,12 +378,11 @@ class EventService {
       } else if (response.statusCode == 403) {
         throw const ApiException(
           error: ApiError(
-              message: 'You are not authorized to delete this event.'),
+            message: 'You are not authorized to delete this event.',
+          ),
         );
       } else if (response.statusCode == 404) {
-        throw const ApiException(
-          error: ApiError(message: 'Event not found.'),
-        );
+        throw const ApiException(error: ApiError(message: 'Event not found.'));
       } else {
         throw _parseApiError(response);
       }

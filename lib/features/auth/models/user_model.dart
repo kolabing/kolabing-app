@@ -36,27 +36,23 @@ enum UserType {
 
 /// City model for user profile
 class City {
-  const City({
-    required this.id,
-    required this.name,
-    this.country,
-  });
+  const City({required this.id, required this.name, this.country});
 
   factory City.fromJson(Map<String, dynamic> json) => City(
-        id: json['id']?.toString() ?? '',
-        name: json['name'] as String,
-        country: json['country'] as String?,
-      );
+    id: json['id']?.toString() ?? '',
+    name: json['name'] as String,
+    country: json['country'] as String?,
+  );
 
   final String id;
   final String name;
   final String? country;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (country != null) 'country': country,
-      };
+    'id': id,
+    'name': name,
+    if (country != null) 'country': country,
+  };
 }
 
 /// Business profile model
@@ -77,7 +73,8 @@ class PrimaryVenueProfile {
   factory PrimaryVenueProfile.fromJson(Map<String, dynamic> json) =>
       PrimaryVenueProfile(
         name: json['name']?.toString() ?? '',
-        formattedAddress: json['formatted_address']?.toString() ??
+        formattedAddress:
+            json['formatted_address']?.toString() ??
             json['address']?.toString() ??
             '',
         city: json['city']?.toString() ?? '',
@@ -104,17 +101,17 @@ class PrimaryVenueProfile {
   final List<String> photos;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'formatted_address': formattedAddress,
-        'city': city,
-        if (placeId != null) 'place_id': placeId,
-        if (country != null) 'country': country,
-        if (latitude != null) 'latitude': latitude,
-        if (longitude != null) 'longitude': longitude,
-        if (venueType != null) 'venue_type': venueType,
-        if (capacity != null) 'capacity': capacity,
-        if (photos.isNotEmpty) 'photos': photos,
-      };
+    'name': name,
+    'formatted_address': formattedAddress,
+    'city': city,
+    if (placeId != null) 'place_id': placeId,
+    if (country != null) 'country': country,
+    if (latitude != null) 'latitude': latitude,
+    if (longitude != null) 'longitude': longitude,
+    if (venueType != null) 'venue_type': venueType,
+    if (capacity != null) 'capacity': capacity,
+    if (photos.isNotEmpty) 'photos': photos,
+  };
 }
 
 class BusinessProfile {
@@ -123,6 +120,7 @@ class BusinessProfile {
     required this.name,
     this.about,
     this.businessType,
+    this.businessTypes = const [],
     this.city,
     this.instagram,
     this.website,
@@ -130,46 +128,63 @@ class BusinessProfile {
     this.primaryVenue,
   });
 
-  factory BusinessProfile.fromJson(Map<String, dynamic> json) =>
-      BusinessProfile(
-        id: json['id']?.toString() ?? '',
-        name: json['name'] as String,
-        about: json['about'] as String?,
-        businessType: json['business_type'] as String?,
-        city: json['city'] != null
-            ? City.fromJson(json['city'] as Map<String, dynamic>)
-            : null,
-        instagram: json['instagram'] as String?,
-        website: json['website'] as String?,
-        profilePhoto: json['profile_photo'] as String?,
-        primaryVenue: json['primary_venue'] != null
-            ? PrimaryVenueProfile.fromJson(
-                json['primary_venue'] as Map<String, dynamic>,
-              )
-            : null,
-      );
+  factory BusinessProfile.fromJson(Map<String, dynamic> json) {
+    final rawBusinessTypes = json['business_types'] as List<dynamic>?;
+    final businessTypes =
+        rawBusinessTypes?.map((e) => e.toString()).toList() ?? const <String>[];
+
+    return BusinessProfile(
+      id: json['id']?.toString() ?? '',
+      name: json['name'] as String,
+      about: json['about'] as String?,
+      businessType:
+          (json['business_type'] as String?) ??
+          (businessTypes.isNotEmpty ? businessTypes.first : null),
+      businessTypes: businessTypes,
+      city: json['city'] != null
+          ? City.fromJson(json['city'] as Map<String, dynamic>)
+          : null,
+      instagram: json['instagram'] as String?,
+      website: json['website'] as String?,
+      profilePhoto: json['profile_photo'] as String?,
+      primaryVenue: json['primary_venue'] != null
+          ? PrimaryVenueProfile.fromJson(
+              json['primary_venue'] as Map<String, dynamic>,
+            )
+          : null,
+    );
+  }
 
   final String id;
   final String name;
   final String? about;
   final String? businessType;
+  final List<String> businessTypes;
   final City? city;
   final String? instagram;
   final String? website;
   final String? profilePhoto;
   final PrimaryVenueProfile? primaryVenue;
 
+  String get businessTypesSummary {
+    if (businessTypes.isNotEmpty) {
+      return businessTypes.join(' · ');
+    }
+    return businessType ?? 'Business';
+  }
+
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (about != null) 'about': about,
-        if (businessType != null) 'business_type': businessType,
-        if (city != null) 'city': city!.toJson(),
-        if (instagram != null) 'instagram': instagram,
-        if (website != null) 'website': website,
-        if (profilePhoto != null) 'profile_photo': profilePhoto,
-        if (primaryVenue != null) 'primary_venue': primaryVenue!.toJson(),
-      };
+    'id': id,
+    'name': name,
+    if (about != null) 'about': about,
+    if (businessType != null) 'business_type': businessType,
+    if (businessTypes.isNotEmpty) 'business_types': businessTypes,
+    if (city != null) 'city': city!.toJson(),
+    if (instagram != null) 'instagram': instagram,
+    if (website != null) 'website': website,
+    if (profilePhoto != null) 'profile_photo': profilePhoto,
+    if (primaryVenue != null) 'primary_venue': primaryVenue!.toJson(),
+  };
 }
 
 int? _parseInt(Object? value) {
@@ -227,16 +242,16 @@ class CommunityProfile {
   final String? profilePhoto;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (about != null) 'about': about,
-        if (communityType != null) 'community_type': communityType,
-        if (city != null) 'city': city!.toJson(),
-        if (instagram != null) 'instagram': instagram,
-        if (tiktok != null) 'tiktok': tiktok,
-        if (website != null) 'website': website,
-        if (profilePhoto != null) 'profile_photo': profilePhoto,
-      };
+    'id': id,
+    'name': name,
+    if (about != null) 'about': about,
+    if (communityType != null) 'community_type': communityType,
+    if (city != null) 'city': city!.toJson(),
+    if (instagram != null) 'instagram': instagram,
+    if (tiktok != null) 'tiktok': tiktok,
+    if (website != null) 'website': website,
+    if (profilePhoto != null) 'profile_photo': profilePhoto,
+  };
 }
 
 /// User subscription model
@@ -263,11 +278,11 @@ class UserSubscription {
   bool get isActive => status == 'active';
 
   Map<String, dynamic> toJson() => {
-        'status': status,
-        if (currentPeriodEnd != null)
-          'current_period_end': currentPeriodEnd!.toIso8601String(),
-        'cancel_at_period_end': cancelAtPeriodEnd,
-      };
+    'status': status,
+    if (currentPeriodEnd != null)
+      'current_period_end': currentPeriodEnd!.toIso8601String(),
+    'cancel_at_period_end': cancelAtPeriodEnd,
+  };
 }
 
 /// Attendee profile model for gamification stats
@@ -300,13 +315,13 @@ class AttendeeProfileData {
   final int? globalRank;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'profile_id': profileId,
-        'total_points': totalPoints,
-        'total_challenges_completed': totalChallengesCompleted,
-        'total_events_attended': totalEventsAttended,
-        if (globalRank != null) 'global_rank': globalRank,
-      };
+    'id': id,
+    'profile_id': profileId,
+    'total_points': totalPoints,
+    'total_challenges_completed': totalChallengesCompleted,
+    'total_events_attended': totalEventsAttended,
+    if (globalRank != null) 'global_rank': globalRank,
+  };
 }
 
 /// Main user model
@@ -327,38 +342,37 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json['id']?.toString() ?? '',
-        email: json['email'] as String,
-        userType: UserType.fromString(json['user_type'] as String),
-        phoneNumber: json['phone_number'] as String?,
-        avatarUrl: json['avatar_url'] as String?,
-        onboardingCompleted: json['onboarding_completed'] as bool? ?? false,
-        hasActiveSubscription:
-            json['has_active_subscription'] as bool? ?? false,
-        businessProfile: json['business_profile'] != null
-            ? BusinessProfile.fromJson(
-                json['business_profile'] as Map<String, dynamic>,
-              )
-            : null,
-        communityProfile: json['community_profile'] != null
-            ? CommunityProfile.fromJson(
-                json['community_profile'] as Map<String, dynamic>,
-              )
-            : null,
-        attendeeProfile: json['attendee_profile'] != null
-            ? AttendeeProfileData.fromJson(
-                json['attendee_profile'] as Map<String, dynamic>,
-              )
-            : null,
-        subscription: json['subscription'] != null
-            ? UserSubscription.fromJson(
-                json['subscription'] as Map<String, dynamic>,
-              )
-            : null,
-        createdAt: json['created_at'] != null
-            ? DateTime.parse(json['created_at'] as String)
-            : null,
-      );
+    id: json['id']?.toString() ?? '',
+    email: json['email'] as String,
+    userType: UserType.fromString(json['user_type'] as String),
+    phoneNumber: json['phone_number'] as String?,
+    avatarUrl: json['avatar_url'] as String?,
+    onboardingCompleted: json['onboarding_completed'] as bool? ?? false,
+    hasActiveSubscription: json['has_active_subscription'] as bool? ?? false,
+    businessProfile: json['business_profile'] != null
+        ? BusinessProfile.fromJson(
+            json['business_profile'] as Map<String, dynamic>,
+          )
+        : null,
+    communityProfile: json['community_profile'] != null
+        ? CommunityProfile.fromJson(
+            json['community_profile'] as Map<String, dynamic>,
+          )
+        : null,
+    attendeeProfile: json['attendee_profile'] != null
+        ? AttendeeProfileData.fromJson(
+            json['attendee_profile'] as Map<String, dynamic>,
+          )
+        : null,
+    subscription: json['subscription'] != null
+        ? UserSubscription.fromJson(
+            json['subscription'] as Map<String, dynamic>,
+          )
+        : null,
+    createdAt: json['created_at'] != null
+        ? DateTime.parse(json['created_at'] as String)
+        : null,
+  );
 
   final String id;
   final String email;
@@ -403,22 +417,20 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        'user_type': userType.toApiValue(),
-        if (phoneNumber != null) 'phone_number': phoneNumber,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-        'onboarding_completed': onboardingCompleted,
-        'has_active_subscription': hasActiveSubscription,
-        if (businessProfile != null)
-          'business_profile': businessProfile!.toJson(),
-        if (communityProfile != null)
-          'community_profile': communityProfile!.toJson(),
-        if (attendeeProfile != null)
-          'attendee_profile': attendeeProfile!.toJson(),
-        if (subscription != null) 'subscription': subscription!.toJson(),
-        if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
-      };
+    'id': id,
+    'email': email,
+    'user_type': userType.toApiValue(),
+    if (phoneNumber != null) 'phone_number': phoneNumber,
+    if (avatarUrl != null) 'avatar_url': avatarUrl,
+    'onboarding_completed': onboardingCompleted,
+    'has_active_subscription': hasActiveSubscription,
+    if (businessProfile != null) 'business_profile': businessProfile!.toJson(),
+    if (communityProfile != null)
+      'community_profile': communityProfile!.toJson(),
+    if (attendeeProfile != null) 'attendee_profile': attendeeProfile!.toJson(),
+    if (subscription != null) 'subscription': subscription!.toJson(),
+    if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+  };
 
   UserModel copyWith({
     String? id,
@@ -433,20 +445,18 @@ class UserModel {
     AttendeeProfileData? attendeeProfile,
     UserSubscription? subscription,
     DateTime? createdAt,
-  }) =>
-      UserModel(
-        id: id ?? this.id,
-        email: email ?? this.email,
-        userType: userType ?? this.userType,
-        phoneNumber: phoneNumber ?? this.phoneNumber,
-        avatarUrl: avatarUrl ?? this.avatarUrl,
-        onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
-        hasActiveSubscription:
-            hasActiveSubscription ?? this.hasActiveSubscription,
-        businessProfile: businessProfile ?? this.businessProfile,
-        communityProfile: communityProfile ?? this.communityProfile,
-        attendeeProfile: attendeeProfile ?? this.attendeeProfile,
-        subscription: subscription ?? this.subscription,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  }) => UserModel(
+    id: id ?? this.id,
+    email: email ?? this.email,
+    userType: userType ?? this.userType,
+    phoneNumber: phoneNumber ?? this.phoneNumber,
+    avatarUrl: avatarUrl ?? this.avatarUrl,
+    onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+    hasActiveSubscription: hasActiveSubscription ?? this.hasActiveSubscription,
+    businessProfile: businessProfile ?? this.businessProfile,
+    communityProfile: communityProfile ?? this.communityProfile,
+    attendeeProfile: attendeeProfile ?? this.attendeeProfile,
+    subscription: subscription ?? this.subscription,
+    createdAt: createdAt ?? this.createdAt,
+  );
 }

@@ -71,33 +71,25 @@ enum VenuePreference {
 /// A media attachment for a Kolab (photo or video).
 @immutable
 class KolabMedia {
-  const KolabMedia({
-    required this.url,
-    required this.type,
-    this.sortOrder = 0,
-  });
+  const KolabMedia({required this.url, required this.type, this.sortOrder = 0});
 
   factory KolabMedia.fromJson(Map<String, dynamic> json) => KolabMedia(
-        url: json['url']?.toString() ?? '',
-        type: json['type']?.toString() ?? 'image',
-        sortOrder: _parseInt(json['sort_order']) ?? 0,
-      );
+    url: json['url']?.toString() ?? '',
+    type: json['type']?.toString() ?? 'image',
+    sortOrder: _parseInt(json['sort_order']) ?? 0,
+  );
 
   final String url;
   final String type;
   final int sortOrder;
 
   Map<String, dynamic> toJson() => {
-        'url': url,
-        'type': type,
-        'sort_order': sortOrder,
-      };
+    'url': url,
+    'type': type,
+    'sort_order': sortOrder,
+  };
 
-  KolabMedia copyWith({
-    String? url,
-    String? type,
-    int? sortOrder,
-  }) =>
+  KolabMedia copyWith({String? url, String? type, int? sortOrder}) =>
       KolabMedia(
         url: url ?? this.url,
         type: type ?? this.type,
@@ -125,44 +117,50 @@ class PastEvent {
     required this.date,
     this.partnerName,
     this.photos = const [],
+    this.videos = const [],
   });
 
   factory PastEvent.fromJson(Map<String, dynamic> json) => PastEvent(
-        name: json['name']?.toString() ?? '',
-        date: _parseDate(json['date']),
-        partnerName: json['partner_name']?.toString(),
-        photos: json['photos'] is List
-            ? (json['photos'] as List).map((e) => e.toString()).toList()
-            : const [],
-      );
+    name: json['name']?.toString() ?? '',
+    date: _parseDate(json['date']),
+    partnerName: json['partner_name']?.toString(),
+    photos: json['photos'] is List
+        ? (json['photos'] as List).map((e) => e.toString()).toList()
+        : const [],
+    videos: json['videos'] is List
+        ? (json['videos'] as List).map((e) => e.toString()).toList()
+        : const [],
+  );
 
   final String name;
   final DateTime date;
   final String? partnerName;
   final List<String> photos;
+  final List<String> videos;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'date': date.toIso8601String().split('T').first,
-        if (partnerName != null && partnerName!.isNotEmpty)
-          'partner_name': partnerName,
-        if (photos.isNotEmpty) 'photos': photos,
-      };
+    'name': name,
+    'date': date.toIso8601String().split('T').first,
+    if (partnerName != null && partnerName!.isNotEmpty)
+      'partner_name': partnerName,
+    if (photos.isNotEmpty) 'photos': photos,
+    if (videos.isNotEmpty) 'videos': videos,
+  };
 
   PastEvent copyWith({
     String? name,
     DateTime? date,
     String? partnerName,
     List<String>? photos,
+    List<String>? videos,
     bool clearPartnerName = false,
-  }) =>
-      PastEvent(
-        name: name ?? this.name,
-        date: date ?? this.date,
-        partnerName:
-            clearPartnerName ? null : (partnerName ?? this.partnerName),
-        photos: photos ?? this.photos,
-      );
+  }) => PastEvent(
+    name: name ?? this.name,
+    date: date ?? this.date,
+    partnerName: clearPartnerName ? null : (partnerName ?? this.partnerName),
+    photos: photos ?? this.photos,
+    videos: videos ?? this.videos,
+  );
 
   static DateTime _parseDate(Object? value) {
     if (value == null) return DateTime.now();
@@ -216,101 +214,94 @@ class Kolab {
 
   /// Creates an empty Kolab with sensible defaults for the given intent type.
   factory Kolab.empty(IntentType intentType) => Kolab(
-        intentType: intentType,
-        status: 'draft',
-        title: '',
-        description: '',
-        preferredCity: '',
-        media: const [],
-        recurringDays: const [],
-        needs: const [],
-        communityTypes: const [],
-        offersInReturn: const [],
-        offering: const [],
-        seekingCommunities: const [],
-        expects: const [],
-        pastEvents: const [],
-      );
+    intentType: intentType,
+    status: 'draft',
+    title: '',
+    description: '',
+    preferredCity: '',
+    media: const [],
+    recurringDays: const [],
+    needs: const [],
+    communityTypes: const [],
+    offersInReturn: const [],
+    offering: const [],
+    seekingCommunities: const [],
+    expects: const [],
+    pastEvents: const [],
+  );
 
   factory Kolab.fromJson(Map<String, dynamic> json) => Kolab(
-        id: json['id']?.toString(),
-        intentType: IntentType.fromString(
-            json['intent_type']?.toString() ?? 'community_seeking'),
-        status: json['status']?.toString() ?? 'draft',
-        title: json['title']?.toString() ?? '',
-        description: json['description']?.toString() ?? '',
-        preferredCity: json['preferred_city']?.toString() ?? '',
-        area: json['area']?.toString(),
-        media: json['media'] is List
-            ? (json['media'] as List)
-                .map((e) => KolabMedia.fromJson(e as Map<String, dynamic>))
-                .toList()
-            : const [],
-        availabilityMode: json['availability_mode'] != null
-            ? AvailabilityMode.fromString(
-                json['availability_mode'].toString())
-            : null,
-        availabilityStart:
-            _parseDateTimeNullable(json['availability_start']),
-        availabilityEnd: _parseDateTimeNullable(json['availability_end']),
-        selectedTime:
-            _parseTimeOfDay(json['selected_time']?.toString()),
-        recurringDays: _parseIntList(json['recurring_days']),
-        needs: json['needs'] is List
-            ? (json['needs'] as List)
-                .map((e) => NeedType.fromString(e.toString()))
-                .toList()
-            : const [],
-        communityTypes: json['community_types'] is List
-            ? (json['community_types'] as List)
-                .map((e) => e.toString())
-                .toList()
-            : const [],
-        communitySize: _parseInt(json['community_size']),
-        typicalAttendance: _parseInt(json['typical_attendance']),
-        offersInReturn: json['offers_in_return'] is List
-            ? (json['offers_in_return'] as List)
-                .map((e) => DeliverableType.fromString(e.toString()))
-                .toList()
-            : const [],
-        venuePreference: json['venue_preference'] != null
-            ? VenuePreference.fromString(
-                json['venue_preference'].toString())
-            : null,
-        venueName: json['venue_name']?.toString(),
-        venueType: json['venue_type'] != null
-            ? VenueType.fromString(json['venue_type'].toString())
-            : null,
-        capacity: _parseInt(json['capacity']),
-        venueAddress: json['venue_address']?.toString(),
-        productName: json['product_name']?.toString(),
-        productType: json['product_type'] != null
-            ? ProductType.fromString(json['product_type'].toString())
-            : null,
-        offering: json['offering'] is List
-            ? (json['offering'] as List)
-                .map((e) => e.toString())
-                .toList()
-            : const [],
-        seekingCommunities: json['seeking_communities'] is List
-            ? (json['seeking_communities'] as List)
-                .map((e) => e.toString())
-                .toList()
-            : const [],
-        minCommunitySize: _parseInt(json['min_community_size']),
-        expects: json['expects'] is List
-            ? (json['expects'] as List)
-                .map((e) => DeliverableType.fromString(e.toString()))
-                .toList()
-            : const [],
-        pastEvents: json['past_events'] is List
-            ? (json['past_events'] as List)
-                .map((e) => PastEvent.fromJson(e as Map<String, dynamic>))
-                .toList()
-            : const [],
-        publishedAt: _parseDateTimeNullable(json['published_at']),
-        createdAt: _parseDateTimeNullable(json['created_at']),
-      );
+    id: json['id']?.toString(),
+    intentType: IntentType.fromString(
+      json['intent_type']?.toString() ?? 'community_seeking',
+    ),
+    status: json['status']?.toString() ?? 'draft',
+    title: json['title']?.toString() ?? '',
+    description: json['description']?.toString() ?? '',
+    preferredCity: json['preferred_city']?.toString() ?? '',
+    area: json['area']?.toString(),
+    media: json['media'] is List
+        ? (json['media'] as List)
+              .map((e) => KolabMedia.fromJson(e as Map<String, dynamic>))
+              .toList()
+        : const [],
+    availabilityMode: json['availability_mode'] != null
+        ? AvailabilityMode.fromString(json['availability_mode'].toString())
+        : null,
+    availabilityStart: _parseDateTimeNullable(json['availability_start']),
+    availabilityEnd: _parseDateTimeNullable(json['availability_end']),
+    selectedTime: _parseTimeOfDay(json['selected_time']?.toString()),
+    recurringDays: _parseIntList(json['recurring_days']),
+    needs: json['needs'] is List
+        ? (json['needs'] as List)
+              .map((e) => NeedType.fromString(e.toString()))
+              .toList()
+        : const [],
+    communityTypes: json['community_types'] is List
+        ? (json['community_types'] as List).map((e) => e.toString()).toList()
+        : const [],
+    communitySize: _parseInt(json['community_size']),
+    typicalAttendance: _parseInt(json['typical_attendance']),
+    offersInReturn: json['offers_in_return'] is List
+        ? (json['offers_in_return'] as List)
+              .map((e) => DeliverableType.fromString(e.toString()))
+              .toList()
+        : const [],
+    venuePreference: json['venue_preference'] != null
+        ? VenuePreference.fromString(json['venue_preference'].toString())
+        : null,
+    venueName: json['venue_name']?.toString(),
+    venueType: json['venue_type'] != null
+        ? VenueType.fromString(json['venue_type'].toString())
+        : null,
+    capacity: _parseInt(json['capacity']),
+    venueAddress: json['venue_address']?.toString(),
+    productName: json['product_name']?.toString(),
+    productType: json['product_type'] != null
+        ? ProductType.fromString(json['product_type'].toString())
+        : null,
+    offering: json['offering'] is List
+        ? (json['offering'] as List).map((e) => e.toString()).toList()
+        : const [],
+    seekingCommunities: json['seeking_communities'] is List
+        ? (json['seeking_communities'] as List)
+              .map((e) => e.toString())
+              .toList()
+        : const [],
+    minCommunitySize: _parseInt(json['min_community_size']),
+    expects: json['expects'] is List
+        ? (json['expects'] as List)
+              .map((e) => DeliverableType.fromString(e.toString()))
+              .toList()
+        : const [],
+    pastEvents: json['past_events'] is List
+        ? (json['past_events'] as List)
+              .map((e) => PastEvent.fromJson(e as Map<String, dynamic>))
+              .toList()
+        : const [],
+    publishedAt: _parseDateTimeNullable(json['published_at']),
+    createdAt: _parseDateTimeNullable(json['created_at']),
+  );
 
   // ---------------------------------------------------------------------------
   // Fields
@@ -370,61 +361,54 @@ class Kolab {
   // ---------------------------------------------------------------------------
 
   Map<String, dynamic> toJson() => {
-        if (id != null) 'id': id,
-        'intent_type': intentType.toApiValue(),
-        'status': status,
-        'title': title,
-        'description': description,
-        'preferred_city': preferredCity,
-        if (area != null && area!.isNotEmpty) 'area': area,
-        if (media.isNotEmpty)
-          'media': media.map((m) => m.toJson()).toList(),
-        if (availabilityMode != null)
-          'availability_mode': availabilityMode!.toApiValue(),
-        if (availabilityStart != null)
-          'availability_start':
-              availabilityStart!.toIso8601String().split('T').first,
-        if (availabilityEnd != null)
-          'availability_end':
-              availabilityEnd!.toIso8601String().split('T').first,
-        if (selectedTime != null)
-          'selected_time':
-              '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}',
-        if (recurringDays.isNotEmpty) 'recurring_days': recurringDays,
-        if (needs.isNotEmpty)
-          'needs': needs.map((n) => n.toApiValue()).toList(),
-        if (communityTypes.isNotEmpty) 'community_types': communityTypes,
-        if (communitySize != null) 'community_size': communitySize,
-        if (typicalAttendance != null)
-          'typical_attendance': typicalAttendance,
-        if (offersInReturn.isNotEmpty)
-          'offers_in_return':
-              offersInReturn.map((o) => o.toApiValue()).toList(),
-        if (venuePreference != null)
-          'venue_preference': venuePreference!.toApiValue(),
-        if (venueName != null && venueName!.isNotEmpty)
-          'venue_name': venueName,
-        if (venueType != null) 'venue_type': venueType!.toApiValue(),
-        if (capacity != null) 'capacity': capacity,
-        if (venueAddress != null && venueAddress!.isNotEmpty)
-          'venue_address': venueAddress,
-        if (productName != null && productName!.isNotEmpty)
-          'product_name': productName,
-        if (productType != null)
-          'product_type': productType!.toApiValue(),
-        if (offering.isNotEmpty) 'offering': offering,
-        if (seekingCommunities.isNotEmpty)
-          'seeking_communities': seekingCommunities,
-        if (minCommunitySize != null)
-          'min_community_size': minCommunitySize,
-        if (expects.isNotEmpty)
-          'expects': expects.map((e) => e.toApiValue()).toList(),
-        if (pastEvents.isNotEmpty)
-          'past_events': pastEvents.map((e) => e.toJson()).toList(),
-        if (publishedAt != null)
-          'published_at': publishedAt!.toIso8601String(),
-        if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
-      };
+    if (id != null) 'id': id,
+    'intent_type': intentType.toApiValue(),
+    'status': status,
+    'title': title,
+    'description': description,
+    'preferred_city': preferredCity,
+    if (area != null && area!.isNotEmpty) 'area': area,
+    if (media.isNotEmpty) 'media': media.map((m) => m.toJson()).toList(),
+    if (availabilityMode != null)
+      'availability_mode': availabilityMode!.toApiValue(),
+    if (availabilityStart != null)
+      'availability_start': availabilityStart!
+          .toIso8601String()
+          .split('T')
+          .first,
+    if (availabilityEnd != null)
+      'availability_end': availabilityEnd!.toIso8601String().split('T').first,
+    if (selectedTime != null)
+      'selected_time':
+          '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}',
+    if (recurringDays.isNotEmpty) 'recurring_days': recurringDays,
+    if (needs.isNotEmpty) 'needs': needs.map((n) => n.toApiValue()).toList(),
+    if (communityTypes.isNotEmpty) 'community_types': communityTypes,
+    if (communitySize != null) 'community_size': communitySize,
+    if (typicalAttendance != null) 'typical_attendance': typicalAttendance,
+    if (offersInReturn.isNotEmpty)
+      'offers_in_return': offersInReturn.map((o) => o.toApiValue()).toList(),
+    if (venuePreference != null)
+      'venue_preference': venuePreference!.toApiValue(),
+    if (venueName != null && venueName!.isNotEmpty) 'venue_name': venueName,
+    if (venueType != null) 'venue_type': venueType!.toApiValue(),
+    if (capacity != null) 'capacity': capacity,
+    if (venueAddress != null && venueAddress!.isNotEmpty)
+      'venue_address': venueAddress,
+    if (productName != null && productName!.isNotEmpty)
+      'product_name': productName,
+    if (productType != null) 'product_type': productType!.toApiValue(),
+    if (offering.isNotEmpty) 'offering': offering,
+    if (seekingCommunities.isNotEmpty)
+      'seeking_communities': seekingCommunities,
+    if (minCommunitySize != null) 'min_community_size': minCommunitySize,
+    if (expects.isNotEmpty)
+      'expects': expects.map((e) => e.toApiValue()).toList(),
+    if (pastEvents.isNotEmpty)
+      'past_events': pastEvents.map((e) => e.toJson()).toList(),
+    if (publishedAt != null) 'published_at': publishedAt!.toIso8601String(),
+    if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+  };
 
   // ---------------------------------------------------------------------------
   // copyWith
@@ -481,62 +465,58 @@ class Kolab {
     bool clearMinCommunitySize = false,
     bool clearPublishedAt = false,
     bool clearCreatedAt = false,
-  }) =>
-      Kolab(
-        id: clearId ? null : (id ?? this.id),
-        intentType: intentType ?? this.intentType,
-        status: status ?? this.status,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        preferredCity: preferredCity ?? this.preferredCity,
-        area: clearArea ? null : (area ?? this.area),
-        media: media ?? this.media,
-        availabilityMode: clearAvailabilityMode
-            ? null
-            : (availabilityMode ?? this.availabilityMode),
-        availabilityStart: clearAvailabilityStart
-            ? null
-            : (availabilityStart ?? this.availabilityStart),
-        availabilityEnd: clearAvailabilityEnd
-            ? null
-            : (availabilityEnd ?? this.availabilityEnd),
-        selectedTime: clearSelectedTime
-            ? null
-            : (selectedTime ?? this.selectedTime),
-        recurringDays: recurringDays ?? this.recurringDays,
-        needs: needs ?? this.needs,
-        communityTypes: communityTypes ?? this.communityTypes,
-        communitySize: clearCommunitySize
-            ? null
-            : (communitySize ?? this.communitySize),
-        typicalAttendance: clearTypicalAttendance
-            ? null
-            : (typicalAttendance ?? this.typicalAttendance),
-        offersInReturn: offersInReturn ?? this.offersInReturn,
-        venuePreference: clearVenuePreference
-            ? null
-            : (venuePreference ?? this.venuePreference),
-        venueName: clearVenueName ? null : (venueName ?? this.venueName),
-        venueType: clearVenueType ? null : (venueType ?? this.venueType),
-        capacity: clearCapacity ? null : (capacity ?? this.capacity),
-        venueAddress:
-            clearVenueAddress ? null : (venueAddress ?? this.venueAddress),
-        productName:
-            clearProductName ? null : (productName ?? this.productName),
-        productType:
-            clearProductType ? null : (productType ?? this.productType),
-        offering: offering ?? this.offering,
-        seekingCommunities:
-            seekingCommunities ?? this.seekingCommunities,
-        minCommunitySize: clearMinCommunitySize
-            ? null
-            : (minCommunitySize ?? this.minCommunitySize),
-        expects: expects ?? this.expects,
-        pastEvents: pastEvents ?? this.pastEvents,
-        publishedAt:
-            clearPublishedAt ? null : (publishedAt ?? this.publishedAt),
-        createdAt: clearCreatedAt ? null : (createdAt ?? this.createdAt),
-      );
+  }) => Kolab(
+    id: clearId ? null : (id ?? this.id),
+    intentType: intentType ?? this.intentType,
+    status: status ?? this.status,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    preferredCity: preferredCity ?? this.preferredCity,
+    area: clearArea ? null : (area ?? this.area),
+    media: media ?? this.media,
+    availabilityMode: clearAvailabilityMode
+        ? null
+        : (availabilityMode ?? this.availabilityMode),
+    availabilityStart: clearAvailabilityStart
+        ? null
+        : (availabilityStart ?? this.availabilityStart),
+    availabilityEnd: clearAvailabilityEnd
+        ? null
+        : (availabilityEnd ?? this.availabilityEnd),
+    selectedTime: clearSelectedTime
+        ? null
+        : (selectedTime ?? this.selectedTime),
+    recurringDays: recurringDays ?? this.recurringDays,
+    needs: needs ?? this.needs,
+    communityTypes: communityTypes ?? this.communityTypes,
+    communitySize: clearCommunitySize
+        ? null
+        : (communitySize ?? this.communitySize),
+    typicalAttendance: clearTypicalAttendance
+        ? null
+        : (typicalAttendance ?? this.typicalAttendance),
+    offersInReturn: offersInReturn ?? this.offersInReturn,
+    venuePreference: clearVenuePreference
+        ? null
+        : (venuePreference ?? this.venuePreference),
+    venueName: clearVenueName ? null : (venueName ?? this.venueName),
+    venueType: clearVenueType ? null : (venueType ?? this.venueType),
+    capacity: clearCapacity ? null : (capacity ?? this.capacity),
+    venueAddress: clearVenueAddress
+        ? null
+        : (venueAddress ?? this.venueAddress),
+    productName: clearProductName ? null : (productName ?? this.productName),
+    productType: clearProductType ? null : (productType ?? this.productType),
+    offering: offering ?? this.offering,
+    seekingCommunities: seekingCommunities ?? this.seekingCommunities,
+    minCommunitySize: clearMinCommunitySize
+        ? null
+        : (minCommunitySize ?? this.minCommunitySize),
+    expects: expects ?? this.expects,
+    pastEvents: pastEvents ?? this.pastEvents,
+    publishedAt: clearPublishedAt ? null : (publishedAt ?? this.publishedAt),
+    createdAt: clearCreatedAt ? null : (createdAt ?? this.createdAt),
+  );
 
   @override
   String toString() =>

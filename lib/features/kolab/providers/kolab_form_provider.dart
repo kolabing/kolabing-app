@@ -66,21 +66,19 @@ class KolabFormState {
     Map<String, String>? fieldErrors,
     bool clearError = false,
     bool clearIntent = false,
-  }) =>
-      KolabFormState(
-        intentType: clearIntent ? null : (intentType ?? this.intentType),
-        currentStep: currentStep ?? this.currentStep,
-        totalSteps: totalSteps ?? this.totalSteps,
-        kolab: kolab ?? this.kolab,
-        isEditing: isEditing ?? this.isEditing,
-        isSubmitting: isSubmitting ?? this.isSubmitting,
-        isPublishing: isPublishing ?? this.isPublishing,
-        isSuccess: isSuccess ?? this.isSuccess,
-        requiresSubscription:
-            requiresSubscription ?? this.requiresSubscription,
-        error: clearError ? null : (error ?? this.error),
-        fieldErrors: fieldErrors ?? this.fieldErrors,
-      );
+  }) => KolabFormState(
+    intentType: clearIntent ? null : (intentType ?? this.intentType),
+    currentStep: currentStep ?? this.currentStep,
+    totalSteps: totalSteps ?? this.totalSteps,
+    kolab: kolab ?? this.kolab,
+    isEditing: isEditing ?? this.isEditing,
+    isSubmitting: isSubmitting ?? this.isSubmitting,
+    isPublishing: isPublishing ?? this.isPublishing,
+    isSuccess: isSuccess ?? this.isSuccess,
+    requiresSubscription: requiresSubscription ?? this.requiresSubscription,
+    error: clearError ? null : (error ?? this.error),
+    fieldErrors: fieldErrors ?? this.fieldErrors,
+  );
 }
 
 // =============================================================================
@@ -93,9 +91,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   @override
   KolabFormState build() {
     _service = ref.read(kolabServiceProvider);
-    return KolabFormState(
-      kolab: Kolab.empty(IntentType.communitySeeking),
-    );
+    return KolabFormState(kolab: Kolab.empty(IntentType.communitySeeking));
   }
 
   // ---------------------------------------------------------------------------
@@ -113,6 +109,17 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
+  /// Load an existing kolab into the unified flow for editing.
+  void initForEdit(Kolab kolab) {
+    state = KolabFormState(
+      intentType: kolab.intentType,
+      currentStep: 0,
+      totalSteps: kolab.intentType.totalSteps,
+      kolab: kolab,
+      isEditing: true,
+    );
+  }
+
   Kolab _buildInitialKolab(IntentType intent) {
     final onboardingState = ref.read(onboardingProvider);
     final businessProfile = _readBusinessProfile();
@@ -120,7 +127,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
 
     var kolab = Kolab.empty(intent);
 
-    final preferredCity = primaryVenue?.city ??
+    final preferredCity =
+        primaryVenue?.city ??
         businessProfile?.city?.name ??
         onboardingState?.location?.city ??
         onboardingState?.cityName ??
@@ -135,7 +143,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           primaryVenue?.venueType ?? onboardingState?.venueType,
         ),
         capacity: primaryVenue?.capacity ?? onboardingState?.venueCapacity,
-        venueAddress: primaryVenue?.formattedAddress ??
+        venueAddress:
+            primaryVenue?.formattedAddress ??
             onboardingState?.location?.formattedAddress,
       );
     }
@@ -262,8 +271,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     state = state.copyWith(
       kolab: state.kolab.copyWith(
         availabilityMode: mode,
-        recurringDays:
-            mode != AvailabilityMode.recurring ? const [] : null,
+        recurringDays: mode != AvailabilityMode.recurring ? const [] : null,
         clearSelectedTime: mode == AvailabilityMode.flexible,
       ),
       clearError: true,
@@ -611,11 +619,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['community_types'] = 'Select at least 1 community type';
         }
         if (kolab.communitySize == null || kolab.communitySize! <= 0) {
-          errors['community_size'] =
-              'Community size must be greater than 0';
+          errors['community_size'] = 'Community size must be greater than 0';
         }
-        if (kolab.typicalAttendance == null ||
-            kolab.typicalAttendance! <= 0) {
+        if (kolab.typicalAttendance == null || kolab.typicalAttendance! <= 0) {
           errors['typical_attendance'] =
               'Typical attendance must be greater than 0';
         }
@@ -871,13 +877,19 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   // ---------------------------------------------------------------------------
 
   void reset() {
-    state = KolabFormState(
-      kolab: Kolab.empty(IntentType.communitySeeking),
-    );
+    state = KolabFormState(kolab: Kolab.empty(IntentType.communitySeeking));
+  }
+
+  void clearSubscriptionRequirement() {
+    if (!state.requiresSubscription) {
+      return;
+    }
+
+    state = state.copyWith(requiresSubscription: false);
   }
 }
 
 /// Provider for the Kolab creation/editing form.
-final kolabFormProvider =
-    NotifierProvider<KolabFormNotifier, KolabFormState>(
-        KolabFormNotifier.new);
+final kolabFormProvider = NotifierProvider<KolabFormNotifier, KolabFormState>(
+  KolabFormNotifier.new,
+);

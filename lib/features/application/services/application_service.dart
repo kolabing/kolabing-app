@@ -13,11 +13,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for application API operations
 class ApplicationService {
-  ApplicationService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  ApplicationService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -46,11 +44,10 @@ class ApplicationService {
     required String message,
     required String availability,
   }) async {
-    final uri = Uri.parse('$_baseUrl/opportunities/$opportunityId/applications');
-    final body = jsonEncode({
-      'message': message,
-      'availability': availability,
-    });
+    final uri = Uri.parse(
+      '$_baseUrl/opportunities/$opportunityId/applications',
+    );
+    final body = jsonEncode({'message': message, 'availability': availability});
 
     debugPrint('ApplicationService: POST $uri');
     debugPrint('Request body: $body');
@@ -106,16 +103,13 @@ class ApplicationService {
       if (status != null) 'status': status,
     };
 
-    final uri = Uri.parse('$_baseUrl/me/applications').replace(
-      queryParameters: queryParams,
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/me/applications',
+    ).replace(queryParameters: queryParams);
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('My applications response status: ${response.statusCode}');
 
@@ -153,18 +147,17 @@ class ApplicationService {
       if (status != null) 'status': status,
     };
 
-    final uri = Uri.parse('$_baseUrl/me/received-applications').replace(
-      queryParameters: queryParams,
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/me/received-applications',
+    ).replace(queryParameters: queryParams);
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
-      debugPrint('Received applications response status: ${response.statusCode}');
+      debugPrint(
+        'Received applications response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         return _parsePaginatedResponse(response.body);
@@ -194,10 +187,7 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Application detail response status: ${response.statusCode}');
 
@@ -212,7 +202,9 @@ class ApplicationService {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(
-          error: ApiError(message: 'You are not authorized to view this application.'),
+          error: ApiError(
+            message: 'You are not authorized to view this application.',
+          ),
         );
       } else if (response.statusCode == 404) {
         throw const ApiException(
@@ -243,6 +235,20 @@ class ApplicationService {
     required String scheduledDate,
     required Map<String, String> contactMethods,
   }) async {
+    return _acceptApplication(
+      id,
+      scheduledDate: scheduledDate,
+      contactMethods: contactMethods,
+      allowRetry: true,
+    );
+  }
+
+  Future<Application> _acceptApplication(
+    String id, {
+    required String scheduledDate,
+    required Map<String, String> contactMethods,
+    required bool allowRetry,
+  }) async {
     final uri = Uri.parse('$_baseUrl/applications/$id/accept');
     final body = jsonEncode({
       'scheduled_date': scheduledDate,
@@ -262,7 +268,7 @@ class ApplicationService {
       debugPrint('Accept application response status: ${response.statusCode}');
       debugPrint('Accept application response body: ${response.body}');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'];
         if (data is Map<String, dynamic>) {
@@ -276,6 +282,15 @@ class ApplicationService {
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _acceptApplication(
+            id,
+            scheduledDate: scheduledDate,
+            contactMethods: contactMethods,
+            allowRetry: false,
+          );
+        }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw _parseApiError(response);
@@ -323,7 +338,9 @@ class ApplicationService {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(
-          error: ApiError(message: 'You are not authorized to decline this application.'),
+          error: ApiError(
+            message: 'You are not authorized to decline this application.',
+          ),
         );
       } else {
         throw _parseApiError(response);
@@ -354,7 +371,9 @@ class ApplicationService {
         headers: await _getHeaders(),
       );
 
-      debugPrint('Withdraw application response status: ${response.statusCode}');
+      debugPrint(
+        'Withdraw application response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -367,7 +386,9 @@ class ApplicationService {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(
-          error: ApiError(message: 'You are not authorized to withdraw this application.'),
+          error: ApiError(
+            message: 'You are not authorized to withdraw this application.',
+          ),
         );
       } else {
         throw _parseApiError(response);
@@ -398,15 +419,13 @@ class ApplicationService {
       'per_page': perPage.toString(),
     };
 
-    final uri = Uri.parse('$_baseUrl/applications/$applicationId/messages')
-        .replace(queryParameters: queryParams);
+    final uri = Uri.parse(
+      '$_baseUrl/applications/$applicationId/messages',
+    ).replace(queryParameters: queryParams);
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Get messages response status: ${response.statusCode}');
 
@@ -416,7 +435,9 @@ class ApplicationService {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 403) {
         throw const ApiException(
-          error: ApiError(message: 'You are not authorized to view these messages.'),
+          error: ApiError(
+            message: 'You are not authorized to view these messages.',
+          ),
         );
       } else {
         throw _parseApiError(response);
@@ -445,7 +466,9 @@ class ApplicationService {
     }
     if (content.length > 5000) {
       throw const ApiException(
-        error: ApiError(message: 'Message content cannot exceed 5000 characters.'),
+        error: ApiError(
+          message: 'Message content cannot exceed 5000 characters.',
+        ),
       );
     }
 
@@ -496,7 +519,9 @@ class ApplicationService {
   /// POST /api/v1/applications/{id}/messages/read
   /// Mark all messages as read for an application
   Future<int> markAsRead(String applicationId) async {
-    final uri = Uri.parse('$_baseUrl/applications/$applicationId/messages/read');
+    final uri = Uri.parse(
+      '$_baseUrl/applications/$applicationId/messages/read',
+    );
     debugPrint('ApplicationService: POST $uri');
 
     try {
@@ -536,10 +561,7 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Unread count response status: ${response.statusCode}');
 
@@ -607,7 +629,9 @@ class ApplicationService {
       }
     }
 
-    debugPrint('Parsed ${applications.length} / ${dataList.length} applications');
+    debugPrint(
+      'Parsed ${applications.length} / ${dataList.length} applications',
+    );
 
     // Use meta if available, otherwise fall back to root json
     final paginationSource = meta ?? json;

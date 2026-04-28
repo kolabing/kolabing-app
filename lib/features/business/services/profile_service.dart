@@ -15,11 +15,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Profile service for managing user profile, notifications, and subscription
 class ProfileService {
-  ProfileService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  ProfileService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -34,6 +32,18 @@ class ProfileService {
     };
   }
 
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
+
   // ---------------------------------------------------------------------------
   // Profile APIs
   // ---------------------------------------------------------------------------
@@ -46,12 +56,12 @@ class ProfileService {
     debugPrint('Profile: GET $url');
 
     try {
-      final response = await _httpClient
-          .get(
-            Uri.parse(url),
-            headers: await _getHeaders(),
-          )
-          .timeout(const Duration(seconds: 15));
+      final response = await _sendWithRefresh(
+        () async => _httpClient
+            .get(Uri.parse(url), headers: await _getHeaders())
+            .timeout(const Duration(seconds: 15)),
+        allowRetry: true,
+      );
 
       debugPrint('Profile response status: ${response.statusCode}');
 
@@ -85,10 +95,13 @@ class ProfileService {
     debugPrint('Profile: PUT $url');
 
     try {
-      final response = await _httpClient.put(
-        Uri.parse(url),
-        headers: await _getHeaders(),
-        body: jsonEncode(data),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.put(
+          Uri.parse(url),
+          headers: await _getHeaders(),
+          body: jsonEncode(data),
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Update profile response status: ${response.statusCode}');
@@ -123,9 +136,10 @@ class ProfileService {
     debugPrint('Profile: DELETE $url');
 
     try {
-      final response = await _httpClient.delete(
-        Uri.parse(url),
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async =>
+            _httpClient.delete(Uri.parse(url), headers: await _getHeaders()),
+        allowRetry: true,
       );
 
       debugPrint('Delete account response status: ${response.statusCode}');
@@ -162,15 +176,16 @@ class ProfileService {
     debugPrint('Profile: GET $url');
 
     try {
-      final response = await _httpClient
-          .get(
-            Uri.parse(url),
-            headers: await _getHeaders(),
-          )
-          .timeout(const Duration(seconds: 15));
+      final response = await _sendWithRefresh(
+        () async => _httpClient
+            .get(Uri.parse(url), headers: await _getHeaders())
+            .timeout(const Duration(seconds: 15)),
+        allowRetry: true,
+      );
 
       debugPrint(
-          'Get notification preferences response status: ${response.statusCode}');
+        'Get notification preferences response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -204,14 +219,18 @@ class ProfileService {
     debugPrint('Profile: PUT $url');
 
     try {
-      final response = await _httpClient.put(
-        Uri.parse(url),
-        headers: await _getHeaders(),
-        body: jsonEncode(prefs),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.put(
+          Uri.parse(url),
+          headers: await _getHeaders(),
+          body: jsonEncode(prefs),
+        ),
+        allowRetry: true,
       );
 
       debugPrint(
-          'Update notification preferences response status: ${response.statusCode}');
+        'Update notification preferences response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -247,9 +266,10 @@ class ProfileService {
     debugPrint('Profile: GET $url');
 
     try {
-      final response = await _httpClient.get(
-        Uri.parse(url),
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async =>
+            _httpClient.get(Uri.parse(url), headers: await _getHeaders()),
+        allowRetry: true,
       );
 
       debugPrint('Get subscription response status: ${response.statusCode}');
@@ -294,14 +314,12 @@ class ProfileService {
       final response = await _httpClient.post(
         Uri.parse(url),
         headers: await _getHeaders(),
-        body: jsonEncode({
-          'success_url': successUrl,
-          'cancel_url': cancelUrl,
-        }),
+        body: jsonEncode({'success_url': successUrl, 'cancel_url': cancelUrl}),
       );
 
       debugPrint(
-          'Create checkout session response status: ${response.statusCode}');
+        'Create checkout session response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -415,7 +433,9 @@ class ProfileService {
         headers: await _getHeaders(),
       );
 
-      debugPrint('Reactivate subscription response status: ${response.statusCode}');
+      debugPrint(
+        'Reactivate subscription response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;

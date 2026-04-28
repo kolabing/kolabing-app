@@ -13,6 +13,9 @@ class OnboardingData {
     this.type,
     this.typeSlug,
     this.typeName,
+    this.businessTypeIds = const [],
+    this.businessTypeSlugs = const [],
+    this.businessTypeNames = const [],
     this.cityId,
     this.cityName,
     this.location,
@@ -51,6 +54,15 @@ class OnboardingData {
 
   /// Type display name for summary
   final String? typeName;
+
+  /// Business category ids (business only, up to 3)
+  final List<String> businessTypeIds;
+
+  /// Business category slugs (business only, up to 3)
+  final List<String> businessTypeSlugs;
+
+  /// Business category display names (business only, up to 3)
+  final List<String> businessTypeNames;
 
   /// Selected city ID
   final String? cityId;
@@ -91,6 +103,34 @@ class OnboardingData {
   /// Current onboarding step (1-4)
   final int currentStep;
 
+  /// Resolved business ids including legacy single-select data.
+  List<String> get selectedBusinessTypeIds {
+    if (businessTypeIds.isNotEmpty) return businessTypeIds;
+    if (type != null && type!.isNotEmpty) return [type!];
+    return const [];
+  }
+
+  /// Resolved business slugs including legacy single-select data.
+  List<String> get selectedBusinessTypeSlugs {
+    if (businessTypeSlugs.isNotEmpty) return businessTypeSlugs;
+    if (typeSlug != null && typeSlug!.isNotEmpty) return [typeSlug!];
+    return const [];
+  }
+
+  /// Resolved business names including legacy single-select data.
+  List<String> get selectedBusinessTypeNames {
+    if (businessTypeNames.isNotEmpty) return businessTypeNames;
+    if (typeName != null && typeName!.isNotEmpty) return [typeName!];
+    return const [];
+  }
+
+  /// UI summary for the selected business categories.
+  String get businessTypesSummary {
+    final names = selectedBusinessTypeNames;
+    if (names.isEmpty) return 'Unknown type';
+    return names.join(' · ');
+  }
+
   /// Check if step 1 is complete (name is required)
   bool get isStep1Complete {
     if (isBusiness) {
@@ -127,14 +167,14 @@ class OnboardingData {
     if (isBusiness) {
       return name != null &&
           name!.trim().isNotEmpty &&
-          type != null &&
-          type!.trim().isNotEmpty;
+          selectedBusinessTypeSlugs.isNotEmpty;
     }
     return true;
   }
 
   /// Check if all required fields are complete
-  bool get isComplete => isStep1Complete && isStep2Complete && isStep3Complete;
+  bool get isComplete =>
+      isStep1Complete && isStep2Complete && isStep3Complete && isStep4Complete;
 
   /// Is business user
   bool get isBusiness => userType == UserType.business;
@@ -151,6 +191,9 @@ class OnboardingData {
     String? type,
     String? typeSlug,
     String? typeName,
+    List<String>? businessTypeIds,
+    List<String>? businessTypeSlugs,
+    List<String>? businessTypeNames,
     String? cityId,
     String? cityName,
     PlaceSuggestion? location,
@@ -174,34 +217,35 @@ class OnboardingData {
     bool clearVenueName = false,
     bool clearVenueType = false,
     bool clearVenueCapacity = false,
-  }) =>
-      OnboardingData(
-        userType: userType ?? this.userType,
-        name: name ?? this.name,
-        photoBase64: clearPhoto ? null : (photoBase64 ?? this.photoBase64),
-        photoFileName:
-            clearPhoto ? null : (photoFileName ?? this.photoFileName),
-        photoMimeType:
-            clearPhoto ? null : (photoMimeType ?? this.photoMimeType),
-        type: type ?? this.type,
-        typeSlug: typeSlug ?? this.typeSlug,
-        typeName: typeName ?? this.typeName,
-        cityId: cityId ?? this.cityId,
-        cityName: cityName ?? this.cityName,
-        location: clearLocation ? null : (location ?? this.location),
-        venueName: clearVenueName ? null : (venueName ?? this.venueName),
-        venueType: clearVenueType ? null : (venueType ?? this.venueType),
-        venueCapacity: clearVenueCapacity
-            ? null
-            : (venueCapacity ?? this.venueCapacity),
-        venuePhotos: venuePhotos ?? this.venuePhotos,
-        about: clearAbout ? null : (about ?? this.about),
-        phone: clearPhone ? null : (phone ?? this.phone),
-        instagram: clearInstagram ? null : (instagram ?? this.instagram),
-        tiktok: clearTiktok ? null : (tiktok ?? this.tiktok),
-        website: clearWebsite ? null : (website ?? this.website),
-        currentStep: currentStep ?? this.currentStep,
-      );
+    bool clearTypeSelection = false,
+  }) => OnboardingData(
+    userType: userType ?? this.userType,
+    name: name ?? this.name,
+    photoBase64: clearPhoto ? null : (photoBase64 ?? this.photoBase64),
+    photoFileName: clearPhoto ? null : (photoFileName ?? this.photoFileName),
+    photoMimeType: clearPhoto ? null : (photoMimeType ?? this.photoMimeType),
+    type: clearTypeSelection ? null : (type ?? this.type),
+    typeSlug: clearTypeSelection ? null : (typeSlug ?? this.typeSlug),
+    typeName: clearTypeSelection ? null : (typeName ?? this.typeName),
+    businessTypeIds: businessTypeIds ?? this.businessTypeIds,
+    businessTypeSlugs: businessTypeSlugs ?? this.businessTypeSlugs,
+    businessTypeNames: businessTypeNames ?? this.businessTypeNames,
+    cityId: cityId ?? this.cityId,
+    cityName: cityName ?? this.cityName,
+    location: clearLocation ? null : (location ?? this.location),
+    venueName: clearVenueName ? null : (venueName ?? this.venueName),
+    venueType: clearVenueType ? null : (venueType ?? this.venueType),
+    venueCapacity: clearVenueCapacity
+        ? null
+        : (venueCapacity ?? this.venueCapacity),
+    venuePhotos: venuePhotos ?? this.venuePhotos,
+    about: clearAbout ? null : (about ?? this.about),
+    phone: clearPhone ? null : (phone ?? this.phone),
+    instagram: clearInstagram ? null : (instagram ?? this.instagram),
+    tiktok: clearTiktok ? null : (tiktok ?? this.tiktok),
+    website: clearWebsite ? null : (website ?? this.website),
+    currentStep: currentStep ?? this.currentStep,
+  );
 
   /// Get profile photo as data URI format
   String? get _profilePhotoDataUri {
@@ -213,19 +257,26 @@ class OnboardingData {
   /// Convert to business onboarding API payload
   Map<String, dynamic> toBusinessPayload() {
     final resolvedCityId = location?.cityId ?? cityId;
-    final resolvedCityName = location?.city.isNotEmpty == true ? location!.city : cityName;
+    final resolvedCityName = location?.city.isNotEmpty == true
+        ? location!.city
+        : cityName;
+    final resolvedBusinessSlugs = selectedBusinessTypeSlugs;
 
     return {
       'name': name?.trim(),
       if (_profilePhotoDataUri != null) 'profile_photo': _profilePhotoDataUri,
-      'business_type': typeSlug,
+      if (resolvedBusinessSlugs.isNotEmpty)
+        'business_type': resolvedBusinessSlugs.first,
+      if (resolvedBusinessSlugs.isNotEmpty)
+        'business_types': resolvedBusinessSlugs,
       if (resolvedCityId != null && resolvedCityId.isNotEmpty)
         'city_id': resolvedCityId,
       if (resolvedCityName != null && resolvedCityName.isNotEmpty)
         'city_name': resolvedCityName,
       if (about != null && about!.isNotEmpty) 'about': about?.trim(),
       if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
-      if (instagram != null && instagram!.isNotEmpty) 'instagram': instagram?.trim(),
+      if (instagram != null && instagram!.isNotEmpty)
+        'instagram': instagram?.trim(),
       if (website != null && website!.isNotEmpty) 'website': website?.trim(),
       'primary_venue': {
         'name': venueName?.trim(),
@@ -245,17 +296,17 @@ class OnboardingData {
 
   /// Convert to community onboarding API payload
   Map<String, dynamic> toCommunityPayload() => {
-        'name': name?.trim(),
-        if (_profilePhotoDataUri != null) 'profile_photo': _profilePhotoDataUri,
-        'community_type': typeSlug,
-        'city_id': cityId,
-        if (about != null && about!.isNotEmpty) 'about': about?.trim(),
-        if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
-        if (instagram != null && instagram!.isNotEmpty)
-          'instagram': instagram?.trim(),
-        if (tiktok != null && tiktok!.isNotEmpty) 'tiktok': tiktok?.trim(),
-        if (website != null && website!.isNotEmpty) 'website': website?.trim(),
-      };
+    'name': name?.trim(),
+    if (_profilePhotoDataUri != null) 'profile_photo': _profilePhotoDataUri,
+    'community_type': typeSlug,
+    'city_id': cityId,
+    if (about != null && about!.isNotEmpty) 'about': about?.trim(),
+    if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
+    if (instagram != null && instagram!.isNotEmpty)
+      'instagram': instagram?.trim(),
+    if (tiktok != null && tiktok!.isNotEmpty) 'tiktok': tiktok?.trim(),
+    if (website != null && website!.isNotEmpty) 'website': website?.trim(),
+  };
 
   @override
   String toString() =>

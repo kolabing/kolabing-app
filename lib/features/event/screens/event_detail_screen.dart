@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
@@ -12,10 +13,7 @@ import '../providers/event_provider.dart';
 
 /// Detail screen for viewing a single event
 class EventDetailScreen extends ConsumerStatefulWidget {
-  const EventDetailScreen({
-    super.key,
-    required this.eventId,
-  });
+  const EventDetailScreen({super.key, required this.eventId});
 
   final String eventId;
 
@@ -64,8 +62,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     );
 
     if (confirmed == true && mounted) {
-      final success =
-          await ref.read(eventsProvider.notifier).deleteEvent(event.id);
+      final success = await ref
+          .read(eventsProvider.notifier)
+          .deleteEvent(event.id);
       if (success && mounted) {
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -156,6 +155,18 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
                     _buildPhotoGrid(event),
+                    const SizedBox(height: KolabingSpacing.lg),
+                  ],
+
+                  if (event.videos.isNotEmpty) ...[
+                    Text(
+                      'Videos',
+                      style: KolabingTextStyles.titleMedium.copyWith(
+                        color: KolabingColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: KolabingSpacing.sm),
+                    _buildVideoList(event),
                   ],
 
                   const SizedBox(height: KolabingSpacing.xl),
@@ -310,10 +321,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: KolabingColors.border,
-                      width: 1,
-                    ),
+                    border: Border.all(color: KolabingColors.border, width: 1),
                   ),
                   child: ClipOval(
                     child: event.partner.profilePhoto != null
@@ -365,7 +373,10 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             ),
           ),
 
-          const Divider(height: KolabingSpacing.lg, color: KolabingColors.border),
+          const Divider(
+            height: KolabingSpacing.lg,
+            color: KolabingColors.border,
+          ),
 
           // Date
           _buildInfoRow(
@@ -374,7 +385,10 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             value: event.formattedDate,
           ),
 
-          const Divider(height: KolabingSpacing.lg, color: KolabingColors.border),
+          const Divider(
+            height: KolabingSpacing.lg,
+            color: KolabingColors.border,
+          ),
 
           // Attendees
           _buildInfoRow(
@@ -385,6 +399,98 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildVideoList(Event event) {
+    return Column(
+      children: List.generate(event.videos.length, (index) {
+        final video = event.videos[index];
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: index == event.videos.length - 1 ? 0 : KolabingSpacing.sm,
+          ),
+          child: InkWell(
+            onTap: () => _openVideo(video.url),
+            borderRadius: KolabingRadius.borderRadiusMd,
+            child: Container(
+              padding: const EdgeInsets.all(KolabingSpacing.sm),
+              decoration: BoxDecoration(
+                color: KolabingColors.surface,
+                borderRadius: KolabingRadius.borderRadiusMd,
+                border: Border.all(color: KolabingColors.border),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: KolabingColors.primary.withValues(alpha: 0.1),
+                      borderRadius: KolabingRadius.borderRadiusMd,
+                      image: video.thumbnailUrl != null
+                          ? DecorationImage(
+                              image: NetworkImage(video.thumbnailUrl!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: video.thumbnailUrl == null
+                        ? const Icon(
+                            LucideIcons.playCircle,
+                            color: KolabingColors.primary,
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: KolabingSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Recap video ${index + 1}',
+                          style: KolabingTextStyles.titleSmall.copyWith(
+                            color: KolabingColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Tap to open the uploaded video',
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: KolabingColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    LucideIcons.externalLink,
+                    size: 16,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Future<void> _openVideo(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      return;
+    }
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not open the video link'),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
+    }
   }
 
   Widget _buildInfoRow({
@@ -403,11 +509,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             color: KolabingColors.primary.withValues(alpha: 0.1),
             borderRadius: KolabingRadius.borderRadiusSm,
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: KolabingColors.primary,
-          ),
+          child: Icon(icon, size: 20, color: KolabingColors.primary),
         ),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
@@ -438,18 +540,18 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   }
 
   Widget _buildPartnerPlaceholder(String name) => Container(
-        color: KolabingColors.primary,
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0] : '?',
-            style: const TextStyle(
-              color: KolabingColors.onPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
+    color: KolabingColors.primary,
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0] : '?',
+        style: const TextStyle(
+          color: KolabingColors.onPrimary,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildPhotoGrid(Event event) {
     return GridView.builder(

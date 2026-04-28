@@ -8,6 +8,7 @@ class AuthResponse {
     required this.tokenType,
     required this.isNewUser,
     required this.user,
+    this.refreshToken,
     this.message,
   });
 
@@ -23,6 +24,7 @@ class AuthResponse {
       message: json['message'] as String?,
       token: data['token'] as String,
       tokenType: data['token_type'] as String? ?? 'Bearer',
+      refreshToken: data['refresh_token'] as String?,
       isNewUser: data['is_new_user'] as bool? ?? false,
       user: UserModel.fromJson(data['user'] as Map<String, dynamic>),
     );
@@ -32,6 +34,7 @@ class AuthResponse {
   final String? message;
   final String token;
   final String tokenType;
+  final String? refreshToken;
   final bool isNewUser;
   final UserModel user;
 
@@ -39,73 +42,94 @@ class AuthResponse {
   String get authorizationHeader => '$tokenType $token';
 
   Map<String, dynamic> toJson() => {
-        'success': success,
-        if (message != null) 'message': message,
-        'data': {
-          'token': token,
-          'token_type': tokenType,
-          'is_new_user': isNewUser,
-          'user': user.toJson(),
-        },
-      };
+    'success': success,
+    if (message != null) 'message': message,
+    'data': {
+      'token': token,
+      'token_type': tokenType,
+      if (refreshToken != null) 'refresh_token': refreshToken,
+      'is_new_user': isNewUser,
+      'user': user.toJson(),
+    },
+  };
+}
+
+/// Session refresh response from POST /auth/refresh.
+class SessionRefreshResponse {
+  const SessionRefreshResponse({
+    required this.token,
+    required this.tokenType,
+    this.refreshToken,
+    this.user,
+  });
+
+  factory SessionRefreshResponse.fromJson(Map<String, dynamic> json) {
+    final data = (json['data'] as Map<String, dynamic>?) ?? json;
+    final token = (data['token'] ?? data['access_token']) as String?;
+    if (token == null || token.isEmpty) {
+      throw const FormatException('Invalid refresh response: missing token');
+    }
+
+    return SessionRefreshResponse(
+      token: token,
+      tokenType: data['token_type'] as String? ?? 'Bearer',
+      refreshToken: data['refresh_token'] as String?,
+      user: data['user'] is Map<String, dynamic>
+          ? UserModel.fromJson(data['user'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  final String token;
+  final String tokenType;
+  final String? refreshToken;
+  final UserModel? user;
 }
 
 /// Google auth request body
 class GoogleAuthRequest {
-  const GoogleAuthRequest({
-    required this.idToken,
-    required this.userType,
-  });
+  const GoogleAuthRequest({required this.idToken, required this.userType});
 
   final String idToken;
   final UserType userType;
 
   Map<String, dynamic> toJson() => {
-        'id_token': idToken,
-        'user_type': userType.toApiValue(),
-      };
+    'id_token': idToken,
+    'user_type': userType.toApiValue(),
+  };
 }
 
 /// User me response from GET /auth/me
 class UserMeResponse {
-  const UserMeResponse({
-    required this.success,
-    required this.user,
-  });
+  const UserMeResponse({required this.success, required this.user});
 
   factory UserMeResponse.fromJson(Map<String, dynamic> json) => UserMeResponse(
-        success: json['success'] as bool? ?? false,
-        user: UserModel.fromJson(json['data'] as Map<String, dynamic>),
-      );
+    success: json['success'] as bool? ?? false,
+    user: UserModel.fromJson(json['data'] as Map<String, dynamic>),
+  );
 
   final bool success;
   final UserModel user;
 
-  Map<String, dynamic> toJson() => {
-        'success': success,
-        'data': user.toJson(),
-      };
+  Map<String, dynamic> toJson() => {'success': success, 'data': user.toJson()};
 }
 
 /// Logout response from POST /auth/logout
 class LogoutResponse {
-  const LogoutResponse({
-    required this.success,
-    this.message,
-  });
+  const LogoutResponse({required this.success, this.message});
 
   factory LogoutResponse.fromJson(Map<String, dynamic> json) => LogoutResponse(
-        success: json['success'] as bool? ?? false,
-        message: json['message'] as String?,
-      );
+    success: json['success'] as bool? ?? false,
+    message: json['message'] as String?,
+  );
 
   final bool success;
   final String? message;
 
   Map<String, dynamic> toJson() => {
-        'success': success,
-        if (message != null) 'message': message,
-      };
+    'success': success,
+    if (message != null) 'message': message,
+  };
 }
 
 /// API error response
@@ -122,15 +146,12 @@ class ApiError {
         message: json['message'] as String? ?? 'Unknown error',
         errors: json['errors'] != null
             ? (json['errors'] as Map<String, dynamic>).map(
-                (key, value) => MapEntry(
-                  key,
-                  (value as List<dynamic>).cast<String>(),
-                ),
+                (key, value) =>
+                    MapEntry(key, (value as List<dynamic>).cast<String>()),
               )
             : null,
         statusCode: statusCode,
-        requiresSubscription:
-            json['requires_subscription'] as bool? ?? false,
+        requiresSubscription: json['requires_subscription'] as bool? ?? false,
       );
 
   final String message;
@@ -172,34 +193,57 @@ class ApiError {
   static String _friendlyMessage(String raw) {
     // Field required patterns
     if (raw.contains('field is required')) {
-      final field = _humanizeField(raw.split(' field is required').first.replaceAll('The ', ''));
+      final field = _humanizeField(
+        raw.split(' field is required').first.replaceAll('The ', ''),
+      );
       return '$field is required.';
     }
     // "required unless" pattern
     if (raw.contains('is required unless')) {
-      final field = _humanizeField(raw.split(' field is required').first.replaceAll('The ', '').split(' is required').first.replaceAll('The ', ''));
+      final field = _humanizeField(
+        raw
+            .split(' field is required')
+            .first
+            .replaceAll('The ', '')
+            .split(' is required')
+            .first
+            .replaceAll('The ', ''),
+      );
       return '$field is required.';
     }
     // "must be" patterns
     if (raw.contains('must be a string')) {
-      final field = _humanizeField(raw.split(' must be').first.replaceAll('The ', ''));
+      final field = _humanizeField(
+        raw.split(' must be').first.replaceAll('The ', ''),
+      );
       return '$field must be text.';
     }
-    if (raw.contains('must be an integer') || raw.contains('must be a number')) {
-      final field = _humanizeField(raw.split(' must be').first.replaceAll('The ', ''));
+    if (raw.contains('must be an integer') ||
+        raw.contains('must be a number')) {
+      final field = _humanizeField(
+        raw.split(' must be').first.replaceAll('The ', ''),
+      );
       return '$field must be a number.';
     }
     if (raw.contains('must not be greater than')) {
-      final field = _humanizeField(raw.split(' must not').first.replaceAll('The ', ''));
+      final field = _humanizeField(
+        raw.split(' must not').first.replaceAll('The ', ''),
+      );
       return '$field is too long.';
     }
     if (raw.contains('must be at least')) {
-      final field = _humanizeField(raw.split(' must be').first.replaceAll('The ', ''));
+      final field = _humanizeField(
+        raw.split(' must be').first.replaceAll('The ', ''),
+      );
       return '$field is too short.';
     }
     // "is invalid" / "format" patterns
-    if (raw.contains('is not a valid') || raw.contains('format is invalid') || raw.contains('is invalid')) {
-      final field = _humanizeField(raw.split(' is ').first.split(' format').first.replaceAll('The ', ''));
+    if (raw.contains('is not a valid') ||
+        raw.contains('format is invalid') ||
+        raw.contains('is invalid')) {
+      final field = _humanizeField(
+        raw.split(' is ').first.split(' format').first.replaceAll('The ', ''),
+      );
       return 'Please enter a valid $field.';
     }
     // Date patterns
@@ -211,7 +255,9 @@ class ApiError {
     }
     // Already exists
     if (raw.contains('has already been taken')) {
-      final field = _humanizeField(raw.split(' has already').first.replaceAll('The ', ''));
+      final field = _humanizeField(
+        raw.split(' has already').first.replaceAll('The ', ''),
+      );
       return 'This $field is already in use.';
     }
     // Return cleaned up version of raw message
@@ -235,9 +281,7 @@ class ApiError {
 
 /// Exception class for API errors
 class ApiException implements Exception {
-  const ApiException({
-    required this.error,
-  });
+  const ApiException({required this.error});
 
   final ApiError error;
 

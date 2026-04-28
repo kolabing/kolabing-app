@@ -111,13 +111,47 @@ class EventCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(
-                              LucideIcons.image,
+                          LucideIcons.image,
                           size: 12,
                           color: Colors.white,
                         ),
                         const SizedBox(width: 2),
                         Text(
                           '${event.photos.length}',
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              if (event.videos.isNotEmpty)
+                Positioned(
+                  top: event.photos.length > 1 ? 44 : KolabingSpacing.sm,
+                  left: KolabingSpacing.sm,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: KolabingSpacing.xs,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      borderRadius: KolabingRadius.borderRadiusSm,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          LucideIcons.playCircle,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          '${event.videos.length}',
                           style: KolabingTextStyles.labelSmall.copyWith(
                             color: Colors.white,
                             fontSize: 10,
@@ -222,27 +256,27 @@ class EventCard extends StatelessWidget {
   }
 
   Widget _buildPlaceholder() => Container(
-        color: KolabingColors.surfaceVariant,
-        child: const Center(
-          child: Icon(
-            LucideIcons.image,
-            size: 32,
-            color: KolabingColors.textTertiary,
-          ),
-        ),
-      );
+    color: KolabingColors.surfaceVariant,
+    child: const Center(
+      child: Icon(
+        LucideIcons.image,
+        size: 32,
+        color: KolabingColors.textTertiary,
+      ),
+    ),
+  );
 
   Widget _buildPartnerPlaceholder() => Container(
-        color: KolabingColors.primary,
-        child: Center(
-          child: Text(
-            event.partner.name.isNotEmpty ? event.partner.name[0] : '?',
-            style: const TextStyle(
-              color: KolabingColors.onPrimary,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    color: KolabingColors.primary,
+    child: Center(
+      child: Text(
+        event.partner.name.isNotEmpty ? event.partner.name[0] : '?',
+        style: const TextStyle(
+          color: KolabingColors.onPrimary,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
         ),
-      );
+      ),
+    ),
+  );
 }
