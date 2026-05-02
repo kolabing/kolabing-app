@@ -79,7 +79,7 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
       );
       return;
     }
-    context.push('/onboarding/business/final');
+    context.push('/onboarding/business/step5');
   }
 
   void _saveData() {
@@ -144,7 +144,7 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
           children: [
             OnboardingHeader(
               currentStep: 3,
-              totalSteps: 3,
+              totalSteps: 4,
               onBack: _handleBack,
               showSkip: false,
             ),

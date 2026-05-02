@@ -108,7 +108,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
           children: [
             OnboardingHeader(
               currentStep: 2,
-              totalSteps: 3,
+              totalSteps: 4,
               onBack: _handleBack,
               showSkip: false,
             ),

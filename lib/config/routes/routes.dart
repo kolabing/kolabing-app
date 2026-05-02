@@ -34,6 +34,7 @@ import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step3_screen.dart';
 import '../../features/onboarding/screens/business/business_step4_screen.dart';
+import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
 import '../../features/onboarding/screens/community/community_step1_screen.dart';
 import '../../features/onboarding/screens/community/community_step2_screen.dart';
@@ -69,6 +70,7 @@ abstract final class KolabingRoutes {
   static const String businessOnboardingStep2 = '/onboarding/business/step2';
   static const String businessOnboardingStep3 = '/onboarding/business/step3';
   static const String businessOnboardingStep4 = '/onboarding/business/step4';
+  static const String businessOnboardingStep5 = '/onboarding/business/step5';
   static const String businessOnboardingFinal = '/onboarding/business/final';
 
   /// Community onboarding routes
@@ -390,6 +392,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'businessOnboardingStep4',
       builder: (BuildContext context, GoRouterState state) =>
           const BusinessStep4Screen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.businessOnboardingStep5,
+      name: 'businessOnboardingStep5',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessStep5Screen(),
     ),
     GoRoute(
       path: KolabingRoutes.businessOnboardingFinal,
