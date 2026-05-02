@@ -31,7 +31,6 @@ import '../../features/notification/screens/notifications_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
-import '../../features/onboarding/screens/business/business_step1_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step3_screen.dart';
 import '../../features/onboarding/screens/business/business_step4_screen.dart';
@@ -367,11 +366,12 @@ final GoRouter kolabingRouter = GoRouter(
     ),
 
     // Business Onboarding
+    // Step 1 (location) was removed — redirect any leftover deeplinks to step 2.
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep1,
       name: 'businessOnboardingStep1',
-      builder: (BuildContext context, GoRouterState state) =>
-          const BusinessStep1Screen(),
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.businessOnboardingStep2,
     ),
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep2,

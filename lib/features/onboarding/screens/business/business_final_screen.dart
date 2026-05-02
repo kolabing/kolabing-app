@@ -70,7 +70,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   }
 
   void _handleEdit() {
-    context.go('/onboarding/business/step1');
+    context.go('/onboarding/business/step2');
   }
 
   String? _validateEmail(String? value) {
@@ -246,7 +246,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
     if (data == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/onboarding/business/step1');
+        context.go('/onboarding/business/step2');
       });
       return const SizedBox.shrink();
     }

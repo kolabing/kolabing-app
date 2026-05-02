@@ -9,7 +9,7 @@ String resolveAuthDestination(UserModel user, {bool isNewUser = false}) {
 
   if (isNewUser || !user.onboardingCompleted) {
     return user.isBusiness
-        ? KolabingRoutes.businessOnboardingStep1
+        ? KolabingRoutes.businessOnboardingStep2
         : KolabingRoutes.communityOnboardingStep1;
   }
 

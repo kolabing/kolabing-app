@@ -130,7 +130,7 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
         switch (type) {
           case SelectionUserType.business:
             ref.read(onboardingProvider.notifier).initialize(UserType.business);
-            context.push('/onboarding/business/step1');
+            context.push('/onboarding/business/step2');
           case SelectionUserType.community:
             ref.read(onboardingProvider.notifier).initialize(UserType.community);
             context.push('/onboarding/community/step1');

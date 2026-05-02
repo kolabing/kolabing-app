@@ -101,7 +101,7 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
                 TextButton(
-                  onPressed: () => context.go(KolabingRoutes.businessOnboardingStep1),
+                  onPressed: () => context.go(KolabingRoutes.businessOnboardingStep2),
                   child: const Text('Complete onboarding'),
                 ),
               ],

@@ -143,7 +143,8 @@ class _BusinessStep4ScreenState extends ConsumerState<BusinessStep4Screen> {
         child: Column(
           children: [
             OnboardingHeader(
-              currentStep: 4,
+              currentStep: 3,
+              totalSteps: 3,
               onBack: _handleBack,
               showSkip: false,
             ),

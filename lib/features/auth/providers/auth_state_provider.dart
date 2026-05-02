@@ -97,7 +97,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
 
       final destination = resolveAuthDestination(user);
 
-      if (destination == KolabingRoutes.businessOnboardingStep1) {
+      if (destination == KolabingRoutes.businessOnboardingStep2) {
         state = state.copyWith(
           isLoading: false,
           navigationTarget: SplashNavigationTarget.businessOnboarding,
