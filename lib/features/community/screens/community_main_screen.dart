@@ -66,7 +66,6 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         dashboardState.communityData?.applicationsReceived.pending ?? 0;
     final totalUnread = ref.watch(totalUnreadCountProvider);
     final badgeCount = pendingSentCount + pendingReceivedCount + totalUnread;
-    const bool hasIncompleteProfile = false;
 
     final navItems = [
       const NavItem(
@@ -90,11 +89,10 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         label: 'Applications',
         badgeCount: badgeCount > 0 ? badgeCount : null,
       ),
-      NavItem(
+      const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
-        showDot: hasIncompleteProfile,
       ),
     ];
 

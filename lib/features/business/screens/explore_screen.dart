@@ -7,12 +7,13 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/explore_detail_sheet.dart';
 import '../../../widgets/explore_filter_sheet.dart';
 import '../../../widgets/explore_swipe_card.dart';
 import '../../application/widgets/apply_modal.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../application/widgets/apply_success_sheet.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/models/opportunity_filter.dart';
@@ -82,30 +83,42 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   }
 
   void _onCardTap(Opportunity opportunity) {
-    final currentUser = ref.read(authProvider).user;
-    final isOwn =
-        currentUser?.id != null &&
-        opportunity.creatorProfile?.id == currentUser?.id;
-    final canApply = !isOwn && (currentUser?.isBusiness != true);
-
+    // APPLY NOW is always wired. The backend is the source of truth for
+    // self-apply, intent-vs-user-type matching, duplicate apply, and
+    // subscription gating — surfacing those as friendly errors in the modal.
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
-      canApply: canApply,
-      onApply: canApply
-          ? () {
-              Navigator.of(context).pop(); // Close detail sheet
-              ApplyModal.show(context, opportunity);
-            }
-          : null,
+      onApply: () {
+        Navigator.of(context).pop();
+        _openApplyFlow(opportunity);
+      },
       onView: () {
-        Navigator.of(context).pop(); // Close detail sheet
+        Navigator.of(context).pop();
         context.push(
           '${widget.detailRoutePrefix}/${opportunity.id}',
           extra: opportunity,
         );
       },
     );
+  }
+
+  Future<void> _openApplyFlow(Opportunity opportunity) async {
+    final submitted = await ApplyModal.show(context, opportunity);
+    if (!mounted || submitted != true) return;
+
+    await ApplySuccessSheet.show(
+      context,
+      opportunity: opportunity,
+      onViewApplications: _goToApplications,
+    );
+  }
+
+  void _goToApplications() {
+    final route = widget.detailRoutePrefix.startsWith('/community')
+        ? KolabingRoutes.communityApplications
+        : KolabingRoutes.businessApplications;
+    context.go(route);
   }
 
   void _openFilterSheet() {

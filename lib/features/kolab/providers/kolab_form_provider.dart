@@ -5,6 +5,7 @@ import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../business/providers/profile_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../enums/deliverable_type.dart';
 import '../enums/intent_type.dart';
@@ -154,7 +155,11 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
 
   BusinessProfile? _readBusinessProfile() {
     try {
-      return ref.read(authProvider).user?.businessProfile;
+      // ProfileProvider holds the freshest /me/profile payload (includes
+      // primary_venue). Fall back to the auth user only if profile is
+      // unavailable (e.g. immediately after sign-in before refresh).
+      return ref.read(profileProvider).profile?.businessProfile ??
+          ref.read(authProvider).user?.businessProfile;
     } on Exception {
       return null;
     }
@@ -660,23 +665,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     Map<String, String> errors,
   ) {
     switch (step) {
-      case 0: // Venue details
+      case 0: // Campaign copy only — venue meta inherited from onboarding profile
         if (kolab.title.isEmpty) {
           errors['title'] = 'Title is required';
         }
         if (kolab.description.isEmpty) {
           errors['description'] = 'Description is required';
-        }
-        if (kolab.venueName == null ||
-            kolab.venueName!.isEmpty ||
-            kolab.venueType == null ||
-            kolab.capacity == null ||
-            kolab.capacity! <= 0 ||
-            kolab.venueAddress == null ||
-            kolab.venueAddress!.isEmpty ||
-            kolab.preferredCity.isEmpty) {
-          errors['primary_venue'] =
-              'Complete your business onboarding venue profile before promoting it.';
         }
       case 1: // Media
         if (kolab.media.isEmpty) {
@@ -701,8 +695,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
         } else {
           final today = DateUtils.dateOnly(DateTime.now());
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
-          if (!start.isAfter(today)) {
-            errors['availability_start'] = 'Start date must be in the future';
+          if (start.isBefore(today)) {
+            errors['availability_start'] =
+                'Start date cannot be in the past';
           }
         }
       case 6: // Review
@@ -756,8 +751,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
         } else {
           final today = DateUtils.dateOnly(DateTime.now());
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
-          if (!start.isAfter(today)) {
-            errors['availability_start'] = 'Start date must be in the future';
+          if (start.isBefore(today)) {
+            errors['availability_start'] =
+                'Start date cannot be in the past';
           }
         }
       case 6: // Review
@@ -772,6 +768,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
 
   /// Save as draft.
   Future<bool> saveDraft() async {
+    // Re-entry guard: ignore rapid double-taps while a submission is in flight.
+    if (state.isSubmitting || state.isPublishing) return false;
+
     state = state.copyWith(
       isSubmitting: true,
       clearError: true,
@@ -804,6 +803,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
 
   /// Save and publish.
   Future<bool> saveAndPublish() async {
+    // Re-entry guard: ignore rapid double-taps while a submission is in flight.
+    if (state.isSubmitting || state.isPublishing) return false;
+
     state = state.copyWith(
       isPublishing: true,
       clearError: true,
@@ -817,6 +819,11 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       } else {
         saved = await _service.create(state.kolab);
       }
+
+      // Persist the saved record immediately and flip to edit-mode so a
+      // subsequent retry (e.g. publish fails below) updates the existing
+      // draft instead of creating a duplicate.
+      state = state.copyWith(kolab: saved, isEditing: true);
 
       // Publish the saved kolab
       final published = await _service.publish(saved.id!, saved);

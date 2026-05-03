@@ -8,9 +8,10 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../application/widgets/apply_modal.dart';
-import '../../auth/providers/auth_provider.dart';
+import '../../application/widgets/apply_success_sheet.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 
@@ -46,10 +47,22 @@ class _CommunityOfferDetailScreenState
   Future<void> _handleApply(Opportunity opportunity) async {
     final result = await ApplyModal.show(context, opportunity);
 
-    if (result == true && mounted) {
-      // Refresh the opportunity detail to update hasApplied status
-      ref.invalidate(opportunityDetailProvider(widget.offerId));
-    }
+    if (result != true || !mounted) return;
+
+    // Refresh detail so the bottom action flips to "ALREADY APPLIED".
+    ref.invalidate(opportunityDetailProvider(widget.offerId));
+
+    await ApplySuccessSheet.show(
+      context,
+      opportunity: opportunity,
+      onViewApplications: () {
+        if (!mounted) return;
+        final route = GoRouterState.of(context).uri.path.startsWith('/community')
+            ? KolabingRoutes.communityApplications
+            : KolabingRoutes.businessApplications;
+        context.go(route);
+      },
+    );
   }
 
   @override
@@ -595,57 +608,10 @@ class _CommunityOfferDetailScreenState
       );
 
   Widget _buildBottomAction(Opportunity opportunity) {
-    // If user owns this opportunity, don't show apply button
-    final currentUser = ref.read(authProvider).user;
-    final currentUserId = currentUser?.id;
-    final isOwn = currentUserId != null &&
-        opportunity.creatorProfile?.id == currentUserId;
-    if (isOwn) {
-      return Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.surfaceVariant,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-              child: Text(
-                'YOUR OPPORTUNITY',
-                style: GoogleFonts.dmSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
-                  color: KolabingColors.textTertiary,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    // Business users cannot apply to opportunities
-    if (currentUser?.isBusiness == true) {
-      return const SizedBox.shrink();
-    }
+    // Self-apply detection happens on the backend — the client cannot reliably
+    // compare user_id vs profile_id since the API uses different ID spaces.
+    // Always show APPLY NOW to authenticated viewers; the server returns a
+    // friendly error if the user attempts to apply to their own opportunity.
 
     // If user has already applied
     if (opportunity.hasApplied == true) {

@@ -449,6 +449,10 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
 
   /// Save as draft
   Future<bool> saveDraft() async {
+    // Re-entry guard: ignore rapid double-taps while a submission is in flight.
+    // The button is disabled on rebuild, but rebuilds lag tap events by a frame.
+    if (state.isSubmitting || state.isPublishing) return false;
+
     final opp = state.opportunity;
     if (opp == null) return false;
     final draftOpportunity = opp.copyWith(status: OpportunityStatus.draft);
@@ -517,6 +521,10 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
 
   /// Save and publish
   Future<bool> saveAndPublish() async {
+    // Re-entry guard: ignore rapid double-taps while a submission is in flight.
+    // The button is disabled on rebuild, but rebuilds lag tap events by a frame.
+    if (state.isSubmitting || state.isPublishing) return false;
+
     final opp = state.opportunity;
     if (opp == null) return false;
 

@@ -343,7 +343,6 @@ class AuthService {
       id: 'mock-user-${DateTime.now().millisecondsSinceEpoch}',
       email: email,
       userType: userType,
-      onboardingCompleted: true,
       createdAt: DateTime.now(),
     );
 
@@ -517,7 +516,6 @@ class AuthService {
       id: 'mock-user-${DateTime.now().millisecondsSinceEpoch}',
       email: email,
       userType: UserType.business,
-      onboardingCompleted: true,
       createdAt: DateTime.now(),
     );
 
@@ -628,7 +626,6 @@ class AuthService {
       email: 'user@example.com',
       userType: UserType.business,
       avatarUrl: 'https://lh3.googleusercontent.com/a/default-user',
-      onboardingCompleted: true,
       createdAt: DateTime.now(),
     );
 

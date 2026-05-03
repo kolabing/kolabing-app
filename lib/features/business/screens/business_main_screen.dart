@@ -65,7 +65,6 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         dashboardState.businessData?.applicationsReceived.pending ?? 0;
     final totalUnread = ref.watch(totalUnreadCountProvider);
     final badgeCount = pendingApplicationsCount + totalUnread;
-    const bool hasIncompleteProfile = false;
 
     final navItems = [
       const NavItem(
@@ -89,11 +88,10 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         label: 'Applications',
         badgeCount: badgeCount > 0 ? badgeCount : null,
       ),
-      NavItem(
+      const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
-        showDot: hasIncompleteProfile,
       ),
     ];
 

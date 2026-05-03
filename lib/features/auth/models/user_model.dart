@@ -135,7 +135,7 @@ class BusinessProfile {
 
     return BusinessProfile(
       id: json['id']?.toString() ?? '',
-      name: json['name'] as String,
+      name: json['name']?.toString() ?? '',
       about: json['about'] as String?,
       businessType:
           (json['business_type'] as String?) ??
@@ -219,7 +219,7 @@ class CommunityProfile {
   factory CommunityProfile.fromJson(Map<String, dynamic> json) =>
       CommunityProfile(
         id: json['id']?.toString() ?? '',
-        name: json['name'] as String,
+        name: json['name']?.toString() ?? '',
         about: json['about'] as String?,
         communityType: json['community_type'] as String?,
         city: json['city'] != null
@@ -332,7 +332,6 @@ class UserModel {
     required this.userType,
     this.phoneNumber,
     this.avatarUrl,
-    this.onboardingCompleted = false,
     this.hasActiveSubscription = false,
     this.businessProfile,
     this.communityProfile,
@@ -343,11 +342,10 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
     id: json['id']?.toString() ?? '',
-    email: json['email'] as String,
-    userType: UserType.fromString(json['user_type'] as String),
+    email: json['email']?.toString() ?? '',
+    userType: UserType.fromString(json['user_type']?.toString() ?? ''),
     phoneNumber: json['phone_number'] as String?,
     avatarUrl: json['avatar_url'] as String?,
-    onboardingCompleted: json['onboarding_completed'] as bool? ?? false,
     hasActiveSubscription: json['has_active_subscription'] as bool? ?? false,
     businessProfile: json['business_profile'] != null
         ? BusinessProfile.fromJson(
@@ -379,7 +377,6 @@ class UserModel {
   final UserType userType;
   final String? phoneNumber;
   final String? avatarUrl;
-  final bool onboardingCompleted;
   final bool hasActiveSubscription;
   final BusinessProfile? businessProfile;
   final CommunityProfile? communityProfile;
@@ -422,7 +419,6 @@ class UserModel {
     'user_type': userType.toApiValue(),
     if (phoneNumber != null) 'phone_number': phoneNumber,
     if (avatarUrl != null) 'avatar_url': avatarUrl,
-    'onboarding_completed': onboardingCompleted,
     'has_active_subscription': hasActiveSubscription,
     if (businessProfile != null) 'business_profile': businessProfile!.toJson(),
     if (communityProfile != null)
@@ -438,7 +434,6 @@ class UserModel {
     UserType? userType,
     String? phoneNumber,
     String? avatarUrl,
-    bool? onboardingCompleted,
     bool? hasActiveSubscription,
     BusinessProfile? businessProfile,
     CommunityProfile? communityProfile,
@@ -451,7 +446,6 @@ class UserModel {
     userType: userType ?? this.userType,
     phoneNumber: phoneNumber ?? this.phoneNumber,
     avatarUrl: avatarUrl ?? this.avatarUrl,
-    onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
     hasActiveSubscription: hasActiveSubscription ?? this.hasActiveSubscription,
     businessProfile: businessProfile ?? this.businessProfile,
     communityProfile: communityProfile ?? this.communityProfile,

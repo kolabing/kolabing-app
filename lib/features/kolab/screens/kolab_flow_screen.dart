@@ -63,7 +63,10 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
     // Listen for success
     ref.listen<KolabFormState>(kolabFormProvider, (prev, next) {
       if (next.isSuccess && !(prev?.isSuccess ?? false)) {
-        _showSuccessDialog(context, ref, next.isPublishing);
+        // Use prev.isPublishing — by the time isSuccess flips to true, the
+        // provider has already reset isPublishing to false in the same
+        // copyWith, so next.isPublishing can't distinguish the two flows.
+        _showSuccessDialog(context, ref, prev?.isPublishing ?? false);
       }
 
       final shouldShowPaywall =

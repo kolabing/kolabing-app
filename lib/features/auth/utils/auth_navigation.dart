@@ -7,7 +7,11 @@ String resolveAuthDestination(UserModel user, {bool isNewUser = false}) {
     return KolabingRoutes.attendeeDashboard;
   }
 
-  if (isNewUser || !user.onboardingCompleted) {
+  // Onboarding is mandatory at registration. Existing accounts always have it
+  // completed — the only signal that the user must run onboarding is the
+  // `is_new_user` flag returned by OAuth (Google/Apple) when they create a
+  // brand-new account.
+  if (isNewUser) {
     return user.isBusiness
         ? KolabingRoutes.businessOnboardingStep2
         : KolabingRoutes.communityOnboardingStep1;

@@ -41,7 +41,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
 
   Future<void> _pickDateRange(KolabFormNotifier notifier, Kolab kolab) async {
     final today = DateUtils.dateOnly(DateTime.now());
-    final firstAllowedDate = today.add(const Duration(days: 1));
+    final firstAllowedDate = today;
     final initialStart = kolab.availabilityStart != null &&
             !DateUtils.dateOnly(kolab.availabilityStart!)
                 .isBefore(firstAllowedDate)

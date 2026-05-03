@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,16 +10,16 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../enums/intent_type.dart';
+import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
-/// Step 6 (venue / product flows): Review & Publish
+/// Step 6 (venue / product flows): Review & Publish.
 ///
-/// Shows a summary of all entered data, grouped by section. Each section is
-/// tappable and navigates back to the corresponding step via
-/// `notifier.goToStep(stepIndex)`.
-///
-/// This is a plain widget -- the parent provides Scaffold, AppBar, step
-/// indicator, and action bar.
+/// Designed to make the user feel "everything is ready":
+/// 1. Hero preview card — mirrors how the listing will appear in Explore.
+/// 2. Readiness banner — explicit "ready to publish" reassurance.
+/// 3. Compact section cards with green checkmarks for filled sections,
+///    amber for skipped optional sections, tappable to edit.
 class ReviewScreen extends ConsumerWidget {
   const ReviewScreen({super.key});
 
@@ -28,330 +30,625 @@ class ReviewScreen extends ConsumerWidget {
     final notifier = ref.read(kolabFormProvider.notifier);
     final isVenue = formState.intentType == IntentType.venuePromotion;
 
+    final sections = _sectionsFor(kolab, isVenue, notifier);
+    final missingCount = sections.where((s) => s.status == _Status.missing).length;
+    final readyToPublish = missingCount == 0;
+
     return ListView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: KolabingSpacing.lg,
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.xxl,
       ),
       children: [
-        // -- Section header
-        Text(
-          'REVIEW & PUBLISH',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+        // Hero preview — what communities will see
+        _PreviewCard(kolab: kolab, isVenue: isVenue),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // Readiness status banner
+        _StatusBanner(
+          ready: readyToPublish,
+          missingCount: missingCount,
         ),
-        const SizedBox(height: KolabingSpacing.xs),
+        const SizedBox(height: KolabingSpacing.lg),
+
         Text(
-          'Tap any section below to edit',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
+          'CHECKLIST',
+          style: GoogleFonts.rubik(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
             color: KolabingColors.textTertiary,
           ),
         ),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.sm),
 
-        // -- Step 0: Venue or Product details
-        if (isVenue)
-          _ReviewSection(
-            title: 'Campaign & Venue',
-            icon: LucideIcons.building2,
-            onTap: () => notifier.goToStep(0),
-            rows: [
-              _ReviewRow(
-                'Title',
-                kolab.title.isNotEmpty ? kolab.title : '-',
-              ),
-              _ReviewRow('Venue', kolab.venueName ?? '-'),
-              _ReviewRow(
-                'Type',
-                kolab.venueType?.displayName ?? '-',
-              ),
-              _ReviewRow(
-                'Description',
-                kolab.description.isNotEmpty ? kolab.description : '-',
-              ),
-              _ReviewRow(
-                'Capacity',
-                kolab.capacity?.toString() ?? '-',
-              ),
-              _ReviewRow('Address', kolab.venueAddress ?? '-'),
-              _ReviewRow(
-                'City',
-                kolab.preferredCity.isNotEmpty
-                    ? kolab.preferredCity
-                    : '-',
-              ),
-            ],
-          )
-        else
-          _ReviewSection(
-            title: 'Product Details',
-            // ignore: deprecated_member_use
-            icon: LucideIcons.package,
-            onTap: () => notifier.goToStep(0),
-            rows: [
-              _ReviewRow(
-                'Title',
-                kolab.title.isNotEmpty ? kolab.title : '-',
-              ),
-              _ReviewRow('Name', kolab.productName ?? '-'),
-              _ReviewRow(
-                'Type',
-                kolab.productType?.displayName ?? '-',
-              ),
-              _ReviewRow(
-                'Description',
-                kolab.description.isNotEmpty ? kolab.description : '-',
-              ),
-              _ReviewRow(
-                'City',
-                kolab.preferredCity.isNotEmpty
-                    ? kolab.preferredCity
-                    : '-',
-              ),
-            ],
-          ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Step 1: Media
-        _ReviewSection(
-          title: 'Media',
-          icon: LucideIcons.image,
-          onTap: () => notifier.goToStep(1),
-          rows: [
-            _ReviewRow(
-              'Photos',
-              '${kolab.media.where((m) => m.type == 'photo').length} photo(s)',
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Step 2: Offering
-        _ReviewSection(
-          title: 'Offering',
-          icon: LucideIcons.gift,
-          onTap: () => notifier.goToStep(2),
-          rows: [
-            _ReviewRow(
-              'Items',
-              kolab.offering.isNotEmpty
-                  ? _formatOfferingList(kolab.offering)
-                  : '-',
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Step 3: Ideal Community
-        _ReviewSection(
-          title: 'Ideal Community',
-          icon: LucideIcons.users,
-          onTap: () => notifier.goToStep(3),
-          rows: [
-            _ReviewRow(
-              'Types',
-              kolab.seekingCommunities.isNotEmpty
-                  ? kolab.seekingCommunities.join(', ')
-                  : '-',
-            ),
-            _ReviewRow(
-              'Min Size',
-              kolab.minCommunitySize != null
-                  ? kolab.minCommunitySize.toString()
-                  : 'Not set',
-            ),
-            _ReviewRow(
-              'Expects',
-              kolab.expects.isNotEmpty
-                  ? kolab.expects.map((e) => e.displayName).join(', ')
-                  : '-',
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Step 4: Past Events
-        _ReviewSection(
-          title: 'Past Collaborations',
-          icon: LucideIcons.history,
-          onTap: () => notifier.goToStep(4),
-          rows: [
-            _ReviewRow(
-              'Events',
-              kolab.pastEvents.isNotEmpty
-                  ? '${kolab.pastEvents.length} event(s)'
-                  : 'None',
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // -- Step 5: Availability
-        _ReviewSection(
-          title: 'Availability',
-          icon: LucideIcons.calendar,
-          onTap: () => notifier.goToStep(5),
-          rows: [
-            _ReviewRow(
-              'Mode',
-              kolab.availabilityMode?.displayName ?? '-',
-            ),
-            if (kolab.availabilityStart != null &&
-                kolab.availabilityEnd != null)
-              _ReviewRow(
-                'Dates',
-                '${DateFormat('MMM d').format(kolab.availabilityStart!)} - ${DateFormat('MMM d, yyyy').format(kolab.availabilityEnd!)}',
-              ),
-            if (kolab.selectedTime != null)
-              _ReviewRow(
-                'Time',
-                '${kolab.selectedTime!.hour.toString().padLeft(2, '0')}:${kolab.selectedTime!.minute.toString().padLeft(2, '0')}',
-              ),
-            if (kolab.recurringDays.isNotEmpty)
-              _ReviewRow(
-                'Days',
-                _formatDays(kolab.recurringDays),
-              ),
-          ],
-        ),
-
-        const SizedBox(height: KolabingSpacing.lg),
+        // Section checklist cards
+        ...sections.map((section) => Padding(
+              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+              child: _SectionCard(section: section),
+            )),
       ],
     );
   }
 
   // ---------------------------------------------------------------------------
-  // Formatters
+  // Section composition
   // ---------------------------------------------------------------------------
 
-  static String _formatOfferingList(List<String> items) {
+  List<_Section> _sectionsFor(
+    Kolab kolab,
+    bool isVenue,
+    KolabFormNotifier notifier,
+  ) {
+    final sections = <_Section>[];
+
+    // Step 0 — Details
+    if (isVenue) {
+      // Step 0 only collects campaign copy; venue meta is inherited from the
+      // business onboarding profile and is not editable here. Status is based
+      // on the user-editable fields only — venue meta is shown for context.
+      final copyFilled =
+          kolab.title.isNotEmpty && kolab.description.isNotEmpty;
+      final hasVenueMeta = (kolab.venueName?.isNotEmpty ?? false) &&
+          kolab.venueType != null &&
+          (kolab.capacity ?? 0) > 0;
+
+      final summary = copyFilled
+          ? hasVenueMeta
+              ? '${kolab.venueName} • ${kolab.venueType?.displayName} • ${kolab.capacity} guests'
+              : kolab.title
+          : 'Add a campaign title and description';
+      final secondary = copyFilled && hasVenueMeta
+          ? [
+              if (kolab.venueAddress?.isNotEmpty ?? false) kolab.venueAddress!,
+              if (kolab.preferredCity.isNotEmpty) kolab.preferredCity,
+            ].join(', ')
+          : null;
+
+      sections.add(_Section(
+        icon: LucideIcons.building2,
+        title: 'Campaign & Venue',
+        status: copyFilled ? _Status.complete : _Status.missing,
+        summary: summary,
+        secondary: secondary?.isNotEmpty == true ? secondary : null,
+        onTap: () => notifier.goToStep(0),
+      ));
+    } else {
+      final fieldsFilled = kolab.title.isNotEmpty &&
+          kolab.description.isNotEmpty &&
+          (kolab.productName?.isNotEmpty ?? false) &&
+          kolab.productType != null &&
+          kolab.preferredCity.isNotEmpty;
+
+      sections.add(_Section(
+        icon: LucideIcons.package,
+        title: 'Product Details',
+        status: fieldsFilled ? _Status.complete : _Status.missing,
+        summary: fieldsFilled
+            ? '${kolab.productName} • ${kolab.productType?.displayName}'
+            : 'Tap to fill product details',
+        secondary: fieldsFilled ? kolab.preferredCity : null,
+        onTap: () => notifier.goToStep(0),
+      ));
+    }
+
+    // Step 1 — Media
+    final photoCount = kolab.media.where((m) => m.type == 'photo').length;
+    sections.add(_Section(
+      icon: LucideIcons.image,
+      title: 'Media',
+      status: photoCount > 0 ? _Status.complete : _Status.missing,
+      summary: photoCount > 0
+          ? '$photoCount photo${photoCount == 1 ? '' : 's'} added'
+          : 'Add at least 1 photo',
+      onTap: () => notifier.goToStep(1),
+    ));
+
+    // Step 2 — Offering
+    sections.add(_Section(
+      icon: LucideIcons.gift,
+      title: 'Offering',
+      status: kolab.offering.isNotEmpty ? _Status.complete : _Status.missing,
+      summary: kolab.offering.isNotEmpty
+          ? _formatOffering(kolab.offering)
+          : 'Pick what you offer',
+      onTap: () => notifier.goToStep(2),
+    ));
+
+    // Step 3 — Ideal community (optional)
+    final hasIdealCommunity = kolab.seekingCommunities.isNotEmpty ||
+        kolab.minCommunitySize != null ||
+        kolab.expects.isNotEmpty;
+    sections.add(_Section(
+      icon: LucideIcons.users,
+      title: 'Ideal Community',
+      status: hasIdealCommunity ? _Status.complete : _Status.optional,
+      summary: hasIdealCommunity
+          ? _summarizeIdealCommunity(kolab)
+          : 'Optional — leave open to all',
+      onTap: () => notifier.goToStep(3),
+    ));
+
+    // Step 4 — Past events (optional)
+    sections.add(_Section(
+      icon: LucideIcons.history,
+      title: 'Past Collaborations',
+      status: kolab.pastEvents.isNotEmpty ? _Status.complete : _Status.optional,
+      summary: kolab.pastEvents.isNotEmpty
+          ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'} added'
+          : 'Optional — adds credibility',
+      onTap: () => notifier.goToStep(4),
+    ));
+
+    // Step 5 — Availability
+    sections.add(_Section(
+      icon: LucideIcons.calendar,
+      title: 'Availability',
+      status: kolab.availabilityMode != null ? _Status.complete : _Status.missing,
+      summary: kolab.availabilityMode != null
+          ? _summarizeAvailability(kolab)
+          : 'Set when you are available',
+      onTap: () => notifier.goToStep(5),
+    ));
+
+    return sections;
+  }
+
+  static String _formatOffering(List<String> items) {
     const labels = <String, String>{
       'venue': 'Venue',
       'food_drink': 'Food & Drink',
       'discount': 'Discount',
-      'products': 'Products / Samples',
-      'social_media': 'Social Media Exposure',
-      'content_creation': 'Content Creation',
+      'products': 'Products',
+      'social_media': 'Social Media',
+      'content_creation': 'Content',
       'sponsorship': 'Sponsorship',
       'other': 'Other',
     };
-    return items.map((i) => labels[i] ?? i).join(', ');
+    final labelled = items.map((i) => labels[i] ?? i).toList();
+    if (labelled.length <= 3) return labelled.join(' • ');
+    return '${labelled.take(2).join(' • ')} +${labelled.length - 2} more';
   }
 
-  static String _formatDays(List<int> days) {
-    const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days
-        .where((d) => d >= 1 && d <= 7)
-        .map((d) => names[d - 1])
-        .join(', ');
+  static String _summarizeIdealCommunity(Kolab kolab) {
+    final parts = <String>[];
+    if (kolab.seekingCommunities.isNotEmpty) {
+      final s = kolab.seekingCommunities;
+      parts.add(s.length <= 2 ? s.join(' • ') : '${s.take(2).join(' • ')} +${s.length - 2}');
+    }
+    if (kolab.minCommunitySize != null) {
+      parts.add('Min ${kolab.minCommunitySize}+');
+    }
+    return parts.isEmpty ? 'Open to all' : parts.join(' • ');
+  }
+
+  static String _summarizeAvailability(Kolab kolab) {
+    final mode = kolab.availabilityMode!.displayName;
+    final parts = <String>[mode];
+    if (kolab.availabilityStart != null && kolab.availabilityEnd != null) {
+      final fmt = DateFormat('MMM d');
+      parts.add(
+        '${fmt.format(kolab.availabilityStart!)} – ${DateFormat('MMM d, yyyy').format(kolab.availabilityEnd!)}',
+      );
+    } else if (kolab.availabilityStart != null) {
+      parts.add('From ${DateFormat('MMM d, yyyy').format(kolab.availabilityStart!)}');
+    }
+    if (kolab.selectedTime != null) {
+      parts.add(
+        '${kolab.selectedTime!.hour.toString().padLeft(2, '0')}:${kolab.selectedTime!.minute.toString().padLeft(2, '0')}',
+      );
+    }
+    return parts.join(' • ');
   }
 }
 
 // =============================================================================
-// Review Section Card
+// Preview card — mimics how the listing appears in Explore
 // =============================================================================
 
-class _ReviewSection extends StatelessWidget {
-  const _ReviewSection({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-    required this.rows,
-  });
+class _PreviewCard extends StatelessWidget {
+  const _PreviewCard({required this.kolab, required this.isVenue});
 
-  final String title;
-  final IconData icon;
-  final VoidCallback onTap;
-  final List<_ReviewRow> rows;
+  final Kolab kolab;
+  final bool isVenue;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: KolabingColors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
+  Widget build(BuildContext context) {
+    final media = kolab.media.where((m) => m.type == 'photo').toList();
+    final coverUrl = media.isNotEmpty ? media.first.url : null;
+
+    final headline = isVenue
+        ? (kolab.venueName?.isNotEmpty ?? false)
+            ? kolab.venueName!
+            : kolab.title
+        : (kolab.productName?.isNotEmpty ?? false)
+            ? kolab.productName!
+            : kolab.title;
+
+    final subhead = isVenue
+        ? [
+            kolab.venueType?.displayName,
+            if (kolab.capacity != null) '${kolab.capacity} guests',
+          ].whereType<String>().join(' • ')
+        : kolab.productType?.displayName ?? '';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(color: KolabingColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Cover image
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: _CoverImage(url: coverUrl),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  icon,
-                  size: 18,
-                  color: KolabingColors.textSecondary,
-                ),
-                const SizedBox(width: KolabingSpacing.xs),
-                Expanded(
+                // Eyebrow tag
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.sm,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: KolabingColors.softYellow,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: KolabingColors.softYellowBorder),
+                  ),
                   child: Text(
-                    title,
+                    isVenue ? 'VENUE PROMOTION' : 'PRODUCT PROMOTION',
                     style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.0,
+                      color: KolabingColors.accentOrangeText,
                     ),
                   ),
                 ),
-                const Icon(
-                  LucideIcons.pencil,
-                  size: 16,
-                  color: KolabingColors.textTertiary,
-                ),
-              ],
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
+                const SizedBox(height: KolabingSpacing.sm),
 
-            // Rows
-            ...rows.map((row) => Padding(
-                  padding: const EdgeInsets.only(bottom: KolabingSpacing.xxs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                // Headline
+                Text(
+                  headline.isNotEmpty ? headline : 'Untitled kolab',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.rubik(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+
+                if (subhead.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    subhead,
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      color: KolabingColors.textSecondary,
+                    ),
+                  ),
+                ],
+
+                if (kolab.description.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.sm),
+                  Text(
+                    kolab.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.openSans(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: KolabingColors.textSecondary,
+                    ),
+                  ),
+                ],
+
+                if (kolab.preferredCity.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.sm),
+                  Row(
                     children: [
-                      SizedBox(
-                        width: 90,
-                        child: Text(
-                          row.label,
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            color: KolabingColors.textTertiary,
-                          ),
-                        ),
+                      const Icon(
+                        LucideIcons.mapPin,
+                        size: 14,
+                        color: KolabingColors.textTertiary,
                       ),
-                      Expanded(
-                        child: Text(
-                          row.value,
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            color: KolabingColors.textPrimary,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
+                      const SizedBox(width: 4),
+                      Text(
+                        kolab.preferredCity,
+                        style: GoogleFonts.openSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: KolabingColors.textSecondary,
                         ),
                       ),
                     ],
                   ),
-                )),
-          ],
-        ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
+  }
+}
+
+class _CoverImage extends StatelessWidget {
+  const _CoverImage({required this.url});
+
+  final String? url;
+
+  @override
+  Widget build(BuildContext context) {
+    if (url == null || url!.isEmpty) {
+      return Container(
+        color: KolabingColors.surfaceVariant,
+        child: const Center(
+          child: Icon(
+            LucideIcons.image,
+            size: 32,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
+      );
+    }
+    if (url!.startsWith('http')) {
+      return Image.network(
+        url!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
+    }
+    return Image.file(
+      File(url!),
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _placeholder(),
+    );
+  }
+
+  Widget _placeholder() => Container(
+        color: KolabingColors.surfaceVariant,
+        child: const Center(
+          child: Icon(
+            LucideIcons.imageOff,
+            size: 28,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
+      );
 }
 
 // =============================================================================
-// Simple label-value row data class
+// Status banner
 // =============================================================================
 
-class _ReviewRow {
-  const _ReviewRow(this.label, this.value);
-  final String label;
-  final String value;
+class _StatusBanner extends StatelessWidget {
+  const _StatusBanner({required this.ready, required this.missingCount});
+
+  final bool ready;
+  final int missingCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = ready
+        ? KolabingColors.success.withValues(alpha: 0.16)
+        : KolabingColors.warning.withValues(alpha: 0.16);
+    final border = ready
+        ? KolabingColors.success.withValues(alpha: 0.4)
+        : KolabingColors.warning.withValues(alpha: 0.4);
+    final iconColor =
+        ready ? const Color(0xFF1A8C46) : KolabingColors.accentOrangeText;
+    final icon = ready ? LucideIcons.checkCircle : LucideIcons.alertCircle;
+    final title = ready
+        ? 'Ready to publish'
+        : 'Almost ready — $missingCount step${missingCount == 1 ? '' : 's'} left';
+    final subtitle = ready
+        ? 'Your listing will appear in Explore for matching communities.'
+        : 'Tap any incomplete card below to finish.';
+
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: border),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: iconColor, size: 22),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.rubik(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.openSans(
+                    fontSize: 13,
+                    color: KolabingColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Section card
+// =============================================================================
+
+enum _Status { complete, missing, optional }
+
+class _Section {
+  const _Section({
+    required this.icon,
+    required this.title,
+    required this.status,
+    required this.summary,
+    required this.onTap,
+    this.secondary,
+  });
+
+  final IconData icon;
+  final String title;
+  final _Status status;
+  final String summary;
+  final String? secondary;
+  final VoidCallback onTap;
+}
+
+class _SectionCard extends StatelessWidget {
+  const _SectionCard({required this.section});
+
+  final _Section section;
+
+  @override
+  Widget build(BuildContext context) {
+    final ({Color bg, Color fg, IconData icon}) badge = switch (section.status) {
+      _Status.complete => (
+          bg: KolabingColors.success.withValues(alpha: 0.18),
+          fg: const Color(0xFF1A8C46),
+          icon: LucideIcons.check,
+        ),
+      _Status.missing => (
+          bg: KolabingColors.error.withValues(alpha: 0.14),
+          fg: KolabingColors.error,
+          icon: LucideIcons.alertCircle,
+        ),
+      _Status.optional => (
+          bg: KolabingColors.surfaceVariant,
+          fg: KolabingColors.textTertiary,
+          icon: LucideIcons.minus,
+        ),
+    };
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: section.onTap,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        child: Container(
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            borderRadius: KolabingRadius.borderRadiusMd,
+            border: Border.all(
+              color: section.status == _Status.missing
+                  ? KolabingColors.error.withValues(alpha: 0.3)
+                  : KolabingColors.border,
+            ),
+          ),
+          child: Row(
+            children: [
+              // Status badge
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: badge.bg,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(badge.icon, color: badge.fg, size: 18),
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          section.icon,
+                          size: 14,
+                          color: KolabingColors.textTertiary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          section.title,
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: KolabingColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      section.summary,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.openSans(
+                        fontSize: 13,
+                        color: section.status == _Status.missing
+                            ? KolabingColors.error
+                            : KolabingColors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                    if (section.secondary != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        section.secondary!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          color: KolabingColors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: KolabingSpacing.xs),
+              const Icon(
+                LucideIcons.chevronRight,
+                size: 18,
+                color: KolabingColors.textTertiary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

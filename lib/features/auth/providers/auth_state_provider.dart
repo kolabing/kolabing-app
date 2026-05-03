@@ -3,18 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../config/routes/routes.dart';
 import '../../../services/permission_service.dart';
 import '../services/auth_service.dart';
-import '../utils/auth_navigation.dart';
 
 /// Represents the navigation destination after splash screen
 enum SplashNavigationTarget {
   /// User is not authenticated yet
   welcome,
-
-  /// User needs to complete business onboarding
-  businessOnboarding,
-
-  /// User needs to complete community onboarding
-  communityOnboarding,
 
   /// User is authenticated as business
   businessDashboard,
@@ -95,24 +88,8 @@ class SplashStateNotifier extends Notifier<SplashState> {
         return KolabingRoutes.welcome;
       }
 
-      final destination = resolveAuthDestination(user);
-
-      if (destination == KolabingRoutes.businessOnboardingStep2) {
-        state = state.copyWith(
-          isLoading: false,
-          navigationTarget: SplashNavigationTarget.businessOnboarding,
-        );
-        return destination;
-      }
-
-      if (destination == KolabingRoutes.communityOnboardingStep1) {
-        state = state.copyWith(
-          isLoading: false,
-          navigationTarget: SplashNavigationTarget.communityOnboarding,
-        );
-        return destination;
-      }
-
+      // Onboarding is mandatory at registration, so any restored session
+      // belongs to a fully onboarded user. Splash always routes to a dashboard.
       final String dashboard;
       final SplashNavigationTarget navTarget;
       if (user.isAttendee) {

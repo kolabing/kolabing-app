@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
-import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -70,59 +68,10 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
       children: [
         const _SectionHeader(label: 'PROMOTION DETAILS'),
         const SizedBox(height: KolabingSpacing.lg),
-        if (!hasVenueProfile) ...[
-          Container(
-            padding: const EdgeInsets.all(KolabingSpacing.md),
-            decoration: BoxDecoration(
-              color: KolabingColors.error.withValues(alpha: 0.08),
-              borderRadius: KolabingRadius.borderRadiusMd,
-              border: Border.all(
-                color: KolabingColors.error.withValues(alpha: 0.2),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Your primary venue profile is missing',
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.error,
-                  ),
-                ),
-                const SizedBox(height: KolabingSpacing.xs),
-                Text(
-                  'Complete business onboarding once to save your venue, then come back here and we will reuse it automatically.',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: KolabingSpacing.sm),
-                TextButton(
-                  onPressed: () => context.go(KolabingRoutes.businessOnboardingStep2),
-                  child: const Text('Complete onboarding'),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.md),
-        ] else ...[
+        if (hasVenueProfile) ...[
           _VenueSummaryCard(kolab: kolab),
           const SizedBox(height: KolabingSpacing.md),
         ],
-        if (errors.containsKey('primary_venue'))
-          Padding(
-            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-            child: Text(
-              errors['primary_venue']!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                color: KolabingColors.error,
-              ),
-            ),
-          ),
         const _FieldLabel(label: 'Listing Title'),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
@@ -143,7 +92,8 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
-            hint: 'Tell communities what kind of experience you want to host and why your venue is a great fit.',
+            hint:
+                'Tell communities what kind of experience you want to host and why your venue is a great fit.',
             error: errors['description'],
           ),
           style: _inputTextStyle,

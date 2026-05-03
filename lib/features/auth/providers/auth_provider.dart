@@ -404,7 +404,10 @@ final shouldShowOnboardingProvider = Provider<bool>((ref) {
     return false;
   }
 
-  return authState.isNewUser || !authState.user!.onboardingCompleted;
+  // Onboarding is mandatory at registration; existing logged-in accounts have
+  // already completed it. Only OAuth-newly-created users (`is_new_user: true`)
+  // need to run onboarding.
+  return authState.isNewUser;
 });
 
 /// Provider for getting navigation route after auth

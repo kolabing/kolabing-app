@@ -11,6 +11,7 @@ import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
 import '../providers/kolab_form_provider.dart';
+import '../providers/my_kolabs_provider.dart';
 
 /// Unified entry screen for creating a new Kolab.
 /// Shows different options based on user type (community vs business).
@@ -124,24 +125,30 @@ class IntentSelectionScreen extends ConsumerWidget {
     final profileState = ref.read(profileProvider);
     final isSubscribed = profileState.isSubscribed;
 
-    if (isSubscribed) {
-      // Show venue/product choice
+    // Free tier: 1 kolab allowed without subscription.
+    // Only show paywall if user has already used their free kolab.
+    final kolabsState = ref.read(myKolabsProvider);
+    final hasUsedFreeKolab =
+        !kolabsState.isLoading && kolabsState.total >= 1;
+    final canUseFreeTier = !hasUsedFreeKolab;
+
+    if (isSubscribed || canUseFreeTier) {
       _showPromotionTypeChoice(context, ref);
-    } else {
-      // Show paywall
-      final result = await showModalBottomSheet<bool>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const SubscriptionPaywall(),
-      );
-      if (result == true && context.mounted) {
-        // Refresh subscription status
-        await ref.read(profileProvider.notifier).refreshSubscription();
-        final updated = ref.read(profileProvider);
-        if (updated.isSubscribed) {
-          if (context.mounted) _showPromotionTypeChoice(context, ref);
-        }
+      return;
+    }
+
+    // Show paywall — user has no subscription AND already used their free kolab.
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const SubscriptionPaywall(),
+    );
+    if (result == true && context.mounted) {
+      await ref.read(profileProvider.notifier).refreshSubscription();
+      final updated = ref.read(profileProvider);
+      if (updated.isSubscribed) {
+        if (context.mounted) _showPromotionTypeChoice(context, ref);
       }
     }
   }

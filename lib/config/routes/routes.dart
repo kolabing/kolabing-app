@@ -242,12 +242,6 @@ abstract final class KolabingRoutes {
       '/attendee/events/:eventId/challenges/:challengeId/initiate';
 
   // ---------------------------------------------------------------------------
-  // Profile Completion
-  // ---------------------------------------------------------------------------
-
-  /// Profile completion flow
-  static const String profileCompletion = '/profile/complete';
-
   /// Permission request screen
   static const String permissions = '/permissions';
 }
@@ -466,14 +460,6 @@ final GoRouter kolabingRouter = GoRouter(
           const ResetPasswordScreen(),
     ),
 
-    // Profile completion
-    GoRoute(
-      path: KolabingRoutes.profileCompletion,
-      name: 'profileCompletion',
-      builder: (BuildContext context, GoRouterState state) =>
-          const _PlaceholderScreen(title: 'Complete Profile'),
-    ),
-
     // Permission request screen
     GoRoute(
       path: KolabingRoutes.permissions,
@@ -493,6 +479,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'businessDashboard',
       builder: (BuildContext context, GoRouterState state) =>
           const BusinessMainScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.businessApplications,
+      name: 'businessApplications',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessMainScreen(initialTab: 3),
     ),
 
     // Kolab creation flow (new unified flow)
@@ -552,6 +544,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'communityDashboard',
       builder: (BuildContext context, GoRouterState state) =>
           const CommunityMainScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.communityApplications,
+      name: 'communityApplications',
+      builder: (BuildContext context, GoRouterState state) =>
+          const CommunityMainScreen(initialTab: 3),
     ),
 
     // Community sub-routes (pushed on top of main screen)

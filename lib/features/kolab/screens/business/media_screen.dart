@@ -52,12 +52,18 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       );
       final notifier = ref.read(kolabFormProvider.notifier);
       final kolab = ref.read(kolabFormProvider).kolab;
+      // Use max-existing-sort + 1 to guarantee uniqueness even after a slot
+      // was removed (count-based formula could collide with a surviving entry).
+      final existingPhotos =
+          kolab.media.where((m) => m.type == 'photo');
+      final nextSort = existingPhotos.isEmpty
+          ? 0
+          : existingPhotos
+                  .map((m) => m.sortOrder)
+                  .reduce((a, b) => a > b ? a : b) +
+              1;
       notifier.addMedia(
-        KolabMedia(
-          url: url,
-          type: 'photo',
-          sortOrder: kolab.media.where((m) => m.type == 'photo').length,
-        ),
+        KolabMedia(url: url, type: 'photo', sortOrder: nextSort),
       );
     } on Exception catch (e) {
       if (mounted) {
