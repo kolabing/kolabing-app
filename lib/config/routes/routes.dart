@@ -33,7 +33,6 @@ import '../../features/subscription/screens/subscription_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step3_screen.dart';
-import '../../features/onboarding/screens/business/business_step4_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
 import '../../features/onboarding/screens/community/community_step1_screen.dart';
@@ -387,11 +386,13 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) =>
           const BusinessStep3Screen(),
     ),
+    // Step 4 (legacy business profile screen) was merged into step 2 — keep
+    // the route as a redirect so any stale deep links land on the merged form.
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep4,
       name: 'businessOnboardingStep4',
-      builder: (BuildContext context, GoRouterState state) =>
-          const BusinessStep4Screen(),
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.businessOnboardingStep2,
     ),
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep5,

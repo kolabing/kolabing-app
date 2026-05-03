@@ -255,9 +255,23 @@ class KolabService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final data = json['data'] as List;
-        return data
-            .map((e) => Kolab.fromJson(e as Map<String, dynamic>))
+
+        // The API may return either:
+        //   { "data": [...] }                                 — data is a list
+        //   { "data": { "data": [...], "current_page": 1 } }  — Laravel paginator
+        final rawData = json['data'];
+        List<dynamic> dataList;
+        if (rawData is List) {
+          dataList = rawData;
+        } else if (rawData is Map<String, dynamic>) {
+          dataList = rawData['data'] as List<dynamic>? ?? const [];
+        } else {
+          dataList = const [];
+        }
+
+        return dataList
+            .whereType<Map<String, dynamic>>()
+            .map(Kolab.fromJson)
             .toList();
       } else if (response.statusCode == 401) {
         if (allowRetry) {

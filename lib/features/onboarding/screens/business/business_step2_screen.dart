@@ -3,32 +3,50 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
 import '../../../kolab/enums/venue_type.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
+import '../../widgets/photo_upload_widget.dart';
+import '../../widgets/type_selection_card.dart';
 
-/// Business onboarding step 2: collect primary venue details.
+/// Business onboarding step 1 (merged): collect business + venue identity in
+/// a single screen — name, business types, photo, venue type/capacity, and
+/// optional contact details. Replaces the previous split between the venue
+/// details screen and the business profile screen.
 class BusinessStep2Screen extends ConsumerStatefulWidget {
   const BusinessStep2Screen({super.key});
 
   @override
-  ConsumerState<BusinessStep2Screen> createState() => _BusinessStep2ScreenState();
+  ConsumerState<BusinessStep2Screen> createState() =>
+      _BusinessStep2ScreenState();
 }
 
 class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
-  final _venueNameController = TextEditingController();
+  final _nameController = TextEditingController();
   final _capacityController = TextEditingController();
+  final _aboutController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _instagramController = TextEditingController();
+  final _websiteController = TextEditingController();
+
+  String? _phoneError;
 
   @override
   void initState() {
     super.initState();
     _configureSystemUI();
     final data = ref.read(onboardingProvider);
-    _venueNameController.text = data?.venueName ?? '';
-    _capacityController.text =
-        data?.venueCapacity != null ? '${data!.venueCapacity}' : '';
+    _nameController.text = data?.name ?? '';
+    _capacityController.text = data?.venueCapacity != null
+        ? '${data!.venueCapacity}'
+        : '';
+    _aboutController.text = data?.about ?? '';
+    _phoneController.text = data?.phone ?? '';
+    _instagramController.text = data?.instagram ?? '';
+    _websiteController.text = data?.website?.replaceFirst('https://', '') ?? '';
   }
 
   void _configureSystemUI() {
@@ -44,35 +62,90 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
 
   @override
   void dispose() {
-    _venueNameController.dispose();
+    _nameController.dispose();
     _capacityController.dispose();
+    _aboutController.dispose();
+    _phoneController.dispose();
+    _instagramController.dispose();
+    _websiteController.dispose();
     super.dispose();
   }
 
   void _handleBack() {
+    _saveData();
     context.pop();
   }
 
+  void _saveData() {
+    final notifier = ref.read(onboardingProvider.notifier);
+    notifier.updateName(_nameController.text);
+    notifier.updateAbout(_aboutController.text);
+    notifier.updatePhone(_normalizePhoneNumber(_phoneController.text));
+    notifier.updateInstagram(_instagramController.text);
+    notifier.updateWebsite(_websiteController.text);
+  }
+
   void _handleContinue() {
+    _saveData();
     final data = ref.read(onboardingProvider);
-    if (data == null || !data.isStep2Complete) {
+    if (data == null || !data.isStep2Complete || _phoneError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please complete your main venue details'),
+          content: Text('Please complete the required business details'),
           backgroundColor: KolabingColors.error,
         ),
       );
       return;
     }
-
     context.push('/onboarding/business/step3');
+  }
+
+  void _validatePhone(String value) {
+    if (value.isEmpty) {
+      setState(() => _phoneError = null);
+      return;
+    }
+    if (!value.startsWith('+')) {
+      setState(() => _phoneError = 'Must start with + (e.g. +34612345678)');
+      return;
+    }
+    final afterPlus = value.substring(1);
+    if (!RegExp(r'^\d*$').hasMatch(afterPlus)) {
+      setState(() => _phoneError = 'Use E.164 format with digits only');
+      return;
+    }
+    if (afterPlus.length < 9) {
+      setState(() => _phoneError = 'Enter at least 9 digits after +');
+      return;
+    }
+    if (afterPlus.length > 14) {
+      setState(() => _phoneError = 'Phone number too long');
+      return;
+    }
+    setState(() => _phoneError = null);
+  }
+
+  String _normalizePhoneNumber(String value) {
+    if (value.isEmpty) return '';
+    String normalized = value.replaceAll(RegExp(r'[^\d+]'), '');
+    if (!normalized.startsWith('+')) {
+      if (normalized.startsWith('00')) {
+        normalized = '+${normalized.substring(2)}';
+      } else {
+        normalized = '+34$normalized';
+      }
+    }
+    return normalized;
   }
 
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(onboardingProvider);
+    final businessTypes = ref.watch(businessTypesProvider);
     final notifier = ref.read(onboardingProvider.notifier);
-    final selectedType = data?.venueType;
+    final selectedTypeIds = data?.selectedBusinessTypeIds ?? const <String>[];
+    final selectedVenueType = data?.venueType;
+    final canContinue = data?.isStep2Complete == true && _phoneError == null;
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -81,7 +154,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
           children: [
             OnboardingHeader(
               currentStep: 1,
-              totalSteps: 4,
+              totalSteps: 3,
               onBack: _handleBack,
               showSkip: false,
             ),
@@ -94,7 +167,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     const SizedBox(height: 32),
                     Center(
                       child: Text(
-                        'TELL US ABOUT YOUR VENUE',
+                        'TELL US ABOUT YOUR BUSINESS',
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -106,7 +179,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     const SizedBox(height: 8),
                     Center(
                       child: Text(
-                        'We’ll reuse this venue profile every time you promote your space.',
+                        'We only ask these once and reuse them across every Kolab.',
                         style: GoogleFonts.openSans(
                           fontSize: 14,
                           color: KolabingColors.textSecondary,
@@ -115,26 +188,81 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    _FieldLabel(label: 'Venue Name'),
+                    PhotoUploadWidget(
+                      photoBase64: data?.photoBase64,
+                      onPhotoSelected: notifier.updatePhoto,
+                      onPhotoRemoved: notifier.clearPhoto,
+                    ),
+                    const SizedBox(height: 24),
+                    _FieldLabel(label: 'Business Name'),
                     const SizedBox(height: 8),
                     TextField(
-                      controller: _venueNameController,
+                      controller: _nameController,
                       maxLength: 255,
-                      onChanged: notifier.updateVenueName,
+                      onChanged: notifier.updateName,
                       decoration: _inputDecoration(
-                        hint: 'e.g. Sol Terrace Rooftop',
+                        hint: 'Enter your business name',
                       ),
                     ),
                     const SizedBox(height: 20),
+                    _FieldLabel(label: 'Business Type'),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Select up to 3 categories that describe your business.',
+                      style: GoogleFonts.openSans(
+                        fontSize: 13,
+                        color: KolabingColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    businessTypes.when(
+                      data: (types) => GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.9,
+                            ),
+                        itemCount: types.length,
+                        itemBuilder: (context, index) {
+                          final type = types[index];
+                          return TypeSelectionCard(
+                            id: type.id,
+                            name: type.name,
+                            icon: type.icon,
+                            isSelected: selectedTypeIds.contains(type.id),
+                            onTap: () => notifier.toggleBusinessType(type),
+                          );
+                        },
+                      ),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(
+                          color: KolabingColors.primary,
+                        ),
+                      ),
+                      error: (_, __) => Text(
+                        'Failed to load business types',
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.error,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     _FieldLabel(label: 'Venue Type'),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
                       children: VenueType.values.map((type) {
-                        final isSelected = selectedType == type.toApiValue();
+                        final isSelected =
+                            selectedVenueType == type.toApiValue();
                         return GestureDetector(
-                          onTap: () => notifier.updateVenueType(type.toApiValue()),
+                          onTap: () =>
+                              notifier.updateVenueType(type.toApiValue()),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 180),
                             padding: const EdgeInsets.symmetric(
@@ -193,6 +321,59 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         hint: 'How many people can you host?',
                       ),
                     ),
+                    const SizedBox(height: 24),
+                    _FieldLabel(label: 'About Your Business'),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _aboutController,
+                      minLines: 3,
+                      maxLines: 5,
+                      maxLength: 1000,
+                      onChanged: notifier.updateAbout,
+                      decoration: _inputDecoration(
+                        hint: 'Share what makes your business special',
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _FieldLabel(label: 'Phone Number'),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      onChanged: (value) {
+                        _validatePhone(value);
+                        notifier.updatePhone(_normalizePhoneNumber(value));
+                      },
+                      decoration: _inputDecoration(
+                        hint: '+34 612 345 678',
+                        prefixIcon: LucideIcons.phone,
+                        errorText: _phoneError,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _FieldLabel(label: 'Instagram'),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _instagramController,
+                      onChanged: notifier.updateInstagram,
+                      decoration: _inputDecoration(
+                        hint: '@yourbusiness',
+                        prefixIcon: LucideIcons.instagram,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _FieldLabel(label: 'Website'),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _websiteController,
+                      keyboardType: TextInputType.url,
+                      onChanged: notifier.updateWebsite,
+                      decoration: _inputDecoration(
+                        hint: 'yourbusiness.com',
+                        prefixIcon: LucideIcons.globe,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -203,12 +384,14 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: data?.isStep2Complete == true ? _handleContinue : null,
+                  onPressed: canContinue ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(alpha: 0.5),
-                    disabledForegroundColor: KolabingColors.onPrimary.withValues(alpha: 0.5),
+                    disabledBackgroundColor:
+                        KolabingColors.primary.withValues(alpha: 0.5),
+                    disabledForegroundColor:
+                        KolabingColors.onPrimary.withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -239,37 +422,55 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
-      );
+    label,
+    style: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      color: KolabingColors.textPrimary,
+    ),
+  );
 }
 
-InputDecoration _inputDecoration({required String hint}) => InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: KolabingColors.textTertiary,
-      ),
-      filled: true,
-      fillColor: KolabingColors.surfaceVariant,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: KolabingColors.primary,
-          width: 1.5,
-        ),
-      ),
-    );
+InputDecoration _inputDecoration({
+  required String hint,
+  IconData? prefixIcon,
+  String? errorText,
+}) => InputDecoration(
+  hintText: hint,
+  hintStyle: GoogleFonts.openSans(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: KolabingColors.textTertiary,
+  ),
+  prefixIcon: prefixIcon == null
+      ? null
+      : Icon(prefixIcon, size: 20, color: KolabingColors.textTertiary),
+  errorText: errorText,
+  errorStyle: GoogleFonts.openSans(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    color: KolabingColors.error,
+  ),
+  filled: true,
+  fillColor: KolabingColors.surfaceVariant,
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.border),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.primary, width: 1.5),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.error),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: KolabingColors.error, width: 1.5),
+  ),
+);

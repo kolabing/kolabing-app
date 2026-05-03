@@ -92,7 +92,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
       return;
     }
 
-    context.push('/onboarding/business/step4');
+    context.push('/onboarding/business/step5');
   }
 
   @override
@@ -108,7 +108,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
           children: [
             OnboardingHeader(
               currentStep: 2,
-              totalSteps: 4,
+              totalSteps: 3,
               onBack: _handleBack,
               showSkip: false,
             ),

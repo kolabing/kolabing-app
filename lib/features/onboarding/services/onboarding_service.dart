@@ -183,8 +183,8 @@ class OnboardingService {
 
   /// Search places for the business location autocomplete.
   ///
-  /// GET /places/autocomplete?query={query}
-  /// Falls back to city search until backend Google Places proxy is ready.
+  /// Calls our backend `GET /v1/places/autocomplete?query={query}`.
+  /// Returns an empty list if the request fails — no third-party fallback.
   Future<List<PlaceSuggestion>> searchPlaces(String query) async {
     if (_useMockApi) {
       final cities = await _mockCities();
@@ -197,7 +197,8 @@ class OnboardingService {
           .toList();
     }
 
-    final url = '$_baseUrl/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
+    final url =
+        '$_baseUrl/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
     debugPrint('📍 Place autocomplete request: GET $url');
 
     try {
@@ -211,27 +212,16 @@ class OnboardingService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as List<dynamic>? ?? const [];
-        final suggestions = data
+        return data
             .map((item) => PlaceSuggestion.fromJson(item as Map<String, dynamic>))
-            .where((item) => item.placeId.isNotEmpty && item.city.isNotEmpty)
+            .where((item) => item.placeId.isNotEmpty)
             .toList();
-
-        if (suggestions.isNotEmpty) {
-          return suggestions;
-        }
       }
+      debugPrint('📍 Place autocomplete error: ${response.statusCode}');
     } catch (e) {
-      debugPrint('📍 Place autocomplete fallback: $e');
+      debugPrint('📍 Place autocomplete error: $e');
     }
-
-    final cities = await getCities();
-    return cities
-        .where((city) =>
-            city.name.toLowerCase().contains(query.toLowerCase()) ||
-            (city.country?.toLowerCase().contains(query.toLowerCase()) ??
-                false))
-        .map(PlaceSuggestion.fromCity)
-        .toList();
+    return const [];
   }
 
   // ---------------------------------------------------------------------------

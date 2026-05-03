@@ -74,7 +74,11 @@ class PlaceSuggestion {
         if (cityId != null) 'city_id': cityId,
       };
 
-  static double? _parseDouble(Object? value) {
+  static double? _parseDouble(Object? value) => tryParseDouble(value);
+
+  /// Parse a numeric value coming from a JSON field that may be a `num` or
+  /// a string representation.
+  static double? tryParseDouble(Object? value) {
     if (value == null) return null;
     if (value is num) return value.toDouble();
     if (value is String) return double.tryParse(value);

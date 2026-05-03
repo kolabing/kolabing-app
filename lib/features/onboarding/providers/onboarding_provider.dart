@@ -91,10 +91,24 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     state = OnboardingData(userType: userType);
   }
 
-  /// Update name (step 1)
+  /// Update name (step 1).
+  ///
+  /// For business users the merged step-2 screen uses a single name field for
+  /// both the business and its primary venue. We mirror the value into
+  /// [OnboardingData.venueName] so the `primary_venue.name` payload field
+  /// stays in sync without asking the user twice.
   void updateName(String name) {
     if (state == null) return;
-    state = state!.copyWith(name: name);
+    if (state!.isBusiness) {
+      final trimmed = name.trim();
+      state = state!.copyWith(
+        name: name,
+        venueName: trimmed.isEmpty ? null : trimmed,
+        clearVenueName: trimmed.isEmpty,
+      );
+    } else {
+      state = state!.copyWith(name: name);
+    }
   }
 
   /// Update photo (step 1)

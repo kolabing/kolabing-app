@@ -141,11 +141,16 @@ class OnboardingData {
     return name != null && name!.trim().isNotEmpty;
   }
 
-  /// Check if step 2 is complete (type is required)
+  /// Check if step 2 is complete.
+  ///
+  /// For business users this is the merged business + venue identity screen,
+  /// requiring business name, at least one business type, venue type and
+  /// capacity. The venue name is mirrored from the business name.
   bool get isStep2Complete {
     if (isBusiness) {
-      return venueName != null &&
-          venueName!.trim().isNotEmpty &&
+      return name != null &&
+          name!.trim().isNotEmpty &&
+          selectedBusinessTypeSlugs.isNotEmpty &&
           venueType != null &&
           venueType!.trim().isNotEmpty &&
           venueCapacity != null &&
@@ -162,13 +167,13 @@ class OnboardingData {
     return cityId != null && cityId!.isNotEmpty;
   }
 
-  /// Check if step 4 is complete
+  /// Check if step 4 is complete.
+  ///
+  /// For business users the step-3 (legacy) profile form was merged into
+  /// step 2, so this delegates to [isStep2Complete] and is kept for
+  /// compatibility with [canProceed] / [isComplete].
   bool get isStep4Complete {
-    if (isBusiness) {
-      return name != null &&
-          name!.trim().isNotEmpty &&
-          selectedBusinessTypeSlugs.isNotEmpty;
-    }
+    if (isBusiness) return isStep2Complete;
     return true;
   }
 
