@@ -112,11 +112,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
 
   /// Load an existing kolab into the unified flow for editing.
   void initForEdit(Kolab kolab) {
+    final normalizedKolab = _normalizeKolabForSubmit(kolab);
     state = KolabFormState(
-      intentType: kolab.intentType,
+      intentType: normalizedKolab.intentType,
       currentStep: 0,
-      totalSteps: kolab.intentType.totalSteps,
-      kolab: kolab,
+      totalSteps: normalizedKolab.intentType.totalSteps,
+      kolab: normalizedKolab,
       isEditing: true,
     );
   }
@@ -127,6 +128,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     final primaryVenue = businessProfile?.primaryVenue;
 
     var kolab = Kolab.empty(intent);
+
+    if (intent == IntentType.communitySeeking) {
+      kolab = kolab.copyWith(venuePreference: VenuePreference.noVenue);
+    }
 
     final preferredCity =
         primaryVenue?.city ??
@@ -334,14 +339,14 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       needs.add(need);
     }
     state = state.copyWith(
-      kolab: state.kolab.copyWith(needs: needs),
+      kolab: _syncVenuePreferenceForNeeds(state.kolab, needs),
       clearError: true,
     );
   }
 
   void updateNeeds(List<NeedType> needs) {
     state = state.copyWith(
-      kolab: state.kolab.copyWith(needs: needs),
+      kolab: _syncVenuePreferenceForNeeds(state.kolab, needs),
       clearError: true,
     );
   }
@@ -643,9 +648,37 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 3: // Availability & Location
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
-        } else if (kolab.availabilityStart == null) {
-          errors['availability_start'] =
-              'Pick a start date for your availability window';
+        } else {
+          switch (kolab.availabilityMode!) {
+            case AvailabilityMode.oneTime:
+              if (kolab.availabilityStart == null) {
+                errors['availability_start'] =
+                    'Pick a start date for your availability window';
+              }
+              if (kolab.availabilityEnd == null) {
+                errors['availability_end'] =
+                    'Pick an end date for your availability window';
+              }
+              if (kolab.selectedTime == null) {
+                errors['selected_time'] = 'Select a time for your availability';
+              }
+            case AvailabilityMode.recurring:
+              if (kolab.recurringDays.isEmpty) {
+                errors['recurring_day'] = 'Select at least 1 recurring day';
+              }
+              if (kolab.selectedTime == null) {
+                errors['selected_time'] = 'Select a time for your availability';
+              }
+            case AvailabilityMode.flexible:
+              if (kolab.availabilityStart == null) {
+                errors['availability_start'] =
+                    'Pick a start date for your availability window';
+              }
+              if (kolab.availabilityEnd == null) {
+                errors['availability_end'] =
+                    'Pick an end date for your availability window';
+              }
+          }
         }
         if (kolab.preferredCity.isEmpty) {
           errors['preferred_city'] = 'Preferred city is required';
@@ -696,8 +729,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           final today = DateUtils.dateOnly(DateTime.now());
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
           if (start.isBefore(today)) {
-            errors['availability_start'] =
-                'Start date cannot be in the past';
+            errors['availability_start'] = 'Start date cannot be in the past';
           }
         }
       case 6: // Review
@@ -752,8 +784,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           final today = DateUtils.dateOnly(DateTime.now());
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
           if (start.isBefore(today)) {
-            errors['availability_start'] =
-                'Start date cannot be in the past';
+            errors['availability_start'] = 'Start date cannot be in the past';
           }
         }
       case 6: // Review
@@ -778,11 +809,13 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
 
     try {
+      final kolabToPersist = _normalizeKolabForSubmit(state.kolab);
+      state = state.copyWith(kolab: kolabToPersist);
       Kolab result;
       if (state.isEditing && state.kolab.id != null) {
-        result = await _service.update(state.kolab.id!, state.kolab);
+        result = await _service.update(state.kolab.id!, kolabToPersist);
       } else {
-        result = await _service.create(state.kolab);
+        result = await _service.create(kolabToPersist);
       }
       state = state.copyWith(
         kolab: result,
@@ -813,11 +846,13 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
 
     try {
+      final kolabToPersist = _normalizeKolabForSubmit(state.kolab);
+      state = state.copyWith(kolab: kolabToPersist);
       Kolab saved;
       if (state.isEditing && state.kolab.id != null) {
-        saved = await _service.update(state.kolab.id!, state.kolab);
+        saved = await _service.update(state.kolab.id!, kolabToPersist);
       } else {
-        saved = await _service.create(state.kolab);
+        saved = await _service.create(kolabToPersist);
       }
 
       // Persist the saved record immediately and flip to edit-mode so a
@@ -898,6 +933,28 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     }
 
     state = state.copyWith(requiresSubscription: false);
+  }
+
+  Kolab _syncVenuePreferenceForNeeds(Kolab kolab, List<NeedType> needs) {
+    if (!needs.contains(NeedType.venue)) {
+      return kolab.copyWith(
+        needs: needs,
+        venuePreference: VenuePreference.noVenue,
+      );
+    }
+
+    return kolab.copyWith(
+      needs: needs,
+      venuePreference: kolab.venuePreference ?? VenuePreference.noVenue,
+    );
+  }
+
+  Kolab _normalizeKolabForSubmit(Kolab kolab) {
+    if (kolab.intentType != IntentType.communitySeeking) {
+      return kolab;
+    }
+
+    return _syncVenuePreferenceForNeeds(kolab, kolab.needs);
   }
 }
 

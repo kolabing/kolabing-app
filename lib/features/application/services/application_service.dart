@@ -20,6 +20,18 @@ class ApplicationService {
   final AuthService _authService;
   final http.Client _httpClient;
 
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
+
   // ---------------------------------------------------------------------------
   // Auth headers
   // ---------------------------------------------------------------------------
@@ -97,6 +109,20 @@ class ApplicationService {
     int page = 1,
     int perPage = 15,
   }) async {
+    return _getMyApplications(
+      status: status,
+      page: page,
+      perPage: perPage,
+      allowRetry: true,
+    );
+  }
+
+  Future<PaginatedResponse<Application>> _getMyApplications({
+    String? status,
+    required int page,
+    required int perPage,
+    required bool allowRetry,
+  }) async {
     final queryParams = <String, String>{
       'page': page.toString(),
       'per_page': perPage.toString(),
@@ -109,7 +135,10 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
+      );
 
       debugPrint('My applications response status: ${response.statusCode}');
 
@@ -141,6 +170,20 @@ class ApplicationService {
     int page = 1,
     int perPage = 15,
   }) async {
+    return _getReceivedApplications(
+      status: status,
+      page: page,
+      perPage: perPage,
+      allowRetry: true,
+    );
+  }
+
+  Future<PaginatedResponse<Application>> _getReceivedApplications({
+    String? status,
+    required int page,
+    required int perPage,
+    required bool allowRetry,
+  }) async {
     final queryParams = <String, String>{
       'page': page.toString(),
       'per_page': perPage.toString(),
@@ -153,7 +196,10 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
+      );
 
       debugPrint(
         'Received applications response status: ${response.statusCode}',

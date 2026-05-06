@@ -154,10 +154,12 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   : null,
               decoration: _inputDecoration(hint: 'Select city'),
               items: cities
-                  .map((city) => DropdownMenuItem(
-                        value: city.name,
-                        child: Text(city.name),
-                      ))
+                  .map(
+                    (city) => DropdownMenuItem(
+                      value: city.name,
+                      child: Text(city.name),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) {
                 if (value != null) {
@@ -183,9 +185,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               fontSize: 15,
               color: KolabingColors.textPrimary,
             ),
-            decoration: _inputDecoration(
-              hint: 'e.g., Shoreditch, Kreuzberg',
-            ),
+            decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg'),
           ),
         ],
       ),
@@ -196,10 +196,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
   // Availability mode-specific fields
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildAvailabilityFields(
-    Kolab kolab,
-    KolabFormState formState,
-  ) {
+  List<Widget> _buildAvailabilityFields(Kolab kolab, KolabFormState formState) {
     switch (kolab.availabilityMode!) {
       case AvailabilityMode.oneTime:
         return _buildOneTimeFields(kolab, formState);
@@ -210,178 +207,172 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     }
   }
 
-  List<Widget> _buildOneTimeFields(Kolab kolab, KolabFormState formState) {
-    return [
-      Row(
-        children: [
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available From',
-              value: kolab.availabilityStart,
-              error: formState.fieldErrors['availability_start'],
-              onChanged: (date) => ref
-                  .read(kolabFormProvider.notifier)
-                  .updateAvailabilityStart(date),
-            ),
+  List<Widget> _buildOneTimeFields(Kolab kolab, KolabFormState formState) => [
+    Row(
+      children: [
+        Expanded(
+          child: _buildDatePicker(
+            label: 'Available From',
+            value: kolab.availabilityStart,
+            error: formState.fieldErrors['availability_start'],
+            onChanged: (date) => ref
+                .read(kolabFormProvider.notifier)
+                .updateAvailabilityStart(date),
           ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available Until',
-              value: kolab.availabilityEnd,
-              error: formState.fieldErrors['availability_end'],
-              minDate: kolab.availabilityStart,
-              onChanged: (date) => ref
-                  .read(kolabFormProvider.notifier)
-                  .updateAvailabilityEnd(date),
-            ),
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: _buildDatePicker(
+            label: 'Available Until',
+            value: kolab.availabilityEnd,
+            error: formState.fieldErrors['availability_end'],
+            minDate: kolab.availabilityStart,
+            onChanged: (date) => ref
+                .read(kolabFormProvider.notifier)
+                .updateAvailabilityEnd(date),
           ),
-        ],
-      ),
-      const SizedBox(height: KolabingSpacing.sm),
-      _buildTimePicker(
-        label: 'Time',
-        value: kolab.selectedTime,
-        error: formState.fieldErrors['selected_time'],
-        onChanged: (time) =>
-            ref.read(kolabFormProvider.notifier).updateSelectedTime(time),
-      ),
-    ];
-  }
-
-  List<Widget> _buildRecurringFields(Kolab kolab, KolabFormState formState) {
-    return [
-      _buildLabel('Day of Week'),
-      const SizedBox(height: KolabingSpacing.xxs),
-      if (formState.fieldErrors['recurring_day'] != null) ...[
-        _buildFieldError(formState.fieldErrors['recurring_day']!),
-        const SizedBox(height: KolabingSpacing.xxs),
+        ),
       ],
-      Row(
-        children: List.generate(7, (i) {
-          final dayIndex = i + 1;
-          final isSelected = kolab.recurringDays.contains(dayIndex);
-          return Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: i < 6 ? 6 : 0),
-              child: GestureDetector(
-                onTap: () => ref
-                    .read(kolabFormProvider.notifier)
-                    .toggleRecurringDay(dayIndex),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
+    ),
+    const SizedBox(height: KolabingSpacing.sm),
+    _buildTimePicker(
+      label: 'Time',
+      value: kolab.selectedTime,
+      error: formState.fieldErrors['selected_time'],
+      onChanged: (time) =>
+          ref.read(kolabFormProvider.notifier).updateSelectedTime(time),
+    ),
+  ];
+
+  List<Widget> _buildRecurringFields(Kolab kolab, KolabFormState formState) => [
+    _buildLabel('Day of Week'),
+    const SizedBox(height: KolabingSpacing.xxs),
+    if (formState.fieldErrors['recurring_day'] != null) ...[
+      _buildFieldError(formState.fieldErrors['recurring_day']!),
+      const SizedBox(height: KolabingSpacing.xxs),
+    ],
+    Row(
+      children: List.generate(7, (i) {
+        final dayIndex = i + 1;
+        final isSelected = kolab.recurringDays.contains(dayIndex);
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(right: i < 6 ? 6 : 0),
+            child: GestureDetector(
+              onTap: () => ref
+                  .read(kolabFormProvider.notifier)
+                  .toggleRecurringDay(dayIndex),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? KolabingColors.softYellow
+                      : KolabingColors.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
                     color: isSelected
-                        ? KolabingColors.softYellow
-                        : KolabingColors.surface,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected
-                          ? KolabingColors.primary
-                          : KolabingColors.border,
-                      width: isSelected ? 1.5 : 1,
-                    ),
+                        ? KolabingColors.primary
+                        : KolabingColors.border,
+                    width: isSelected ? 1.5 : 1,
                   ),
-                  child: Text(
-                    _dayNames[i].substring(0, 3),
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w400,
-                      color: isSelected
-                          ? KolabingColors.textPrimary
-                          : KolabingColors.textSecondary,
-                    ),
+                ),
+                child: Text(
+                  _dayNames[i].substring(0, 3),
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                    color: isSelected
+                        ? KolabingColors.textPrimary
+                        : KolabingColors.textSecondary,
                   ),
                 ),
               ),
             ),
-          );
-        }),
-      ),
-      const SizedBox(height: KolabingSpacing.sm),
-      _buildTimePicker(
-        label: 'Time',
-        value: kolab.selectedTime,
-        error: formState.fieldErrors['selected_time'],
-        onChanged: (time) =>
-            ref.read(kolabFormProvider.notifier).updateSelectedTime(time),
-      ),
-    ];
-  }
-
-  List<Widget> _buildFlexibleFields(Kolab kolab, KolabFormState formState) {
-    return [
-      Row(
-        children: [
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available From',
-              value: kolab.availabilityStart,
-              error: formState.fieldErrors['availability_start'],
-              onChanged: (date) => ref
-                  .read(kolabFormProvider.notifier)
-                  .updateAvailabilityStart(date),
-            ),
           ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available Until',
-              value: kolab.availabilityEnd,
-              error: formState.fieldErrors['availability_end'],
-              minDate: kolab.availabilityStart,
-              onChanged: (date) => ref
-                  .read(kolabFormProvider.notifier)
-                  .updateAvailabilityEnd(date),
+        );
+      }),
+    ),
+    const SizedBox(height: KolabingSpacing.sm),
+    _buildTimePicker(
+      label: 'Time',
+      value: kolab.selectedTime,
+      error: formState.fieldErrors['selected_time'],
+      onChanged: (time) =>
+          ref.read(kolabFormProvider.notifier).updateSelectedTime(time),
+    ),
+  ];
+
+  List<Widget> _buildFlexibleFields(Kolab kolab, KolabFormState formState) => [
+    Row(
+      children: [
+        Expanded(
+          child: _buildDatePicker(
+            label: 'Available From',
+            value: kolab.availabilityStart,
+            error: formState.fieldErrors['availability_start'],
+            onChanged: (date) => ref
+                .read(kolabFormProvider.notifier)
+                .updateAvailabilityStart(date),
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: _buildDatePicker(
+            label: 'Available Until',
+            value: kolab.availabilityEnd,
+            error: formState.fieldErrors['availability_end'],
+            minDate: kolab.availabilityStart,
+            onChanged: (date) => ref
+                .read(kolabFormProvider.notifier)
+                .updateAvailabilityEnd(date),
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: KolabingSpacing.sm),
+    Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xs + 2,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.softYellow.withValues(alpha: 0.5),
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: KolabingColors.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            LucideIcons.clock,
+            size: 16,
+            color: KolabingColors.textSecondary,
+          ),
+          const SizedBox(width: KolabingSpacing.xs),
+          Text(
+            'Time: Flexible -- no fixed time',
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: KolabingColors.textSecondary,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
       ),
-      const SizedBox(height: KolabingSpacing.sm),
-      Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs + 2,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.softYellow.withValues(alpha: 0.5),
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border:
-              Border.all(color: KolabingColors.primary.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.clock,
-              size: 16,
-              color: KolabingColors.textSecondary,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Text(
-              'Time: Flexible -- no fixed time',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                color: KolabingColors.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+    ),
+    const SizedBox(height: KolabingSpacing.xs),
+    Text(
+      'Businesses will propose a specific date and time within this window.',
+      style: GoogleFonts.openSans(
+        fontSize: 12,
+        color: KolabingColors.textTertiary,
+        fontStyle: FontStyle.italic,
       ),
-      const SizedBox(height: KolabingSpacing.xs),
-      Text(
-        'Businesses will propose a specific date and time within this window.',
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          color: KolabingColors.textTertiary,
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    ];
-  }
+    ),
+  ];
 
   // ---------------------------------------------------------------------------
   // Reusable sub-widgets
@@ -393,57 +384,53 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     required String description,
     required bool isSelected,
     required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? KolabingColors.softYellow
-              : KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: isSelected ? KolabingColors.primary : KolabingColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isSelected
-                  ? KolabingColors.primary
-                  : KolabingColors.textTertiary,
-            ),
-            const SizedBox(height: KolabingSpacing.xxs),
-            Text(
-              title,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              description,
-              style: GoogleFonts.openSans(
-                fontSize: 10,
-                color: KolabingColors.textTertiary,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+  }) => GestureDetector(
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: isSelected ? KolabingColors.primary : KolabingColors.border,
+          width: isSelected ? 2 : 1,
         ),
       ),
-    );
-  }
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            size: 24,
+            color: isSelected
+                ? KolabingColors.primary
+                : KolabingColors.textTertiary,
+          ),
+          const SizedBox(height: KolabingSpacing.xxs),
+          Text(
+            title,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textPrimary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            description,
+            style: GoogleFonts.openSans(
+              fontSize: 10,
+              color: KolabingColors.textTertiary,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _buildDatePicker({
     required String label,
@@ -490,8 +477,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               color: KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusMd,
               border: Border.all(
-                color:
-                    error != null ? KolabingColors.error : KolabingColors.border,
+                color: error != null
+                    ? KolabingColors.error
+                    : KolabingColors.border,
               ),
             ),
             child: Row(
@@ -504,9 +492,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
                   child: Text(
-                    value != null
-                        ? dateFormat.format(value)
-                        : 'Select date',
+                    value != null ? dateFormat.format(value) : 'Select date',
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       color: value != null
@@ -538,142 +524,132 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     required TimeOfDay? value,
     required ValueChanged<TimeOfDay?> onChanged,
     String? error,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildLabel(label),
-        const SizedBox(height: KolabingSpacing.xxs),
-        GestureDetector(
-          onTap: () async {
-            final picked = await KolabingTimePicker.show(
-              context,
-              initialTime: value ?? const TimeOfDay(hour: 10, minute: 0),
-            );
-            if (picked != null) {
-              onChanged(picked);
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.sm,
-              vertical: KolabingSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: KolabingColors.surface,
-              borderRadius: KolabingRadius.borderRadiusMd,
-              border: Border.all(
-                color:
-                    error != null ? KolabingColors.error : KolabingColors.border,
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  LucideIcons.clock,
-                  size: 18,
-                  color: KolabingColors.textTertiary,
-                ),
-                const SizedBox(width: KolabingSpacing.xs),
-                Text(
-                  value != null ? value.format(context) : 'Select time',
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    color: value != null
-                        ? KolabingColors.textPrimary
-                        : KolabingColors.textTertiary,
-                  ),
-                ),
-              ],
+  }) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildLabel(label),
+      const SizedBox(height: KolabingSpacing.xxs),
+      GestureDetector(
+        onTap: () async {
+          final picked = await KolabingTimePicker.show(
+            context,
+            initialTime: value ?? const TimeOfDay(hour: 10, minute: 0),
+          );
+          if (picked != null) {
+            onChanged(picked);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.sm,
+            vertical: KolabingSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            borderRadius: KolabingRadius.borderRadiusMd,
+            border: Border.all(
+              color: error != null
+                  ? KolabingColors.error
+                  : KolabingColors.border,
             ),
           ),
+          child: Row(
+            children: [
+              const Icon(
+                LucideIcons.clock,
+                size: 18,
+                color: KolabingColors.textTertiary,
+              ),
+              const SizedBox(width: KolabingSpacing.xs),
+              Text(
+                value != null ? value.format(context) : 'Select time',
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  color: value != null
+                      ? KolabingColors.textPrimary
+                      : KolabingColors.textTertiary,
+                ),
+              ),
+            ],
+          ),
         ),
-        if (error != null) ...[
-          const SizedBox(height: 4),
-          Text(
+      ),
+      if (error != null) ...[
+        const SizedBox(height: 4),
+        Text(
+          error,
+          style: GoogleFonts.openSans(
+            fontSize: 12,
+            color: KolabingColors.error,
+          ),
+        ),
+      ],
+    ],
+  );
+
+  InputDecoration _inputDecoration({required String hint}) => InputDecoration(
+    hintText: hint,
+    hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
+    filled: true,
+    fillColor: KolabingColors.surface,
+    border: OutlineInputBorder(
+      borderRadius: KolabingRadius.borderRadiusSm,
+      borderSide: const BorderSide(color: KolabingColors.border),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: KolabingRadius.borderRadiusSm,
+      borderSide: const BorderSide(color: KolabingColors.border),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: KolabingRadius.borderRadiusSm,
+      borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
+    ),
+  );
+
+  Widget _buildSectionHeader(String title) => Text(
+    title,
+    style: GoogleFonts.rubik(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      color: KolabingColors.textSecondary,
+      letterSpacing: 1.0,
+    ),
+  );
+
+  Widget _buildLabel(String label) => Text(
+    label,
+    style: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: KolabingColors.textPrimary,
+    ),
+  );
+
+  Widget _buildFieldError(String error) => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.errorBg,
+      borderRadius: KolabingRadius.borderRadiusSm,
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.error_outline, size: 14, color: KolabingColors.error),
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
             error,
             style: GoogleFonts.openSans(
               fontSize: 12,
               color: KolabingColors.error,
             ),
           ),
-        ],
+        ),
       ],
-    );
-  }
-
-  InputDecoration _inputDecoration({required String hint}) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        color: KolabingColors.textTertiary,
-      ),
-      filled: true,
-      fillColor: KolabingColors.surface,
-      border: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide:
-            const BorderSide(color: KolabingColors.primary, width: 2),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) => Text(
-        title,
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textSecondary,
-          letterSpacing: 1.0,
-        ),
-      );
-
-  Widget _buildLabel(String label) => Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
-        ),
-      );
-
-  Widget _buildFieldError(String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 14,
-              color: KolabingColors.error,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+    ),
+  );
 
   IconData _availabilityModeIcon(AvailabilityMode mode) {
     switch (mode) {
@@ -685,5 +661,4 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return LucideIcons.calendarRange;
     }
   }
-
 }

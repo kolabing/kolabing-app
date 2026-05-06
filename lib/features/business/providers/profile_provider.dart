@@ -14,6 +14,11 @@ import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../services/profile_service.dart';
 
+final profileServiceProvider = Provider<ProfileService>((ref) {
+  final authService = ref.read(authServiceProvider);
+  return ProfileService(authService: authService);
+});
+
 /// Profile state
 class ProfileState {
   const ProfileState({
@@ -73,7 +78,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
   @override
   ProfileState build() {
     _authService = ref.read(authServiceProvider);
-    _profileService = ProfileService(authService: _authService);
+    _profileService = ref.read(profileServiceProvider);
     // Auto-load profile on initialization
     Future.microtask(() => loadProfile());
     return const ProfileState();
@@ -92,17 +97,38 @@ class ProfileNotifier extends Notifier<ProfileState> {
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
-      // Fetch profile first
       final profile = await _profileService.getProfile();
+      state = state.copyWith(
+        profile: profile,
+        isLoading: true,
+        isInitialized: true,
+        clearError: true,
+        subscription: null,
+        clearSubscription: true,
+      );
 
-      // Fetch notification preferences
-      final notificationPrefs = await _profileService
-          .getNotificationPreferences();
+      NotificationPreferences? notificationPrefs = state.notificationPrefs;
+      try {
+        notificationPrefs = await _profileService.getNotificationPreferences();
+      } on ApiException catch (e) {
+        debugPrint('Load notification preferences API error: $e');
+      } on NetworkException catch (e) {
+        debugPrint('Load notification preferences network error: $e');
+      } on Exception catch (e) {
+        debugPrint('Load notification preferences error: $e');
+      }
 
-      // Fetch subscription (only for business users)
       Subscription? subscription;
       if (profile.isBusiness) {
-        subscription = await _profileService.getSubscription();
+        try {
+          subscription = await _profileService.getSubscription();
+        } on ApiException catch (e) {
+          debugPrint('Load subscription API error: $e');
+        } on NetworkException catch (e) {
+          debugPrint('Load subscription network error: $e');
+        } on Exception catch (e) {
+          debugPrint('Load subscription error: $e');
+        }
       }
 
       state = state.copyWith(

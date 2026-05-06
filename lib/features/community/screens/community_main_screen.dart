@@ -11,6 +11,9 @@ import '../../application/screens/applications_screen.dart';
 import '../../business/screens/explore_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
+import '../../kolab/enums/intent_type.dart';
+import '../../kolab/providers/kolab_form_provider.dart';
+import '../../kolab/providers/my_kolabs_provider.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
 
@@ -19,10 +22,7 @@ import 'my_opportunities_screen.dart';
 /// This is the main container for community users after login.
 /// Contains 5 tabs: Home, Explore, My Kolabs, Applications, Profile
 class CommunityMainScreen extends ConsumerStatefulWidget {
-  const CommunityMainScreen({
-    super.key,
-    this.initialTab = 1,
-  });
+  const CommunityMainScreen({super.key, this.initialTab = 0});
 
   final int initialTab;
 
@@ -47,11 +47,16 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
-    await context.push(KolabingRoutes.kolabNew);
+    ref
+        .read(kolabFormProvider.notifier)
+        .selectIntent(IntentType.communitySeeking);
+    await context.push(KolabingRoutes.kolabFlow);
     if (mounted) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
       if (mounted) {
-        ref.invalidate(dashboardProvider);
+        ref
+          ..invalidate(dashboardProvider)
+          ..invalidate(myKolabsProvider);
       }
     }
   }
@@ -99,8 +104,9 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+      backgroundColor: isDark
+          ? KolabingColors.darkBackground
+          : KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex,
         children: [
@@ -111,11 +117,10 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           const _CommunityProfileTab(),
         ],
       ),
-      floatingActionButton: _currentIndex != 4 // Hide on profile tab
-          ? KolabingFAB(
-              onPressed: _onFabPressed,
-              tooltip: 'Create Opportunity',
-            )
+      floatingActionButton:
+          _currentIndex !=
+              4 // Hide on profile tab
+          ? KolabingFAB(onPressed: _onFabPressed, tooltip: 'Create Opportunity')
           : null,
       bottomNavigationBar: KolabingBottomNavBar(
         items: navItems,
@@ -136,50 +141,42 @@ class _CommunityHomeTab extends StatelessWidget {
   final ValueChanged<int> onSwitchTab;
 
   @override
-  Widget build(BuildContext context) {
-    return CommunityDashboardScreen(onSwitchTab: onSwitchTab);
-  }
+  Widget build(BuildContext context) =>
+      CommunityDashboardScreen(onSwitchTab: onSwitchTab);
 }
 
 class _CommunityExploreTab extends StatelessWidget {
   const _CommunityExploreTab();
 
   @override
-  Widget build(BuildContext context) {
-    // Reuse the ExploreScreen from business feature
-    // Lock to business creator type so community users only see business offers
-    return const ExploreScreen(
-      detailRoutePrefix: '/community/explore/offer',
-      lockedCreatorType: 'business',
-    );
-  }
+  Widget build(BuildContext context) =>
+      // Reuse the ExploreScreen from business feature
+      // Lock to business creator type so community users only see business offers
+      const ExploreScreen(
+        detailRoutePrefix: '/community/explore/offer',
+        lockedCreatorType: 'business',
+      );
 }
 
 class _CommunityMyOppsTab extends StatelessWidget {
   const _CommunityMyOppsTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const MyOpportunitiesScreen();
-  }
+  Widget build(BuildContext context) => const MyOpportunitiesScreen();
 }
 
 class _CommunityApplicationsTab extends StatelessWidget {
   const _CommunityApplicationsTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const ApplicationsScreen();
-  }
+  Widget build(BuildContext context) => const ApplicationsScreen();
 }
 
 class _CommunityProfileTab extends StatelessWidget {
   const _CommunityProfileTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const CommunityProfileScreen();
-  }
+  Widget build(BuildContext context) => const CommunityProfileScreen();
 }
 
 // -----------------------------------------------------------------------------

@@ -51,7 +51,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
         if (mounted) {
           await Future<void>.delayed(const Duration(seconds: 2));
-          ref.read(profileProvider.notifier).refreshSubscription();
+          await ref.read(profileProvider.notifier).refreshSubscription();
         }
       }
     }
@@ -66,12 +66,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       );
     } else {
       // Android: Open Stripe billing portal
-      final url = await ref.read(profileProvider.notifier).getBillingPortalUrl();
+      final url = await ref
+          .read(profileProvider.notifier)
+          .getBillingPortalUrl();
       if (url != null) {
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
         if (mounted) {
           await Future<void>.delayed(const Duration(seconds: 2));
-          ref.read(profileProvider.notifier).refreshSubscription();
+          await ref.read(profileProvider.notifier).refreshSubscription();
         }
       }
     }
@@ -79,7 +81,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
   Future<void> _handleReactivate() async {
     setState(() => _isReactivating = true);
-    final success = await ref.read(profileProvider.notifier).reactivateSubscription();
+    final success = await ref
+        .read(profileProvider.notifier)
+        .reactivateSubscription();
     if (mounted) {
       setState(() => _isReactivating = false);
       if (success) {
@@ -127,17 +131,19 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if ((confirmed ?? false) && mounted) {
       setState(() => _isCancelling = true);
-      final success =
-          await ref.read(profileProvider.notifier).cancelSubscription();
+      final success = await ref
+          .read(profileProvider.notifier)
+          .cancelSubscription();
       if (mounted) {
         setState(() => _isCancelling = false);
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content:
-                  Text('Subscription will cancel at the end of billing period'),
+              content: Text(
+                'Subscription will cancel at the end of billing period',
+              ),
               backgroundColor: KolabingColors.success,
             ),
           );
@@ -149,17 +155,30 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(profileProvider);
+    final iapState = Platform.isIOS ? ref.watch(iapProvider) : null;
 
-    ref.listen<ProfileState>(profileProvider, (previous, next) {
-      if (next.error != null && previous?.error != next.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: KolabingColors.error,
-          ),
-        );
-      }
-    });
+    ref
+      ..listen<ProfileState>(profileProvider, (previous, next) {
+        if (next.error != null && previous?.error != next.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.error!),
+              backgroundColor: KolabingColors.error,
+            ),
+          );
+        }
+      })
+      ..listen<IAPState>(iapProvider, (previous, next) {
+        if (!Platform.isIOS) return;
+        if (next.error != null && previous?.error != next.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.error!),
+              backgroundColor: KolabingColors.error,
+            ),
+          );
+        }
+      });
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -180,35 +199,39 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       body: SafeArea(
         child: state.isLoading && !state.isInitialized
             ? _buildLoadingState()
-            : _buildContent(state.subscription, state.isSubscribed),
+            : _buildContent(state.subscription, state.isSubscribed, iapState),
       ),
     );
   }
 
   Widget _buildLoadingState() => SingleChildScrollView(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        child: Column(
-          children: List.generate(
-            3,
-            (index) => Padding(
-              padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
-              child: Shimmer.fromColors(
-                baseColor: KolabingColors.surfaceVariant,
-                highlightColor: KolabingColors.surface,
-                child: Container(
-                  height: index == 0 ? 200 : 120,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: KolabingRadius.borderRadiusLg,
-                  ),
-                ),
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    child: Column(
+      children: List.generate(
+        3,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
+          child: Shimmer.fromColors(
+            baseColor: KolabingColors.surfaceVariant,
+            highlightColor: KolabingColors.surface,
+            child: Container(
+              height: index == 0 ? 200 : 120,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
-  Widget _buildContent(Subscription? subscription, bool isSubscribed) {
+  Widget _buildContent(
+    Subscription? subscription,
+    bool isSubscribed,
+    IAPState? iapState,
+  ) {
     final isActive = isSubscribed;
     final isPastDue = subscription?.status == SubscriptionStatus.pastDue;
     final isCancelPending = subscription?.cancelAtPeriodEnd ?? false;
@@ -224,7 +247,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
           // Benefits section
           if (!isActive) ...[
-            _buildBenefitsSection(),
+            _buildBenefitsSection(iapState),
             const SizedBox(height: KolabingSpacing.lg),
           ],
 
@@ -247,7 +270,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ],
 
           // Action buttons
-          _buildActions(subscription, isActive, isPastDue, isCancelPending),
+          _buildActions(
+            subscription,
+            isActive,
+            isPastDue,
+            isCancelPending,
+            iapState,
+          ),
 
           const SizedBox(height: KolabingSpacing.xxl),
         ],
@@ -344,191 +373,179 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   // Benefits Section (shown when no active subscription)
   // ---------------------------------------------------------------------------
 
-  Widget _buildBenefitsSection() => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+  Widget _buildBenefitsSection(IAPState? iapState) => Container(
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Premium Benefits',
-              style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            _BenefitItem(
-              icon: LucideIcons.megaphone,
-              title: 'Publish Opportunities',
-              description: 'Create and publish collaboration offers',
-            ),
-            _BenefitItem(
-              icon: LucideIcons.users,
-              title: 'Connect with Communities',
-              description: 'Reach local communities and creators',
-            ),
-            _BenefitItem(
-              icon: LucideIcons.inbox,
-              title: 'Receive Applications',
-              description: 'Get applications from interested communities',
-            ),
-            _BenefitItem(
-              icon: LucideIcons.barChart2,
-              title: 'Track Performance',
-              description: 'Monitor your collaboration metrics',
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            const Divider(height: 1, color: KolabingColors.border),
-            const SizedBox(height: KolabingSpacing.md),
-            Center(
-              child: Platform.isIOS
-                  ? Consumer(
-                      builder: (context, ref, _) {
-                        final price = ref.watch(iapProvider).priceString;
-                        return Text(
-                          '$price/month',
-                          style: KolabingTextStyles.displaySmall.copyWith(
-                            color: KolabingColors.textPrimary,
-                          ),
-                        );
-                      },
-                    )
-                  : RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '29 ',
-                            style: KolabingTextStyles.displaySmall.copyWith(
-                              color: KolabingColors.textPrimary,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'EUR/month',
-                            style: KolabingTextStyles.bodyLarge.copyWith(
-                              color: KolabingColors.textSecondary,
-                            ),
-                          ),
-                        ],
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Premium Benefits',
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: KolabingColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        const _BenefitItem(
+          icon: LucideIcons.megaphone,
+          title: 'Publish Opportunities',
+          description: 'Create and publish collaboration offers',
+        ),
+        const _BenefitItem(
+          icon: LucideIcons.users,
+          title: 'Connect with Communities',
+          description: 'Reach local communities and creators',
+        ),
+        const _BenefitItem(
+          icon: LucideIcons.inbox,
+          title: 'Receive Applications',
+          description: 'Get applications from interested communities',
+        ),
+        const _BenefitItem(
+          icon: LucideIcons.barChart2,
+          title: 'Track Performance',
+          description: 'Monitor your collaboration metrics',
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        const Divider(height: 1, color: KolabingColors.border),
+        const SizedBox(height: KolabingSpacing.md),
+        Center(
+          child: Platform.isIOS
+              ? _buildApplePriceLabel(iapState)
+              : RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '29 ',
+                        style: KolabingTextStyles.displaySmall.copyWith(
+                          color: KolabingColors.textPrimary,
+                        ),
                       ),
-                    ),
-            ),
-          ],
+                      TextSpan(
+                        text: 'EUR/month',
+                        style: KolabingTextStyles.bodyLarge.copyWith(
+                          color: KolabingColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
         ),
-      );
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Plan Details (shown when active)
   // ---------------------------------------------------------------------------
 
   Widget _buildPlanDetails(Subscription subscription) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Plan Details',
-              style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            _DetailRow(
-              label: 'Plan',
-              value: 'Premium Business',
-              icon: LucideIcons.crown,
-            ),
-            _DetailRow(
-              label: 'Price',
-              value: '29 EUR/month',
-              icon: LucideIcons.creditCard,
-            ),
-            if (subscription.currentPeriodStart != null)
-              _DetailRow(
-                label: 'Current Period',
-                value: _formatDate(subscription.currentPeriodStart!),
-                icon: LucideIcons.calendarCheck,
-              ),
-            if (subscription.currentPeriodEnd != null)
-              _DetailRow(
-                label: 'Renews On',
-                value: _formatDate(subscription.currentPeriodEnd!),
-                icon: LucideIcons.calendarClock,
-              ),
-            if (subscription.daysRemaining != null)
-              _DetailRow(
-                label: 'Days Remaining',
-                value: '${subscription.daysRemaining} days',
-                icon: LucideIcons.clock,
-              ),
-          ],
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Plan Details',
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: KolabingColors.textPrimary,
+          ),
         ),
-      );
+        const SizedBox(height: KolabingSpacing.md),
+        const _DetailRow(
+          label: 'Plan',
+          value: 'Premium Business',
+          icon: LucideIcons.crown,
+        ),
+        const _DetailRow(
+          label: 'Price',
+          value: '29 EUR/month',
+          icon: LucideIcons.creditCard,
+        ),
+        if (subscription.currentPeriodStart != null)
+          _DetailRow(
+            label: 'Current Period',
+            value: _formatDate(subscription.currentPeriodStart!),
+            icon: LucideIcons.calendarCheck,
+          ),
+        if (subscription.currentPeriodEnd != null)
+          _DetailRow(
+            label: 'Renews On',
+            value: _formatDate(subscription.currentPeriodEnd!),
+            icon: LucideIcons.calendarClock,
+          ),
+        if (subscription.daysRemaining != null)
+          _DetailRow(
+            label: 'Days Remaining',
+            value: '${subscription.daysRemaining} days',
+            icon: LucideIcons.clock,
+          ),
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Warning Banners
   // ---------------------------------------------------------------------------
 
   Widget _buildPastDueWarning() => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: KolabingColors.error.withValues(alpha: 0.3),
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.errorBg,
+      borderRadius: KolabingRadius.borderRadiusMd,
+      border: Border.all(color: KolabingColors.error.withValues(alpha: 0.3)),
+    ),
+    child: Row(
+      children: [
+        const Icon(
+          LucideIcons.alertTriangle,
+          color: KolabingColors.error,
+          size: 24,
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Payment Failed',
+                style: KolabingTextStyles.titleSmall.copyWith(
+                  color: KolabingColors.error,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Your last payment failed. Update your payment method to continue publishing opportunities.',
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.error,
+                ),
+              ),
+            ],
           ),
         ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.alertTriangle,
-              color: KolabingColors.error,
-              size: 24,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Payment Failed',
-                    style: KolabingTextStyles.titleSmall.copyWith(
-                      color: KolabingColors.error,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Your last payment failed. Update your payment method to continue publishing opportunities.',
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.error,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 
   Widget _buildCancelPendingWarning(Subscription subscription) {
     final endDate = subscription.currentPeriodEnd != null
@@ -546,11 +563,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       ),
       child: Row(
         children: [
-          const Icon(
-            LucideIcons.info,
-            color: KolabingColors.warning,
-            size: 24,
-          ),
+          const Icon(LucideIcons.info, color: KolabingColors.warning, size: 24),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Column(
@@ -586,7 +599,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     bool isActive,
     bool isPastDue,
     bool isCancelPending,
+    IAPState? iapState,
   ) {
+    final canStartApplePurchase =
+        !Platform.isIOS || (iapState?.canPurchase ?? false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -629,7 +646,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           SizedBox(
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: _handleSubscribe,
+              onPressed: canStartApplePurchase ? _handleSubscribe : null,
               icon: const Icon(LucideIcons.sparkles, size: 20),
               label: Text(
                 Platform.isIOS ? 'SUBSCRIBE' : 'SUBSCRIBE FOR 29 EUR/MONTH',
@@ -647,6 +664,19 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
             ),
           ),
+          if (Platform.isIOS &&
+              (iapState?.purchaseAvailabilityMessage != null)) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              iapState!.purchaseAvailabilityMessage!,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: iapState.isLoadingProducts
+                    ? KolabingColors.textTertiary
+                    : KolabingColors.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
 
         // Update Payment Method (past due)
@@ -724,10 +754,43 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
+  Widget _buildApplePriceLabel(IAPState? iapState) {
+    final state = iapState ?? const IAPState();
+
+    if (state.monthlyProduct == null) {
+      return Text(
+        state.isLoadingProducts
+            ? 'Loading App Store price...'
+            : 'Subscription unavailable',
+        style: KolabingTextStyles.titleMedium.copyWith(
+          color: KolabingColors.textPrimary,
+        ),
+        textAlign: TextAlign.center,
+      );
+    }
+
+    return Text(
+      '${state.priceString}/month',
+      style: KolabingTextStyles.displaySmall.copyWith(
+        color: KolabingColors.textPrimary,
+      ),
+    );
+  }
+
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
@@ -750,41 +813,41 @@ class _BenefitItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.1),
-                borderRadius: KolabingRadius.borderRadiusSm,
-              ),
-              child: Icon(icon, color: KolabingColors.primary, size: 20),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: KolabingTextStyles.titleSmall.copyWith(
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    description,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
+    child: Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: KolabingColors.primary.withValues(alpha: 0.1),
+            borderRadius: KolabingRadius.borderRadiusSm,
+          ),
+          child: Icon(icon, color: KolabingColors.primary, size: 20),
         ),
-      );
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: KolabingTextStyles.titleSmall.copyWith(
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+              Text(
+                description,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -804,27 +867,27 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: KolabingColors.textTertiary),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Text(
-                label,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textSecondary,
-                ),
-              ),
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+    child: Row(
+      children: [
+        Icon(icon, size: 18, color: KolabingColors.textTertiary),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Text(
+            label,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: KolabingColors.textSecondary,
             ),
-            Text(
-              value,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+        Text(
+          value,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    ),
+  );
 }

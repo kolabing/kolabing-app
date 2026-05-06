@@ -13,10 +13,7 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Dashboard API response that holds either business or community data
 class DashboardResponse {
-  const DashboardResponse({
-    this.businessDashboard,
-    this.communityDashboard,
-  });
+  const DashboardResponse({this.businessDashboard, this.communityDashboard});
 
   final BusinessDashboard? businessDashboard;
   final CommunityDashboard? communityDashboard;
@@ -27,14 +24,24 @@ class DashboardResponse {
 
 /// Service for dashboard API operations
 class DashboardService {
-  DashboardService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  DashboardService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
+
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
 
   // ---------------------------------------------------------------------------
   // Auth headers
@@ -59,13 +66,17 @@ class DashboardService {
   /// - Business users: contains `opportunities` key
   /// - Community users: contains `applications_sent` key
   Future<DashboardResponse> getDashboard() async {
+    return _getDashboard(allowRetry: true);
+  }
+
+  Future<DashboardResponse> _getDashboard({required bool allowRetry}) async {
     final uri = Uri.parse('$_baseUrl/me/dashboard');
     debugPrint('DashboardService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
       );
 
       debugPrint('Dashboard response status: ${response.statusCode}');
@@ -89,8 +100,10 @@ class DashboardService {
           );
         } else {
           // Fallback: try to parse as business first, then community
-          debugPrint('DashboardService: Unknown dashboard shape, '
-              'attempting business parse');
+          debugPrint(
+            'DashboardService: Unknown dashboard shape, '
+            'attempting business parse',
+          );
           return DashboardResponse(
             businessDashboard: BusinessDashboard.fromJson(data),
           );

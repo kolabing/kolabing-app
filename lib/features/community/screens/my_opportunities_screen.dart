@@ -9,11 +9,13 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../business/providers/profile_provider.dart';
+import '../../kolab/enums/intent_type.dart';
 import '../../kolab/models/kolab.dart';
+import '../../kolab/providers/kolab_form_provider.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
-import '../../business/providers/profile_provider.dart';
 
 /// My Opportunities screen for community users
 ///
@@ -57,7 +59,10 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
   }
 
   void _onCreateNew() {
-    context.push(KolabingRoutes.kolabNew);
+    ref
+        .read(kolabFormProvider.notifier)
+        .selectIntent(IntentType.communitySeeking);
+    context.push(KolabingRoutes.kolabFlow);
   }
 
   void _onEdit(Kolab kolab) {

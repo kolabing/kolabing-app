@@ -11,6 +11,8 @@ import '../services/kolab_service.dart';
 class MyKolabsState {
   const MyKolabsState({
     this.kolabs = const [],
+    this.currentPage = 0,
+    this.lastPage = 1,
     this.total = 0,
     this.isLoading = false,
     this.isLoadingMore = false,
@@ -19,17 +21,21 @@ class MyKolabsState {
   });
 
   final List<Kolab> kolabs;
+  final int currentPage;
+  final int lastPage;
   final int total;
   final bool isLoading;
   final bool isLoadingMore;
   final bool requiresSubscription;
   final String? error;
 
-  bool get hasMore => false;
+  bool get hasMore => currentPage < lastPage;
   bool get isEmpty => kolabs.isEmpty && !isLoading;
 
   MyKolabsState copyWith({
     List<Kolab>? kolabs,
+    int? currentPage,
+    int? lastPage,
     int? total,
     bool? isLoading,
     bool? isLoadingMore,
@@ -38,6 +44,8 @@ class MyKolabsState {
     bool clearError = false,
   }) => MyKolabsState(
     kolabs: kolabs ?? this.kolabs,
+    currentPage: currentPage ?? this.currentPage,
+    lastPage: lastPage ?? this.lastPage,
     total: total ?? this.total,
     isLoading: isLoading ?? this.isLoading,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
@@ -62,6 +70,7 @@ final myKolabsStatusProvider =
 
 class MyKolabsNotifier extends Notifier<MyKolabsState> {
   late KolabService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   MyKolabsState build() {
@@ -72,22 +81,45 @@ class MyKolabsNotifier extends Notifier<MyKolabsState> {
   }
 
   Future<void> _load(String? status) async {
+    final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(
       isLoading: true,
+      isLoadingMore: false,
       requiresSubscription: false,
       clearError: true,
     );
 
     try {
-      final kolabs = await _service.getMyKolabs(status: status);
-      state = MyKolabsState(kolabs: kolabs, total: kolabs.length);
+      final result = await _service.getMyKolabs(status: status, page: 1);
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+
+      state = MyKolabsState(
+        kolabs: result.data,
+        currentPage: result.currentPage,
+        lastPage: result.lastPage,
+        total: result.total,
+      );
     } on AuthException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.message);
     } on ApiException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.error.message);
     } on NetworkException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.message);
     } on Exception catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load my kolabs error: $e');
       state = state.copyWith(
         isLoading: false,
@@ -100,7 +132,39 @@ class MyKolabsNotifier extends Notifier<MyKolabsState> {
     await _load(ref.read(myKolabsStatusProvider));
   }
 
-  Future<void> loadMore() async {}
+  Future<void> loadMore() async {
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) {
+      return;
+    }
+
+    state = state.copyWith(isLoadingMore: true);
+    final status = ref.read(myKolabsStatusProvider);
+    final requestGeneration = _activeRequestGeneration;
+
+    try {
+      final result = await _service.getMyKolabs(
+        status: status,
+        page: state.currentPage + 1,
+      );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+
+      state = state.copyWith(
+        kolabs: [...state.kolabs, ...result.data],
+        currentPage: result.currentPage,
+        lastPage: result.lastPage,
+        total: result.total,
+        isLoadingMore: false,
+      );
+    } on Exception catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      debugPrint('Load more my kolabs error: $e');
+      state = state.copyWith(isLoadingMore: false);
+    }
+  }
 
   Future<bool> publish(String id) async {
     final kolab = await _resolveKolab(id);
@@ -157,7 +221,11 @@ class MyKolabsNotifier extends Notifier<MyKolabsState> {
     try {
       await _service.delete(id);
       final updated = state.kolabs.where((kolab) => kolab.id != id).toList();
-      state = state.copyWith(kolabs: updated, total: updated.length);
+      state = state.copyWith(
+        kolabs: updated,
+        total: state.total > 0 ? state.total - 1 : updated.length,
+      );
+      await refresh();
       return true;
     } on ApiException catch (e) {
       state = state.copyWith(error: e.error.message);
@@ -196,7 +264,6 @@ class MyKolabsNotifier extends Notifier<MyKolabsState> {
 
     state = state.copyWith(
       kolabs: list,
-      total: list.length,
       requiresSubscription: false,
       clearError: true,
     );

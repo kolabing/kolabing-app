@@ -15,6 +15,150 @@ void main() {
   });
 
   test(
+    'getMyApplications refreshes once on 401 before returning paginated data',
+    () async {
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+      });
+
+      final client = _QueuedClient(
+        responses: [
+          _QueuedResponse(
+            statusCode: 401,
+            body: jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'token': 'token-456',
+                'refresh_token': 'refresh-456',
+                'token_type': 'Bearer',
+              },
+            }),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'data': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 'app-1',
+                    'collab_opportunity_id': 'opp-1',
+                    'message': 'Excited to collaborate',
+                    'availability': 'Next Thursday evening',
+                    'status': 'pending',
+                    'created_at': '2026-04-28T10:00:00Z',
+                  },
+                ],
+                'current_page': 1,
+                'last_page': 2,
+                'total': 2,
+              },
+            }),
+          ),
+        ],
+      );
+
+      final authService = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: client,
+      );
+      final service = ApplicationService(
+        authService: authService,
+        httpClient: client,
+      );
+
+      final response = await service.getMyApplications();
+
+      expect(response.data.single.id, 'app-1');
+      expect(response.currentPage, 1);
+      expect(response.lastPage, 2);
+      expect(response.total, 2);
+      expect(await authService.getToken(), 'token-456');
+      expect(await authService.getRefreshToken(), 'refresh-456');
+      expect(client.sentAuthHeaders, <String?>[
+        'Bearer token-123',
+        null,
+        'Bearer token-456',
+      ]);
+    },
+  );
+
+  test(
+    'getReceivedApplications refreshes once on 401 before returning paginated data',
+    () async {
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+      });
+
+      final client = _QueuedClient(
+        responses: [
+          _QueuedResponse(
+            statusCode: 401,
+            body: jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'token': 'token-456',
+                'refresh_token': 'refresh-456',
+                'token_type': 'Bearer',
+              },
+            }),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'data': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 'app-2',
+                    'collab_opportunity_id': 'opp-2',
+                    'message': 'We would love to host you',
+                    'availability': 'Every Friday',
+                    'status': 'pending',
+                    'created_at': '2026-04-29T10:00:00Z',
+                  },
+                ],
+                'current_page': 1,
+                'last_page': 1,
+                'total': 1,
+              },
+            }),
+          ),
+        ],
+      );
+
+      final authService = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: client,
+      );
+      final service = ApplicationService(
+        authService: authService,
+        httpClient: client,
+      );
+
+      final response = await service.getReceivedApplications();
+
+      expect(response.data.single.id, 'app-2');
+      expect(response.currentPage, 1);
+      expect(response.lastPage, 1);
+      expect(response.total, 1);
+      expect(await authService.getToken(), 'token-456');
+      expect(await authService.getRefreshToken(), 'refresh-456');
+      expect(client.sentAuthHeaders, <String?>[
+        'Bearer token-123',
+        null,
+        'Bearer token-456',
+      ]);
+    },
+  );
+
+  test(
     'acceptApplication refreshes once on 401 and parses 201 responses',
     () async {
       FlutterSecureStorage.setMockInitialValues(<String, String>{

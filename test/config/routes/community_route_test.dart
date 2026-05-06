@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:kolabing_app/config/routes/routes.dart';
+import 'package:kolabing_app/features/application/providers/application_provider.dart';
+import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
+import 'package:kolabing_app/features/business/providers/profile_provider.dart';
+import 'package:kolabing_app/features/community/screens/community_main_screen.dart';
+import 'package:kolabing_app/features/dashboard/models/dashboard_model.dart';
+import 'package:kolabing_app/features/dashboard/providers/dashboard_provider.dart';
+import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
+import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
+import 'package:kolabing_app/features/opportunity/models/opportunity_filter.dart';
+import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
+import 'package:kolabing_app/features/rewards/providers/wallet_provider.dart';
+
+void main() {
+  testWidgets(
+    'navigating to /community builds the community shell on the Home tab',
+    (tester) async {
+      kolabingRouter.go(KolabingRoutes.communityDashboard);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authProvider.overrideWith(
+              () => _FakeAuthNotifier(
+                const AuthState(status: AuthStatus.authenticated),
+              ),
+            ),
+            dashboardProvider.overrideWith(
+              () => _FakeDashboardNotifier(
+                const DashboardState(
+                  communityData: CommunityDashboard(),
+                  isLoading: false,
+                  isInitialized: true,
+                ),
+              ),
+            ),
+            notificationProvider.overrideWith(
+              () => _FakeNotificationNotifier(const NotificationState()),
+            ),
+            opportunityFiltersProvider.overrideWith(
+              () => _FakeOpportunityFiltersNotifier(const OpportunityFilters()),
+            ),
+            opportunityListProvider.overrideWith(
+              () => _FakeOpportunityListNotifier(const OpportunityListState()),
+            ),
+            myKolabsProvider.overrideWith(
+              () => _FakeMyKolabsNotifier(const MyKolabsState()),
+            ),
+            myApplicationsProvider.overrideWith(
+              () => _FakeMyApplicationsNotifier(const ApplicationsState()),
+            ),
+            receivedApplicationsProvider.overrideWith(
+              () =>
+                  _FakeReceivedApplicationsNotifier(const ApplicationsState()),
+            ),
+            profileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const ProfileState(isLoading: false, isInitialized: true),
+              ),
+            ),
+            walletProvider.overrideWith(
+              () => _FakeWalletNotifier(const WalletState()),
+            ),
+            totalUnreadCountProvider.overrideWith((ref) => 0),
+            unreadNotificationCountProvider.overrideWith((ref) => 0),
+          ],
+          child: MaterialApp.router(routerConfig: kolabingRouter),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.byType(CommunityMainScreen), findsOneWidget);
+
+      final stack = tester.widget<IndexedStack>(find.byType(IndexedStack));
+
+      expect(stack.index, 0);
+    },
+  );
+}
+
+class _FakeAuthNotifier extends AuthNotifier {
+  _FakeAuthNotifier(this._initialState);
+
+  final AuthState _initialState;
+
+  @override
+  AuthState build() => _initialState;
+}
+
+class _FakeDashboardNotifier extends DashboardNotifier {
+  _FakeDashboardNotifier(this._initialState);
+
+  final DashboardState _initialState;
+
+  @override
+  DashboardState build() => _initialState;
+}
+
+class _FakeNotificationNotifier extends NotificationNotifier {
+  _FakeNotificationNotifier(this._initialState);
+
+  final NotificationState _initialState;
+
+  @override
+  NotificationState build() => _initialState;
+}
+
+class _FakeOpportunityFiltersNotifier extends OpportunityFiltersNotifier {
+  _FakeOpportunityFiltersNotifier(this._initialState);
+
+  final OpportunityFilters _initialState;
+
+  @override
+  OpportunityFilters build() => _initialState;
+}
+
+class _FakeOpportunityListNotifier extends OpportunityListNotifier {
+  _FakeOpportunityListNotifier(this._initialState);
+
+  final OpportunityListState _initialState;
+
+  @override
+  OpportunityListState build() => _initialState;
+
+  @override
+  Future<void> refresh() async {}
+
+  @override
+  Future<void> loadMore() async {}
+}
+
+class _FakeMyKolabsNotifier extends MyKolabsNotifier {
+  _FakeMyKolabsNotifier(this._initialState);
+
+  final MyKolabsState _initialState;
+
+  @override
+  MyKolabsState build() => _initialState;
+}
+
+class _FakeMyApplicationsNotifier extends MyApplicationsNotifier {
+  _FakeMyApplicationsNotifier(this._initialState);
+
+  final ApplicationsState _initialState;
+
+  @override
+  ApplicationsState build() => _initialState;
+}
+
+class _FakeReceivedApplicationsNotifier extends ReceivedApplicationsNotifier {
+  _FakeReceivedApplicationsNotifier(this._initialState);
+
+  final ApplicationsState _initialState;
+
+  @override
+  ApplicationsState build() => _initialState;
+}
+
+class _FakeProfileNotifier extends ProfileNotifier {
+  _FakeProfileNotifier(this._initialState);
+
+  final ProfileState _initialState;
+
+  @override
+  ProfileState build() => _initialState;
+}
+
+class _FakeWalletNotifier extends WalletNotifier {
+  _FakeWalletNotifier(this._initialState);
+
+  final WalletState _initialState;
+
+  @override
+  WalletState build() => _initialState;
+}

@@ -233,19 +233,34 @@ class KolabService {
   // ---------------------------------------------------------------------------
 
   /// GET /api/v1/kolabs/me
-  Future<List<Kolab>> getMyKolabs({String? status}) async {
-    return _getMyKolabs(status: status, allowRetry: true);
+  Future<PaginatedKolabResponse> getMyKolabs({
+    String? status,
+    int page = 1,
+    int perPage = 15,
+  }) async {
+    return _getMyKolabs(
+      status: status,
+      page: page,
+      perPage: perPage,
+      allowRetry: true,
+    );
   }
 
-  Future<List<Kolab>> _getMyKolabs({
+  Future<PaginatedKolabResponse> _getMyKolabs({
     String? status,
+    required int page,
+    required int perPage,
     required bool allowRetry,
   }) async {
-    final queryParams = <String, String>{if (status != null) 'status': status};
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'per_page': perPage.toString(),
+      if (status != null) 'status': status,
+    };
 
     final uri = Uri.parse(
       '$_baseUrl/kolabs/me',
-    ).replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
+    ).replace(queryParameters: queryParams);
     debugPrint('KolabService: GET $uri');
 
     try {
@@ -254,29 +269,16 @@ class KolabService {
       debugPrint('My kolabs response: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-
-        // The API may return either:
-        //   { "data": [...] }                                 — data is a list
-        //   { "data": { "data": [...], "current_page": 1 } }  — Laravel paginator
-        final rawData = json['data'];
-        List<dynamic> dataList;
-        if (rawData is List) {
-          dataList = rawData;
-        } else if (rawData is Map<String, dynamic>) {
-          dataList = rawData['data'] as List<dynamic>? ?? const [];
-        } else {
-          dataList = const [];
-        }
-
-        return dataList
-            .whereType<Map<String, dynamic>>()
-            .map(Kolab.fromJson)
-            .toList();
+        return _parsePaginatedResponse(response.body);
       } else if (response.statusCode == 401) {
         if (allowRetry) {
           await _authService.refreshSession();
-          return _getMyKolabs(status: status, allowRetry: false);
+          return _getMyKolabs(
+            status: status,
+            page: page,
+            perPage: perPage,
+            allowRetry: false,
+          );
         }
         throw const AuthException('Session expired. Please sign in again.');
       } else {
@@ -385,6 +387,45 @@ class KolabService {
   // Error parsing
   // ---------------------------------------------------------------------------
 
+  PaginatedKolabResponse _parsePaginatedResponse(String body) {
+    final json = jsonDecode(body) as Map<String, dynamic>;
+    final rawData = json['data'];
+
+    List<dynamic> dataList;
+    Map<String, dynamic>? meta;
+
+    if (rawData is List) {
+      dataList = rawData;
+      meta = json['meta'] as Map<String, dynamic>? ?? json;
+    } else if (rawData is Map<String, dynamic>) {
+      dataList = rawData['data'] as List<dynamic>? ?? const <dynamic>[];
+      meta = rawData;
+    } else {
+      dataList = const <dynamic>[];
+      meta = json['meta'] as Map<String, dynamic>?;
+    }
+
+    final kolabs = dataList
+        .whereType<Map<String, dynamic>>()
+        .map(Kolab.fromJson)
+        .toList();
+
+    return PaginatedKolabResponse(
+      data: kolabs,
+      currentPage: _safeInt(meta?['current_page']) ?? 1,
+      lastPage: _safeInt(meta?['last_page']) ?? 1,
+      total: _safeInt(meta?['total']) ?? kolabs.length,
+    );
+  }
+
+  static int? _safeInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
   ApiException _parseApiError(http.Response response) {
     try {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -400,6 +441,22 @@ class KolabService {
       );
     }
   }
+}
+
+class PaginatedKolabResponse {
+  const PaginatedKolabResponse({
+    required this.data,
+    required this.currentPage,
+    required this.lastPage,
+    required this.total,
+  });
+
+  final List<Kolab> data;
+  final int currentPage;
+  final int lastPage;
+  final int total;
+
+  bool get hasMore => currentPage < lastPage;
 }
 
 final kolabServiceProvider = Provider<KolabService>((ref) => KolabService());

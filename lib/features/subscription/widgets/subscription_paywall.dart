@@ -37,7 +37,7 @@ class SubscriptionPaywall extends ConsumerStatefulWidget {
       builder: (_) => const SubscriptionPaywall(),
     );
 
-    return result == true;
+    return result ?? false;
   }
 
   @override
@@ -90,6 +90,13 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   Widget build(BuildContext context) {
     // Always watch/listen unconditionally (Riverpod hooks must be stable)
     final iapState = ref.watch(iapProvider);
+    final isLoading = Platform.isIOS
+        ? iapState.isPurchasing || iapState.isRestoring
+        : _isLoading;
+    final canStartApplePurchase = !Platform.isIOS || iapState.canPurchase;
+    final purchaseStatusMessage =
+        iapState.error ??
+        (Platform.isIOS ? iapState.purchaseAvailabilityMessage : null);
 
     ref.listen<IAPState>(iapProvider, (prev, next) {
       if (!Platform.isIOS) return;
@@ -104,20 +111,13 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       }
     });
 
-    // Use IAP loading state on iOS
-    if (Platform.isIOS && (iapState.isPurchasing || iapState.isRestoring)) {
-      _isLoading = true;
-    }
-
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
       margin: EdgeInsets.only(bottom: bottomPadding),
       decoration: const BoxDecoration(
         color: KolabingColors.surface,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
         top: false,
@@ -141,7 +141,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Container(
                 width: 72,
                 height: 72,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: KolabingColors.softYellow,
                   shape: BoxShape.circle,
                 ),
@@ -164,7 +164,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Description
               Text(
-                'You\'ve used your 1 free kollab request. Subscribe to create unlimited requests and connect with more communities.',
+                "You've used your 1 free kollab request. Subscribe to create unlimited requests and connect with more communities.",
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textSecondary,
                 ),
@@ -199,21 +199,29 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      Platform.isIOS
-                          ? ref.watch(iapProvider).priceString
-                          : '29 EUR',
-                      style: KolabingTextStyles.headlineLarge.copyWith(
-                        color: KolabingColors.textPrimary,
+                    if (!Platform.isIOS || iapState.monthlyProduct != null) ...[
+                      Text(
+                        Platform.isIOS ? iapState.priceString : '29 EUR',
+                        style: KolabingTextStyles.headlineLarge.copyWith(
+                          color: KolabingColors.textPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: KolabingSpacing.xs),
-                    Text(
-                      '/ month',
-                      style: KolabingTextStyles.bodyLarge.copyWith(
-                        color: KolabingColors.textSecondary,
+                      const SizedBox(width: KolabingSpacing.xs),
+                      Text(
+                        '/ month',
+                        style: KolabingTextStyles.bodyLarge.copyWith(
+                          color: KolabingColors.textSecondary,
+                        ),
                       ),
-                    ),
+                    ] else
+                      Text(
+                        iapState.isLoadingProducts
+                            ? 'Loading App Store price...'
+                            : 'Subscription unavailable',
+                        style: KolabingTextStyles.titleMedium.copyWith(
+                          color: KolabingColors.textPrimary,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -224,18 +232,21 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleSubscribe,
+                  onPressed: isLoading || !canStartApplePurchase
+                      ? null
+                      : _handleSubscribe,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                      alpha: 0.5,
+                    ),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: _isLoading
+                  child: isLoading
                       ? const SizedBox(
                           width: 24,
                           height: 24,
@@ -268,7 +279,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               // Restore Purchases (iOS only — Apple requires this)
               if (Platform.isIOS) ...[
                 TextButton(
-                  onPressed: _isLoading
+                  onPressed: isLoading
                       ? null
                       : () => ref.read(iapProvider.notifier).restore(),
                   child: Text(
@@ -281,22 +292,33 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 ),
               ],
 
-              // IAP error message
+              // IAP status / error message
               if (Platform.isIOS) ...[
-                Builder(builder: (context) {
-                  final iapError = ref.watch(iapProvider).error;
-                  if (iapError == null) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: KolabingSpacing.xs),
-                    child: Text(
-                      iapError,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.error,
+                Builder(
+                  builder: (context) {
+                    if (purchaseStatusMessage == null) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final messageColor =
+                        iapState.error != null ||
+                            (!iapState.isLoadingProducts &&
+                                !iapState.canPurchase)
+                        ? KolabingColors.error
+                        : KolabingColors.textTertiary;
+
+                    return Padding(
+                      padding: const EdgeInsets.only(top: KolabingSpacing.xs),
+                      child: Text(
+                        purchaseStatusMessage,
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: messageColor,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }),
+                    );
+                  },
+                ),
               ],
             ],
           ),
@@ -306,28 +328,28 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   }
 
   Widget _buildBenefitRow(IconData icon, String text) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-        child: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: KolabingColors.success.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: KolabingColors.success, size: 16),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Text(
-                text,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-            ),
-          ],
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+    child: Row(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: KolabingColors.success.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: KolabingColors.success, size: 16),
         ),
-      );
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Text(
+            text,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: KolabingColors.textPrimary,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
