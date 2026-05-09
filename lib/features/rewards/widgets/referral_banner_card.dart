@@ -54,12 +54,12 @@ class ReferralBannerCard extends ConsumerWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
-                    color: KolabingColors.textTertiary,
+                    color: KolabingColors.accent,
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
-                  'Invite a business, earn up to \u20AC20',
+                  'Invite a business & earn 75\u20AC \uD83E\uDD11',
                   style: GoogleFonts.rubik(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -85,10 +85,10 @@ class ReferralBannerCard extends ConsumerWidget {
                   ),
                   child: Text(
                     'SHARE MY LINK',
-                    style: GoogleFonts.dmSans(
+                    style: GoogleFonts.rubik(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      letterSpacing: 0.8,
+                      letterSpacing: 1.0,
                     ),
                   ),
                 ),

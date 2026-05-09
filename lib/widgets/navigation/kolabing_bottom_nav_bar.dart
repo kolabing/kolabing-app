@@ -96,12 +96,12 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isSelected
-        ? KolabingColors.primary
+        ? KolabingColors.accent
         : isDark
             ? const Color(0xFF6B7280)
             : const Color(0xFF9CA3AF); // Gray-400
     final labelColor = isSelected
-        ? (isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary)
+        ? KolabingColors.accent
         : isDark
             ? const Color(0xFF6B7280)
             : const Color(0xFF9CA3AF);
@@ -111,8 +111,8 @@ class _NavBarItem extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          splashColor: KolabingColors.primary.withValues(alpha: 0.1),
-          highlightColor: KolabingColors.primary.withValues(alpha: 0.05),
+          splashColor: KolabingColors.accent.withValues(alpha: 0.08),
+          highlightColor: KolabingColors.accent.withValues(alpha: 0.04),
           child: SizedBox(
             height: 64,
             child: Column(
@@ -197,7 +197,7 @@ class _DotBadge extends StatelessWidget {
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: KolabingColors.primary,
+        color: KolabingColors.accent,
         shape: BoxShape.circle,
         border: Border.all(
           color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,

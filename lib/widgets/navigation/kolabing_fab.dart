@@ -23,16 +23,31 @@ class KolabingFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: onPressed,
-      tooltip: tooltip,
-      heroTag: heroTag ?? 'kolabing_fab',
-      elevation: 6,
-      highlightElevation: 12,
-      backgroundColor: KolabingColors.primary,
-      foregroundColor: KolabingColors.onPrimary,
-      shape: const CircleBorder(),
-      child: Icon(icon, size: 28),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FloatingActionButton(
+        onPressed: onPressed,
+        tooltip: tooltip,
+        heroTag: heroTag ?? 'kolabing_fab',
+        elevation: 0,
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
+        backgroundColor: KolabingColors.primary,
+        foregroundColor: KolabingColors.onPrimary,
+        shape: const CircleBorder(),
+        child: Icon(icon, size: 24),
+      ),
     );
   }
 }
@@ -54,19 +69,34 @@ class KolabingExtendedFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton.extended(
-      onPressed: onPressed,
-      heroTag: heroTag ?? 'kolabing_extended_fab',
-      elevation: 6,
-      highlightElevation: 12,
-      backgroundColor: KolabingColors.primary,
-      foregroundColor: KolabingColors.onPrimary,
-      icon: Icon(icon, size: 20),
-      label: Text(
-        label.toUpperCase(),
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FloatingActionButton.extended(
+        onPressed: onPressed,
+        heroTag: heroTag ?? 'kolabing_extended_fab',
+        elevation: 0,
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
+        backgroundColor: KolabingColors.primary,
+        foregroundColor: KolabingColors.onPrimary,
+        icon: Icon(icon, size: 20),
+        label: Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );

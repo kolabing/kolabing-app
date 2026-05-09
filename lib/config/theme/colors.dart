@@ -1,65 +1,80 @@
 import 'package:flutter/material.dart';
 
-/// Kolabing design system colors
+/// Kolabing design system colors — Calm redesign
 ///
-/// All color definitions for the Kolabing app following the brand guidelines.
-/// Use these constants throughout the app for consistent styling.
+/// Palette: warm beige surfaces, muted yellow CTA, near-black text,
+/// purple for links/active states only. No pure-black backgrounds.
 abstract final class KolabingColors {
   // ---------------------------------------------------------------------------
   // Primary Brand Colors
   // ---------------------------------------------------------------------------
 
-  /// Primary brand color - Yellow
-  /// Used for main CTAs, active tabs, and highlights
-  static const Color primary = Color(0xFFFFD861);
+  /// Primary CTA — warm soft yellow
+  static const Color primary = Color(0xFFFFE28C);
 
-  /// Darker yellow for pressed/hover states
-  static const Color primaryDark = Color(0xFFE5C057);
+  /// Darker yellow for pressed states
+  static const Color primaryDark = Color(0xFFF5D070);
 
-  /// Black text on primary color (always use for text on yellow)
-  static const Color onPrimary = Color(0xFF000000);
+  /// Near-black on primary (always use for text on yellow)
+  static const Color onPrimary = Color(0xFF0D0D0D);
 
   // ---------------------------------------------------------------------------
   // Background Colors
   // ---------------------------------------------------------------------------
 
-  /// Light gray background - Main app background
-  static const Color background = Color(0xFFF7F8FA);
+  /// Warm beige — main background, all screens
+  static const Color background = Color(0xFFF5F1E8);
 
-  /// White surfaces for cards, modals, bottom sheets
-  static const Color surface = Color(0xFFFFFFFF);
+  /// Warm off-white — cards, modals, elevated content
+  static const Color surface = Color(0xFFFCFAF5);
 
-  /// Input backgrounds (light theme)
-  static const Color surfaceVariant = Color(0xFFF5F6F8);
+  /// Pure white — input fills
+  static const Color surfaceVariant = Color(0xFFFFFFFF);
 
   // ---------------------------------------------------------------------------
   // Text Colors
   // ---------------------------------------------------------------------------
 
-  /// Primary text color
-  static const Color textPrimary = Color(0xFF232323);
+  /// Primary text — near black
+  static const Color textPrimary = Color(0xFF0D0D0D);
 
-  /// Secondary/muted text color
-  static const Color textSecondary = Color(0xFF606060);
+  /// Secondary/muted text
+  static const Color textSecondary = Color(0xFF5A5A55);
 
-  /// Tertiary/hint text color
-  static const Color textTertiary = Color(0xFF888888);
+  /// Tertiary/hint text
+  static const Color textTertiary = Color(0xFF8C8A82);
 
-  /// White text for dark backgrounds
+  /// White text (badge text on dark fills, overlays)
   static const Color textOnDark = Color(0xFFFFFFFF);
 
   // ---------------------------------------------------------------------------
-  // Dark Theme Colors (Auth Screens)
+  // Auth context colors
+  // Auth screens now share the same warm beige — no pure-black mode.
+  // These aliases are kept for API compatibility with existing screens.
   // ---------------------------------------------------------------------------
 
-  /// Black background for auth screens
-  static const Color darkBackground = Color(0xFF000000);
+  /// Auth screen background — warm beige (same as [background])
+  static const Color darkBackground = Color(0xFFF5F1E8);
 
-  /// Dark surface for inputs on auth screens
-  static const Color darkSurface = Color(0xFF222222);
+  /// Auth input surface — pure white
+  static const Color darkSurface = Color(0xFFFFFFFF);
 
-  /// Dark border color
-  static const Color darkBorder = Color(0xFF444444);
+  /// Auth border — subtle warm divider
+  static const Color darkBorder = Color(0x0F0D0D0D);
+
+  // ---------------------------------------------------------------------------
+  // Accent — Purple
+  // State/navigation/intelligence color. Yellow = action, Purple = state.
+  // ---------------------------------------------------------------------------
+
+  /// Purple accent — active nav, section labels, progress, chips, badges
+  static const Color accent = Color(0xFF7F77DD);
+
+  /// Text/icons on purple accent fills
+  static const Color onAccent = Color(0xFFFFFFFF);
+
+  /// Soft purple — light fill for selected chips and subtle tints
+  static const Color softAccent = Color(0xFFEFEEFA);
 
   // ---------------------------------------------------------------------------
   // Semantic Colors
@@ -68,10 +83,10 @@ abstract final class KolabingColors {
   /// Success green
   static const Color success = Color(0xFF7AE7A3);
 
-  /// Warning yellow
+  /// Warning amber
   static const Color warning = Color(0xFFFBC02D);
 
-  /// Error/destructive red
+  /// Error/destructive rose
   static const Color error = Color(0xFFE14D76);
 
   /// Info blue
@@ -81,17 +96,17 @@ abstract final class KolabingColors {
   // Border Colors
   // ---------------------------------------------------------------------------
 
-  /// Default border color
-  static const Color border = Color(0xFFEBEBEB);
+  /// Default border — subtle warm divider (rgba 0,0,0,0.06)
+  static const Color border = Color(0x0F0D0D0D);
 
-  /// Focus border color
-  static const Color borderFocus = Color(0xFFE8D7A0);
+  /// Focus border — near black (high contrast on warm surface)
+  static const Color borderFocus = Color(0xFF0D0D0D);
 
-  /// Error border color
-  static const Color borderError = Color(0xFFFF6B6B);
+  /// Error border
+  static const Color borderError = Color(0xFFE14D76);
 
   // ---------------------------------------------------------------------------
-  // Accent Colors (Categories/Badges)
+  // Accent / Badge backgrounds
   // ---------------------------------------------------------------------------
 
   /// Orange badge background
@@ -100,51 +115,39 @@ abstract final class KolabingColors {
   /// Orange badge text
   static const Color accentOrangeText = Color(0xFFD8910B);
 
-  /// Soft yellow background
-  static const Color softYellow = Color(0xFFFFF6D8);
+  /// Soft yellow — selected card fills, soft chips
+  static const Color softYellow = Color(0xFFFFF4C2);
 
   /// Soft yellow border
-  static const Color softYellowBorder = Color(0xFFF9E9AC);
+  static const Color softYellowBorder = Color(0xFFFFE28C);
 
   // ---------------------------------------------------------------------------
   // Status Badge Colors
   // ---------------------------------------------------------------------------
 
-  /// Pending badge background
   static const Color pendingBg = Color(0xFFFFDDAC);
-
-  /// Pending badge text
   static const Color pendingText = Color(0xFFD8910B);
 
-  /// Active/Published badge background
   static const Color activeBg = Color(0xFFD4EDDA);
-
-  /// Active/Published badge text
   static const Color activeText = Color(0xFF155724);
 
-  /// Completed badge background
-  static const Color completedBg = Color(0xFFE8E8E8);
+  static const Color completedBg = Color(0xFFEDEAE0);
+  static const Color completedText = Color(0xFF5A5A55);
 
-  /// Completed badge text
-  static const Color completedText = Color(0xFF666666);
-
-  /// Error/Declined badge background
   static const Color errorBg = Color(0xFFF8D7DA);
-
-  /// Error/Declined badge text
   static const Color errorText = Color(0xFF721C24);
 
   // ---------------------------------------------------------------------------
   // Gradient
   // ---------------------------------------------------------------------------
 
-  /// Primary gradient for special elements
+  /// Primary gradient — promotional banners and highlight elements only
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFFFD861),
-      Color(0xFFFFE082),
+      Color(0xFFFFE28C),
+      Color(0xFFFFF4C2),
     ],
   );
 }

@@ -9,11 +9,13 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../kolab/models/kolab.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../../widgets/navigation/navigation.dart';
 
 /// My Opportunities screen for community users
 ///
@@ -185,11 +187,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
-        backgroundColor: KolabingColors.primary,
-        foregroundColor: KolabingColors.onPrimary,
-        child: const Icon(LucideIcons.plus),
+        tooltip: 'Create New Kolab',
       ),
     );
   }
@@ -206,10 +206,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       children: [
         Text(
           'MY KOLABS',
-          style: GoogleFonts.rubik(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
+          style: KolabingTextStyles.pageTitle.copyWith(
             color: KolabingColors.textPrimary,
           ),
         ),

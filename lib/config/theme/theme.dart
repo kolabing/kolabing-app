@@ -24,7 +24,7 @@ abstract final class KolabingTheme {
           onPrimary: KolabingColors.onPrimary,
           primaryContainer: KolabingColors.softYellow,
           onPrimaryContainer: KolabingColors.textPrimary,
-          secondary: KolabingColors.textSecondary,
+          secondary: KolabingColors.accent,
           onSecondary: KolabingColors.textOnDark,
           surface: KolabingColors.surface,
           onSurface: KolabingColors.textPrimary,
@@ -32,19 +32,21 @@ abstract final class KolabingTheme {
           error: KolabingColors.error,
           onError: KolabingColors.textOnDark,
           outline: KolabingColors.border,
-          outlineVariant: KolabingColors.borderFocus,
+          outlineVariant: KolabingColors.border,
         ),
 
-        // Scaffold
+        // Scaffold — warm beige
         scaffoldBackgroundColor: KolabingColors.background,
 
-        // AppBar
+        // AppBar — beige, no elevation, no divider
         appBarTheme: AppBarTheme(
           elevation: 0,
+          scrolledUnderElevation: 0,
           centerTitle: true,
-          backgroundColor: KolabingColors.surface,
+          backgroundColor: KolabingColors.background,
           foregroundColor: KolabingColors.textPrimary,
           surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.dark,
@@ -57,21 +59,22 @@ abstract final class KolabingTheme {
           ),
         ),
 
-        // Bottom Navigation
+        // Bottom Navigation — card surface, yellow active
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: KolabingColors.surface,
-          selectedItemColor: KolabingColors.primary,
-          unselectedItemColor: KolabingColors.textSecondary,
+          selectedItemColor: KolabingColors.textPrimary,
+          unselectedItemColor: KolabingColors.textTertiary,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
           selectedLabelStyle: KolabingTextStyles.labelSmall,
           unselectedLabelStyle: KolabingTextStyles.labelSmall,
         ),
 
-        // Card
+        // Card — white, no elevation, warm-grey border only
         cardTheme: CardThemeData(
           color: KolabingColors.surface,
           elevation: 0,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: KolabingRadius.borderRadiusLg,
             side: const BorderSide(color: KolabingColors.border),
@@ -79,13 +82,14 @@ abstract final class KolabingTheme {
           margin: EdgeInsets.zero,
         ),
 
-        // Elevated Button (Primary)
+        // Elevated Button (Primary) — no glow, no shadow, no uppercase
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: KolabingColors.primary,
             foregroundColor: KolabingColors.onPrimary,
             elevation: 0,
-            minimumSize: const Size(double.infinity, 52),
+            shadowColor: Colors.transparent,
+            minimumSize: const Size(double.infinity, 50),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -94,31 +98,31 @@ abstract final class KolabingTheme {
           ),
         ),
 
-        // Outlined Button (Secondary)
+        // Outlined Button (Secondary) — subtle border, no shadow
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: KolabingColors.textPrimary,
             elevation: 0,
-            minimumSize: const Size(double.infinity, 48),
+            minimumSize: const Size(double.infinity, 50),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
             ),
-            side: const BorderSide(color: KolabingColors.border, width: 1.5),
+            side: const BorderSide(color: KolabingColors.border, width: 1),
             textStyle: KolabingTextStyles.button,
           ),
         ),
 
-        // Text Button
+        // Text Button — purple for links
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.primary,
+            foregroundColor: KolabingColors.accent,
             textStyle: KolabingTextStyles.labelLarge,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
         ),
 
-        // Input Decoration (Light theme)
+        // Input Decoration — pure white fill, subtle border, black on focus
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: KolabingColors.surfaceVariant,
@@ -127,33 +131,33 @@ abstract final class KolabingTheme {
             vertical: 14,
           ),
           border: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
-            borderSide: BorderSide.none,
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: const BorderSide(color: KolabingColors.border),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
+            borderRadius: KolabingRadius.borderRadiusMd,
             borderSide: const BorderSide(color: KolabingColors.border),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
+            borderRadius: KolabingRadius.borderRadiusMd,
             borderSide: const BorderSide(
               color: KolabingColors.borderFocus,
-              width: 2,
+              width: 1.5,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
+            borderRadius: KolabingRadius.borderRadiusMd,
             borderSide: const BorderSide(color: KolabingColors.borderError),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
+            borderRadius: KolabingRadius.borderRadiusMd,
             borderSide: const BorderSide(
               color: KolabingColors.borderError,
-              width: 2,
+              width: 1.5,
             ),
           ),
           hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.textTertiary,
           ),
           labelStyle: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textSecondary,
@@ -166,21 +170,218 @@ abstract final class KolabingTheme {
           ),
         ),
 
-        // Chip
+        // Chip — warm surface, no shadow
         chipTheme: ChipThemeData(
           backgroundColor: KolabingColors.surfaceVariant,
           labelStyle: KolabingTextStyles.labelSmall,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           shape: RoundedRectangleBorder(
             borderRadius: KolabingRadius.borderRadiusMd,
+            side: const BorderSide(color: KolabingColors.border),
           ),
+          elevation: 0,
+          pressElevation: 0,
         ),
 
-        // Divider
+        // Divider — warm grey
         dividerTheme: const DividerThemeData(
           color: KolabingColors.border,
           thickness: 1,
           space: 1,
+        ),
+
+        // Dialog — white surface
+        dialogTheme: DialogThemeData(
+          backgroundColor: KolabingColors.surface,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: KolabingRadius.borderRadiusLg,
+            side: const BorderSide(color: KolabingColors.border),
+          ),
+          titleTextStyle: KolabingTextStyles.headlineMedium.copyWith(
+            color: KolabingColors.textPrimary,
+          ),
+          contentTextStyle: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+
+        // Bottom Sheet — white, no heavy shadow
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: KolabingColors.surface,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(KolabingRadius.xl),
+            ),
+          ),
+          showDragHandle: true,
+          dragHandleColor: KolabingColors.border,
+        ),
+
+        // Snackbar — near-black (the one place we use dark fill)
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: KolabingColors.textPrimary,
+          contentTextStyle: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textOnDark,
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: KolabingRadius.borderRadiusSm,
+          ),
+        ),
+
+        // Icon
+        iconTheme: const IconThemeData(
+          color: KolabingColors.textPrimary,
+          size: 24,
+        ),
+
+        // Text Theme
+        textTheme: _buildTextTheme(KolabingColors.textPrimary),
+
+        // Font — Inter everywhere
+        fontFamily: KolabingTypography.fontBody,
+      );
+
+  // ---------------------------------------------------------------------------
+  // Auth Theme (same as light — warm beige, no black backgrounds)
+  // ---------------------------------------------------------------------------
+
+  /// Auth screens share the same warm palette as the main app.
+  /// This getter is kept for API compatibility; routes that previously used
+  /// a "dark" theme now render in the unified beige theme.
+  static ThemeData get darkTheme => ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+
+        // Color scheme — identical to light theme
+        colorScheme: const ColorScheme.light(
+          primary: KolabingColors.primary,
+          onPrimary: KolabingColors.onPrimary,
+          primaryContainer: KolabingColors.softYellow,
+          onPrimaryContainer: KolabingColors.textPrimary,
+          secondary: KolabingColors.accent,
+          onSecondary: KolabingColors.textOnDark,
+          surface: KolabingColors.surface,
+          onSurface: KolabingColors.textPrimary,
+          surfaceContainerHighest: KolabingColors.surfaceVariant,
+          error: KolabingColors.error,
+          onError: KolabingColors.textOnDark,
+          outline: KolabingColors.border,
+          outlineVariant: KolabingColors.border,
+        ),
+
+        // Scaffold — warm beige
+        scaffoldBackgroundColor: KolabingColors.background,
+
+        // AppBar — beige, transparent
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          centerTitle: true,
+          backgroundColor: KolabingColors.background,
+          foregroundColor: KolabingColors.textPrimary,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
+          titleTextStyle: KolabingTextStyles.titleLarge,
+          iconTheme: const IconThemeData(
+            color: KolabingColors.textPrimary,
+            size: 24,
+          ),
+        ),
+
+        // Elevated Button — no glow, no shadow
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KolabingColors.primary,
+            foregroundColor: KolabingColors.onPrimary,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            minimumSize: const Size(double.infinity, 50),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+            ),
+            textStyle: KolabingTextStyles.button,
+          ),
+        ),
+
+        // Outlined Button — subtle warm-grey border
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: KolabingColors.textPrimary,
+            elevation: 0,
+            minimumSize: const Size(double.infinity, 50),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+            ),
+            side: const BorderSide(color: KolabingColors.border, width: 1),
+            textStyle: KolabingTextStyles.button,
+          ),
+        ),
+
+        // Text Button — purple for links
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: KolabingColors.accent,
+            textStyle: KolabingTextStyles.labelLarge,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+        ),
+
+        // Input Decoration — white fill, warm-grey border, black focus
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: KolabingColors.surface,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: const BorderSide(color: KolabingColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: const BorderSide(color: KolabingColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: const BorderSide(
+              color: KolabingColors.borderFocus,
+              width: 1.5,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: const BorderSide(color: KolabingColors.borderError),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: const BorderSide(
+              color: KolabingColors.borderError,
+              width: 1.5,
+            ),
+          ),
+          hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textTertiary,
+          ),
+          labelStyle: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textSecondary,
+          ),
+          floatingLabelStyle: KolabingTextStyles.bodySmall.copyWith(
+            color: KolabingColors.textSecondary,
+          ),
+          errorStyle: KolabingTextStyles.bodySmall.copyWith(
+            color: KolabingColors.error,
+          ),
         ),
 
         // Dialog
@@ -229,194 +430,6 @@ abstract final class KolabingTheme {
 
         // Text Theme
         textTheme: _buildTextTheme(KolabingColors.textPrimary),
-
-        // Font
-        fontFamily: KolabingTypography.fontBody,
-      );
-
-  // ---------------------------------------------------------------------------
-  // Dark Theme (Auth Screens)
-  // ---------------------------------------------------------------------------
-
-  /// Dark theme for authentication screens
-  static ThemeData get darkTheme => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-
-        // Color scheme
-        colorScheme: const ColorScheme.dark(
-          primary: KolabingColors.primary,
-          onPrimary: KolabingColors.onPrimary,
-          primaryContainer: KolabingColors.primaryDark,
-          onPrimaryContainer: KolabingColors.onPrimary,
-          secondary: KolabingColors.textSecondary,
-          onSecondary: KolabingColors.textOnDark,
-          surface: KolabingColors.darkSurface,
-          onSurface: KolabingColors.textOnDark,
-          surfaceContainerHighest: KolabingColors.darkSurface,
-          error: KolabingColors.error,
-          onError: KolabingColors.textOnDark,
-          outline: KolabingColors.darkBorder,
-        ),
-
-        // Scaffold
-        scaffoldBackgroundColor: KolabingColors.darkBackground,
-
-        // AppBar
-        appBarTheme: AppBarTheme(
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          foregroundColor: KolabingColors.textOnDark,
-          surfaceTintColor: Colors.transparent,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
-          ),
-          titleTextStyle: KolabingTextStyles.titleLarge,
-          iconTheme: const IconThemeData(
-            color: KolabingColors.textOnDark,
-            size: 24,
-          ),
-        ),
-
-        // Elevated Button (Primary - Yellow on dark)
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
-            elevation: 0,
-            minimumSize: const Size(double.infinity, 52),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-            textStyle: KolabingTextStyles.button,
-          ),
-        ),
-
-        // Outlined Button (Secondary on dark)
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.textOnDark,
-            elevation: 0,
-            minimumSize: const Size(double.infinity, 48),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-            side: const BorderSide(
-              color: KolabingColors.darkBorder,
-              width: 1.5,
-            ),
-            textStyle: KolabingTextStyles.button,
-          ),
-        ),
-
-        // Text Button
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.primary,
-            textStyle: KolabingTextStyles.labelLarge,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
-        ),
-
-        // Input Decoration (Dark theme)
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: KolabingColors.darkSurface,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            borderSide: const BorderSide(color: KolabingColors.darkBorder),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            borderSide: const BorderSide(color: KolabingColors.darkBorder),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            borderSide: const BorderSide(
-              color: KolabingColors.borderFocus,
-              width: 2,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            borderSide: const BorderSide(color: KolabingColors.borderError),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            borderSide: const BorderSide(
-              color: KolabingColors.borderError,
-              width: 2,
-            ),
-          ),
-          hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textTertiary,
-          ),
-          labelStyle: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
-          ),
-          floatingLabelStyle: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.textOnDark,
-          ),
-          errorStyle: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.error,
-          ),
-        ),
-
-        // Dialog
-        dialogTheme: DialogThemeData(
-          backgroundColor: KolabingColors.darkSurface,
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusLg,
-          ),
-          titleTextStyle: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.textOnDark,
-          ),
-          contentTextStyle: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textTertiary,
-          ),
-        ),
-
-        // Bottom Sheet
-        bottomSheetTheme: const BottomSheetThemeData(
-          backgroundColor: KolabingColors.darkSurface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(KolabingRadius.xl),
-            ),
-          ),
-          showDragHandle: true,
-          dragHandleColor: KolabingColors.darkBorder,
-        ),
-
-        // Snackbar
-        snackBarTheme: SnackBarThemeData(
-          backgroundColor: KolabingColors.surface,
-          contentTextStyle: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textPrimary,
-          ),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
-          ),
-        ),
-
-        // Icon
-        iconTheme: const IconThemeData(
-          color: KolabingColors.textOnDark,
-          size: 24,
-        ),
-
-        // Text Theme
-        textTheme: _buildTextTheme(KolabingColors.textOnDark),
 
         // Font
         fontFamily: KolabingTypography.fontBody,

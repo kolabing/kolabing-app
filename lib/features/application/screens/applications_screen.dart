@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
@@ -50,11 +51,8 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
         centerTitle: true,
         title: Text(
           'APPLICATIONS',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+          style: KolabingTextStyles.pageTitleSmall.copyWith(
+            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
           ),
         ),
         bottom: PreferredSize(

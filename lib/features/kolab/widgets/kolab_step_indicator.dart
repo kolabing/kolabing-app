@@ -48,11 +48,11 @@ class KolabStepIndicator extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isActive || isCompleted
-                      ? KolabingColors.primary
+                      ? KolabingColors.accent
                       : Colors.transparent,
                   border: Border.all(
                     color: isActive || isCompleted
-                        ? KolabingColors.primary
+                        ? KolabingColors.accent
                         : KolabingColors.border,
                     width: 1.5,
                   ),

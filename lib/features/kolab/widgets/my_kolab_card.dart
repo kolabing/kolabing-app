@@ -286,10 +286,10 @@ class _ActionButton extends StatelessWidget {
           icon: Icon(icon, size: 14),
           label: Text(
             label.toUpperCase(),
-            style: GoogleFonts.dmSans(
+            style: GoogleFonts.rubik(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+              letterSpacing: 1.0,
             ),
           ),
           style: ElevatedButton.styleFrom(
@@ -314,10 +314,10 @@ class _ActionButton extends StatelessWidget {
         icon: Icon(icon, size: 14, color: color),
         label: Text(
           label.toUpperCase(),
-          style: GoogleFonts.dmSans(
+          style: GoogleFonts.rubik(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: 1.0,
             color: color,
           ),
         ),

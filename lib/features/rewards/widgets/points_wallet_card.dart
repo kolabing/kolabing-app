@@ -53,12 +53,12 @@ class PointsWalletCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(KolabingSpacing.lg),
           decoration: BoxDecoration(
-            gradient: KolabingColors.primaryGradient,
+            color: const Color(0xFFFFE28C),
             borderRadius: KolabingRadius.borderRadiusLg,
             boxShadow: [
               BoxShadow(
-                color: KolabingColors.primary.withValues(alpha: 0.35),
-                blurRadius: 12,
+                color: const Color(0xFFFFE28C).withValues(alpha: 0.40),
+                blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -168,7 +168,7 @@ class PointsWalletCard extends StatelessWidget {
           ),
           child: Text(
             'WITHDRAW',
-            style: GoogleFonts.dmSans(
+            style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.0,

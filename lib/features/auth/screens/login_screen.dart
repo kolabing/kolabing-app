@@ -428,10 +428,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           opacityAnimation: _logoAnimation,
                           slideAnimation: _logoSlideAnimation,
                           child: const KolabingLogo(
-                            size: KolabingLogoSize.medium,
-                            variant: KolabingLogoVariant.yellowCircle,
-                            showText: true,
-                            onDarkBackground: false,
+                            width: 160,
+                            variant: KolabingLogoVariant.onDark,
                           ),
                         ),
 
