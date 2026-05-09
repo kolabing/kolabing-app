@@ -277,10 +277,10 @@ class OpportunityCard extends StatelessWidget {
               ),
               child: Text(
                 'VIEW',
-                style: GoogleFonts.dmSans(
+                style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+                  letterSpacing: 1.0,
                 ),
               ),
             ),
@@ -304,10 +304,10 @@ class OpportunityCard extends StatelessWidget {
               ),
               child: Text(
                 'APPLY',
-                style: GoogleFonts.dmSans(
+                style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+                  letterSpacing: 1.0,
                 ),
               ),
             ),

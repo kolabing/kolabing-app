@@ -93,59 +93,53 @@ abstract final class KolabingLayout {
   static const double iconSizeSmall = 20;
 }
 
-/// Kolabing shadow definitions
+/// Kolabing shadow definitions — Calm redesign
 ///
-/// Consistent shadow styles for elevation throughout the app.
+/// Shadows are minimal. Cards use borders instead of elevation.
+/// No glow effects anywhere. Buttons are flat.
 abstract final class KolabingShadows {
-  /// Card shadow - subtle elevation
+  /// Card shadow — nearly invisible lift
   static const BoxShadow card = BoxShadow(
-    color: Color(0x1A374957), // rgba(55, 73, 87, 0.10)
-    blurRadius: 8,
-    offset: Offset(0, 1.5),
-  );
-
-  /// Card hover shadow - increased elevation on interaction
-  static const BoxShadow cardHover = BoxShadow(
-    color: Color(0x1F374957), // rgba(55, 73, 87, 0.12)
-    blurRadius: 16,
-    offset: Offset(0, 4),
-  );
-
-  /// Button shadow - slight elevation for CTAs
-  static const BoxShadow button = BoxShadow(
-    color: Color(0x1C374957), // rgba(55, 73, 87, 0.11)
+    color: Color(0x0A000000),
     blurRadius: 4,
-    offset: Offset(0, 1.5),
+    offset: Offset(0, 1),
   );
 
-  /// Bottom navigation shadow
-  static const BoxShadow bottomNav = BoxShadow(
-    color: Color(0x14000000), // rgba(0, 0, 0, 0.08)
-    blurRadius: 20,
-    offset: Offset(0, -4),
+  /// Card hover shadow — slight lift on interaction
+  static const BoxShadow cardHover = BoxShadow(
+    color: Color(0x12000000),
+    blurRadius: 10,
+    offset: Offset(0, 3),
   );
 
-  /// Focus ring shadow for inputs
-  static const BoxShadow focusRing = BoxShadow(
-    color: Color(0x66FFF6D8), // rgba(255, 246, 216, 0.4)
+  /// Button shadow — none (buttons are flat; no glow)
+  static const BoxShadow button = BoxShadow(
+    color: Color(0x00000000),
     blurRadius: 0,
-    spreadRadius: 3,
+    offset: Offset(0, 0),
+  );
+
+  /// Bottom navigation shadow — soft upward line
+  static const BoxShadow bottomNav = BoxShadow(
+    color: Color(0x0A000000),
+    blurRadius: 12,
+    offset: Offset(0, -2),
+  );
+
+  /// Focus ring — removed; focus expressed via border-color only
+  static const BoxShadow focusRing = BoxShadow(
+    color: Color(0x00000000),
+    blurRadius: 0,
+    spreadRadius: 0,
   );
 
   // ---------------------------------------------------------------------------
   // List helpers for decoration
   // ---------------------------------------------------------------------------
 
-  /// Card shadow as list
   static List<BoxShadow> get cardShadow => [card];
-
-  /// Card hover shadow as list
   static List<BoxShadow> get cardHoverShadow => [cardHover];
-
-  /// Button shadow as list
-  static List<BoxShadow> get buttonShadow => [button];
-
-  /// Bottom navigation shadow as list
+  static List<BoxShadow> get buttonShadow => [];
   static List<BoxShadow> get bottomNavShadow => [bottomNav];
 }
 

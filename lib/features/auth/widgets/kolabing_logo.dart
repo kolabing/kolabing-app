@@ -1,179 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../../config/theme/colors.dart';
-
-/// Logo size presets
-enum KolabingLogoSize {
-  /// 40dp - Navigation bars, small headers
-  small(40),
-
-  /// 56dp - Medium contexts
-  medium(56),
-
-  /// 64dp - Auth screens
-  large(64),
-
-  /// 80dp - Welcome screen
-  xLarge(80),
-
-  /// 120dp - Splash screen
-  splash(120);
-
-  const KolabingLogoSize(this.value);
-
-  final double value;
-}
-
-/// Logo variant styles
+/// Which logo asset to render
 enum KolabingLogoVariant {
-  /// Black K on yellow circle background (default for light backgrounds)
-  yellowBackground,
+  /// Black cloud + yellow text — for yellow/light backgrounds
+  onYellow('assets/images/logo_cloud_on_yellow.png'),
 
-  /// Yellow circle with black K (for dark backgrounds)
-  yellowCircle,
+  /// Yellow cloud + black text — for dark/black backgrounds
+  onDark('assets/images/logo_cloud_on_dark.png'),
 
-  /// Black K only (no background, for splash screen)
-  blackKOnly,
+  /// Black cloud + white text on transparent — for mixed/floating contexts
+  transparent('assets/images/logo_cloud_transparent.png'),
+
+  /// Black cloud + yellow text on transparent
+  yellowTransparent('assets/images/logo_cloud_yellow_transparent.png'),
+
+  /// Yellow cloud + black text on transparent
+  lightTransparent('assets/images/logo_cloud_light_transparent.png'),
+
+  /// Black cloud + white text — maximum contrast
+  whiteOnDark('assets/images/logo_wordmark_white_on_dark.png');
+
+  const KolabingLogoVariant(this.assetPath);
+  final String assetPath;
 }
 
-/// Kolabing logo widget
+/// Kolabing logo widget — renders the real logo image asset.
 ///
-/// Displays the Kolabing logo with optional text below.
-/// Supports different sizes and variants for various contexts.
+/// [width] controls the rendered width; height scales automatically.
+/// Pick [variant] based on the background:
+///   dark bg → onDark, yellow/light bg → onYellow, floating → transparent.
 class KolabingLogo extends StatelessWidget {
   const KolabingLogo({
     super.key,
-    this.size = KolabingLogoSize.large,
-    this.variant = KolabingLogoVariant.yellowCircle,
-    this.showText = true,
-    this.onDarkBackground = true,
-    this.textColor,
+    this.width = 200,
+    this.variant = KolabingLogoVariant.onDark,
   });
 
-  /// Logo size
-  final KolabingLogoSize size;
-
-  /// Logo variant style
+  final double width;
   final KolabingLogoVariant variant;
-
-  /// Whether to show "Kolabing" text below the logo
-  final bool showText;
-
-  /// Whether the logo is on a dark background (affects text color)
-  final bool onDarkBackground;
-
-  /// Custom text color (overrides onDarkBackground)
-  final Color? textColor;
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Kolabing application logo',
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Logo
-            _buildLogo(),
-
-            // Text below logo
-            if (showText) ...[
-              SizedBox(height: size == KolabingLogoSize.splash ? 16 : 12),
-              Text(
-                'Kolabing',
-                style: GoogleFonts.rubik(
-                  fontSize: _getTextSize(),
-                  fontWeight: FontWeight.w800,
-                  color: textColor ??
-                      (onDarkBackground
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary),
-                  letterSpacing: 1.0,
-                ),
-              ),
-            ],
-          ],
+        label: 'Kolabing logo',
+        image: true,
+        child: Image.asset(
+          variant.assetPath,
+          width: width,
+          fit: BoxFit.contain,
         ),
       );
-
-  Widget _buildLogo() {
-    switch (variant) {
-      case KolabingLogoVariant.yellowBackground:
-        return _buildYellowBackgroundLogo();
-      case KolabingLogoVariant.yellowCircle:
-        return _buildYellowCircleLogo();
-      case KolabingLogoVariant.blackKOnly:
-        return _buildBlackKOnly();
-    }
-  }
-
-  /// Yellow circle with black K inside
-  Widget _buildYellowCircleLogo() => Container(
-        width: size.value,
-        height: size.value,
-        decoration: const BoxDecoration(
-          color: KolabingColors.primary,
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Text(
-            'K',
-            style: GoogleFonts.rubik(
-              fontSize: size.value * 0.5,
-              fontWeight: FontWeight.w800,
-              color: KolabingColors.onPrimary,
-            ),
-          ),
-        ),
-      );
-
-  /// Black K on yellow background (for splash)
-  Widget _buildYellowBackgroundLogo() => Container(
-        width: size.value,
-        height: size.value,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Center(
-          child: Text(
-            'K',
-            style: GoogleFonts.rubik(
-              fontSize: size.value * 0.67,
-              fontWeight: FontWeight.w800,
-              color: KolabingColors.onPrimary,
-            ),
-          ),
-        ),
-      );
-
-  /// Black K only without background
-  Widget _buildBlackKOnly() => SizedBox(
-        width: size.value,
-        height: size.value,
-        child: Center(
-          child: Text(
-            'K',
-            style: GoogleFonts.rubik(
-              fontSize: size.value * 0.67,
-              fontWeight: FontWeight.w800,
-              color: KolabingColors.onPrimary,
-            ),
-          ),
-        ),
-      );
-
-  double _getTextSize() {
-    switch (size) {
-      case KolabingLogoSize.small:
-        return 14;
-      case KolabingLogoSize.medium:
-        return 16;
-      case KolabingLogoSize.large:
-        return 18;
-      case KolabingLogoSize.xLarge:
-        return 20;
-      case KolabingLogoSize.splash:
-        return 24;
-    }
-  }
 }

@@ -24,14 +24,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   // Staggered animations for each element
   late final Animation<double> _logoAnimation;
-  late final Animation<double> _appNameAnimation;
   late final Animation<double> _headlineAnimation;
   late final Animation<double> _descriptionAnimation;
   late final Animation<double> _buttonsAnimation;
 
   // Slide animations
   late final Animation<Offset> _logoSlideAnimation;
-  late final Animation<Offset> _appNameSlideAnimation;
   late final Animation<Offset> _headlineSlideAnimation;
   late final Animation<Offset> _descriptionSlideAnimation;
   late final Animation<Offset> _buttonsSlideAnimation;
@@ -67,14 +65,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
     // Staggered opacity animations
     _logoAnimation = _createOpacityAnimation(0.0, 0.4);
-    _appNameAnimation = _createOpacityAnimation(0.08, 0.48);
     _headlineAnimation = _createOpacityAnimation(0.17, 0.57);
     _descriptionAnimation = _createOpacityAnimation(0.25, 0.65);
     _buttonsAnimation = _createOpacityAnimation(0.33, 0.73);
 
     // Staggered slide animations (20dp up)
     _logoSlideAnimation = _createSlideAnimation(0.0, 0.4);
-    _appNameSlideAnimation = _createSlideAnimation(0.08, 0.48);
     _headlineSlideAnimation = _createSlideAnimation(0.17, 0.57);
     _descriptionSlideAnimation = _createSlideAnimation(0.25, 0.65);
     _buttonsSlideAnimation = _createSlideAnimation(0.33, 0.73);
@@ -131,26 +127,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               opacityAnimation: _logoAnimation,
               slideAnimation: _logoSlideAnimation,
               child: const KolabingLogo(
-                size: KolabingLogoSize.xLarge,
-                variant: KolabingLogoVariant.yellowCircle,
-                showText: false,
-                onDarkBackground: false,
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // App name
-            _AnimatedElement(
-              opacityAnimation: _appNameAnimation,
-              slideAnimation: _appNameSlideAnimation,
-              child: Text(
-                'Kolabing',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
-                ),
+                width: 220,
+                variant: KolabingLogoVariant.onYellow,
               ),
             ),
 

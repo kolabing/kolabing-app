@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/providers/wallet_provider.dart';
@@ -141,13 +142,10 @@ class _CommunityDashboardScreenState
             children: [
               Text(
                 'COMMUNITY DASHBOARD',
-                style: GoogleFonts.rubik(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+                style: KolabingTextStyles.pageTitle.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.textPrimary,
-                  letterSpacing: 1.0,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
@@ -251,10 +249,10 @@ class _CommunityDashboardScreenState
               ),
               child: Text(
                 'FIND A COLLAB',
-                style: GoogleFonts.dmSans(
+                style: GoogleFonts.rubik(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
+                  letterSpacing: 1.0,
                 ),
               ),
             ),
@@ -288,10 +286,10 @@ class _CommunityDashboardScreenState
                 child: Text(
                   'MY APPLICATIONS',
                   maxLines: 1,
-                  style: GoogleFonts.dmSans(
+                  style: GoogleFonts.rubik(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.8,
+                    letterSpacing: 1.0,
                   ),
                 ),
               ),
@@ -315,8 +313,7 @@ class _CommunityDashboardScreenState
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: const Color(0xFF0D0D0D),
             letterSpacing: 0.8,
           ),
         ),
@@ -405,10 +402,10 @@ class _CommunityDashboardScreenState
                 icon: const Icon(LucideIcons.refreshCw, size: 18),
                 label: Text(
                   'RETRY',
-                  style: GoogleFonts.dmSans(
+                  style: GoogleFonts.rubik(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.8,
+                    letterSpacing: 1.0,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(

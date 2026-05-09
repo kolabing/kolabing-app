@@ -203,10 +203,10 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               icon: const Icon(LucideIcons.fileText, size: 18),
               label: Text(
                 'VIEW MY APPLICATIONS',
-                style: GoogleFonts.dmSans(
+                style: GoogleFonts.rubik(
                   fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.0,
                 ),
               ),
               style: ElevatedButton.styleFrom(
@@ -235,7 +235,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               ),
               child: Text(
                 'Keep exploring',
-                style: GoogleFonts.dmSans(
+                style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

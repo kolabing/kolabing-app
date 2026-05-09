@@ -490,10 +490,10 @@ class ExploreDetailSheet extends StatelessWidget {
           icon: const Icon(LucideIcons.send, size: 18),
           label: Text(
             'APPLY NOW',
-            style: GoogleFonts.dmSans(
+            style: GoogleFonts.rubik(
               fontSize: 15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
             ),
           ),
           style: ElevatedButton.styleFrom(

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// A stats card widget used on both Business and Community dashboards.
 ///
@@ -58,13 +57,10 @@ class DashboardStatCard extends StatelessWidget {
         children: [
           // Title label
           Text(
-            title.toUpperCase(),
-            style: GoogleFonts.dmSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.5,
+            title,
+            style: KolabingTextStyles.labelSmall.copyWith(
               color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                  ? KolabingColors.textOnDark.withValues(alpha: 0.45)
                   : KolabingColors.textTertiary,
             ),
             maxLines: 1,
@@ -80,9 +76,9 @@ class DashboardStatCard extends StatelessWidget {
               // Count
               Text(
                 count.toString(),
-                style: GoogleFonts.rubik(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                style: KolabingTextStyles.displaySmall.copyWith(
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: -0.5,
                   color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.textPrimary,
@@ -111,10 +107,10 @@ class DashboardStatCard extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               subtitle!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.textSecondary,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: isDark
+                    ? KolabingColors.textOnDark.withValues(alpha: 0.45)
+                    : KolabingColors.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

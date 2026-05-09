@@ -148,10 +148,10 @@ class _PrimaryActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: GoogleFonts.darkerGrotesque(
+                  style: GoogleFonts.rubik(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.0,
                   ),
                 ),
         ),
@@ -197,10 +197,10 @@ class _OutlinedActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: GoogleFonts.darkerGrotesque(
+                  style: GoogleFonts.rubik(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.0,
                   ),
                 ),
         ),

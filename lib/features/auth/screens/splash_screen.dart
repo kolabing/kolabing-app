@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
 import '../providers/auth_state_provider.dart';
+import '../widgets/kolabing_logo.dart';
 
 /// Animation durations as per UX spec
 const Duration _fadeInDuration = Duration(milliseconds: 200);
@@ -161,39 +161,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         ),
         child: Semantics(
           label: 'Kolabing - Loading application',
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Black "K" logo
-                SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: Center(
-                    child: Text(
-                      'K',
-                      style: GoogleFonts.rubik(
-                        fontSize: 80,
-                        fontWeight: FontWeight.w800,
-                        color: KolabingColors.onPrimary,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // "Kolabing" text
-                Text(
-                  'Kolabing',
-                  style: GoogleFonts.rubik(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: KolabingColors.onPrimary,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ],
+          child: const Center(
+            child: KolabingLogo(
+              width: 280,
+              variant: KolabingLogoVariant.onYellow,
             ),
           ),
         ),

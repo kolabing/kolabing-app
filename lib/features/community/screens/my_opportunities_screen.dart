@@ -9,6 +9,8 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../widgets/navigation/navigation.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../kolab/enums/intent_type.dart';
 import '../../kolab/models/kolab.dart';
@@ -190,11 +192,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
-        backgroundColor: KolabingColors.primary,
-        foregroundColor: KolabingColors.onPrimary,
-        child: const Icon(LucideIcons.plus),
+        tooltip: 'Create New Kolab',
       ),
     );
   }
@@ -211,10 +211,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       children: [
         Text(
           'MY KOLABS',
-          style: GoogleFonts.rubik(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
+          style: KolabingTextStyles.pageTitle.copyWith(
             color: KolabingColors.textPrimary,
           ),
         ),
