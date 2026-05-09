@@ -76,7 +76,9 @@ class DashboardStatCard extends StatelessWidget {
               // Count
               Text(
                 count.toString(),
-                style: KolabingTextStyles.displayMedium.copyWith(
+                style: KolabingTextStyles.displaySmall.copyWith(
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: -0.5,
                   color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.textPrimary,

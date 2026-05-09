@@ -313,7 +313,7 @@ class _CommunityDashboardScreenState
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.accent,
+            color: const Color(0xFF0D0D0D),
             letterSpacing: 0.8,
           ),
         ),
