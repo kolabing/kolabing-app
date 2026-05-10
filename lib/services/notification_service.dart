@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -39,7 +41,7 @@ class NotificationService {
 
   /// Called when a notification is tapped.
   /// Set this via [connectRouter] to enable deep-link navigation.
-  void Function(String type, String? id)? _onNotificationTap;
+  void Function(String? type, String? id, String? deeplink)? _onNotificationTap;
 
   // ---------------------------------------------------------------------------
   // Initialization
@@ -73,8 +75,10 @@ class NotificationService {
   /// Connect GoRouter navigation to notification taps.
   ///
   /// Call after the router is set up in main().
-  /// [navigate] receives `(type, id)` from the notification payload.
-  void connectRouter(void Function(String type, String? id) navigate) {
+  /// [navigate] receives `(type, id, deeplink)` from the notification payload.
+  void connectRouter(
+    void Function(String? type, String? id, String? deeplink) navigate,
+  ) {
     _onNotificationTap = navigate;
   }
 
@@ -178,17 +182,25 @@ class NotificationService {
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
     debugPrint('[FCM] Foreground message: ${message.messageId}');
 
-    final notification = message.notification;
-    if (notification == null) return;
+    final type = message.data['type']?.toString() ?? '';
+    final id = message.data['id']?.toString() ?? '';
+    final deeplink = message.data['deeplink']?.toString();
+    final title = message.notification?.title ?? message.data['title']?.toString();
+    final body = message.notification?.body ?? message.data['body']?.toString();
+    if ((title == null || title.isEmpty) && (body == null || body.isEmpty)) {
+      return;
+    }
 
-    final type = message.data['type'] as String? ?? '';
-    final id = message.data['id'] as String? ?? '';
-    final payload = '$type|$id';
+    final payload = _buildLocalNotificationPayload(
+      type: type,
+      id: id,
+      deeplink: deeplink,
+    );
 
     await _localNotifications.show(
       message.hashCode,
-      notification.title,
-      notification.body,
+      title,
+      body,
       NotificationDetails(
         android: AndroidNotificationDetails(
           _channel.id,
@@ -211,11 +223,17 @@ class NotificationService {
   void _handleNotificationTap(RemoteMessage message) {
     debugPrint('[FCM] Notification tapped: ${message.data}');
 
-    final type = message.data['type'] as String?;
-    final id = message.data['id'] as String?;
+    final type = message.data['type']?.toString();
+    final id = message.data['id']?.toString();
+    final deeplink = message.data['deeplink']?.toString();
 
-    if (type != null && type.isNotEmpty) {
-      _onNotificationTap?.call(type, id?.isNotEmpty ?? false ? id : null);
+    if ((type?.isNotEmpty ?? false) ||
+        (deeplink?.isNotEmpty ?? false)) {
+      _onNotificationTap?.call(
+        type,
+        id?.isNotEmpty ?? false ? id : null,
+        deeplink?.isNotEmpty ?? false ? deeplink : null,
+      );
     }
   }
 
@@ -225,12 +243,44 @@ class NotificationService {
     final payload = response.payload;
     if (payload == null || payload.isEmpty) return;
 
-    final parts = payload.split('|');
-    final type = parts.isNotEmpty ? parts[0] : null;
-    final id = parts.length > 1 && parts[1].isNotEmpty ? parts[1] : null;
+    final decoded = _parseLocalNotificationPayload(payload);
+    final type = decoded['type'];
+    final id = decoded['id'];
+    final deeplink = decoded['deeplink'];
 
-    if (type != null && type.isNotEmpty) {
-      _onNotificationTap?.call(type, id);
+    if ((type?.isNotEmpty ?? false) ||
+        (deeplink?.isNotEmpty ?? false)) {
+      _onNotificationTap?.call(type, id, deeplink);
+    }
+  }
+
+  String _buildLocalNotificationPayload({
+    String? type,
+    String? id,
+    String? deeplink,
+  }) {
+    return jsonEncode(<String, String>{
+      if (type != null && type.isNotEmpty) 'type': type,
+      if (id != null && id.isNotEmpty) 'id': id,
+      if (deeplink != null && deeplink.isNotEmpty) 'deeplink': deeplink,
+    });
+  }
+
+  Map<String, String?> _parseLocalNotificationPayload(String payload) {
+    try {
+      final json = jsonDecode(payload) as Map<String, dynamic>;
+      return <String, String?>{
+        'type': json['type'] as String?,
+        'id': json['id'] as String?,
+        'deeplink': json['deeplink'] as String?,
+      };
+    } on FormatException {
+      final parts = payload.split('|');
+      return <String, String?>{
+        'type': parts.isNotEmpty ? parts[0] : null,
+        'id': parts.length > 1 && parts[1].isNotEmpty ? parts[1] : null,
+        'deeplink': null,
+      };
     }
   }
 }

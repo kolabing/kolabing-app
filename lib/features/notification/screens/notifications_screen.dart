@@ -11,6 +11,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/app_notification.dart';
 import '../providers/notification_provider.dart';
+import '../utils/notification_navigation.dart';
 
 /// Notifications listing screen
 class NotificationsScreen extends ConsumerStatefulWidget {
@@ -136,22 +137,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       ref.read(notificationProvider.notifier).markAsRead(notification.id);
     }
 
-    // Navigate based on target type and notification type
-    if (notification.targetId != null &&
-        notification.targetType == 'application') {
-      if (notification.type == NotificationType.newMessage) {
-        // Navigate to chat screen
-        context.push(
-          KolabingRoutes.applicationChat
-              .replaceFirst(':id', notification.targetId!),
-        );
-      } else {
-        // Navigate to application detail screen
-        context.push(
-          KolabingRoutes.applicationDetails
-              .replaceFirst(':id', notification.targetId!),
-        );
-      }
+    final route = resolveNotificationRoute(
+      type: notification.rawType,
+      id: notification.targetId,
+      deeplink: notification.deeplink,
+    );
+
+    if (route != KolabingRoutes.notifications) {
+      context.push(route);
     }
   }
 
@@ -365,6 +358,26 @@ class _NotificationTile extends StatelessWidget {
           LucideIcons.xCircle,
           KolabingColors.error.withValues(alpha: 0.12),
           KolabingColors.error,
+        ),
+      NotificationType.badgeAwarded => (
+          LucideIcons.badgeCheck,
+          KolabingColors.primary.withValues(alpha: 0.12),
+          KolabingColors.primary,
+        ),
+      NotificationType.challengeVerified => (
+          LucideIcons.shieldCheck,
+          KolabingColors.info.withValues(alpha: 0.12),
+          KolabingColors.info,
+        ),
+      NotificationType.rewardWon => (
+          LucideIcons.gift,
+          KolabingColors.success.withValues(alpha: 0.15),
+          const Color(0xFF155724),
+        ),
+      NotificationType.unknown => (
+          LucideIcons.bell,
+          KolabingColors.surfaceVariant,
+          KolabingColors.textSecondary,
         ),
     };
 

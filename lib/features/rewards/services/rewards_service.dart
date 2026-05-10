@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import '../../auth/models/auth_response.dart';
-import '../../auth/services/auth_service.dart';
 import '../../../config/constants/api.dart';
+import '../../auth/models/auth_response.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
 import '../models/wallet_model.dart';
@@ -16,14 +17,15 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for Rewards/Gamification API endpoints.
 class RewardsService {
-  RewardsService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  RewardsService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
+
+  @visibleForTesting
+  AuthService get authService => _authService;
 
   Future<Map<String, String>> _getHeaders() async {
     final token = await _authService.getToken();
@@ -44,10 +46,7 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Wallet response: ${response.statusCode}');
 
@@ -85,10 +84,7 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Ledger response: ${response.statusCode}');
 
@@ -123,10 +119,7 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Badges response: ${response.statusCode}');
 
@@ -162,10 +155,7 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Referral code response: ${response.statusCode}');
 
@@ -174,7 +164,9 @@ class RewardsService {
         final data = json['data'] as Map<String, dynamic>;
         return (
           code: data['code'] as String,
-          link: data['referral_link'] as String? ?? 'https://kolabing.com/ref/${data['code']}',
+          link:
+              data['referral_link'] as String? ??
+              'https://kolabing.com/ref/${data['code']}',
         );
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
@@ -207,10 +199,7 @@ class RewardsService {
       final response = await _httpClient.post(
         uri,
         headers: await _getHeaders(),
-        body: jsonEncode({
-          'iban': iban,
-          'account_holder': accountHolder,
-        }),
+        body: jsonEncode({'iban': iban, 'account_holder': accountHolder}),
       );
 
       debugPrint('Withdrawal response: ${response.statusCode}');
@@ -219,9 +208,7 @@ class RewardsService {
         return;
       } else if (response.statusCode == 400) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: 400),
-        );
+        throw ApiException(error: ApiError.fromJson(json, statusCode: 400));
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 409) {
@@ -264,5 +251,5 @@ class RewardsService {
 
 /// Provider for the rewards service.
 final rewardsServiceProvider = Provider<RewardsService>(
-  (ref) => RewardsService(),
+  (ref) => RewardsService(authService: ref.watch(authServiceProvider)),
 );

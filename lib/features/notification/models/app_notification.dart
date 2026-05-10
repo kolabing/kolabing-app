@@ -12,7 +12,19 @@ enum NotificationType {
   applicationAccepted,
 
   /// Your application was declined
-  applicationDeclined;
+  applicationDeclined,
+
+  /// A rewards badge was awarded to the user
+  badgeAwarded,
+
+  /// A challenge was verified
+  challengeVerified,
+
+  /// A reward was won
+  rewardWon,
+
+  /// A backend type the current app does not handle explicitly yet
+  unknown;
 
   static NotificationType fromString(String value) {
     switch (value) {
@@ -24,8 +36,14 @@ enum NotificationType {
         return NotificationType.applicationAccepted;
       case 'application_declined':
         return NotificationType.applicationDeclined;
+      case 'badge_awarded':
+        return NotificationType.badgeAwarded;
+      case 'challenge_verified':
+        return NotificationType.challengeVerified;
+      case 'reward_won':
+        return NotificationType.rewardWon;
       default:
-        return NotificationType.newMessage;
+        return NotificationType.unknown;
     }
   }
 
@@ -39,6 +57,32 @@ enum NotificationType {
         return 'application_accepted';
       case NotificationType.applicationDeclined:
         return 'application_declined';
+      case NotificationType.badgeAwarded:
+        return 'badge_awarded';
+      case NotificationType.challengeVerified:
+        return 'challenge_verified';
+      case NotificationType.rewardWon:
+        return 'reward_won';
+      case NotificationType.unknown:
+        return 'unknown';
+    }
+  }
+}
+
+enum NotificationPriority {
+  high,
+  normal,
+  low;
+
+  static NotificationPriority fromString(String value) {
+    switch (value) {
+      case 'high':
+        return NotificationPriority.high;
+      case 'low':
+        return NotificationPriority.low;
+      case 'normal':
+      default:
+        return NotificationPriority.normal;
     }
   }
 }
@@ -48,25 +92,34 @@ enum NotificationType {
 class AppNotification {
   const AppNotification({
     required this.id,
+    required this.notificationId,
     required this.type,
+    required this.rawType,
     required this.title,
     required this.body,
     required this.createdAt,
     this.isRead = false,
     this.readAt,
+    this.deeplink,
+    this.priority = NotificationPriority.normal,
     this.actorName,
     this.actorAvatarUrl,
     this.targetId,
     this.targetType,
   });
 
+  /// Notification row ID used by read/unread APIs
   final String id;
+  final String notificationId;
   final NotificationType type;
+  final String rawType;
   final String title;
   final String body;
   final DateTime createdAt;
   final bool isRead;
   final DateTime? readAt;
+  final String? deeplink;
+  final NotificationPriority priority;
 
   /// Who triggered the notification (sender name)
   final String? actorName;
@@ -92,9 +145,17 @@ class AppNotification {
   }
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
+    final rawType = json['type'] as String? ?? '';
+    final id =
+        json['id']?.toString() ?? json['notification_id']?.toString() ?? '';
+    final notificationId =
+        json['notification_id']?.toString() ?? id;
+
     return AppNotification(
-      id: json['id']?.toString() ?? '',
-      type: NotificationType.fromString(json['type'] as String? ?? ''),
+      id: id,
+      notificationId: notificationId,
+      type: NotificationType.fromString(rawType),
+      rawType: rawType,
       title: json['title'] as String? ?? '',
       body: json['body'] as String? ?? '',
       createdAt:
@@ -104,6 +165,10 @@ class AppNotification {
       readAt: json['read_at'] != null
           ? DateTime.tryParse(json['read_at'] as String)
           : null,
+      deeplink: json['deeplink'] as String?,
+      priority: NotificationPriority.fromString(
+        json['priority'] as String? ?? 'normal',
+      ),
       actorName: json['actor_name'] as String?,
       actorAvatarUrl: json['actor_avatar_url'] as String?,
       targetId: json['target_id']?.toString(),
@@ -113,12 +178,16 @@ class AppNotification {
 
   AppNotification copyWith({
     String? id,
+    String? notificationId,
     NotificationType? type,
+    String? rawType,
     String? title,
     String? body,
     DateTime? createdAt,
     bool? isRead,
     DateTime? readAt,
+    String? deeplink,
+    NotificationPriority? priority,
     String? actorName,
     String? actorAvatarUrl,
     String? targetId,
@@ -126,12 +195,16 @@ class AppNotification {
   }) =>
       AppNotification(
         id: id ?? this.id,
+        notificationId: notificationId ?? this.notificationId,
         type: type ?? this.type,
+        rawType: rawType ?? this.rawType,
         title: title ?? this.title,
         body: body ?? this.body,
         createdAt: createdAt ?? this.createdAt,
         isRead: isRead ?? this.isRead,
         readAt: readAt ?? this.readAt,
+        deeplink: deeplink ?? this.deeplink,
+        priority: priority ?? this.priority,
         actorName: actorName ?? this.actorName,
         actorAvatarUrl: actorAvatarUrl ?? this.actorAvatarUrl,
         targetId: targetId ?? this.targetId,

@@ -5,17 +5,13 @@ import 'package:intl/intl.dart' hide TextDirection;
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../features/discovery/models/discovery_item.dart';
 import '../features/opportunity/models/opportunity.dart';
 
-/// A full-screen Tinder/Hinge-style swipe card for the Explore tab.
-///
-/// Displays an [Opportunity] with an image slideshow (or gradient fallback),
-/// overlaid creator info, category chips, description, and availability row.
-/// Designed to be placed inside a vertical PageView.
 class ExploreSwipeCard extends StatefulWidget {
-  const ExploreSwipeCard({required this.opportunity, this.onTap, super.key});
+  const ExploreSwipeCard({required this.item, this.onTap, super.key});
 
-  final Opportunity opportunity;
+  final DiscoveryItem item;
   final VoidCallback? onTap;
 
   @override
@@ -26,15 +22,13 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   late final PageController _imagePageController;
   int _currentImagePage = 0;
 
-  Opportunity get _opp => widget.opportunity;
+  DiscoveryItem get _item => widget.item;
 
-  /// Collect all available image URLs for the slideshow.
-  /// Priority: offerPhoto first, then creator avatar as full-bleed image.
   List<String> get _imageUrls {
     final urls = <String>[];
-    final photo = _opp.offerPhoto;
-    if (photo != null && photo.isNotEmpty) urls.add(photo);
-    final avatar = _opp.creatorProfile?.avatarUrl;
+    final cover = _item.coverPhotoUrl;
+    if (cover != null && cover.isNotEmpty) urls.add(cover);
+    final avatar = _item.creatorProfile.avatarUrl;
     if (avatar != null && avatar.isNotEmpty) urls.add(avatar);
     return urls;
   }
@@ -51,10 +45,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     super.dispose();
   }
 
-  // ---------------------------------------------------------------------------
-  // Build
-  // ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: widget.onTap,
@@ -69,23 +59,14 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Layer 1 -- Image slideshow or gradient fallback
             _buildImageArea(),
-
-            // Layer 2 -- Bottom gradient overlay
             _buildGradientOverlay(),
-
-            // Layer 3 -- Overlaid content
             _buildOverlaidContent(),
           ],
         ),
       ),
     ),
   );
-
-  // ---------------------------------------------------------------------------
-  // Image area
-  // ---------------------------------------------------------------------------
 
   Widget _buildImageArea() {
     final urls = _imageUrls;
@@ -97,62 +78,60 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     return PageView.builder(
       controller: _imagePageController,
       itemCount: urls.length,
-      onPageChanged: (index) => setState(() => _currentImagePage = index),
-      itemBuilder: (context, index) => Image.network(
+      onPageChanged: (int index) => setState(() => _currentImagePage = index),
+      itemBuilder: (BuildContext context, int index) => Image.network(
         urls[index],
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        errorBuilder: (_, _, _) => _buildGradientFallback(),
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return _buildImagePlaceholder(loadingProgress);
-        },
+        errorBuilder: (context, error, stackTrace) => _buildGradientFallback(),
+        loadingBuilder:
+            (BuildContext context, Widget child, ImageChunkEvent? progress) {
+              if (progress == null) return child;
+              return _buildImagePlaceholder(progress);
+            },
       ),
     );
   }
 
-  /// Gradient fallback shown when no images are available at all.
-  Widget _buildGradientFallback() {
-    final initial = _opp.creatorProfile?.initial ?? '?';
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            KolabingColors.primary.withValues(alpha: 0.3),
-            KolabingColors.surfaceVariant,
-          ],
-        ),
+  Widget _buildGradientFallback() => DecoratedBox(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          KolabingColors.primary.withValues(alpha: 0.3),
+          KolabingColors.surfaceVariant,
+        ],
       ),
-      child: Center(
-        child: Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: KolabingColors.primary.withValues(alpha: 0.15),
-            border: Border.all(
-              color: KolabingColors.primary.withValues(alpha: 0.3),
-              width: 2,
-            ),
+    ),
+    child: Center(
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: KolabingColors.primary.withValues(alpha: 0.15),
+          border: Border.all(
+            color: KolabingColors.primary.withValues(alpha: 0.3),
+            width: 2,
           ),
-          alignment: Alignment.center,
-          child: Text(
-            initial,
-            style: GoogleFonts.rubik(
-              fontSize: 48,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary.withValues(alpha: 0.6),
-            ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          _item.creatorProfile.displayName.isNotEmpty
+              ? _item.creatorProfile.displayName[0].toUpperCase()
+              : '?',
+          style: GoogleFonts.rubik(
+            fontSize: 48,
+            fontWeight: FontWeight.w700,
+            color: KolabingColors.textPrimary.withValues(alpha: 0.6),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 
-  /// Placeholder shown while an image is loading.
   Widget _buildImagePlaceholder(ImageChunkEvent progress) {
     final expectedBytes = progress.expectedTotalBytes;
     final value = expectedBytes != null
@@ -175,10 +154,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Gradient overlay
-  // ---------------------------------------------------------------------------
-
   Widget _buildGradientOverlay() {
     final hasImages = _imageUrls.isNotEmpty;
     return Positioned.fill(
@@ -188,17 +163,17 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              stops: const [0.0, 0.4, 1.0],
+              stops: const [0.0, 0.42, 1.0],
               colors: hasImages
-                  ? [
+                  ? <Color>[
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.3),
-                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: 0.32),
+                      Colors.black.withValues(alpha: 0.9),
                     ]
-                  : [
+                  : <Color>[
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.05),
-                      Colors.black.withValues(alpha: 0.7),
+                      Colors.black.withValues(alpha: 0.08),
+                      Colors.black.withValues(alpha: 0.72),
                     ],
             ),
           ),
@@ -206,10 +181,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       ),
     );
   }
-
-  // ---------------------------------------------------------------------------
-  // Dot indicators
-  // ---------------------------------------------------------------------------
 
   Widget _buildDotIndicators() {
     final count = _imageUrls.length;
@@ -221,7 +192,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: List.generate(count, (index) {
+        children: List.generate(count, (int index) {
           final isActive = index == _currentImagePage;
           return AnimatedContainer(
             duration: const Duration(milliseconds: 200),
@@ -240,10 +211,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Overlaid content
-  // ---------------------------------------------------------------------------
-
   Widget _buildOverlaidContent() => Positioned(
     left: KolabingSpacing.md,
     right: KolabingSpacing.md,
@@ -252,94 +219,108 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Creator type badge
-        _buildCreatorTypeBadge(),
+        _buildHeaderRow(),
         const SizedBox(height: KolabingSpacing.xs),
-
         if (_imageUrls.length > 1) ...[
           _buildDotIndicators(),
           const SizedBox(height: KolabingSpacing.xs),
         ],
-
-        // Creator name
         _buildCreatorName(),
         const SizedBox(height: KolabingSpacing.xs),
-
-        // Category chips
-        _buildCategoryChips(),
+        _buildPrimaryBadges(),
+        if (_item.fitReasonLabels.isNotEmpty) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          _buildFitReasonBadges(),
+        ],
         const SizedBox(height: KolabingSpacing.xs),
-
-        // Description
         _buildDescription(),
         const SizedBox(height: KolabingSpacing.xs),
-
-        // Availability row
         _buildAvailabilityRow(),
       ],
     ),
   );
 
-  // ---------------------------------------------------------------------------
-  // Creator type badge
-  // ---------------------------------------------------------------------------
+  Widget _buildHeaderRow() => Row(
+    children: [
+      _buildCreatorTypeBadge(),
+      const Spacer(),
+      if (_item.match != null) _buildFitBadge(),
+    ],
+  );
 
   Widget _buildCreatorTypeBadge() {
-    final userType = _opp.creatorProfile?.userType ?? '';
-    if (userType.isEmpty) return const SizedBox.shrink();
+    final label = _item.isBusinessOffer
+        ? 'Business Offer'
+        : 'Community Request';
 
-    return Text(
-      userType,
-      style: GoogleFonts.openSans(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: Colors.white.withValues(alpha: 0.6),
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.xs,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(KolabingRadius.round),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.dmSans(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
       ),
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Creator name
-  // ---------------------------------------------------------------------------
-
-  Widget _buildCreatorName() {
-    final name = _opp.creatorProfile?.displayName ?? _opp.title;
-
-    return Text(
-      name,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: GoogleFonts.rubik(
-        fontSize: 22,
+  Widget _buildFitBadge() => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.xs,
+      vertical: 6,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.softYellow.withValues(alpha: 0.95),
+      borderRadius: BorderRadius.circular(KolabingRadius.round),
+    ),
+    child: Text(
+      '${_item.match!.score}% fit',
+      style: GoogleFonts.dmSans(
+        fontSize: 11,
         fontWeight: FontWeight.w700,
-        color: Colors.white,
+        color: Colors.black,
       ),
-    );
-  }
+    ),
+  );
 
-  // ---------------------------------------------------------------------------
-  // Category chips
-  // ---------------------------------------------------------------------------
+  Widget _buildCreatorName() => Text(
+    _item.creatorProfile.displayName,
+    maxLines: 1,
+    overflow: TextOverflow.ellipsis,
+    style: GoogleFonts.rubik(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: Colors.white,
+    ),
+  );
 
-  Widget _buildCategoryChips() {
-    final categories = _opp.categories;
-    if (categories.isEmpty) return const SizedBox.shrink();
-
-    // Show at most 3 categories
-    final visible = categories.take(3).toList();
+  Widget _buildPrimaryBadges() {
+    final badges = _item.primaryBadges;
+    if (badges.isEmpty) return const SizedBox.shrink();
 
     return Wrap(
       spacing: 6,
       runSpacing: 6,
-      children: visible
+      children: badges
           .map(
-            (category) => Container(
+            (String badge) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: KolabingColors.primary,
                 borderRadius: BorderRadius.circular(KolabingRadius.round),
               ),
               child: Text(
-                category,
+                badge,
                 style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -352,25 +333,49 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Description
-  // ---------------------------------------------------------------------------
+  Widget _buildFitReasonBadges() {
+    final reasons = _item.fitReasonLabels.take(2).toList();
+
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: reasons
+          .map(
+            (String reason) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(KolabingRadius.round),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+              ),
+              child: Text(
+                reason,
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
 
   Widget _buildDescription() {
-    final description = _opp.description;
+    final description = _item.description;
     if (description.isEmpty) return const SizedBox.shrink();
 
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder: (BuildContext context, BoxConstraints constraints) {
         final textStyle = GoogleFonts.openSans(
           fontSize: 14,
           fontWeight: FontWeight.w400,
-          color: Colors.white.withValues(alpha: 0.8),
+          color: Colors.white.withValues(alpha: 0.82),
         );
 
-        final textSpan = TextSpan(text: description, style: textStyle);
         final textPainter = TextPainter(
-          text: textSpan,
+          text: TextSpan(text: description, style: textStyle),
           maxLines: 2,
           textDirection: TextDirection.ltr,
         )..layout(maxWidth: constraints.maxWidth);
@@ -402,26 +407,35 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Availability row
-  // ---------------------------------------------------------------------------
-
   Widget _buildAvailabilityRow() {
-    if (_opp.availabilityMode == AvailabilityMode.recurring) {
-      return _buildRecurringDays();
+    final availability = _item.availability;
+    if (availability.toOpportunityAvailabilityMode() ==
+        AvailabilityMode.recurring) {
+      return _buildRecurringDays(availability.recurringDays);
     }
-    return _buildDateRangeText();
+
+    return Text(
+      '${DateFormat('MMM d').format(availability.start)}'
+      ' - '
+      '${DateFormat('MMM d').format(availability.end)}'
+      '  ·  '
+      '${availability.toOpportunityAvailabilityMode().displayName}',
+      style: GoogleFonts.openSans(
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        color: Colors.white.withValues(alpha: 0.7),
+      ),
+    );
   }
 
-  /// Day chips for recurring availability: M Tu W Th F Sa Su
-  Widget _buildRecurringDays() {
-    const dayLabels = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
+  Widget _buildRecurringDays(List<int> recurringDays) {
+    const dayLabels = <String>['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(7, (index) {
-        final dayNumber = index + 1; // 1=Mon .. 7=Sun
-        final isAvailable = _opp.recurringDays.contains(dayNumber);
+      children: List.generate(7, (int index) {
+        final dayNumber = index + 1;
+        final isAvailable = recurringDays.contains(dayNumber);
 
         return Padding(
           padding: EdgeInsets.only(right: index < 6 ? 6.0 : 0),
@@ -450,18 +464,4 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       }),
     );
   }
-
-  /// Date range text for one-time or flexible availability.
-  Widget _buildDateRangeText() => Text(
-    '${DateFormat('MMM d').format(_opp.availabilityStart)}'
-    ' - '
-    '${DateFormat('MMM d').format(_opp.availabilityEnd)}'
-    '  ·  '
-    '${_opp.availabilityMode.displayName}',
-    style: GoogleFonts.openSans(
-      fontSize: 13,
-      fontWeight: FontWeight.w400,
-      color: Colors.white.withValues(alpha: 0.7),
-    ),
-  );
 }

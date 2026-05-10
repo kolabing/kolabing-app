@@ -1,0 +1,98 @@
+<h2>Recommended + Short Filters</h2>
+<p class="subtitle">Apply / match rate icin onerilen bilgi mimarisi. Her iki tarafta da varsayilan liste Recommended, filtreler ise role-aware ve kisa.</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Community Explore -> Business Offers</div>
+    <div class="mockup-body">
+      <div style="background:#fff;border:1px solid #e7e2db;border-radius:22px;padding:14px;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="background:#171717;color:#fff;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;">Recommended</div>
+          <div style="background:#f3efe8;color:#6c675f;padding:6px 12px;border-radius:999px;font-size:12px;">All</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">City</div>
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">Intent</div>
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">What They Offer</div>
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">Min Community Size</div>
+        </div>
+        <div style="background:#f7f4ee;border-radius:16px;padding:12px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="font-size:13px;">High Fit</strong>
+            <span style="font-size:11px;color:#9a7c2f;">92% match</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:6px;">Cafe launch with creator brunch</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;">Barcelona</span>
+            <span style="background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;">Venue + Food</span>
+            <span style="background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;">Lifestyle creators</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#6c675f;line-height:1.45;">
+          Bottom sheet primary fields:
+          <br>Intent Type, City, What They Offer, Min Community Size, Availability
+          <br><br>Secondary fields:
+          <br>Venue Type, Product Type, Community Expectation
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Business Explore -> Community Requests</div>
+    <div class="mockup-body">
+      <div style="background:#fff;border:1px solid #e7e2db;border-radius:22px;padding:14px;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="background:#171717;color:#fff;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;">Recommended</div>
+          <div style="background:#f3efe8;color:#6c675f;padding:6px 12px;border-radius:999px;font-size:12px;">All</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">City</div>
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">Community Type</div>
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">Need</div>
+          <div style="border:1px solid #e7e2db;border-radius:999px;padding:6px 10px;font-size:12px;">Audience Size</div>
+        </div>
+        <div style="background:#f7f4ee;border-radius:16px;padding:12px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="font-size:13px;">High Fit</strong>
+            <span style="font-size:11px;color:#9a7c2f;">89% match</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:6px;">Wellness community seeking sponsor + drinks</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;">Madrid</span>
+            <span style="background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;">250 attendees</span>
+            <span style="background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;">Food & Drink</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#6c675f;line-height:1.45;">
+          Bottom sheet primary fields:
+          <br>Community Type, City, Need, Audience Size, Availability
+          <br><br>Secondary fields:
+          <br>Offers In Return, Venue Preference, Exact Attendance
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Why this structure</h3>
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>Primary layer</h4>
+      <ul>
+        <li>Recommended siralamasi filtre secmeden en iyi eslesmeleri gosterir</li>
+        <li>Ustte sadece 4 hizli chip kalir, karar yorgunlugu dusuk olur</li>
+        <li>Role-specific alanlar apply oranina direkt etki eder</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>Not primary</h4>
+      <ul>
+        <li>Search alanini discovery yerine fallback olarak kullan</li>
+        <li>Title ve description filtre degil ranking/search sinyali olmali</li>
+        <li>Past events ve media detay kalmali, primary filter olmamali</li>
+      </ul>
+    </div>
+  </div>
+</div>

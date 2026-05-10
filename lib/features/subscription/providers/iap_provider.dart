@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../../auth/models/auth_response.dart';
 import '../../business/providers/profile_provider.dart';
 import '../services/iap_service.dart';
 
@@ -119,23 +120,39 @@ class IAPNotifier extends Notifier<IAPState> {
   }
 
   /// Purchase the monthly subscription
-  Future<void> purchase() async {
-    if (state.isPurchasing) return;
+  Future<PurchaseStartResult> purchase({String? referralCode}) async {
+    if (state.isPurchasing) {
+      return (started: false, validatedReferralCode: null);
+    }
 
     final purchaseAvailabilityMessage = state.purchaseAvailabilityMessage;
     if (purchaseAvailabilityMessage != null) {
       state = state.copyWith(error: purchaseAvailabilityMessage);
-      return;
+      return (started: false, validatedReferralCode: null);
     }
 
     state = state.copyWith(isPurchasing: true, clearError: true);
 
-    final started = await _iapService.purchaseSubscription();
-    if (!started) {
-      state = state.copyWith(
-        isPurchasing: false,
-        error: 'Could not start purchase. Please try again.',
+    try {
+      final result = await _iapService.purchaseSubscription(
+        referralCode: referralCode,
       );
+      if (!result.started) {
+        state = state.copyWith(
+          isPurchasing: false,
+          error: 'Could not start purchase. Please try again.',
+        );
+      }
+      return result;
+    } on ApiException {
+      state = state.copyWith(isPurchasing: false, clearError: true);
+      rethrow;
+    } on NetworkException {
+      state = state.copyWith(isPurchasing: false, clearError: true);
+      rethrow;
+    } on Exception {
+      state = state.copyWith(isPurchasing: false, clearError: true);
+      rethrow;
     }
     // If started, the purchase stream will handle the result
   }

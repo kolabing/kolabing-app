@@ -39,6 +39,7 @@ void main() {
       phone: '+34612345678',
       instagram: 'solstudio',
       website: 'https://solstudio.com',
+      referralCode: 'kolab-irsc',
     );
 
     final payload = data.toBusinessPayload();
@@ -46,6 +47,7 @@ void main() {
     final photos = primaryVenue['photos'] as List<dynamic>;
 
     expect(payload['city_id'], 'city-1');
+    expect(payload['referral_code'], 'KOLAB-IRSC');
     expect(primaryVenue['name'], 'Sol Studio Rooftop');
     expect(primaryVenue['venue_type'], 'restaurant');
     expect(primaryVenue['place_id'], 'place-123');

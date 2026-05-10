@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import '../../auth/models/auth_response.dart';
-import '../../auth/services/auth_service.dart';
 import '../../../config/constants/api.dart';
+import '../../auth/models/auth_response.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/kolab.dart';
 
 /// API base URL
@@ -20,6 +21,9 @@ class KolabService {
 
   final AuthService _authService;
   final http.Client _httpClient;
+
+  @visibleForTesting
+  AuthService get authService => _authService;
 
   Future<Map<String, String>> _getHeaders() async {
     final token = await _authService.getToken();
@@ -459,4 +463,6 @@ class PaginatedKolabResponse {
   bool get hasMore => currentPage < lastPage;
 }
 
-final kolabServiceProvider = Provider<KolabService>((ref) => KolabService());
+final kolabServiceProvider = Provider<KolabService>(
+  (ref) => KolabService(authService: ref.watch(authServiceProvider)),
+);

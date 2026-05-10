@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/permission_service.dart';
+import '../../../../widgets/referral_code_field.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/summary_card.dart';
 
@@ -24,9 +25,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
+  final _referralCodeFocusNode = FocusNode();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _referralCodeController = TextEditingController();
 
   bool _isLoading = false;
   bool _showSuccess = false;
@@ -36,10 +39,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   // API validation errors for specific fields
   String? _emailApiError;
   String? _passwordApiError;
+  String? _referralCodeApiError;
 
   @override
   void initState() {
     super.initState();
+    _referralCodeController.text =
+        ref.read(onboardingProvider)?.referralCode ?? '';
     _configureSystemUI();
   }
 
@@ -48,9 +54,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
+    _referralCodeFocusNode.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _referralCodeController.dispose();
     super.dispose();
   }
 
@@ -103,13 +111,18 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   }
 
   void _clearApiErrors() {
-    if (_emailApiError != null || _passwordApiError != null) {
+    if (_emailApiError != null ||
+        _passwordApiError != null ||
+        _referralCodeApiError != null) {
       setState(() {
         _emailApiError = null;
         _passwordApiError = null;
+        _referralCodeApiError = null;
       });
     }
   }
+
+  String? _validateReferralCode(String? value) => _referralCodeApiError;
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
@@ -175,6 +188,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
           _isLoading = false;
           _emailApiError = apiError.getFieldError('email');
           _passwordApiError = apiError.getFieldError('password');
+          _referralCodeApiError = apiError.getFriendlyFieldError(
+            'referral_code',
+          );
         });
         // Trigger form validation to show the errors on fields
         _formKey.currentState!.validate();
@@ -479,6 +495,24 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 ),
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          ReferralCodeField(
+                            controller: _referralCodeController,
+                            focusNode: _referralCodeFocusNode,
+                            enabled: !_isLoading,
+                            errorText: _validateReferralCode(
+                              _referralCodeController.text,
+                            ),
+                            onChanged: (value) {
+                              if (_referralCodeApiError != null) {
+                                setState(() => _referralCodeApiError = null);
+                              }
+                              ref
+                                  .read(onboardingProvider.notifier)
+                                  .updateReferralCode(value);
+                            },
                           ),
                           const SizedBox(height: 16),
 

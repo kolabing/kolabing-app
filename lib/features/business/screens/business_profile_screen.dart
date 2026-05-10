@@ -931,36 +931,44 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     child: Column(
       children: [
         _NotificationToggle(
-          label: 'Email Notifications',
-          value: preferences?.emailNotifications ?? true,
+          label: 'Messages',
+          value: preferences?.messagesEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
               .read(profileProvider.notifier)
-              .updateNotificationPreference('email_notifications', value),
+              .updateNotificationPreference('messages_enabled', value),
         ),
         _NotificationToggle(
-          label: 'New Application Alerts',
-          value: preferences?.newApplicationAlerts ?? true,
+          label: 'Application Alerts',
+          value: preferences?.applicationsEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
               .read(profileProvider.notifier)
-              .updateNotificationPreference('new_application_alerts', value),
+              .updateNotificationPreference('applications_enabled', value),
         ),
         _NotificationToggle(
           label: 'Collaboration Updates',
-          value: preferences?.collaborationUpdates ?? true,
+          value: preferences?.collaborationsEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
               .read(profileProvider.notifier)
-              .updateNotificationPreference('collaboration_updates', value),
+              .updateNotificationPreference('collaborations_enabled', value),
+        ),
+        _NotificationToggle(
+          label: 'Rewards & Wallet',
+          value: preferences?.rewardsEnabled ?? true,
+          isUpdating: isUpdating,
+          onChanged: (value) => ref
+              .read(profileProvider.notifier)
+              .updateNotificationPreference('rewards_enabled', value),
         ),
         _NotificationToggle(
           label: 'Marketing & Tips',
-          value: preferences?.marketingTips ?? false,
+          value: preferences?.marketingEnabled ?? false,
           isUpdating: isUpdating,
           onChanged: (value) => ref
               .read(profileProvider.notifier)
-              .updateNotificationPreference('marketing_tips', value),
+              .updateNotificationPreference('marketing_enabled', value),
         ),
       ],
     ),

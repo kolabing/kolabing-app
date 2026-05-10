@@ -118,9 +118,13 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         ],
       ),
       floatingActionButton:
-          _currentIndex !=
-              4 // Hide on profile tab
-          ? KolabingFAB(onPressed: _onFabPressed, tooltip: 'Create Opportunity')
+          _currentIndex != 4 &&
+              _currentIndex != 2 // Hide on profile and My Kolabs tabs
+          ? KolabingFAB(
+              onPressed: _onFabPressed,
+              tooltip: 'Create Opportunity',
+              heroTag: 'community_main_fab',
+            )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(
         items: navItems,

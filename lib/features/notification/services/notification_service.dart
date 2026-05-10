@@ -3,25 +3,26 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../config/constants/api.dart';
+import '../../application/services/application_service.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
-import '../../application/services/application_service.dart';
 import '../models/app_notification.dart';
-import '../../../config/constants/api.dart';
 
 /// API base URL
 const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for notification API operations.
 class NotificationService {
-  NotificationService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  NotificationService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
+
+  @visibleForTesting
+  AuthService get authService => _authService;
 
   // ---------------------------------------------------------------------------
   // Auth headers
@@ -50,16 +51,13 @@ class NotificationService {
       'per_page': perPage.toString(),
     };
 
-    final uri = Uri.parse('$_baseUrl/me/notifications').replace(
-      queryParameters: queryParams,
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/me/notifications',
+    ).replace(queryParameters: queryParams);
     debugPrint('NotificationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Notifications response status: ${response.statusCode}');
 
@@ -90,10 +88,7 @@ class NotificationService {
     debugPrint('NotificationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(
-        uri,
-        headers: await _getHeaders(),
-      );
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
 
       debugPrint('Unread count response status: ${response.statusCode}');
 
@@ -122,8 +117,7 @@ class NotificationService {
 
   /// Mark a single notification as read.
   Future<void> markAsRead(String notificationId) async {
-    final uri =
-        Uri.parse('$_baseUrl/me/notifications/$notificationId/read');
+    final uri = Uri.parse('$_baseUrl/me/notifications/$notificationId/read');
     debugPrint('NotificationService: POST $uri');
 
     try {
@@ -141,7 +135,8 @@ class NotificationService {
       } else if (response.statusCode == 403) {
         throw const ApiException(
           error: ApiError(
-              message: 'You are not authorized to access this notification.'),
+            message: 'You are not authorized to access this notification.',
+          ),
         );
       } else if (response.statusCode == 404) {
         throw const ApiException(
@@ -224,8 +219,9 @@ class NotificationService {
     final notifications = <AppNotification>[];
     for (final item in dataList) {
       try {
-        notifications
-            .add(AppNotification.fromJson(item as Map<String, dynamic>));
+        notifications.add(
+          AppNotification.fromJson(item as Map<String, dynamic>),
+        );
       } catch (e, st) {
         debugPrint('Error parsing notification: $e');
         debugPrint('Stack: $st');
@@ -233,7 +229,8 @@ class NotificationService {
     }
 
     debugPrint(
-        'Parsed ${notifications.length} / ${dataList.length} notifications');
+      'Parsed ${notifications.length} / ${dataList.length} notifications',
+    );
 
     return PaginatedResponse<AppNotification>(
       data: notifications,

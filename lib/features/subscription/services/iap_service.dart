@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
+import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/services/profile_service.dart';
 
@@ -14,17 +16,18 @@ const String kMonthlySubscriptionId = 'com.kolabing.app.subscription.monthly';
 /// Set of all subscription product IDs
 const Set<String> kSubscriptionProductIds = {kMonthlySubscriptionId};
 
+typedef PurchaseStartResult = ({bool started, String? validatedReferralCode});
+
 /// Service for handling iOS In-App Purchase operations
 class IAPService {
-  IAPService({
-    ProfileService? profileService,
-    InAppPurchase? iap,
-  })  : _profileService = profileService ?? ProfileService(),
-        _iap = iap ?? InAppPurchase.instance;
+  IAPService({ProfileService? profileService, InAppPurchase? iap})
+    : _profileService = profileService ?? ProfileService(),
+      _iap = iap ?? InAppPurchase.instance;
 
   final ProfileService _profileService;
   final InAppPurchase _iap;
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
+  String? _pendingReferralCode;
 
   /// Whether the store is available
   bool _isAvailable = false;
@@ -89,19 +92,33 @@ class IAPService {
   }
 
   /// Start a subscription purchase
-  Future<bool> purchaseSubscription() async {
+  Future<PurchaseStartResult> purchaseSubscription({
+    String? referralCode,
+  }) async {
     if (!_isAvailable || monthlyProduct == null) {
       debugPrint('IAP: Cannot purchase — store not available or no products');
-      return false;
+      return (started: false, validatedReferralCode: null);
     }
 
+    final validatedReferralCode = await _profileService.validateReferralCode(
+      referralCode,
+    );
+    _pendingReferralCode = validatedReferralCode;
     final purchaseParam = PurchaseParam(productDetails: monthlyProduct!);
 
     try {
-      return await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+      final started = await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+      if (!started) {
+        _pendingReferralCode = null;
+      }
+      return (
+        started: started,
+        validatedReferralCode: started ? validatedReferralCode : null,
+      );
     } on Exception catch (e) {
       debugPrint('IAP: Purchase error: $e');
-      return false;
+      _pendingReferralCode = null;
+      return (started: false, validatedReferralCode: null);
     }
   }
 
@@ -126,14 +143,25 @@ class IAPService {
       case PurchaseStatus.purchased:
       case PurchaseStatus.restored:
         debugPrint(
-            'IAP: Purchase ${purchase.status.name} — verifying with backend');
+          'IAP: Purchase ${purchase.status.name} — verifying with backend',
+        );
         try {
           final subscription = await _verifyWithBackend(purchase);
+          _pendingReferralCode = null;
           onPurchaseVerified(subscription);
+        } on ApiException catch (e) {
+          debugPrint('IAP: Backend verification failed: $e');
+          _pendingReferralCode = null;
+          onError(
+            e.error.getFriendlyFieldError('referral_code') ??
+                e.error.allErrorMessages,
+          );
         } on Exception catch (e) {
           debugPrint('IAP: Backend verification failed: $e');
+          _pendingReferralCode = null;
           onError(
-              'Purchase completed but verification failed. Please try again or contact support.');
+            'Purchase completed but verification failed. Please try again or contact support.',
+          );
         }
         // Complete the transaction with Apple
         if (purchase.pendingCompletePurchase) {
@@ -142,6 +170,7 @@ class IAPService {
 
       case PurchaseStatus.error:
         debugPrint('IAP: Purchase error: ${purchase.error}');
+        _pendingReferralCode = null;
         final errorMessage = purchase.error?.message ?? 'Purchase failed';
         if (!errorMessage.toLowerCase().contains('cancel')) {
           onError(errorMessage);
@@ -152,6 +181,7 @@ class IAPService {
 
       case PurchaseStatus.canceled:
         debugPrint('IAP: Purchase canceled by user');
+        _pendingReferralCode = null;
         if (purchase.pendingCompletePurchase) {
           await _iap.completePurchase(purchase);
         }
@@ -162,9 +192,22 @@ class IAPService {
   Future<Subscription> _verifyWithBackend(PurchaseDetails purchase) =>
       _profileService.verifyApplePurchase(
         transactionId: purchase.purchaseID ?? '',
-        originalTransactionId: purchase.purchaseID ?? '',
+        originalTransactionId: _resolveOriginalTransactionId(purchase),
         productId: purchase.productID,
+        referralCode: _pendingReferralCode,
       );
+
+  String _resolveOriginalTransactionId(PurchaseDetails purchase) {
+    if (purchase is AppStorePurchaseDetails) {
+      return purchase
+              .skPaymentTransaction
+              .originalTransaction
+              ?.transactionIdentifier ??
+          purchase.purchaseID ??
+          '';
+    }
+    return purchase.purchaseID ?? '';
+  }
 
   /// Dispose resources
   void dispose() {

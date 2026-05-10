@@ -29,6 +29,27 @@ void main() {
     },
   );
 
+  test('purchase forwards referral code to the IAP service', () async {
+    final service = _ReadyIAPService();
+    final container = ProviderContainer(
+      overrides: [iapServiceProvider.overrideWith((ref) => service)],
+    );
+    addTearDown(container.dispose);
+
+    final notifier = container.read(iapProvider.notifier)
+      ..state = IAPState(
+        isAvailable: true,
+        products: <ProductDetails>[_monthlyProduct],
+      );
+
+    final result = await notifier.purchase(referralCode: 'kolab-irsc');
+
+    expect(service.purchaseCalls, 1);
+    expect(service.lastReferralCode, 'KOLAB-IRSC');
+    expect(result.started, isTrue);
+    expect(result.validatedReferralCode, 'KOLAB-IRSC');
+  });
+
   test('state exposes loading and product availability guards', () {
     const loadingState = IAPState(isLoadingProducts: true);
     const unavailableProductState = IAPState(isAvailable: true);
@@ -88,13 +109,34 @@ class _FakeIAPService extends IAPService {
   }) {}
 
   @override
-  Future<bool> purchaseSubscription() async {
+  Future<({bool started, String? validatedReferralCode})> purchaseSubscription({
+    String? referralCode,
+  }) async {
     purchaseCalls += 1;
-    return false;
+    return (started: false, validatedReferralCode: null);
   }
 
   @override
   Future<void> restorePurchases() async {}
+}
+
+class _ReadyIAPService extends _FakeIAPService {
+  String? lastReferralCode;
+
+  @override
+  bool get isAvailable => true;
+
+  @override
+  List<ProductDetails> get products => <ProductDetails>[_monthlyProduct];
+
+  @override
+  Future<({bool started, String? validatedReferralCode})> purchaseSubscription({
+    String? referralCode,
+  }) async {
+    purchaseCalls += 1;
+    lastReferralCode = referralCode?.toUpperCase();
+    return (started: true, validatedReferralCode: lastReferralCode);
+  }
 }
 
 class _FakeInAppPurchase implements InAppPurchase {

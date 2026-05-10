@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../services/notification_service.dart';
 import '../utils/auth_navigation.dart';
@@ -89,7 +90,7 @@ class AuthNotifier extends Notifier<AuthState> {
   @override
   AuthState build() {
     NotificationService.instance.onTokenRefresh((token) {
-      _authService.registerDeviceToken(token);
+      unawaited(_registerDeviceToken(token));
     });
     return const AuthState();
   }
@@ -223,6 +224,11 @@ class AuthNotifier extends Notifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading);
 
     try {
+      final fcmToken = await NotificationService.instance.getToken();
+      if (fcmToken != null && fcmToken.isNotEmpty) {
+        await _authService.removeDeviceToken(fcmToken);
+      }
+
       // Delete FCM token so this device stops receiving notifications
       await NotificationService.instance.deleteToken();
       await _authService.logout();
@@ -244,11 +250,31 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final fcmToken = await NotificationService.instance.getToken();
       if (fcmToken != null) {
-        await _authService.registerDeviceToken(fcmToken);
+        await _registerDeviceToken(fcmToken);
       }
     } on Exception catch (e) {
       debugPrint('[FCM] Token registration error: $e');
     }
+  }
+
+  Future<void> _registerDeviceToken(String fcmToken) async {
+    String? appVersion;
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      appVersion = packageInfo.version;
+    } on Exception catch (e) {
+      debugPrint('[FCM] Package info unavailable: $e');
+    }
+
+    final locale = PlatformDispatcher.instance.locale.languageCode;
+    final timezone = DateTime.now().timeZoneName;
+
+    await _authService.registerDeviceToken(
+      fcmToken,
+      appVersion: appVersion,
+      locale: locale,
+      timezone: timezone,
+    );
   }
 
   /// Sign in with Apple (existing users only)

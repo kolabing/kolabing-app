@@ -10,6 +10,8 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/referral_code_field.dart';
+import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
@@ -31,6 +33,10 @@ class SubscriptionScreen extends ConsumerStatefulWidget {
 class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   bool _isCancelling = false;
   bool _isReactivating = false;
+  bool _isSubscribing = false;
+  final _referralCodeController = TextEditingController();
+  String? _referralCodeApiError;
+  String? _referralCodeHelperText;
 
   @override
   void initState() {
@@ -40,21 +46,123 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _referralCodeController.dispose();
+    super.dispose();
+  }
+
   Future<void> _handleSubscribe() async {
+    setState(() {
+      _referralCodeApiError = null;
+      _referralCodeHelperText = null;
+    });
     if (Platform.isIOS) {
-      // iOS: Use Apple IAP
-      await ref.read(iapProvider.notifier).purchase();
+      try {
+        final result = await ref
+            .read(iapProvider.notifier)
+            .purchase(referralCode: _referralCodeController.text);
+        if (!mounted) return;
+        if (result.validatedReferralCode != null) {
+          _setValidatedReferralCode(result.validatedReferralCode!);
+        }
+      } on ApiException catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _referralCodeApiError = e.error.getFriendlyFieldError(
+            'referral_code',
+          );
+        });
+        if (_referralCodeApiError == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.error.message),
+              backgroundColor: KolabingColors.error,
+            ),
+          );
+        }
+      } on NetworkException catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      } on Exception {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to start App Store purchase'),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      }
     } else {
       // Android: Use Stripe
-      final url = await ref.read(profileProvider.notifier).getCheckoutUrl();
-      if (url != null) {
+      setState(() => _isSubscribing = true);
+      try {
+        final url = await ref
+            .read(profileServiceProvider)
+            .createCheckoutSession(
+              successUrl: 'kolabing://subscription/success',
+              cancelUrl: 'kolabing://subscription/cancel',
+              referralCode: _referralCodeController.text,
+            );
+
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
         if (mounted) {
+          setState(() => _isSubscribing = false);
           await Future<void>.delayed(const Duration(seconds: 2));
           await ref.read(profileProvider.notifier).refreshSubscription();
         }
+      } on ApiException catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _isSubscribing = false;
+          _referralCodeApiError = e.error.getFriendlyFieldError(
+            'referral_code',
+          );
+        });
+        if (_referralCodeApiError == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.error.message),
+              backgroundColor: KolabingColors.error,
+            ),
+          );
+        }
+      } on NetworkException catch (e) {
+        if (!mounted) return;
+        setState(() => _isSubscribing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      } on Exception {
+        if (!mounted) return;
+        setState(() => _isSubscribing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to create checkout session'),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
       }
     }
+  }
+
+  void _setValidatedReferralCode(String validatedReferralCode) {
+    _referralCodeController.value = TextEditingValue(
+      text: validatedReferralCode,
+      selection: TextSelection.collapsed(offset: validatedReferralCode.length),
+    );
+    setState(() {
+      _referralCodeApiError = null;
+      _referralCodeHelperText = 'Referral code applied.';
+    });
   }
 
   Future<void> _handleManageBilling() async {
@@ -603,6 +711,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   ) {
     final canStartApplePurchase =
         !Platform.isIOS || (iapState?.canPurchase ?? false);
+    final isSubscribeBusy =
+        _isSubscribing ||
+        (Platform.isIOS &&
+            ((iapState?.isPurchasing ?? false) ||
+                (iapState?.isRestoring ?? false)));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -643,11 +756,38 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
         // Subscribe button (no active subscription)
         if (!isActive) ...[
+          ReferralCodeField(
+            controller: _referralCodeController,
+            enabled: !isSubscribeBusy,
+            errorText: _referralCodeApiError,
+            helperText: _referralCodeHelperText,
+            onChanged: (_) {
+              if (_referralCodeApiError != null ||
+                  _referralCodeHelperText != null) {
+                setState(() {
+                  _referralCodeApiError = null;
+                  _referralCodeHelperText = null;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: KolabingSpacing.md),
           SizedBox(
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: canStartApplePurchase ? _handleSubscribe : null,
-              icon: const Icon(LucideIcons.sparkles, size: 20),
+              onPressed: canStartApplePurchase && !isSubscribeBusy
+                  ? _handleSubscribe
+                  : null,
+              icon: isSubscribeBusy
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: KolabingColors.onPrimary,
+                      ),
+                    )
+                  : const Icon(LucideIcons.sparkles, size: 20),
               label: Text(
                 Platform.isIOS ? 'SUBSCRIBE' : 'SUBSCRIBE FOR 29 EUR/MONTH',
                 style: KolabingTextStyles.buttonSmall.copyWith(

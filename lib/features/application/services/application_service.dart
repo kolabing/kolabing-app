@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../config/constants/api.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
-import '../../../config/constants/api.dart';
 
 /// API base URL
 const String _baseUrl = ApiConfig.baseUrl;
@@ -19,6 +19,9 @@ class ApplicationService {
 
   final AuthService _authService;
   final http.Client _httpClient;
+
+  @visibleForTesting
+  AuthService get authService => _authService;
 
   Future<http.Response> _sendWithRefresh(
     Future<http.Response> Function() request, {
@@ -81,6 +84,8 @@ class ApplicationService {
           return Application.fromJson(data);
         }
         throw const NetworkException('Invalid response format');
+      } else if (_isMissingApplyTargetResponse(response)) {
+        throw _missingApplyTargetError(response.statusCode);
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 422) {
@@ -744,6 +749,26 @@ class ApplicationService {
     if (value is String) return int.tryParse(value) ?? defaultValue;
     return defaultValue;
   }
+
+  bool _isMissingApplyTargetResponse(http.Response response) {
+    if (response.statusCode != 404 &&
+        response.statusCode != 500 &&
+        response.statusCode != 422) {
+      return false;
+    }
+
+    final body = response.body;
+    return body.contains('No query results for model') &&
+        body.contains('CollabOpportunity');
+  }
+
+  ApiException _missingApplyTargetError(int statusCode) => ApiException(
+    error: ApiError(
+      message:
+          'This listing is no longer available for applications. Refresh Explore and try again.',
+      statusCode: statusCode,
+    ),
+  );
 
   ApiException _parseApiError(http.Response response) {
     try {

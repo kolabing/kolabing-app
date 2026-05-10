@@ -9,6 +9,8 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/referral_code_field.dart';
+import '../../auth/models/auth_response.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
 
@@ -47,8 +49,21 @@ class SubscriptionPaywall extends ConsumerStatefulWidget {
 
 class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   bool _isLoading = false;
+  final _referralCodeController = TextEditingController();
+  String? _referralCodeApiError;
+  String? _referralCodeHelperText;
+
+  @override
+  void dispose() {
+    _referralCodeController.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleSubscribe() async {
+    setState(() {
+      _referralCodeApiError = null;
+      _referralCodeHelperText = null;
+    });
     if (Platform.isIOS) {
       await _handleAppleSubscribe();
     } else {
@@ -59,21 +74,64 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   /// iOS: Use Apple IAP
   Future<void> _handleAppleSubscribe() async {
     final iapNotifier = ref.read(iapProvider.notifier);
-    await iapNotifier.purchase();
-    // Purchase result handled by listener in build method
+    try {
+      final result = await iapNotifier.purchase(
+        referralCode: _referralCodeController.text,
+      );
+      if (!mounted) return;
+      if (result.validatedReferralCode != null) {
+        _setValidatedReferralCode(result.validatedReferralCode!);
+      }
+      // Purchase result handled by listener in build method
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _referralCodeApiError = e.error.getFriendlyFieldError('referral_code');
+      });
+      if (_referralCodeApiError == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.error.message),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      }
+    } on NetworkException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
+    } on Exception {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to start App Store purchase'),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
+    }
   }
 
   /// Android/Other: Use Stripe (existing flow)
   Future<void> _handleStripeSubscribe() async {
     setState(() => _isLoading = true);
 
-    final url = await ref.read(profileProvider.notifier).getCheckoutUrl();
+    try {
+      final url = await ref
+          .read(profileServiceProvider)
+          .createCheckoutSession(
+            successUrl: 'kolabing://subscription/success',
+            cancelUrl: 'kolabing://subscription/cancel',
+            referralCode: _referralCodeController.text,
+          );
 
-    if (mounted) {
-      setState(() => _isLoading = false);
-    }
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
 
-    if (url != null) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
       if (mounted) {
         await Future<void>.delayed(const Duration(seconds: 2));
@@ -83,7 +141,50 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           Navigator.of(context).pop(subscription?.isActive ?? false);
         }
       }
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _referralCodeApiError = e.error.getFriendlyFieldError('referral_code');
+      });
+      if (_referralCodeApiError == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.error.message),
+            backgroundColor: KolabingColors.error,
+          ),
+        );
+      }
+    } on NetworkException catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
+    } on Exception {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to create checkout session'),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
     }
+  }
+
+  void _setValidatedReferralCode(String validatedReferralCode) {
+    _referralCodeController.value = TextEditingValue(
+      text: validatedReferralCode,
+      selection: TextSelection.collapsed(offset: validatedReferralCode.length),
+    );
+    setState(() {
+      _referralCodeApiError = null;
+      _referralCodeHelperText = 'Referral code applied.';
+    });
   }
 
   @override
@@ -121,7 +222,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(KolabingSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -224,6 +325,23 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       ),
                   ],
                 ),
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+
+              ReferralCodeField(
+                controller: _referralCodeController,
+                enabled: !isLoading,
+                errorText: _referralCodeApiError,
+                helperText: _referralCodeHelperText,
+                onChanged: (_) {
+                  if (_referralCodeApiError != null ||
+                      _referralCodeHelperText != null) {
+                    setState(() {
+                      _referralCodeApiError = null;
+                      _referralCodeHelperText = null;
+                    });
+                  }
+                },
               ),
               const SizedBox(height: KolabingSpacing.lg),
 

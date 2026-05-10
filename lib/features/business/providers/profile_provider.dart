@@ -73,11 +73,9 @@ class ProfileState {
 /// Profile notifier for managing profile state
 class ProfileNotifier extends Notifier<ProfileState> {
   late final ProfileService _profileService;
-  late final AuthService _authService;
 
   @override
   ProfileState build() {
-    _authService = ref.read(authServiceProvider);
     _profileService = ref.read(profileServiceProvider);
     // Auto-load profile on initialization
     Future.microtask(() => loadProfile());
@@ -252,14 +250,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
   Future<void> signOut() async {
     state = state.copyWith(isUpdating: true, clearError: true);
 
-    try {
-      await _authService.logout();
-    } on Exception catch (e) {
-      debugPrint('Logout service error: $e');
-    }
-
-    // Reset auth state
-    ref.read(authProvider.notifier).logout();
+    await ref.read(authProvider.notifier).logout();
 
     // Invalidate all user-scoped providers so stale data
     // is not visible if another user signs in
@@ -283,7 +274,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
     try {
       await _profileService.deleteAccount();
-      await _authService.logout();
+      await ref.read(authProvider.notifier).logout();
       state = const ProfileState();
       return true;
     } on ApiException catch (e) {

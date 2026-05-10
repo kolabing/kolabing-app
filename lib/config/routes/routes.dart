@@ -40,6 +40,7 @@ import '../../features/onboarding/screens/community/community_step2_screen.dart'
 import '../../features/onboarding/screens/community/community_step3_screen.dart';
 import '../../features/onboarding/screens/community/community_step4_screen.dart';
 import '../../features/permission/screens/permission_screen.dart';
+import '../../features/notification/utils/notification_navigation.dart';
 
 /// Kolabing route definitions
 ///
@@ -255,26 +256,17 @@ final GlobalKey<NavigatorState> kolabingNavigatorKey =
 /// Call once in main() after the app widget is running.
 /// Maps FCM `type` → app route and navigates accordingly.
 void connectNotificationRouter() {
-  NotificationService.instance.connectRouter((String type, String? id) {
-    switch (type) {
-      case 'new_message':
-        if (id != null) kolabingRouter.push('/application/$id/chat');
-
-      case 'application_received':
-      case 'application_accepted':
-      case 'application_declined':
-        if (id != null) kolabingRouter.push('/application/$id');
-
-      case 'badge_awarded':
-      // No badge screen yet — navigate to attendee dashboard
-
-      case 'challenge_verified':
-      case 'reward_won':
-      // No rewards screen yet — navigate to attendee dashboard
-
-      default:
-        debugPrint('[FCM] Unknown notification type: $type');
-    }
+  NotificationService.instance.connectRouter((
+    String? type,
+    String? id,
+    String? deeplink,
+  ) {
+    final route = resolveNotificationRoute(
+      type: type,
+      id: id,
+      deeplink: deeplink,
+    );
+    kolabingRouter.push(route);
   });
 }
 

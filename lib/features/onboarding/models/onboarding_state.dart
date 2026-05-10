@@ -1,3 +1,4 @@
+import '../../../utils/referral_code.dart';
 import '../../auth/models/user_model.dart';
 import 'onboarding_photo.dart';
 import 'place_suggestion.dart';
@@ -28,6 +29,7 @@ class OnboardingData {
     this.instagram,
     this.tiktok,
     this.website,
+    this.referralCode,
     this.currentStep = 1,
   });
 
@@ -99,6 +101,9 @@ class OnboardingData {
 
   /// Website URL (optional)
   final String? website;
+
+  /// Optional referral code for business signups.
+  final String? referralCode;
 
   /// Current onboarding step (1-4)
   final int currentStep;
@@ -211,6 +216,7 @@ class OnboardingData {
     String? instagram,
     String? tiktok,
     String? website,
+    String? referralCode,
     int? currentStep,
     bool clearPhoto = false,
     bool clearAbout = false,
@@ -223,6 +229,7 @@ class OnboardingData {
     bool clearVenueType = false,
     bool clearVenueCapacity = false,
     bool clearTypeSelection = false,
+    bool clearReferralCode = false,
   }) => OnboardingData(
     userType: userType ?? this.userType,
     name: name ?? this.name,
@@ -249,6 +256,9 @@ class OnboardingData {
     instagram: clearInstagram ? null : (instagram ?? this.instagram),
     tiktok: clearTiktok ? null : (tiktok ?? this.tiktok),
     website: clearWebsite ? null : (website ?? this.website),
+    referralCode: clearReferralCode
+        ? null
+        : (referralCode ?? this.referralCode),
     currentStep: currentStep ?? this.currentStep,
   );
 
@@ -262,10 +272,11 @@ class OnboardingData {
   /// Convert to business onboarding API payload
   Map<String, dynamic> toBusinessPayload() {
     final resolvedCityId = location?.cityId ?? cityId;
-    final resolvedCityName = location?.city.isNotEmpty == true
+    final resolvedCityName = (location?.city.isNotEmpty ?? false)
         ? location!.city
         : cityName;
     final resolvedBusinessSlugs = selectedBusinessTypeSlugs;
+    final normalizedReferralCode = normalizeReferralCode(referralCode);
 
     return {
       'name': name?.trim(),
@@ -283,6 +294,8 @@ class OnboardingData {
       if (instagram != null && instagram!.isNotEmpty)
         'instagram': instagram?.trim(),
       if (website != null && website!.isNotEmpty) 'website': website?.trim(),
+      if (normalizedReferralCode != null)
+        'referral_code': normalizedReferralCode,
       'primary_venue': {
         'name': venueName?.trim(),
         'venue_type': venueType,

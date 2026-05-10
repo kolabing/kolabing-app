@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../config/constants/api.dart';
+import '../../../utils/referral_code.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
-import '../../../config/constants/api.dart';
 
 /// API configuration
 const String _baseUrl = ApiConfig.baseUrl;
@@ -52,7 +53,7 @@ class ProfileService {
   ///
   /// GET /api/v1/me/profile
   Future<UserModel> getProfile() async {
-    final url = '$_baseUrl/me/profile';
+    const url = '$_baseUrl/me/profile';
     debugPrint('Profile: GET $url');
 
     try {
@@ -91,7 +92,7 @@ class ProfileService {
   ///
   /// PUT /api/v1/me/profile
   Future<UserModel> updateProfile(Map<String, dynamic> data) async {
-    final url = '$_baseUrl/me/profile';
+    const url = '$_baseUrl/me/profile';
     debugPrint('Profile: PUT $url');
 
     try {
@@ -132,7 +133,7 @@ class ProfileService {
   ///
   /// DELETE /api/v1/me/account
   Future<void> deleteAccount() async {
-    final url = '$_baseUrl/me/account';
+    const url = '$_baseUrl/me/account';
     debugPrint('Profile: DELETE $url');
 
     try {
@@ -172,7 +173,7 @@ class ProfileService {
   ///
   /// GET /api/v1/me/notification-preferences
   Future<NotificationPreferences> getNotificationPreferences() async {
-    final url = '$_baseUrl/me/notification-preferences';
+    const url = '$_baseUrl/me/notification-preferences';
     debugPrint('Profile: GET $url');
 
     try {
@@ -215,7 +216,7 @@ class ProfileService {
   Future<NotificationPreferences> updateNotificationPreferences(
     Map<String, bool> prefs,
   ) async {
-    final url = '$_baseUrl/me/notification-preferences';
+    const url = '$_baseUrl/me/notification-preferences';
     debugPrint('Profile: PUT $url');
 
     try {
@@ -262,7 +263,7 @@ class ProfileService {
   ///
   /// GET /api/v1/me/subscription
   Future<Subscription?> getSubscription() async {
-    final url = '$_baseUrl/me/subscription';
+    const url = '$_baseUrl/me/subscription';
     debugPrint('Profile: GET $url');
 
     try {
@@ -300,21 +301,73 @@ class ProfileService {
     }
   }
 
+  /// Validate a referral code before starting Apple purchase flow.
+  ///
+  /// POST /api/v1/referrals/validate
+  Future<String?> validateReferralCode(String? referralCode) async {
+    final normalizedReferralCode = normalizeReferralCode(referralCode);
+    if (normalizedReferralCode == null) return null;
+
+    const url = '$_baseUrl/referrals/validate';
+    debugPrint('Profile: POST $url');
+
+    try {
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          Uri.parse(url),
+          headers: await _getHeaders(),
+          body: jsonEncode({'referral_code': normalizedReferralCode}),
+        ),
+        allowRetry: true,
+      );
+
+      debugPrint('Validate referral response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as Map<String, dynamic>;
+        return normalizeReferralCode(data['referral_code'] as String?) ??
+            normalizedReferralCode;
+      } else if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Validate referral error: $e');
+      throw NetworkException('Failed to validate referral code: $e');
+    }
+  }
+
   /// Create checkout session for subscription
   ///
   /// POST /api/v1/me/subscription/checkout
   Future<String> createCheckoutSession({
     required String successUrl,
     required String cancelUrl,
+    String? referralCode,
   }) async {
-    final url = '$_baseUrl/me/subscription/checkout';
+    const url = '$_baseUrl/me/subscription/checkout';
     debugPrint('Profile: POST $url');
+    final normalizedReferralCode = normalizeReferralCode(referralCode);
 
     try {
       final response = await _httpClient.post(
         Uri.parse(url),
         headers: await _getHeaders(),
-        body: jsonEncode({'success_url': successUrl, 'cancel_url': cancelUrl}),
+        body: jsonEncode({
+          'success_url': successUrl,
+          'cancel_url': cancelUrl,
+          if (normalizedReferralCode != null)
+            'referral_code': normalizedReferralCode,
+        }),
       );
 
       debugPrint(
@@ -387,7 +440,7 @@ class ProfileService {
   ///
   /// POST /api/v1/me/subscription/cancel
   Future<Subscription> cancelSubscription() async {
-    final url = '$_baseUrl/me/subscription/cancel';
+    const url = '$_baseUrl/me/subscription/cancel';
     debugPrint('Profile: POST $url');
 
     try {
@@ -424,7 +477,7 @@ class ProfileService {
   ///
   /// POST /api/v1/me/subscription/reactivate
   Future<Subscription> reactivateSubscription() async {
-    final url = '$_baseUrl/me/subscription/reactivate';
+    const url = '$_baseUrl/me/subscription/reactivate';
     debugPrint('Profile: POST $url');
 
     try {
@@ -470,9 +523,11 @@ class ProfileService {
     required String transactionId,
     required String originalTransactionId,
     required String productId,
+    String? referralCode,
   }) async {
-    final url = '$_baseUrl/me/subscription/apple-verify';
+    const url = '$_baseUrl/me/subscription/apple-verify';
     debugPrint('Profile: POST $url');
+    final normalizedReferralCode = normalizeReferralCode(referralCode);
 
     try {
       final response = await _httpClient.post(
@@ -482,6 +537,8 @@ class ProfileService {
           'transaction_id': transactionId,
           'original_transaction_id': originalTransactionId,
           'product_id': productId,
+          if (normalizedReferralCode != null)
+            'referral_code': normalizedReferralCode,
         }),
       );
 
@@ -515,7 +572,7 @@ class ProfileService {
   Future<Subscription?> restoreApplePurchases({
     required List<Map<String, String>> transactions,
   }) async {
-    final url = '$_baseUrl/me/subscription/apple-restore';
+    const url = '$_baseUrl/me/subscription/apple-restore';
     debugPrint('Profile: POST $url');
 
     try {

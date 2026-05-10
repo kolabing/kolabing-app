@@ -77,7 +77,7 @@ final filteredCitiesProvider = Provider.autoDispose
           return AsyncValue.data(filtered);
         },
         loading: () => const AsyncValue.loading(),
-        error: (error, stack) => AsyncValue.error(error, stack),
+        error: AsyncValue.error,
       );
     });
 
@@ -125,7 +125,7 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         photoFileName: fileName,
         photoMimeType: _inferMimeType(fileName),
       );
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Error encoding photo: $e');
     }
   }
@@ -236,7 +236,7 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         mimeType: _inferMimeType(file.path),
       );
       state = state!.copyWith(venuePhotos: [...state!.venuePhotos, photo]);
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Error encoding venue photo: $e');
     }
   }
@@ -304,6 +304,16 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       // Add https:// if not present
       final url = website.startsWith('http') ? website : 'https://$website';
       state = state!.copyWith(website: url);
+    }
+  }
+
+  /// Update optional referral code for business signups.
+  void updateReferralCode(String? referralCode) {
+    if (state == null) return;
+    if (referralCode == null || referralCode.trim().isEmpty) {
+      state = state!.copyWith(clearReferralCode: true);
+    } else {
+      state = state!.copyWith(referralCode: referralCode.trim());
     }
   }
 
@@ -411,7 +421,7 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         errorMessage: e.message,
         isNetworkError: true,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Onboarding error: $e');
       return const OnboardingResult(
         success: false,

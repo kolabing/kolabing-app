@@ -195,6 +195,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
         tooltip: 'Create New Kolab',
+        heroTag: 'community_my_kolabs_fab',
       ),
     );
   }

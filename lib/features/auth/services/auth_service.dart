@@ -102,7 +102,15 @@ class AuthService {
   ///
   /// POST /api/v1/me/device-token
   /// Call after successful login (any method).
-  Future<void> registerDeviceToken(String fcmToken) async {
+  Future<void> registerDeviceToken(
+    String fcmToken, {
+    String? appVersion,
+    String? locale,
+    String? timezone,
+    double? lastLocationLat,
+    double? lastLocationLng,
+    DateTime? locationPermissionGrantedAt,
+  }) async {
     final token = await getToken();
     if (token == null) return;
 
@@ -120,12 +128,48 @@ class AuthService {
         body: jsonEncode({
           'token': fcmToken,
           'platform': Platform.isIOS ? 'ios' : 'android',
+          if (appVersion != null && appVersion.isNotEmpty)
+            'app_version': appVersion,
+          if (locale != null && locale.isNotEmpty) 'locale': locale,
+          if (timezone != null && timezone.isNotEmpty) 'timezone': timezone,
+          if (lastLocationLat != null) 'last_location_lat': lastLocationLat,
+          if (lastLocationLng != null) 'last_location_lng': lastLocationLng,
+          if (locationPermissionGrantedAt != null)
+            'location_permission_granted_at':
+                locationPermissionGrantedAt.toIso8601String(),
         }),
       );
       debugPrint('[FCM] Register token response: ${response.statusCode}');
     } on Exception catch (e) {
       debugPrint('[FCM] Register token error: $e');
       // Non-fatal: don't throw, just log
+    }
+  }
+
+  /// Remove FCM device token from backend.
+  ///
+  /// DELETE /api/v1/me/device-token
+  Future<void> removeDeviceToken(String fcmToken) async {
+    final token = await getToken();
+    if (token == null) return;
+
+    final url = '$_baseUrl/me/device-token';
+    debugPrint('[FCM] Removing device token: DELETE $url');
+
+    try {
+      final request = http.Request('DELETE', Uri.parse(url))
+        ..headers.addAll({
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        })
+        ..body = jsonEncode({'token': fcmToken});
+
+      final streamedResponse = await _httpClient.send(request);
+      final response = await http.Response.fromStream(streamedResponse);
+      debugPrint('[FCM] Remove token response: ${response.statusCode}');
+    } on Exception catch (e) {
+      debugPrint('[FCM] Remove token error: $e');
     }
   }
 

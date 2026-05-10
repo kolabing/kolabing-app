@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
 import '../services/application_service.dart';
-import '../../opportunity/models/opportunity.dart';
 
 // =============================================================================
 // Service Provider
 // =============================================================================
 
 final applicationServiceProvider = Provider<ApplicationService>(
-  (ref) => ApplicationService(),
+  (ref) => ApplicationService(authService: ref.watch(authServiceProvider)),
 );
 
 // =============================================================================
@@ -40,8 +41,7 @@ class ApplicationsState {
   bool get hasData => applications.isNotEmpty;
   bool get hasMore => currentPage < lastPage;
 
-  int get pendingCount =>
-      applications.where((a) => a.status.isPending).length;
+  int get pendingCount => applications.where((a) => a.status.isPending).length;
 
   int get totalUnreadCount =>
       applications.fold(0, (sum, a) => sum + a.unreadCount);
@@ -54,15 +54,14 @@ class ApplicationsState {
     int? lastPage,
     int? total,
     bool clearError = false,
-  }) =>
-      ApplicationsState(
-        applications: applications ?? this.applications,
-        isLoading: isLoading ?? this.isLoading,
-        error: clearError ? null : (error ?? this.error),
-        currentPage: currentPage ?? this.currentPage,
-        lastPage: lastPage ?? this.lastPage,
-        total: total ?? this.total,
-      );
+  }) => ApplicationsState(
+    applications: applications ?? this.applications,
+    isLoading: isLoading ?? this.isLoading,
+    error: clearError ? null : (error ?? this.error),
+    currentPage: currentPage ?? this.currentPage,
+    lastPage: lastPage ?? this.lastPage,
+    total: total ?? this.total,
+  );
 }
 
 // =============================================================================
@@ -95,10 +94,7 @@ class MyApplicationsNotifier extends Notifier<ApplicationsState> {
       );
     } catch (e) {
       debugPrint('Load applications error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -120,10 +116,7 @@ class MyApplicationsNotifier extends Notifier<ApplicationsState> {
       );
     } catch (e) {
       debugPrint('Load more applications error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -190,7 +183,8 @@ class MyApplicationsNotifier extends Notifier<ApplicationsState> {
 
 final myApplicationsProvider =
     NotifierProvider<MyApplicationsNotifier, ApplicationsState>(
-        MyApplicationsNotifier.new);
+      MyApplicationsNotifier.new,
+    );
 
 // =============================================================================
 // Received Applications Provider (For opportunity owners)
@@ -222,10 +216,7 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
       );
     } catch (e) {
       debugPrint('Load received applications error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -247,10 +238,7 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
       );
     } catch (e) {
       debugPrint('Load more received applications error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -296,14 +284,17 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
 
 final receivedApplicationsProvider =
     NotifierProvider<ReceivedApplicationsNotifier, ApplicationsState>(
-        ReceivedApplicationsNotifier.new);
+      ReceivedApplicationsNotifier.new,
+    );
 
 // =============================================================================
 // Single Application Detail Provider
 // =============================================================================
 
-final applicationDetailProvider =
-    FutureProvider.family<Application?, String>((ref, id) async {
+final applicationDetailProvider = FutureProvider.family<Application?, String>((
+  ref,
+  id,
+) async {
   final service = ref.watch(applicationServiceProvider);
   try {
     return await service.getApplication(id);
@@ -357,38 +348,37 @@ class ChatState {
     int? currentPage,
     int? lastPage,
     int? total,
-  }) =>
-      ChatState(
-        application: application ?? this.application,
-        messages: messages ?? this.messages,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isSending: isSending ?? this.isSending,
-        error: clearError ? null : (error ?? this.error),
-        currentPage: currentPage ?? this.currentPage,
-        lastPage: lastPage ?? this.lastPage,
-        total: total ?? this.total,
-      );
+  }) => ChatState(
+    application: application ?? this.application,
+    messages: messages ?? this.messages,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    isSending: isSending ?? this.isSending,
+    error: clearError ? null : (error ?? this.error),
+    currentPage: currentPage ?? this.currentPage,
+    lastPage: lastPage ?? this.lastPage,
+    total: total ?? this.total,
+  );
 }
 
 /// Chat data provider - loads application details for chat
-final chatDataProvider =
-    FutureProvider.autoDispose.family<Application?, String>((ref, applicationId) async {
-  final service = ref.read(applicationServiceProvider);
-  try {
-    final application = await service.getApplication(applicationId);
-    // Mark messages as read when opening chat
-    await service.markAsRead(applicationId);
-    // Invalidate unread count to refresh badge
-    ref.invalidate(unreadMessagesCountProvider);
-    return application;
-  } on AuthException {
-    rethrow;
-  } catch (e) {
-    debugPrint('Load chat error: $e');
-    return null;
-  }
-});
+final chatDataProvider = FutureProvider.autoDispose
+    .family<Application?, String>((ref, applicationId) async {
+      final service = ref.read(applicationServiceProvider);
+      try {
+        final application = await service.getApplication(applicationId);
+        // Mark messages as read when opening chat
+        await service.markAsRead(applicationId);
+        // Invalidate unread count to refresh badge
+        ref.invalidate(unreadMessagesCountProvider);
+        return application;
+      } on AuthException {
+        rethrow;
+      } catch (e) {
+        debugPrint('Load chat error: $e');
+        return null;
+      }
+    });
 
 // =============================================================================
 // Chat Messages Provider (Paginated)
@@ -422,17 +412,15 @@ class ChatMessagesNotifier extends Notifier<ChatState> {
       ref.invalidate(unreadMessagesCountProvider);
 
       state = ChatState(
-        messages: response.data.reversed.toList(), // Reverse for chronological order
+        messages: response.data.reversed
+            .toList(), // Reverse for chronological order
         currentPage: response.currentPage,
         lastPage: response.lastPage,
         total: response.total,
       );
     } on Exception catch (e) {
       debugPrint('Load messages error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -460,10 +448,7 @@ class ChatMessagesNotifier extends Notifier<ChatState> {
       );
     } on Exception catch (e) {
       debugPrint('Load more messages error: $e');
-      state = state.copyWith(
-        isLoadingMore: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoadingMore: false, error: _getErrorMessage(e));
     }
   }
 
@@ -491,10 +476,7 @@ class ChatMessagesNotifier extends Notifier<ChatState> {
       return message;
     } on Exception catch (e) {
       debugPrint('Send message error: $e');
-      state = state.copyWith(
-        isSending: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isSending: false, error: _getErrorMessage(e));
       return null;
     }
   }
@@ -543,8 +525,9 @@ class ChatMessagesNotifier extends Notifier<ChatState> {
       e.toString().replaceAll('Exception: ', '');
 }
 
-final chatMessagesProvider =
-    NotifierProvider<ChatMessagesNotifier, ChatState>(ChatMessagesNotifier.new);
+final chatMessagesProvider = NotifierProvider<ChatMessagesNotifier, ChatState>(
+  ChatMessagesNotifier.new,
+);
 
 // =============================================================================
 // Unread Messages Count Provider
@@ -552,18 +535,20 @@ final chatMessagesProvider =
 
 final unreadMessagesCountProvider =
     FutureProvider.autoDispose<UnreadMessagesCount>((ref) async {
-  final service = ref.read(applicationServiceProvider);
-  try {
-    return await service.getUnreadMessagesCount();
-  } catch (e) {
-    debugPrint('Get unread count error: $e');
-    return const UnreadMessagesCount(total: 0, byApplication: {});
-  }
-});
+      final service = ref.read(applicationServiceProvider);
+      try {
+        return await service.getUnreadMessagesCount();
+      } catch (e) {
+        debugPrint('Get unread count error: $e');
+        return const UnreadMessagesCount(total: 0, byApplication: {});
+      }
+    });
 
 /// Provider to get unread count for a specific application
-final applicationUnreadCountProvider =
-    Provider.family<int, String>((ref, applicationId) {
+final applicationUnreadCountProvider = Provider.family<int, String>((
+  ref,
+  applicationId,
+) {
   final asyncCount = ref.watch(unreadMessagesCountProvider);
   return asyncCount.maybeWhen(
     data: (count) => count.getCountForApplication(applicationId),
@@ -574,8 +559,5 @@ final applicationUnreadCountProvider =
 /// Provider to get total unread count
 final totalUnreadCountProvider = Provider<int>((ref) {
   final asyncCount = ref.watch(unreadMessagesCountProvider);
-  return asyncCount.maybeWhen(
-    data: (count) => count.total,
-    orElse: () => 0,
-  );
+  return asyncCount.maybeWhen(data: (count) => count.total, orElse: () => 0);
 });

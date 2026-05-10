@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/providers/auth_provider.dart';
 import '../models/app_notification.dart';
 import '../services/notification_service.dart';
 
@@ -9,7 +10,7 @@ import '../services/notification_service.dart';
 // =============================================================================
 
 final notificationServiceProvider = Provider<NotificationService>(
-  (ref) => NotificationService(),
+  (ref) => NotificationService(authService: ref.watch(authServiceProvider)),
 );
 
 // =============================================================================
@@ -52,17 +53,16 @@ class NotificationState {
     int? currentPage,
     int? lastPage,
     int? total,
-  }) =>
-      NotificationState(
-        notifications: notifications ?? this.notifications,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        error: clearError ? null : (error ?? this.error),
-        unreadCount: unreadCount ?? this.unreadCount,
-        currentPage: currentPage ?? this.currentPage,
-        lastPage: lastPage ?? this.lastPage,
-        total: total ?? this.total,
-      );
+  }) => NotificationState(
+    notifications: notifications ?? this.notifications,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    error: clearError ? null : (error ?? this.error),
+    unreadCount: unreadCount ?? this.unreadCount,
+    currentPage: currentPage ?? this.currentPage,
+    lastPage: lastPage ?? this.lastPage,
+    total: total ?? this.total,
+  );
 }
 
 // =============================================================================
@@ -107,10 +107,7 @@ class NotificationNotifier extends Notifier<NotificationState> {
       );
     } catch (e) {
       debugPrint('Load notifications error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -133,10 +130,7 @@ class NotificationNotifier extends Notifier<NotificationState> {
       );
     } catch (e) {
       debugPrint('Load more notifications error: $e');
-      state = state.copyWith(
-        isLoadingMore: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoadingMore: false, error: _getErrorMessage(e));
     }
   }
 
@@ -153,10 +147,7 @@ class NotificationNotifier extends Notifier<NotificationState> {
       }).toList();
 
       final unreadCount = updated.where((n) => !n.isRead).length;
-      state = state.copyWith(
-        notifications: updated,
-        unreadCount: unreadCount,
-      );
+      state = state.copyWith(notifications: updated, unreadCount: unreadCount);
     } catch (e) {
       debugPrint('Mark as read error: $e');
     }
@@ -175,10 +166,7 @@ class NotificationNotifier extends Notifier<NotificationState> {
         return n;
       }).toList();
 
-      state = state.copyWith(
-        notifications: updated,
-        unreadCount: 0,
-      );
+      state = state.copyWith(notifications: updated, unreadCount: 0);
     } catch (e) {
       debugPrint('Mark all as read error: $e');
     }
@@ -201,7 +189,8 @@ class NotificationNotifier extends Notifier<NotificationState> {
 
 final notificationProvider =
     NotifierProvider<NotificationNotifier, NotificationState>(
-        NotificationNotifier.new);
+      NotificationNotifier.new,
+    );
 
 /// Convenience provider for just the unread count (for badge display)
 final unreadNotificationCountProvider = Provider<int>((ref) {
