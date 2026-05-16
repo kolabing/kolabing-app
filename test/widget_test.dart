@@ -8,12 +8,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:kolabing_app/features/auth/screens/splash_screen.dart';
 import 'package:kolabing_app/main.dart';
 
 void main() {
   testWidgets('Kolabing app boots', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: KolabingApp()));
 
-    expect(find.text('Kolabing'), findsOneWidget);
+    expect(find.byType(SplashScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

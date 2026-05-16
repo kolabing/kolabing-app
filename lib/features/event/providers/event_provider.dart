@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/event.dart';
 import '../services/event_service.dart';
 
+final eventServiceProvider = Provider<EventService>((ref) => EventService());
+
 /// State for the events list
 class EventsState {
   const EventsState({
@@ -49,7 +51,7 @@ class EventsNotifier extends Notifier<EventsState> {
 
   @override
   EventsState build() {
-    _service = EventService();
+    _service = ref.read(eventServiceProvider);
     // Auto-load events on initialization
     Future.microtask(() => loadEvents());
     return const EventsState();
@@ -180,10 +182,16 @@ class EventsNotifier extends Notifier<EventsState> {
 final eventsProvider =
     NotifierProvider<EventsNotifier, EventsState>(EventsNotifier.new);
 
+final eventDetailProvider =
+    FutureProvider.family<Event, String>((ref, eventId) async {
+  final service = ref.watch(eventServiceProvider);
+  return service.getEvent(eventId);
+});
+
 /// Provider for loading another user's events by profile ID (read-only)
 final profileEventsProvider =
     FutureProvider.family<List<Event>, String>((ref, profileId) async {
-  final service = EventService();
+  final service = ref.watch(eventServiceProvider);
   final result = await service.getEvents(profileId: profileId);
   return result.events;
 });

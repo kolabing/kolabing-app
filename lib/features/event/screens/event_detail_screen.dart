@@ -13,9 +13,14 @@ import '../providers/event_provider.dart';
 
 /// Detail screen for viewing a single event
 class EventDetailScreen extends ConsumerStatefulWidget {
-  const EventDetailScreen({super.key, required this.eventId});
+  const EventDetailScreen({
+    super.key,
+    required this.eventId,
+    this.isReadOnly = true,
+  });
 
   final String eventId;
+  final bool isReadOnly;
 
   @override
   ConsumerState<EventDetailScreen> createState() => _EventDetailScreenState();
@@ -80,10 +85,48 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(eventsProvider);
-    final event = _getEvent(state);
+    final cachedEvent = _getEvent(state);
+    final canDelete = !widget.isReadOnly;
 
-    if (event == null) {
-      return Scaffold(
+    if (cachedEvent != null) {
+      return _buildContent(cachedEvent, canDelete: canDelete);
+    }
+
+    final asyncEvent = ref.watch(eventDetailProvider(widget.eventId));
+
+    return asyncEvent.when(
+      loading: _buildLoadingState,
+      error: (error, _) => _buildMissingState(
+        title: 'Event not found',
+        message: error.toString(),
+      ),
+      data: (event) => _buildContent(event, canDelete: canDelete),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Scaffold(
+      backgroundColor: KolabingColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(LucideIcons.arrowLeft),
+          color: KolabingColors.textPrimary,
+        ),
+      ),
+      body: const Center(
+        child: CircularProgressIndicator(color: KolabingColors.primary),
+      ),
+    );
+  }
+
+  Widget _buildMissingState({
+    required String title,
+    String? message,
+  }) {
+    return Scaffold(
         backgroundColor: KolabingColors.background,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -105,17 +148,33 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
-                'Event not found',
+                title,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: KolabingColors.textSecondary,
                 ),
               ),
+              if (message != null) ...[
+                const SizedBox(height: KolabingSpacing.xs),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.lg,
+                  ),
+                  child: Text(
+                    message,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.textTertiary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       );
-    }
+  }
 
+  Widget _buildContent(Event event, {required bool canDelete}) {
     return Scaffold(
       backgroundColor: KolabingColors.background,
       body: CustomScrollView(
@@ -171,20 +230,20 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
                   const SizedBox(height: KolabingSpacing.xl),
 
-                  // Delete Button
-                  OutlinedButton.icon(
-                    onPressed: () => _handleDelete(event),
-                    icon: const Icon(LucideIcons.trash2, size: 18),
-                    label: const Text('DELETE EVENT'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: KolabingColors.error,
-                      side: const BorderSide(color: KolabingColors.error),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: KolabingSpacing.sm,
+                  if (canDelete)
+                    OutlinedButton.icon(
+                      onPressed: () => _handleDelete(event),
+                      icon: const Icon(LucideIcons.trash2, size: 18),
+                      label: const Text('DELETE EVENT'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: KolabingColors.error,
+                        side: const BorderSide(color: KolabingColors.error),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: KolabingSpacing.sm,
+                        ),
+                        minimumSize: const Size(double.infinity, 48),
                       ),
-                      minimumSize: const Size(double.infinity, 48),
                     ),
-                  ),
 
                   const SizedBox(height: KolabingSpacing.xxl),
                 ],

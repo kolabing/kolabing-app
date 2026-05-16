@@ -12,6 +12,11 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
+import '../../auth/models/user_model.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../event/models/event.dart';
+import '../../event/providers/event_provider.dart';
+import '../../event/widgets/event_card.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 
@@ -68,27 +73,54 @@ class _CommunityOfferDetailScreenState
   @override
   Widget build(BuildContext context) {
     final detailAsync = ref.watch(opportunityDetailProvider(widget.offerId));
+    final user = ref.watch(authProvider).user;
 
     return detailAsync.when(
       loading: () {
         // Show pre-loaded data while refreshing, otherwise shimmer
         if (widget.offer != null) {
-          return _buildContent(widget.offer!);
+          return _buildContent(
+            widget.offer!,
+            isPreviewMode: _isPreviewMode(user, widget.offer!),
+          );
         }
         return _buildLoadingState();
       },
       error: (error, _) {
         // Show pre-loaded data on error, otherwise error state
         if (widget.offer != null) {
-          return _buildContent(widget.offer!);
+          return _buildContent(
+            widget.offer!,
+            isPreviewMode: _isPreviewMode(user, widget.offer!),
+          );
         }
         return _buildErrorState(error.toString());
       },
-      data: (opportunity) => _buildContent(opportunity),
+      data: (opportunity) => _buildContent(
+        opportunity,
+        isPreviewMode: _isPreviewMode(user, opportunity),
+      ),
     );
   }
 
-  Widget _buildContent(Opportunity opportunity) => Scaffold(
+  bool _isPreviewMode(UserModel? user, Opportunity opportunity) {
+    final communityProfileId = user?.communityProfile?.id;
+    if (user == null || !user.isCommunity || communityProfileId == null) {
+      return false;
+    }
+
+    if (opportunity.status != OpportunityStatus.published) {
+      return false;
+    }
+
+    return opportunity.isOwn == true ||
+        opportunity.creatorProfile?.id == communityProfileId;
+  }
+
+  Widget _buildContent(
+    Opportunity opportunity, {
+    required bool isPreviewMode,
+  }) => Scaffold(
         backgroundColor: KolabingColors.background,
         body: Stack(
           children: [
@@ -126,6 +158,11 @@ class _CommunityOfferDetailScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (isPreviewMode) ...[
+                          const _PreviewModeBanner(),
+                          const SizedBox(height: KolabingSpacing.md),
+                        ],
+
                         // Details card
                         _buildDetailsCard(opportunity),
 
@@ -143,6 +180,11 @@ class _CommunityOfferDetailScreenState
 
                         // Location & availability
                         _buildLocationSection(opportunity),
+
+                        if (opportunity.creatorProfile != null)
+                          _CommunityPastEventsSection(
+                            profileId: opportunity.creatorProfile!.id,
+                          ),
                       ],
                     ),
                   ),
@@ -155,7 +197,10 @@ class _CommunityOfferDetailScreenState
               left: 0,
               right: 0,
               bottom: 0,
-              child: _buildBottomAction(opportunity),
+              child: _buildBottomAction(
+                opportunity,
+                isPreviewMode: isPreviewMode,
+              ),
             ),
           ],
         ),
@@ -607,42 +652,33 @@ class _CommunityOfferDetailScreenState
         ],
       );
 
-  Widget _buildBottomAction(Opportunity opportunity) {
+  Widget _buildBottomAction(
+    Opportunity opportunity, {
+    required bool isPreviewMode,
+  }) {
     // Self-apply detection happens on the backend — the client cannot reliably
     // compare user_id vs profile_id since the API uses different ID spaces.
     // Always show APPLY NOW to authenticated viewers; the server returns a
     // friendly error if the user attempts to apply to their own opportunity.
 
-    // If user has already applied
-    if (opportunity.hasApplied == true) {
-      return Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
+    if (isPreviewMode) {
+      return _buildBottomButtonShell(
+        child: ElevatedButton(
+          onPressed: null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KolabingColors.surfaceVariant,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
             ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.surfaceVariant,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-              child: Text(
-                'ALREADY APPLIED',
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(LucideIcons.eye, size: 18),
+              const SizedBox(width: KolabingSpacing.xs),
+              Text(
+                'PREVIEW MODE',
                 style: GoogleFonts.dmSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -650,12 +686,68 @@ class _CommunityOfferDetailScreenState
                   color: KolabingColors.textTertiary,
                 ),
               ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // If user has already applied
+    if (opportunity.hasApplied == true) {
+      return _buildBottomButtonShell(
+        child: ElevatedButton(
+          onPressed: null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KolabingColors.surfaceVariant,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+            ),
+          ),
+          child: Text(
+            'ALREADY APPLIED',
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1,
+              color: KolabingColors.textTertiary,
             ),
           ),
         ),
       );
     }
 
+    return _buildBottomButtonShell(
+      child: ElevatedButton(
+        onPressed: () => _handleApply(opportunity),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: KolabingColors.primary,
+          foregroundColor: KolabingColors.onPrimary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(LucideIcons.send, size: 18),
+            const SizedBox(width: KolabingSpacing.xs),
+            Text(
+              'APPLY NOW',
+              style: GoogleFonts.dmSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomButtonShell({required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -673,32 +765,7 @@ class _CommunityOfferDetailScreenState
         child: SizedBox(
           width: double.infinity,
           height: 52,
-          child: ElevatedButton(
-            onPressed: () => _handleApply(opportunity),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(LucideIcons.send, size: 18),
-                const SizedBox(width: KolabingSpacing.xs),
-                Text(
-                  'APPLY NOW',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          child: child,
         ),
       ),
     );
@@ -815,6 +882,138 @@ class _CommunityOfferDetailScreenState
           ),
         ),
       );
+}
+
+class _PreviewModeBanner extends StatelessWidget {
+  const _PreviewModeBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        0,
+      ),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.primary.withValues(alpha: 0.12),
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(
+          color: KolabingColors.primary.withValues(alpha: 0.24),
+        ),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            LucideIcons.eye,
+            color: KolabingColors.primary,
+            size: 18,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Text(
+              'You are previewing this collaboration as businesses see it',
+              style: GoogleFonts.openSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommunityPastEventsSection extends ConsumerWidget {
+  const _CommunityPastEventsSection({required this.profileId});
+
+  final String profileId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncEvents = ref.watch(profileEventsProvider(profileId));
+
+    return asyncEvents.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (events) {
+        final visibleEvents = _sortedVisibleEvents(events);
+        if (visibleEvents.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Container(
+          margin: const EdgeInsets.fromLTRB(
+            KolabingSpacing.md,
+            0,
+            KolabingSpacing.md,
+            KolabingSpacing.md,
+          ),
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            borderRadius: KolabingRadius.borderRadiusLg,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Past events from this community',
+                style: GoogleFonts.rubik(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                'See this community\'s recent track record before applying.',
+                style: GoogleFonts.openSans(
+                  fontSize: 13,
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+              SizedBox(
+                height: 220,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: visibleEvents.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(width: KolabingSpacing.sm),
+                  itemBuilder: (context, index) {
+                    final event = visibleEvents[index];
+                    return EventCard(
+                      event: event,
+                      onTap: () => context.push(
+                        KolabingRoutes.buildEventDetailPath(event.id),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  List<Event> _sortedVisibleEvents(List<Event> events) {
+    final sorted = [...events]..sort((a, b) => b.date.compareTo(a.date));
+    return sorted.take(5).toList();
+  }
 }
 
 /// Creator avatar widget

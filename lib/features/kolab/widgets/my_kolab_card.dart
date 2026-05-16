@@ -14,6 +14,7 @@ class MyKolabCard extends StatelessWidget {
   const MyKolabCard({
     required this.kolab,
     super.key,
+    this.onView,
     this.onEdit,
     this.onPublish,
     this.onClose,
@@ -21,6 +22,7 @@ class MyKolabCard extends StatelessWidget {
   });
 
   final Kolab kolab;
+  final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onPublish;
   final VoidCallback? onClose;
@@ -115,6 +117,17 @@ class MyKolabCard extends StatelessWidget {
 
   Widget _buildActions() {
     final actions = <Widget>[];
+
+    if (kolab.status == 'published' && onView != null) {
+      actions.add(
+        _ActionButton(
+          label: 'View',
+          icon: LucideIcons.eye,
+          onTap: onView!,
+          primary: true,
+        ),
+      );
+    }
 
     if (kolab.canEdit && onEdit != null) {
       actions.add(
