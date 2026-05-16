@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/features/business/providers/profile_provider.dart';
 import 'package:kolabing_app/features/community/screens/my_opportunities_screen.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
@@ -93,19 +94,84 @@ void main() {
     expect(copiedText, isEmpty);
     expect(find.text('Could not open the share sheet.'), findsOneWidget);
   });
+
+  testWidgets('subscription gating opens paywall and refreshes after upgrade', (
+    tester,
+  ) async {
+    final notifier = _FakeMyOpportunitiesNotifier(const OpportunityListState());
+    final profileNotifier = _FakeProfileNotifier(
+      const ProfileState(isLoading: false, isInitialized: true),
+    );
+    var paywallShown = 0;
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          myOpportunitiesProvider.overrideWith(() => notifier),
+          profileProvider.overrideWith(() => profileNotifier),
+        ],
+        child: MaterialApp(
+          home: MyOpportunitiesScreen(
+            showSubscriptionPaywall: (_) async {
+              paywallShown++;
+              return true;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    notifier.triggerSubscriptionRequirement();
+    await tester.pumpAndSettle();
+
+    expect(paywallShown, 1);
+    expect(notifier.clearSubscriptionCalls, 1);
+    expect(notifier.refreshCalls, 1);
+    expect(profileNotifier.refreshSubscriptionCalls, 1);
+  });
 }
 
 class _FakeMyOpportunitiesNotifier extends MyOpportunitiesNotifier {
   _FakeMyOpportunitiesNotifier(this._initialState);
 
   final OpportunityListState _initialState;
+  int refreshCalls = 0;
+  int clearSubscriptionCalls = 0;
 
   @override
   OpportunityListState build() => _initialState;
 
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    refreshCalls++;
+  }
 
   @override
   Future<void> loadMore() async {}
+
+  @override
+  void clearSubscriptionRequirement() {
+    clearSubscriptionCalls++;
+    state = state.copyWith(requiresSubscription: false);
+  }
+
+  void triggerSubscriptionRequirement() {
+    state = state.copyWith(requiresSubscription: true);
+  }
+}
+
+class _FakeProfileNotifier extends ProfileNotifier {
+  _FakeProfileNotifier(this._initialState);
+
+  final ProfileState _initialState;
+  int refreshSubscriptionCalls = 0;
+
+  @override
+  ProfileState build() => _initialState;
+
+  @override
+  Future<void> refreshSubscription() async {
+    refreshSubscriptionCalls++;
+  }
 }

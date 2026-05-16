@@ -36,7 +36,7 @@ final citiesProvider = FutureProvider<List<OnboardingCity>>((ref) async {
 /// Notifier for browse filter state
 class OpportunityFiltersNotifier extends Notifier<OpportunityFilters> {
   @override
-  OpportunityFilters build() => const OpportunityFilters();
+  OpportunityFilters build() => OpportunityFilters.empty;
 
   void setSearch(String query) {
     state = state.copyWith(searchQuery: query);
@@ -90,7 +90,7 @@ class OpportunityFiltersNotifier extends Notifier<OpportunityFilters> {
   }
 
   void clearAll() {
-    state = const OpportunityFilters();
+    state = OpportunityFilters.empty;
   }
 }
 
@@ -113,6 +113,7 @@ class OpportunityListState {
     this.total = 0,
     this.isLoading = false,
     this.isLoadingMore = false,
+    this.requiresSubscription = false,
     this.error,
   });
 
@@ -122,6 +123,7 @@ class OpportunityListState {
   final int total;
   final bool isLoading;
   final bool isLoadingMore;
+  final bool requiresSubscription;
   final String? error;
 
   bool get hasMore => currentPage < lastPage;
@@ -134,6 +136,7 @@ class OpportunityListState {
     int? total,
     bool? isLoading,
     bool? isLoadingMore,
+    bool? requiresSubscription,
     String? error,
     bool clearError = false,
   }) => OpportunityListState(
@@ -143,6 +146,7 @@ class OpportunityListState {
     total: total ?? this.total,
     isLoading: isLoading ?? this.isLoading,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    requiresSubscription: requiresSubscription ?? this.requiresSubscription,
     error: clearError ? null : (error ?? this.error),
   );
 }
@@ -192,14 +196,8 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
     } on NetworkException catch (e) {
       debugPrint('[OpportunityList] NetworkException: ${e.message}');
       state = state.copyWith(isLoading: false, error: e.message);
-    } on Exception catch (e) {
-      debugPrint('[OpportunityList] Unknown Exception: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Failed to load opportunities',
-      );
-    } catch (e, st) {
-      debugPrint('[OpportunityList] Uncaught error: $e');
+    } on Exception catch (e, st) {
+      debugPrint('[OpportunityList] Error: $e');
       debugPrint('[OpportunityList] Stack: $st');
       state = state.copyWith(
         isLoading: false,
@@ -252,8 +250,10 @@ class MyOpportunitiesStatusNotifier extends Notifier<String?> {
   @override
   String? build() => null; // null = all statuses
 
-  void setStatus(String? status) {
-    state = status;
+  String? get status => state;
+
+  set status(String? value) {
+    state = value;
   }
 }
 
@@ -277,7 +277,12 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   }
 
   Future<void> _load(String? status) async {
-    state = state.copyWith(isLoading: true, clearError: true);
+    state = state.copyWith(
+      isLoading: true,
+      isLoadingMore: false,
+      requiresSubscription: false,
+      clearError: true,
+    );
 
     try {
       final result = await _service.getMyOpportunities(status: status, page: 1);
@@ -340,13 +345,24 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
       return true;
     } on ApiException catch (e) {
       debugPrint('Publish error: ${e.error.message}');
+      if (e.error.requiresSubscription || e.error.statusCode == 402) {
+        state = state.copyWith(
+          requiresSubscription: true,
+          error: e.error.message,
+        );
+        return false;
+      }
       state = state.copyWith(error: e.error.message);
       return false;
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Publish error: $e');
       state = state.copyWith(error: 'Failed to publish opportunity');
       return false;
     }
+  }
+
+  void clearSubscriptionRequirement() {
+    state = state.copyWith(requiresSubscription: false);
   }
 
   /// Close an opportunity and update the list
@@ -390,7 +406,11 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
       if (o.id == id) return updated;
       return o;
     }).toList();
-    state = state.copyWith(opportunities: list);
+    state = state.copyWith(
+      opportunities: list,
+      requiresSubscription: false,
+      clearError: true,
+    );
   }
 }
 

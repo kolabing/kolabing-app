@@ -13,14 +13,17 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../business/providers/profile_provider.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../opportunity/utils/opportunity_share.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../widgets/my_opportunity_card.dart';
 
 typedef OpportunityShareInvoker =
     Future<ShareResult> Function(String text, {Rect? sharePositionOrigin});
 typedef OpportunityShareCopyText = Future<void> Function(String text);
+typedef ShowSubscriptionPaywall = Future<bool?> Function(BuildContext context);
 
 /// My Opportunities screen for community users
 ///
@@ -31,13 +34,23 @@ class MyOpportunitiesScreen extends ConsumerStatefulWidget {
     super.key,
     this.share = Share.share,
     this.copyText = _copyText,
+    this.showSubscriptionPaywall = _showSubscriptionPaywall,
   });
 
   final OpportunityShareInvoker share;
   final OpportunityShareCopyText copyText;
+  final ShowSubscriptionPaywall showSubscriptionPaywall;
 
   static Future<void> _copyText(String text) =>
       Clipboard.setData(ClipboardData(text: text));
+
+  static Future<bool?> _showSubscriptionPaywall(BuildContext context) =>
+      showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const SubscriptionPaywall(),
+      );
 
   @override
   ConsumerState<MyOpportunitiesScreen> createState() =>
@@ -136,7 +149,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     } on Exception {
       _showSnackbar(
         message: 'Could not open the share sheet.',
-        isSuccess: true,
+        isSuccess: false,
       );
     }
   }
@@ -211,6 +224,23 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     final listState = ref.watch(myOpportunitiesProvider);
     final currentStatus = ref.watch(myOpportunitiesStatusProvider);
 
+    ref.listen<OpportunityListState>(myOpportunitiesProvider, (
+      previous,
+      next,
+    ) async {
+      if (next.requiresSubscription &&
+          !(previous?.requiresSubscription ?? false)) {
+        ref
+            .read(myOpportunitiesProvider.notifier)
+            .clearSubscriptionRequirement();
+        final allowed = await widget.showSubscriptionPaywall(context);
+        if ((allowed ?? false) && mounted) {
+          await ref.read(profileProvider.notifier).refreshSubscription();
+          await ref.read(myOpportunitiesProvider.notifier).refresh();
+        }
+      }
+    });
+
     return Scaffold(
       backgroundColor: KolabingColors.background,
       body: SafeArea(
@@ -281,9 +311,8 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                ref
-                    .read(myOpportunitiesStatusProvider.notifier)
-                    .setStatus(tab.value);
+                ref.read(myOpportunitiesStatusProvider.notifier).status =
+                    tab.value;
               },
               borderRadius: KolabingRadius.borderRadiusRound,
               child: AnimatedContainer(

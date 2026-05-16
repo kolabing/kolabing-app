@@ -12,9 +12,6 @@ import 'package:kolabing_app/features/dashboard/models/dashboard_model.dart';
 import 'package:kolabing_app/features/dashboard/providers/dashboard_provider.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_filters.dart';
 import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
-import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
-import 'package:kolabing_app/features/kolab/providers/kolab_form_provider.dart';
-import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
 import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity_filter.dart';
 import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
@@ -22,10 +19,10 @@ import 'package:kolabing_app/features/rewards/providers/wallet_provider.dart';
 
 void main() {
   testWidgets(
-    'closing the create flow refreshes both dashboard and my kolabs providers',
+    'closing the create flow refreshes both dashboard and my opportunities providers',
     (WidgetTester tester) async {
       var dashboardBuilds = 0;
-      var myKolabsBuilds = 0;
+      var myOpportunitiesBuilds = 0;
 
       final router = GoRouter(
         initialLocation: '/',
@@ -36,29 +33,14 @@ void main() {
                 const CommunityMainScreen(),
           ),
           GoRoute(
-            path: KolabingRoutes.kolabFlow,
-            builder: (BuildContext context, GoRouterState state) => Consumer(
-              builder: (context, ref, _) {
-                final intentType = ref.watch(kolabFormProvider).intentType;
-                return Scaffold(
-                  body: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          intentType == IntentType.communitySeeking
-                              ? 'Community flow'
-                              : 'Wrong flow',
-                        ),
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Close create flow'),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+            path: KolabingRoutes.communityOpportunitiesNew,
+            builder: (BuildContext context, GoRouterState state) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close create flow'),
+                ),
+              ),
             ),
           ),
         ],
@@ -89,8 +71,10 @@ void main() {
             opportunityListProvider.overrideWith(
               () => _FakeOpportunityListNotifier(const OpportunityListState()),
             ),
-            myKolabsProvider.overrideWith(
-              () => _CountingMyKolabsNotifier(onBuild: () => myKolabsBuilds++),
+            myOpportunitiesProvider.overrideWith(
+              () => _CountingMyOpportunitiesNotifier(
+                onBuild: () => myOpportunitiesBuilds++,
+              ),
             ),
             myApplicationsProvider.overrideWith(
               () => _FakeMyApplicationsNotifier(const ApplicationsState()),
@@ -117,11 +101,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(dashboardBuilds, 1);
-      expect(myKolabsBuilds, 1);
+      expect(myOpportunitiesBuilds, 1);
 
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
-      expect(find.text('Community flow'), findsOneWidget);
       expect(find.text('Close create flow'), findsOneWidget);
 
       await tester.tap(find.text('Close create flow'));
@@ -130,7 +113,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(dashboardBuilds, 2);
-      expect(myKolabsBuilds, 2);
+      expect(myOpportunitiesBuilds, 2);
     },
   );
 }
@@ -209,15 +192,15 @@ class _FakeDiscoveryListNotifier extends DiscoveryListNotifier {
   Future<void> loadMore() async {}
 }
 
-class _CountingMyKolabsNotifier extends MyKolabsNotifier {
-  _CountingMyKolabsNotifier({required this.onBuild});
+class _CountingMyOpportunitiesNotifier extends MyOpportunitiesNotifier {
+  _CountingMyOpportunitiesNotifier({required this.onBuild});
 
   final VoidCallback onBuild;
 
   @override
-  MyKolabsState build() {
+  OpportunityListState build() {
     onBuild();
-    return const MyKolabsState();
+    return const OpportunityListState();
   }
 }
 
