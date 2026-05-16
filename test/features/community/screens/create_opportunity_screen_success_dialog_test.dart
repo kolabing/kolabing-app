@@ -4,17 +4,20 @@ import 'package:kolabing_app/features/community/widgets/opportunity_publish_succ
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
 void main() {
-  Widget buildSubject({required bool isDraft, Opportunity? opportunity}) =>
-      MaterialApp(
-        home: Scaffold(
-          body: OpportunityPublishSuccessDialog(
-            isDraft: isDraft,
-            opportunity: opportunity,
-            onShare: () {},
-            onViewOpportunities: () {},
-          ),
-        ),
-      );
+  Widget buildSubject({
+    required bool isDraft,
+    Opportunity? opportunity,
+    VoidCallback? onShare,
+  }) => MaterialApp(
+    home: Scaffold(
+      body: OpportunityPublishSuccessDialog(
+        isDraft: isDraft,
+        opportunity: opportunity,
+        onShare: onShare ?? () {},
+        onViewOpportunities: () {},
+      ),
+    ),
+  );
 
   testWidgets(
     'published opportunity with id shows share and opportunity copy',
@@ -38,6 +41,20 @@ void main() {
     await tester.pumpWidget(buildSubject(isDraft: true));
 
     expect(find.text('Draft Saved!'), findsOneWidget);
+    expect(find.text('SHARE'), findsNothing);
+    expect(find.text('VIEW MY OPPORTUNITIES'), findsOneWidget);
+  });
+
+  testWidgets('published opportunity without usable id hides share CTA', (
+    WidgetTester tester,
+  ) async {
+    final opportunity = Opportunity.empty().copyWith(title: 'Untitled');
+
+    await tester.pumpWidget(
+      buildSubject(isDraft: false, opportunity: opportunity, onShare: null),
+    );
+
+    expect(find.text('Opportunity Published!'), findsOneWidget);
     expect(find.text('SHARE'), findsNothing);
     expect(find.text('VIEW MY OPPORTUNITIES'), findsOneWidget);
   });

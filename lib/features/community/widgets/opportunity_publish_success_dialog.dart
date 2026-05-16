@@ -23,7 +23,8 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canShare = !isDraft && (opportunity?.id?.isNotEmpty ?? false);
+    final canShare =
+        !isDraft && onShare != null && (opportunity?.id?.isNotEmpty ?? false);
 
     return AlertDialog(
       shape: RoundedRectangleBorder(

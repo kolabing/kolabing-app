@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
@@ -15,7 +14,7 @@ import '../../onboarding/widgets/photo_upload_widget.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
-import '../../opportunity/utils/opportunity_share.dart';
+import '../../opportunity/utils/opportunity_share_launcher.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../widgets/opportunity_publish_success_dialog.dart';
 
@@ -59,6 +58,8 @@ class _CreateOpportunityScreenState
 
   // Product controllers managed dynamically
   final List<TextEditingController> _productControllers = [];
+  final OpportunityShareLauncher _opportunityShareLauncher =
+      const OpportunityShareLauncher();
 
   // ---------------------------------------------------------------------------
   // Lifecycle
@@ -164,40 +165,20 @@ class _CreateOpportunityScreenState
       return;
     }
 
-    final opportunityUrl = buildOpportunityShareUri(opportunityId).toString();
     final box = context.findRenderObject() as RenderBox?;
     final shareOrigin = box == null
         ? null
         : box.localToGlobal(Offset.zero) & box.size;
 
-    try {
-      final result = await Share.share(
-        buildOpportunityShareMessage(
-          title: opportunity.title,
-          opportunityId: opportunityId,
-        ),
-        sharePositionOrigin: shareOrigin,
-      );
-
-      if (result.status == ShareResultStatus.unavailable && mounted) {
-        await _copyOpportunityUrlFallback(
-          opportunityUrl: opportunityUrl,
-          message: 'Sharing is unavailable. Opportunity link copied.',
-        );
-      }
-    } on Exception {
-      await _copyOpportunityUrlFallback(
-        opportunityUrl: opportunityUrl,
-        message: 'Could not open share sheet. Opportunity link copied.',
-      );
-    }
+    await _opportunityShareLauncher.launchOpportunityShare(
+      title: opportunity.title,
+      opportunityId: opportunityId,
+      sharePositionOrigin: shareOrigin,
+      onFallbackMessage: _showOpportunityShareFallbackMessage,
+    );
   }
 
-  Future<void> _copyOpportunityUrlFallback({
-    required String opportunityUrl,
-    required String message,
-  }) async {
-    await Clipboard.setData(ClipboardData(text: opportunityUrl));
+  void _showOpportunityShareFallbackMessage(String message) {
     if (!mounted) {
       return;
     }
