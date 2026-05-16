@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
 import 'package:kolabing_app/features/community/screens/my_opportunities_screen.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
@@ -129,6 +130,54 @@ void main() {
     expect(notifier.clearSubscriptionCalls, 1);
     expect(notifier.refreshCalls, 1);
     expect(profileNotifier.refreshSubscriptionCalls, 1);
+  });
+
+  testWidgets('published opportunity View navigates to opportunity detail', (
+    tester,
+  ) async {
+    final opportunity = Opportunity.empty().copyWith(
+      id: 'opp-42',
+      title: 'Sunset Rooftop Collab',
+      preferredCity: 'Barcelona',
+      status: OpportunityStatus.published,
+    );
+
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const MyOpportunitiesScreen(),
+        ),
+        GoRoute(
+          path: '/opportunity/:id',
+          builder: (context, state) =>
+              Scaffold(body: Text('detail:${state.pathParameters['id']}')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          myOpportunitiesProvider.overrideWith(
+            () => _FakeMyOpportunitiesNotifier(
+              OpportunityListState(opportunities: [opportunity], total: 1),
+            ),
+          ),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('View'), findsOneWidget);
+
+    await tester.tap(find.text('View'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('detail:opp-42'), findsOneWidget);
   });
 }
 

@@ -1,46 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../services/notification_service.dart';
 
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
-import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
-import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/user_type_selection_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
-import '../../features/event/screens/event_detail_screen.dart';
-import '../../features/gamification/gamification.dart';
-import '../../features/opportunity/models/opportunity.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
-import '../../features/community/screens/community_main_screen.dart';
 import '../../features/business/screens/create_collab_request_screen.dart';
+import '../../features/collaboration/screens/collaboration_detail_screen.dart';
+import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/gamification/gamification.dart';
+import '../../features/kolab/models/kolab.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
-import '../../features/kolab/models/kolab.dart';
-import '../../features/rewards/screens/referral_screen.dart';
-import '../../features/rewards/screens/wallet_screen.dart';
-import '../../features/rewards/screens/withdrawal_request_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
-import '../../features/profile/screens/public_profile_screen.dart';
-import '../../features/subscription/screens/subscription_screen.dart';
+import '../../features/notification/utils/notification_navigation.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
-import '../../features/onboarding/screens/business/business_step3_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
 import '../../features/onboarding/screens/community/community_step1_screen.dart';
 import '../../features/onboarding/screens/community/community_step2_screen.dart';
 import '../../features/onboarding/screens/community/community_step3_screen.dart';
 import '../../features/onboarding/screens/community/community_step4_screen.dart';
+import '../../features/opportunity/models/opportunity.dart';
+import '../../features/opportunity/providers/opportunity_provider.dart';
 import '../../features/permission/screens/permission_screen.dart';
-import '../../features/notification/utils/notification_navigation.dart';
+import '../../features/profile/screens/public_profile_screen.dart';
+import '../../features/rewards/screens/referral_screen.dart';
+import '../../features/rewards/screens/wallet_screen.dart';
+import '../../features/rewards/screens/withdrawal_request_screen.dart';
+import '../../features/subscription/screens/subscription_screen.dart';
+import '../../services/notification_service.dart';
 
 /// Kolabing route definitions
 ///
@@ -162,6 +162,9 @@ abstract final class KolabingRoutes {
   static const String communityOpportunitiesEdit =
       '/community/opportunities/:id/edit';
 
+  static String buildCommunityOpportunityEditPath(String id) =>
+      '/community/opportunities/$id/edit';
+
   /// Community applications sent
   static const String communityApplications = '/community/applications';
 
@@ -210,6 +213,17 @@ abstract final class KolabingRoutes {
 
   /// Event detail screen
   static const String eventDetail = '/event/:id';
+
+  /// Build an event detail route with explicit access mode.
+  static String buildEventDetailPath(
+    String eventId, {
+    bool isReadOnly = true,
+  }) => Uri(
+    path: '/event/$eventId',
+    queryParameters: <String, String>{
+      'readonly': isReadOnly ? 'true' : 'false',
+    },
+  ).toString();
 
   // ---------------------------------------------------------------------------
   // Attendee (Gamification) Routes
@@ -353,12 +367,12 @@ final GoRouter kolabingRouter = GoRouter(
     ),
 
     // Business Onboarding
-    // Step 1 (location) was removed — redirect any leftover deeplinks to step 2.
+    // Step 1 now starts at the venue picker/import screen.
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep1,
       name: 'businessOnboardingStep1',
       redirect: (BuildContext context, GoRouterState state) =>
-          KolabingRoutes.businessOnboardingStep2,
+          KolabingRoutes.businessOnboardingStep5,
     ),
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep2,
@@ -369,8 +383,8 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep3,
       name: 'businessOnboardingStep3',
-      builder: (BuildContext context, GoRouterState state) =>
-          const BusinessStep3Screen(),
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.businessOnboardingStep2,
     ),
     // Step 4 (legacy business profile screen) was merged into step 2 — keep
     // the route as a redirect so any stale deep links land on the merged form.
@@ -564,8 +578,27 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.communityOpportunitiesEdit,
       name: 'communityOpportunitiesEdit',
       builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
         final opportunity = state.extra as Opportunity?;
-        return CreateOpportunityScreen(editOpportunity: opportunity);
+        if (opportunity != null) {
+          return CreateOpportunityScreen(editOpportunity: opportunity);
+        }
+
+        return Consumer(
+          builder: (context, ref, _) {
+            final opportunityAsync = ref.watch(opportunityDetailProvider(id));
+            return opportunityAsync.when(
+              data: (opportunity) =>
+                  CreateOpportunityScreen(editOpportunity: opportunity),
+              loading: () => const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
+              error: (error, stackTrace) => Scaffold(
+                body: Center(child: Text('Could not load opportunity: $error')),
+              ),
+            );
+          },
+        );
       },
     ),
     GoRoute(
@@ -652,7 +685,11 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'eventDetail',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        return EventDetailScreen(eventId: id);
+        final isReadOnlyParam = state.uri.queryParameters['readonly'];
+        final isReadOnly =
+            isReadOnlyParam == null ||
+            (isReadOnlyParam != 'false' && isReadOnlyParam != '0');
+        return EventDetailScreen(eventId: id, isReadOnly: isReadOnly);
       },
     ),
 

@@ -91,7 +91,15 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
   }
 
   void _onEdit(Opportunity opportunity) {
-    context.push(KolabingRoutes.communityOpportunitiesEdit, extra: opportunity);
+    final opportunityId = opportunity.id;
+    if (opportunityId == null || opportunityId.isEmpty) {
+      return;
+    }
+
+    context.push(
+      KolabingRoutes.buildCommunityOpportunityEditPath(opportunityId),
+      extra: opportunity,
+    );
   }
 
   void _onView(Opportunity opportunity) {

@@ -264,6 +264,7 @@ final myOpportunitiesStatusProvider =
 
 class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   late OpportunityService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   OpportunityListState build() {
@@ -277,6 +278,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   }
 
   Future<void> _load(String? status) async {
+    final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(
       isLoading: true,
       isLoadingMore: false,
@@ -286,6 +288,9 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
 
     try {
       final result = await _service.getMyOpportunities(status: status, page: 1);
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = OpportunityListState(
         opportunities: result.data,
         currentPage: result.currentPage,
@@ -293,12 +298,24 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
         total: result.total,
       );
     } on AuthException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.message);
     } on ApiException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.error.message);
     } on NetworkException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.message);
     } on Exception catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load my opportunities error: $e');
       state = state.copyWith(
         isLoading: false,
@@ -313,16 +330,20 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   }
 
   Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
     final status = ref.read(myOpportunitiesStatusProvider);
+    final requestGeneration = _activeRequestGeneration;
 
     try {
       final result = await _service.getMyOpportunities(
         status: status,
         page: state.currentPage + 1,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         opportunities: [...state.opportunities, ...result.data],
         currentPage: result.currentPage,
@@ -331,6 +352,9 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
         isLoadingMore: false,
       );
     } on Exception catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load more my opportunities error: $e');
       state = state.copyWith(isLoadingMore: false);
     }
