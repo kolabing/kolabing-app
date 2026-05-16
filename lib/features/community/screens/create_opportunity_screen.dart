@@ -5,16 +5,18 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/time_picker.dart';
 import '../../onboarding/widgets/photo_upload_widget.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../opportunity/utils/opportunity_share.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
-import '../../../widgets/time_picker.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
 ///
@@ -150,11 +152,26 @@ class _CreateOpportunityScreenState
         .read(opportunityFormProvider.notifier)
         .saveAndPublish();
     if (success && mounted) {
-      _showSuccessDialog(isDraft: false);
+      final opportunity = ref.read(opportunityFormProvider).opportunity;
+      _showSuccessDialog(isDraft: false, opportunity: opportunity);
     }
   }
 
-  void _showSuccessDialog({required bool isDraft}) {
+  Future<void> _sharePublishedOpportunity(Opportunity opportunity) async {
+    final opportunityId = opportunity.id;
+    if (opportunityId == null || opportunityId.isEmpty) {
+      return;
+    }
+
+    await Share.share(
+      buildOpportunityShareMessage(
+        title: opportunity.title,
+        opportunityId: opportunityId,
+      ),
+    );
+  }
+
+  void _showSuccessDialog({required bool isDraft, Opportunity? opportunity}) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -180,7 +197,7 @@ class _CreateOpportunityScreenState
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              isDraft ? 'Draft Saved!' : 'Kolab Published!',
+              isDraft ? 'Draft Saved!' : 'Opportunity Published!',
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -201,6 +218,14 @@ class _CreateOpportunityScreenState
           ],
         ),
         actions: [
+          if (!isDraft && opportunity?.id != null)
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => _sharePublishedOpportunity(opportunity!),
+                child: const Text('SHARE'),
+              ),
+            ),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -217,7 +242,7 @@ class _CreateOpportunityScreenState
                 ),
               ),
               child: Text(
-                'VIEW MY KOLABS',
+                'VIEW MY OPPORTUNITIES',
                 style: GoogleFonts.dmSans(
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
