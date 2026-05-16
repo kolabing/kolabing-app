@@ -8,6 +8,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
@@ -389,365 +390,376 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     canPop: !_anyLoading,
     child: Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       body: AnimatedBuilder(
         animation: _exitController,
         builder: (context, child) =>
             Opacity(opacity: _exitAnimation.value, child: child),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Top bar with back button and Sign Up link
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _BackButton(
-                      onPressed: _handleBack,
-                      isEnabled: !_anyLoading && !_showSuccess,
-                    ),
-                    _SignUpLink(
-                      onTap: _navigateToSignUp,
-                      isEnabled: !_anyLoading && !_showSuccess,
-                    ),
-                  ],
+        child: KeyboardAvoidingContent(
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Top bar with back button and Sign Up link
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _BackButton(
+                        onPressed: _handleBack,
+                        isEnabled: !_anyLoading && !_showSuccess,
+                      ),
+                      _SignUpLink(
+                        onTap: _navigateToSignUp,
+                        isEnabled: !_anyLoading && !_showSuccess,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 24),
+                Expanded(
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 24),
 
-                        // Logo
-                        _AnimatedElement(
-                          opacityAnimation: _logoAnimation,
-                          slideAnimation: _logoSlideAnimation,
-                          child: const KolabingLogo(
-                            width: 160,
-                            variant: KolabingLogoVariant.onDark,
-                          ),
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Headline
-                        _AnimatedElement(
-                          opacityAnimation: _headlineAnimation,
-                          slideAnimation: _headlineSlideAnimation,
-                          child: Text(
-                            'WELCOME BACK',
-                            style: GoogleFonts.rubik(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                              color: KolabingColors.textPrimary,
-                              letterSpacing: 1.2,
+                          // Logo
+                          _AnimatedElement(
+                            opacityAnimation: _logoAnimation,
+                            slideAnimation: _logoSlideAnimation,
+                            child: const KolabingLogo(
+                              width: 160,
+                              variant: KolabingLogoVariant.onDark,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
 
-                        const SizedBox(height: 8),
+                          const SizedBox(height: 32),
 
-                        // Subtitle
-                        AnimatedBuilder(
-                          animation: _headlineAnimation,
-                          builder: (context, child) => Opacity(
-                            opacity: _headlineAnimation.value,
-                            child: child,
-                          ),
-                          child: Text(
-                            'Sign in to your account',
-                            style: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.textTertiary,
+                          // Headline
+                          _AnimatedElement(
+                            opacityAnimation: _headlineAnimation,
+                            slideAnimation: _headlineSlideAnimation,
+                            child: Text(
+                              'WELCOME BACK',
+                              style: GoogleFonts.rubik(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                color: KolabingColors.textPrimary,
+                                letterSpacing: 1.2,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
 
-                        const SizedBox(height: 40),
+                          const SizedBox(height: 8),
 
-                        // Email/Password Form
-                        _AnimatedElement(
-                          opacityAnimation: _formAnimation,
-                          slideAnimation: _formSlideAnimation,
-                          child: Column(
-                            children: [
-                              // Email label
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Email',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.textPrimary,
-                                  ),
-                                ),
+                          // Subtitle
+                          AnimatedBuilder(
+                            animation: _headlineAnimation,
+                            builder: (context, child) => Opacity(
+                              opacity: _headlineAnimation.value,
+                              child: child,
+                            ),
+                            child: Text(
+                              'Sign in to your account',
+                              style: GoogleFonts.openSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: KolabingColors.textTertiary,
                               ),
-                              const SizedBox(height: 6),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
 
-                              // Email field
-                              TextFormField(
-                                controller: _emailController,
-                                focusNode: _emailFocusNode,
-                                keyboardType: TextInputType.emailAddress,
-                                autocorrect: false,
-                                enabled: !_anyLoading,
-                                validator: _validateEmail,
-                                textInputAction: TextInputAction.next,
-                                onFieldSubmitted: (_) {
-                                  _passwordFocusNode.requestFocus();
-                                },
-                                style: GoogleFonts.openSans(
-                                  color: const Color(0xFF1A1A1A),
-                                  fontSize: 16,
-                                ),
-                                decoration: _inputDecoration(
-                                  hint: 'your@email.com',
-                                  prefixIcon: Icons.email_outlined,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
+                          const SizedBox(height: 40),
 
-                              // Password label
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Password',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.textPrimary,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-
-                              // Password field
-                              TextFormField(
-                                controller: _passwordController,
-                                focusNode: _passwordFocusNode,
-                                obscureText: _obscurePassword,
-                                enabled: !_anyLoading,
-                                validator: _validatePassword,
-                                textInputAction: TextInputAction.done,
-                                onFieldSubmitted: (_) => _handleEmailLogin(),
-                                style: GoogleFonts.openSans(
-                                  color: const Color(0xFF1A1A1A),
-                                  fontSize: 16,
-                                ),
-                                decoration: _inputDecoration(
-                                  hint: 'Enter your password',
-                                  prefixIcon: Icons.lock_outline,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                      color: const Color(0xFFAAAAAA),
+                          // Email/Password Form
+                          _AnimatedElement(
+                            opacityAnimation: _formAnimation,
+                            slideAnimation: _formSlideAnimation,
+                            child: Column(
+                              children: [
+                                // Email label
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Email',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: KolabingColors.textPrimary,
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscurePassword = !_obscurePassword;
-                                      });
-                                    },
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                const SizedBox(height: 6),
 
-                        const SizedBox(height: 24),
-
-                        // Login Button
-                        _AnimatedElement(
-                          opacityAnimation: _buttonAnimation,
-                          slideAnimation: _buttonSlideAnimation,
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 52,
-                            child: ElevatedButton(
-                              onPressed: _anyLoading ? null : _handleEmailLogin,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: KolabingColors.primary,
-                                foregroundColor: KolabingColors.onPrimary,
-                                disabledBackgroundColor: KolabingColors.primary
-                                    .withValues(alpha: 0.7),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                // Email field
+                                TextFormField(
+                                  controller: _emailController,
+                                  focusNode: _emailFocusNode,
+                                  keyboardType: TextInputType.emailAddress,
+                                  autocorrect: false,
+                                  enabled: !_anyLoading,
+                                  validator: _validateEmail,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) {
+                                    _passwordFocusNode.requestFocus();
+                                  },
+                                  style: GoogleFonts.openSans(
+                                    color: const Color(0xFF1A1A1A),
+                                    fontSize: 16,
+                                  ),
+                                  decoration: _inputDecoration(
+                                    hint: 'your@email.com',
+                                    prefixIcon: Icons.email_outlined,
+                                  ),
                                 ),
-                                elevation: 0,
-                              ),
-                              child: _isLoading
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              KolabingColors.onPrimary,
-                                            ),
+                                const SizedBox(height: 20),
+
+                                // Password label
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Password',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: KolabingColors.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+
+                                // Password field
+                                TextFormField(
+                                  controller: _passwordController,
+                                  focusNode: _passwordFocusNode,
+                                  obscureText: _obscurePassword,
+                                  enabled: !_anyLoading,
+                                  validator: _validatePassword,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => _handleEmailLogin(),
+                                  style: GoogleFonts.openSans(
+                                    color: const Color(0xFF1A1A1A),
+                                    fontSize: 16,
+                                  ),
+                                  decoration: _inputDecoration(
+                                    hint: 'Enter your password',
+                                    prefixIcon: Icons.lock_outline,
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                        color: const Color(0xFFAAAAAA),
                                       ),
-                                    )
-                                  : _showSuccess
-                                  ? const Icon(
-                                      Icons.check_rounded,
-                                      size: 24,
-                                      color: KolabingColors.onPrimary,
-                                    )
-                                  : Text(
-                                      'SIGN IN',
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1.0,
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Login Button
+                          _AnimatedElement(
+                            opacityAnimation: _buttonAnimation,
+                            slideAnimation: _buttonSlideAnimation,
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 52,
+                              child: ElevatedButton(
+                                onPressed: _anyLoading
+                                    ? null
+                                    : _handleEmailLogin,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: KolabingColors.primary,
+                                  foregroundColor: KolabingColors.onPrimary,
+                                  disabledBackgroundColor: KolabingColors
+                                      .primary
+                                      .withValues(alpha: 0.7),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                KolabingColors.onPrimary,
+                                              ),
+                                        ),
+                                      )
+                                    : _showSuccess
+                                    ? const Icon(
+                                        Icons.check_rounded,
+                                        size: 24,
+                                        color: KolabingColors.onPrimary,
+                                      )
+                                    : Text(
+                                        'SIGN IN',
+                                        style: GoogleFonts.dmSans(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.0,
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                        // Forgot Password link
-                        AnimatedBuilder(
-                          animation: _buttonAnimation,
-                          builder: (context, child) => Opacity(
-                            opacity: _buttonAnimation.value,
-                            child: child,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: GestureDetector(
-                              onTap: _anyLoading || _showSuccess
-                                  ? null
-                                  : () => context.push(
-                                      KolabingRoutes.forgotPassword,
+                          // Forgot Password link
+                          AnimatedBuilder(
+                            animation: _buttonAnimation,
+                            builder: (context, child) => Opacity(
+                              opacity: _buttonAnimation.value,
+                              child: child,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: _anyLoading || _showSuccess
+                                    ? null
+                                    : () => context.push(
+                                        KolabingRoutes.forgotPassword,
+                                      ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: Text(
+                                    'Forgot Password?',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: KolabingColors.primary,
                                     ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                ),
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.primary,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // Divider
-                        AnimatedBuilder(
-                          animation: _dividerAnimation,
-                          builder: (context, child) => Opacity(
-                            opacity: _dividerAnimation.value,
-                            child: child,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 1,
-                                  color: KolabingColors.border,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Text(
-                                  'or',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: KolabingColors.textTertiary,
+                          // Divider
+                          AnimatedBuilder(
+                            animation: _dividerAnimation,
+                            builder: (context, child) => Opacity(
+                              opacity: _dividerAnimation.value,
+                              child: child,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: KolabingColors.border,
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  height: 1,
-                                  color: KolabingColors.border,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    'or',
+                                    style: GoogleFonts.openSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: KolabingColors.textTertiary,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: KolabingColors.border,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // Google Sign In Button
-                        AnimatedBuilder(
-                          animation: _googleAnimation,
-                          builder: (context, child) => Opacity(
-                            opacity: _googleAnimation.value,
-                            child: child,
+                          // Google Sign In Button
+                          AnimatedBuilder(
+                            animation: _googleAnimation,
+                            builder: (context, child) => Opacity(
+                              opacity: _googleAnimation.value,
+                              child: child,
+                            ),
+                            child: GoogleSignInButton(
+                              onPressed: _handleGoogleSignIn,
+                              buttonText: 'Continue with Google',
+                              isLoading: _isGoogleLoading,
+                              showSuccess: _showSuccess,
+                              isEnabled: !_anyLoading && !_showSuccess,
+                            ),
                           ),
-                          child: GoogleSignInButton(
-                            onPressed: _handleGoogleSignIn,
-                            buttonText: 'Continue with Google',
-                            isLoading: _isGoogleLoading,
-                            showSuccess: _showSuccess,
-                            isEnabled: !_anyLoading && !_showSuccess,
-                          ),
-                        ),
 
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                        // Apple Sign In Button
-                        AnimatedBuilder(
-                          animation: _googleAnimation,
-                          builder: (context, child) => Opacity(
-                            opacity: _googleAnimation.value,
-                            child: child,
+                          // Apple Sign In Button
+                          AnimatedBuilder(
+                            animation: _googleAnimation,
+                            builder: (context, child) => Opacity(
+                              opacity: _googleAnimation.value,
+                              child: child,
+                            ),
+                            child: AppleSignInButton(
+                              onPressed: _handleAppleSignIn,
+                              buttonText: 'Continue with Apple',
+                              isLoading: _isAppleLoading,
+                              showSuccess: _showSuccess,
+                              isEnabled: !_anyLoading && !_showSuccess,
+                            ),
                           ),
-                          child: AppleSignInButton(
-                            onPressed: _handleAppleSignIn,
-                            buttonText: 'Continue with Apple',
-                            isLoading: _isAppleLoading,
-                            showSuccess: _showSuccess,
-                            isEnabled: !_anyLoading && !_showSuccess,
-                          ),
-                        ),
 
-                        const SizedBox(height: 32),
+                          const SizedBox(height: 32),
 
-                        // Bottom link
-                        AnimatedBuilder(
-                          animation: _linkAnimation,
-                          builder: (context, child) => Opacity(
-                            opacity: _linkAnimation.value,
-                            child: child,
+                          // Bottom link
+                          AnimatedBuilder(
+                            animation: _linkAnimation,
+                            builder: (context, child) => Opacity(
+                              opacity: _linkAnimation.value,
+                              child: child,
+                            ),
+                            child: _CreateAccountLink(
+                              onTap: _navigateToSignUp,
+                              isEnabled: !_anyLoading && !_showSuccess,
+                            ),
                           ),
-                          child: _CreateAccountLink(
-                            onTap: _navigateToSignUp,
-                            isEnabled: !_anyLoading && !_showSuccess,
-                          ),
-                        ),
 
-                        const SizedBox(height: 32),
-                      ],
+                          const SizedBox(height: 32),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

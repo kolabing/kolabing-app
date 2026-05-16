@@ -8,6 +8,7 @@ import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/permission_service.dart';
 import '../../../../widgets/referral_code_field.dart';
+import '../../../auth/providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/summary_card.dart';
 
@@ -134,47 +135,54 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
     return null;
   }
 
-  Future<void> _handleRegister() async {
+  Future<void> _finishOnboardingSuccess() async {
+    setState(() {
+      _isLoading = false;
+      _showSuccess = true;
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+
+    final hasShownPermissions = await PermissionService.instance
+        .hasShownPermissionScreen();
+    if (!mounted) return;
+
+    if (!hasShownPermissions) {
+      context.go(
+        '${KolabingRoutes.permissions}?destination='
+        '${Uri.encodeComponent(KolabingRoutes.businessDashboard)}',
+      );
+    } else {
+      context.go(KolabingRoutes.businessDashboard);
+    }
+  }
+
+  Future<void> _handleSubmit({required bool authenticatedFlow}) async {
     if (_isLoading || _showSuccess) return;
 
     // Clear any previous API errors before validation
     _clearApiErrors();
 
-    if (!_formKey.currentState!.validate()) return;
+    if (!authenticatedFlow && !_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
-    final result = await ref
-        .read(onboardingProvider.notifier)
-        .completeWithEmail(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
+    final result = authenticatedFlow
+        ? await ref
+              .read(onboardingProvider.notifier)
+              .completeAuthenticatedOnboarding()
+        : await ref
+              .read(onboardingProvider.notifier)
+              .completeWithEmail(
+                email: _emailController.text.trim(),
+                password: _passwordController.text,
+              );
 
     if (!mounted) return;
 
     if (result.success) {
-      setState(() {
-        _isLoading = false;
-        _showSuccess = true;
-      });
-
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-      if (!mounted) return;
-
-      // Show permission screen on first registration
-      final hasShownPermissions = await PermissionService.instance
-          .hasShownPermissionScreen();
-      if (!mounted) return;
-
-      if (!hasShownPermissions) {
-        context.go(
-          '${KolabingRoutes.permissions}?destination='
-          '${Uri.encodeComponent(KolabingRoutes.businessDashboard)}',
-        );
-      } else {
-        context.go(KolabingRoutes.businessDashboard);
-      }
+      await _finishOnboardingSuccess();
     } else if (result.isNetworkError) {
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();
@@ -182,6 +190,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       // Check for field-specific validation errors
       final apiError = result.error;
       if (apiError != null &&
+          !authenticatedFlow &&
           apiError.errors != null &&
           apiError.errors!.isNotEmpty) {
         setState(() {
@@ -231,7 +240,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
         action: SnackBarAction(
           label: 'Retry',
           textColor: KolabingColors.textOnDark,
-          onPressed: _handleRegister,
+          onPressed: () {
+            final authState = ref.read(authProvider);
+            final authenticatedFlow =
+                authState.isAuthenticated && authState.user?.isBusiness == true;
+            _handleSubmit(authenticatedFlow: authenticatedFlow);
+          },
         ),
       ),
     );
@@ -259,10 +273,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(onboardingProvider);
+    final authState = ref.watch(authProvider);
+    final authenticatedFlow =
+        authState.isAuthenticated && authState.user?.isBusiness == true;
 
     if (data == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/onboarding/business/step2');
+        context.go('/onboarding/business/step5');
       });
       return const SizedBox.shrink();
     }
@@ -330,7 +347,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
                           // Title
                           Text(
-                            'CREATE YOUR ACCOUNT',
+                            authenticatedFlow
+                                ? 'FINISH BUSINESS ONBOARDING'
+                                : 'CREATE YOUR ACCOUNT',
                             style: GoogleFonts.rubik(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -342,7 +361,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
                           // Subtitle
                           Text(
-                            'Enter your email and password to complete registration',
+                            authenticatedFlow
+                                ? 'Review your imported details one last time and save your business profile.'
+                                : 'Enter your email and password to complete registration',
                             style: GoogleFonts.openSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
@@ -381,198 +402,234 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          // Email field
-                          TextFormField(
-                            controller: _emailController,
-                            focusNode: _emailFocusNode,
-                            keyboardType: TextInputType.emailAddress,
-                            autocorrect: false,
-                            enabled: !_isLoading,
-                            validator: _validateEmail,
-                            textInputAction: TextInputAction.next,
-                            onChanged: (_) {
-                              if (_emailApiError != null) {
-                                setState(() => _emailApiError = null);
-                              }
-                            },
-                            onFieldSubmitted: (_) {
-                              _passwordFocusNode.requestFocus();
-                            },
-                            scrollPadding: const EdgeInsets.only(bottom: 160),
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              hintText: 'your@email.com',
-                              prefixIcon: const Icon(Icons.email_outlined),
-                              filled: true,
-                              fillColor: KolabingColors.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                          if (!authenticatedFlow) ...[
+                            // Email field
+                            TextFormField(
+                              controller: _emailController,
+                              focusNode: _emailFocusNode,
+                              keyboardType: TextInputType.emailAddress,
+                              autocorrect: false,
+                              enabled: !_isLoading,
+                              validator: _validateEmail,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) {
+                                if (_emailApiError != null) {
+                                  setState(() => _emailApiError = null);
+                                }
+                              },
+                              onFieldSubmitted: (_) {
+                                _passwordFocusNode.requestFocus();
+                              },
+                              scrollPadding: const EdgeInsets.only(bottom: 160),
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                hintText: 'your@email.com',
+                                prefixIcon: const Icon(Icons.email_outlined),
+                                filled: true,
+                                fillColor: KolabingColors.surface,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.border,
+                                  ),
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.border,
+                                  ),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
-                                  width: 2,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.primary,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.error,
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.error,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
-                          // Password field
-                          TextFormField(
-                            controller: _passwordController,
-                            focusNode: _passwordFocusNode,
-                            obscureText: _obscurePassword,
-                            enabled: !_isLoading,
-                            validator: _validatePassword,
-                            textInputAction: TextInputAction.next,
-                            onChanged: (_) {
-                              if (_passwordApiError != null) {
-                                setState(() => _passwordApiError = null);
-                              }
-                            },
-                            onFieldSubmitted: (_) {
-                              _confirmPasswordFocusNode.requestFocus();
-                            },
-                            scrollPadding: const EdgeInsets.only(bottom: 160),
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              hintText: 'Min. 8 characters',
-                              prefixIcon: const Icon(Icons.lock_outline),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
+                            // Password field
+                            TextFormField(
+                              controller: _passwordController,
+                              focusNode: _passwordFocusNode,
+                              obscureText: _obscurePassword,
+                              enabled: !_isLoading,
+                              validator: _validatePassword,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) {
+                                if (_passwordApiError != null) {
+                                  setState(() => _passwordApiError = null);
+                                }
+                              },
+                              onFieldSubmitted: (_) {
+                                _confirmPasswordFocusNode.requestFocus();
+                              },
+                              scrollPadding: const EdgeInsets.only(bottom: 160),
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                hintText: 'Min. 8 characters',
+                                prefixIcon: const Icon(Icons.lock_outline),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                              filled: true,
-                              fillColor: KolabingColors.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                filled: true,
+                                fillColor: KolabingColors.surface,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.border,
+                                  ),
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.border,
+                                  ),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
-                                  width: 2,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.primary,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.error,
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.error,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
-                          ReferralCodeField(
-                            controller: _referralCodeController,
-                            focusNode: _referralCodeFocusNode,
-                            enabled: !_isLoading,
-                            errorText: _validateReferralCode(
-                              _referralCodeController.text,
+                            ReferralCodeField(
+                              controller: _referralCodeController,
+                              focusNode: _referralCodeFocusNode,
+                              enabled: !_isLoading,
+                              errorText: _validateReferralCode(
+                                _referralCodeController.text,
+                              ),
+                              onChanged: (value) {
+                                if (_referralCodeApiError != null) {
+                                  setState(() => _referralCodeApiError = null);
+                                }
+                                ref
+                                    .read(onboardingProvider.notifier)
+                                    .updateReferralCode(value);
+                              },
                             ),
-                            onChanged: (value) {
-                              if (_referralCodeApiError != null) {
-                                setState(() => _referralCodeApiError = null);
-                              }
-                              ref
-                                  .read(onboardingProvider.notifier)
-                                  .updateReferralCode(value);
-                            },
-                          ),
-                          const SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
-                          // Confirm Password field
-                          TextFormField(
-                            controller: _confirmPasswordController,
-                            focusNode: _confirmPasswordFocusNode,
-                            obscureText: _obscureConfirmPassword,
-                            enabled: !_isLoading,
-                            validator: _validateConfirmPassword,
-                            textInputAction: TextInputAction.done,
-                            onFieldSubmitted: (_) => _handleRegister(),
-                            scrollPadding: const EdgeInsets.only(bottom: 160),
-                            decoration: InputDecoration(
-                              labelText: 'Confirm Password',
-                              hintText: 'Re-enter your password',
-                              prefixIcon: const Icon(Icons.lock_outline),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureConfirmPassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
+                            // Confirm Password field
+                            TextFormField(
+                              controller: _confirmPasswordController,
+                              focusNode: _confirmPasswordFocusNode,
+                              obscureText: _obscureConfirmPassword,
+                              enabled: !_isLoading,
+                              validator: _validateConfirmPassword,
+                              textInputAction: TextInputAction.done,
+                              onFieldSubmitted: (_) =>
+                                  _handleSubmit(authenticatedFlow: false),
+                              scrollPadding: const EdgeInsets.only(bottom: 160),
+                              decoration: InputDecoration(
+                                labelText: 'Confirm Password',
+                                hintText: 'Re-enter your password',
+                                prefixIcon: const Icon(Icons.lock_outline),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureConfirmPassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureConfirmPassword =
+                                          !_obscureConfirmPassword;
+                                    });
+                                  },
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureConfirmPassword =
-                                        !_obscureConfirmPassword;
-                                  });
-                                },
-                              ),
-                              filled: true,
-                              fillColor: KolabingColors.surface,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                filled: true,
+                                fillColor: KolabingColors.surface,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.border,
+                                  ),
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.border,
+                                  ),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
-                                  width: 2,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.primary,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.error,
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: KolabingColors.error,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
+                            const SizedBox(height: 24),
+                          ] else ...[
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: KolabingColors.surface,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: KolabingColors.border,
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    Icons.check_circle_outline_rounded,
+                                    color: KolabingColors.primary,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Your account is already created. Tapping the button below will save this onboarding data to the business onboarding endpoint.',
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 13,
+                                        color: KolabingColors.textSecondary,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
                         ],
                       ),
                     ),
@@ -589,7 +646,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleRegister,
+                          onPressed: _isLoading
+                              ? null
+                              : () => _handleSubmit(
+                                  authenticatedFlow: authenticatedFlow,
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: KolabingColors.primary,
                             foregroundColor: KolabingColors.onPrimary,
@@ -618,7 +679,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   color: KolabingColors.onPrimary,
                                 )
                               : Text(
-                                  'CREATE ACCOUNT',
+                                  authenticatedFlow
+                                      ? 'COMPLETE ONBOARDING'
+                                      : 'CREATE ACCOUNT',
                                   style: GoogleFonts.dmSans(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -631,7 +694,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
                       // Terms text
                       Text(
-                        'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                        authenticatedFlow
+                            ? 'We only save the selected Google photos when the onboarding request succeeds.'
+                            : 'By creating an account, you agree to our Terms of Service and Privacy Policy',
                         style: GoogleFonts.openSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,

@@ -8,6 +8,7 @@ import '../models/business_type.dart';
 import '../models/city.dart';
 import '../models/community_type.dart';
 import '../models/onboarding_state.dart';
+import '../models/place_details_import.dart';
 import '../models/place_suggestion.dart';
 import '../../../config/constants/api.dart';
 
@@ -20,7 +21,7 @@ const bool _useMockApi = false;
 /// Onboarding service for handling onboarding API calls
 class OnboardingService {
   OnboardingService({http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client();
+    : _httpClient = httpClient ?? http.Client();
 
   final http.Client _httpClient;
 
@@ -40,18 +41,14 @@ class OnboardingService {
       // Try new endpoint first, fallback to old lookup endpoint
       var response = await _httpClient.get(
         Uri.parse('$_baseUrl/business-types'),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
 
       // Fallback to old lookup endpoint if new one returns 404
       if (response.statusCode == 404) {
         response = await _httpClient.get(
           Uri.parse('$_baseUrl/lookup/business-types'),
-          headers: {
-            'Accept': 'application/json',
-          },
+          headers: {'Accept': 'application/json'},
         );
       }
 
@@ -88,18 +85,14 @@ class OnboardingService {
       // Try new endpoint first, fallback to old lookup endpoint
       var response = await _httpClient.get(
         Uri.parse('$_baseUrl/community-types'),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
 
       // Fallback to old lookup endpoint if new one returns 404
       if (response.statusCode == 404) {
         response = await _httpClient.get(
           Uri.parse('$_baseUrl/lookup/community-types'),
-          headers: {
-            'Accept': 'application/json',
-          },
+          headers: {'Accept': 'application/json'},
         );
       }
 
@@ -139,13 +132,13 @@ class OnboardingService {
     try {
       final response = await _httpClient.get(
         Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
 
       debugPrint('🌍 Cities API Response Status: ${response.statusCode}');
-      debugPrint('🌍 Cities API Response Body (first 300 chars): ${response.body.length > 300 ? response.body.substring(0, 300) : response.body}');
+      debugPrint(
+        '🌍 Cities API Response Body (first 300 chars): ${response.body.length > 300 ? response.body.substring(0, 300) : response.body}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -189,10 +182,12 @@ class OnboardingService {
     if (_useMockApi) {
       final cities = await _mockCities();
       return cities
-          .where((city) =>
-              city.name.toLowerCase().contains(query.toLowerCase()) ||
-              (city.country?.toLowerCase().contains(query.toLowerCase()) ??
-                  false))
+          .where(
+            (city) =>
+                city.name.toLowerCase().contains(query.toLowerCase()) ||
+                (city.country?.toLowerCase().contains(query.toLowerCase()) ??
+                    false),
+          )
           .map(PlaceSuggestion.fromCity)
           .toList();
     }
@@ -204,16 +199,16 @@ class OnboardingService {
     try {
       final response = await _httpClient.get(
         Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as List<dynamic>? ?? const [];
         return data
-            .map((item) => PlaceSuggestion.fromJson(item as Map<String, dynamic>))
+            .map(
+              (item) => PlaceSuggestion.fromJson(item as Map<String, dynamic>),
+            )
             .where((item) => item.placeId.isNotEmpty)
             .toList();
       }
@@ -224,13 +219,52 @@ class OnboardingService {
     return const [];
   }
 
+  /// Fetch full Google Place details via the backend proxy.
+  ///
+  /// GET /places/details?place_id={placeId}
+  Future<PlaceDetailsImport> getPlaceDetails(String placeId) async {
+    final url =
+        '$_baseUrl/places/details?place_id=${Uri.encodeQueryComponent(placeId)}';
+    debugPrint('📍 Place details request: GET $url');
+
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(url),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        return PlaceDetailsImport.fromJson(json);
+      }
+
+      if (response.statusCode == 503) {
+        throw const PlaceImportUnavailableException();
+      }
+
+      throw ApiException(
+        error: ApiError.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>,
+          statusCode: response.statusCode,
+        ),
+      );
+    } on PlaceImportUnavailableException {
+      rethrow;
+    } on ApiException {
+      rethrow;
+    } on Exception catch (e) {
+      debugPrint('📍 Place details error: $e');
+      throw NetworkException('Failed to import place details: $e');
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Onboarding APIs
   // ---------------------------------------------------------------------------
 
   /// Complete business onboarding
   ///
-  /// POST /onboarding/business
+  /// PUT /onboarding/business
   Future<void> completeBusinessOnboarding(
     String token,
     OnboardingData data,
@@ -241,7 +275,7 @@ class OnboardingService {
     }
 
     try {
-      final response = await _httpClient.post(
+      final response = await _httpClient.put(
         Uri.parse('$_baseUrl/onboarding/business'),
         headers: {
           'Authorization': 'Bearer $token',
@@ -268,7 +302,7 @@ class OnboardingService {
 
   /// Complete community onboarding
   ///
-  /// POST /onboarding/community
+  /// PUT /onboarding/community
   Future<void> completeCommunityOnboarding(
     String token,
     OnboardingData data,
@@ -279,7 +313,7 @@ class OnboardingService {
     }
 
     try {
-      final response = await _httpClient.post(
+      final response = await _httpClient.put(
         Uri.parse('$_baseUrl/onboarding/community'),
         headers: {
           'Authorization': 'Bearer $token',
@@ -312,10 +346,20 @@ class OnboardingService {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return const [
       BusinessType(id: '1', name: 'Cafe', slug: 'cafe', icon: '\u2615'),
-      BusinessType(id: '2', name: 'Restaurant', slug: 'restaurant', icon: '\u{1F37D}'),
+      BusinessType(
+        id: '2',
+        name: 'Restaurant',
+        slug: 'restaurant',
+        icon: '\u{1F37D}',
+      ),
       BusinessType(id: '3', name: 'Bar', slug: 'bar', icon: '\u{1F37A}'),
       BusinessType(id: '4', name: 'Bakery', slug: 'bakery', icon: '\u{1F950}'),
-      BusinessType(id: '5', name: 'Coworking', slug: 'coworking', icon: '\u{1F4BC}'),
+      BusinessType(
+        id: '5',
+        name: 'Coworking',
+        slug: 'coworking',
+        icon: '\u{1F4BC}',
+      ),
       BusinessType(id: '6', name: 'Gym', slug: 'gym', icon: '\u{1F4AA}'),
       BusinessType(id: '7', name: 'Salon', slug: 'salon', icon: '\u{1F487}'),
       BusinessType(id: '8', name: 'Retail', slug: 'retail', icon: '\u{1F6CD}'),
@@ -327,15 +371,60 @@ class OnboardingService {
   Future<List<CommunityType>> _mockCommunityTypes() async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return const [
-      CommunityType(id: '1', name: 'Food Blogger', slug: 'food-blogger', icon: '\u{1F354}'),
-      CommunityType(id: '2', name: 'Lifestyle Influencer', slug: 'lifestyle-influencer', icon: '\u2728'),
-      CommunityType(id: '3', name: 'Fitness Enthusiast', slug: 'fitness-enthusiast', icon: '\u{1F4AA}'),
-      CommunityType(id: '4', name: 'Travel Blogger', slug: 'travel-blogger', icon: '\u2708'),
-      CommunityType(id: '5', name: 'Photographer', slug: 'photographer', icon: '\u{1F4F8}'),
-      CommunityType(id: '6', name: 'Local Explorer', slug: 'local-explorer', icon: '\u{1F5FA}'),
-      CommunityType(id: '7', name: 'Student', slug: 'student', icon: '\u{1F393}'),
-      CommunityType(id: '8', name: 'Professional', slug: 'professional', icon: '\u{1F4BC}'),
-      CommunityType(id: '9', name: 'Community Organizer', slug: 'community-organizer', icon: '\u{1F389}'),
+      CommunityType(
+        id: '1',
+        name: 'Food Blogger',
+        slug: 'food-blogger',
+        icon: '\u{1F354}',
+      ),
+      CommunityType(
+        id: '2',
+        name: 'Lifestyle Influencer',
+        slug: 'lifestyle-influencer',
+        icon: '\u2728',
+      ),
+      CommunityType(
+        id: '3',
+        name: 'Fitness Enthusiast',
+        slug: 'fitness-enthusiast',
+        icon: '\u{1F4AA}',
+      ),
+      CommunityType(
+        id: '4',
+        name: 'Travel Blogger',
+        slug: 'travel-blogger',
+        icon: '\u2708',
+      ),
+      CommunityType(
+        id: '5',
+        name: 'Photographer',
+        slug: 'photographer',
+        icon: '\u{1F4F8}',
+      ),
+      CommunityType(
+        id: '6',
+        name: 'Local Explorer',
+        slug: 'local-explorer',
+        icon: '\u{1F5FA}',
+      ),
+      CommunityType(
+        id: '7',
+        name: 'Student',
+        slug: 'student',
+        icon: '\u{1F393}',
+      ),
+      CommunityType(
+        id: '8',
+        name: 'Professional',
+        slug: 'professional',
+        icon: '\u{1F4BC}',
+      ),
+      CommunityType(
+        id: '9',
+        name: 'Community Organizer',
+        slug: 'community-organizer',
+        icon: '\u{1F389}',
+      ),
       CommunityType(id: '10', name: 'Other', slug: 'other', icon: '\u{1F4E6}'),
     ];
   }
@@ -355,4 +444,8 @@ class OnboardingService {
       OnboardingCity(id: '10', name: 'Alicante', country: 'Spain'),
     ];
   }
+}
+
+class PlaceImportUnavailableException implements Exception {
+  const PlaceImportUnavailableException();
 }

@@ -108,6 +108,12 @@ class SummaryCard extends StatelessWidget {
               data.venueName != null &&
               data.venueName!.isNotEmpty) ...[
             _ContactItem(icon: LucideIcons.building2, text: data.venueName!),
+            if (data.location != null &&
+                data.location!.formattedAddress.trim().isNotEmpty)
+              _ContactItem(
+                icon: LucideIcons.mapPin,
+                text: data.location!.formattedAddress,
+              ),
             if (data.location != null)
               _ContactItem(icon: LucideIcons.mapPin, text: data.location!.city),
             if (data.venueCapacity != null)

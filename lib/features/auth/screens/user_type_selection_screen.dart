@@ -23,7 +23,8 @@ class UserTypeSelectionScreen extends ConsumerStatefulWidget {
       _UserTypeSelectionScreenState();
 }
 
-class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScreen>
+class _UserTypeSelectionScreenState
+    extends ConsumerState<UserTypeSelectionScreen>
     with TickerProviderStateMixin {
   late final AnimationController _entryController;
 
@@ -97,10 +98,7 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
       );
 
   Animation<Offset> _createSlideAnimation(double begin, double end) =>
-      Tween<Offset>(
-        begin: const Offset(0, 20),
-        end: Offset.zero,
-      ).animate(
+      Tween<Offset>(begin: const Offset(0, 20), end: Offset.zero).animate(
         CurvedAnimation(
           parent: _entryController,
           curve: Interval(begin, end, curve: Curves.easeOut),
@@ -130,9 +128,11 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
         switch (type) {
           case SelectionUserType.business:
             ref.read(onboardingProvider.notifier).initialize(UserType.business);
-            context.push('/onboarding/business/step2');
+            context.push('/onboarding/business/step5');
           case SelectionUserType.community:
-            ref.read(onboardingProvider.notifier).initialize(UserType.community);
+            ref
+                .read(onboardingProvider.notifier)
+                .initialize(UserType.community);
             context.push('/onboarding/community/step1');
           case SelectionUserType.attendee:
             // Attendee has no onboarding steps, go directly to registration
@@ -149,116 +149,114 @@ class _UserTypeSelectionScreenState extends ConsumerState<UserTypeSelectionScree
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: KolabingColors.background,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Top bar with back button
-              Padding(
-                padding: const EdgeInsets.only(left: 8, top: 8),
-                child: _BackButton(onPressed: _handleBack),
-              ),
-
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 24),
-
-                      // Headline
-                      _AnimatedElement(
-                        opacityAnimation: _headlineAnimation,
-                        slideAnimation: _headlineSlideAnimation,
-                        child: Text(
-                          'CHOOSE YOUR PATH',
-                          style: GoogleFonts.rubik(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: KolabingColors.textPrimary,
-                            letterSpacing: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Subtitle
-                      _AnimatedElement(
-                        opacityAnimation: _subtitleAnimation,
-                        slideAnimation: _subtitleSlideAnimation,
-                        child: Text(
-                          'Select your account type to get started',
-                          style: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-
-                      const SizedBox(height: 48),
-
-                      // Business Card
-                      _AnimatedElement(
-                        opacityAnimation: _businessCardAnimation,
-                        slideAnimation: _businessCardSlideAnimation,
-                        child: SelectionCard(
-                          userType: SelectionUserType.business,
-                          isSelected: _selectedType == SelectionUserType.business,
-                          onTap: () => _handleCardTap(SelectionUserType.business),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Community Card
-                      _AnimatedElement(
-                        opacityAnimation: _communityCardAnimation,
-                        slideAnimation: _communityCardSlideAnimation,
-                        child: SelectionCard(
-                          userType: SelectionUserType.community,
-                          isSelected:
-                              _selectedType == SelectionUserType.community,
-                          onTap: () => _handleCardTap(SelectionUserType.community),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Attendee Card
-                      _AnimatedElement(
-                        opacityAnimation: _attendeeCardAnimation,
-                        slideAnimation: _attendeeCardSlideAnimation,
-                        child: SelectionCard(
-                          userType: SelectionUserType.attendee,
-                          isSelected:
-                              _selectedType == SelectionUserType.attendee,
-                          onTap: () => _handleCardTap(SelectionUserType.attendee),
-                        ),
-                      ),
-
-                      const SizedBox(height: 48),
-
-                      // Bottom link
-                      _AnimatedElement(
-                        opacityAnimation: _bottomLinkAnimation,
-                        slideAnimation: _bottomLinkSlideAnimation,
-                        child: _LoginLink(onTap: _navigateToLogin),
-                      ),
-
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+    backgroundColor: KolabingColors.background,
+    body: SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top bar with back button
+          Padding(
+            padding: const EdgeInsets.only(left: 8, top: 8),
+            child: _BackButton(onPressed: _handleBack),
           ),
-        ),
-      );
+
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+
+                  // Headline
+                  _AnimatedElement(
+                    opacityAnimation: _headlineAnimation,
+                    slideAnimation: _headlineSlideAnimation,
+                    child: Text(
+                      'CHOOSE YOUR PATH',
+                      style: GoogleFonts.rubik(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: KolabingColors.textPrimary,
+                        letterSpacing: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Subtitle
+                  _AnimatedElement(
+                    opacityAnimation: _subtitleAnimation,
+                    slideAnimation: _subtitleSlideAnimation,
+                    child: Text(
+                      'Select your account type to get started',
+                      style: GoogleFonts.openSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: KolabingColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  const SizedBox(height: 48),
+
+                  // Business Card
+                  _AnimatedElement(
+                    opacityAnimation: _businessCardAnimation,
+                    slideAnimation: _businessCardSlideAnimation,
+                    child: SelectionCard(
+                      userType: SelectionUserType.business,
+                      isSelected: _selectedType == SelectionUserType.business,
+                      onTap: () => _handleCardTap(SelectionUserType.business),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Community Card
+                  _AnimatedElement(
+                    opacityAnimation: _communityCardAnimation,
+                    slideAnimation: _communityCardSlideAnimation,
+                    child: SelectionCard(
+                      userType: SelectionUserType.community,
+                      isSelected: _selectedType == SelectionUserType.community,
+                      onTap: () => _handleCardTap(SelectionUserType.community),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Attendee Card
+                  _AnimatedElement(
+                    opacityAnimation: _attendeeCardAnimation,
+                    slideAnimation: _attendeeCardSlideAnimation,
+                    child: SelectionCard(
+                      userType: SelectionUserType.attendee,
+                      isSelected: _selectedType == SelectionUserType.attendee,
+                      onTap: () => _handleCardTap(SelectionUserType.attendee),
+                    ),
+                  ),
+
+                  const SizedBox(height: 48),
+
+                  // Bottom link
+                  _AnimatedElement(
+                    opacityAnimation: _bottomLinkAnimation,
+                    slideAnimation: _bottomLinkSlideAnimation,
+                    child: _LoginLink(onTap: _navigateToLogin),
+                  ),
+
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 /// Animated wrapper for staggered entry
@@ -275,16 +273,13 @@ class _AnimatedElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: opacityAnimation,
-        builder: (context, child) => Transform.translate(
-          offset: slideAnimation.value,
-          child: Opacity(
-            opacity: opacityAnimation.value,
-            child: child,
-          ),
-        ),
-        child: child,
-      );
+    animation: opacityAnimation,
+    builder: (context, child) => Transform.translate(
+      offset: slideAnimation.value,
+      child: Opacity(opacity: opacityAnimation.value, child: child),
+    ),
+    child: child,
+  );
 }
 
 /// Back button with icon and text
@@ -302,40 +297,40 @@ class _BackButtonState extends State<_BackButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: () {
-          HapticFeedback.lightImpact();
-          widget.onPressed();
-        },
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 100),
-          opacity: _isPressed ? 0.6 : 1.0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.arrow_back_ios_rounded,
-                  size: 20,
-                  color: KolabingColors.textPrimary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Back',
-                  style: GoogleFonts.openSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.textPrimary,
-                  ),
-                ),
-              ],
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: () {
+      HapticFeedback.lightImpact();
+      widget.onPressed();
+    },
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 100),
+      opacity: _isPressed ? 0.6 : 1.0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 20,
+              color: KolabingColors.textPrimary,
             ),
-          ),
+            const SizedBox(width: 4),
+            Text(
+              'Back',
+              style: GoogleFonts.openSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: KolabingColors.textPrimary,
+              ),
+            ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// Login link at bottom
@@ -353,39 +348,39 @@ class _LoginLinkState extends State<_LoginLink> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: widget.onTap,
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 100),
-          scale: _isPressed ? 0.98 : 1.0,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: widget.onTap,
+    behavior: HitTestBehavior.opaque,
+    child: AnimatedScale(
+      duration: const Duration(milliseconds: 100),
+      scale: _isPressed ? 0.98 : 1.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: KolabingColors.textSecondary,
+            ),
+            children: [
+              const TextSpan(text: 'Already have an account? '),
+              TextSpan(
+                text: 'Login',
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: KolabingColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.textPrimary,
+                  decoration: _isPressed ? TextDecoration.underline : null,
                 ),
-                children: [
-                  const TextSpan(text: 'Already have an account? '),
-                  TextSpan(
-                    text: 'Login',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                      decoration: _isPressed ? TextDecoration.underline : null,
-                    ),
-                  ),
-                ],
               ),
-            ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

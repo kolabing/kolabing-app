@@ -6,15 +6,13 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 
 /// Screen for organizers to create a custom challenge
 class CreateChallengeScreen extends ConsumerStatefulWidget {
-  const CreateChallengeScreen({
-    super.key,
-    required this.eventId,
-  });
+  const CreateChallengeScreen({super.key, required this.eventId});
 
   final String eventId;
 
@@ -80,8 +78,9 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           content: const Text('Challenge created successfully!'),
           backgroundColor: KolabingColors.success,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       context.pop();
@@ -92,7 +91,9 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           content: Text(e.toString()),
           backgroundColor: KolabingColors.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     } finally {
@@ -105,23 +106,24 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? KolabingColors.darkBackground : KolabingColors.background;
-    final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
-    final surfaceColor =
-        isDark ? KolabingColors.darkSurface : KolabingColors.surface;
+    final bgColor = isDark
+        ? KolabingColors.darkBackground
+        : KolabingColors.background;
+    final textColor = isDark
+        ? KolabingColors.textOnDark
+        : KolabingColors.textPrimary;
+    final surfaceColor = isDark
+        ? KolabingColors.darkSurface
+        : KolabingColors.surface;
 
     return Scaffold(
       backgroundColor: bgColor,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            LucideIcons.x,
-            color: textColor,
-          ),
+          icon: Icon(LucideIcons.x, color: textColor),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -133,157 +135,161 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(KolabingSpacing.lg),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Name field
-              _FieldLabel(label: 'Challenge Name', required: true),
-              const SizedBox(height: KolabingSpacing.xs),
-              TextFormField(
-                controller: _nameController,
-                enabled: !_isLoading,
-                textCapitalization: TextCapitalization.words,
-                decoration: _inputDecoration(
-                  hint: 'Enter challenge name',
-                  isDark: isDark,
-                  surfaceColor: surfaceColor,
+      body: KeyboardAvoidingContent(
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: const EdgeInsets.all(KolabingSpacing.lg),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name field
+                _FieldLabel(label: 'Challenge Name', required: true),
+                const SizedBox(height: KolabingSpacing.xs),
+                TextFormField(
+                  controller: _nameController,
+                  enabled: !_isLoading,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: _inputDecoration(
+                    hint: 'Enter challenge name',
+                    isDark: isDark,
+                    surfaceColor: surfaceColor,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter a challenge name';
+                    }
+                    if (value.trim().length < 3) {
+                      return 'Name must be at least 3 characters';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a challenge name';
-                  }
-                  if (value.trim().length < 3) {
-                    return 'Name must be at least 3 characters';
-                  }
-                  return null;
-                },
-              ),
 
-              const SizedBox(height: KolabingSpacing.lg),
+                const SizedBox(height: KolabingSpacing.lg),
 
-              // Description field
-              _FieldLabel(label: 'Description', required: false),
-              const SizedBox(height: KolabingSpacing.xs),
-              TextFormField(
-                controller: _descriptionController,
-                enabled: !_isLoading,
-                maxLines: 3,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: _inputDecoration(
-                  hint: 'Describe what attendees need to do',
-                  isDark: isDark,
-                  surfaceColor: surfaceColor,
+                // Description field
+                _FieldLabel(label: 'Description', required: false),
+                const SizedBox(height: KolabingSpacing.xs),
+                TextFormField(
+                  controller: _descriptionController,
+                  enabled: !_isLoading,
+                  maxLines: 3,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: _inputDecoration(
+                    hint: 'Describe what attendees need to do',
+                    isDark: isDark,
+                    surfaceColor: surfaceColor,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: KolabingSpacing.lg),
+                const SizedBox(height: KolabingSpacing.lg),
 
-              // Difficulty selection
-              _FieldLabel(label: 'Difficulty', required: true),
-              const SizedBox(height: KolabingSpacing.xs),
-              _DifficultySelector(
-                selectedDifficulty: _selectedDifficulty,
-                onChanged: _onDifficultyChanged,
-                enabled: !_isLoading,
-              ),
+                // Difficulty selection
+                _FieldLabel(label: 'Difficulty', required: true),
+                const SizedBox(height: KolabingSpacing.xs),
+                _DifficultySelector(
+                  selectedDifficulty: _selectedDifficulty,
+                  onChanged: _onDifficultyChanged,
+                  enabled: !_isLoading,
+                ),
 
-              const SizedBox(height: KolabingSpacing.lg),
+                const SizedBox(height: KolabingSpacing.lg),
 
-              // Points field
-              _FieldLabel(label: 'Points', required: false),
-              const SizedBox(height: KolabingSpacing.xs),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _pointsController,
-                      enabled: !_isLoading,
-                      keyboardType: TextInputType.number,
-                      decoration: _inputDecoration(
-                        hint: 'Points awarded',
-                        isDark: isDark,
-                        surfaceColor: surfaceColor,
-                        prefixIcon: LucideIcons.star,
+                // Points field
+                _FieldLabel(label: 'Points', required: false),
+                const SizedBox(height: KolabingSpacing.xs),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _pointsController,
+                        enabled: !_isLoading,
+                        keyboardType: TextInputType.number,
+                        decoration: _inputDecoration(
+                          hint: 'Points awarded',
+                          isDark: isDark,
+                          surfaceColor: surfaceColor,
+                          prefixIcon: LucideIcons.star,
+                        ),
+                        validator: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            final points = int.tryParse(value);
+                            if (points == null || points < 1) {
+                              return 'Enter a valid number';
+                            }
+                            if (points > 100) {
+                              return 'Maximum 100 points';
+                            }
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value != null && value.isNotEmpty) {
-                          final points = int.tryParse(value);
-                          if (points == null || points < 1) {
-                            return 'Enter a valid number';
-                          }
-                          if (points > 100) {
-                            return 'Maximum 100 points';
-                          }
-                        }
-                        return null;
-                      },
                     ),
-                  ),
-                  const SizedBox(width: KolabingSpacing.sm),
-                  TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            _pointsController.text =
-                                _selectedDifficulty.defaultPoints.toString();
-                          },
-                    child: const Text('Reset to default'),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                'Default: Easy=5, Medium=15, Hard=30 points',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
+                    const SizedBox(width: KolabingSpacing.sm),
+                    TextButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              _pointsController.text = _selectedDifficulty
+                                  .defaultPoints
+                                  .toString();
+                            },
+                      child: const Text('Reset to default'),
+                    ),
+                  ],
                 ),
-              ),
 
-              const SizedBox(height: KolabingSpacing.xxl),
-
-              // Create button
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleCreate,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                const SizedBox(height: KolabingSpacing.xs),
+                Text(
+                  'Default: Easy=5, Medium=15, Hard=30 points',
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    color: KolabingColors.textTertiary,
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              KolabingColors.onPrimary,
+                ),
+
+                const SizedBox(height: KolabingSpacing.xxl),
+
+                // Create button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _handleCreate,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: KolabingColors.primary,
+                      foregroundColor: KolabingColors.onPrimary,
+                      disabledBackgroundColor: KolabingColors.primary
+                          .withValues(alpha: 0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                KolabingColors.onPrimary,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            'CREATE CHALLENGE',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0,
                             ),
                           ),
-                        )
-                      : Text(
-                          'CREATE CHALLENGE',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -298,9 +304,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        color: KolabingColors.textTertiary,
-      ),
+      hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: KolabingColors.textTertiary)
           : null,
@@ -320,26 +324,18 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: KolabingColors.primary,
-          width: 2,
-        ),
+        borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: KolabingColors.error,
-        ),
+        borderSide: const BorderSide(color: KolabingColors.error),
       ),
     );
   }
 }
 
 class _FieldLabel extends StatelessWidget {
-  const _FieldLabel({
-    required this.label,
-    required this.required,
-  });
+  const _FieldLabel({required this.label, required this.required});
 
   final String label;
   final bool required;
@@ -347,8 +343,9 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+    final textColor = isDark
+        ? KolabingColors.textOnDark
+        : KolabingColors.textPrimary;
 
     return Row(
       children: [
@@ -429,9 +426,7 @@ class _DifficultyOption extends StatelessWidget {
 
     switch (difficulty) {
       case ChallengeDifficulty.easy:
-        bgColor = isSelected
-            ? const Color(0xFFD4EDDA)
-            : Colors.transparent;
+        bgColor = isSelected ? const Color(0xFFD4EDDA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF155724)
             : KolabingColors.border;
@@ -440,9 +435,7 @@ class _DifficultyOption extends StatelessWidget {
             : KolabingColors.textSecondary;
         icon = LucideIcons.leaf;
       case ChallengeDifficulty.medium:
-        bgColor = isSelected
-            ? const Color(0xFFFFF3CD)
-            : Colors.transparent;
+        bgColor = isSelected ? const Color(0xFFFFF3CD) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF856404)
             : KolabingColors.border;
@@ -451,9 +444,7 @@ class _DifficultyOption extends StatelessWidget {
             : KolabingColors.textSecondary;
         icon = LucideIcons.flame;
       case ChallengeDifficulty.hard:
-        bgColor = isSelected
-            ? const Color(0xFFF8D7DA)
-            : Colors.transparent;
+        bgColor = isSelected ? const Color(0xFFF8D7DA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF721C24)
             : KolabingColors.border;
@@ -473,10 +464,7 @@ class _DifficultyOption extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: borderColor,
-              width: isSelected ? 2 : 1,
-            ),
+            border: Border.all(color: borderColor, width: isSelected ? 2 : 1),
           ),
           child: Column(
             children: [

@@ -13,7 +13,7 @@ String resolveAuthDestination(UserModel user, {bool isNewUser = false}) {
   // brand-new account.
   if (isNewUser) {
     return user.isBusiness
-        ? KolabingRoutes.businessOnboardingStep2
+        ? KolabingRoutes.businessOnboardingStep5
         : KolabingRoutes.communityOnboardingStep1;
   }
 

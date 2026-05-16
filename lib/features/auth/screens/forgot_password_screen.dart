@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
 
@@ -84,10 +85,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       );
 
   Animation<Offset> _createSlideAnimation(double begin, double end) =>
-      Tween<Offset>(
-        begin: const Offset(0, 30),
-        end: Offset.zero,
-      ).animate(
+      Tween<Offset>(begin: const Offset(0, 30), end: Offset.zero).animate(
         CurvedAnimation(
           parent: _entryController,
           curve: Interval(begin, end, curve: Curves.easeOut),
@@ -127,9 +125,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     setState(() => _isLoading = true);
 
     try {
-      await _authService.forgotPassword(
-        email: _emailController.text.trim(),
-      );
+      await _authService.forgotPassword(email: _emailController.text.trim());
     } on ApiException {
       // Per API spec: always show generic success to avoid email enumeration.
       // Do NOT reveal whether the email exists or not.
@@ -177,8 +173,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.wifi_off_rounded,
-                color: KolabingColors.textOnDark, size: 20),
+            const Icon(
+              Icons.wifi_off_rounded,
+              color: KolabingColors.textOnDark,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -207,362 +206,370 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   @override
   Widget build(BuildContext context) => PopScope(
-        canPop: !_isLoading,
-        child: Scaffold(
-          backgroundColor: KolabingColors.darkBackground,
-          body: SafeArea(
-            child: Column(
-              children: [
-                // Top bar with back button
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: _isLoading ? null : _handleBack,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.arrow_back_ios_rounded,
-                                size: 20,
+    canPop: !_isLoading,
+    child: Scaffold(
+      backgroundColor: KolabingColors.darkBackground,
+      resizeToAvoidBottomInset: false,
+      body: KeyboardAvoidingContent(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Top bar with back button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _isLoading ? null : _handleBack,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: 20,
+                              color: KolabingColors.textOnDark,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Back',
+                              style: GoogleFonts.openSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                                 color: KolabingColors.textOnDark,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Back',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textOnDark,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
 
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _emailSent
-                        ? _buildSuccessContent()
-                        : _buildFormContent(),
-                  ),
+              Expanded(
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _emailSent
+                      ? _buildSuccessContent()
+                      : _buildFormContent(),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildFormContent() => Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            const SizedBox(height: 48),
+    key: _formKey,
+    child: Column(
+      children: [
+        const SizedBox(height: 48),
 
-            // Lock icon
-            _AnimatedEntry(
-              opacity: _iconAnimation,
-              slide: _iconSlideAnimation,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.lock_reset_rounded,
-                  size: 40,
-                  color: KolabingColors.primary,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Headline
-            _AnimatedEntry(
-              opacity: _headlineAnimation,
-              slide: _headlineSlideAnimation,
-              child: Column(
-                children: [
-                  Text(
-                    'FORGOT PASSWORD?',
-                    style: GoogleFonts.rubik(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: KolabingColors.textOnDark,
-                      letterSpacing: 1.2,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      "Enter your email address and we'll send you a link to reset your password.",
-                      style: GoogleFonts.openSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.textTertiary,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // Email field
-            _AnimatedEntry(
-              opacity: _formAnimation,
-              slide: _formSlideAnimation,
-              child: TextFormField(
-                controller: _emailController,
-                focusNode: _emailFocusNode,
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                enabled: !_isLoading,
-                validator: _validateEmail,
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _handleSendResetLink(),
-                style: GoogleFonts.openSans(
-                  color: KolabingColors.textOnDark,
-                  fontSize: 16,
-                ),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'your@email.com',
-                  labelStyle: GoogleFonts.openSans(
-                    color: KolabingColors.textTertiary,
-                  ),
-                  hintStyle: GoogleFonts.openSans(
-                    color: KolabingColors.textTertiary.withValues(alpha:0.6),
-                  ),
-                  prefixIcon: const Icon(Icons.email_outlined,
-                      color: KolabingColors.textTertiary),
-                  filled: true,
-                  fillColor: KolabingColors.darkSurface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(color: KolabingColors.darkBorder),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(color: KolabingColors.darkBorder),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                        color: KolabingColors.primary, width: 2),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(color: KolabingColors.error),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                        color: KolabingColors.error, width: 2),
-                  ),
-                  errorStyle: GoogleFonts.openSans(
-                    color: KolabingColors.error,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Send button
-            _AnimatedEntry(
-              opacity: _buttonAnimation,
-              slide: _buttonSlideAnimation,
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleSendResetLink,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha:0.7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              KolabingColors.onPrimary,
-                            ),
-                          ),
-                        )
-                      : Text(
-                          'SEND RESET LINK',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-          ],
-        ),
-      );
-
-  Widget _buildSuccessContent() => Column(
-        children: [
-          const SizedBox(height: 48),
-
-          // Success icon
-          Container(
+        // Lock icon
+        _AnimatedEntry(
+          opacity: _iconAnimation,
+          slide: _iconSlideAnimation,
+          child: Container(
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: KolabingColors.success.withValues(alpha:0.15),
+              color: KolabingColors.primary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.mark_email_read_outlined,
+              Icons.lock_reset_rounded,
               size: 40,
-              color: KolabingColors.success,
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
-          // Success headline
-          Text(
-            'CHECK YOUR EMAIL',
-            style: GoogleFonts.rubik(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: KolabingColors.textOnDark,
-              letterSpacing: 1.2,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 12),
-
-          // Success message
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "We've sent a password reset link to",
-              style: GoogleFonts.openSans(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.textTertiary,
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Email address
-          Text(
-            _emailController.text.trim(),
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
               color: KolabingColors.primary,
             ),
-            textAlign: TextAlign.center,
           ),
+        ),
 
-          const SizedBox(height: 12),
+        const SizedBox(height: 32),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Please check your inbox and follow the link to reset your password.',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.textTertiary,
-                height: 1.5,
+        // Headline
+        _AnimatedEntry(
+          opacity: _headlineAnimation,
+          slide: _headlineSlideAnimation,
+          child: Column(
+            children: [
+              Text(
+                'FORGOT PASSWORD?',
+                style: GoogleFonts.rubik(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: KolabingColors.textOnDark,
+                  letterSpacing: 1.2,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Enter your email address and we'll send you a link to reset your password.",
+                  style: GoogleFonts.openSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: KolabingColors.textTertiary,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 40),
+
+        // Email field
+        _AnimatedEntry(
+          opacity: _formAnimation,
+          slide: _formSlideAnimation,
+          child: TextFormField(
+            controller: _emailController,
+            focusNode: _emailFocusNode,
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            enabled: !_isLoading,
+            validator: _validateEmail,
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) => _handleSendResetLink(),
+            style: GoogleFonts.openSans(
+              color: KolabingColors.textOnDark,
+              fontSize: 16,
+            ),
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'your@email.com',
+              labelStyle: GoogleFonts.openSans(
+                color: KolabingColors.textTertiary,
+              ),
+              hintStyle: GoogleFonts.openSans(
+                color: KolabingColors.textTertiary.withValues(alpha: 0.6),
+              ),
+              prefixIcon: const Icon(
+                Icons.email_outlined,
+                color: KolabingColors.textTertiary,
+              ),
+              filled: true,
+              fillColor: KolabingColors.darkSurface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: KolabingColors.primary,
+                  width: 2,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: KolabingColors.error),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: KolabingColors.error,
+                  width: 2,
+                ),
+              ),
+              errorStyle: GoogleFonts.openSans(
+                color: KolabingColors.error,
+                fontSize: 12,
+              ),
             ),
           ),
+        ),
 
-          const SizedBox(height: 40),
+        const SizedBox(height: 24),
 
-          // Back to login button
-          SizedBox(
+        // Send button
+        _AnimatedEntry(
+          opacity: _buttonAnimation,
+          slide: _buttonSlideAnimation,
+          child: SizedBox(
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: () => context.go('/auth/login'),
+              onPressed: _isLoading ? null : _handleSendResetLink,
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
+                disabledBackgroundColor: KolabingColors.primary.withValues(
+                  alpha: 0.7,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                'BACK TO SIGN IN',
-                style: GoogleFonts.dmSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
-              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          KolabingColors.onPrimary,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      'SEND RESET LINK',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
             ),
           ),
+        ),
 
-          const SizedBox(height: 16),
+        const SizedBox(height: 32),
+      ],
+    ),
+  );
 
-          // Resend link
-          TextButton(
-            onPressed: () {
-              setState(() => _emailSent = false);
-            },
-            child: Text(
-              "Didn't receive the email? Try again",
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textTertiary,
-              ),
+  Widget _buildSuccessContent() => Column(
+    children: [
+      const SizedBox(height: 48),
+
+      // Success icon
+      Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: KolabingColors.success.withValues(alpha: 0.15),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.mark_email_read_outlined,
+          size: 40,
+          color: KolabingColors.success,
+        ),
+      ),
+
+      const SizedBox(height: 32),
+
+      // Success headline
+      Text(
+        'CHECK YOUR EMAIL',
+        style: GoogleFonts.rubik(
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          color: KolabingColors.textOnDark,
+          letterSpacing: 1.2,
+        ),
+        textAlign: TextAlign.center,
+      ),
+
+      const SizedBox(height: 12),
+
+      // Success message
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          "We've sent a password reset link to",
+          style: GoogleFonts.openSans(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: KolabingColors.textTertiary,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+
+      const SizedBox(height: 8),
+
+      // Email address
+      Text(
+        _emailController.text.trim(),
+        style: GoogleFonts.openSans(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.primary,
+        ),
+        textAlign: TextAlign.center,
+      ),
+
+      const SizedBox(height: 12),
+
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          'Please check your inbox and follow the link to reset your password.',
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: KolabingColors.textTertiary,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+
+      const SizedBox(height: 40),
+
+      // Back to login button
+      SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: ElevatedButton(
+          onPressed: () => context.go('/auth/login'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KolabingColors.primary,
+            foregroundColor: KolabingColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            'BACK TO SIGN IN',
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
             ),
           ),
+        ),
+      ),
 
-          const SizedBox(height: 32),
-        ],
-      );
+      const SizedBox(height: 16),
+
+      // Resend link
+      TextButton(
+        onPressed: () {
+          setState(() => _emailSent = false);
+        },
+        child: Text(
+          "Didn't receive the email? Try again",
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 32),
+    ],
+  );
 }
 
 /// Animated wrapper for staggered entry
@@ -579,14 +586,11 @@ class _AnimatedEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: opacity,
-        builder: (context, child) => Transform.translate(
-          offset: slide.value,
-          child: Opacity(
-            opacity: opacity.value,
-            child: child,
-          ),
-        ),
-        child: child,
-      );
+    animation: opacity,
+    builder: (context, child) => Transform.translate(
+      offset: slide.value,
+      child: Opacity(opacity: opacity.value, child: child),
+    ),
+    child: child,
+  );
 }

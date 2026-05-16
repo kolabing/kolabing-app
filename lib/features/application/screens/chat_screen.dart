@@ -9,6 +9,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -16,10 +17,7 @@ import '../providers/application_provider.dart';
 
 /// Chat screen for application conversation
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({
-    required this.applicationId,
-    super.key,
-  });
+  const ChatScreen({required this.applicationId, super.key});
 
   final String applicationId;
 
@@ -84,7 +82,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     _messageController.clear();
 
-    final message = await ref.read(chatMessagesProvider.notifier).sendMessage(content);
+    final message = await ref
+        .read(chatMessagesProvider.notifier)
+        .sendMessage(content);
 
     if (message != null && mounted) {
       _scrollToBottom();
@@ -107,7 +107,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final chatState = ref.watch(chatMessagesProvider);
 
     // Scroll to bottom when messages are first loaded
-    if (!_isInitialized && chatState.messages.isNotEmpty && !chatState.isLoading) {
+    if (!_isInitialized &&
+        chatState.messages.isNotEmpty &&
+        !chatState.isLoading) {
       _isInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom(animate: false);
@@ -115,19 +117,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
 
     return asyncAppData.when(
-      loading: () => _buildScaffold(
-        isLoading: true,
-        body: _buildLoadingState(),
-      ),
+      loading: () =>
+          _buildScaffold(isLoading: true, body: _buildLoadingState()),
       error: (error, _) {
         if (error is AuthException) {
-          return _buildScaffold(
-            body: _buildAuthErrorState(),
-          );
+          return _buildScaffold(body: _buildAuthErrorState());
         }
-        return _buildScaffold(
-          body: _buildErrorState(error.toString()),
-        );
+        return _buildScaffold(body: _buildErrorState(error.toString()));
       },
       data: (application) {
         if (application == null) {
@@ -158,16 +154,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+      backgroundColor: isDark
+          ? KolabingColors.darkBackground
+          : KolabingColors.background,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor:
-            isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        backgroundColor: isDark
+            ? KolabingColors.darkSurface
+            : KolabingColors.surface,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
           onPressed: () => context.pop(),
-          color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+          color: isDark
+              ? KolabingColors.textOnDark
+              : KolabingColors.textPrimary,
         ),
         title: application != null
             ? Row(
@@ -196,7 +197,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           style: GoogleFonts.openSans(
                             fontSize: 12,
                             color: isDark
-                                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                                ? KolabingColors.textOnDark.withValues(
+                                    alpha: 0.5,
+                                  )
                                 : KolabingColors.textTertiary,
                           ),
                         ),
@@ -206,15 +209,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ],
               )
             : isLoading
-                ? Text(
-                    'Loading...',
-                    style: TextStyle(
-                      color: isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
-                    ),
-                  )
-                : null,
+            ? Text(
+                'Loading...',
+                style: TextStyle(
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
+                ),
+              )
+            : null,
         actions: application != null
             ? [
                 IconButton(
@@ -228,28 +231,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ]
             : null,
       ),
-      body: body,
+      body: KeyboardAvoidingContent(child: body),
     );
   }
 
   Widget _buildAvatar(String name, {bool isDark = false}) => Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
+    width: 36,
+    height: 36,
+    decoration: BoxDecoration(
+      color: KolabingColors.primary.withValues(alpha: 0.1),
+      shape: BoxShape.circle,
+    ),
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: GoogleFonts.rubik(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.primary,
         ),
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.primary,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildApplicationHeader(Application application) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -308,6 +311,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return ListView.builder(
       controller: _scrollController,
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       itemCount: messages.length + (chatState.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
@@ -318,7 +322,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
         final adjustedIndex = chatState.isLoadingMore ? index - 1 : index;
         final message = messages[adjustedIndex];
-        final showDate = adjustedIndex == 0 ||
+        final showDate =
+            adjustedIndex == 0 ||
             !_isSameDay(
               messages[adjustedIndex - 1].timestamp,
               message.timestamp,
@@ -368,8 +373,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       label = '${date.day}/${date.month}/${date.year}';
     }
 
-    final dividerColor =
-        isDark ? KolabingColors.darkBorder : KolabingColors.border;
+    final dividerColor = isDark
+        ? KolabingColors.darkBorder
+        : KolabingColors.border;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
@@ -496,10 +502,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Shimmer.fromColors(
-      baseColor:
-          isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
-      highlightColor:
-          isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+      baseColor: isDark
+          ? KolabingColors.darkSurface
+          : KolabingColors.surfaceVariant,
+      highlightColor: isDark
+          ? KolabingColors.darkBorder
+          : KolabingColors.surface,
       child: ListView.builder(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         itemCount: 5,
@@ -523,42 +531,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Widget _buildErrorState(String error) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.alertCircle,
-                size: 48,
-                color: KolabingColors.error,
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton.icon(
-                onPressed: () {
-                  ref.invalidate(chatDataProvider(widget.applicationId));
-                  ref.read(chatMessagesProvider.notifier).load(widget.applicationId);
-                },
-                icon: const Icon(LucideIcons.rotateCcw, size: 16),
-                label: const Text('Retry'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                ),
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            LucideIcons.alertCircle,
+            size: 48,
+            color: KolabingColors.error,
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.md),
+          Text(
+            error,
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: KolabingSpacing.lg),
+          ElevatedButton.icon(
+            onPressed: () {
+              ref.invalidate(chatDataProvider(widget.applicationId));
+              ref
+                  .read(chatMessagesProvider.notifier)
+                  .load(widget.applicationId);
+            },
+            icon: const Icon(LucideIcons.rotateCcw, size: 16),
+            label: const Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: KolabingColors.primary,
+              foregroundColor: KolabingColors.onPrimary,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _buildAuthErrorState() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -686,7 +696,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(LucideIcons.xCircle, color: KolabingColors.error),
+              leading: const Icon(
+                LucideIcons.xCircle,
+                color: KolabingColors.error,
+              ),
               title: const Text(
                 'Cancel Application',
                 style: TextStyle(color: KolabingColors.error),
@@ -731,9 +744,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 );
               }
             },
-            style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
             child: const Text('Yes, Withdraw'),
           ),
         ],
@@ -757,8 +768,9 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
       child: Row(
-        mainAxisAlignment:
-            isOwn ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isOwn
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // Show avatar for received messages
@@ -780,8 +792,8 @@ class _MessageBubble extends StatelessWidget {
                 color: isOwn
                     ? KolabingColors.primary
                     : isDark
-                        ? KolabingColors.darkSurface
-                        : KolabingColors.surface,
+                    ? KolabingColors.darkSurface
+                    : KolabingColors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -799,8 +811,9 @@ class _MessageBubble extends StatelessWidget {
                       ],
               ),
               child: Column(
-                crossAxisAlignment:
-                    isOwn ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                crossAxisAlignment: isOwn
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
                   // Show sender name for received messages
                   if (!isOwn) ...[
@@ -822,8 +835,8 @@ class _MessageBubble extends StatelessWidget {
                       color: isOwn
                           ? KolabingColors.onPrimary
                           : isDark
-                              ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
+                          ? KolabingColors.textOnDark
+                          : KolabingColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -838,9 +851,8 @@ class _MessageBubble extends StatelessWidget {
                           color: isOwn
                               ? KolabingColors.onPrimary.withValues(alpha: 0.7)
                               : isDark
-                                  ? KolabingColors.textOnDark
-                                      .withValues(alpha: 0.5)
-                                  : KolabingColors.textTertiary,
+                              ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+                              : KolabingColors.textTertiary,
                         ),
                       ),
                       // Read receipts for own messages
@@ -907,19 +919,11 @@ class _MessageBubble extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          LucideIcons.check,
-          size: 12,
-          color: iconColor,
-        ),
+        Icon(LucideIcons.check, size: 12, color: iconColor),
         if (isRead)
           Padding(
             padding: const EdgeInsets.only(left: 0),
-            child: Icon(
-              LucideIcons.check,
-              size: 12,
-              color: iconColor,
-            ),
+            child: Icon(LucideIcons.check, size: 12, color: iconColor),
           ),
       ],
     );

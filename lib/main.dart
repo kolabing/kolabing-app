@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
+import 'services/global_network_banner_service.dart';
 import 'services/notification_service.dart';
 
 /// Application entry point
@@ -53,6 +54,7 @@ class KolabingApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp.router(
         title: 'Kolabing',
         debugShowCheckedModeBanner: false,
+        scaffoldMessengerKey: globalScaffoldMessengerKey,
         theme: KolabingTheme.lightTheme,
         themeMode: ThemeMode.light,
         routerConfig: kolabingRouter,

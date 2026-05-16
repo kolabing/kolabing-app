@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
 
@@ -99,10 +100,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       );
 
   Animation<Offset> _createSlideAnimation(double begin, double end) =>
-      Tween<Offset>(
-        begin: const Offset(0, 30),
-        end: Offset.zero,
-      ).animate(
+      Tween<Offset>(begin: const Offset(0, 30), end: Offset.zero).animate(
         CurvedAnimation(
           parent: _entryController,
           curve: Interval(begin, end, curve: Curves.easeOut),
@@ -228,8 +226,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.wifi_off_rounded,
-                color: KolabingColors.textOnDark, size: 20),
+            const Icon(
+              Icons.wifi_off_rounded,
+              color: KolabingColors.textOnDark,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -258,379 +259,376 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
 
   @override
   Widget build(BuildContext context) => PopScope(
-        canPop: !_isLoading,
-        child: Scaffold(
-          backgroundColor: KolabingColors.darkBackground,
-          body: SafeArea(
-            child: Column(
-              children: [
-                // Top bar with back button
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: _isLoading ? null : _handleBack,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.arrow_back_ios_rounded,
-                                size: 20,
+    canPop: !_isLoading,
+    child: Scaffold(
+      backgroundColor: KolabingColors.darkBackground,
+      resizeToAvoidBottomInset: false,
+      body: KeyboardAvoidingContent(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Top bar with back button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _isLoading ? null : _handleBack,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: 20,
+                              color: KolabingColors.textOnDark,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Back',
+                              style: GoogleFonts.openSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                                 color: KolabingColors.textOnDark,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Back',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textOnDark,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
 
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _resetSuccess
-                        ? _buildSuccessContent()
-                        : _buildFormContent(),
-                  ),
+              Expanded(
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _resetSuccess
+                      ? _buildSuccessContent()
+                      : _buildFormContent(),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildFormContent() => Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            const SizedBox(height: 48),
+    key: _formKey,
+    child: Column(
+      children: [
+        const SizedBox(height: 48),
 
-            // Lock icon
-            _AnimatedEntry(
-              opacity: _iconAnimation,
-              slide: _iconSlideAnimation,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.lock_outline_rounded,
-                  size: 40,
-                  color: KolabingColors.primary,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Headline
-            _AnimatedEntry(
-              opacity: _headlineAnimation,
-              slide: _headlineSlideAnimation,
-              child: Column(
-                children: [
-                  Text(
-                    'RESET PASSWORD',
-                    style: GoogleFonts.rubik(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: KolabingColors.textOnDark,
-                      letterSpacing: 1.2,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Enter your new password below.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.textTertiary,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // Password fields
-            _AnimatedEntry(
-              opacity: _formAnimation,
-              slide: _formSlideAnimation,
-              child: Column(
-                children: [
-                  // New password field
-                  TextFormField(
-                    controller: _passwordController,
-                    focusNode: _passwordFocusNode,
-                    obscureText: _obscurePassword,
-                    enabled: !_isLoading,
-                    validator: _validatePassword,
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (_) {
-                      _confirmPasswordFocusNode.requestFocus();
-                    },
-                    style: GoogleFonts.openSans(
-                      color: KolabingColors.textOnDark,
-                      fontSize: 16,
-                    ),
-                    decoration: _inputDecoration(
-                      label: 'New Password',
-                      hint: 'Enter new password',
-                      prefixIcon: Icons.lock_outline,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: KolabingColors.textTertiary,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Confirm password field
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    focusNode: _confirmPasswordFocusNode,
-                    obscureText: _obscureConfirmPassword,
-                    enabled: !_isLoading,
-                    validator: _validateConfirmPassword,
-                    textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (_) => _handleResetPassword(),
-                    style: GoogleFonts.openSans(
-                      color: KolabingColors.textOnDark,
-                      fontSize: 16,
-                    ),
-                    decoration: _inputDecoration(
-                      label: 'Confirm Password',
-                      hint: 'Confirm new password',
-                      prefixIcon: Icons.lock_outline,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureConfirmPassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: KolabingColors.textTertiary,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureConfirmPassword =
-                                !_obscureConfirmPassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Reset button
-            _AnimatedEntry(
-              opacity: _buttonAnimation,
-              slide: _buttonSlideAnimation,
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleResetPassword,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              KolabingColors.onPrimary,
-                            ),
-                          ),
-                        )
-                      : Text(
-                          'RESET PASSWORD',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-          ],
-        ),
-      );
-
-  Widget _buildSuccessContent() => Column(
-        children: [
-          const SizedBox(height: 48),
-
-          // Success icon
-          Container(
+        // Lock icon
+        _AnimatedEntry(
+          opacity: _iconAnimation,
+          slide: _iconSlideAnimation,
+          child: Container(
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: KolabingColors.success.withValues(alpha: 0.15),
+              color: KolabingColors.primary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.check_circle_outline_rounded,
+              Icons.lock_outline_rounded,
               size: 40,
-              color: KolabingColors.success,
+              color: KolabingColors.primary,
             ),
           ),
+        ),
 
-          const SizedBox(height: 32),
+        const SizedBox(height: 32),
 
-          // Success headline
-          Text(
-            'PASSWORD RESET',
-            style: GoogleFonts.rubik(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: KolabingColors.textOnDark,
-              letterSpacing: 1.2,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 12),
-
-          // Success message
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Your password has been successfully reset. Redirecting you to sign in...',
-              style: GoogleFonts.openSans(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.textTertiary,
-                height: 1.5,
+        // Headline
+        _AnimatedEntry(
+          opacity: _headlineAnimation,
+          slide: _headlineSlideAnimation,
+          child: Column(
+            children: [
+              Text(
+                'RESET PASSWORD',
+                style: GoogleFonts.rubik(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: KolabingColors.textOnDark,
+                  letterSpacing: 1.2,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Enter your new password below.',
+                  style: GoogleFonts.openSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: KolabingColors.textTertiary,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ),
+        ),
 
-          const SizedBox(height: 40),
+        const SizedBox(height: 40),
 
-          // Manual sign in button (in case auto-redirect fails)
-          SizedBox(
+        // Password fields
+        _AnimatedEntry(
+          opacity: _formAnimation,
+          slide: _formSlideAnimation,
+          child: Column(
+            children: [
+              // New password field
+              TextFormField(
+                controller: _passwordController,
+                focusNode: _passwordFocusNode,
+                obscureText: _obscurePassword,
+                enabled: !_isLoading,
+                validator: _validatePassword,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) {
+                  _confirmPasswordFocusNode.requestFocus();
+                },
+                style: GoogleFonts.openSans(
+                  color: KolabingColors.textOnDark,
+                  fontSize: 16,
+                ),
+                decoration: _inputDecoration(
+                  label: 'New Password',
+                  hint: 'Enter new password',
+                  prefixIcon: Icons.lock_outline,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: KolabingColors.textTertiary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Confirm password field
+              TextFormField(
+                controller: _confirmPasswordController,
+                focusNode: _confirmPasswordFocusNode,
+                obscureText: _obscureConfirmPassword,
+                enabled: !_isLoading,
+                validator: _validateConfirmPassword,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _handleResetPassword(),
+                style: GoogleFonts.openSans(
+                  color: KolabingColors.textOnDark,
+                  fontSize: 16,
+                ),
+                decoration: _inputDecoration(
+                  label: 'Confirm Password',
+                  hint: 'Confirm new password',
+                  prefixIcon: Icons.lock_outline,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: KolabingColors.textTertiary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureConfirmPassword = !_obscureConfirmPassword;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
+        // Reset button
+        _AnimatedEntry(
+          opacity: _buttonAnimation,
+          slide: _buttonSlideAnimation,
+          child: SizedBox(
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: () => context.go('/auth/login'),
+              onPressed: _isLoading ? null : _handleResetPassword,
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
+                disabledBackgroundColor: KolabingColors.primary.withValues(
+                  alpha: 0.7,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                'GO TO SIGN IN',
-                style: GoogleFonts.dmSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
-              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          KolabingColors.onPrimary,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      'RESET PASSWORD',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
             ),
           ),
+        ),
 
-          const SizedBox(height: 32),
-        ],
-      );
+        const SizedBox(height: 32),
+      ],
+    ),
+  );
+
+  Widget _buildSuccessContent() => Column(
+    children: [
+      const SizedBox(height: 48),
+
+      // Success icon
+      Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: KolabingColors.success.withValues(alpha: 0.15),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.check_circle_outline_rounded,
+          size: 40,
+          color: KolabingColors.success,
+        ),
+      ),
+
+      const SizedBox(height: 32),
+
+      // Success headline
+      Text(
+        'PASSWORD RESET',
+        style: GoogleFonts.rubik(
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          color: KolabingColors.textOnDark,
+          letterSpacing: 1.2,
+        ),
+        textAlign: TextAlign.center,
+      ),
+
+      const SizedBox(height: 12),
+
+      // Success message
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          'Your password has been successfully reset. Redirecting you to sign in...',
+          style: GoogleFonts.openSans(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: KolabingColors.textTertiary,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+
+      const SizedBox(height: 40),
+
+      // Manual sign in button (in case auto-redirect fails)
+      SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: ElevatedButton(
+          onPressed: () => context.go('/auth/login'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KolabingColors.primary,
+            foregroundColor: KolabingColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            'GO TO SIGN IN',
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 32),
+    ],
+  );
 
   InputDecoration _inputDecoration({
     required String label,
     required String hint,
     required IconData prefixIcon,
     Widget? suffixIcon,
-  }) =>
-      InputDecoration(
-        labelText: label,
-        hintText: hint,
-        labelStyle: GoogleFonts.openSans(
-          color: KolabingColors.textTertiary,
-        ),
-        hintStyle: GoogleFonts.openSans(
-          color: KolabingColors.textTertiary.withValues(alpha: 0.6),
-        ),
-        prefixIcon: Icon(prefixIcon, color: KolabingColors.textTertiary),
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: KolabingColors.darkSurface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.darkBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.darkBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: KolabingColors.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.error, width: 2),
-        ),
-        errorStyle: GoogleFonts.openSans(
-          color: KolabingColors.error,
-          fontSize: 12,
-        ),
-      );
+  }) => InputDecoration(
+    labelText: label,
+    hintText: hint,
+    labelStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
+    hintStyle: GoogleFonts.openSans(
+      color: KolabingColors.textTertiary.withValues(alpha: 0.6),
+    ),
+    prefixIcon: Icon(prefixIcon, color: KolabingColors.textTertiary),
+    suffixIcon: suffixIcon,
+    filled: true,
+    fillColor: KolabingColors.darkSurface,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: KolabingColors.error),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: KolabingColors.error, width: 2),
+    ),
+    errorStyle: GoogleFonts.openSans(color: KolabingColors.error, fontSize: 12),
+  );
 }
 
 /// Animated wrapper for staggered entry
@@ -647,14 +645,11 @@ class _AnimatedEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: opacity,
-        builder: (context, child) => Transform.translate(
-          offset: slide.value,
-          child: Opacity(
-            opacity: opacity.value,
-            child: child,
-          ),
-        ),
-        child: child,
-      );
+    animation: opacity,
+    builder: (context, child) => Transform.translate(
+      offset: slide.value,
+      child: Opacity(opacity: opacity.value, child: child),
+    ),
+    child: child,
+  );
 }

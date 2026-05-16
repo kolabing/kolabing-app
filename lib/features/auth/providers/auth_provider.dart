@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -89,9 +90,11 @@ enum AuthStatus {
 class AuthNotifier extends Notifier<AuthState> {
   @override
   AuthState build() {
-    NotificationService.instance.onTokenRefresh((token) {
-      unawaited(_registerDeviceToken(token));
-    });
+    if (Firebase.apps.isNotEmpty) {
+      NotificationService.instance.onTokenRefresh((token) {
+        unawaited(_registerDeviceToken(token));
+      });
+    }
     return const AuthState();
   }
 
