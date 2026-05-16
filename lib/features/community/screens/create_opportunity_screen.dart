@@ -27,10 +27,15 @@ import '../widgets/opportunity_publish_success_dialog.dart';
 ///   3 - Location & Availability (availability mode, dates, venue mode, city)
 ///   4 - Review & Publish
 class CreateOpportunityScreen extends ConsumerStatefulWidget {
-  const CreateOpportunityScreen({super.key, this.editOpportunity});
+  const CreateOpportunityScreen({
+    super.key,
+    this.editOpportunity,
+    this.opportunityShareLauncher = const OpportunityShareLauncher(),
+  });
 
   /// If non-null the form opens in **edit** mode pre-filled with this data.
   final Opportunity? editOpportunity;
+  final OpportunityShareLauncher opportunityShareLauncher;
 
   @override
   ConsumerState<CreateOpportunityScreen> createState() =>
@@ -58,8 +63,6 @@ class _CreateOpportunityScreenState
 
   // Product controllers managed dynamically
   final List<TextEditingController> _productControllers = [];
-  final OpportunityShareLauncher _opportunityShareLauncher =
-      const OpportunityShareLauncher();
 
   // ---------------------------------------------------------------------------
   // Lifecycle
@@ -170,7 +173,7 @@ class _CreateOpportunityScreenState
         ? null
         : box.localToGlobal(Offset.zero) & box.size;
 
-    await _opportunityShareLauncher.launchOpportunityShare(
+    await widget.opportunityShareLauncher.launchOpportunityShare(
       title: opportunity.title,
       opportunityId: opportunityId,
       sharePositionOrigin: shareOrigin,

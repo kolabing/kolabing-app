@@ -13,6 +13,20 @@ void main() {
     );
   });
 
+  test('buildOpportunityShareUri returns the canonical web URI', () {
+    expect(
+      buildOpportunityShareUri('opp-42'),
+      Uri.parse('https://kolabing.com/c/opp-42'),
+    );
+  });
+
+  test('buildOpportunityShareUri appends apply=1 when requested', () {
+    expect(
+      buildOpportunityShareUri('opp-42', apply: true),
+      Uri.parse('https://kolabing.com/c/opp-42?apply=1'),
+    );
+  });
+
   test('buildOpportunityShareMessage includes the title and web URL', () {
     expect(
       buildOpportunityShareMessage(
