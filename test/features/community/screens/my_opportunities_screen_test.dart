@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:share_plus/share_plus.dart';
-
 import 'package:kolabing_app/features/community/screens/my_opportunities_screen.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
-import 'package:kolabing_app/features/opportunity/utils/opportunity_share_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 void main() {
   testWidgets('share fallback shows snackbar when sharing is unavailable', (
@@ -32,13 +30,10 @@ void main() {
         ],
         child: MaterialApp(
           home: MyOpportunitiesScreen(
-            opportunityShareLauncher: OpportunityShareLauncher(
-              share: (_, {sharePositionOrigin}) async =>
-                  ShareResult.unavailable,
-              copyText: (text) async {
-                copiedText = text;
-              },
-            ),
+            share: (_, {sharePositionOrigin}) async => ShareResult.unavailable,
+            copyText: (text) async {
+              copiedText = text;
+            },
           ),
         ),
       ),
@@ -66,6 +61,8 @@ void main() {
       status: OpportunityStatus.published,
     );
 
+    var copiedText = '';
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -77,12 +74,12 @@ void main() {
         ],
         child: MaterialApp(
           home: MyOpportunitiesScreen(
-            opportunityShareLauncher: OpportunityShareLauncher(
-              share: (_, {sharePositionOrigin}) async {
-                throw Exception('share failed');
-              },
-              copyText: (text) async {},
-            ),
+            share: (_, {sharePositionOrigin}) async {
+              throw Exception('share failed');
+            },
+            copyText: (text) async {
+              copiedText = text;
+            },
           ),
         ),
       ),
@@ -93,6 +90,7 @@ void main() {
     await tester.tap(find.text('Share'));
     await tester.pumpAndSettle();
 
+    expect(copiedText, isEmpty);
     expect(find.text('Could not open the share sheet.'), findsOneWidget);
   });
 }

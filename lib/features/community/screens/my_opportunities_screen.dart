@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
@@ -13,8 +15,12 @@ import '../../../config/theme/typography.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
-import '../../opportunity/utils/opportunity_share_launcher.dart';
+import '../../opportunity/utils/opportunity_share.dart';
 import '../widgets/my_opportunity_card.dart';
+
+typedef OpportunityShareInvoker =
+    Future<ShareResult> Function(String text, {Rect? sharePositionOrigin});
+typedef OpportunityShareCopyText = Future<void> Function(String text);
 
 /// My Opportunities screen for community users
 ///
@@ -23,10 +29,15 @@ import '../widgets/my_opportunity_card.dart';
 class MyOpportunitiesScreen extends ConsumerStatefulWidget {
   const MyOpportunitiesScreen({
     super.key,
-    this.opportunityShareLauncher = const OpportunityShareLauncher(),
+    this.share = Share.share,
+    this.copyText = _copyText,
   });
 
-  final OpportunityShareLauncher opportunityShareLauncher;
+  final OpportunityShareInvoker share;
+  final OpportunityShareCopyText copyText;
+
+  static Future<void> _copyText(String text) =>
+      Clipboard.setData(ClipboardData(text: text));
 
   @override
   ConsumerState<MyOpportunitiesScreen> createState() =>
@@ -100,33 +111,34 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       return;
     }
 
+    final shareMessage = buildOpportunityShareMessage(
+      title: opportunity.title,
+      opportunityId: opportunityId,
+    );
+    final opportunityUrl = buildOpportunityShareUri(opportunityId).toString();
     final box = context.findRenderObject() as RenderBox?;
     final shareOrigin = box == null
         ? null
         : box.localToGlobal(Offset.zero) & box.size;
 
-    await widget.opportunityShareLauncher.launchOpportunityShare(
-      title: opportunity.title,
-      opportunityId: opportunityId,
-      sharePositionOrigin: shareOrigin,
-      onFallbackMessage: _showShareFallbackMessage,
-    );
-  }
-
-  void _showShareFallbackMessage(String message) {
-    if (!mounted) {
-      return;
+    try {
+      final result = await widget.share(
+        shareMessage,
+        sharePositionOrigin: shareOrigin,
+      );
+      if (result.status == ShareResultStatus.unavailable) {
+        await widget.copyText(opportunityUrl);
+        _showSnackbar(
+          message: 'Sharing is unavailable. Link copied instead.',
+          isSuccess: true,
+        );
+      }
+    } on Exception {
+      _showSnackbar(
+        message: 'Could not open the share sheet.',
+        isSuccess: true,
+      );
     }
-
-    final normalizedMessage = switch (message) {
-      'Sharing is unavailable. Opportunity link copied.' =>
-        'Sharing is unavailable. Link copied instead.',
-      'Could not open share sheet. Opportunity link copied.' =>
-        'Could not open the share sheet.',
-      _ => message,
-    };
-
-    _showSnackbar(message: normalizedMessage, isSuccess: true);
   }
 
   Future<void> _onClose(String id) async {
