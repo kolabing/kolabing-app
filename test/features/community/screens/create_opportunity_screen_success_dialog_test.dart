@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kolabing_app/features/community/screens/create_opportunity_screen.dart';
+import 'package:kolabing_app/features/community/widgets/opportunity_publish_success_dialog.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
 void main() {
