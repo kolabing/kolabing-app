@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
@@ -14,7 +13,7 @@ import '../../../config/theme/typography.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
-import '../../opportunity/utils/opportunity_share.dart';
+import '../../opportunity/utils/opportunity_share_launcher.dart';
 import '../widgets/my_opportunity_card.dart';
 
 /// My Opportunities screen for community users
@@ -22,7 +21,12 @@ import '../widgets/my_opportunity_card.dart';
 /// Shows the user's own opportunities with status tabs,
 /// management actions, pull-to-refresh, and pagination.
 class MyOpportunitiesScreen extends ConsumerStatefulWidget {
-  const MyOpportunitiesScreen({super.key});
+  const MyOpportunitiesScreen({
+    super.key,
+    this.opportunityShareLauncher = const OpportunityShareLauncher(),
+  });
+
+  final OpportunityShareLauncher opportunityShareLauncher;
 
   @override
   ConsumerState<MyOpportunitiesScreen> createState() =>
@@ -96,12 +100,33 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       return;
     }
 
-    await Share.share(
-      buildOpportunityShareMessage(
-        title: opportunity.title,
-        opportunityId: opportunityId,
-      ),
+    final box = context.findRenderObject() as RenderBox?;
+    final shareOrigin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
+
+    await widget.opportunityShareLauncher.launchOpportunityShare(
+      title: opportunity.title,
+      opportunityId: opportunityId,
+      sharePositionOrigin: shareOrigin,
+      onFallbackMessage: _showShareFallbackMessage,
     );
+  }
+
+  void _showShareFallbackMessage(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    final normalizedMessage = switch (message) {
+      'Sharing is unavailable. Opportunity link copied.' =>
+        'Sharing is unavailable. Link copied instead.',
+      'Could not open share sheet. Opportunity link copied.' =>
+        'Could not open the share sheet.',
+      _ => message,
+    };
+
+    _showSnackbar(message: normalizedMessage, isSuccess: true);
   }
 
   Future<void> _onClose(String id) async {
