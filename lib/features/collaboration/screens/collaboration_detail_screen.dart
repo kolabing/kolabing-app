@@ -12,6 +12,7 @@ import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
+import '../../../widgets/category_icon.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
 /// Both business and community users see this screen with role-aware content.
@@ -376,12 +377,18 @@ class _PartnerInfoCard extends StatelessWidget {
                     ),
                     if (partner.category != null) ...[
                       const SizedBox(height: 2),
-                      Text(
-                        partner.category!,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          color: KolabingColors.textSecondary,
-                        ),
+                      Row(
+                        children: [
+                          CategoryIcon(name: partner.category!, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            partner.category!,
+                            style: GoogleFonts.openSans(
+                              fontSize: 13,
+                              color: KolabingColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                     if (partner.city != null) ...[

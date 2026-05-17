@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
@@ -71,27 +72,32 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
         label: 'Home',
+        iconSlug: UiIconSlug.home,
       ),
       const NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
         label: 'Explore',
+        iconSlug: UiIconSlug.compass,
       ),
       const NavItem(
         icon: LucideIcons.briefcase,
         activeIcon: LucideIcons.briefcase,
         label: 'My Kollabs',
+        iconSlug: UiIconSlug.briefcase,
       ),
       NavItem(
         icon: LucideIcons.inbox,
         activeIcon: LucideIcons.inbox,
         label: 'Applications',
         badgeCount: badgeCount > 0 ? badgeCount : null,
+        iconSlug: UiIconSlug.inbox,
       ),
       const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
+        iconSlug: UiIconSlug.user,
       ),
     ];
 

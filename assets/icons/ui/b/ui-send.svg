@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Paper plane body -->
+  <path d="M8 32L56 10 38 56 30 36 8 32z" fill="#FFE28C" stroke="#0D0D0D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Fold line -->
+  <line x1="30" y1="36" x2="56" y2="10" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Motion trail -->
+  <path d="M4 44l6-4" stroke="#7F77DD" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <path d="M6 52l4-3" stroke="#7F77DD" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+</svg>

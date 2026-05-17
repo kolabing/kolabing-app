@@ -98,3 +98,6 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/icons/categories/
+    - assets/icons/ui/a/
+    - assets/icons/ui/b/

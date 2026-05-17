@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/ui_icon.dart';
 import '../models/reward_claim.dart';
 
 /// Card displaying a reward claim in the wallet
@@ -49,11 +49,7 @@ class RewardCard extends StatelessWidget {
                 color: _getIconBackgroundColor(),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                _getIcon(),
-                size: 28,
-                color: _getIconColor(),
-              ),
+              child: Center(child: _buildStatusIcon()),
             ),
             const SizedBox(width: KolabingSpacing.md),
 
@@ -164,14 +160,26 @@ class RewardCard extends StatelessWidget {
     }
   }
 
-  IconData _getIcon() {
+  Widget _buildStatusIcon() {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
-        return LucideIcons.gift;
+        return const UiIcon(
+          icon: UiIconSlug.gift,
+          size: 28,
+          variant: UiIconVariant.expressive,
+        );
       case RewardClaimStatus.redeemed:
-        return LucideIcons.checkCircle;
+        return const UiIcon(
+          icon: UiIconSlug.checkCircle,
+          size: 28,
+          variant: UiIconVariant.expressive,
+        );
       case RewardClaimStatus.expired:
-        return LucideIcons.clock;
+        return UiIcon(
+          icon: UiIconSlug.clock,
+          size: 28,
+          color: _getIconColor(),
+        );
     }
   }
 

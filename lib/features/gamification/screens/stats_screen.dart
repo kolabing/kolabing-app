@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/ui_icon.dart';
 import '../models/gamification_stats.dart';
 import '../providers/stats_provider.dart';
 import '../widgets/stat_card.dart';
@@ -105,8 +106,8 @@ class StatsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                LucideIcons.star,
+              const UiIcon(
+                icon: UiIconSlug.star,
                 size: 32,
                 color: KolabingColors.onPrimary,
               ),
@@ -141,8 +142,8 @@ class StatsScreen extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  LucideIcons.trophy,
+                const UiIcon(
+                  icon: UiIconSlug.trophy,
                   size: 16,
                   color: KolabingColors.onPrimary,
                 ),
@@ -171,6 +172,7 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: StatCard(
             icon: LucideIcons.calendar,
+            iconSlug: UiIconSlug.calendar,
             iconColor: KolabingColors.info,
             label: 'Events',
             value: '${stats.totalEventsAttended}',
@@ -180,6 +182,7 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: StatCard(
             icon: LucideIcons.target,
+            iconSlug: UiIconSlug.target,
             iconColor: KolabingColors.success,
             label: 'Challenges',
             value: '${stats.totalChallengesCompleted}',
@@ -189,6 +192,7 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: StatCard(
             icon: LucideIcons.award,
+            iconSlug: UiIconSlug.award,
             iconColor: KolabingColors.warning,
             label: 'Badges',
             value: '${stats.totalBadgesEarned}',
@@ -231,6 +235,7 @@ class StatsScreen extends ConsumerWidget {
             'Rewards Won',
             '${stats.totalRewardsWon}',
             KolabingColors.primary,
+            iconSlug: UiIconSlug.gift,
           ),
           const Divider(height: KolabingSpacing.lg),
 
@@ -255,6 +260,7 @@ class StatsScreen extends ConsumerWidget {
             'Spins Used',
             '${stats.totalSpins}',
             KolabingColors.warning,
+            iconSlug: UiIconSlug.clock,
           ),
         ],
       ),
@@ -265,8 +271,9 @@ class StatsScreen extends ConsumerWidget {
     IconData icon,
     String label,
     String value,
-    Color color,
-  ) {
+    Color color, {
+    UiIconSlug? iconSlug,
+  }) {
     return Row(
       children: [
         Container(
@@ -276,7 +283,11 @@ class StatsScreen extends ConsumerWidget {
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, size: 20, color: color),
+          child: Center(
+            child: iconSlug != null
+                ? UiIcon(icon: iconSlug, size: 20, color: color)
+                : Icon(icon, size: 20, color: color),
+          ),
         ),
         const SizedBox(width: KolabingSpacing.md),
         Expanded(
@@ -322,6 +333,7 @@ class StatsScreen extends ConsumerWidget {
                 LucideIcons.trophy,
                 'Leaderboard',
                 () => context.push('/attendee/leaderboard'),
+                iconSlug: UiIconSlug.trophy,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -331,6 +343,7 @@ class StatsScreen extends ConsumerWidget {
                 LucideIcons.award,
                 'Badges',
                 () => context.push('/attendee/badges'),
+                iconSlug: UiIconSlug.award,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -340,6 +353,7 @@ class StatsScreen extends ConsumerWidget {
                 LucideIcons.gift,
                 'Rewards',
                 () => context.push('/attendee/rewards'),
+                iconSlug: UiIconSlug.gift,
               ),
             ),
           ],
@@ -352,8 +366,9 @@ class StatsScreen extends ConsumerWidget {
     BuildContext context,
     IconData icon,
     String label,
-    VoidCallback onTap,
-  ) {
+    VoidCallback onTap, {
+    UiIconSlug? iconSlug,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -368,7 +383,10 @@ class StatsScreen extends ConsumerWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 24, color: KolabingColors.primary),
+            if (iconSlug != null)
+              UiIcon(icon: iconSlug, size: 24, color: KolabingColors.primary)
+            else
+              Icon(icon, size: 24, color: KolabingColors.primary),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               label,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme/colors.dart';
+import '../ui_icon.dart';
 
 /// Navigation item data model
 class NavItem {
@@ -10,6 +11,7 @@ class NavItem {
     required this.label,
     this.badgeCount,
     this.showDot = false,
+    this.iconSlug,
   });
 
   final IconData icon;
@@ -17,6 +19,11 @@ class NavItem {
   final String label;
   final int? badgeCount;
   final bool showDot;
+
+  /// Optional UiIconSlug. When provided, [UiIcon] is rendered instead of
+  /// the Lucide [icon]/[activeIcon] IconData, allowing custom SVG branding
+  /// in the bottom nav while keeping backward compatibility.
+  final UiIconSlug? iconSlug;
 }
 
 /// Kolabing custom bottom navigation bar
@@ -121,11 +128,20 @@ class _NavBarItem extends StatelessWidget {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Icon(
-                      isSelected ? item.activeIcon : item.icon,
-                      color: color,
-                      size: 24,
-                    ),
+                    if (item.iconSlug != null)
+                      UiIcon(
+                        icon: item.iconSlug!,
+                        size: 24,
+                        color: isSelected
+                            ? const Color(0xFF7F77DD)
+                            : const Color(0xFF9CA3AF),
+                      )
+                    else
+                      Icon(
+                        isSelected ? item.activeIcon : item.icon,
+                        color: color,
+                        size: 24,
+                      ),
                     if (item.badgeCount != null && item.badgeCount! > 0)
                       Positioned(
                         right: -8,

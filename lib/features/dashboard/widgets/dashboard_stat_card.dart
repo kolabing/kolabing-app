@@ -3,6 +3,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/ui_icon.dart';
 
 /// A stats card widget used on both Business and Community dashboards.
 ///
@@ -15,6 +16,8 @@ class DashboardStatCard extends StatelessWidget {
     required this.icon,
     required this.accentColor,
     this.subtitle,
+    this.iconSlug,
+    this.iconVariant = UiIconVariant.minimal,
   });
 
   /// Uppercase label at the top (e.g. "PUBLISHED OPPORTUNITIES")
@@ -23,8 +26,14 @@ class DashboardStatCard extends StatelessWidget {
   /// Large numeric count
   final int count;
 
-  /// Icon displayed inside the colored circle
+  /// Fallback icon (used when [iconSlug] is null)
   final IconData icon;
+
+  /// When provided, renders a custom [UiIcon] instead of the Lucide [icon].
+  final UiIconSlug? iconSlug;
+
+  /// Icon variant — defaults to minimal; pass expressive for the B direction.
+  final UiIconVariant iconVariant;
 
   /// Accent color for the icon circle background and icon tint
   final Color accentColor;
@@ -37,7 +46,10 @@ class DashboardStatCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
@@ -93,11 +105,16 @@ class DashboardStatCard extends StatelessWidget {
                   color: accentColor.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: accentColor,
-                ),
+                child: iconSlug != null
+                    ? UiIcon(
+                        icon: iconSlug!,
+                        size: 22,
+                        variant: iconVariant,
+                        color: iconVariant == UiIconVariant.expressive
+                            ? null
+                            : accentColor,
+                      )
+                    : Icon(icon, size: 20, color: accentColor),
               ),
             ],
           ),

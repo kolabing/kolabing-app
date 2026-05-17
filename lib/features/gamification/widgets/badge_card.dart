@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/ui_icon.dart';
 import '../models/badge.dart';
 
 /// Card displaying a badge
@@ -64,11 +64,10 @@ class BadgeCard extends StatelessWidget {
                             color: isEarned ? null : KolabingColors.textTertiary,
                             colorBlendMode: isEarned ? null : BlendMode.saturation,
                           )
-                        : Icon(
-                            _getBadgeIcon(),
+                        : _buildBadgeIcon(
                             size: 28,
                             color: isEarned
-                                ? KolabingColors.primary
+                                ? null
                                 : KolabingColors.textTertiary,
                           ),
                   ),
@@ -81,10 +80,12 @@ class BadgeCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      LucideIcons.lock,
-                      size: 20,
-                      color: KolabingColors.textTertiary,
+                    child: const Center(
+                      child: UiIcon(
+                        icon: UiIconSlug.lock,
+                        size: 20,
+                        color: KolabingColors.textTertiary,
+                      ),
                     ),
                   ),
               ],
@@ -111,29 +112,38 @@ class BadgeCard extends StatelessWidget {
     );
   }
 
-  IconData _getBadgeIcon() {
+  UiIconSlug _getBadgeIconSlug() {
     // Map badge types to icons based on name/slug
     final name = (badge.slug ?? badge.name).toLowerCase();
 
     if (name.contains('first') || name.contains('event')) {
-      return LucideIcons.calendar;
+      return UiIconSlug.calendar;
     }
     if (name.contains('challenge') || name.contains('complete')) {
-      return LucideIcons.target;
+      return UiIconSlug.target;
     }
     if (name.contains('point') || name.contains('collector')) {
-      return LucideIcons.star;
+      return UiIconSlug.star;
     }
     if (name.contains('win') || name.contains('lucky')) {
-      return LucideIcons.gift;
+      return UiIconSlug.gift;
     }
     if (name.contains('veteran') || name.contains('legend')) {
-      return LucideIcons.trophy;
+      return UiIconSlug.trophy;
     }
     if (name.contains('streak')) {
-      return LucideIcons.flame;
+      return UiIconSlug.flame;
     }
-    return LucideIcons.award;
+    return UiIconSlug.award;
+  }
+
+  Widget _buildBadgeIcon({required double size, Color? color}) {
+    return UiIcon(
+      icon: _getBadgeIconSlug(),
+      size: size,
+      variant: UiIconVariant.expressive,
+      color: color,
+    );
   }
 
   void _showBadgeDetail(BuildContext context) {
@@ -179,12 +189,10 @@ class BadgeCard extends StatelessWidget {
                         color: isEarned ? null : KolabingColors.textTertiary,
                         colorBlendMode: isEarned ? null : BlendMode.saturation,
                       )
-                    : Icon(
-                        _getBadgeIcon(),
+                    : _buildBadgeIcon(
                         size: 40,
-                        color: isEarned
-                            ? KolabingColors.primary
-                            : KolabingColors.textTertiary,
+                        color:
+                            isEarned ? null : KolabingColors.textTertiary,
                       ),
               ),
             ),
@@ -239,8 +247,8 @@ class BadgeCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    LucideIcons.checkCircle,
+                  const UiIcon(
+                    icon: UiIconSlug.checkCircle,
                     size: 16,
                     color: KolabingColors.success,
                   ),
@@ -262,8 +270,8 @@ class BadgeCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    LucideIcons.lock,
+                  const UiIcon(
+                    icon: UiIconSlug.lock,
                     size: 16,
                     color: KolabingColors.textTertiary,
                   ),

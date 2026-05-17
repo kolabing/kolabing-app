@@ -7,6 +7,7 @@ import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../features/opportunity/models/opportunity.dart';
+import 'category_icon.dart';
 
 /// Modal bottom sheet displaying full opportunity details.
 ///
@@ -446,13 +447,20 @@ class ExploreDetailSheet extends StatelessWidget {
                     color: KolabingColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(KolabingRadius.round),
                   ),
-                  child: Text(
-                    category,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CategoryIcon(name: category, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        category,
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: KolabingColors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
                 ))
             .toList(),

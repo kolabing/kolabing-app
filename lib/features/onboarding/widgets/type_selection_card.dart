@@ -3,10 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../widgets/category_icon.dart';
 
 /// Type selection card for business/community type selection.
 ///
-/// 2-column layout: large emoji at top, full name wrapping on 2 lines below.
+/// 2-column layout: custom SVG illustration at top, full name below.
 class TypeSelectionCard extends StatefulWidget {
   const TypeSelectionCard({
     required this.id,
@@ -59,140 +60,6 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
     widget.onTap();
   }
 
-  /// Returns the best emoji for this type, falling back to a keyword map.
-  String get _emoji {
-    final icon = widget.icon?.trim() ?? '';
-    if (icon.isNotEmpty) return icon;
-
-    // Keyword → emoji map (checked against the type name, case-insensitive)
-    const map = <String, String>{
-      // Business types
-      'cafe': '☕',
-      'coffee': '☕',
-      'restaurant': '🍽️',
-      'bar': '🍺',
-      'pub': '🍺',
-      'bakery': '🥐',
-      'pastry': '🥐',
-      'coworking': '🖥️',
-      'co-working': '🖥️',
-      'gym': '💪',
-      'fitness': '💪',
-      'salon': '💇',
-      'spa': '🧖',
-      'beauty': '💄',
-      'retail': '🛍️',
-      'shop': '🛍️',
-      'store': '🛍️',
-      'hotel': '🏨',
-      'accommodation': '🏨',
-      'hostel': '🏨',
-      'clinic': '🏥',
-      'pharmacy': '💊',
-      'dental': '🦷',
-      'legal': '⚖️',
-      'law': '⚖️',
-      'account': '📊',
-      'finance': '💰',
-      'bank': '🏦',
-      'insurance': '🛡️',
-      'real estate': '🏠',
-      'property': '🏠',
-      'architect': '📐',
-      'construct': '🏗️',
-      'florist': '💐',
-      'flower': '💐',
-      'photography': '📸',
-      'photo': '📸',
-      'studio': '🎬',
-      'agency': '📢',
-      'market': '🏪',
-      'supermarket': '🛒',
-      'grocery': '🛒',
-      'butcher': '🥩',
-      'seafood': '🦞',
-      'sushi': '🍣',
-      'pizza': '🍕',
-      'burger': '🍔',
-      'ice cream': '🍦',
-      'dessert': '🍰',
-      'juice': '🥤',
-      'catering': '🍱',
-      'laundry': '👕',
-      'cleaning': '🧹',
-      'repair': '🔧',
-      'auto': '🚗',
-      'car': '🚗',
-      'bike': '🚴',
-      'cycling': '🚴',
-      'travel': '✈️',
-      'tour': '🗺️',
-      'event': '🎉',
-      'wedding': '💍',
-      'print': '🖨️',
-      'design': '🎨',
-      'art': '🎨',
-      'music': '🎵',
-      'dance': '💃',
-      'yoga': '🧘',
-      'wellness': '🧘',
-      'meditation': '🧘',
-      'nutrition': '🥗',
-      'diet': '🥗',
-      'organic': '🌿',
-      'vegan': '🌱',
-      'sustainab': '🌱',
-      'eco': '🌱',
-      'tech': '💻',
-      'startup': '🚀',
-      'software': '💻',
-      'it ': '💻',
-      'book': '📚',
-      'reading': '📚',
-      'educat': '🎓',
-      'school': '🎓',
-      'tutor': '🎓',
-      'sport': '⚽',
-      'gaming': '🎮',
-      'game': '🎮',
-      'film': '🎬',
-      'cinema': '🎬',
-      'pet': '🐾',
-      'animal': '🐾',
-      'vet': '🐾',
-      'outdoor': '🏕️',
-      'hik': '🥾',
-      'swim': '🏊',
-      'surf': '🏄',
-      'skate': '🛹',
-      'social': '🤝',
-      'community': '🏘️',
-      'nonprofit': '❤️',
-      'charity': '❤️',
-      'health': '❤️',
-      'mental': '🧠',
-      'comedy': '😂',
-      'podcast': '🎙️',
-      'influencer': '⭐',
-      'entrepreneur': '💼',
-      'business': '💼',
-      'fashion': '👗',
-      'style': '👗',
-      'run': '🏃',
-      'parent': '👶',
-      'family': '👨‍👩‍👧',
-      'local': '📍',
-      'neighbor': '📍',
-    };
-
-    final nameLower = widget.name.toLowerCase();
-    for (final entry in map.entries) {
-      if (nameLower.contains(entry.key)) return entry.value;
-    }
-    return '🤝';
-  }
-
-
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTapDown: _handleTapDown,
@@ -231,11 +98,8 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Emoji
-                  Text(
-                    _emoji,
-                    style: const TextStyle(fontSize: 28),
-                  ),
+                  // Category illustration
+                  CategoryIcon(name: widget.name, size: 40),
                   const SizedBox(height: 6),
                   // Name — full text, up to 2 lines, centred
                   Text(

@@ -14,6 +14,7 @@ import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import '../../../widgets/category_icon.dart';
 import '../../../widgets/time_picker.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
@@ -503,15 +504,22 @@ class _CreateOpportunityScreenState
                     width: isSelected ? 2 : 1,
                   ),
                 ),
-                child: Text(
-                  category,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected
-                        ? KolabingColors.textPrimary
-                        : KolabingColors.textSecondary,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CategoryIcon(name: category, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      category,
+                      style: GoogleFonts.openSans(
+                        fontSize: 13,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                        color: isSelected
+                            ? KolabingColors.textPrimary
+                            : KolabingColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

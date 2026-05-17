@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/ui_icon.dart';
 import '../models/reward_claim.dart';
 import '../providers/reward_provider.dart';
 import '../widgets/reward_card.dart';
@@ -78,9 +79,10 @@ class RewardWalletScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              LucideIcons.gift,
+            UiIcon(
+              icon: UiIconSlug.gift,
               size: 80,
+              variant: UiIconVariant.expressive,
               color: KolabingColors.textTertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: KolabingSpacing.lg),

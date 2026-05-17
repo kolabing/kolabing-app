@@ -11,6 +11,7 @@ import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
+import '../../../widgets/category_icon.dart';
 
 /// Application review screen — shown when tapping a received application.
 /// Displays the applicant's profile like a "CV card" with their message,
@@ -283,13 +284,20 @@ class _ApplicationReviewScreenState
                 color: KolabingColors.accentOrange.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                profile.category!,
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.accentOrangeText,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CategoryIcon(name: profile.category!, size: 14),
+                  const SizedBox(width: 4),
+                  Text(
+                    profile.category!,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: KolabingColors.accentOrangeText,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
