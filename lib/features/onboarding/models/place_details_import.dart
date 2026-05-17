@@ -1,3 +1,4 @@
+import '../../../config/constants/api.dart';
 import 'onboarding_photo.dart';
 import 'place_suggestion.dart';
 
@@ -154,7 +155,7 @@ class ImportedGooglePhoto {
   factory ImportedGooglePhoto.fromJson(Map<String, dynamic> json) =>
       ImportedGooglePhoto(
         resourceName: json['resource_name']?.toString() ?? '',
-        previewUrl: json['preview_url']?.toString() ?? '',
+        previewUrl: _normalizePreviewUrl(json['preview_url']?.toString()),
         width: _parseInt(json['width']),
         height: _parseInt(json['height']),
         authorAttributions:
@@ -172,6 +173,19 @@ class ImportedGooglePhoto {
   final int? width;
   final int? height;
   final List<OnboardingPhotoAttribution> authorAttributions;
+}
+
+String _normalizePreviewUrl(String? previewUrl) {
+  final raw = previewUrl?.trim() ?? '';
+  if (raw.isEmpty) return '';
+
+  final uri = Uri.tryParse(raw);
+  if (uri != null && uri.hasScheme) {
+    return raw;
+  }
+
+  final apiBaseUri = Uri.parse('${ApiConfig.baseUrl}/');
+  return apiBaseUri.resolve(raw).toString();
 }
 
 int? _parseInt(Object? value) {

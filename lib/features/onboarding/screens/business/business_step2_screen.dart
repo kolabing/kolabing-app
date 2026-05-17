@@ -64,7 +64,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
         ? '${data!.venueCapacity}'
         : '';
     _aboutController.text = data?.about ?? '';
-    _phoneController.text = data?.phone ?? '';
+    _phoneController.text = _normalizePhoneNumber(data?.phone ?? '');
     _instagramController.text = data?.instagram ?? '';
     _websiteController.text = data?.website?.replaceFirst('https://', '') ?? '';
     _validatePhone(_phoneController.text);
@@ -183,6 +183,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
   String _normalizePhoneNumber(String value) {
     if (value.isEmpty) return '';
     String normalized = value.replaceAll(RegExp(r'[^\d+]'), '');
+    if (normalized.contains('+')) {
+      normalized = '+${normalized.replaceAll('+', '')}';
+    }
     if (!normalized.startsWith('+')) {
       if (normalized.startsWith('00')) {
         normalized = '+${normalized.substring(2)}';
@@ -482,12 +485,13 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: const [_E164PhoneInputFormatter()],
                       onChanged: (value) {
                         _validatePhone(value);
                         notifier.updatePhone(_normalizePhoneNumber(value));
                       },
                       decoration: _inputDecoration(
-                        hint: '+34 612 345 678',
+                        hint: '+34612345678',
                         prefixIcon: LucideIcons.phone,
                         errorText: _phoneError,
                       ),
@@ -554,6 +558,36 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _E164PhoneInputFormatter extends TextInputFormatter {
+  const _E164PhoneInputFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final rawText = newValue.text;
+    if (rawText.isEmpty) {
+      return newValue.copyWith(
+        text: '',
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    var sanitized = rawText.replaceAll(RegExp(r'[^\d+]'), '');
+    if (sanitized.contains('+')) {
+      sanitized = '+${sanitized.replaceAll('+', '')}';
+    }
+
+    final caretOffset = sanitized.length.clamp(0, sanitized.length);
+    return TextEditingValue(
+      text: sanitized,
+      selection: TextSelection.collapsed(offset: caretOffset),
+      composing: TextRange.empty,
     );
   }
 }

@@ -9,6 +9,8 @@ import '../../config/constants/radius.dart';
 import '../../config/constants/spacing.dart';
 import '../../config/theme/colors.dart';
 import '../../config/theme/typography.dart';
+import '../../features/auth/models/user_model.dart';
+import '../../features/business/providers/profile_provider.dart';
 import '../../features/profile/providers/gallery_provider.dart';
 import 'photo_viewer_dialog.dart';
 
@@ -25,6 +27,8 @@ class ProfileGallerySection extends ConsumerStatefulWidget {
 }
 
 class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
+  static const String _fallbackPhotoPrefix = '__primary_venue_photo__';
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +39,17 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   @override
   Widget build(BuildContext context) {
     final galleryState = ref.watch(galleryProvider);
+    final profileState = ref.watch(profileProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentProfile = profileState.profile;
+    final isBusinessProfile = currentProfile?.isBusiness == true;
+    final fallbackPhotos = _buildFallbackPhotos(currentProfile);
+    final isUsingProfileFallback =
+        galleryState.photos.isEmpty && fallbackPhotos.isNotEmpty;
+    final visiblePhotos = isUsingProfileFallback
+        ? fallbackPhotos
+        : galleryState.photos;
+    final canAddMore = visiblePhotos.length < GalleryState.maxPhotos;
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -73,18 +87,18 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                       : KolabingColors.textPrimary,
                 ),
               ),
-              if (!galleryState.isLoading && galleryState.photos.isNotEmpty)
+              if (visiblePhotos.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(left: KolabingSpacing.xs),
                   child: Text(
-                    '${galleryState.photos.length}/${GalleryState.maxPhotos}',
+                    '${visiblePhotos.length}/${GalleryState.maxPhotos}',
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
                   ),
                 ),
               const Spacer(),
-              if (galleryState.canAddMore && !galleryState.isLoading)
+              if (canAddMore && !galleryState.isUploading)
                 GestureDetector(
                   onTap: () => _showAddPhotoSheet(context),
                   child: Container(
@@ -126,17 +140,28 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Gallery content
-          if (galleryState.isLoading)
-            _buildLoadingState(isDark)
-          else if (galleryState.isUploading)
+          if (galleryState.isUploading)
             _buildUploadingIndicator(isDark)
+          else if (visiblePhotos.isNotEmpty)
+            _buildPhotoGrid(
+              context,
+              visiblePhotos,
+              isDark,
+              allowDelete: !isUsingProfileFallback,
+            )
+          else if (galleryState.isLoading)
+            _buildLoadingState(isDark)
           else if (galleryState.isEmpty)
-            _buildEmptyState(context, isDark)
+            _buildEmptyState(
+              context,
+              isDark,
+              isBusinessProfile: isBusinessProfile,
+            )
           else
-            _buildPhotoGrid(context, galleryState, isDark),
+            _buildPhotoGrid(context, galleryState.photos, isDark),
 
           // Error message
-          if (galleryState.error != null) ...[
+          if (galleryState.error != null && !isUsingProfileFallback) ...[
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               galleryState.error!,
@@ -276,10 +301,14 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
     ),
   );
 
-  Widget _buildEmptyState(BuildContext context, bool isDark) => GestureDetector(
+  Widget _buildEmptyState(
+    BuildContext context,
+    bool isDark, {
+    required bool isBusinessProfile,
+  }) => GestureDetector(
     onTap: () => _showAddPhotoSheet(context),
     child: Container(
-      height: 120,
+      constraints: const BoxConstraints(minHeight: 160),
       decoration: BoxDecoration(
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
@@ -289,62 +318,108 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
         ),
       ),
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              LucideIcons.camera,
-              size: 32,
-              color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                  : KolabingColors.textTertiary,
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Text(
-              'Showcase your community\nAdd photos from your events to attract collaborations.',
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                    : KolabingColors.textTertiary,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.lg,
+            vertical: KolabingSpacing.md,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: KolabingColors.primary.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  LucideIcons.camera,
+                  size: 24,
+                  color: isDark
+                      ? KolabingColors.textOnDark.withValues(alpha: 0.72)
+                      : KolabingColors.textSecondary,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: KolabingSpacing.sm),
+              Text(
+                isBusinessProfile
+                    ? 'Showcase your venue'
+                    : 'Showcase your community',
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.titleSmall.copyWith(
+                  color: isDark
+                      ? KolabingColors.textOnDark
+                      : KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                isBusinessProfile
+                    ? 'Add venue photos so collaborators can see your space before they apply.'
+                    : 'Add photos from your events so new collaborators understand your community.',
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  color: isDark
+                      ? KolabingColors.textOnDark.withValues(alpha: 0.68)
+                      : KolabingColors.textSecondary,
+                  height: 1.45,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),
   );
 
+  List<GalleryPhoto> _buildFallbackPhotos(UserModel? profile) {
+    final rawPhotos =
+        profile?.businessProfile?.primaryVenue?.photos ?? const <String>[];
+    if (rawPhotos.isEmpty) {
+      return const <GalleryPhoto>[];
+    }
+
+    return [
+      for (var index = 0; index < rawPhotos.length; index++)
+        if (rawPhotos[index].trim().isNotEmpty)
+          GalleryPhoto.fromUrl(
+            id: '$_fallbackPhotoPrefix$index',
+            rawUrl: rawPhotos[index],
+            sortOrder: index,
+          ),
+    ];
+  }
+
   Widget _buildPhotoGrid(
     BuildContext context,
-    GalleryState galleryState,
-    bool isDark,
-  ) {
-    final photos = galleryState.photos;
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: KolabingSpacing.xs,
-        mainAxisSpacing: KolabingSpacing.xs,
-      ),
-      itemCount: photos.length,
-      itemBuilder: (context, index) {
-        final photo = photos[index];
-        return _GalleryThumbnail(
-          photo: photo,
-          isDark: isDark,
-          onTap: () => PhotoViewerDialog.show(
-            context,
-            photos: photos,
-            initialIndex: index,
-          ),
-          onDelete: () => _confirmDelete(context, photo),
-        );
-      },
-    );
-  }
+    List<GalleryPhoto> photos,
+    bool isDark, {
+    bool allowDelete = true,
+  }) => GridView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3,
+      crossAxisSpacing: KolabingSpacing.xs,
+      mainAxisSpacing: KolabingSpacing.xs,
+    ),
+    itemCount: photos.length,
+    itemBuilder: (context, index) {
+      final photo = photos[index];
+      return _GalleryThumbnail(
+        photo: photo,
+        isDark: isDark,
+        showDeleteButton: allowDelete,
+        onTap: () => PhotoViewerDialog.show(
+          context,
+          photos: photos,
+          initialIndex: index,
+        ),
+        onDelete: allowDelete ? () => _confirmDelete(context, photo) : null,
+      );
+    },
+  );
 
   void _confirmDelete(BuildContext context, GalleryPhoto photo) {
     HapticFeedback.mediumImpact();
@@ -381,14 +456,16 @@ class _GalleryThumbnail extends StatelessWidget {
   const _GalleryThumbnail({
     required this.photo,
     required this.onTap,
-    required this.onDelete,
+    this.onDelete,
     this.isDark = false,
+    this.showDeleteButton = true,
   });
 
   final GalleryPhoto photo;
   final VoidCallback onTap;
-  final VoidCallback onDelete;
+  final VoidCallback? onDelete;
   final bool isDark;
+  final bool showDeleteButton;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -452,22 +529,27 @@ class _GalleryThumbnail extends StatelessWidget {
             ),
 
           // Delete button
-          Positioned(
-            top: 4,
-            right: 4,
-            child: GestureDetector(
-              onTap: onDelete,
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  shape: BoxShape.circle,
+          if (showDeleteButton && onDelete != null)
+            Positioned(
+              top: 4,
+              right: 4,
+              child: GestureDetector(
+                onTap: onDelete,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.x,
+                    size: 14,
+                    color: Colors.white,
+                  ),
                 ),
-                child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
               ),
             ),
-          ),
         ],
       ),
     ),
