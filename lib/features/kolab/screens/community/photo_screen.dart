@@ -10,6 +10,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
+import '../../../../utils/image_picker_normalize.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -39,13 +40,16 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
 
     setState(() => _isUploading = true);
     try {
+      // C10: normalize to a readable local path before upload.
+      final localPath = await normalizePickedImage(image);
       final uploadService = ref.read(uploadServiceProvider);
       final url = await uploadService.upload(
-        filePath: image.path,
+        filePath: localPath,
         folder: 'kolabs',
       );
       ref.read(kolabFormProvider.notifier).updateMedia([
-            KolabMedia(url: url, type: 'photo', sortOrder: 0),
+            // Backend rejects 'photo' (B7). Use 'image' consistently.
+            KolabMedia(url: url, type: 'image', sortOrder: 0),
           ]);
     } on Exception catch (e) {
       if (mounted) {

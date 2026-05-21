@@ -181,6 +181,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             onChanged: (value) => ref
                 .read(kolabFormProvider.notifier)
                 .updateArea(value.isEmpty ? null : value),
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: GoogleFonts.openSans(
               fontSize: 15,
               color: KolabingColors.textPrimary,

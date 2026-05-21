@@ -28,6 +28,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   final _titleController = TextEditingController();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+  // H2: offer headline pinned to the discovery card.
+  final _headlineController = TextEditingController();
 
   bool _didInit = false;
 
@@ -36,6 +38,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     _titleController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
+    _headlineController.dispose();
     super.dispose();
   }
 
@@ -46,6 +49,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     _titleController.text = kolab.title;
     _nameController.text = kolab.productName ?? '';
     _descriptionController.text = kolab.description;
+    _headlineController.text = kolab.offerHeadline ?? '';
   }
 
   @override
@@ -81,6 +85,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ),
           style: _inputTextStyle,
           onChanged: notifier.updateTitle,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -96,6 +101,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ),
           style: _inputTextStyle,
           onChanged: notifier.updateProductName,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -182,6 +188,30 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ),
           style: _inputTextStyle,
           onChanged: notifier.updateDescription,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        // H2: short, one-line offer headline shown on the discovery card.
+        const _FieldLabel(label: 'Offer Headline'),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'One short line communities will see on your card.',
+          style: GoogleFonts.openSans(
+            fontSize: 12,
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        TextField(
+          controller: _headlineController,
+          maxLength: 50,
+          decoration: _inputDecoration(
+            hint: 'e.g. Free with any 5+ order',
+            error: errors['offer_headline'],
+          ),
+          style: _inputTextStyle,
+          onChanged: notifier.updateOfferHeadline,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.md),
 

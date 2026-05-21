@@ -462,6 +462,10 @@ class Opportunity {
     this.isOwn,
     this.hasApplied,
     this.myApplication,
+    // Phase 5 (2026-05-21): H2 offer headline + H3 base/negotiable offer model.
+    this.offerHeadline,
+    this.baseOffer,
+    this.negotiationTriggers = const [],
   });
 
   factory Opportunity.fromJson(Map<String, dynamic> json) {
@@ -528,6 +532,14 @@ class Opportunity {
           ? MyApplication.fromJson(
               json['my_application'] as Map<String, dynamic>)
           : null,
+      offerHeadline: json['offer_headline']?.toString(),
+      baseOffer: json['base_offer']?.toString(),
+      negotiationTriggers: json['negotiation_triggers'] is List
+          ? (json['negotiation_triggers'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map(NegotiationTrigger.fromJson)
+              .toList()
+          : const [],
     );
   }
 
@@ -573,6 +585,14 @@ class Opportunity {
   final bool? isOwn;
   final bool? hasApplied;
   final MyApplication? myApplication;
+
+  // Phase 5 discovery & matching (2026-05-21).
+  final String? offerHeadline;
+  final String? baseOffer;
+  /// Backend gates `negotiation_triggers` so they only arrive after the
+  /// viewer has applied. An empty list means either "no triggers configured"
+  /// OR "you can't see them yet" — UI shouldn't infer the difference.
+  final List<NegotiationTrigger> negotiationTriggers;
 
   /// JSON body for POST/PUT requests (excludes response-only fields)
   Map<String, dynamic> toJson() => {
@@ -800,4 +820,34 @@ abstract final class OpportunityCategories {
     'Community',
     'Environment',
   ];
+}
+
+// =============================================================================
+// Negotiation Trigger (H3)
+// =============================================================================
+
+/// Read-view of a negotiation trigger on a published Kolab. Mirrors the
+/// `NegotiationTrigger` defined in `features/kolab/models/kolab.dart` (the
+/// writer-side state). Both are intentionally the same shape — backend
+/// returns this format from list/detail/discovery endpoints.
+@immutable
+class NegotiationTrigger {
+  const NegotiationTrigger({
+    required this.condition,
+    required this.additionalOffer,
+  });
+
+  factory NegotiationTrigger.fromJson(Map<String, dynamic> json) =>
+      NegotiationTrigger(
+        condition: json['condition']?.toString() ?? '',
+        additionalOffer: json['additional_offer']?.toString() ?? '',
+      );
+
+  final String condition;
+  final String additionalOffer;
+
+  Map<String, dynamic> toJson() => {
+        'condition': condition,
+        'additional_offer': additionalOffer,
+      };
 }

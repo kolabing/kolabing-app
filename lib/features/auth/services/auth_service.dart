@@ -202,6 +202,16 @@ class AuthService {
 
       debugPrint('🔐 Request body keys: ${body.keys.toList()}');
 
+      // [B6] Audit photo-shape mix — backend rejects mixed shapes silently.
+      final photos = onboardingData.venuePhotos;
+      final uploadCount = photos.where((p) => p.isUploaded).length;
+      final googleCount = photos.where((p) => p.isGoogleImported).length;
+      final hostedCount = photos.where((p) => p.isHosted).length;
+      debugPrint(
+        '[B6] venue photos: total=${photos.length} '
+        'upload=$uploadCount google=$googleCount hosted=$hostedCount',
+      );
+
       final response = await _httpClient.post(
         Uri.parse(url),
         headers: {
@@ -523,8 +533,13 @@ class AuthService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final authResponse = AuthResponse.fromJson(json);
         await _saveAuthData(authResponse);
+        debugPrint(
+          '[AUTH] login success: userType=${authResponse.user.userType} '
+          'hasRefreshToken=${authResponse.refreshToken != null && authResponse.refreshToken!.isNotEmpty}',
+        );
         return authResponse;
       } else {
+        debugPrint('[AUTH] login non-200: ${response.statusCode}');
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw ApiException(
           error: ApiError.fromJson(json, statusCode: response.statusCode),
@@ -534,7 +549,7 @@ class AuthService {
       if (e is ApiException || e is NetworkException) {
         rethrow;
       }
-      debugPrint('🔐 Login error: $e');
+      debugPrint('[AUTH] login network error: $e');
       throw NetworkException('Failed to connect to server: $e');
     }
   }
@@ -978,11 +993,16 @@ class AuthService {
   Future<String> _performRefreshSession() async {
     final refreshToken = await getRefreshToken();
     if (refreshToken == null || refreshToken.isEmpty) {
+      debugPrint('[AUTH] refresh aborted: no refresh token stored');
       throw const AuthException('Session expired. Please sign in again.');
     }
 
     final url = '$_baseUrl/auth/refresh';
-    debugPrint('🔐 Refresh Session: POST $url');
+    final tokenTail = refreshToken.length >= 6
+        ? refreshToken.substring(refreshToken.length - 6)
+        : refreshToken;
+    final startedAt = DateTime.now();
+    debugPrint('[AUTH] refresh start: tokenTail=…$tokenTail url=$url');
 
     try {
       final response = await _httpClient.post(
@@ -994,7 +1014,10 @@ class AuthService {
         body: jsonEncode({'refresh_token': refreshToken}),
       );
 
-      debugPrint('🔐 Refresh response status: ${response.statusCode}');
+      final elapsed = DateTime.now().difference(startedAt).inMilliseconds;
+      debugPrint(
+        '[AUTH] refresh done: status=${response.statusCode} elapsed=${elapsed}ms',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;

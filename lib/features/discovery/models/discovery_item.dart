@@ -50,8 +50,23 @@ class DiscoveryItem {
           )
         : null,
     match: json['match'] is Map<String, dynamic>
-        ? DiscoveryMatch.fromJson(json['match'] as Map<String, dynamic>)
-        : null,
+        ? DiscoveryMatch.fromJson({
+            ...(json['match'] as Map<String, dynamic>),
+            // H1: backend may emit match_breakdown at the item level
+            // alongside `match`. Surface it inside the match object.
+            if (json['match_breakdown'] is List)
+              'match_breakdown': json['match_breakdown'],
+            if (json['match_score'] != null && json['match'] is Map<String, dynamic>
+                && (json['match'] as Map<String, dynamic>)['score'] == null)
+              'score': json['match_score'],
+          })
+        : json['match_score'] != null || json['match_breakdown'] is List
+            ? DiscoveryMatch.fromJson({
+                'score': json['match_score'],
+                if (json['match_breakdown'] is List)
+                  'match_breakdown': json['match_breakdown'],
+              })
+            : null,
   );
 
   final String id;
@@ -416,6 +431,7 @@ class DiscoveryMatch {
     required this.score,
     this.tier,
     this.reasons = const <String>[],
+    this.breakdown = const <DiscoveryMatchSignal>[],
   });
 
   factory DiscoveryMatch.fromJson(Map<String, dynamic> json) => DiscoveryMatch(
@@ -425,14 +441,50 @@ class DiscoveryMatch {
     reasons: (json['reasons'] as List<dynamic>? ?? const <dynamic>[])
         .map((value) => value.toString())
         .toList(),
+    // H1: ordered signal weights backing the score. Backend returns these as
+    // `breakdown` (nested) or `match_breakdown` (sibling) — support both.
+    breakdown: _parseBreakdown(json['breakdown'] ?? json['match_breakdown']),
   );
 
   final String feed;
   final int score;
   final String? tier;
   final List<String> reasons;
+  final List<DiscoveryMatchSignal> breakdown;
 
   List<String> get reasonLabels => reasons.map(_matchReasonLabel).toList();
+}
+
+/// One signal in the discovery match-score breakdown (H1).
+@immutable
+class DiscoveryMatchSignal {
+  const DiscoveryMatchSignal({
+    required this.key,
+    required this.label,
+    required this.weight,
+    required this.score,
+  });
+
+  factory DiscoveryMatchSignal.fromJson(Map<String, dynamic> json) =>
+      DiscoveryMatchSignal(
+        key: json['key']?.toString() ?? '',
+        label: json['label']?.toString() ?? '',
+        weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+        score: (json['score'] as num?)?.toDouble() ?? 0.0,
+      );
+
+  final String key;
+  final String label;
+  final double weight;
+  final double score;
+}
+
+List<DiscoveryMatchSignal> _parseBreakdown(Object? raw) {
+  if (raw is! List) return const [];
+  return raw
+      .whereType<Map<String, dynamic>>()
+      .map(DiscoveryMatchSignal.fromJson)
+      .toList(growable: false);
 }
 
 @immutable

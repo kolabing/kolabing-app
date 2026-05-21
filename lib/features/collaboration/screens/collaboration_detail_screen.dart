@@ -136,6 +136,14 @@ class _CollaborationContent extends ConsumerWidget {
               _TimelineSection(steps: collaboration.timeline),
               const SizedBox(height: KolabingSpacing.lg),
 
+              // D3: terminal-state action. Both parties can flip a scheduled /
+              // in-progress collaboration to completed once the event has run.
+              if (collaboration.status == CollaborationStatus.scheduled ||
+                  collaboration.status == CollaborationStatus.inProgress)
+                _FinishCollaborationSection(
+                  collaborationId: collaborationId,
+                ),
+
               // Gamification: Challenges Setup
               _ChallengesSection(
                 collaborationId: collaborationId,
@@ -1474,4 +1482,136 @@ class _ErrorState extends StatelessWidget {
       ),
     );
   }
+}
+
+// =============================================================================
+// D3: Finish Collaboration section
+// =============================================================================
+
+class _FinishCollaborationSection extends ConsumerStatefulWidget {
+  const _FinishCollaborationSection({required this.collaborationId});
+
+  final String collaborationId;
+
+  @override
+  ConsumerState<_FinishCollaborationSection> createState() =>
+      _FinishCollaborationSectionState();
+}
+
+class _FinishCollaborationSectionState
+    extends ConsumerState<_FinishCollaborationSection> {
+  bool _isSubmitting = false;
+
+  Future<void> _confirmAndFinish() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'Mark as completed?',
+          style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 18),
+        ),
+        content: Text(
+          'Confirms the collaboration is finished. Both parties will see it '
+          'in the Completed list and can leave a review.',
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            color: KolabingColors.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.dmSans(color: KolabingColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: KolabingColors.primary,
+              foregroundColor: KolabingColors.onPrimary,
+            ),
+            child: Text(
+              'Mark completed',
+              style: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    setState(() => _isSubmitting = true);
+    try {
+      await markCollaborationCompleted(widget.collaborationId);
+      if (!mounted) return;
+      ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Collaboration marked as completed.',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } on Exception catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Could not mark as completed: $e',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
+        child: SizedBox(
+          width: double.infinity,
+          height: 48,
+          child: ElevatedButton.icon(
+            onPressed: _isSubmitting ? null : _confirmAndFinish,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: KolabingColors.success,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KolabingRadius.md),
+              ),
+              elevation: 0,
+            ),
+            icon: _isSubmitting
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(LucideIcons.checkCircle, size: 18),
+            label: Text(
+              _isSubmitting ? 'COMPLETING…' : 'MARK AS COMPLETED',
+              style: GoogleFonts.dmSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ),
+      );
 }

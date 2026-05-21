@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
+import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
@@ -11,6 +12,7 @@ import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/user_type_selection_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/auth/utils/auth_navigation.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/business/screens/create_collab_request_screen.dart';
@@ -497,8 +499,15 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.kolabNew,
       name: 'kolabNew',
-      builder: (BuildContext context, GoRouterState state) =>
-          const IntentSelectionScreen(),
+      builder: (BuildContext context, GoRouterState state) {
+        // C9: Send-Kolab CTA on a community profile passes the community id
+        // so the form can scope the publish payload to that recipient.
+        final recipientId = state.uri.queryParameters['recipient_community_id'];
+        return IntentSelectionScreen(
+          recipientCommunityId:
+              recipientId == null || recipientId.isEmpty ? null : recipientId,
+        );
+      },
     ),
     GoRoute(
       path: KolabingRoutes.kolabFlow,
@@ -753,46 +762,83 @@ final GoRouter kolabingRouter = GoRouter(
     ),
   ],
 
-  // Error page
+  // Error page — auth-aware, gives the user a recovery action so a failed
+  // route doesn't leave them stranded (B2 "page not found" stranding).
   errorBuilder: (BuildContext context, GoRouterState state) =>
-      _PlaceholderScreen(
-        title: 'Page Not Found',
-        subtitle: state.uri.toString(),
-      ),
+      _RouteNotFoundScreen(failedUrl: state.uri.toString()),
 );
 
-/// Placeholder screen for routes that are not yet implemented
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title, this.subtitle});
+/// Auth-aware "route not found" page (B2). Logs the failed URL + current
+/// auth state, then offers a recovery action depending on whether the user
+/// is signed in.
+class _RouteNotFoundScreen extends ConsumerWidget {
+  const _RouteNotFoundScreen({required this.failedUrl});
 
-  final String title;
-  final String? subtitle;
+  final String failedUrl;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)),
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(title, style: Theme.of(context).textTheme.headlineMedium),
-          if (subtitle != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodyMedium,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authProvider);
+    debugPrint(
+      '[B2] errorBuilder fired: url=$failedUrl '
+      'authStatus=${auth.status} userType=${auth.user?.userType}',
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Page Not Found')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 48,
+                color: Theme.of(context).colorScheme.outline,
               ),
-            ),
-          const SizedBox(height: 24),
-          Text(
-            'Screen not yet implemented',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+              const SizedBox(height: 16),
+              Text(
+                "We couldn't find that page",
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                failedUrl,
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              if (auth.isAuthenticated && auth.user != null) ...[
+                FilledButton(
+                  onPressed: () {
+                    final destination = resolveAuthDestination(
+                      auth.user!,
+                      isNewUser: auth.isNewUser,
+                    );
+                    context.go(destination);
+                  },
+                  child: const Text('Go to dashboard'),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () async {
+                    await ref.read(authProvider.notifier).logout();
+                    if (context.mounted) context.go(KolabingRoutes.login);
+                  },
+                  child: const Text('Sign out'),
+                ),
+              ] else ...[
+                FilledButton(
+                  onPressed: () => context.go(KolabingRoutes.login),
+                  child: const Text('Back to login'),
+                ),
+              ],
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

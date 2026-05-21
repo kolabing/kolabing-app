@@ -7,6 +7,7 @@ import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../features/discovery/models/discovery_item.dart';
 import '../features/opportunity/models/opportunity.dart';
+import 'match_breakdown.dart';
 
 class ExploreSwipeCard extends StatefulWidget {
   const ExploreSwipeCard({required this.item, this.onTap, super.key});
@@ -274,24 +275,67 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  Widget _buildFitBadge() => Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: KolabingSpacing.xs,
-      vertical: 6,
-    ),
-    decoration: BoxDecoration(
-      color: KolabingColors.softYellow.withValues(alpha: 0.95),
-      borderRadius: BorderRadius.circular(KolabingRadius.round),
-    ),
-    child: Text(
-      '${_item.match!.score}% fit',
-      style: GoogleFonts.dmSans(
-        fontSize: 11,
-        fontWeight: FontWeight.w700,
-        color: Colors.black,
+  Widget _buildFitBadge() {
+    final match = _item.match!;
+    final hasBreakdown = match.breakdown.isNotEmpty;
+
+    // H1: when we have a breakdown, render the % + mini-bars stacked. Falls
+    // back to the legacy single-pill badge for backward compatibility.
+    if (!hasBreakdown) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.xs,
+          vertical: 6,
+        ),
+        decoration: BoxDecoration(
+          color: KolabingColors.softYellow.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(KolabingRadius.round),
+        ),
+        child: Text(
+          '${match.score}% fit',
+          style: GoogleFonts.dmSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),
+        ),
+      );
+    }
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 160),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.sm,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: KolabingColors.softYellow.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              '${match.score}% match',
+              style: GoogleFonts.dmSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 4),
+            MatchBreakdown(
+              signals: match.breakdown,
+              compact: true,
+              color: Colors.black,
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   Widget _buildCreatorName() => Text(
     _item.creatorProfile.displayName,

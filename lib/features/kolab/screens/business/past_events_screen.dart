@@ -11,6 +11,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
+import '../../../../utils/image_picker_normalize.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -324,9 +325,11 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               );
               if (image == null) return;
               try {
+                // C10: normalize before upload so the preview path is usable.
+                final localPath = await normalizePickedImage(image);
                 final uploadService = UploadService();
                 final url = await uploadService.upload(
-                  filePath: image.path,
+                  filePath: localPath,
                   folder: 'kolabs',
                 );
                 final updated = [...widget.event.photos, url];

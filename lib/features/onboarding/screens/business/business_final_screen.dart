@@ -8,6 +8,7 @@ import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/permission_service.dart';
 import '../../../../widgets/referral_code_field.dart';
+import '../../../auth/models/auth_response.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/summary_card.dart';
@@ -41,6 +42,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   String? _emailApiError;
   String? _passwordApiError;
   String? _referralCodeApiError;
+
+  // Persistent error banner for non-field-mapped backend errors (B6
+  // diagnostic: 4-second snackbars hid the actual cause of signup failures).
+  String? _bannerErrorTitle;
+  String? _bannerErrorDetails;
 
   @override
   void initState() {
@@ -114,11 +120,15 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   void _clearApiErrors() {
     if (_emailApiError != null ||
         _passwordApiError != null ||
-        _referralCodeApiError != null) {
+        _referralCodeApiError != null ||
+        _bannerErrorTitle != null ||
+        _bannerErrorDetails != null) {
       setState(() {
         _emailApiError = null;
         _passwordApiError = null;
         _referralCodeApiError = null;
+        _bannerErrorTitle = null;
+        _bannerErrorDetails = null;
       });
     }
   }
@@ -168,6 +178,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
     setState(() => _isLoading = true);
 
+    debugPrint(
+      '[B6] _handleSubmit start (authenticatedFlow=$authenticatedFlow)',
+    );
+
     final result = authenticatedFlow
         ? await ref
               .read(onboardingProvider.notifier)
@@ -179,6 +193,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                 password: _passwordController.text,
               );
 
+    debugPrint(
+      '[B6] _handleSubmit result: success=${result.success} '
+      'isNetworkError=${result.isNetworkError} '
+      'errorStatus=${result.error?.statusCode} '
+      'errorMessage=${result.error?.message ?? result.errorMessage}',
+    );
+
     if (!mounted) return;
 
     if (result.success) {
@@ -189,10 +210,16 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
     } else {
       // Check for field-specific validation errors
       final apiError = result.error;
-      if (apiError != null &&
+      final hasMappedFieldError =
+          apiError != null &&
           !authenticatedFlow &&
           apiError.errors != null &&
-          apiError.errors!.isNotEmpty) {
+          apiError.errors!.isNotEmpty &&
+          (apiError.errors!.containsKey('email') ||
+              apiError.errors!.containsKey('password') ||
+              apiError.errors!.containsKey('referral_code'));
+
+      if (hasMappedFieldError) {
         setState(() {
           _isLoading = false;
           _emailApiError = apiError.getFieldError('email');
@@ -203,11 +230,56 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
         });
         // Trigger form validation to show the errors on fields
         _formKey.currentState!.validate();
+        // Still surface non-mapped errors in the banner if present (e.g. a
+        // 422 that includes both `email` AND `primary_venue.photos.0`).
+        final unmapped = apiError.errors!.entries
+            .where(
+              (e) =>
+                  e.key != 'email' &&
+                  e.key != 'password' &&
+                  e.key != 'referral_code',
+            )
+            .toList();
+        if (unmapped.isNotEmpty) {
+          final details = unmapped
+              .expand((e) => e.value.map((msg) => '• ${e.key}: $msg'))
+              .join('\n');
+          setState(() {
+            _bannerErrorTitle =
+                apiError.message.isEmpty ? 'Sign-up failed' : apiError.message;
+            _bannerErrorDetails = details;
+          });
+        }
       } else {
-        setState(() => _isLoading = false);
-        _showErrorSnackBar(result.displayError);
+        // Surface every server-side detail in the persistent banner so QA
+        // can read and copy it (snackbars disappear after 4 seconds).
+        final title = apiError?.message.isNotEmpty == true
+            ? apiError!.message
+            : (result.errorMessage ?? 'Sign-up failed');
+        final details = _buildBannerDetails(apiError);
+        setState(() {
+          _isLoading = false;
+          _bannerErrorTitle = title;
+          _bannerErrorDetails = details;
+        });
       }
     }
+  }
+
+  /// Combine status code + all server field errors into a copyable block.
+  String _buildBannerDetails(ApiError? apiError) {
+    final lines = <String>[];
+    if (apiError?.statusCode != null) {
+      lines.add('Status: ${apiError!.statusCode}');
+    }
+    if (apiError?.errors != null && apiError!.errors!.isNotEmpty) {
+      apiError.errors!.forEach((field, msgs) {
+        for (final msg in msgs) {
+          lines.add('• $field: $msg');
+        }
+      });
+    }
+    return lines.join('\n');
   }
 
   void _showNetworkErrorSnackBar() {
@@ -251,21 +323,119 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
     );
   }
 
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: GoogleFonts.openSans(
-            color: KolabingColors.textOnDark,
-            fontWeight: FontWeight.w600,
+  Widget _buildErrorBanner() {
+    final title = _bannerErrorTitle ?? 'Sign-up failed';
+    final details = _bannerErrorDetails;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: KolabingColors.error.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: KolabingColors.error.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 20,
+                color: KolabingColors.error,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.error,
+                  ),
+                ),
+              ),
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () => setState(() {
+                  _bannerErrorTitle = null;
+                  _bannerErrorDetails = null;
+                }),
+                icon: const Icon(
+                  Icons.close_rounded,
+                  size: 18,
+                  color: KolabingColors.error,
+                ),
+              ),
+            ],
           ),
-        ),
-        backgroundColor: KolabingColors.error,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 4),
+          if (details != null && details.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: KolabingColors.border),
+              ),
+              child: SelectableText(
+                details,
+                style: GoogleFonts.robotoMono(
+                  fontSize: 12,
+                  color: KolabingColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  minimumSize: const Size(0, 32),
+                ),
+                onPressed: () async {
+                  final payload = '$title\n$details';
+                  await Clipboard.setData(ClipboardData(text: payload));
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Error details copied to clipboard',
+                        style: GoogleFonts.openSans(
+                          color: KolabingColors.textOnDark,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.copy_rounded,
+                  size: 16,
+                  color: KolabingColors.error,
+                ),
+                label: Text(
+                  'Copy details',
+                  style: GoogleFonts.openSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.error,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -344,6 +514,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                       child: Column(
                         children: [
                           const SizedBox(height: 16),
+
+                          if (_bannerErrorTitle != null) ...[
+                            _buildErrorBanner(),
+                            const SizedBox(height: 16),
+                          ],
 
                           // Title
                           Text(

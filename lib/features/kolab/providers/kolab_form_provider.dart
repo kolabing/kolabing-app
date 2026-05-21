@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
+// Hide NegotiationTrigger here — both kolab.dart and opportunity.dart export
+// the same shape. Provider stays on the kolab.dart definition for writes.
+import 'package:kolabing_app/features/opportunity/models/opportunity.dart'
+    hide NegotiationTrigger;
 
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
@@ -34,6 +37,7 @@ class KolabFormState {
     this.requiresSubscription = false,
     this.error,
     this.fieldErrors = const {},
+    this.recipientCommunityId,
   });
 
   final IntentType? intentType;
@@ -47,6 +51,12 @@ class KolabFormState {
   final bool requiresSubscription;
   final String? error;
   final Map<String, String> fieldErrors;
+
+  /// When set, the Kolab is being sent as a direct proposal to a specific
+  /// community (e.g. from the Send-Kolab CTA on a public community profile).
+  /// The publish endpoint receives this so the backend can scope visibility
+  /// or notify the recipient.
+  final String? recipientCommunityId;
 
   bool get canGoBack => currentStep > 0;
   bool get canGoNext => currentStep < totalSteps - 1;
@@ -65,8 +75,10 @@ class KolabFormState {
     bool? requiresSubscription,
     String? error,
     Map<String, String>? fieldErrors,
+    String? recipientCommunityId,
     bool clearError = false,
     bool clearIntent = false,
+    bool clearRecipientCommunityId = false,
   }) => KolabFormState(
     intentType: clearIntent ? null : (intentType ?? this.intentType),
     currentStep: currentStep ?? this.currentStep,
@@ -79,6 +91,9 @@ class KolabFormState {
     requiresSubscription: requiresSubscription ?? this.requiresSubscription,
     error: clearError ? null : (error ?? this.error),
     fieldErrors: fieldErrors ?? this.fieldErrors,
+    recipientCommunityId: clearRecipientCommunityId
+        ? null
+        : (recipientCommunityId ?? this.recipientCommunityId),
   );
 }
 
@@ -99,14 +114,29 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   // Intent Selection
   // ---------------------------------------------------------------------------
 
-  /// Select an intent type and reset the form for that flow.
+  /// Stash a recipient community id from the Send-Kolab CTA so the publish
+  /// payload can scope the Kolab to that community (C9 follow-up).
+  void setRecipientCommunityId(String? id) {
+    final trimmed = id?.trim();
+    state = state.copyWith(
+      recipientCommunityId:
+          (trimmed == null || trimmed.isEmpty) ? null : trimmed,
+      clearRecipientCommunityId: trimmed == null || trimmed.isEmpty,
+    );
+  }
+
+  /// Select an intent type and reset the form for that flow. Preserves any
+  /// stashed `recipientCommunityId` so the Send-Kolab CTA's target survives
+  /// the intent reset.
   void selectIntent(IntentType intent) {
     final initialKolab = _buildInitialKolab(intent);
+    final preservedRecipient = state.recipientCommunityId;
     state = KolabFormState(
       intentType: intent,
       currentStep: 0,
       totalSteps: intent.totalSteps,
       kolab: initialKolab,
+      recipientCommunityId: preservedRecipient,
     );
   }
 
@@ -228,6 +258,38 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   void updateDescription(String description) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(description: description),
+      clearError: true,
+    );
+  }
+
+  /// H2: short one-line headline pinned to the discovery card.
+  void updateOfferHeadline(String? headline) {
+    final trimmed = headline?.trim();
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(
+        offerHeadline: trimmed?.isEmpty == true ? null : trimmed,
+        clearOfferHeadline: trimmed == null || trimmed.isEmpty,
+      ),
+      clearError: true,
+    );
+  }
+
+  /// H3: long-form public offer shown on the kolab detail.
+  void updateBaseOffer(String? baseOffer) {
+    final trimmed = baseOffer?.trim();
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(
+        baseOffer: trimmed?.isEmpty == true ? null : trimmed,
+        clearBaseOffer: trimmed == null || trimmed.isEmpty,
+      ),
+      clearError: true,
+    );
+  }
+
+  /// H3: negotiation triggers (gated until a community applies).
+  void updateNegotiationTriggers(List<NegotiationTrigger> triggers) {
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(negotiationTriggers: triggers),
       clearError: true,
     );
   }
@@ -705,6 +767,11 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
         if (kolab.description.isEmpty) {
           errors['description'] = 'Description is required';
         }
+        // H2: offer headline is required on venue promotion.
+        if (kolab.offerHeadline == null || kolab.offerHeadline!.trim().isEmpty) {
+          errors['offer_headline'] =
+              'Add a one-line offer headline (e.g. "20% off Tuesdays")';
+        }
       case 1: // Media
         if (kolab.media.isEmpty) {
           errors['media'] = 'Add at least 1 photo';
@@ -759,6 +826,11 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
         }
         if (kolab.preferredCity.isEmpty) {
           errors['preferred_city'] = 'Preferred city is required';
+        }
+        // H2: offer headline is required on product promotion.
+        if (kolab.offerHeadline == null || kolab.offerHeadline!.trim().isEmpty) {
+          errors['offer_headline'] =
+              'Add a one-line offer headline (e.g. "Free with any 5+ order")';
         }
       case 1: // Media
         if (kolab.media.isEmpty) {
@@ -845,6 +917,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       requiresSubscription: false,
     );
 
+    debugPrint(
+      '[B1B7] saveAndPublish start: isEditing=${state.isEditing} '
+      'kolabId=${state.kolab.id} mediaCount=${state.kolab.media.length} '
+      'mediaTypes=${state.kolab.media.map((m) => m.type).toSet().toList()}',
+    );
+
     try {
       final kolabToPersist = _normalizeKolabForSubmit(state.kolab);
       state = state.copyWith(kolab: kolabToPersist);
@@ -854,14 +932,43 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       } else {
         saved = await _service.create(kolabToPersist);
       }
+      debugPrint(
+        '[B1B7] save ok: id=${saved.id} status=${saved.status}',
+      );
 
       // Persist the saved record immediately and flip to edit-mode so a
       // subsequent retry (e.g. publish fails below) updates the existing
       // draft instead of creating a duplicate.
       state = state.copyWith(kolab: saved, isEditing: true);
 
-      // Publish the saved kolab
-      final published = await _service.publish(saved.id!, saved);
+      // Publish the saved kolab. recipientCommunityId is passed only when set
+      // (Send-Kolab CTA flow) so the backend can scope visibility / notify
+      // the recipient.
+      final published = await _service.publish(
+        saved.id!,
+        saved,
+        recipientCommunityId: state.recipientCommunityId,
+      );
+      debugPrint(
+        '[B1B7] publish ok: id=${published.id} status=${published.status}',
+      );
+
+      // Backend safety net (B1): if the server returned 200 but the kolab is
+      // still a draft, treat it as a subscription block so the existing
+      // paywall flow kicks in instead of silently leaving the user stranded.
+      if (published.status != 'published') {
+        debugPrint(
+          '[B1B7] publish returned non-published status=${published.status} — '
+          'treating as subscription requirement',
+        );
+        state = state.copyWith(
+          kolab: published,
+          isPublishing: false,
+          requiresSubscription: true,
+        );
+        return false;
+      }
+
       state = state.copyWith(
         kolab: published,
         isPublishing: false,
@@ -869,11 +976,16 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       );
       return true;
     } on ApiException catch (e) {
-      debugPrint('Save and publish API error: $e');
+      debugPrint(
+        '[B1B7] ApiException: status=${e.error.statusCode} '
+        'requiresSubscription=${e.error.requiresSubscription} '
+        'message=${e.error.message} '
+        'fieldErrors=${e.error.errors?.keys.toList() ?? []}',
+      );
       _handleApiError(e, isPublishing: true);
       return false;
     } on Exception catch (e) {
-      debugPrint('Save and publish error: $e');
+      debugPrint('[B1B7] unexpected: $e');
       state = state.copyWith(isPublishing: false, error: e.toString());
       return false;
     }
@@ -924,6 +1036,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   // ---------------------------------------------------------------------------
 
   void reset() {
+    // Drop the recipientCommunityId as well — a new Send-Kolab session will
+    // set it again via setRecipientCommunityId.
     state = KolabFormState(kolab: Kolab.empty(IntentType.communitySeeking));
   }
 

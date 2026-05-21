@@ -10,6 +10,8 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
+import '../../../../utils/image_picker_normalize.dart';
+import '../../../business/providers/profile_provider.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -45,17 +47,22 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
     setState(() => _isUploading = true);
     try {
+      // C10: Google Photos / iCloud picks can return content URIs that
+      // dart:io can't read. Normalize to a real temp file before upload.
+      final localPath = await normalizePickedImage(image);
       final uploadService = ref.read(uploadServiceProvider);
       final url = await uploadService.upload(
-        filePath: image.path,
+        filePath: localPath,
         folder: 'kolabs',
       );
       final notifier = ref.read(kolabFormProvider.notifier);
       final kolab = ref.read(kolabFormProvider).kolab;
       // Use max-existing-sort + 1 to guarantee uniqueness even after a slot
       // was removed (count-based formula could collide with a surviving entry).
+      // Backend expects `image` / `video` — `photo` was rejected on publish
+      // (B7). Use `image` consistently across upload + filter.
       final existingPhotos =
-          kolab.media.where((m) => m.type == 'photo');
+          kolab.media.where((m) => m.type == 'image');
       final nextSort = existingPhotos.isEmpty
           ? 0
           : existingPhotos
@@ -63,7 +70,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
                   .reduce((a, b) => a > b ? a : b) +
               1;
       notifier.addMedia(
-        KolabMedia(url: url, type: 'photo', sortOrder: nextSort),
+        KolabMedia(url: url, type: 'image', sortOrder: nextSort),
       );
     } on Exception catch (e) {
       if (mounted) {
@@ -76,6 +83,70 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     }
   }
 
+  /// C7: pull-in unused venue photos from the business profile so users don't
+  /// have to re-upload the same shots for every Kolab.
+  void _addVenuePhotos() {
+    final profile = ref.read(profileProvider).profile;
+    final venuePhotoUrls =
+        profile?.businessProfile?.primaryVenue?.photos ?? const <String>[];
+    if (venuePhotoUrls.isEmpty) return;
+
+    final notifier = ref.read(kolabFormProvider.notifier);
+    final existing = ref.read(kolabFormProvider).kolab.media;
+    final existingUrls = existing.map((m) => m.url).toSet();
+
+    final maxToAdd = 5 - existing.length;
+    if (maxToAdd <= 0) return;
+
+    final nextSortStart = existing.isEmpty
+        ? 0
+        : existing.map((m) => m.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
+
+    final toAdd = venuePhotoUrls
+        .where((url) => url.isNotEmpty && !existingUrls.contains(url))
+        .take(maxToAdd)
+        .toList();
+
+    if (toAdd.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'All your venue photos are already in this Kolab.',
+              style: GoogleFonts.openSans(color: Colors.white),
+            ),
+            backgroundColor: KolabingColors.textSecondary,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    for (var i = 0; i < toAdd.length; i++) {
+      notifier.addMedia(
+        KolabMedia(
+          url: toAdd[i],
+          type: 'image',
+          sortOrder: nextSortStart + i,
+        ),
+      );
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Added ${toAdd.length} venue photo${toAdd.length == 1 ? '' : 's'}.',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(kolabFormProvider);
@@ -85,6 +156,15 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
     final isVenue = formState.intentType == IntentType.venuePromotion;
     final title = isVenue ? 'SHOW OFF YOUR VENUE' : 'SHOW YOUR PRODUCT';
+
+    // C7: surface a "Use venue photos" CTA only on venue promotion when the
+    // business profile actually has photos to reuse.
+    final venuePhotoUrls = ref.watch(
+      profileProvider.select((s) => s.profile?.businessProfile?.primaryVenue?.photos),
+    );
+    final showReuseCta = isVenue &&
+        kolab.media.length < 5 &&
+        (venuePhotoUrls?.isNotEmpty ?? false);
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -113,6 +193,36 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(errors['media']!, style: GoogleFonts.openSans(fontSize: 12, color: KolabingColors.error)),
           ),
+
+        // C7: one-tap import of existing venue photos.
+        if (showReuseCta) ...[
+          OutlinedButton.icon(
+            onPressed: _isUploading ? null : _addVenuePhotos,
+            icon: const Icon(LucideIcons.imagePlus, size: 18),
+            label: Text(
+              'USE VENUE PHOTOS (${venuePhotoUrls!.length})',
+              style: GoogleFonts.dmSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KolabingColors.primary,
+              side: BorderSide(
+                color: KolabingColors.primary.withValues(alpha: 0.5),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KolabingRadius.sm),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+                vertical: 10,
+              ),
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+        ],
 
         // Upload progress
         if (_isUploading)
@@ -149,7 +259,7 @@ class _PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photos = media.where((m) => m.type == 'photo').toList();
+    final photos = media.where((m) => m.type == 'image').toList();
     final canAdd = photos.length < 5;
 
     return Wrap(

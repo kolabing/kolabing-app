@@ -159,7 +159,11 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           _buildDateRangeSection(kolab, notifier, errors),
         ],
 
-        if (kolab.availabilityMode == AvailabilityMode.flexible)
+        if (kolab.availabilityMode == AvailabilityMode.flexible) ...[
+          // The flexible mode still needs a window (start/end) — without it
+          // publish silently fails (C8). Same picker, different framing.
+          _buildDateRangeSection(kolab, notifier, errors),
+          const SizedBox(height: KolabingSpacing.md),
           Padding(
             padding: const EdgeInsets.only(top: KolabingSpacing.xs),
             child: Container(
@@ -178,7 +182,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: Text(
-                      'Communities will propose a time and you can accept or suggest an alternative.',
+                      'Communities propose a time inside this window and you accept or suggest an alternative.',
                       style: GoogleFonts.openSans(
                         fontSize: 13,
                         color: KolabingColors.textSecondary,
@@ -189,6 +193,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
               ),
             ),
           ),
+        ],
 
         const SizedBox(height: KolabingSpacing.lg),
       ],

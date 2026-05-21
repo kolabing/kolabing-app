@@ -81,6 +81,15 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           extra: opportunity,
         );
       },
+      // C9: business viewer tapping a community card needs a path to the
+      // community's public profile (Send Kolab CTA lives there). Hidden when
+      // the creator profile id isn't usable.
+      onViewCreatorProfile: item.creatorProfile.id.isEmpty
+          ? null
+          : () {
+              Navigator.of(context).pop();
+              context.push('/profile/${item.creatorProfile.id}');
+            },
     );
   }
 

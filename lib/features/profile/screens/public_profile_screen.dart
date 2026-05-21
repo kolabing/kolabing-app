@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
@@ -8,9 +9,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/public_profile.dart';
@@ -41,6 +44,7 @@ class PublicProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(publicProfileProvider(profileId));
+    final viewer = ref.watch(authProvider).user;
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -54,6 +58,18 @@ class PublicProfileScreen extends ConsumerWidget {
           body: _buildErrorBody(context, ref, error.toString()),
         ),
         data: (profile) => _buildProfileContent(context, profile),
+      ),
+      // C9: business viewing a community → primary CTA to send a Kolab proposal.
+      // Until then the user could only "Not right now" out of this screen.
+      bottomNavigationBar: profileAsync.maybeWhen(
+        data: (profile) {
+          final shouldShowCta = viewer != null &&
+              viewer.isBusiness &&
+              profile.isCommunity;
+          if (!shouldShowCta) return const SizedBox.shrink();
+          return _SendKolabBottomBar(community: profile);
+        },
+        orElse: () => const SizedBox.shrink(),
       ),
     );
   }
@@ -665,6 +681,93 @@ class _SocialLinkChip extends StatelessWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: KolabingColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+// =============================================================================
+// C9: Send Kolab proposal CTA — business viewing a community
+// =============================================================================
+
+class _SendKolabBottomBar extends StatelessWidget {
+  const _SendKolabBottomBar({required this.community});
+
+  final PublicProfile community;
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(
+            KolabingSpacing.md,
+            KolabingSpacing.sm,
+            KolabingSpacing.md,
+            KolabingSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            border: Border(
+              top: BorderSide(
+                color: KolabingColors.border.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).maybePop(),
+                  style: TextButton.styleFrom(
+                    foregroundColor: KolabingColors.textSecondary,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: Text(
+                    'Save for later',
+                    style: GoogleFonts.openSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                flex: 2,
+                child: SizedBox(
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Route to the Kolab create flow with the community
+                      // pre-selected as the recipient. The flow reads the
+                      // `recipient_community_id` query param.
+                      context.push(
+                        '${KolabingRoutes.kolabNew}'
+                        '?recipient_community_id=${Uri.encodeComponent(community.id)}',
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: KolabingColors.primary,
+                      foregroundColor: KolabingColors.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(KolabingRadius.md),
+                      ),
+                      elevation: 0,
+                    ),
+                    icon: const Icon(LucideIcons.send, size: 18),
+                    label: Text(
+                      'SEND A KOLAB PROPOSAL',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -135,7 +135,7 @@ class ReviewScreen extends ConsumerWidget {
     }
 
     // Step 1 — Media
-    final photoCount = kolab.media.where((m) => m.type == 'photo').length;
+    final photoCount = kolab.media.where((m) => m.type == 'image').length;
     sections.add(_Section(
       icon: LucideIcons.image,
       title: 'Media',
@@ -256,7 +256,7 @@ class _PreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final media = kolab.media.where((m) => m.type == 'photo').toList();
+    final media = kolab.media.where((m) => m.type == 'image').toList();
     final coverUrl = media.isNotEmpty ? media.first.url : null;
 
     final headline = isVenue

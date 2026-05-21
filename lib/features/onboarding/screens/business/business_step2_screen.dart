@@ -311,6 +311,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       photoBase64: data.photoBase64,
                       onPhotoSelected: notifier.updatePhoto,
                       onPhotoRemoved: notifier.clearPhoto,
+                      // E5: this slot is the business brand logo, not a venue
+                      // photo. Venue photos use VenuePhotoManager below.
+                      addLabel: 'Add logo (optional)',
                     ),
                     const SizedBox(height: 24),
                     _FieldLabel(label: 'Venue Address'),

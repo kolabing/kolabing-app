@@ -1,28 +1,48 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../config/constants/api.dart';
+import '../../auth/models/auth_response.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/public_profile.dart';
 import '../providers/gallery_provider.dart';
 import 'gallery_service.dart';
 
 /// Service for fetching public profile data.
 ///
-/// Currently uses mock data for profile info and past collaborations.
-/// Gallery photos are fetched from the real API.
+/// Community profiles: `GET /api/v1/communities/{id}/public-profile`
+/// (live as of 2026-05-21 contract update).
 ///
-/// TODO: Replace mock data with real API when available:
-/// - GET /api/v1/profiles/{id} — Public profile data
-/// - GET /api/v1/profiles/{id}/collaborations — Past collaborations
+/// Business profile endpoint is still TBD; for businesses we fall back to
+/// mock data until the equivalent endpoint ships.
 class PublicProfileService {
   PublicProfileService({
     GalleryService? galleryService,
-  }) : _galleryService = galleryService ?? GalleryService();
+    AuthService? authService,
+    http.Client? httpClient,
+  })  : _galleryService = galleryService ?? GalleryService(),
+        _authService = authService ?? AuthService(),
+        _httpClient = httpClient ?? http.Client();
 
   final GalleryService _galleryService;
+  final AuthService _authService;
+  final http.Client _httpClient;
 
   /// Fetch a public profile by ID.
   ///
-  /// Combines mock profile data with real gallery photos from the API.
+  /// Tries the live community endpoint first. Falls back to mock data if the
+  /// endpoint is not available for this profile type (e.g. business viewers).
+  /// Gallery photos always come from the real API.
   Future<PublicProfile> getPublicProfile(String profileId) async {
+    PublicProfile? remote;
+    try {
+      remote = await _fetchCommunityPublicProfile(profileId);
+    } on Exception catch (e) {
+      debugPrint('PublicProfileService: remote profile fetch failed: $e');
+    }
+
     // Fetch gallery photos from real API
     List<GalleryPhoto> gallery = [];
     try {
@@ -31,10 +51,55 @@ class PublicProfileService {
       debugPrint('PublicProfileService: gallery fetch failed: $e');
     }
 
-    // Mock profile data — will be replaced with API call
-    final mockProfile = _getMockProfile(profileId);
+    final base = remote ?? _getMockProfile(profileId);
+    return base.copyWith(gallery: gallery);
+  }
 
-    return mockProfile.copyWith(gallery: gallery);
+  Future<PublicProfile?> _fetchCommunityPublicProfile(String id) async {
+    return _fetchCommunityPublicProfileInner(id, allowRetry: true);
+  }
+
+  Future<PublicProfile?> _fetchCommunityPublicProfileInner(
+    String id, {
+    required bool allowRetry,
+  }) async {
+    final url = '${ApiConfig.baseUrl}/communities/$id/public-profile';
+    final token = await _authService.getToken();
+    debugPrint('[C9] GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+    );
+
+    debugPrint('[C9] response status=${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      final raw = data is Map<String, dynamic> ? data : json;
+      return PublicProfile.fromJson(raw);
+    }
+
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _fetchCommunityPublicProfileInner(id, allowRetry: false);
+    }
+
+    if (response.statusCode == 404) {
+      // Likely a business profile id — endpoint is community-only for now.
+      return null;
+    }
+
+    final body = response.body.isEmpty
+        ? <String, dynamic>{'message': 'Failed to load profile'}
+        : jsonDecode(response.body) as Map<String, dynamic>;
+    throw ApiException(
+      error: ApiError.fromJson(body, statusCode: response.statusCode),
+    );
   }
 
   // ---------------------------------------------------------------------------

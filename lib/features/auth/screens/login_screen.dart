@@ -201,12 +201,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       if (!mounted) return;
 
       final route = await _getNavigationRoute(result);
+      debugPrint(
+        '[B2] login success → routing to "$route" '
+        '(userType=${result.user?.userType} isNewUser=${result.isNewUser})',
+      );
       if (!mounted) return;
       context.go(route);
     } else if (result.isNetworkError) {
+      debugPrint('[B2] login network error: ${result.errorMessage}');
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar(isGoogle: false);
     } else {
+      debugPrint(
+        '[B2] login failed: status=${result.error?.statusCode} '
+        'message=${result.displayError}',
+      );
       setState(() => _isLoading = false);
       _showErrorSnackBar(result.displayError);
     }

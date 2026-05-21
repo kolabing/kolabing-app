@@ -16,6 +16,7 @@ class PhotoUploadWidget extends StatefulWidget {
     super.key,
     this.photoBase64,
     this.onPhotoRemoved,
+    this.addLabel = 'Add photo (optional)',
   });
 
   /// Current photo as base64 string
@@ -26,6 +27,10 @@ class PhotoUploadWidget extends StatefulWidget {
 
   /// Callback when photo is removed
   final VoidCallback? onPhotoRemoved;
+
+  /// Label shown under the empty slot (E5: business uses "Add logo", community
+  /// keeps the default "Add photo").
+  final String addLabel;
 
   @override
   State<PhotoUploadWidget> createState() => _PhotoUploadWidgetState();
@@ -275,9 +280,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
 
                 // Label
                 Text(
-                  widget.photoBase64 == null
-                      ? 'Add photo (optional)'
-                      : 'Tap to change',
+                  widget.photoBase64 == null ? widget.addLabel : 'Tap to change',
                   style: GoogleFonts.openSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,

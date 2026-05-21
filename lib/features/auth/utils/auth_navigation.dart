@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../config/routes/routes.dart';
 import '../models/user_model.dart';
 
@@ -12,12 +14,23 @@ String resolveAuthDestination(UserModel user, {bool isNewUser = false}) {
   // `is_new_user` flag returned by OAuth (Google/Apple) when they create a
   // brand-new account.
   if (isNewUser) {
-    return user.isBusiness
-        ? KolabingRoutes.businessOnboardingStep5
-        : KolabingRoutes.communityOnboardingStep1;
+    if (user.isBusiness) return KolabingRoutes.businessOnboardingStep5;
+    if (user.isCommunity) return KolabingRoutes.communityOnboardingStep1;
+    debugPrint(
+      '[B2] resolveAuthDestination: unknown new-user type=${user.userType} '
+      '— falling back to welcome',
+    );
+    return KolabingRoutes.welcome;
   }
 
-  return user.isBusiness
-      ? KolabingRoutes.businessDashboard
-      : KolabingRoutes.communityDashboard;
+  if (user.isBusiness) return KolabingRoutes.businessDashboard;
+  if (user.isCommunity) return KolabingRoutes.communityDashboard;
+
+  // Unknown user type — log loudly and route to a known landing instead of
+  // silently defaulting to /community (which would bounce the user).
+  debugPrint(
+    '[B2] resolveAuthDestination: unknown user type=${user.userType} '
+    '(id=${user.id}) — falling back to welcome',
+  );
+  return KolabingRoutes.welcome;
 }

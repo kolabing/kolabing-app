@@ -87,6 +87,8 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             maxLength: 255,
             onChanged: (value) =>
                 ref.read(kolabFormProvider.notifier).updateTitle(value),
+            // C1: dismiss keyboard on tap-outside so the bottom action bar is reachable.
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: GoogleFonts.openSans(
               fontSize: 15,
               color: KolabingColors.textPrimary,
@@ -130,6 +132,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             maxLines: 5,
             onChanged: (value) =>
                 ref.read(kolabFormProvider.notifier).updateDescription(value),
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: GoogleFonts.openSans(
               fontSize: 15,
               color: KolabingColors.textPrimary,

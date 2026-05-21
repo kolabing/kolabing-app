@@ -13,11 +13,39 @@ import '../providers/kolab_form_provider.dart';
 
 /// Unified entry screen for creating a new Kolab.
 /// Shows different options based on user type (community vs business).
-class IntentSelectionScreen extends ConsumerWidget {
-  const IntentSelectionScreen({super.key});
+class IntentSelectionScreen extends ConsumerStatefulWidget {
+  const IntentSelectionScreen({
+    super.key,
+    this.recipientCommunityId,
+  });
+
+  /// When set, the resulting Kolab is targeted at this specific community
+  /// (Send-Kolab CTA from a community public profile, C9 follow-up).
+  final String? recipientCommunityId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<IntentSelectionScreen> createState() =>
+      _IntentSelectionScreenState();
+}
+
+class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final recipient = widget.recipientCommunityId;
+    if (recipient != null && recipient.isNotEmpty) {
+      // Stash on the form state immediately so downstream steps see it even
+      // if the user backs out and re-enters the intent picker.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(kolabFormProvider.notifier)
+            .setRecipientCommunityId(recipient);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final profileState = ref.watch(profileProvider);
     final userType = profileState.profile?.userType;
     final isProfileTypeResolved = userType != null;

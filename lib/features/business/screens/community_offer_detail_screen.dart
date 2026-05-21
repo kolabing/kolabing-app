@@ -336,6 +336,46 @@ class _CommunityOfferDetailScreenState
             ),
             const SizedBox(height: KolabingSpacing.md),
 
+            // H2: Offer headline (pinned right below the title for at-a-glance
+            // scanning).
+            if (opportunity.offerHeadline != null &&
+                opportunity.offerHeadline!.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.sm,
+                  vertical: 8,
+                ),
+                margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
+                decoration: BoxDecoration(
+                  color: KolabingColors.softYellow,
+                  borderRadius: BorderRadius.circular(KolabingRadius.sm),
+                  border: Border.all(
+                    color: KolabingColors.primary.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      LucideIcons.zap,
+                      size: 16,
+                      color: KolabingColors.textPrimary,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        opportunity.offerHeadline!,
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: KolabingColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
             // Description
             Text(
               opportunity.description,
@@ -346,6 +386,24 @@ class _CommunityOfferDetailScreenState
                 height: 1.6,
               ),
             ),
+
+            // H3 (writer-side public copy): base offer goes here so every
+            // viewer sees the full offer text, not just the headline.
+            if (opportunity.baseOffer != null &&
+                opportunity.baseOffer!.isNotEmpty) ...[
+              const SizedBox(height: KolabingSpacing.md),
+              _BaseOfferCard(text: opportunity.baseOffer!),
+            ],
+
+            // H3 (reader-side gated): negotiation triggers only arrive after
+            // the viewer has applied. Backend gates the field — if it's
+            // empty, we render nothing.
+            if (opportunity.negotiationTriggers.isNotEmpty) ...[
+              const SizedBox(height: KolabingSpacing.md),
+              _NegotiationTriggersSection(
+                triggers: opportunity.negotiationTriggers,
+              ),
+            ],
 
             // Applications count
             if (opportunity.applicationsCount != null &&
@@ -1111,4 +1169,152 @@ class _StatusBadge extends StatelessWidget {
       ),
     );
   }
+}
+
+// =============================================================================
+// H3: Base offer + Negotiation triggers
+// =============================================================================
+
+class _BaseOfferCard extends StatelessWidget {
+  const _BaseOfferCard({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.surface,
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
+          border: Border.all(color: KolabingColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  LucideIcons.gift,
+                  size: 16,
+                  color: KolabingColors.primary,
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(
+                  'THE OFFER',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              text,
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                color: KolabingColors.textPrimary,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+class _NegotiationTriggersSection extends StatelessWidget {
+  const _NegotiationTriggersSection({required this.triggers});
+
+  final List<NegotiationTrigger> triggers;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          // Slightly different background so it reads as "extra terms unlocked
+          // for you" rather than the standard public offer card.
+          color: KolabingColors.primary.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
+          border: Border.all(
+            color: KolabingColors.primary.withValues(alpha: 0.25),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  LucideIcons.unlock,
+                  size: 16,
+                  color: KolabingColors.primary,
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(
+                  'EXTRA TERMS UNLOCKED',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                    color: KolabingColors.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.xxs),
+            Text(
+              'These only show because you have already applied.',
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                color: KolabingColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            ...triggers.map(_buildTriggerRow),
+          ],
+        ),
+      );
+
+  Widget _buildTriggerRow(NegotiationTrigger trigger) => Padding(
+        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '• ',
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                color: KolabingColors.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'IF ${trigger.condition}',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: KolabingColors.textTertiary,
+                    ),
+                  ),
+                  Text(
+                    trigger.additionalOffer,
+                    style: GoogleFonts.openSans(
+                      fontSize: 13,
+                      color: KolabingColors.textPrimary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
 }

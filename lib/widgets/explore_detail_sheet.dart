@@ -18,6 +18,7 @@ class ExploreDetailSheet extends StatelessWidget {
     required this.opportunity,
     this.onApply,
     this.onView,
+    this.onViewCreatorProfile,
     this.canApply = true,
     super.key,
   });
@@ -25,6 +26,9 @@ class ExploreDetailSheet extends StatelessWidget {
   final Opportunity opportunity;
   final VoidCallback? onApply;
   final VoidCallback? onView;
+  // C9: optional CTA that opens the creator's public profile so a business
+  // viewer can reach the Send-Kolab proposal flow.
+  final VoidCallback? onViewCreatorProfile;
   final bool canApply;
 
   /// Day labels indexed 1..7 (Mon..Sun) matching [Opportunity.recurringDays].
@@ -36,6 +40,7 @@ class ExploreDetailSheet extends StatelessWidget {
     required Opportunity opportunity,
     VoidCallback? onApply,
     VoidCallback? onView,
+    VoidCallback? onViewCreatorProfile,
     bool canApply = true,
   }) =>
       showModalBottomSheet<void>(
@@ -46,6 +51,7 @@ class ExploreDetailSheet extends StatelessWidget {
           opportunity: opportunity,
           onApply: onApply,
           onView: onView,
+          onViewCreatorProfile: onViewCreatorProfile,
           canApply: canApply,
         ),
       );
@@ -482,29 +488,54 @@ class ExploreDetailSheet extends StatelessWidget {
           ),
         ],
       ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: ElevatedButton.icon(
-          onPressed: onApply,
-          icon: const Icon(LucideIcons.send, size: 18),
-          label: Text(
-            'APPLY NOW',
-            style: GoogleFonts.rubik(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: onApply,
+              icon: const Icon(LucideIcons.send, size: 18),
+              label: Text(
+                'APPLY NOW',
+                style: GoogleFonts.rubik(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.primary,
+                foregroundColor: KolabingColors.onPrimary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: KolabingRadius.borderRadiusMd,
+                ),
+              ),
             ),
           ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
+          if (onViewCreatorProfile != null) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            // C9: secondary link to the creator's public profile. Routes
+            // through PublicProfileScreen so a business viewer reaches the
+            // Send-Kolab proposal CTA instead of dead-ending here.
+            TextButton.icon(
+              onPressed: onViewCreatorProfile,
+              icon: const Icon(LucideIcons.user, size: 16),
+              label: Text(
+                'View creator profile',
+                style: GoogleFonts.openSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                foregroundColor: KolabingColors.textSecondary,
+              ),
             ),
-          ),
-        ),
+          ],
+        ],
       ),
     );
   }

@@ -556,11 +556,24 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     required String password,
   }) async {
     if (state == null || !state!.isComplete) {
+      debugPrint(
+        '[B6] completeWithEmail aborted: state=${state == null ? "null" : "incomplete"} '
+        '(step1=${state?.isStep1Complete} step2=${state?.isStep2Complete} '
+        'step3=${state?.isStep3Complete})',
+      );
       return const OnboardingResult(
         success: false,
         errorMessage: 'Please complete all required fields',
       );
     }
+
+    debugPrint(
+      '[B6] completeWithEmail: userType=${state!.userType} '
+      'email=$email name=${state!.name} venueType=${state!.venueType} '
+      'venueCapacity=${state!.venueCapacity} '
+      'venuePhotos=${state!.venuePhotos.length} '
+      'businessTypes=${state!.selectedBusinessTypeSlugs.length}',
+    );
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -581,20 +594,31 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         );
       }
 
+      debugPrint(
+        '[B6] register* succeeded — user=${authResponse.user.email} '
+        'hasToken=${authResponse.token.isNotEmpty}',
+      );
+
       // Update auth state
       await ref.read(authProvider.notifier).checkAuthStatus();
 
       return OnboardingResult(success: true, user: authResponse.user);
     } on ApiException catch (e) {
+      debugPrint(
+        '[B6] ApiException: status=${e.error.statusCode} '
+        'message=${e.error.message} '
+        'fieldErrors=${e.error.errors?.keys.toList() ?? []}',
+      );
       return OnboardingResult(success: false, error: e.error);
     } on NetworkException catch (e) {
+      debugPrint('[B6] NetworkException: ${e.message}');
       return OnboardingResult(
         success: false,
         errorMessage: e.message,
         isNetworkError: true,
       );
     } on Exception catch (e) {
-      debugPrint('Onboarding error: $e');
+      debugPrint('[B6] Unexpected exception: $e');
       return const OnboardingResult(
         success: false,
         errorMessage: 'An unexpected error occurred',
