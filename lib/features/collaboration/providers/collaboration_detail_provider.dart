@@ -8,16 +8,64 @@ import '../../../config/constants/api.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../../gamification/models/challenge.dart';
-import '../../opportunity/models/opportunity.dart';
 import '../models/collaboration.dart';
 
-/// Provider for collaboration detail - uses mock data for now
+/// Provider for collaboration detail. Fetches the REAL collaboration from
+/// `GET /api/v1/collaborations/{id}` so the detail screen and the finish/close
+/// flow operate on real data (previously this returned mock data, so the finish
+/// action never ran against an actual collaboration).
 final collaborationDetailProvider =
     FutureProvider.family<Collaboration?, String>((ref, id) async {
-      // Simulate network delay
-      await Future<void>.delayed(const Duration(milliseconds: 800));
-      return _mockCollaboration(id);
+      return _fetchCollaboration(id, allowRetry: true);
     });
+
+Future<Collaboration?> _fetchCollaboration(
+  String id, {
+  required bool allowRetry,
+}) async {
+  final url = '${ApiConfig.baseUrl}/collaborations/$id';
+  debugPrint('[Collaboration] GET $url');
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  debugPrint('[Collaboration] response status=${response.statusCode}');
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = json['data'];
+    final raw = data is Map<String, dynamic>
+        ? (data['collaboration'] as Map<String, dynamic>? ?? data)
+        : json;
+    return Collaboration.fromJson(raw);
+  }
+
+  if (response.statusCode == 401 && allowRetry) {
+    await authService.refreshSession();
+    return _fetchCollaboration(id, allowRetry: false);
+  }
+
+  if (response.statusCode == 404) {
+    return null;
+  }
+
+  final body = response.body.isEmpty
+      ? <String, dynamic>{'message': 'Failed to load Kolab'}
+      : jsonDecode(response.body) as Map<String, dynamic>;
+  throw ApiException(
+    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  );
+}
 
 /// Mark a collaboration as completed (D3).
 ///
@@ -188,60 +236,6 @@ final challengeSelectionProvider =
 // =============================================================================
 // Mock Data
 // =============================================================================
-
-Collaboration? _mockCollaboration(String id) {
-  final now = DateTime.now();
-  return Collaboration(
-    id: id,
-    status: CollaborationStatus.scheduled,
-    scheduledDate: now.add(const Duration(days: 12)),
-    scheduledTime: '14:00 - 18:00',
-    businessPartner: const CollaborationPartner(
-      id: 'biz-001',
-      name: 'Nomad Coffee Roasters',
-      profilePhoto: null,
-      category: 'Food & Drink',
-      city: 'Barcelona',
-      userType: 'business',
-    ),
-    communityPartner: const CollaborationPartner(
-      id: 'com-001',
-      name: 'Barcelona Runners Club',
-      profilePhoto: null,
-      category: 'Sports & Fitness',
-      city: 'Barcelona',
-      userType: 'community',
-    ),
-    opportunity: null,
-    contactMethods: const ContactMethods(
-      whatsapp: '+34612345678',
-      email: 'contact@nomadcoffee.com',
-      instagram: '@nomadcoffee',
-    ),
-    businessOffer: const BusinessOffer(
-      venue: true,
-      foodDrink: true,
-      socialMediaExposure: true,
-      contentCreation: false,
-      discount: DiscountOffer(enabled: true, percentage: 15),
-      products: ['Specialty Coffee Tasting Kit'],
-      other: 'Exclusive use of our rooftop terrace',
-    ),
-    communityDeliverables: const CommunityDeliverables(
-      socialMediaContent: true,
-      eventActivation: true,
-      productPlacement: false,
-      communityReach: true,
-      reviewFeedback: false,
-      other: 'Post-run group photo with branding',
-    ),
-    eventId: 'evt-001',
-    qrCodeUrl: null,
-    challenges: _mockChallenges,
-    selectedChallengeIds: ['ch-001', 'ch-003'],
-    createdAt: now.subtract(const Duration(days: 3)),
-  );
-}
 
 final List<Challenge> _mockChallenges = [
   Challenge(
