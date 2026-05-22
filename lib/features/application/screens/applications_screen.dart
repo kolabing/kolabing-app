@@ -11,9 +11,10 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
+import '../widgets/listed_offers_tab.dart';
 
-/// Applications list screen showing both sent and received applications
-/// via a tabbed interface.
+/// Applications list screen with three tabs:
+/// Listed Offers (the user's own posts), Received, and Sent.
 class ApplicationsScreen extends ConsumerStatefulWidget {
   const ApplicationsScreen({super.key});
 
@@ -28,7 +29,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -81,9 +82,12 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                 ),
+                isScrollable: true,
+                tabAlignment: TabAlignment.center,
                 tabs: const [
-                  Tab(text: 'SENT'),
+                  Tab(text: 'LISTED OFFERS'),
                   Tab(text: 'RECEIVED'),
+                  Tab(text: 'SENT'),
                 ],
               ),
               Divider(
@@ -99,10 +103,12 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Tab 1: Sent applications
-          _SentApplicationsTab(),
+          // Tab 1: Listed Offers — the user's own posts (role-aware)
+          const ListedOffersTab(),
           // Tab 2: Received applications
           _ReceivedApplicationsTab(),
+          // Tab 3: Sent applications
+          _SentApplicationsTab(),
         ],
       ),
     );

@@ -16,6 +16,9 @@ enum CollaborationStatus {
     switch (value.toLowerCase()) {
       case 'scheduled':
         return CollaborationStatus.scheduled;
+      // Backend uses 'active' (CollaborationStatus enum); older payloads /
+      // mock data used 'in_progress'. Treat both as the in-progress state.
+      case 'active':
       case 'in_progress':
         return CollaborationStatus.inProgress;
       case 'completed':

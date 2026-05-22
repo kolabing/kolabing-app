@@ -1,57 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
-import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
-import '../../../widgets/navigation/navigation.dart';
-import '../../business/providers/profile_provider.dart';
-import '../../dashboard/providers/dashboard_provider.dart';
-import '../../opportunity/models/opportunity.dart';
-import '../../opportunity/providers/opportunity_provider.dart';
-import '../../opportunity/utils/opportunity_share.dart';
-import '../../subscription/widgets/subscription_paywall.dart';
-import '../widgets/my_opportunity_card.dart';
+import '../../collaboration/providers/collaborations_list_provider.dart';
+import '../../collaboration/widgets/collaboration_list_card.dart';
 
-typedef OpportunityShareInvoker =
-    Future<ShareResult> Function(String text, {Rect? sharePositionOrigin});
-typedef OpportunityShareCopyText = Future<void> Function(String text);
-typedef ShowSubscriptionPaywall = Future<bool?> Function(BuildContext context);
-
-/// My Opportunities screen for community users
+/// My Kolabs screen for community users.
 ///
-/// Shows the user's own opportunities with status tabs,
-/// management actions, pull-to-refresh, and pagination.
+/// Repurposed (2026-05-22): instead of the community's own POSTS, this screen
+/// now shows the community's COLLABORATIONS (the accepted matches) with two
+/// sub-tabs — Active (scheduled / in-progress) and Finished (completed only).
+/// Tapping a collaboration opens `/collaboration/:id`, where the finish /
+/// mark-complete flow lives. Own-posts creation moved to the Applications tab.
+/// Communities are never gated (ROLES-AND-PERMISSIONS §1).
 class MyOpportunitiesScreen extends ConsumerStatefulWidget {
-  const MyOpportunitiesScreen({
-    super.key,
-    this.share = Share.share,
-    this.copyText = _copyText,
-    this.showSubscriptionPaywall = _showSubscriptionPaywall,
-  });
-
-  final OpportunityShareInvoker share;
-  final OpportunityShareCopyText copyText;
-  final ShowSubscriptionPaywall showSubscriptionPaywall;
-
-  static Future<void> _copyText(String text) =>
-      Clipboard.setData(ClipboardData(text: text));
-
-  static Future<bool?> _showSubscriptionPaywall(BuildContext context) =>
-      showModalBottomSheet<bool>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const SubscriptionPaywall(),
-      );
+  const MyOpportunitiesScreen({super.key});
 
   @override
   ConsumerState<MyOpportunitiesScreen> createState() =>
@@ -59,213 +29,15 @@ class MyOpportunitiesScreen extends ConsumerStatefulWidget {
 }
 
 class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
-  final _scrollController = ScrollController();
+  CollaborationsFilter _filter = CollaborationsFilter.active;
 
-  static const _statusTabs = [
-    (label: 'All', value: null),
-    (label: 'Draft', value: 'draft'),
-    (label: 'Published', value: 'published'),
-    (label: 'Closed', value: 'closed'),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      ref.read(myOpportunitiesProvider.notifier).loadMore();
-    }
-  }
-
-  Future<void> _onCreateNew() async {
-    // B1 (2026-05-22): all NEW creation goes through the unified /kolab/flow
-    // via /kolab/new (IntentSelectionScreen). Role gating lives there:
-    // communities get the FREE communitySeeking option and are NEVER
-    // paywalled (ROLES-AND-PERMISSIONS golden rule 1); a non-subscribed
-    // business sees the upgrade prompt inside the intent screen. We therefore
-    // do NOT show a paywall here.
-    await context.push(KolabingRoutes.kolabNew);
-    if (!mounted) {
-      return;
-    }
-    // Refresh the dashboard counts and the opportunities list so a freshly
-    // created kolab shows up immediately on return.
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    if (mounted) {
-      ref
-        ..invalidate(dashboardProvider)
-        ..invalidate(myOpportunitiesProvider);
-    }
-  }
-
-  void _onEdit(Opportunity opportunity) {
-    final opportunityId = opportunity.id;
-    if (opportunityId == null || opportunityId.isEmpty) {
-      return;
-    }
-
-    context.push(
-      KolabingRoutes.buildCommunityOpportunityEditPath(opportunityId),
-      extra: opportunity,
-    );
-  }
-
-  void _onView(Opportunity opportunity) {
-    final id = opportunity.id;
-    if (id == null || id.isEmpty) {
-      return;
-    }
-    context.push('/opportunity/$id');
-  }
-
-  Future<void> _onPublish(String id) async {
-    final success = await ref
-        .read(myOpportunitiesProvider.notifier)
-        .publish(id);
-    if (!mounted) {
-      return;
-    }
-
-    final state = ref.read(myOpportunitiesProvider);
-    final errorMessage = state.error ?? 'Failed to publish Kolab';
-    _showSnackbar(
-      message: success ? 'Kolab published!' : errorMessage,
-      isSuccess: success,
-    );
-  }
-
-  Future<void> _shareOpportunity(Opportunity opportunity) async {
-    final opportunityId = opportunity.id;
-    if (opportunityId == null || opportunityId.isEmpty) {
-      return;
-    }
-
-    final shareMessage = buildOpportunityShareMessage(
-      title: opportunity.title,
-      opportunityId: opportunityId,
-    );
-    final opportunityUrl = buildOpportunityShareUri(opportunityId).toString();
-    final box = context.findRenderObject() as RenderBox?;
-    final shareOrigin = box == null
-        ? null
-        : box.localToGlobal(Offset.zero) & box.size;
-
-    try {
-      final result = await widget.share(
-        shareMessage,
-        sharePositionOrigin: shareOrigin,
-      );
-      if (result.status == ShareResultStatus.unavailable) {
-        await widget.copyText(opportunityUrl);
-        _showSnackbar(
-          message: 'Sharing is unavailable. Link copied instead.',
-          isSuccess: true,
-        );
-      }
-    } on Exception {
-      _showSnackbar(
-        message: 'Could not open the share sheet.',
-        isSuccess: false,
-      );
-    }
-  }
-
-  Future<void> _onClose(String id) async {
-    final success = await ref.read(myOpportunitiesProvider.notifier).close(id);
-    if (!mounted) {
-      return;
-    }
-
-    final state = ref.read(myOpportunitiesProvider);
-    final errorMessage = state.error ?? 'Failed to close Kolab';
-    _showSnackbar(
-      message: success ? 'Kolab closed' : errorMessage,
-      isSuccess: success,
-    );
-  }
-
-  Future<void> _onDelete(String id) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Kolab'),
-        content: const Text(
-          'Are you sure you want to delete this Kolab? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-
-    if (!(confirmed ?? false)) {
-      return;
-    }
-
-    final success = await ref.read(myOpportunitiesProvider.notifier).delete(id);
-    if (!mounted) {
-      return;
-    }
-
-    final state = ref.read(myOpportunitiesProvider);
-    final errorMessage = state.error ?? 'Failed to delete Kolab';
-    _showSnackbar(
-      message: success ? 'Kolab deleted' : errorMessage,
-      isSuccess: success,
-    );
-  }
-
-  void _showSnackbar({required String message, required bool isSuccess}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: isSuccess
-            ? KolabingColors.success
-            : KolabingColors.error,
-      ),
-    );
+  void _openDetail(String id) {
+    context.push('/collaboration/$id');
   }
 
   @override
   Widget build(BuildContext context) {
-    final listState = ref.watch(myOpportunitiesProvider);
-    final currentStatus = ref.watch(myOpportunitiesStatusProvider);
-
-    ref.listen<OpportunityListState>(myOpportunitiesProvider, (
-      previous,
-      next,
-    ) async {
-      if (next.requiresSubscription &&
-          !(previous?.requiresSubscription ?? false)) {
-        ref
-            .read(myOpportunitiesProvider.notifier)
-            .clearSubscriptionRequirement();
-        final allowed = await widget.showSubscriptionPaywall(context);
-        if ((allowed ?? false) && mounted) {
-          await ref.read(profileProvider.notifier).refreshSubscription();
-          await ref.read(myOpportunitiesProvider.notifier).refresh();
-        }
-      }
-    });
+    final asyncItems = ref.watch(collaborationsListProvider(_filter));
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -274,23 +46,17 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(),
-            _buildStatusTabs(currentStatus),
+            _buildSubTabs(),
             Expanded(
-              child: listState.isLoading
-                  ? _buildLoadingState()
-                  : listState.error != null
-                  ? _buildErrorState(listState.error!)
-                  : listState.isEmpty
-                  ? _buildEmptyState()
-                  : _buildList(listState),
+              child: asyncItems.when(
+                data: (items) =>
+                    items.isEmpty ? _buildEmptyState() : _buildList(items),
+                loading: _buildLoadingState,
+                error: (error, _) => _buildErrorState('$error'),
+              ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: KolabingFAB(
-        onPressed: _onCreateNew,
-        tooltip: 'Create New Kolab',
-        heroTag: 'community_my_opportunities_fab',
       ),
     );
   }
@@ -313,7 +79,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Create and manage your Kolabs',
+          'Your active and finished collaborations',
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -324,132 +90,54 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     ),
   );
 
-  Widget _buildStatusTabs(String? currentStatus) => SizedBox(
-    height: 44,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-      children: _statusTabs.map((tab) {
-        final isSelected = currentStatus == tab.value;
-        return Padding(
-          padding: const EdgeInsets.only(right: KolabingSpacing.xs),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                ref.read(myOpportunitiesStatusProvider.notifier).status =
-                    tab.value;
-              },
-              borderRadius: KolabingRadius.borderRadiusRound,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.surface,
-                  borderRadius: KolabingRadius.borderRadiusRound,
-                  border: Border.all(
-                    color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.border,
-                  ),
-                ),
-                child: Text(
-                  tab.label,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: isSelected
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.textPrimary,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
+  Widget _buildSubTabs() => Padding(
+    padding: const EdgeInsets.fromLTRB(
+      KolabingSpacing.md,
+      KolabingSpacing.xs,
+      KolabingSpacing.md,
+      KolabingSpacing.xs,
+    ),
+    child: Row(
+      children: [
+        _SubTab(
+          label: 'Active',
+          isSelected: _filter == CollaborationsFilter.active,
+          onTap: () => setState(() => _filter = CollaborationsFilter.active),
+        ),
+        const SizedBox(width: KolabingSpacing.xs),
+        _SubTab(
+          label: 'Finished',
+          isSelected: _filter == CollaborationsFilter.finished,
+          onTap: () => setState(() => _filter = CollaborationsFilter.finished),
+        ),
+      ],
     ),
   );
 
-  Widget _buildList(OpportunityListState listState) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.sm,
-        ),
-        child: Text(
-          '${listState.total} ${listState.total == 1 ? 'Kolab' : 'Kolabs'}',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: KolabingColors.textTertiary,
-          ),
-        ),
+  Widget _buildList(List<CollaborationListItem> items) => RefreshIndicator(
+    color: KolabingColors.primary,
+    onRefresh: () async {
+      ref.invalidate(collaborationsListProvider(_filter));
+      await ref.read(collaborationsListProvider(_filter).future);
+    },
+    child: ListView.separated(
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.sm,
+        KolabingSpacing.md,
+        KolabingSpacing.xxl,
       ),
-      Expanded(
-        child: RefreshIndicator(
-          color: KolabingColors.primary,
-          onRefresh: () async {
-            await ref.read(myOpportunitiesProvider.notifier).refresh();
-          },
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: const EdgeInsets.fromLTRB(
-              KolabingSpacing.md,
-              0,
-              KolabingSpacing.md,
-              KolabingSpacing.xxl,
-            ),
-            itemCount:
-                listState.opportunities.length +
-                (listState.isLoadingMore ? 1 : 0),
-            separatorBuilder: (context, index) =>
-                const SizedBox(height: KolabingSpacing.sm),
-            itemBuilder: (context, index) {
-              if (index >= listState.opportunities.length) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(KolabingSpacing.md),
-                    child: CircularProgressIndicator(
-                      color: KolabingColors.primary,
-                      strokeWidth: 2,
-                    ),
-                  ),
-                );
-              }
-
-              final opportunity = listState.opportunities[index];
-              return MyOpportunityCard(
-                opportunity: opportunity,
-                onView: opportunity.status == OpportunityStatus.published
-                    ? () => _onView(opportunity)
-                    : null,
-                onEdit: () => _onEdit(opportunity),
-                onPublish: opportunity.id != null
-                    ? () => _onPublish(opportunity.id!)
-                    : null,
-                onShare: opportunity.id != null
-                    ? () => _shareOpportunity(opportunity)
-                    : null,
-                onClose: opportunity.id != null
-                    ? () => _onClose(opportunity.id!)
-                    : null,
-                onDelete: opportunity.id != null
-                    ? () => _onDelete(opportunity.id!)
-                    : null,
-              );
-            },
-          ),
-        ),
-      ),
-    ],
+      itemCount: items.length,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: KolabingSpacing.sm),
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return CollaborationListCard(
+          item: item,
+          onTap: () => _openDetail(item.id),
+        );
+      },
+    ),
   );
 
   Widget _buildLoadingState() => SingleChildScrollView(
@@ -463,7 +151,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             baseColor: KolabingColors.surfaceVariant,
             highlightColor: KolabingColors.surface,
             child: Container(
-              height: 120,
+              height: 88,
               decoration: BoxDecoration(
                 color: KolabingColors.surface,
                 borderRadius: KolabingRadius.borderRadiusLg,
@@ -490,7 +178,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
               width: 80,
               height: 80,
               child: Icon(
-                LucideIcons.star,
+                LucideIcons.heartHandshake,
                 size: 36,
                 color: KolabingColors.textTertiary,
               ),
@@ -498,7 +186,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'No Kolabs yet',
+            _filter == CollaborationsFilter.active
+                ? 'No active collaborations'
+                : 'No finished collaborations',
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -507,22 +197,14 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Create your first Kolab and start connecting.',
+            _filter == CollaborationsFilter.active
+                ? 'When an application is accepted, the collaboration shows up here.'
+                : 'Completed collaborations will appear here.',
             style: GoogleFonts.openSans(
               fontSize: 14,
               color: KolabingColors.textSecondary,
             ),
             textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
-            onPressed: _onCreateNew,
-            icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('Create Kolab'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-            ),
           ),
         ],
       ),
@@ -571,7 +253,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           ElevatedButton(
             onPressed: () {
-              ref.read(myOpportunitiesProvider.notifier).refresh();
+              ref.invalidate(collaborationsListProvider(_filter));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
@@ -583,4 +265,53 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       ),
     ),
   );
+}
+
+class _SubTab extends StatelessWidget {
+  const _SubTab({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: KolabingRadius.borderRadiusRound,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.md,
+            vertical: KolabingSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected ? KolabingColors.primary : KolabingColors.surface,
+            borderRadius: KolabingRadius.borderRadiusRound,
+            border: Border.all(
+              color: isSelected
+                  ? KolabingColors.primary
+                  : KolabingColors.border,
+            ),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.dmSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: isSelected
+                  ? KolabingColors.onPrimary
+                  : KolabingColors.textPrimary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -3,101 +3,118 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:kolabing_app/config/routes/routes.dart';
-import 'package:kolabing_app/features/business/providers/profile_provider.dart';
 import 'package:kolabing_app/features/business/screens/my_kollabs_screen.dart';
-import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
-import 'package:kolabing_app/features/kolab/models/kolab.dart';
-import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
+import 'package:kolabing_app/features/collaboration/models/collaboration.dart';
+import 'package:kolabing_app/features/collaboration/providers/collaborations_list_provider.dart';
+
+CollaborationListItem _item({
+  required String id,
+  required CollaborationStatus status,
+  required String partnerName,
+}) => CollaborationListItem(
+  id: id,
+  status: status,
+  partnerName: partnerName,
+  scheduledDate: DateTime(2026, 6, 15),
+  opportunityTitle: 'Spring Launch',
+);
 
 void main() {
-  testWidgets(
-    'tapping Edit opens the unified kolab flow with the existing draft',
-    (tester) async {
-      final kolab = Kolab(
-        id: '42',
-        intentType: IntentType.venuePromotion,
-        status: 'draft',
-        title: 'Spring Launch',
-        description: 'Need a community partner for our launch event.',
-        preferredCity: 'Madrid',
-        venueName: 'Launch Hub',
-        venueAddress: 'Madrid',
-      );
+  testWidgets('My Kolabs shows Active and Finished sub-tabs', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          collaborationsListProvider(
+            CollaborationsFilter.active,
+          ).overrideWith((ref) async => const <CollaborationListItem>[]),
+        ],
+        child: const MaterialApp(home: MyKollabsScreen()),
+      ),
+    );
 
-      final router = GoRouter(
-        initialLocation: '/',
-        routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const MyKollabsScreen(),
-          ),
-          GoRoute(
-            path: KolabingRoutes.kolabNew,
-            builder: (context, state) =>
-                const Scaffold(body: Text('new-collab-screen')),
-          ),
-          GoRoute(
-            path: KolabingRoutes.kolabFlow,
-            builder: (context, state) {
-              final extra = state.extra as Kolab?;
-              return Scaffold(body: Text('edit-kolab-flow:${extra?.id}'));
-            },
+    await tester.pumpAndSettle();
+
+    expect(find.text('MY KOLABS'), findsOneWidget);
+    expect(find.text('Active'), findsOneWidget);
+    expect(find.text('Finished'), findsOneWidget);
+  });
+
+  testWidgets('tapping an active collaboration opens /collaboration/:id', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const MyKollabsScreen(),
+        ),
+        GoRoute(
+          path: '/collaboration/:id',
+          builder: (context, state) =>
+              Scaffold(body: Text('detail:${state.pathParameters['id']}')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          collaborationsListProvider(CollaborationsFilter.active).overrideWith(
+            (ref) async => [
+              _item(
+                id: 'collab-7',
+                status: CollaborationStatus.scheduled,
+                partnerName: 'Move Club',
+              ),
+            ],
           ),
         ],
-      );
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            myKolabsProvider.overrideWith(
-              () => _FakeMyKolabsNotifier(
-                MyKolabsState(kolabs: [kolab], total: 1),
+    await tester.pumpAndSettle();
+
+    expect(find.text('Move Club'), findsOneWidget);
+
+    await tester.tap(find.text('Move Club'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('detail:collab-7'), findsOneWidget);
+  });
+
+  testWidgets('switching to Finished loads the completed bucket', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          collaborationsListProvider(
+            CollaborationsFilter.active,
+          ).overrideWith((ref) async => const <CollaborationListItem>[]),
+          collaborationsListProvider(
+            CollaborationsFilter.finished,
+          ).overrideWith(
+            (ref) async => [
+              _item(
+                id: 'collab-9',
+                status: CollaborationStatus.completed,
+                partnerName: 'Book Lovers',
               ),
-            ),
-            profileProvider.overrideWith(
-              () => _FakeProfileNotifier(
-                const ProfileState(isLoading: false, isInitialized: true),
-              ),
-            ),
-          ],
-          child: MaterialApp.router(routerConfig: router),
-        ),
-      );
+            ],
+          ),
+        ],
+        child: const MaterialApp(home: MyKollabsScreen()),
+      ),
+    );
 
-      await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
+    expect(find.text('No active collaborations'), findsOneWidget);
 
-      expect(find.text('EDIT'), findsOneWidget);
+    await tester.tap(find.text('Finished'));
+    await tester.pumpAndSettle();
 
-      await tester.tap(find.text('EDIT'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('edit-kolab-flow:42'), findsOneWidget);
-      expect(find.text('new-collab-screen'), findsNothing);
-    },
-  );
-}
-
-class _FakeMyKolabsNotifier extends MyKolabsNotifier {
-  _FakeMyKolabsNotifier(this._initialState);
-
-  final MyKolabsState _initialState;
-
-  @override
-  MyKolabsState build() => _initialState;
-
-  @override
-  Future<void> refresh() async {}
-
-  @override
-  Future<void> loadMore() async {}
-}
-
-class _FakeProfileNotifier extends ProfileNotifier {
-  _FakeProfileNotifier(this._initialState);
-
-  final ProfileState _initialState;
-
-  @override
-  ProfileState build() => _initialState;
+    expect(find.text('Book Lovers'), findsOneWidget);
+  });
 }
