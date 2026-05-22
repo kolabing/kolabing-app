@@ -58,11 +58,10 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
   }
 
   Future<void> _onCreateNew() async {
-    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
-    if (!allowed || !mounted) {
-      return;
-    }
-
+    // B1 (2026-05-22): route all NEW creation through the unified /kolab/flow
+    // via /kolab/new (IntentSelectionScreen). The subscription gate for a
+    // non-subscribed business is enforced inside IntentSelectionScreen
+    // (_LockedBusinessCreateState), so we no longer pre-gate here.
     await context.push(KolabingRoutes.kolabNew);
   }
 

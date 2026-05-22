@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:kolabing_app/config/routes/routes.dart';
-import 'package:kolabing_app/config/theme/colors.dart';
 import 'package:kolabing_app/features/auth/screens/welcome_screen.dart';
 import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
@@ -58,54 +57,66 @@ Future<void> _pumpWelcome(
 }
 
 void main() {
+  // The welcome screen was redesigned (commit c1e1c1a) into a dark landing-page
+  // hero: pure-black background, yellow wordmark, a "REAL PEOPLE / REAL
+  // EXPERIENCES / REAL GROWTH." headline, a GET STARTED primary CTA and a LOGIN
+  // text link. These tests assert that current intended design.
   testWidgets(
-    'welcome screen keeps the cream editorial layout and routes correctly',
+    'welcome screen renders the dark landing hero and routes correctly',
     (WidgetTester tester) async {
       await _pumpWelcome(tester);
 
+      // Dark hero background (not the old cream editorial layout).
       final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
-      expect(scaffold.backgroundColor, KolabingColors.background);
+      expect(scaffold.backgroundColor, const Color(0xFF000000));
 
-      const removedHeadlines = [
+      // Old editorial copy is gone.
+      const removedCopy = [
         'BRANDS X',
         'COMMUNITIES',
         'Match fast. Launch louder.',
+        'OFFERS',
+        'EVENTS',
+        'PARTNERSHIPS',
+        'CREATE ACCOUNT',
+        'Free to join as a brand or community.',
       ];
-      for (final label in removedHeadlines) {
+      for (final label in removedCopy) {
         expect(find.text(label), findsNothing);
       }
 
-      for (final label in ['OFFERS', 'EVENTS', 'PARTNERSHIPS', 'GROWTH']) {
-        expect(find.text(label), findsOneWidget);
+      // New stacked headline.
+      for (final line in ['REAL PEOPLE', 'REAL EXPERIENCES', 'REAL GROWTH.']) {
+        expect(find.text(line), findsOneWidget);
       }
 
+      // Yellow wordmark logo.
       final logoFinder = find.byType(KolabingLogo);
       expect(logoFinder, findsOneWidget);
       final logo = tester.widget<KolabingLogo>(logoFinder);
-      expect(logo.variant, KolabingLogoVariant.lightTransparent);
+      expect(logo.variant, KolabingLogoVariant.yellowTransparent);
 
-      expect(
-        find.text('Free to join as a brand or community.'),
-        findsOneWidget,
-      );
-
-      final createAccountFinder = find.text('CREATE ACCOUNT');
+      // Primary CTA + login link.
+      final getStartedFinder = find.text('GET STARTED');
       final loginFinder = find.text('LOGIN');
-      expect(createAccountFinder, findsOneWidget);
+      expect(getStartedFinder, findsOneWidget);
       expect(loginFinder, findsOneWidget);
       expect(find.byType(FilledButton), findsOneWidget);
       expect(find.byType(TextButton), findsOneWidget);
+      // CTA sits above the login link.
       expect(
-        tester.getTopLeft(createAccountFinder).dy,
+        tester.getTopLeft(getStartedFinder).dy,
         lessThan(tester.getTopLeft(loginFinder).dy),
       );
 
-      await tester.tap(createAccountFinder);
+      // GET STARTED routes to user-type selection.
+      await tester.tap(getStartedFinder);
       await tester.pumpAndSettle();
       expect(find.text('user type selection'), findsOneWidget);
 
+      // LOGIN routes to the login screen.
       await _pumpWelcome(tester);
-      await tester.tap(loginFinder);
+      await tester.tap(find.text('LOGIN'));
       await tester.pumpAndSettle();
       expect(find.text('login screen'), findsOneWidget);
     },
@@ -120,10 +131,10 @@ void main() {
       textScaleFactor: 1.25,
     );
 
+    // No RenderFlex overflow (previously the CTA row overflowed by 27px).
     expect(tester.takeException(), isNull);
     expect(find.byType(KolabingLogo), findsOneWidget);
-    expect(find.text('Free to join as a brand or community.'), findsOneWidget);
-    expect(find.text('CREATE ACCOUNT'), findsOneWidget);
+    expect(find.text('GET STARTED'), findsOneWidget);
     expect(find.text('LOGIN'), findsOneWidget);
   });
 }

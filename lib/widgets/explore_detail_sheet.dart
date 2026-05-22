@@ -470,9 +470,18 @@ class ExploreDetailSheet extends ConsumerWidget {
     final startFormatted = dateFormat.format(opportunity.availabilityStart);
     final endFormatted = dateFormat.format(opportunity.availabilityEnd);
 
+    // Prefer the richer "area, city" label from the discovery item so a
+    // community viewing a business sees the business's neighbourhood/area, not
+    // just the city. Falls back to the plain city when no area is available.
+    final discoveryLocation = discoveryItem?.locationLabel.trim();
+    final locationLabel =
+        (discoveryLocation != null && discoveryLocation.isNotEmpty)
+        ? discoveryLocation
+        : opportunity.preferredCity;
+
     final items = <_DetailItem>[
-      if (opportunity.preferredCity.isNotEmpty)
-        _DetailItem(icon: LucideIcons.mapPin, label: opportunity.preferredCity),
+      if (locationLabel.isNotEmpty)
+        _DetailItem(icon: LucideIcons.mapPin, label: locationLabel),
       _DetailItem(
         icon: LucideIcons.building2,
         label: opportunity.venueMode.displayName,

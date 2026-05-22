@@ -133,7 +133,7 @@ void main() {
     expect(profileNotifier.refreshSubscriptionCalls, 1);
   });
 
-  testWidgets('create new opportunity is blocked behind the paywall', (
+  testWidgets('create new opportunity is free for communities (no paywall)', (
     tester,
   ) async {
     var paywallShown = 0;
@@ -151,9 +151,9 @@ void main() {
           ),
         ),
         GoRoute(
-          path: '/community/opportunities/new',
+          path: '/kolab/new',
           builder: (context, state) =>
-              const Scaffold(body: Text('create-opportunity')),
+              const Scaffold(body: Text('kolab-new-flow')),
         ),
       ],
     );
@@ -191,8 +191,10 @@ void main() {
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
-    expect(paywallShown, 1);
-    expect(find.text('create-opportunity'), findsNothing);
+    // Communities are NEVER paywalled (ROLES §1): tapping create goes straight
+    // to the unified kolab flow with no paywall.
+    expect(paywallShown, 0);
+    expect(find.text('kolab-new-flow'), findsOneWidget);
   });
 
   testWidgets('published opportunity View navigates to opportunity detail', (

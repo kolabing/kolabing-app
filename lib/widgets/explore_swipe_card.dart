@@ -272,6 +272,13 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           _buildKolabTitle(),
           const SizedBox(height: KolabingSpacing.xs),
           _buildCreatorIdentity(),
+          // Concrete offer banner — mirrors the community-side headline banner
+          // so both feeds present the offer with the same clean treatment
+          // (e.g. "Social Media · 30+ people") instead of a plain text row.
+          if (_item.communityOfferLine case final offerLine?) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            _buildHeadlineBanner(offerLine),
+          ],
           const SizedBox(height: KolabingSpacing.sm),
           _buildBusinessExploreHighlights(),
         ] else ...[
@@ -594,7 +601,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           label: 'Looking for',
           value: request.needTypeLabels.join(', '),
         ),
-      if (request.offerInReturnLabels.isNotEmpty)
+      // "They offer" is now surfaced concretely in the headline banner above
+      // (see [DiscoveryItem.communityOfferLine]); only show the detail row here
+      // when the banner could not be built, so we never lose the data.
+      if (_item.communityOfferLine == null &&
+          request.offerInReturnLabels.isNotEmpty)
         _buildHighlightRow(
           icon: Icons.redeem_rounded,
           label: 'They offer',

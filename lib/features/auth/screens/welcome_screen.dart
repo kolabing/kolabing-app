@@ -23,10 +23,10 @@ const Color _kMutedWhite = Color(0xCCFFFFFF); // ~80% white
 
 // Hero photos cycle through these in order. All sit in assets/images/.
 const List<String> _kHeroImages = <String>[
-  'assets/images/welcome_hero.png',         // rooftop cheers, Sagrada at sunset
-  'assets/images/welcome_hero_coffee.png',  // runners circle with coffee cups
-  'assets/images/welcome_hero_yoga.png',    // yoga silhouettes at sunset
-  'assets/images/welcome_hero_bike.png',    // cyclists on mountain road
+  'assets/images/welcome_hero.png', // rooftop cheers, Sagrada at sunset
+  'assets/images/welcome_hero_coffee.png', // runners circle with coffee cups
+  'assets/images/welcome_hero_yoga.png', // yoga silhouettes at sunset
+  'assets/images/welcome_hero_bike.png', // cyclists on mountain road
 ];
 
 // ---------------------------------------------------------------------------
@@ -98,14 +98,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           ),
         );
 
-    Animation<Offset> slide(double a, double b,
-            {Offset from = const Offset(0, 18)}) =>
-        Tween<Offset>(begin: from, end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _entry,
-            curve: Interval(a, b, curve: Curves.easeOutCubic),
-          ),
-        );
+    Animation<Offset> slide(
+      double a,
+      double b, {
+      Offset from = const Offset(0, 18),
+    }) => Tween<Offset>(begin: from, end: Offset.zero).animate(
+      CurvedAnimation(
+        parent: _entry,
+        curve: Interval(a, b, curve: Curves.easeOutCubic),
+      ),
+    );
 
     _heroFade = fade(0.00, 0.30);
     _logoOpacity = fade(0.10, 0.35);
@@ -122,13 +124,17 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         weight: 40,
       ),
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 1.0, end: 1.05)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.05,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 12,
       ),
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 1.05, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween<double>(
+          begin: 1.05,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 18,
       ),
       TweenSequenceItem<double>(
@@ -254,8 +260,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           onPressed: _onLogin,
                           style: TextButton.styleFrom(
                             minimumSize: const Size(88, 48),
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                           ),
                           child: Text(
                             'LOGIN',
@@ -396,10 +401,7 @@ class _HeroBackdropState extends State<_HeroBackdrop> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: <Color>[
-                      Colors.transparent,
-                      _kBg,
-                    ],
+                    colors: <Color>[Colors.transparent, _kBg],
                   ),
                 ),
               ),
@@ -514,16 +516,16 @@ class _FitLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          maxLines: 1,
-          softWrap: false,
-          overflow: TextOverflow.visible,
-          style: style,
-        ),
-      );
+    fit: BoxFit.scaleDown,
+    alignment: Alignment.centerLeft,
+    child: Text(
+      text,
+      maxLines: 1,
+      softWrap: false,
+      overflow: TextOverflow.visible,
+      style: style,
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -738,8 +740,7 @@ class _NotifCard extends StatelessWidget {
           filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             width: width,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
             decoration: BoxDecoration(
               color: _kCardSurface.withValues(alpha: 0.96),
               borderRadius: BorderRadius.circular(18),
@@ -819,38 +820,46 @@ class _PrimaryCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        button: true,
-        label: 'Get started',
-        child: Container(
-          height: 60,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: _kAccentYellow.withValues(alpha: 0.28),
-                blurRadius: 28,
-                offset: const Offset(0, 14),
-              ),
-            ],
+    button: true,
+    label: 'Get started',
+    child: Container(
+      height: 60,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: _kAccentYellow.withValues(alpha: 0.28),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
           ),
-          child: FilledButton(
-            onPressed: onPressed,
-            style: FilledButton.styleFrom(
-              backgroundColor: _kAccentYellow,
-              foregroundColor: _kInk,
-              elevation: 0,
-              shadowColor: Colors.transparent,
-              minimumSize: const Size.fromHeight(60),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
+        ],
+      ),
+      child: FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: _kAccentYellow,
+          foregroundColor: _kInk,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          minimumSize: const Size.fromHeight(60),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // Flexible + FittedBox lets the label shrink instead of
+            // overflowing on narrow screens at large text scales (e.g.
+            // 320dp width @ 1.25x previously overflowed the Row by 27px).
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
                   'GET STARTED',
+                  maxLines: 1,
+                  softWrap: false,
                   style: GoogleFonts.darkerGrotesque(
                     color: _kInk,
                     fontSize: 16,
@@ -859,17 +868,15 @@ class _PrimaryCta extends StatelessWidget {
                     height: 1.0,
                   ),
                 ),
-                const SizedBox(width: 10),
-                const Icon(
-                  LucideIcons.arrowRight,
-                  size: 18,
-                  color: _kInk,
-                ),
-              ],
+              ),
             ),
-          ),
+            const SizedBox(width: 10),
+            const Icon(LucideIcons.arrowRight, size: 18, color: _kInk),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -889,11 +896,11 @@ class _FadeSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: Listenable.merge(<Listenable>[opacity, offset]),
-        builder: (context, c) => Opacity(
-          opacity: opacity.value.clamp(0.0, 1.0),
-          child: Transform.translate(offset: offset.value, child: c),
-        ),
-        child: child,
-      );
+    animation: Listenable.merge(<Listenable>[opacity, offset]),
+    builder: (context, c) => Opacity(
+      opacity: opacity.value.clamp(0.0, 1.0),
+      child: Transform.translate(offset: offset.value, child: c),
+    ),
+    child: child,
+  );
 }

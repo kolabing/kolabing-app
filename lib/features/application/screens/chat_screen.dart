@@ -10,6 +10,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/blurred_identity.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -132,13 +133,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           );
         }
 
+        // Subscription-lapse re-gate (§2.8): a business whose subscription
+        // lapsed loses chat access until it resubscribes. The community
+        // counterparty is NEVER blurred, so we AND with isBusiness as a guard.
+        final isBusiness = ref.read(authProvider).user?.isBusiness ?? false;
+        final mustResubscribe = isBusiness && application.viewerMustResubscribe;
+
         return _buildScaffold(
           application: application,
+          counterpartyName: _counterpartyName(application),
           body: Column(
             children: [
               _buildApplicationHeader(application),
-              Expanded(child: _buildMessagesList(chatState)),
-              _buildInputField(chatState.isSending),
+              if (mustResubscribe) _buildResubscribeBanner(),
+              Expanded(
+                child: mustResubscribe
+                    // Blur the conversation (no full-screen block, golden rule
+                    // 5) and prevent interaction while re-gated.
+                    ? IgnorePointer(
+                        child: BlurredIdentity(
+                          enabled: true,
+                          sigma: 6,
+                          child: _buildMessagesList(chatState),
+                        ),
+                      )
+                    : _buildMessagesList(chatState),
+              ),
+              // Hide the composer entirely while re-gated.
+              if (!mustResubscribe) _buildInputField(chatState.isSending),
             ],
           ),
         );
@@ -146,12 +168,90 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
+  /// Compact "Resubscribe to continue" banner shown in chat for a lapsed
+  /// business. Routes to the subscription plans screen.
+  Widget _buildResubscribeBanner() {
+    return Material(
+      color: KolabingColors.softYellow,
+      child: InkWell(
+        onTap: () => context.push('/business/plans'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.md,
+            vertical: KolabingSpacing.sm,
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                LucideIcons.lock,
+                size: 16,
+                color: KolabingColors.onPrimary,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Your subscription lapsed. Resubscribe to continue this chat.',
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: KolabingSpacing.xs),
+              Text(
+                'RESUBSCRIBE',
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: KolabingColors.onPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Resolve the OTHER party's name to show in the chat header (§4: "The other
+  /// party's name is shown in chat").
+  ///
+  /// `application.recipientName` is always the opportunity CREATOR. When the
+  /// current user IS the creator (they received the application), the header
+  /// must instead show the applicant — otherwise the user sees their own name.
+  /// We compare the current user's profile id against the applicant's id.
+  String _counterpartyName(Application application) {
+    final user = ref.read(authProvider).user;
+    final myId = user?.id ?? '';
+
+    // The application carries two profile ids: the applicant (applicantId) and
+    // the opportunity creator (recipientId). If our own id matches one, the
+    // counterparty is the other. UserModel.id is the viewer's profile id, which
+    // mirrors these `profiles.id` values per docs/ROLES-BACKEND-DB-MAP.md §1.
+    if (myId.isNotEmpty && application.applicantId == myId) {
+      return application.recipientName;
+    }
+    if (myId.isNotEmpty && application.recipientId == myId) {
+      return application.applicantName;
+    }
+    // Last resort when ids are unavailable: prefer a real (non-"Unknown")
+    // applicant name, else the creator name. This preserves prior behaviour for
+    // sent-application payloads (which only populate the creator).
+    final applicant = application.applicantName;
+    if (applicant.isNotEmpty && applicant != 'Unknown') return applicant;
+    return application.recipientName;
+  }
+
   Widget _buildScaffold({
     required Widget body,
     Application? application,
+    String? counterpartyName,
     bool isLoading = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final displayName = counterpartyName ?? application?.recipientName ?? '';
 
     return Scaffold(
       backgroundColor: isDark
@@ -173,7 +273,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: application != null
             ? Row(
                 children: [
-                  _buildAvatar(application.recipientName, isDark: isDark),
+                  _buildAvatar(displayName, isDark: isDark),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: Column(
@@ -181,7 +281,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          application.recipientName,
+                          displayName,
                           style: GoogleFonts.rubik(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

@@ -14,6 +14,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../dashboard/providers/dashboard_provider.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../opportunity/utils/opportunity_share.dart';
@@ -87,23 +88,24 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
   }
 
   Future<void> _onCreateNew() async {
-    final profileState = ref.read(profileProvider);
-    if (profileState.isSubscribed) {
-      await context.push(KolabingRoutes.communityOpportunitiesNew);
-      return;
-    }
-
-    final allowed = await widget.showSubscriptionPaywall(context);
-    if (!(allowed ?? false) || !mounted) {
-      return;
-    }
-
-    await ref.read(profileProvider.notifier).refreshSubscription();
+    // B1 (2026-05-22): all NEW creation goes through the unified /kolab/flow
+    // via /kolab/new (IntentSelectionScreen). Role gating lives there:
+    // communities get the FREE communitySeeking option and are NEVER
+    // paywalled (ROLES-AND-PERMISSIONS golden rule 1); a non-subscribed
+    // business sees the upgrade prompt inside the intent screen. We therefore
+    // do NOT show a paywall here.
+    await context.push(KolabingRoutes.kolabNew);
     if (!mounted) {
       return;
     }
-
-    await context.push(KolabingRoutes.communityOpportunitiesNew);
+    // Refresh the dashboard counts and the opportunities list so a freshly
+    // created kolab shows up immediately on return.
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    if (mounted) {
+      ref
+        ..invalidate(dashboardProvider)
+        ..invalidate(myOpportunitiesProvider);
+    }
   }
 
   void _onEdit(Opportunity opportunity) {

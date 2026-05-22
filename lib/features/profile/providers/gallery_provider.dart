@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../config/constants/api.dart';
 import '../../../utils/image_picker_normalize.dart';
 import '../../../utils/remote_media_url.dart';
 import '../services/gallery_service.dart';
@@ -68,11 +69,43 @@ class GalleryPhoto {
             : null) ??
         '';
 
-    final normalizedUrl = normalizeRemoteMediaUrl(rawUrl);
+    final normalizedUrl = _resolveAgainstHostRoot(rawUrl);
     debugPrint(
       'GalleryPhoto.fromJson: id=${json['id']}, url=$normalizedUrl, keys=${json.keys.toList()}',
     );
     return normalizedUrl;
+  }
+
+  /// Resolves a gallery/media URL to an absolute URL.
+  ///
+  /// Already-absolute and `data:` URLs are returned untouched (delegated to
+  /// [normalizeRemoteMediaUrl]). Relative URLs (whether or not they carry a
+  /// leading slash, e.g. `storage/...` or `/storage/...`) are resolved against
+  /// the API HOST ROOT rather than the `/api/v1/` path. Stored media lives at
+  /// the domain root (`https://host/storage/...`), so resolving against the API
+  /// path would incorrectly yield `https://host/api/v1/storage/...`.
+  static String _resolveAgainstHostRoot(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty || trimmed.startsWith('data:')) {
+      return trimmed;
+    }
+
+    final parsed = Uri.tryParse(trimmed);
+    if (parsed != null && parsed.hasScheme) {
+      // Already absolute; keep as-is.
+      return normalizeRemoteMediaUrl(trimmed);
+    }
+
+    // Resolve relative paths against the scheme+host origin (drops `/api/v1`).
+    final apiUri = Uri.parse(ApiConfig.baseUrl);
+    final hostRoot = Uri(
+      scheme: apiUri.scheme,
+      host: apiUri.host,
+      port: apiUri.hasPort ? apiUri.port : null,
+      path: '/',
+    );
+    final relative = trimmed.startsWith('/') ? trimmed.substring(1) : trimmed;
+    return hostRoot.resolve(relative).toString();
   }
 }
 

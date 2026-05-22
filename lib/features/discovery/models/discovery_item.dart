@@ -140,6 +140,35 @@ class DiscoveryItem {
     return null;
   }
 
+  /// Concrete one-line summary of what a COMMUNITY offers in return, used on
+  /// the business-side Explore card so it reads as cleanly as the community
+  /// side (e.g. "Social Media · 30+ people"). Returns null when no concrete
+  /// detail is available, so the caller can fall back gracefully.
+  String? get communityOfferLine {
+    final request = communityRequest;
+    if (request == null) {
+      return null;
+    }
+
+    final parts = <String>[];
+    final offers = request.offerInReturnLabels;
+    if (offers.isNotEmpty) {
+      parts.add(offers.take(2).join(' · '));
+    }
+
+    // Append a concrete people-scale (attendance preferred, else community
+    // size) so the line mirrors the "Social Media · 30+ people" pattern.
+    final scale = request.typicalAttendance ?? request.communitySize;
+    if (scale != null && scale > 0) {
+      parts.add('$scale+ people');
+    }
+
+    if (parts.isEmpty) {
+      return null;
+    }
+    return parts.join(' · ');
+  }
+
   String? get activityBadgeLabel {
     if (activeThisMonth ?? false) {
       final customLabel = activeThisMonthLabel?.trim();
@@ -408,6 +437,8 @@ class BusinessOfferSummary {
     this.offerTypes = const <String>[],
     this.venueType,
     this.productType,
+    this.venueTypeLabelRaw,
+    this.productTypeLabelRaw,
     this.seekingCommunities = const <DiscoveryLabelValue>[],
     this.minCommunitySize,
     this.expectedDeliverables = const <String>[],
@@ -420,11 +451,11 @@ class BusinessOfferSummary {
             .toList(),
         venueType: json['venue_type']?.toString(),
         productType: json['product_type']?.toString(),
-        seekingCommunities:
-            (json['seeking_communities'] as List<dynamic>? ?? const <dynamic>[])
-                .whereType<Map<String, dynamic>>()
-                .map(DiscoveryLabelValue.fromJson)
-                .toList(),
+        // Prefer the backend's pre-formatted `*_type_label` slug variants when
+        // present so the card never has to title-case a raw slug.
+        venueTypeLabelRaw: json['venue_type_label']?.toString(),
+        productTypeLabelRaw: json['product_type_label']?.toString(),
+        seekingCommunities: _parseLabelValues(json['seeking_communities']),
         minCommunitySize: _parseInt(json['min_community_size']),
         expectedDeliverables:
             (json['expected_deliverables'] as List<dynamic>? ??
@@ -436,6 +467,8 @@ class BusinessOfferSummary {
   final List<String> offerTypes;
   final String? venueType;
   final String? productType;
+  final String? venueTypeLabelRaw;
+  final String? productTypeLabelRaw;
   final List<DiscoveryLabelValue> seekingCommunities;
   final int? minCommunitySize;
   final List<String> expectedDeliverables;
@@ -444,10 +477,11 @@ class BusinessOfferSummary {
       offerTypes.map(_discoveryLabelFromKey).toList();
   List<String> get seekingCommunityLabels =>
       seekingCommunities.map((item) => item.label).toList();
-  String? get venueTypeLabel =>
-      venueType != null ? _discoveryLabelFromKey(venueType!) : null;
+  // Prefer the backend-formatted label; fall back to title-casing the slug so
+  // a raw value like "coffee_shop" never reaches the UI.
+  String? get venueTypeLabel => _preferFormatted(venueTypeLabelRaw, venueType);
   String? get productTypeLabel =>
-      productType != null ? _discoveryLabelFromKey(productType!) : null;
+      _preferFormatted(productTypeLabelRaw, productType);
 }
 
 @immutable
@@ -466,11 +500,7 @@ class CommunityRequestSummary {
         needTypes: (json['need_types'] as List<dynamic>? ?? const <dynamic>[])
             .map((value) => value.toString())
             .toList(),
-        communityTypes:
-            (json['community_types'] as List<dynamic>? ?? const <dynamic>[])
-                .whereType<Map<String, dynamic>>()
-                .map(DiscoveryLabelValue.fromJson)
-                .toList(),
+        communityTypes: _parseLabelValues(json['community_types']),
         communitySize: _parseInt(json['community_size']),
         typicalAttendance: _parseInt(json['typical_attendance']),
         offersInReturn:
@@ -562,14 +592,42 @@ List<DiscoveryMatchSignal> _parseBreakdown(Object? raw) {
 class DiscoveryLabelValue {
   const DiscoveryLabelValue({required this.key, required this.label});
 
-  factory DiscoveryLabelValue.fromJson(Map<String, dynamic> json) =>
-      DiscoveryLabelValue(
-        key: json['key']?.toString() ?? '',
-        label: json['label']?.toString() ?? '',
-      );
+  factory DiscoveryLabelValue.fromJson(Map<String, dynamic> json) {
+    final key = json['key']?.toString() ?? '';
+    // Prefer the backend's pre-formatted label (`label`, also accepts
+    // `type_label`). If absent, format the raw slug client-side so we never
+    // surface a raw value like "Run_Club" — it becomes "Run Club".
+    final rawLabel = (json['label'] ?? json['type_label'])?.toString().trim();
+    final label = (rawLabel != null && rawLabel.isNotEmpty)
+        ? rawLabel
+        : _discoveryLabelFromKey(key);
+    return DiscoveryLabelValue(key: key, label: label);
+  }
+
+  /// Builds a label/value from a heterogeneous list entry that may be a
+  /// `{key,label}` map OR a bare slug string. A bare string is title-cased so
+  /// the UI always shows a formatted label (e.g. "run_club" -> "Run Club"),
+  /// never the raw slug.
+  factory DiscoveryLabelValue.fromDynamic(Object? value) {
+    if (value is Map<String, dynamic>) {
+      return DiscoveryLabelValue.fromJson(value);
+    }
+    final slug = value?.toString() ?? '';
+    return DiscoveryLabelValue(key: slug, label: _discoveryLabelFromKey(slug));
+  }
 
   final String key;
   final String label;
+}
+
+/// Parses a discovery type-tag list that may contain `{key,label}` maps and/or
+/// bare slug strings, always yielding formatted labels (never raw slugs).
+List<DiscoveryLabelValue> _parseLabelValues(Object? raw) {
+  if (raw is! List) return const <DiscoveryLabelValue>[];
+  return raw
+      .map(DiscoveryLabelValue.fromDynamic)
+      .where((DiscoveryLabelValue item) => item.label.isNotEmpty)
+      .toList(growable: false);
 }
 
 int? _parseInt(Object? value) {
@@ -615,3 +673,17 @@ String _discoveryLabelFromKey(String key) => key
     .where((String part) => part.isNotEmpty)
     .map((String part) => '${part[0].toUpperCase()}${part.substring(1)}')
     .join(' ');
+
+/// Returns the backend-formatted [formatted] label when present and non-empty,
+/// otherwise title-cases the raw [slug]. Returns null when neither is usable.
+/// Guards against raw slugs ("Run_Club") ever reaching the UI.
+String? _preferFormatted(String? formatted, String? slug) {
+  final trimmed = formatted?.trim();
+  if (trimmed != null && trimmed.isNotEmpty) {
+    return trimmed;
+  }
+  if (slug != null && slug.trim().isNotEmpty) {
+    return _discoveryLabelFromKey(slug.trim());
+  }
+  return null;
+}

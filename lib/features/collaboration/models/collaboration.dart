@@ -59,11 +59,7 @@ enum CollaborationStatus {
 }
 
 /// Timeline step status
-enum TimelineStepStatus {
-  completed,
-  current,
-  upcoming;
-}
+enum TimelineStepStatus { completed, current, upcoming }
 
 // =============================================================================
 // Value Objects
@@ -109,11 +105,7 @@ class CollaborationPartner {
 
 /// Contact methods shared during collaboration
 class ContactMethods {
-  const ContactMethods({
-    this.whatsapp,
-    this.email,
-    this.instagram,
-  });
+  const ContactMethods({this.whatsapp, this.email, this.instagram});
 
   factory ContactMethods.fromJson(Map<String, dynamic> json) {
     return ContactMethods(
@@ -150,18 +142,15 @@ class TimelineStep {
 
 /// Challenge selection for gamification setup
 class ChallengeSelection {
-  const ChallengeSelection({
-    required this.challenge,
-    this.isSelected = false,
-  });
+  const ChallengeSelection({required this.challenge, this.isSelected = false});
 
   final Challenge challenge;
   final bool isSelected;
 
   ChallengeSelection copyWith({bool? isSelected}) => ChallengeSelection(
-        challenge: challenge,
-        isSelected: isSelected ?? this.isSelected,
-      );
+    challenge: challenge,
+    isSelected: isSelected ?? this.isSelected,
+  );
 }
 
 // =============================================================================
@@ -188,6 +177,7 @@ class Collaboration {
     required this.createdAt,
     this.updatedAt,
     this.feedbackSubmittedAt,
+    this.viewerMustResubscribe = false,
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) {
@@ -197,23 +187,28 @@ class Collaboration {
       scheduledDate: DateTime.parse(json['scheduled_date'] as String),
       scheduledTime: json['scheduled_time'] as String?,
       businessPartner: CollaborationPartner.fromJson(
-          json['business_partner'] as Map<String, dynamic>),
+        json['business_partner'] as Map<String, dynamic>,
+      ),
       communityPartner: CollaborationPartner.fromJson(
-          json['community_partner'] as Map<String, dynamic>),
+        json['community_partner'] as Map<String, dynamic>,
+      ),
       opportunity: json['opportunity'] != null
           ? Opportunity.fromJson(json['opportunity'] as Map<String, dynamic>)
           : null,
       contactMethods: json['contact_methods'] != null
           ? ContactMethods.fromJson(
-              json['contact_methods'] as Map<String, dynamic>)
+              json['contact_methods'] as Map<String, dynamic>,
+            )
           : const ContactMethods(),
       businessOffer: json['business_offer'] != null
           ? BusinessOffer.fromJson(
-              json['business_offer'] as Map<String, dynamic>)
+              json['business_offer'] as Map<String, dynamic>,
+            )
           : const BusinessOffer(),
       communityDeliverables: json['community_deliverables'] != null
           ? CommunityDeliverables.fromJson(
-              json['community_deliverables'] as Map<String, dynamic>)
+              json['community_deliverables'] as Map<String, dynamic>,
+            )
           : const CommunityDeliverables(),
       eventId: json['event_id'] as String?,
       qrCodeUrl: json['qr_code_url'] as String?,
@@ -230,7 +225,27 @@ class Collaboration {
       feedbackSubmittedAt: json['feedback_submitted_at'] != null
           ? DateTime.parse(json['feedback_submitted_at'] as String)
           : null,
+      // Subscription-lapse re-gate (docs/ROLES-AND-PERMISSIONS.md §2.8). The
+      // backend sets this true ONLY for a business viewer whose subscription
+      // has lapsed on an ongoing collaboration. It is never true for a
+      // community viewer, so the client can trust it verbatim. Tolerate a few
+      // key spellings while the backend contract settles.
+      viewerMustResubscribe: _parseBool(
+        json['viewer_must_resubscribe'] ??
+            json['must_resubscribe'] ??
+            json['viewer_resubscribe_required'],
+      ),
     );
+  }
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final v = value.toLowerCase();
+      return v == 'true' || v == '1';
+    }
+    return false;
   }
 
   final String id;
@@ -254,6 +269,13 @@ class Collaboration {
   /// the mobile "Leave review" CTA is shown on completed collaborations.
   final DateTime? feedbackSubmittedAt;
 
+  /// True only when the VIEWER is a business whose subscription lapsed while
+  /// this collaboration is still ongoing (docs/ROLES-AND-PERMISSIONS.md §2.8).
+  /// When true the detail + chat content is blurred behind a "Resubscribe to
+  /// continue" prompt. The community counterparty is never re-gated, so this
+  /// is always false for a community viewer.
+  final bool viewerMustResubscribe;
+
   /// Get the other party based on current user type
   CollaborationPartner partnerFor({required bool isBusiness}) =>
       isBusiness ? communityPartner : businessPartner;
@@ -262,8 +284,18 @@ class Collaboration {
   String get formattedDate {
     const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${dayNames[scheduledDate.weekday - 1]}, '
         '${scheduledDate.day} '
@@ -289,8 +321,8 @@ class Collaboration {
         status: status == CollaborationStatus.scheduled && isBeforeEvent
             ? TimelineStepStatus.current
             : status == CollaborationStatus.scheduled
-                ? TimelineStepStatus.upcoming
-                : TimelineStepStatus.completed,
+            ? TimelineStepStatus.upcoming
+            : TimelineStepStatus.completed,
       ),
       TimelineStep(
         title: 'Event Day',
@@ -298,8 +330,8 @@ class Collaboration {
         status: status == CollaborationStatus.inProgress
             ? TimelineStepStatus.current
             : status == CollaborationStatus.completed
-                ? TimelineStepStatus.completed
-                : TimelineStepStatus.upcoming,
+            ? TimelineStepStatus.completed
+            : TimelineStepStatus.upcoming,
         date: scheduledDate,
       ),
       TimelineStep(

@@ -7,33 +7,78 @@ import '../../../config/theme/colors.dart';
 import '../models/collaboration_feedback.dart';
 import '../providers/collaboration_feedback_provider.dart';
 
-/// Multi-step bottom sheet that collects business-side feedback after a
-/// collaboration is marked completed. Each step is one question; required
-/// questions gate the Next button.
+/// Multi-step bottom sheet that collects feedback from EITHER side of a
+/// collaboration. Each step is one question; required questions gate the Next
+/// button. The [variant] tailors copy + which optional questions appear
+/// (business vs community, see `docs/ROLES-AND-PERMISSIONS.md` §4).
+///
+/// Two entry points:
+/// - [show]: standalone post-completion survey that submits on its own (the
+///   "Leave review" CTA path). Returns true when submitted.
+/// - [collectForFinish]: collects + validates the draft but does NOT submit;
+///   returns the completed draft so the caller can finish + submit feedback in
+///   one `POST /finish` call. Returns null if the user backs out.
 class CollaborationFeedbackSheet extends StatefulWidget {
   const CollaborationFeedbackSheet({
     required this.collaborationId,
+    this.variant = FeedbackVariant.business,
+    this.submitOnComplete = true,
     super.key,
   });
 
   final String collaborationId;
+
+  /// Which side is leaving feedback.
+  final FeedbackVariant variant;
+
+  /// When true (default), the sheet submits the survey itself via
+  /// [submitCollaborationFeedback]. When false, it returns the completed draft
+  /// to the caller without any network call (used by the finish flow, which
+  /// submits feedback + finish together).
+  final bool submitOnComplete;
 
   /// Returns `true` when the survey was submitted successfully, `false` if
   /// the user dismissed without finishing.
   static Future<bool> show(
     BuildContext context, {
     required String collaborationId,
+    FeedbackVariant variant = FeedbackVariant.business,
   }) async {
-    final result = await showModalBottomSheet<bool>(
+    final result = await showModalBottomSheet<Object?>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       isDismissible: false,
       enableDrag: false,
-      builder: (context) =>
-          CollaborationFeedbackSheet(collaborationId: collaborationId),
+      builder: (context) => CollaborationFeedbackSheet(
+        collaborationId: collaborationId,
+        variant: variant,
+      ),
     );
-    return result ?? false;
+    return result == true;
+  }
+
+  /// Collect the feedback without submitting. Returns the completed draft, or
+  /// null if the user dismissed. The caller is responsible for submitting it
+  /// (e.g. via `finishCollaborationWithFeedback`).
+  static Future<CollaborationFeedbackDraft?> collectForFinish(
+    BuildContext context, {
+    required String collaborationId,
+    required FeedbackVariant variant,
+  }) async {
+    final result = await showModalBottomSheet<Object?>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) => CollaborationFeedbackSheet(
+        collaborationId: collaborationId,
+        variant: variant,
+        submitOnComplete: false,
+      ),
+    );
+    return result is CollaborationFeedbackDraft ? result : null;
   }
 
   @override
@@ -41,14 +86,55 @@ class CollaborationFeedbackSheet extends StatefulWidget {
       _CollaborationFeedbackSheetState();
 }
 
+/// Identifies each possible question so the step order can vary by variant.
+enum _FbStep {
+  star,
+  stories, // business only
+  postsReels,
+  revenue, // business only
+  benefits, // community only
+  expectations,
+  recommend,
+  review,
+}
+
 class _CollaborationFeedbackSheetState
     extends State<CollaborationFeedbackSheet> {
-  static const _stepCount = 7;
   final _pageController = PageController();
   int _stepIndex = 0;
-  CollaborationFeedbackDraft _draft = const CollaborationFeedbackDraft();
+  late CollaborationFeedbackDraft _draft;
+  late final List<_FbStep> _steps;
   bool _isSubmitting = false;
   bool _isSubmitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _draft = CollaborationFeedbackDraft(variant: widget.variant);
+    // Build the step order for this variant. Required steps (star, recommend,
+    // review) are shared; the rest are optional and variant-specific.
+    _steps = widget.variant.isBusiness
+        ? const [
+            _FbStep.star,
+            _FbStep.stories,
+            _FbStep.postsReels,
+            _FbStep.revenue,
+            _FbStep.expectations,
+            _FbStep.recommend,
+            _FbStep.review,
+          ]
+        : const [
+            _FbStep.star,
+            _FbStep.benefits,
+            _FbStep.postsReels,
+            _FbStep.expectations,
+            _FbStep.recommend,
+            _FbStep.review,
+          ];
+  }
+
+  int get _stepCount => _steps.length;
+  _FbStep get _currentStep => _steps[_stepIndex];
 
   @override
   void dispose() {
@@ -57,38 +143,45 @@ class _CollaborationFeedbackSheetState
   }
 
   bool get _canAdvance {
-    switch (_stepIndex) {
-      case 0:
+    switch (_currentStep) {
+      case _FbStep.star:
         return _draft.starRating != null;
-      case 5:
+      case _FbStep.recommend:
         return _draft.wouldRecommend != null;
-      case 6:
+      case _FbStep.review:
         return _draft.canSubmit && !_isSubmitting;
       default:
+        // Optional steps: always advanceable (Next / Skip).
         return true;
     }
   }
 
   String get _nextLabel {
-    if (_stepIndex == _stepCount - 1) return 'SUBMIT FEEDBACK';
-    if (_stepIndex == 1 ||
-        _stepIndex == 2 ||
-        _stepIndex == 3 ||
-        _stepIndex == 4) {
-      return _isStepAnswered(_stepIndex) ? 'NEXT' : 'SKIP';
+    if (_stepIndex == _stepCount - 1) {
+      return widget.submitOnComplete ? 'SUBMIT FEEDBACK' : 'FINISH & SUBMIT';
+    }
+    if (_isOptionalStep(_currentStep)) {
+      return _isStepAnswered(_currentStep) ? 'NEXT' : 'SKIP';
     }
     return 'NEXT';
   }
 
-  bool _isStepAnswered(int step) {
+  bool _isOptionalStep(_FbStep step) =>
+      step != _FbStep.star &&
+      step != _FbStep.recommend &&
+      step != _FbStep.review;
+
+  bool _isStepAnswered(_FbStep step) {
     switch (step) {
-      case 1:
+      case _FbStep.stories:
         return _draft.storiesPosted != null;
-      case 2:
+      case _FbStep.postsReels:
         return _draft.postsReels != null;
-      case 3:
+      case _FbStep.revenue:
         return _draft.revenueAmountCents != null || _draft.revenueSkipped;
-      case 4:
+      case _FbStep.benefits:
+        return _draft.benefitsReceived?.trim().isNotEmpty ?? false;
+      case _FbStep.expectations:
         return _draft.metExpectationsRating != null ||
             (_draft.metExpectationsComment?.trim().isNotEmpty ?? false);
       default:
@@ -129,9 +222,7 @@ class _CollaborationFeedbackSheetState
     final shouldDismiss = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Skip feedback?',
           style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 18),
@@ -175,6 +266,14 @@ class _CollaborationFeedbackSheetState
 
   Future<void> _submit() async {
     if (!_draft.canSubmit) return;
+
+    // Finish flow: don't submit here — hand the completed draft back to the
+    // caller, which finishes the collaboration and submits feedback together.
+    if (!widget.submitOnComplete) {
+      Navigator.of(context).pop(_draft);
+      return;
+    }
+
     setState(() => _isSubmitting = true);
     try {
       await submitCollaborationFeedback(widget.collaborationId, _draft);
@@ -218,6 +317,89 @@ class _CollaborationFeedbackSheetState
           behavior: SnackBarBehavior.floating,
         ),
       );
+    }
+  }
+
+  /// Map a step identifier to its page widget. Wiring matches the variant's
+  /// step list built in [initState].
+  Widget _buildStep(_FbStep step) {
+    switch (step) {
+      case _FbStep.star:
+        return _StarRatingStep(
+          value: _draft.starRating,
+          onChanged: (value) =>
+              setState(() => _draft = _draft.copyWith(starRating: value)),
+        );
+      case _FbStep.stories:
+        return _BucketStep(
+          title: 'How many stories did they post?',
+          subtitle: 'Stories on Instagram / TikTok / Snap during the campaign.',
+          value: _draft.storiesPosted,
+          onChanged: (value) => setState(
+            () => _draft = _draft.copyWith(
+              storiesPosted: value,
+              clearStoriesPosted: value == null,
+            ),
+          ),
+        );
+      case _FbStep.postsReels:
+        return _BucketStep(
+          title: widget.variant.isBusiness
+              ? 'How many posts or reels did they publish?'
+              : 'How many posts or reels did you publish?',
+          subtitle: 'Permanent feed content — posts, reels, TikToks.',
+          value: _draft.postsReels,
+          onChanged: (value) => setState(
+            () => _draft = _draft.copyWith(
+              postsReels: value,
+              clearPostsReels: value == null,
+            ),
+          ),
+        );
+      case _FbStep.revenue:
+        return _RevenueStep(
+          amountCents: _draft.revenueAmountCents,
+          skipped: _draft.revenueSkipped,
+          onChanged: (int? amount, {required bool skipped}) => setState(
+            () => _draft = _draft.copyWith(
+              revenueAmountCents: amount,
+              revenueSkipped: skipped,
+              clearRevenueAmount: amount == null,
+            ),
+          ),
+        );
+      case _FbStep.benefits:
+        return _BenefitsStep(
+          value: _draft.benefitsReceived,
+          onChanged: (value) => setState(
+            () => _draft = _draft.copyWith(
+              benefitsReceived: value,
+              clearBenefitsReceived: value == null,
+            ),
+          ),
+        );
+      case _FbStep.expectations:
+        return _ExpectationsStep(
+          rating: _draft.metExpectationsRating,
+          comment: _draft.metExpectationsComment,
+          onChanged: (rating, comment) => setState(
+            () => _draft = _draft.copyWith(
+              metExpectationsRating: rating,
+              metExpectationsComment: comment,
+              clearMetExpectationsRating: rating == null,
+              clearMetExpectationsComment: comment == null,
+            ),
+          ),
+        );
+      case _FbStep.recommend:
+        return _RecommendStep(
+          variant: widget.variant,
+          value: _draft.wouldRecommend,
+          onChanged: (value) =>
+              setState(() => _draft = _draft.copyWith(wouldRecommend: value)),
+        );
+      case _FbStep.review:
+        return _ReviewStep(draft: _draft);
     }
   }
 
@@ -290,74 +472,7 @@ class _CollaborationFeedbackSheetState
                     : PageView(
                         controller: _pageController,
                         physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          _StarRatingStep(
-                            value: _draft.starRating,
-                            onChanged: (value) => setState(
-                              () => _draft =
-                                  _draft.copyWith(starRating: value),
-                            ),
-                          ),
-                          _BucketStep(
-                            title: 'How many stories did they post?',
-                            subtitle:
-                                'Stories on Instagram / TikTok / Snap during the campaign.',
-                            value: _draft.storiesPosted,
-                            onChanged: (value) => setState(
-                              () => _draft = _draft.copyWith(
-                                storiesPosted: value,
-                                clearStoriesPosted: value == null,
-                              ),
-                            ),
-                          ),
-                          _BucketStep(
-                            title: 'How many posts or reels did they publish?',
-                            subtitle:
-                                'Permanent feed content — posts, reels, TikToks.',
-                            value: _draft.postsReels,
-                            onChanged: (value) => setState(
-                              () => _draft = _draft.copyWith(
-                                postsReels: value,
-                                clearPostsReels: value == null,
-                              ),
-                            ),
-                          ),
-                          _RevenueStep(
-                            amountCents: _draft.revenueAmountCents,
-                            skipped: _draft.revenueSkipped,
-                            onChanged:
-                                (
-                                  int? amount, {
-                                  required bool skipped,
-                                }) => setState(
-                                  () => _draft = _draft.copyWith(
-                                    revenueAmountCents: amount,
-                                    revenueSkipped: skipped,
-                                    clearRevenueAmount: amount == null,
-                                  ),
-                                ),
-                          ),
-                          _ExpectationsStep(
-                            rating: _draft.metExpectationsRating,
-                            comment: _draft.metExpectationsComment,
-                            onChanged: (rating, comment) => setState(
-                              () => _draft = _draft.copyWith(
-                                metExpectationsRating: rating,
-                                metExpectationsComment: comment,
-                                clearMetExpectationsRating: rating == null,
-                                clearMetExpectationsComment: comment == null,
-                              ),
-                            ),
-                          ),
-                          _RecommendStep(
-                            value: _draft.wouldRecommend,
-                            onChanged: (value) => setState(
-                              () => _draft =
-                                  _draft.copyWith(wouldRecommend: value),
-                            ),
-                          ),
-                          _ReviewStep(draft: _draft),
-                        ],
+                        children: _steps.map(_buildStep).toList(),
                       ),
               ),
               if (!_isSubmitted)
@@ -541,9 +656,7 @@ class _StarRatingStep extends StatelessWidget {
             child: Icon(
               filled ? LucideIcons.star : LucideIcons.star,
               size: 44,
-              color: filled
-                  ? KolabingColors.primary
-                  : KolabingColors.border,
+              color: filled ? KolabingColors.primary : KolabingColors.border,
             ),
           ),
         );
@@ -859,17 +972,96 @@ class _ExpectationsStepState extends State<_ExpectationsStep> {
   );
 }
 
-class _RecommendStep extends StatelessWidget {
-  const _RecommendStep({required this.value, required this.onChanged});
+/// Community-only: free-text describing the benefits the community received
+/// (e.g. free venue, discounts, exposure). Optional / skippable.
+class _BenefitsStep extends StatefulWidget {
+  const _BenefitsStep({required this.value, required this.onChanged});
 
+  final String? value;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  State<_BenefitsStep> createState() => _BenefitsStepState();
+}
+
+class _BenefitsStepState extends State<_BenefitsStep> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => _StepFrame(
+    title: 'What benefits did you receive?',
+    subtitle:
+        'Optional — e.g. free venue, discounts, products, or exposure to the '
+        "business's followers.",
+    child: TextField(
+      controller: _controller,
+      maxLines: 4,
+      maxLength: 400,
+      style: GoogleFonts.openSans(
+        fontSize: 14,
+        color: KolabingColors.textPrimary,
+      ),
+      decoration: InputDecoration(
+        hintText: 'List what the business provided (optional)',
+        hintStyle: GoogleFonts.openSans(
+          fontSize: 14,
+          color: KolabingColors.textTertiary,
+        ),
+        filled: true,
+        fillColor: KolabingColors.surfaceVariant,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: KolabingColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: KolabingColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: KolabingColors.primary,
+            width: 1.5,
+          ),
+        ),
+      ),
+      onChanged: (value) =>
+          widget.onChanged(value.trim().isEmpty ? null : value),
+    ),
+  );
+}
+
+class _RecommendStep extends StatelessWidget {
+  const _RecommendStep({
+    required this.variant,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final FeedbackVariant variant;
   final bool? value;
   final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) => _StepFrame(
-    title: 'Would you recommend this community?',
-    subtitle:
-        'Other businesses will see this signal — be honest, it helps everyone.',
+    title: variant.isBusiness
+        ? 'Would you recommend this community?'
+        : 'Would you recommend this business?',
+    subtitle: variant.isBusiness
+        ? 'Other businesses will see this signal — be honest, it helps everyone.'
+        : 'Other communities will see this signal — be honest, it helps everyone.',
     child: Row(
       children: [
         Expanded(
@@ -984,15 +1176,26 @@ class _ReviewStep extends StatelessWidget {
             label: 'Star rating',
             value: '${draft.starRating ?? 0} / 5',
           ),
-          _ReviewRow(
-            label: 'Stories posted',
-            value: _bucketLabel(draft.storiesPosted),
-          ),
+          // Business-only rows
+          if (draft.variant.isBusiness) ...[
+            _ReviewRow(
+              label: 'Stories posted',
+              value: _bucketLabel(draft.storiesPosted),
+            ),
+          ],
+          // Community-only rows
+          if (draft.variant.isCommunity &&
+              (draft.benefitsReceived?.trim().isNotEmpty ?? false))
+            _ReviewRow(
+              label: 'Benefits',
+              value: draft.benefitsReceived!.trim(),
+            ),
           _ReviewRow(
             label: 'Posts / reels',
             value: _bucketLabel(draft.postsReels),
           ),
-          _ReviewRow(label: 'Revenue', value: _revenueLabel()),
+          if (draft.variant.isBusiness)
+            _ReviewRow(label: 'Revenue', value: _revenueLabel()),
           _ReviewRow(
             label: 'Met expectations',
             value: draft.metExpectationsRating != null

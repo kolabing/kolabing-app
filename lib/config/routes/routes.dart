@@ -15,7 +15,6 @@ import '../../features/auth/screens/welcome_screen.dart';
 import '../../features/auth/utils/auth_navigation.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
-import '../../features/business/screens/create_collab_request_screen.dart';
 import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
@@ -504,8 +503,9 @@ final GoRouter kolabingRouter = GoRouter(
         // so the form can scope the publish payload to that recipient.
         final recipientId = state.uri.queryParameters['recipient_community_id'];
         return IntentSelectionScreen(
-          recipientCommunityId:
-              recipientId == null || recipientId.isEmpty ? null : recipientId,
+          recipientCommunityId: recipientId == null || recipientId.isEmpty
+              ? null
+              : recipientId,
         );
       },
     ),
@@ -518,22 +518,24 @@ final GoRouter kolabingRouter = GoRouter(
       },
     ),
 
-    // Business sub-routes (pushed on top of main screen)
+    // Business legacy create/edit routes (System A, collab_opportunities).
+    // B1 (2026-05-22): the legacy single-page CreateCollabRequestScreen was
+    // retired. ALL new business creation now goes through the unified
+    // /kolab/flow via /kolab/new. These paths hard-redirect so any stale deep
+    // links or cached navigations land on the new flow. No data migration:
+    // existing collab_opportunities remain readable/closable via their list
+    // and detail screens; only the create entry changed.
     GoRoute(
       path: KolabingRoutes.businessOffersNew,
       name: 'businessOffersNew',
-      builder: (BuildContext context, GoRouterState state) {
-        final opportunity = state.extra as Opportunity?;
-        return CreateCollabRequestScreen(editOpportunity: opportunity);
-      },
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.kolabNew,
     ),
     GoRoute(
       path: KolabingRoutes.businessOffersEdit,
       name: 'businessOffersEdit',
-      builder: (BuildContext context, GoRouterState state) {
-        final opportunity = state.extra as Opportunity?;
-        return CreateCollabRequestScreen(editOpportunity: opportunity);
-      },
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.kolabNew,
     ),
     GoRoute(
       path: KolabingRoutes.businessPlans,
@@ -577,12 +579,23 @@ final GoRouter kolabingRouter = GoRouter(
         return CommunityOfferDetailScreen(offerId: id, offer: offer);
       },
     ),
+    // Community legacy create route (System A, collab_opportunities).
+    // B1 (2026-05-22): NEW community creation now goes through the unified
+    // /kolab/flow via /kolab/new (IntentSelectionScreen offers the FREE
+    // communitySeeking option). This path hard-redirects so the legacy
+    // single-page CreateOpportunityScreen is unreachable for NEW creation.
     GoRoute(
       path: KolabingRoutes.communityOpportunitiesNew,
       name: 'communityOpportunitiesNew',
-      builder: (BuildContext context, GoRouterState state) =>
-          const CreateOpportunityScreen(),
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.kolabNew,
     ),
+    // EDIT still points at the legacy CreateOpportunityScreen on purpose.
+    // Existing rows are System-A `collab_opportunities` (Opportunity model);
+    // the new /kolab/flow consumes the System-B `Kolab` model. There is no
+    // clean Opportunity -> Kolab mapping, so per the B1 brief we keep editing
+    // legacy opportunities on the legacy screen (no data migration). New
+    // creation is fully on /kolab/flow. See report.
     GoRoute(
       path: KolabingRoutes.communityOpportunitiesEdit,
       name: 'communityOpportunitiesEdit',
