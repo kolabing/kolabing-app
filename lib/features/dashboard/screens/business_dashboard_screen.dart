@@ -15,7 +15,6 @@ import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
-import '../widgets/dashboard_stat_card.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 
 /// Business Dashboard Screen
@@ -96,10 +95,6 @@ class _BusinessDashboardScreenState
         _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
-        // Stats grid 2x2
-        _buildStatsGrid(data),
-        const SizedBox(height: KolabingSpacing.lg),
-
         // Referral banner (rewards)
         const ReferralBannerCard(),
         const SizedBox(height: KolabingSpacing.lg),
@@ -147,62 +142,6 @@ class _BusinessDashboardScreenState
         ),
       ),
       const NotificationBell(),
-    ],
-  );
-
-  // ---------------------------------------------------------------------------
-  // Stats Grid
-  // ---------------------------------------------------------------------------
-
-  Widget _buildStatsGrid(BusinessDashboard data) => Column(
-    children: [
-      Row(
-        children: [
-          Expanded(
-            child: DashboardStatCard(
-              title: 'Published',
-              count: data.opportunities.published,
-              icon: LucideIcons.megaphone,
-              accentColor: KolabingColors.primary,
-              subtitle: '${data.opportunities.total} total requests',
-            ),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: DashboardStatCard(
-              title: 'Pending Applications',
-              count: data.applicationsReceived.pending,
-              icon: LucideIcons.clock,
-              accentColor: const Color(0xFFFF9800),
-              subtitle: '${data.applicationsReceived.total} total',
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: KolabingSpacing.sm),
-      Row(
-        children: [
-          Expanded(
-            child: DashboardStatCard(
-              title: 'Active Kolabs',
-              count: data.collaborations.active,
-              icon: LucideIcons.users,
-              accentColor: const Color(0xFF4CAF50),
-              subtitle: '${data.collaborations.upcoming} upcoming',
-            ),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: DashboardStatCard(
-              title: 'Completed',
-              count: data.collaborations.completed,
-              icon: LucideIcons.checkCircle,
-              accentColor: KolabingColors.info,
-              subtitle: '${data.collaborations.total} total',
-            ),
-          ),
-        ],
-      ),
     ],
   );
 
