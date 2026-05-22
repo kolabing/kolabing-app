@@ -607,8 +607,11 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         'hasToken=${authResponse.token.isNotEmpty}',
       );
 
-      // Update auth state
-      await ref.read(authProvider.notifier).checkAuthStatus();
+      // Update auth state for the new account. onRegistered() also resets any
+      // user-scoped providers left over from a prior (signed-out) session, so a
+      // sign-out -> create-account starts clean instead of showing
+      // "session expired" on every tab.
+      await ref.read(authProvider.notifier).onRegistered();
 
       return OnboardingResult(success: true, user: authResponse.user);
     } on ApiException catch (e) {

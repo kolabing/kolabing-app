@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -210,15 +207,12 @@ class _CommunityProfileScreenState
         );
       }
 
-      // Read file and convert to base64
-      final bytes = await File(pickedFile.path).readAsBytes();
-      final base64Image = base64Encode(bytes);
-      final mimeType = pickedFile.mimeType ?? 'image/jpeg';
-
-      // Upload
+      // Upload the picked image as a multipart file. The backend validates
+      // profile_photo as an uploaded image file (a base64 string is rejected
+      // with 422), so we pass the file path.
       final success = await ref
           .read(profileProvider.notifier)
-          .updateProfilePhoto(base64Image, mimeType);
+          .updateProfilePhoto(pickedFile.path);
 
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();

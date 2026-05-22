@@ -107,8 +107,9 @@ class _AttendeeRegisterScreenState
         password: _passwordController.text,
       );
 
-      // Update auth state
-      ref.read(authProvider.notifier).checkAuthStatus();
+      // Update auth state + reset any provider state from a prior session, so a
+      // sign-out -> create-account starts clean (no stale "session expired").
+      await ref.read(authProvider.notifier).onRegistered();
 
       if (!mounted) return;
 

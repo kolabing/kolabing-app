@@ -235,6 +235,20 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// Call after a successful REGISTRATION (account creation) — onboarding
+  /// (business/community) and attendee register. Mirrors the post-login
+  /// sequence: tear down any user-scoped provider state left over from a
+  /// previous (signed-out) session BEFORE the new session's providers fire,
+  /// then resolve the authenticated user. Without this, a sign-out ->
+  /// create-account leaves Home/Explore/Applications/Profile showing
+  /// "session expired" until a full app restart (same root cause the login
+  /// path already handles).
+  Future<void> onRegistered() async {
+    invalidateUserScopedProviders(ref);
+    await checkAuthStatus();
+    unawaited(_registerFcmToken());
+  }
+
   /// Logout current user
   Future<void> logout() async {
     state = state.copyWith(status: AuthStatus.loading);

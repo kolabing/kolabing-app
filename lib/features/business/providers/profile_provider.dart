@@ -169,15 +169,17 @@ class ProfileNotifier extends Notifier<ProfileState> {
     await loadProfile();
   }
 
-  /// Update profile photo
-  Future<bool> updateProfilePhoto(String base64Photo, String mimeType) async {
+  /// Update profile photo from a picked image file.
+  ///
+  /// Sends the image as a multipart file (the backend validates `profile_photo`
+  /// as an uploaded image file; a base64 string is rejected with 422).
+  Future<bool> updateProfilePhoto(String filePath) async {
     state = state.copyWith(isUpdating: true, clearError: true);
 
     try {
-      final dataUri = 'data:$mimeType;base64,$base64Photo';
-      final updatedProfile = await _profileService.updateProfile({
-        'profile_photo': dataUri,
-      });
+      final updatedProfile = await _profileService.updateProfilePhotoFile(
+        filePath: filePath,
+      );
 
       state = state.copyWith(profile: updatedProfile, isUpdating: false);
       return true;
