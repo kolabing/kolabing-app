@@ -55,6 +55,9 @@ dependencies:
   # Local notifications (for foreground display on iOS)
   flutter_local_notifications: ^18.0.1
 
+  # OneSignal push + in-app messaging
+  onesignal_flutter: ^5.5.4
+
   # Apple Sign In
   sign_in_with_apple: ^7.0.1
 

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'one_signal_service.dart';
+
 /// Service for managing app permissions (location & notifications).
 class PermissionService {
   const PermissionService._();
@@ -62,12 +64,22 @@ class PermissionService {
   /// Request notification permission. Returns the resulting status.
   Future<PermissionStatus> requestNotificationPermission() async {
     try {
-      final status = await Permission.notification.request();
+      await OneSignalService.instance.requestPermission();
+      final status = await Permission.notification.status;
       debugPrint('[PermissionService] Notification permission: $status');
       return status;
     } on Exception catch (e) {
       debugPrint('[PermissionService] Notification permission error: $e');
-      return PermissionStatus.denied;
+      try {
+        final fallbackStatus = await Permission.notification.request();
+        debugPrint(
+          '[PermissionService] Notification permission fallback: '
+          '$fallbackStatus',
+        );
+        return fallbackStatus;
+      } on Exception {
+        return PermissionStatus.denied;
+      }
     }
   }
 
@@ -85,7 +97,5 @@ class PermissionService {
   // ---------------------------------------------------------------------------
 
   /// Open the app settings page (for when permissions are permanently denied).
-  Future<bool> openSettings() async {
-    return openAppSettings();
-  }
+  Future<bool> openSettings() => openAppSettings();
 }

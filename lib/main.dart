@@ -9,6 +9,7 @@ import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
 import 'services/global_network_banner_service.dart';
 import 'services/notification_service.dart';
+import 'services/one_signal_service.dart';
 
 /// Application entry point
 void main() async {
@@ -16,6 +17,10 @@ void main() async {
 
   // Firebase initialization
   await Firebase.initializeApp();
+
+  // Initialize OneSignal alongside FCM so custom push subscriptions exist
+  // as soon as the app launches.
+  await OneSignalService.instance.initialize();
 
   // Crashlytics: catch all Flutter framework errors
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -39,11 +44,7 @@ void main() async {
   ]);
 
   // Run the app with Riverpod
-  runApp(
-    const ProviderScope(
-      child: KolabingApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: KolabingApp()));
 }
 
 /// Main application widget
@@ -52,11 +53,11 @@ class KolabingApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        title: 'Kolabing',
-        debugShowCheckedModeBanner: false,
-        scaffoldMessengerKey: globalScaffoldMessengerKey,
-        theme: KolabingTheme.lightTheme,
-        themeMode: ThemeMode.light,
-        routerConfig: kolabingRouter,
-      );
+    title: 'Kolabing',
+    debugShowCheckedModeBanner: false,
+    scaffoldMessengerKey: globalScaffoldMessengerKey,
+    theme: KolabingTheme.lightTheme,
+    themeMode: ThemeMode.light,
+    routerConfig: kolabingRouter,
+  );
 }

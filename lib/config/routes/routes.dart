@@ -42,6 +42,7 @@ import '../../features/rewards/screens/wallet_screen.dart';
 import '../../features/rewards/screens/withdrawal_request_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
 import '../../services/notification_service.dart';
+import '../../services/one_signal_service.dart';
 
 /// Kolabing route definitions
 ///
@@ -271,18 +272,17 @@ final GlobalKey<NavigatorState> kolabingNavigatorKey =
 /// Call once in main() after the app widget is running.
 /// Maps FCM `type` → app route and navigates accordingly.
 void connectNotificationRouter() {
-  NotificationService.instance.connectRouter((
-    String? type,
-    String? id,
-    String? deeplink,
-  ) {
+  void navigateFromPush(String? type, String? id, String? deeplink) {
     final route = resolveNotificationRoute(
       type: type,
       id: id,
       deeplink: deeplink,
     );
     kolabingRouter.push(route);
-  });
+  }
+
+  NotificationService.instance.connectRouter(navigateFromPush);
+  OneSignalService.instance.connectRouter(navigateFromPush);
 }
 
 /// Kolabing router configuration
