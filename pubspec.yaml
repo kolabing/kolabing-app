@@ -71,7 +71,7 @@ dependencies:
 
   # QR Code
   qr_flutter: ^4.1.0
-  mobile_scanner: ^6.0.2
+  mobile_scanner: ^7.2.0
 
   # Gamification / Rewards
   share_plus: ^10.1.4
