@@ -21,13 +21,16 @@ class FeedbackEndpointMissingException implements Exception {
 
 /// Submit a post-completion feedback survey for a collaboration.
 ///
-/// `POST /api/v1/collaborations/{id}/feedback`
-/// — see `kolabing-v2/.agent/todo/BE-XXX-collaboration-feedback-endpoint.md`.
+/// Both parties submit through `POST /api/v1/collaborations/{id}/finish`. The
+/// backend records one feedback row per reviewer and only flips the status to
+/// completed on the FIRST finish — so the SECOND party (e.g. the business after
+/// the community already completed) can still call `/finish` to record their
+/// feedback without re-completing. There is no separate `/feedback` route.
 Future<void> submitCollaborationFeedback(
   String collaborationId,
   CollaborationFeedbackDraft draft,
 ) async {
-  final url = '${ApiConfig.baseUrl}/collaborations/$collaborationId/feedback';
+  final url = '${ApiConfig.baseUrl}/collaborations/$collaborationId/finish';
   final payload = draft.toPayload();
   debugPrint('[FB] POST $url payload=$payload');
   await _post(url, payload, allowRetry: true);

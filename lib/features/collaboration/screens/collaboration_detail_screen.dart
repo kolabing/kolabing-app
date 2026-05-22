@@ -16,6 +16,7 @@ import '../models/collaboration.dart';
 import '../models/collaboration_feedback.dart';
 import '../providers/collaboration_detail_provider.dart';
 import '../providers/collaboration_feedback_provider.dart';
+import '../providers/collaborations_list_provider.dart';
 import '../widgets/collaboration_feedback_sheet.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
@@ -222,13 +223,19 @@ class _CollaborationBody extends ConsumerWidget {
                 collaboration.status == CollaborationStatus.inProgress))
           _FinishCollaborationSection(collaborationId: collaborationId),
 
-        // Post-completion: businesses who haven't yet submitted feedback
-        // see a "Leave review" CTA. Hidden once feedback_submitted_at lands.
+        // Post-completion: BOTH parties must review. Whoever has not yet left
+        // feedback (e.g. the business after the community already completed) is
+        // prompted here — the sheet also auto-opens so it is not silently
+        // skipped. Hidden once this viewer's feedback row exists.
         if (interactive &&
             collaboration.status == CollaborationStatus.completed &&
-            collaboration.feedbackSubmittedAt == null &&
-            isBusiness)
-          _LeaveReviewSection(collaborationId: collaborationId),
+            !collaboration.viewerHasSubmittedFeedback)
+          _LeaveReviewSection(
+            collaborationId: collaborationId,
+            variant: isBusiness
+                ? FeedbackVariant.business
+                : FeedbackVariant.community,
+          ),
 
         // Gamification: Challenges Setup
         _ChallengesSection(
@@ -1915,7 +1922,11 @@ class _FinishCollaborationSectionState
         }
       }
       if (!mounted) return;
+      // Refresh the detail AND the My Kolabs lists so the collaboration moves
+      // from Active to Finished immediately (previously required an app restart).
       ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      ref.invalidate(collaborationsListProvider(CollaborationsFilter.active));
+      ref.invalidate(collaborationsListProvider(CollaborationsFilter.finished));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -1985,87 +1996,124 @@ class _FinishCollaborationSectionState
 // Post-completion: "Leave review" entry point
 // =============================================================================
 
-class _LeaveReviewSection extends ConsumerWidget {
-  const _LeaveReviewSection({required this.collaborationId});
+class _LeaveReviewSection extends ConsumerStatefulWidget {
+  const _LeaveReviewSection({
+    required this.collaborationId,
+    required this.variant,
+  });
 
   final String collaborationId;
+  final FeedbackVariant variant;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Padding(
-    padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
-    child: Container(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: KolabingColors.softYellow,
-        borderRadius: BorderRadius.circular(KolabingRadius.lg),
-        border: Border.all(color: KolabingColors.softYellowBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                LucideIcons.messageSquare,
-                size: 18,
-                color: KolabingColors.onPrimary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Share your feedback',
-                style: GoogleFonts.rubik(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+  ConsumerState<_LeaveReviewSection> createState() =>
+      _LeaveReviewSectionState();
+}
+
+class _LeaveReviewSectionState extends ConsumerState<_LeaveReviewSection> {
+  bool _autoPrompted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Enforce two-sided feedback: when the viewer opens a completed Kolab they
+    // have not reviewed, auto-open the feedback sheet once so it is not silently
+    // skipped. The persistent CTA below remains until they submit.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_autoPrompted && mounted) {
+        _autoPrompted = true;
+        _openSheet();
+      }
+    });
+  }
+
+  Future<void> _openSheet() async {
+    final submitted = await CollaborationFeedbackSheet.show(
+      context,
+      collaborationId: widget.collaborationId,
+      variant: widget.variant,
+    );
+    if (submitted && mounted) {
+      ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      ref.invalidate(collaborationsListProvider(CollaborationsFilter.active));
+      ref.invalidate(collaborationsListProvider(CollaborationsFilter.finished));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isBusiness = widget.variant.isBusiness;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
+      child: Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.softYellow,
+          borderRadius: BorderRadius.circular(KolabingRadius.lg),
+          border: Border.all(color: KolabingColors.softYellowBorder),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  LucideIcons.messageSquare,
+                  size: 18,
+                  color: KolabingColors.onPrimary,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'A 30-second review helps other businesses pick the right communities.',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
-              height: 1.4,
+                const SizedBox(width: 8),
+                Text(
+                  'Your feedback is required',
+                  style: GoogleFonts.rubik(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                final submitted = await CollaborationFeedbackSheet.show(
-                  context,
-                  collaborationId: collaborationId,
-                  variant: FeedbackVariant.business,
-                );
-                if (submitted && context.mounted) {
-                  ref.invalidate(collaborationDetailProvider(collaborationId));
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(KolabingRadius.md),
-                ),
-                elevation: 0,
+            const SizedBox(height: 6),
+            Text(
+              isBusiness
+                  ? 'The community already wrapped this Kolab. Add your review to '
+                        'complete it — it helps other businesses pick the right communities.'
+                  : 'Add your review to complete this Kolab — it helps other '
+                        'communities pick the right businesses.',
+              style: GoogleFonts.openSans(
+                fontSize: 13,
+                color: KolabingColors.textSecondary,
+                height: 1.4,
               ),
-              icon: const Icon(LucideIcons.star, size: 18),
-              label: Text(
-                'LEAVE REVIEW',
-                style: GoogleFonts.dmSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: ElevatedButton.icon(
+                onPressed: _openSheet,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: KolabingColors.primary,
+                  foregroundColor: KolabingColors.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(KolabingRadius.md),
+                  ),
+                  elevation: 0,
+                ),
+                icon: const Icon(LucideIcons.star, size: 18),
+                label: Text(
+                  'ADD YOUR FEEDBACK',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

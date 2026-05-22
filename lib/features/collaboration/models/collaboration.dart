@@ -181,6 +181,7 @@ class Collaboration {
     this.creatorPartner,
     this.applicantPartner,
     this.viewerIsCreator,
+    this.viewerHasSubmittedFeedback = false,
     required this.opportunity,
     required this.contactMethods,
     required this.businessOffer,
@@ -211,6 +212,20 @@ class Collaboration {
     // than guessing from the viewer's business/community type (which breaks for
     // either side and has no safe default when the auth user is momentarily null).
     final myRole = json['my_role']?.toString();
+
+    // Has the VIEWER already left feedback? The backend `feedback` array holds
+    // one row per reviewer with `reviewer_role` ('creator' | 'applicant');
+    // match it against `my_role`. Drives the post-completion "add your feedback"
+    // prompt so the second party is never silently skipped.
+    final feedbackList = json['feedback'];
+    final viewerHasSubmittedFeedback =
+        myRole != null &&
+        feedbackList is List &&
+        feedbackList.any(
+          (entry) =>
+              entry is Map && entry['reviewer_role']?.toString() == myRole,
+        );
+
     final creatorPartner = json['creator_profile'] is Map<String, dynamic>
         ? CollaborationPartner.fromJson(
             json['creator_profile'] as Map<String, dynamic>,
@@ -252,6 +267,7 @@ class Collaboration {
           : myRole == 'applicant'
           ? false
           : null,
+      viewerHasSubmittedFeedback: viewerHasSubmittedFeedback,
       opportunity: opportunityJson != null
           ? Opportunity.fromJson(opportunityJson)
           : null,
@@ -366,6 +382,11 @@ class Collaboration {
   /// From the backend `my_role`: true if the viewer is the creator, false if
   /// the applicant, null if unknown (e.g. list payloads without `my_role`).
   final bool? viewerIsCreator;
+
+  /// True when the VIEWER has already left feedback for this collaboration
+  /// (their row exists in the backend `feedback` array). Drives the
+  /// post-completion "add your feedback" prompt — both sides must review.
+  final bool viewerHasSubmittedFeedback;
 
   final Opportunity? opportunity;
   final ContactMethods contactMethods;

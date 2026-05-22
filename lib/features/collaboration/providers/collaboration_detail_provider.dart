@@ -33,10 +33,7 @@ Future<Collaboration?> _fetchCollaboration(
 
   final response = await http.get(
     Uri.parse(url),
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    },
+    headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
   );
 
   debugPrint('[Collaboration] response status=${response.statusCode}');

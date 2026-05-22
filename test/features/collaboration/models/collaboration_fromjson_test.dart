@@ -80,6 +80,35 @@ void main() {
       expect(c.feedbackSubmittedAt, isNull); // review CTA stays available
     });
 
+    test('viewerHasSubmittedFeedback matches the viewer my_role row', () {
+      // Viewer is the creator; only the applicant has left feedback so far ->
+      // the viewer still needs to review.
+      final pending = realResourcePayload()
+        ..['feedback'] = [
+          {'reviewer_role': 'applicant', 'rating': 5},
+        ];
+      expect(
+        Collaboration.fromJson(pending).viewerHasSubmittedFeedback,
+        isFalse,
+      );
+
+      // Now the creator (viewer) row exists -> submitted.
+      final done = realResourcePayload()
+        ..['feedback'] = [
+          {'reviewer_role': 'applicant', 'rating': 5},
+          {'reviewer_role': 'creator', 'rating': 4},
+        ];
+      expect(Collaboration.fromJson(done).viewerHasSubmittedFeedback, isTrue);
+
+      // No feedback array at all -> not submitted.
+      expect(
+        Collaboration.fromJson(
+          realResourcePayload(),
+        ).viewerHasSubmittedFeedback,
+        isFalse,
+      );
+    });
+
     test('partnerForViewer uses my_role to show the OTHER party', () {
       // Viewer is the creator (community Real Run Club). The partner shown must
       // be the applicant (business Eixample 46), NOT the viewer's own side,
