@@ -94,7 +94,7 @@ class DiscoveryService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('DiscoveryService error: $e');
-      throw NetworkException('Failed to load discovery opportunities: $e');
+      throw NetworkException('Failed to load Kolabs: $e');
     }
   }
 

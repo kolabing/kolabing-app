@@ -82,9 +82,7 @@ class MyOpportunityCard extends StatelessWidget {
 
           // Title
           Text(
-            opportunity.title.isNotEmpty
-                ? opportunity.title
-                : 'Untitled Opportunity',
+            opportunity.title.isNotEmpty ? opportunity.title : 'Untitled Kolab',
             style: GoogleFonts.openSans(
               fontSize: 16,
               fontWeight: FontWeight.w600,

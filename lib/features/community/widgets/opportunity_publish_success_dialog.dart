@@ -48,7 +48,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            isDraft ? 'Draft Saved!' : 'Opportunity Published!',
+            isDraft ? 'Draft Saved!' : 'Kolab Published!',
             style: GoogleFonts.rubik(
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -58,8 +58,8 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             isDraft
-                ? 'Your opportunity has been saved as a draft. You can edit and publish it later.'
-                : 'Your opportunity is now live. Businesses can start applying!',
+                ? 'Your Kolab has been saved as a draft. You can edit and publish it later.'
+                : 'Your Kolab is now live. Businesses can start applying!',
             style: GoogleFonts.openSans(
               fontSize: 14,
               color: KolabingColors.textSecondary,
@@ -90,7 +90,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
               ),
             ),
             child: Text(
-              'VIEW MY OPPORTUNITIES',
+              'VIEW MY KOLABS',
               style: GoogleFonts.dmSans(
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,

@@ -186,7 +186,7 @@ class PublicProfileService {
     }
 
     final body = response.body.isEmpty
-        ? <String, dynamic>{'message': 'Failed to load collaborations'}
+        ? <String, dynamic>{'message': 'Failed to load Kolabs'}
         : jsonDecode(response.body) as Map<String, dynamic>;
     throw ApiException(
       error: ApiError.fromJson(body, statusCode: response.statusCode),

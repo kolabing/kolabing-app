@@ -757,7 +757,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
-              'Send a message to begin discussing this collaboration',
+              'Send a message to begin discussing this Kolab',
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 color: KolabingColors.textSecondary,
@@ -779,7 +779,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             ListTile(
               leading: const Icon(LucideIcons.eye),
-              title: const Text('View Opportunity'),
+              title: const Text('View Kolab'),
               onTap: () {
                 Navigator.pop(ctx);
                 if (application != null) {

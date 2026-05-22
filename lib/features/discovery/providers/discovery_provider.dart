@@ -198,10 +198,7 @@ class DiscoveryListNotifier extends Notifier<DiscoveryListState> {
     } on NetworkException catch (e) {
       state = state.copyWith(isLoading: false, error: e.message);
     } on Exception {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Failed to load discovery opportunities',
-      );
+      state = state.copyWith(isLoading: false, error: 'Failed to load Kolabs');
     }
   }
 

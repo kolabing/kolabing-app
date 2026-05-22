@@ -27,7 +27,7 @@ void main() {
                 NavItem(
                   icon: LucideIcons.star,
                   activeIcon: LucideIcons.star,
-                  label: 'My Opportunities',
+                  label: 'My Kolabs',
                 ),
                 NavItem(
                   icon: LucideIcons.send,
@@ -50,7 +50,7 @@ void main() {
 
     expect(
       find.ancestor(
-        of: find.text('My Opportunities'),
+        of: find.text('My Kolabs'),
         matching: find.byType(FittedBox),
       ),
       findsOneWidget,

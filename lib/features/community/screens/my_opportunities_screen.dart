@@ -137,9 +137,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     }
 
     final state = ref.read(myOpportunitiesProvider);
-    final errorMessage = state.error ?? 'Failed to publish opportunity';
+    final errorMessage = state.error ?? 'Failed to publish Kolab';
     _showSnackbar(
-      message: success ? 'Opportunity published!' : errorMessage,
+      message: success ? 'Kolab published!' : errorMessage,
       isSuccess: success,
     );
   }
@@ -187,9 +187,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     }
 
     final state = ref.read(myOpportunitiesProvider);
-    final errorMessage = state.error ?? 'Failed to close opportunity';
+    final errorMessage = state.error ?? 'Failed to close Kolab';
     _showSnackbar(
-      message: success ? 'Opportunity closed' : errorMessage,
+      message: success ? 'Kolab closed' : errorMessage,
       isSuccess: success,
     );
   }
@@ -198,9 +198,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Opportunity'),
+        title: const Text('Delete Kolab'),
         content: const Text(
-          'Are you sure you want to delete this opportunity? This action cannot be undone.',
+          'Are you sure you want to delete this Kolab? This action cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -226,9 +226,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     }
 
     final state = ref.read(myOpportunitiesProvider);
-    final errorMessage = state.error ?? 'Failed to delete opportunity';
+    final errorMessage = state.error ?? 'Failed to delete Kolab';
     _showSnackbar(
-      message: success ? 'Opportunity deleted' : errorMessage,
+      message: success ? 'Kolab deleted' : errorMessage,
       isSuccess: success,
     );
   }
@@ -289,7 +289,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       ),
       floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
-        tooltip: 'Create New Opportunity',
+        tooltip: 'Create New Kolab',
         heroTag: 'community_my_opportunities_fab',
       ),
     );
@@ -306,14 +306,14 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MY OPPORTUNITIES',
+          'MY KOLABS',
           style: KolabingTextStyles.pageTitle.copyWith(
             color: KolabingColors.textPrimary,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Create and manage your opportunities',
+          'Create and manage your Kolabs',
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -385,7 +385,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           vertical: KolabingSpacing.sm,
         ),
         child: Text(
-          '${listState.total} ${listState.total == 1 ? 'opportunity' : 'opportunities'}',
+          '${listState.total} ${listState.total == 1 ? 'Kolab' : 'Kolabs'}',
           style: GoogleFonts.openSans(
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -498,7 +498,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'No opportunities yet',
+            'No Kolabs yet',
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -507,7 +507,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Create your first opportunity and start connecting.',
+            'Create your first Kolab and start connecting.',
             style: GoogleFonts.openSans(
               fontSize: 14,
               color: KolabingColors.textSecondary,
@@ -518,7 +518,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           ElevatedButton.icon(
             onPressed: _onCreateNew,
             icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('Create Opportunity'),
+            label: const Text('Create Kolab'),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,

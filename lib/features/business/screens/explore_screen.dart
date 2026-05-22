@@ -264,7 +264,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     if (!filters.hasActiveFilters) {
       return filters.feed == DiscoveryFeed.recommended
           ? 'Recommended matches for you'
-          : 'Browse all open collabs';
+          : 'Browse all open Kolabs';
     }
 
     final parts = <String>[];
@@ -289,7 +289,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       parts.add('Offers ${filters.offerTypes.length}');
     }
     if (_isCommunityViewer && filters.intentTypes.isNotEmpty) {
-      parts.add('Collab ${filters.intentTypes.length}');
+      parts.add('Kolab ${filters.intentTypes.length}');
     }
 
     if (parts.isEmpty) {
@@ -469,7 +469,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   ? 'No results found'
                   : isRecommended
                   ? 'No recommended matches yet'
-                  : 'No opportunities yet',
+                  : 'No Kolabs yet',
               style: GoogleFonts.rubik(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -481,8 +481,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               filters.hasActiveFilters
                   ? 'Try broadening your filters or switching feeds.'
                   : isRecommended
-                  ? 'Switch to All or check back for fresh collabs.'
-                  : 'Check back later for new opportunities.',
+                  ? 'Switch to All or check back for fresh Kolabs.'
+                  : 'Check back later for new Kolabs.',
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 color: KolabingColors.textSecondary,

@@ -39,7 +39,7 @@ class CollaborationDetailScreen extends ConsumerWidget {
         ),
         data: (collaboration) {
           if (collaboration == null) {
-            return const Center(child: Text('Collaboration not found'));
+            return const Center(child: Text('Kolab not found'));
           }
           return _CollaborationContent(
             collaboration: collaboration,
@@ -373,7 +373,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
       initialDate: collaboration.scheduledDate,
       firstDate: DateTime.now().subtract(const Duration(days: 1)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Reschedule collaboration',
+      helpText: 'Reschedule Kolab',
     );
     if (pickedDate == null || !mounted) return;
 
@@ -1710,7 +1710,7 @@ class _ResubscribePrompt extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Your subscription has lapsed, so this ongoing collaboration and its '
+            'Your subscription has lapsed, so this ongoing Kolab and its '
             'chat are paused on your side. The community keeps full access. '
             'Resubscribe to pick up where you left off.',
             style: GoogleFonts.openSans(
@@ -1788,7 +1788,7 @@ class _ErrorState extends StatelessWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load collaboration',
+              'Failed to load Kolab',
               style: GoogleFonts.rubik(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -1849,12 +1849,12 @@ class _FinishCollaborationSectionState
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Finish collaboration?',
+          'Finish Kolab?',
           style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 18),
         ),
         content: Text(
           'To finish, share a quick review of how it went. Both parties will '
-          'then see this collaboration in the Completed list.',
+          'then see this Kolab in the Completed list.',
           style: GoogleFonts.openSans(
             fontSize: 14,
             color: KolabingColors.textSecondary,
@@ -1915,7 +1915,7 @@ class _FinishCollaborationSectionState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Collaboration finished. Thanks for the feedback!',
+            'Kolab finished. Thanks for the feedback!',
             style: GoogleFonts.openSans(color: Colors.white),
           ),
           backgroundColor: KolabingColors.success,
@@ -1928,7 +1928,7 @@ class _FinishCollaborationSectionState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Could not finish collaboration: $e',
+            'Could not finish Kolab: $e',
             style: GoogleFonts.openSans(color: Colors.white),
           ),
           backgroundColor: KolabingColors.error,

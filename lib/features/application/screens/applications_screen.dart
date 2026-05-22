@@ -42,17 +42,21 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+      backgroundColor: isDark
+          ? KolabingColors.darkBackground
+          : KolabingColors.background,
       appBar: AppBar(
-        backgroundColor:
-            isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        backgroundColor: isDark
+            ? KolabingColors.darkSurface
+            : KolabingColors.surface,
         elevation: 0,
         centerTitle: true,
         title: Text(
           'APPLICATIONS',
           style: KolabingTextStyles.pageTitleSmall.copyWith(
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark
+                ? KolabingColors.textOnDark
+                : KolabingColors.textPrimary,
           ),
         ),
         bottom: PreferredSize(
@@ -84,8 +88,9 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
               ),
               Divider(
                 height: 1,
-                color:
-                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                color: isDark
+                    ? KolabingColors.darkBorder
+                    : KolabingColors.border,
               ),
             ],
           ),
@@ -155,48 +160,48 @@ class _SentApplicationsTab extends ConsumerWidget {
   }
 
   Widget _buildSentEmptyState(bool isDark) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  LucideIcons.send,
-                  size: 36,
-                  color: KolabingColors.primary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                'No Applications Yet',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                'Start exploring opportunities and apply to collaborate with businesses and communities.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: KolabingColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              LucideIcons.send,
+              size: 36,
+              color: KolabingColors.primary,
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            'No Applications Yet',
+            style: GoogleFonts.rubik(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: isDark
+                  ? KolabingColors.textOnDark
+                  : KolabingColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            'Start exploring Kolabs and apply to collaborate with businesses and communities.',
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -217,7 +222,11 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, ApplicationsState state, bool isDark) {
+  Widget _buildBody(
+    BuildContext context,
+    ApplicationsState state,
+    bool isDark,
+  ) {
     if (state.isLoading) {
       return _buildLoadingState(isDark);
     }
@@ -254,48 +263,48 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
   }
 
   Widget _buildReceivedEmptyState(bool isDark) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  LucideIcons.inbox,
-                  size: 36,
-                  color: KolabingColors.primary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                'No Received Applications',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                "When someone applies to your opportunities, they'll appear here.",
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: KolabingColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              LucideIcons.inbox,
+              size: 36,
+              color: KolabingColors.primary,
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            'No Received Applications',
+            style: GoogleFonts.rubik(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: isDark
+                  ? KolabingColors.textOnDark
+                  : KolabingColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            "When someone applies to your Kolabs, they'll appear here.",
+            style: GoogleFonts.openSans(
+              fontSize: 14,
+              color: KolabingColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -303,59 +312,59 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
 // =============================================================================
 
 Widget _buildLoadingState(bool isDark) => Shimmer.fromColors(
-      baseColor:
-          isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
-      highlightColor:
-          isDark ? KolabingColors.darkBorder : KolabingColors.surface,
-      child: ListView.separated(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        itemCount: 5,
-        separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
-        itemBuilder: (_, _) => Container(
-          height: 100,
-          decoration: BoxDecoration(
-            color: isDark ? KolabingColors.darkSurface : Colors.white,
-            borderRadius: KolabingRadius.borderRadiusMd,
-          ),
-        ),
+  baseColor: isDark
+      ? KolabingColors.darkSurface
+      : KolabingColors.surfaceVariant,
+  highlightColor: isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+  child: ListView.separated(
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    itemCount: 5,
+    separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
+    itemBuilder: (_, _) => Container(
+      height: 100,
+      decoration: BoxDecoration(
+        color: isDark ? KolabingColors.darkSurface : Colors.white,
+        borderRadius: KolabingRadius.borderRadiusMd,
       ),
-    );
+    ),
+  ),
+);
 
 Widget _buildErrorState(String error, bool isDark) => Center(
-      child: Padding(
-        padding: const EdgeInsets.all(KolabingSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              LucideIcons.alertCircle,
-              size: 48,
-              color: KolabingColors.error,
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            Text(
-              'Something went wrong',
-              style: GoogleFonts.rubik(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Text(
-              error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+  child: Padding(
+    padding: const EdgeInsets.all(KolabingSpacing.xl),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(
+          LucideIcons.alertCircle,
+          size: 48,
+          color: KolabingColors.error,
         ),
-      ),
-    );
+        const SizedBox(height: KolabingSpacing.md),
+        Text(
+          'Something went wrong',
+          style: GoogleFonts.rubik(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: isDark
+                ? KolabingColors.textOnDark
+                : KolabingColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        Text(
+          error,
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            color: KolabingColors.textSecondary,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  ),
+);
 
 // =============================================================================
 // Application Card Widget
@@ -380,137 +389,137 @@ class _ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-      onTap: onTap,
-      borderRadius: KolabingRadius.borderRadiusMd,
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Avatar
-            _buildAvatar(),
-            const SizedBox(width: KolabingSpacing.sm),
+    onTap: onTap,
+    borderRadius: KolabingRadius.borderRadiusMd,
+    child: Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar
+          _buildAvatar(),
+          const SizedBox(width: KolabingSpacing.sm),
 
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          application.opportunityTitle,
-                          style: GoogleFonts.rubik(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        application.opportunityTitle,
+                        style: GoogleFonts.rubik(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? KolabingColors.textOnDark
+                              : KolabingColors.textPrimary,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      _buildStatusBadge(),
-                    ],
-                  ),
-                  const SizedBox(height: KolabingSpacing.xxs),
-
-                  // Name label: "From:" for received, "To:" for sent
-                  Text(
-                    isReceived
-                        ? 'From: ${application.applicantName}'
-                        : 'To: ${application.recipientName}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
                     ),
-                  ),
-                  const SizedBox(height: KolabingSpacing.xs),
+                    _buildStatusBadge(),
+                  ],
+                ),
+                const SizedBox(height: KolabingSpacing.xxs),
 
-                  // Message preview
-                  Text(
-                    application.message,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textSecondary,
+                // Name label: "From:" for received, "To:" for sent
+                Text(
+                  isReceived
+                      ? 'From: ${application.applicantName}'
+                      : 'To: ${application.recipientName}',
+                  style: GoogleFonts.openSans(
+                    fontSize: 13,
+                    color: KolabingColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+
+                // Message preview
+                Text(
+                  application.message,
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    color: KolabingColors.textSecondary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+
+                // Footer
+                Row(
+                  children: [
+                    // Created time
+                    const Icon(
+                      LucideIcons.clock,
+                      size: 12,
+                      color: KolabingColors.textTertiary,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: KolabingSpacing.xs),
-
-                  // Footer
-                  Row(
-                    children: [
-                      // Created time
-                      const Icon(
-                        LucideIcons.clock,
-                        size: 12,
+                    const SizedBox(width: 4),
+                    Text(
+                      application.createdAtDisplay,
+                      style: GoogleFonts.openSans(
+                        fontSize: 12,
                         color: KolabingColors.textTertiary,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        application.createdAtDisplay,
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          color: KolabingColors.textTertiary,
+                    ),
+
+                    const Spacer(),
+
+                    // Unread indicator
+                    if (application.unreadCount > 0) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: KolabingColors.error,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${application.unreadCount}',
+                          style: GoogleFonts.openSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-
-                      const Spacer(),
-
-                      // Unread indicator
-                      if (application.unreadCount > 0) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: KolabingColors.error,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${application.unreadCount}',
-                            style: GoogleFonts.openSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ] else ...[
-                        const Icon(
-                          LucideIcons.chevronRight,
-                          size: 18,
-                          color: KolabingColors.textTertiary,
-                        ),
-                      ],
+                    ] else ...[
+                      const Icon(
+                        LucideIcons.chevronRight,
+                        size: 18,
+                        color: KolabingColors.textTertiary,
+                      ),
                     ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
+    ),
+  );
 
   Widget _buildAvatar() {
     final String? avatarUrl;
@@ -544,38 +553,38 @@ class _ApplicationCard extends StatelessWidget {
   }
 
   Widget _avatarPlaceholder(String name) => Center(
-        child: Text(
-          name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.primary,
-          ),
-        ),
-      );
+    child: Text(
+      name.isNotEmpty ? name[0].toUpperCase() : '?',
+      style: GoogleFonts.rubik(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: KolabingColors.primary,
+      ),
+    ),
+  );
 
   Widget _buildStatusBadge() {
     final (bgColor, textColor, label) = switch (application.status) {
       ApplicationStatus.pending => (
-          KolabingColors.pendingBg,
-          KolabingColors.pendingText,
-          'Pending',
-        ),
+        KolabingColors.pendingBg,
+        KolabingColors.pendingText,
+        'Pending',
+      ),
       ApplicationStatus.accepted => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText,
-          'Accepted',
-        ),
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+        'Accepted',
+      ),
       ApplicationStatus.declined => (
-          KolabingColors.errorBg,
-          KolabingColors.error,
-          'Declined',
-        ),
+        KolabingColors.errorBg,
+        KolabingColors.error,
+        'Declined',
+      ),
       ApplicationStatus.withdrawn => (
-          KolabingColors.surfaceVariant,
-          KolabingColors.textTertiary,
-          'Withdrawn',
-        ),
+        KolabingColors.surfaceVariant,
+        KolabingColors.textTertiary,
+        'Withdrawn',
+      ),
     };
 
     return Container(

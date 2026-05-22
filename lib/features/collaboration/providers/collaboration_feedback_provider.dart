@@ -151,7 +151,7 @@ Future<Map<String, dynamic>> _postReturningJson(
   }
 
   final body = response.body.isEmpty
-      ? <String, dynamic>{'message': 'Failed to finish collaboration'}
+      ? <String, dynamic>{'message': 'Failed to finish Kolab'}
       : jsonDecode(response.body) as Map<String, dynamic>;
   throw ApiException(
     error: ApiError.fromJson(body, statusCode: response.statusCode),

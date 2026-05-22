@@ -117,10 +117,7 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       floatingActionButton:
           _currentIndex !=
               4 // Hide on profile tab
-          ? KolabingFAB(
-              onPressed: _onFabPressed,
-              tooltip: 'Create Collab Request',
-            )
+          ? KolabingFAB(onPressed: _onFabPressed, tooltip: 'Create Kolab')
           : null,
       bottomNavigationBar: KolabingBottomNavBar(
         items: navItems,

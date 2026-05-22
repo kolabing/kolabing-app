@@ -18,7 +18,7 @@ enum PointEventType {
   String get displayLabel {
     switch (this) {
       case PointEventType.collaborationComplete:
-        return 'Collaboration Completed';
+        return 'Kolab Completed';
       case PointEventType.reviewPosted:
         return 'Review Posted';
       case PointEventType.ugcPosted:
@@ -105,13 +105,14 @@ class LedgerEntry {
   });
 
   factory LedgerEntry.fromJson(Map<String, dynamic> json) => LedgerEntry(
-        id: json['id']?.toString() ?? '',
-        points: _parseInt(json['points']) ?? 0,
-        eventType: PointEventType.fromString(
-            json['event_type']?.toString() ?? 'collaboration_complete'),
-        description: json['description']?.toString() ?? '',
-        createdAt: _parseDateTime(json['created_at']),
-      );
+    id: json['id']?.toString() ?? '',
+    points: _parseInt(json['points']) ?? 0,
+    eventType: PointEventType.fromString(
+      json['event_type']?.toString() ?? 'collaboration_complete',
+    ),
+    description: json['description']?.toString() ?? '',
+    createdAt: _parseDateTime(json['created_at']),
+  );
 
   /// Unique identifier.
   final String id;

@@ -135,7 +135,11 @@ class PastEventsSection extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildHeader(
-      BuildContext context, WidgetRef ref, List<Event> events, bool isDark) {
+    BuildContext context,
+    WidgetRef ref,
+    List<Event> events,
+    bool isDark,
+  ) {
     return Row(
       children: [
         const Icon(
@@ -147,8 +151,9 @@ class PastEventsSection extends ConsumerWidget {
         Text(
           'Past Events',
           style: KolabingTextStyles.titleMedium.copyWith(
-            color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark
+                ? KolabingColors.textOnDark
+                : KolabingColors.textPrimary,
           ),
         ),
         if (events.isNotEmpty) ...[
@@ -197,7 +202,11 @@ class PastEventsSection extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildOwnContent(
-      BuildContext context, WidgetRef ref, EventsState state, bool isDark) {
+    BuildContext context,
+    WidgetRef ref,
+    EventsState state,
+    bool isDark,
+  ) {
     if (state.isLoading) {
       return _buildLoadingState(isDark);
     }
@@ -228,8 +237,9 @@ class PastEventsSection extends ConsumerWidget {
           baseColor: isDark
               ? KolabingColors.darkSurface
               : KolabingColors.surfaceVariant,
-          highlightColor:
-              isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+          highlightColor: isDark
+              ? KolabingColors.darkBorder
+              : KolabingColors.surface,
           child: Container(
             width: 180,
             decoration: BoxDecoration(
@@ -243,7 +253,11 @@ class PastEventsSection extends ConsumerWidget {
   }
 
   Widget _buildErrorState(
-      BuildContext context, WidgetRef ref, String error, bool isDark) {
+    BuildContext context,
+    WidgetRef ref,
+    String error,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       child: Column(
@@ -311,7 +325,7 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Share your past collaborations with the community',
+            'Share your past Kolabs with the community',
             style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.textSecondary,
             ),

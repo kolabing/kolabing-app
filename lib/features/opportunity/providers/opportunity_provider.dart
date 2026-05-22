@@ -199,10 +199,7 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
     } on Exception catch (e, st) {
       debugPrint('[OpportunityList] Error: $e');
       debugPrint('[OpportunityList] Stack: $st');
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Failed to load opportunities',
-      );
+      state = state.copyWith(isLoading: false, error: 'Failed to load Kolabs');
     }
   }
 
@@ -319,7 +316,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
       debugPrint('Load my opportunities error: $e');
       state = state.copyWith(
         isLoading: false,
-        error: 'Failed to load your opportunities',
+        error: 'Failed to load your Kolabs',
       );
     }
   }
@@ -380,7 +377,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
       return false;
     } on Exception catch (e) {
       debugPrint('Publish error: $e');
-      state = state.copyWith(error: 'Failed to publish opportunity');
+      state = state.copyWith(error: 'Failed to publish Kolab');
       return false;
     }
   }
@@ -402,7 +399,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
       return false;
     } on Exception catch (e) {
       debugPrint('Close error: $e');
-      state = state.copyWith(error: 'Failed to close opportunity');
+      state = state.copyWith(error: 'Failed to close Kolab');
       return false;
     }
   }
@@ -420,7 +417,7 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
       return false;
     } on Exception catch (e) {
       debugPrint('Delete error: $e');
-      state = state.copyWith(error: 'Failed to delete opportunity');
+      state = state.copyWith(error: 'Failed to delete Kolab');
       return false;
     }
   }

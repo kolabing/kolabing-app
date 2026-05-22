@@ -124,7 +124,7 @@ class OpportunityService {
     } catch (e, st) {
       debugPrint('Browse opportunities error: $e');
       debugPrint('Browse stack: $st');
-      throw NetworkException('Failed to load opportunities: $e');
+      throw NetworkException('Failed to load Kolabs: $e');
     }
   }
 
@@ -190,7 +190,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Get my opportunities error: $e');
-      throw NetworkException('Failed to load your opportunities: $e');
+      throw NetworkException('Failed to load your Kolabs: $e');
     }
   }
 
@@ -231,13 +231,11 @@ class OpportunityService {
       } else if (response.statusCode == 403) {
         throw const ApiException(
           error: ApiError(
-            message: 'You are not authorized to view this opportunity.',
+            message: 'You are not authorized to view this Kolab.',
           ),
         );
       } else if (response.statusCode == 404) {
-        throw const ApiException(
-          error: ApiError(message: 'Opportunity not found.'),
-        );
+        throw const ApiException(error: ApiError(message: 'Kolab not found.'));
       } else {
         throw _parseApiError(response);
       }
@@ -247,7 +245,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Get opportunity error: $e');
-      throw NetworkException('Failed to load opportunity: $e');
+      throw NetworkException('Failed to load Kolab: $e');
     }
   }
 
@@ -304,7 +302,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Create opportunity error: $e');
-      throw NetworkException('Failed to create opportunity: $e');
+      throw NetworkException('Failed to create Kolab: $e');
     }
   }
 
@@ -364,7 +362,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Update opportunity error: $e');
-      throw NetworkException('Failed to update opportunity: $e');
+      throw NetworkException('Failed to update Kolab: $e');
     }
   }
 
@@ -429,7 +427,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Publish opportunity error: $e');
-      throw NetworkException('Failed to publish opportunity: $e');
+      throw NetworkException('Failed to publish Kolab: $e');
     }
   }
 
@@ -483,7 +481,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Status update publish error: $e');
-      throw NetworkException('Failed to publish opportunity: $e');
+      throw NetworkException('Failed to publish Kolab: $e');
     }
   }
 
@@ -533,7 +531,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Close opportunity error: $e');
-      throw NetworkException('Failed to close opportunity: $e');
+      throw NetworkException('Failed to close Kolab: $e');
     }
   }
 
@@ -575,7 +573,7 @@ class OpportunityService {
       rethrow;
     } on Exception catch (e) {
       debugPrint('Delete opportunity error: $e');
-      throw NetworkException('Failed to delete opportunity: $e');
+      throw NetworkException('Failed to delete Kolab: $e');
     }
   }
 

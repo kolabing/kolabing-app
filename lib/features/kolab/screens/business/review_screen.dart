@@ -31,7 +31,9 @@ class ReviewScreen extends ConsumerWidget {
     final isVenue = formState.intentType == IntentType.venuePromotion;
 
     final sections = _sectionsFor(kolab, isVenue, notifier);
-    final missingCount = sections.where((s) => s.status == _Status.missing).length;
+    final missingCount = sections
+        .where((s) => s.status == _Status.missing)
+        .length;
     final readyToPublish = missingCount == 0;
 
     return ListView(
@@ -47,10 +49,7 @@ class ReviewScreen extends ConsumerWidget {
         const SizedBox(height: KolabingSpacing.md),
 
         // Readiness status banner
-        _StatusBanner(
-          ready: readyToPublish,
-          missingCount: missingCount,
-        ),
+        _StatusBanner(ready: readyToPublish, missingCount: missingCount),
         const SizedBox(height: KolabingSpacing.lg),
 
         Text(
@@ -65,10 +64,12 @@ class ReviewScreen extends ConsumerWidget {
         const SizedBox(height: KolabingSpacing.sm),
 
         // Section checklist cards
-        ...sections.map((section) => Padding(
-              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-              child: _SectionCard(section: section),
-            )),
+        ...sections.map(
+          (section) => Padding(
+            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+            child: _SectionCard(section: section),
+          ),
+        ),
       ],
     );
   }
@@ -89,16 +90,16 @@ class ReviewScreen extends ConsumerWidget {
       // Step 0 only collects campaign copy; venue meta is inherited from the
       // business onboarding profile and is not editable here. Status is based
       // on the user-editable fields only — venue meta is shown for context.
-      final copyFilled =
-          kolab.title.isNotEmpty && kolab.description.isNotEmpty;
-      final hasVenueMeta = (kolab.venueName?.isNotEmpty ?? false) &&
+      final copyFilled = kolab.title.isNotEmpty && kolab.description.isNotEmpty;
+      final hasVenueMeta =
+          (kolab.venueName?.isNotEmpty ?? false) &&
           kolab.venueType != null &&
           (kolab.capacity ?? 0) > 0;
 
       final summary = copyFilled
           ? hasVenueMeta
-              ? '${kolab.venueName} • ${kolab.venueType?.displayName} • ${kolab.capacity} guests'
-              : kolab.title
+                ? '${kolab.venueName} • ${kolab.venueType?.displayName} • ${kolab.capacity} guests'
+                : kolab.title
           : 'Add a campaign title and description';
       final secondary = copyFilled && hasVenueMeta
           ? [
@@ -107,91 +108,111 @@ class ReviewScreen extends ConsumerWidget {
             ].join(', ')
           : null;
 
-      sections.add(_Section(
-        icon: LucideIcons.building2,
-        title: 'Campaign & Venue',
-        status: copyFilled ? _Status.complete : _Status.missing,
-        summary: summary,
-        secondary: secondary?.isNotEmpty == true ? secondary : null,
-        onTap: () => notifier.goToStep(0),
-      ));
+      sections.add(
+        _Section(
+          icon: LucideIcons.building2,
+          title: 'Campaign & Venue',
+          status: copyFilled ? _Status.complete : _Status.missing,
+          summary: summary,
+          secondary: secondary?.isNotEmpty == true ? secondary : null,
+          onTap: () => notifier.goToStep(0),
+        ),
+      );
     } else {
-      final fieldsFilled = kolab.title.isNotEmpty &&
+      final fieldsFilled =
+          kolab.title.isNotEmpty &&
           kolab.description.isNotEmpty &&
           (kolab.productName?.isNotEmpty ?? false) &&
           kolab.productType != null &&
           kolab.preferredCity.isNotEmpty;
 
-      sections.add(_Section(
-        icon: LucideIcons.package,
-        title: 'Product Details',
-        status: fieldsFilled ? _Status.complete : _Status.missing,
-        summary: fieldsFilled
-            ? '${kolab.productName} • ${kolab.productType?.displayName}'
-            : 'Tap to fill product details',
-        secondary: fieldsFilled ? kolab.preferredCity : null,
-        onTap: () => notifier.goToStep(0),
-      ));
+      sections.add(
+        _Section(
+          icon: LucideIcons.package,
+          title: 'Product Details',
+          status: fieldsFilled ? _Status.complete : _Status.missing,
+          summary: fieldsFilled
+              ? '${kolab.productName} • ${kolab.productType?.displayName}'
+              : 'Tap to fill product details',
+          secondary: fieldsFilled ? kolab.preferredCity : null,
+          onTap: () => notifier.goToStep(0),
+        ),
+      );
     }
 
     // Step 1 — Media
     final photoCount = kolab.media.where((m) => m.type == 'image').length;
-    sections.add(_Section(
-      icon: LucideIcons.image,
-      title: 'Media',
-      status: photoCount > 0 ? _Status.complete : _Status.missing,
-      summary: photoCount > 0
-          ? '$photoCount photo${photoCount == 1 ? '' : 's'} added'
-          : 'Add at least 1 photo',
-      onTap: () => notifier.goToStep(1),
-    ));
+    sections.add(
+      _Section(
+        icon: LucideIcons.image,
+        title: 'Media',
+        status: photoCount > 0 ? _Status.complete : _Status.missing,
+        summary: photoCount > 0
+            ? '$photoCount photo${photoCount == 1 ? '' : 's'} added'
+            : 'Add at least 1 photo',
+        onTap: () => notifier.goToStep(1),
+      ),
+    );
 
     // Step 2 — Offering
-    sections.add(_Section(
-      icon: LucideIcons.gift,
-      title: 'Offering',
-      status: kolab.offering.isNotEmpty ? _Status.complete : _Status.missing,
-      summary: kolab.offering.isNotEmpty
-          ? _formatOffering(kolab.offering)
-          : 'Pick what you offer',
-      onTap: () => notifier.goToStep(2),
-    ));
+    sections.add(
+      _Section(
+        icon: LucideIcons.gift,
+        title: 'Offering',
+        status: kolab.offering.isNotEmpty ? _Status.complete : _Status.missing,
+        summary: kolab.offering.isNotEmpty
+            ? _formatOffering(kolab.offering)
+            : 'Pick what you offer',
+        onTap: () => notifier.goToStep(2),
+      ),
+    );
 
     // Step 3 — Ideal community (optional)
-    final hasIdealCommunity = kolab.seekingCommunities.isNotEmpty ||
+    final hasIdealCommunity =
+        kolab.seekingCommunities.isNotEmpty ||
         kolab.minCommunitySize != null ||
         kolab.expects.isNotEmpty;
-    sections.add(_Section(
-      icon: LucideIcons.users,
-      title: 'Ideal Community',
-      status: hasIdealCommunity ? _Status.complete : _Status.optional,
-      summary: hasIdealCommunity
-          ? _summarizeIdealCommunity(kolab)
-          : 'Optional — leave open to all',
-      onTap: () => notifier.goToStep(3),
-    ));
+    sections.add(
+      _Section(
+        icon: LucideIcons.users,
+        title: 'Ideal Community',
+        status: hasIdealCommunity ? _Status.complete : _Status.optional,
+        summary: hasIdealCommunity
+            ? _summarizeIdealCommunity(kolab)
+            : 'Optional — leave open to all',
+        onTap: () => notifier.goToStep(3),
+      ),
+    );
 
     // Step 4 — Past events (optional)
-    sections.add(_Section(
-      icon: LucideIcons.history,
-      title: 'Past Collaborations',
-      status: kolab.pastEvents.isNotEmpty ? _Status.complete : _Status.optional,
-      summary: kolab.pastEvents.isNotEmpty
-          ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'} added'
-          : 'Optional — adds credibility',
-      onTap: () => notifier.goToStep(4),
-    ));
+    sections.add(
+      _Section(
+        icon: LucideIcons.history,
+        title: 'Past Kolabs',
+        status: kolab.pastEvents.isNotEmpty
+            ? _Status.complete
+            : _Status.optional,
+        summary: kolab.pastEvents.isNotEmpty
+            ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'} added'
+            : 'Optional — adds credibility',
+        onTap: () => notifier.goToStep(4),
+      ),
+    );
 
     // Step 5 — Availability
-    sections.add(_Section(
-      icon: LucideIcons.calendar,
-      title: 'Availability',
-      status: kolab.availabilityMode != null ? _Status.complete : _Status.missing,
-      summary: kolab.availabilityMode != null
-          ? _summarizeAvailability(kolab)
-          : 'Set when you are available',
-      onTap: () => notifier.goToStep(5),
-    ));
+    sections.add(
+      _Section(
+        icon: LucideIcons.calendar,
+        title: 'Availability',
+        status: kolab.availabilityMode != null
+            ? _Status.complete
+            : _Status.missing,
+        summary: kolab.availabilityMode != null
+            ? _summarizeAvailability(kolab)
+            : 'Set when you are available',
+        onTap: () => notifier.goToStep(5),
+      ),
+    );
 
     return sections;
   }
@@ -216,7 +237,11 @@ class ReviewScreen extends ConsumerWidget {
     final parts = <String>[];
     if (kolab.seekingCommunities.isNotEmpty) {
       final s = kolab.seekingCommunities;
-      parts.add(s.length <= 2 ? s.join(' • ') : '${s.take(2).join(' • ')} +${s.length - 2}');
+      parts.add(
+        s.length <= 2
+            ? s.join(' • ')
+            : '${s.take(2).join(' • ')} +${s.length - 2}',
+      );
     }
     if (kolab.minCommunitySize != null) {
       parts.add('Min ${kolab.minCommunitySize}+');
@@ -233,7 +258,9 @@ class ReviewScreen extends ConsumerWidget {
         '${fmt.format(kolab.availabilityStart!)} – ${DateFormat('MMM d, yyyy').format(kolab.availabilityEnd!)}',
       );
     } else if (kolab.availabilityStart != null) {
-      parts.add('From ${DateFormat('MMM d, yyyy').format(kolab.availabilityStart!)}');
+      parts.add(
+        'From ${DateFormat('MMM d, yyyy').format(kolab.availabilityStart!)}',
+      );
     }
     if (kolab.selectedTime != null) {
       parts.add(
@@ -261,11 +288,11 @@ class _PreviewCard extends StatelessWidget {
 
     final headline = isVenue
         ? (kolab.venueName?.isNotEmpty ?? false)
-            ? kolab.venueName!
-            : kolab.title
+              ? kolab.venueName!
+              : kolab.title
         : (kolab.productName?.isNotEmpty ?? false)
-            ? kolab.productName!
-            : kolab.title;
+        ? kolab.productName!
+        : kolab.title;
 
     final subhead = isVenue
         ? [
@@ -427,15 +454,15 @@ class _CoverImage extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-        color: KolabingColors.surfaceVariant,
-        child: const Center(
-          child: Icon(
-            LucideIcons.imageOff,
-            size: 28,
-            color: KolabingColors.textTertiary,
-          ),
-        ),
-      );
+    color: KolabingColors.surfaceVariant,
+    child: const Center(
+      child: Icon(
+        LucideIcons.imageOff,
+        size: 28,
+        color: KolabingColors.textTertiary,
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -456,8 +483,9 @@ class _StatusBanner extends StatelessWidget {
     final border = ready
         ? KolabingColors.success.withValues(alpha: 0.4)
         : KolabingColors.warning.withValues(alpha: 0.4);
-    final iconColor =
-        ready ? const Color(0xFF1A8C46) : KolabingColors.accentOrangeText;
+    final iconColor = ready
+        ? const Color(0xFF1A8C46)
+        : KolabingColors.accentOrangeText;
     final icon = ready ? LucideIcons.checkCircle : LucideIcons.alertCircle;
     final title = ready
         ? 'Ready to publish'
@@ -539,23 +567,24 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ({Color bg, Color fg, IconData icon}) badge = switch (section.status) {
-      _Status.complete => (
-          bg: KolabingColors.success.withValues(alpha: 0.18),
-          fg: const Color(0xFF1A8C46),
-          icon: LucideIcons.check,
-        ),
-      _Status.missing => (
-          bg: KolabingColors.error.withValues(alpha: 0.14),
-          fg: KolabingColors.error,
-          icon: LucideIcons.alertCircle,
-        ),
-      _Status.optional => (
-          bg: KolabingColors.surfaceVariant,
-          fg: KolabingColors.textTertiary,
-          icon: LucideIcons.minus,
-        ),
-    };
+    final ({Color bg, Color fg, IconData icon}) badge =
+        switch (section.status) {
+          _Status.complete => (
+            bg: KolabingColors.success.withValues(alpha: 0.18),
+            fg: const Color(0xFF1A8C46),
+            icon: LucideIcons.check,
+          ),
+          _Status.missing => (
+            bg: KolabingColors.error.withValues(alpha: 0.14),
+            fg: KolabingColors.error,
+            icon: LucideIcons.alertCircle,
+          ),
+          _Status.optional => (
+            bg: KolabingColors.surfaceVariant,
+            fg: KolabingColors.textTertiary,
+            icon: LucideIcons.minus,
+          ),
+        };
 
     return Material(
       color: Colors.transparent,

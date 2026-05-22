@@ -249,7 +249,7 @@ class _CommunitySections extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Collab Type'),
+        const _SectionLabel(label: 'Kolab Type'),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.intentTypeOptions,
@@ -765,7 +765,7 @@ class _ResultsCount extends StatelessWidget {
     child: Text(
       total > 0
           ? '$total result${total == 1 ? '' : 's'} found'
-          : 'Showing all opportunities',
+          : 'Showing all Kolabs',
       style: GoogleFonts.openSans(
         fontSize: 13,
         fontWeight: FontWeight.w500,

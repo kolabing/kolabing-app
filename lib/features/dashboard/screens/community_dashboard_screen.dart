@@ -207,7 +207,7 @@ class _CommunityDashboardScreenState
           children: [
             Expanded(
               child: DashboardStatCard(
-                title: 'Active Collabs',
+                title: 'Active Kolabs',
                 count: data.collaborations.active,
                 icon: LucideIcons.users,
                 accentColor: KolabingColors.info,
@@ -255,7 +255,7 @@ class _CommunityDashboardScreenState
                 ),
               ),
               child: Text(
-                'FIND A COLLAB',
+                'FIND A KOLAB',
                 style: GoogleFonts.rubik(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -317,7 +317,7 @@ class _CommunityDashboardScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'UPCOMING COLLABORATIONS',
+          'UPCOMING KOLABS',
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -360,7 +360,7 @@ class _CommunityDashboardScreenState
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'No upcoming collaborations yet',
+            'No upcoming Kolabs yet',
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,

@@ -256,7 +256,7 @@ class Application {
   final bool viewerMustResubscribe;
 
   /// Get opportunity title
-  String get opportunityTitle => opportunity?.title ?? 'Unknown Opportunity';
+  String get opportunityTitle => opportunity?.title ?? 'Unknown Kolab';
 
   /// Get applicant name
   String get applicantName => applicantProfile?.displayName ?? 'Unknown';

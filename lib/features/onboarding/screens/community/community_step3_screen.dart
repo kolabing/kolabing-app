@@ -111,7 +111,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
                         // Subtitle
                         Text(
-                          'Find opportunities in your area',
+                          'Find Kolabs in your area',
                           style: GoogleFonts.openSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
@@ -272,10 +272,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
-                    disabledForegroundColor:
-                        KolabingColors.onPrimary.withValues(alpha: 0.5),
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                      alpha: 0.5,
+                    ),
+                    disabledForegroundColor: KolabingColors.onPrimary
+                        .withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

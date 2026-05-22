@@ -5,11 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme/colors.dart';
 
 /// User type for selection cards
-enum SelectionUserType {
-  business,
-  community,
-  attendee,
-}
+enum SelectionUserType { business, community, attendee }
 
 /// Selection card for user type (Business or Community)
 ///
@@ -53,13 +49,9 @@ class _SelectionCardState extends State<SelectionCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   @override
@@ -119,7 +111,7 @@ class _SelectionCardState extends State<SelectionCard>
       case SelectionUserType.business:
         return 'Looking for communities to partner with';
       case SelectionUserType.community:
-        return 'Seeking sponsors and collaboration partners';
+        return 'Seeking sponsors and Kolab partners';
       case SelectionUserType.attendee:
         return 'Joining events and completing challenges';
     }
@@ -127,84 +119,79 @@ class _SelectionCardState extends State<SelectionCard>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        button: true,
-        enabled: widget.isEnabled,
-        selected: widget.isSelected,
-        label: '$_title. $_description',
-        child: GestureDetector(
-          onTapDown: _handleTapDown,
-          onTapUp: _handleTapUp,
-          onTapCancel: _handleTapCancel,
-          onTap: _handleTap,
-          child: AnimatedBuilder(
-            animation: _scaleAnimation,
-            builder: (context, child) => Transform.scale(
-              scale: _isPressed || widget.isSelected
-                  ? _scaleAnimation.value
-                  : 1.0,
-              child: child,
+    button: true,
+    enabled: widget.isEnabled,
+    selected: widget.isSelected,
+    label: '$_title. $_description',
+    child: GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: _handleTap,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) => Transform.scale(
+          scale: _isPressed || widget.isSelected ? _scaleAnimation.value : 1.0,
+          child: child,
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _isPressed || widget.isSelected
+                  ? KolabingColors.primary
+                  : KolabingColors.border,
+              width: 2,
             ),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-              decoration: BoxDecoration(
-                color: KolabingColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: _isPressed || widget.isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.border,
-                  width: 2,
+            boxShadow: [
+              BoxShadow(
+                color: _isPressed || widget.isSelected
+                    ? KolabingColors.primary.withValues(alpha: 0.20)
+                    : const Color(0xFF374957).withValues(alpha: 0.10),
+                blurRadius: _isPressed || widget.isSelected ? 16 : 8,
+                offset: const Offset(0, 1.5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Text(_icon, style: const TextStyle(fontSize: 48)),
+              const SizedBox(height: 16),
+
+              // Title
+              Text(
+                _title,
+                style: GoogleFonts.dmSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.textPrimary,
+                  letterSpacing: 0.5,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _isPressed || widget.isSelected
-                        ? KolabingColors.primary.withValues(alpha: 0.20)
-                        : const Color(0xFF374957).withValues(alpha: 0.10),
-                    blurRadius: _isPressed || widget.isSelected ? 16 : 8,
-                    offset: const Offset(0, 1.5),
-                  ),
-                ],
+                textAlign: TextAlign.center,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Icon
-                  Text(
-                    _icon,
-                    style: const TextStyle(fontSize: 48),
-                  ),
-                  const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
-                  // Title
-                  Text(
-                    _title,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
-                      letterSpacing: 0.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Description
-                  Text(
-                    _description,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
-                      height: 1.4,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+              // Description
+              Text(
+                _description,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: KolabingColors.textSecondary,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

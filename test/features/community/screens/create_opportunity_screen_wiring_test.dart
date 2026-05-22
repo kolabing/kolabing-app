@@ -39,7 +39,7 @@ void main() {
       await tester.tap(find.text('PUBLISH'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Opportunity Published!'), findsOneWidget);
+      expect(find.text('Kolab Published!'), findsOneWidget);
       expect(find.text('SHARE'), findsOneWidget);
 
       await tester.tap(find.text('SHARE'));

@@ -437,7 +437,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       iconColor = KolabingColors.textTertiary;
       iconBgColor = KolabingColors.surfaceVariant;
       title = 'No Active Plan';
-      subtitle = 'Subscribe to publish opportunities';
+      subtitle = 'Subscribe to publish Kolabs';
     }
 
     return Container(
@@ -512,8 +512,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         const SizedBox(height: KolabingSpacing.md),
         const _BenefitItem(
           icon: LucideIcons.megaphone,
-          title: 'Publish Opportunities',
-          description: 'Create and publish collaboration offers',
+          title: 'Publish Kolabs',
+          description: 'Create and publish Kolab offers',
         ),
         const _BenefitItem(
           icon: LucideIcons.users,
@@ -528,7 +528,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         const _BenefitItem(
           icon: LucideIcons.barChart2,
           title: 'Track Performance',
-          description: 'Monitor your collaboration metrics',
+          description: 'Monitor your Kolab metrics',
         ),
         const SizedBox(height: KolabingSpacing.md),
         const Divider(height: 1, color: KolabingColors.border),
@@ -649,7 +649,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               ),
               const SizedBox(height: 2),
               Text(
-                'Your last payment failed. Update your payment method to continue publishing opportunities.',
+                'Your last payment failed. Update your payment method to continue publishing Kolabs.',
                 style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.error,
                 ),
@@ -691,7 +691,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Your subscription is active until $endDate. After that, you will not be able to publish new opportunities.',
+                  'Your subscription is active until $endDate. After that, you will not be able to publish new Kolabs.',
                   style: KolabingTextStyles.bodySmall.copyWith(
                     color: KolabingColors.warning,
                   ),

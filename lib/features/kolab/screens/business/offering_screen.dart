@@ -27,7 +27,7 @@ class OfferingScreen extends ConsumerStatefulWidget {
     _OfferingOption(
       value: 'venue',
       title: 'Venue',
-      subtitle: 'Provide your space for the collaboration',
+      subtitle: 'Provide your space for the Kolab',
       icon: LucideIcons.building2,
     ),
     _OfferingOption(
@@ -63,7 +63,7 @@ class OfferingScreen extends ConsumerStatefulWidget {
     _OfferingOption(
       value: 'sponsorship',
       title: 'Sponsorship budget',
-      subtitle: 'Financial support for the collaboration',
+      subtitle: 'Financial support for the Kolab',
       icon: LucideIcons.banknote,
     ),
     _OfferingOption(
@@ -73,7 +73,6 @@ class OfferingScreen extends ConsumerStatefulWidget {
       icon: LucideIcons.moreHorizontal,
     ),
   ];
-
 }
 
 class _OfferingScreenState extends ConsumerState<OfferingScreen> {
@@ -206,7 +205,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         _SectionLabel(label: 'EXTRA TERMS (OPTIONAL)'),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Better terms you only unlock once a community proposes a collab. '
+          'Better terms you only unlock once a community proposes a Kolab. '
           'They see these after sending you a Kolab.',
           style: GoogleFonts.openSans(
             fontSize: 13,
@@ -277,10 +276,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
       builder: (_) => const _TriggerEditorSheet(),
     );
     if (result == null) return;
-    notifier.updateNegotiationTriggers([
-      ...kolab.negotiationTriggers,
-      result,
-    ]);
+    notifier.updateNegotiationTriggers([...kolab.negotiationTriggers, result]);
   }
 }
 
@@ -289,14 +285,14 @@ class _SectionLabel extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: GoogleFonts.rubik(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-          color: KolabingColors.textSecondary,
-        ),
-      );
+    label,
+    style: GoogleFonts.rubik(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 1.0,
+      color: KolabingColors.textSecondary,
+    ),
+  );
 }
 
 class _TriggerCard extends StatelessWidget {
@@ -314,53 +310,53 @@ class _TriggerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: KolabingColors.border),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'IF $condition',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                      color: KolabingColors.textTertiary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    additionalOffer,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textPrimary,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: KolabingColors.border),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'IF $condition',
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: KolabingColors.textTertiary,
+                ),
               ),
-            ),
-            IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: onRemove,
-              icon: const Icon(
-                LucideIcons.x,
-                size: 18,
-                color: KolabingColors.textTertiary,
+              const SizedBox(height: 4),
+              Text(
+                additionalOffer,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  color: KolabingColors.textPrimary,
+                  height: 1.4,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      );
+        IconButton(
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          onPressed: onRemove,
+          icon: const Icon(
+            LucideIcons.x,
+            size: 18,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _TriggerEditorSheet extends StatefulWidget {
@@ -529,86 +525,80 @@ class _ToggleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? KolabingColors.softYellow
-              : KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: isSelected
-                ? KolabingColors.primary
-                : KolabingColors.border,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Checkbox / Locked indicator
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? KolabingColors.primary
-                    : Colors.transparent,
-                borderRadius: KolabingRadius.borderRadiusXs,
-                border: Border.all(
-                  color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.border,
-                  width: 1.5,
-                ),
-              ),
-              child: isSelected
-                  ? Icon(
-                      isLocked ? LucideIcons.lock : LucideIcons.check,
-                      size: 14,
-                      color: KolabingColors.onPrimary,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Icon
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? KolabingColors.textPrimary
-                  : KolabingColors.textSecondary,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Title + subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: isSelected ? KolabingColors.primary : KolabingColors.border,
         ),
       ),
-    );
+      child: Row(
+        children: [
+          // Checkbox / Locked indicator
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isSelected ? KolabingColors.primary : Colors.transparent,
+              borderRadius: KolabingRadius.borderRadiusXs,
+              border: Border.all(
+                color: isSelected
+                    ? KolabingColors.primary
+                    : KolabingColors.border,
+                width: 1.5,
+              ),
+            ),
+            child: isSelected
+                ? Icon(
+                    isLocked ? LucideIcons.lock : LucideIcons.check,
+                    size: 14,
+                    color: KolabingColors.onPrimary,
+                  )
+                : null,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Icon
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected
+                ? KolabingColors.textPrimary
+                : KolabingColors.textSecondary,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Title + subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

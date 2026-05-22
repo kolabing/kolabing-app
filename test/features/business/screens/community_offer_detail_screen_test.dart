@@ -68,7 +68,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('You are previewing this collaboration as businesses see it'),
+        find.text('You are previewing this Kolab as businesses see it'),
         findsOneWidget,
       );
       expect(find.text('PREVIEW MODE'), findsOneWidget);
@@ -231,9 +231,7 @@ Opportunity _testOpportunity() => Opportunity(
   title: 'Barcelona brunch collab',
   description: 'Host our community for a brunch meetup.',
   businessOffer: const BusinessOffer(venue: true, foodDrink: true),
-  communityDeliverables: const CommunityDeliverables(
-    socialMediaContent: true,
-  ),
+  communityDeliverables: const CommunityDeliverables(socialMediaContent: true),
   categories: const ['Food'],
   availabilityMode: AvailabilityMode.oneTime,
   availabilityStart: DateTime(2026, 6, 12),
@@ -263,10 +261,7 @@ Event _testEvent({
   date: date,
   attendeeCount: 120,
   photos: [
-    const EventPhoto(
-      id: 'photo-1',
-      url: 'https://example.com/photo.jpg',
-    ),
+    const EventPhoto(id: 'photo-1', url: 'https://example.com/photo.jpg'),
   ],
   createdAt: date,
 );

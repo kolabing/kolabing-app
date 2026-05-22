@@ -944,7 +944,7 @@ class _CommunityOfferDetailScreenState
         onPressed: () => context.pop(),
       ),
       title: Text(
-        'Opportunity Details',
+        'Kolab Details',
         style: GoogleFonts.rubik(
           fontWeight: FontWeight.w600,
           color: KolabingColors.textPrimary,
@@ -974,7 +974,7 @@ class _CommunityOfferDetailScreenState
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'Opportunity Not Found',
+              'Kolab Not Found',
               style: GoogleFonts.rubik(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -1035,7 +1035,7 @@ class _PreviewModeBanner extends StatelessWidget {
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Text(
-              'You are previewing this collaboration as businesses see it',
+              'You are previewing this Kolab as businesses see it',
               style: GoogleFonts.openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,

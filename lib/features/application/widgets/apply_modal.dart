@@ -184,7 +184,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     }
     final errorString = error.toString();
     if (errorString.contains('already applied')) {
-      return 'You have already applied to this opportunity';
+      return 'You have already applied to this Kolab';
     }
     return 'Failed to submit application. Please try again.';
   }
@@ -332,7 +332,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       minLines: 4,
                       decoration: _buildInputDecoration(
                         hintText:
-                            "Tell them why you're perfect for this collaboration and what value you can bring...",
+                            "Tell them why you're perfect for this Kolab and what value you can bring...",
                       ),
                       style: GoogleFonts.openSans(
                         fontSize: 14,
@@ -346,7 +346,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     _buildSectionTitle('Select Date(s)', required: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'Pick from the available dates for this collaboration',
+                      'Pick from the available dates for this Kolab',
                       style: GoogleFonts.openSans(
                         fontSize: 12,
                         color: KolabingColors.textTertiary,
@@ -460,7 +460,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           ),
         ),
         child: Text(
-          'No available dates for this collaboration',
+          'No available dates for this Kolab',
           style: GoogleFonts.openSans(
             fontSize: 13,
             color: KolabingColors.error,

@@ -326,7 +326,7 @@ class Collaboration {
       ),
       TimelineStep(
         title: 'Event Day',
-        description: 'Collaboration event takes place',
+        description: 'Kolab event takes place',
         status: status == CollaborationStatus.inProgress
             ? TimelineStepStatus.current
             : status == CollaborationStatus.completed

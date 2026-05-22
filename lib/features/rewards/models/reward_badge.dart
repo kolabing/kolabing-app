@@ -49,15 +49,15 @@ enum RewardBadgeSlug {
   String get description {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
-        return 'Complete your first collaboration';
+        return 'Complete your first Kolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Post 3 reviews for collaborations';
+        return 'Post 3 reviews for Kolabs';
       case RewardBadgeSlug.communityEarner:
         return 'Earn 100 points through activities';
       case RewardBadgeSlug.referralPioneer:
         return 'Refer your first user to Kolabing';
       case RewardBadgeSlug.powerPartner:
-        return 'Complete 5 collaborations';
+        return 'Complete 5 Kolabs';
     }
   }
 
@@ -65,7 +65,7 @@ enum RewardBadgeSlug {
   String get requirement {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
-        return '1 collab needed';
+        return '1 Kolab needed';
       case RewardBadgeSlug.contentCreator:
         return '3 reviews needed';
       case RewardBadgeSlug.communityEarner:
@@ -73,7 +73,7 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.referralPioneer:
         return '1 referral needed';
       case RewardBadgeSlug.powerPartner:
-        return '5 collabs needed';
+        return '5 Kolabs needed';
     }
   }
 
@@ -142,11 +142,10 @@ class RewardBadge {
   });
 
   factory RewardBadge.fromJson(Map<String, dynamic> json) => RewardBadge(
-        slug: RewardBadgeSlug.fromString(
-            json['slug']?.toString() ?? 'first_kolab'),
-        isUnlocked: json['is_unlocked'] == true,
-        earnedAt: _parseDateTimeNullable(json['earned_at']),
-      );
+    slug: RewardBadgeSlug.fromString(json['slug']?.toString() ?? 'first_kolab'),
+    isUnlocked: json['is_unlocked'] == true,
+    earnedAt: _parseDateTimeNullable(json['earned_at']),
+  );
 
   /// Which badge this is.
   final RewardBadgeSlug slug;
@@ -161,8 +160,18 @@ class RewardBadge {
   String get earnedDateFormatted {
     if (earnedAt == null) return '';
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[earnedAt!.month - 1]} ${earnedAt!.day}, ${earnedAt!.year}';
   }

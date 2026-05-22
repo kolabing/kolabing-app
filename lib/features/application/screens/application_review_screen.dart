@@ -17,10 +17,7 @@ import '../providers/application_provider.dart';
 /// availability, and Accept / Decline actions.
 /// After accepting, navigates to the chat screen.
 class ApplicationReviewScreen extends ConsumerStatefulWidget {
-  const ApplicationReviewScreen({
-    super.key,
-    required this.applicationId,
-  });
+  const ApplicationReviewScreen({super.key, required this.applicationId});
 
   final String applicationId;
 
@@ -36,8 +33,9 @@ class _ApplicationReviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    final asyncApplication =
-        ref.watch(applicationDetailProvider(widget.applicationId));
+    final asyncApplication = ref.watch(
+      applicationDetailProvider(widget.applicationId),
+    );
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -46,8 +44,10 @@ class _ApplicationReviewScreenState
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft,
-              color: KolabingColors.textPrimary),
+          icon: const Icon(
+            LucideIcons.arrowLeft,
+            color: KolabingColors.textPrimary,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -69,8 +69,11 @@ class _ApplicationReviewScreenState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(LucideIcons.alertCircle,
-                    size: 48, color: KolabingColors.error),
+                const Icon(
+                  LucideIcons.alertCircle,
+                  size: 48,
+                  color: KolabingColors.error,
+                ),
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
                   'Failed to load application',
@@ -83,11 +86,15 @@ class _ApplicationReviewScreenState
                 const SizedBox(height: KolabingSpacing.sm),
                 TextButton(
                   onPressed: () => ref.invalidate(
-                      applicationDetailProvider(widget.applicationId)),
-                  child: Text('Retry',
-                      style: GoogleFonts.dmSans(
-                          color: KolabingColors.primary,
-                          fontWeight: FontWeight.w600)),
+                    applicationDetailProvider(widget.applicationId),
+                  ),
+                  child: Text(
+                    'Retry',
+                    style: GoogleFonts.dmSans(
+                      color: KolabingColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -202,11 +209,15 @@ class _ApplicationReviewScreenState
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.briefcase, size: 18, color: KolabingColors.onPrimary),
+          const Icon(
+            LucideIcons.briefcase,
+            size: 18,
+            color: KolabingColors.onPrimary,
+          ),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
-              opportunity?.title ?? 'Unknown Opportunity',
+              opportunity?.title ?? 'Unknown Kolab',
               style: GoogleFonts.rubik(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -222,7 +233,9 @@ class _ApplicationReviewScreenState
   }
 
   Widget _buildApplicantCard(
-      ApplicantProfile? profile, Application application) {
+    ApplicantProfile? profile,
+    Application application,
+  ) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -300,8 +313,11 @@ class _ApplicationReviewScreenState
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(LucideIcons.mapPin,
-                    size: 14, color: KolabingColors.textTertiary),
+                const Icon(
+                  LucideIcons.mapPin,
+                  size: 14,
+                  color: KolabingColors.textTertiary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   profile.city!,
@@ -399,31 +415,26 @@ class _ApplicationReviewScreenState
   Widget _buildStatusInfo(Application application) {
     final (icon, color, label, description) = switch (application.status) {
       ApplicationStatus.accepted => (
-          LucideIcons.checkCircle,
-          KolabingColors.success,
-          'Accepted',
-          'This application has been accepted. You can chat with the applicant.',
-        ),
+        LucideIcons.checkCircle,
+        KolabingColors.success,
+        'Accepted',
+        'This application has been accepted. You can chat with the applicant.',
+      ),
       ApplicationStatus.declined => (
-          LucideIcons.xCircle,
-          KolabingColors.error,
-          'Declined',
-          application.declineReason != null
-              ? 'Declined: ${application.declineReason}'
-              : 'This application has been declined.',
-        ),
+        LucideIcons.xCircle,
+        KolabingColors.error,
+        'Declined',
+        application.declineReason != null
+            ? 'Declined: ${application.declineReason}'
+            : 'This application has been declined.',
+      ),
       ApplicationStatus.withdrawn => (
-          LucideIcons.minusCircle,
-          KolabingColors.textTertiary,
-          'Withdrawn',
-          'The applicant has withdrawn their application.',
-        ),
-      _ => (
-          LucideIcons.clock,
-          KolabingColors.pendingText,
-          'Pending',
-          '',
-        ),
+        LucideIcons.minusCircle,
+        KolabingColors.textTertiary,
+        'Withdrawn',
+        'The applicant has withdrawn their application.',
+      ),
+      _ => (LucideIcons.clock, KolabingColors.pendingText, 'Pending', ''),
     };
 
     return Container(
@@ -514,10 +525,9 @@ class _ApplicationReviewScreenState
             child: SizedBox(
               height: 52,
               child: OutlinedButton.icon(
-                onPressed:
-                    _isDeclining || _isAccepting
-                        ? null
-                        : () => _showDeclineDialog(application),
+                onPressed: _isDeclining || _isAccepting
+                    ? null
+                    : () => _showDeclineDialog(application),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: KolabingColors.error,
                   side: const BorderSide(color: KolabingColors.error),
@@ -530,7 +540,9 @@ class _ApplicationReviewScreenState
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: KolabingColors.error),
+                          strokeWidth: 2,
+                          color: KolabingColors.error,
+                        ),
                       )
                     : const Icon(LucideIcons.x, size: 18),
                 label: Text(
@@ -552,10 +564,9 @@ class _ApplicationReviewScreenState
             child: SizedBox(
               height: 52,
               child: ElevatedButton.icon(
-                onPressed:
-                    _isAccepting || _isDeclining
-                        ? null
-                        : () => _handleAccept(application),
+                onPressed: _isAccepting || _isDeclining
+                    ? null
+                    : () => _handleAccept(application),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,
@@ -569,7 +580,9 @@ class _ApplicationReviewScreenState
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: KolabingColors.onPrimary),
+                          strokeWidth: 2,
+                          color: KolabingColors.onPrimary,
+                        ),
                       )
                     : const Icon(LucideIcons.check, size: 18),
                 label: Text(
@@ -637,10 +650,7 @@ class _ApplicationReviewScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Decline Application',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -672,8 +682,9 @@ class _ApplicationReviewScreenState
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide:
-                      const BorderSide(color: KolabingColors.borderFocus),
+                  borderSide: const BorderSide(
+                    color: KolabingColors.borderFocus,
+                  ),
                 ),
               ),
             ),
@@ -693,7 +704,8 @@ class _ApplicationReviewScreenState
               backgroundColor: KolabingColors.error,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
               elevation: 0,
             ),
             child: Text(
@@ -709,8 +721,9 @@ class _ApplicationReviewScreenState
 
     setState(() => _isDeclining = true);
 
-    final reason =
-        reasonController.text.trim().isNotEmpty ? reasonController.text.trim() : null;
+    final reason = reasonController.text.trim().isNotEmpty
+        ? reasonController.text.trim()
+        : null;
 
     try {
       await ref
@@ -799,8 +812,9 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
     final start = DateUtils.dateOnly(opportunity.availabilityStart);
     final end = DateUtils.dateOnly(opportunity.availabilityEnd);
-    final tomorrow =
-        DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
+    final tomorrow = DateUtils.dateOnly(
+      DateTime.now(),
+    ).add(const Duration(days: 1));
     final effectiveStart = start.isBefore(tomorrow) ? tomorrow : start;
 
     if (effectiveStart.isAfter(end)) return [];
@@ -813,13 +827,14 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
     }
 
     // Recurring: publisher picked specific weekdays. Filter the daily walk.
-    final filterByWeekday = modeName == 'recurring' &&
-        opportunity.recurringDays.isNotEmpty;
+    final filterByWeekday =
+        modeName == 'recurring' && opportunity.recurringDays.isNotEmpty;
 
     final dates = <DateTime>[];
     var current = effectiveStart;
     while (!current.isAfter(end)) {
-      if (!filterByWeekday || opportunity.recurringDays.contains(current.weekday)) {
+      if (!filterByWeekday ||
+          opportunity.recurringDays.contains(current.weekday)) {
         dates.add(current);
       }
       current = current.add(const Duration(days: 1));
@@ -881,7 +896,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
-                "Pick a collaboration date — you'll continue the conversation in chat after accepting.",
+                "Pick a Kolab date — you'll continue the conversation in chat after accepting.",
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   color: KolabingColors.textSecondary,
@@ -909,7 +924,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                     borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Text(
-                    'No available future dates in the opportunity range.',
+                    'No available future dates in the Kolab range.',
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       color: KolabingColors.textTertiary,
@@ -926,7 +941,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                         const SizedBox(width: KolabingSpacing.xs),
                     itemBuilder: (_, index) {
                       final date = dates[index];
-                      final isSelected = _selectedDate != null &&
+                      final isSelected =
+                          _selectedDate != null &&
                           DateUtils.isSameDay(_selectedDate!, date);
                       return _buildDateTile(date, isSelected);
                     },
@@ -964,8 +980,9 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.4),
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                      alpha: 0.4,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -976,7 +993,9 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: KolabingColors.onPrimary),
+                            strokeWidth: 2,
+                            color: KolabingColors.onPrimary,
+                          ),
                         )
                       : const Icon(LucideIcons.check, size: 18),
                   label: Text(
@@ -999,8 +1018,18 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
   Widget _buildDateTile(DateTime date, bool isSelected) {
     const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
 
     return GestureDetector(
@@ -1012,9 +1041,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ? KolabingColors.primary
               : KolabingColors.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
-          border: isSelected
-              ? null
-              : Border.all(color: KolabingColors.border),
+          border: isSelected ? null : Border.all(color: KolabingColors.border),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1087,7 +1114,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Application accepted! Collaboration created.',
+            'Application accepted! Kolab created.',
             style: GoogleFonts.openSans(color: Colors.white),
           ),
           backgroundColor: KolabingColors.success,

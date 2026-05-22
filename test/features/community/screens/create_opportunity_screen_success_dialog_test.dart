@@ -32,8 +32,8 @@ void main() {
       );
 
       expect(find.text('SHARE'), findsOneWidget);
-      expect(find.text('Opportunity Published!'), findsOneWidget);
-      expect(find.text('VIEW MY OPPORTUNITIES'), findsOneWidget);
+      expect(find.text('Kolab Published!'), findsOneWidget);
+      expect(find.text('VIEW MY KOLABS'), findsOneWidget);
     },
   );
 
@@ -42,7 +42,7 @@ void main() {
 
     expect(find.text('Draft Saved!'), findsOneWidget);
     expect(find.text('SHARE'), findsNothing);
-    expect(find.text('VIEW MY OPPORTUNITIES'), findsOneWidget);
+    expect(find.text('VIEW MY KOLABS'), findsOneWidget);
   });
 
   testWidgets('published opportunity without usable id hides share CTA', (
@@ -54,8 +54,8 @@ void main() {
       buildSubject(isDraft: false, opportunity: opportunity, onShare: null),
     );
 
-    expect(find.text('Opportunity Published!'), findsOneWidget);
+    expect(find.text('Kolab Published!'), findsOneWidget);
     expect(find.text('SHARE'), findsNothing);
-    expect(find.text('VIEW MY OPPORTUNITIES'), findsOneWidget);
+    expect(find.text('VIEW MY KOLABS'), findsOneWidget);
   });
 }

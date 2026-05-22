@@ -16,8 +16,7 @@ class EventDetailsScreen extends ConsumerStatefulWidget {
   const EventDetailsScreen({super.key});
 
   @override
-  ConsumerState<EventDetailsScreen> createState() =>
-      _EventDetailsScreenState();
+  ConsumerState<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
 class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
@@ -71,7 +70,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Describe your collaboration and what you offer',
+            'Describe your Kolab and what you offer',
             style: GoogleFonts.openSans(
               fontSize: 14,
               color: KolabingColors.textSecondary,
@@ -110,8 +109,10 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: KolabingColors.primary,
+                  width: 2,
+                ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -139,7 +140,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             ),
             decoration: InputDecoration(
               hintText:
-                  'Describe what you are looking for and how this collaboration would work...',
+                  'Describe what you are looking for and how this Kolab would work...',
               hintStyle: GoogleFonts.openSans(
                 color: KolabingColors.textTertiary,
               ),
@@ -155,8 +156,10 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: KolabingColors.primary,
+                  width: 2,
+                ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -271,41 +274,37 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
   }
 
   Widget _buildLabel(String label) => Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
-        ),
-      );
+    label,
+    style: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: KolabingColors.textPrimary,
+    ),
+  );
 
   Widget _buildFieldError(String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 14,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.errorBg,
+      borderRadius: KolabingRadius.borderRadiusSm,
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.error_outline, size: 14, color: KolabingColors.error),
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
+            error,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
               color: KolabingColors.error,
             ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }

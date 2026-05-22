@@ -255,7 +255,7 @@ class _LockedBusinessCreateState extends StatelessWidget {
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
-          'Upgrade your business plan to publish venue or product opportunities for communities.',
+          'Upgrade your business plan to publish venue or product Kolabs for communities.',
           textAlign: TextAlign.center,
           style: GoogleFonts.openSans(
             fontSize: 14,

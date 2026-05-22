@@ -406,7 +406,7 @@ class _CreateOpportunityScreenState
       children: [
         _buildStepHeader(
           title: 'BASIC INFORMATION',
-          subtitle: 'Describe your collaboration idea',
+          subtitle: 'Describe your Kolab idea',
         ),
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -425,8 +425,7 @@ class _CreateOpportunityScreenState
         // Description
         _buildTextField(
           label: 'Description',
-          hint:
-              'Describe your collaboration opportunity in detail. What are you looking for?',
+          hint: 'Describe your Kolab in detail. What are you looking for?',
           controller: _descriptionController,
           error: formState.fieldErrors['description'],
           maxLines: 5,
@@ -1061,7 +1060,7 @@ class _CreateOpportunityScreenState
             children: [
               // Title
               Text(
-                opp.title.isEmpty ? 'Untitled Opportunity' : opp.title,
+                opp.title.isEmpty ? 'Untitled Kolab' : opp.title,
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,

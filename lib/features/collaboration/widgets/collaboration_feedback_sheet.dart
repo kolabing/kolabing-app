@@ -228,7 +228,7 @@ class _CollaborationFeedbackSheetState
           style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 18),
         ),
         content: Text(
-          'You can always leave a review later from the collaboration page.',
+          'You can always leave a review later from the Kolab page.',
           style: GoogleFonts.openSans(
             fontSize: 14,
             color: KolabingColors.textSecondary,
@@ -639,7 +639,7 @@ class _StarRatingStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _StepFrame(
-    title: 'How would you rate the collaboration?',
+    title: 'How would you rate the Kolab?',
     subtitle: 'Tap a star — 1 means underwhelming, 5 means outstanding.',
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

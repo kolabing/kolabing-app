@@ -124,7 +124,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
                   2 // Hide on profile and My Kolabs tabs
           ? KolabingFAB(
               onPressed: _onFabPressed,
-              tooltip: 'Create Opportunity',
+              tooltip: 'Create Kolab',
               heroTag: 'community_main_fab',
             )
           : null,

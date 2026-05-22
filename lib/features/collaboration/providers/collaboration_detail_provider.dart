@@ -70,7 +70,7 @@ Future<Collaboration> _markCompleted(
   }
 
   final body = response.body.isEmpty
-      ? <String, dynamic>{'message': 'Failed to complete collaboration'}
+      ? <String, dynamic>{'message': 'Failed to complete Kolab'}
       : jsonDecode(response.body) as Map<String, dynamic>;
   throw ApiException(
     error: ApiError.fromJson(body, statusCode: response.statusCode),
@@ -145,7 +145,7 @@ Future<Collaboration> _patchSchedule(
   }
 
   final body = response.body.isEmpty
-      ? <String, dynamic>{'message': 'Failed to update collaboration'}
+      ? <String, dynamic>{'message': 'Failed to update Kolab'}
       : jsonDecode(response.body) as Map<String, dynamic>;
   throw ApiException(
     error: ApiError.fromJson(body, statusCode: response.statusCode),
