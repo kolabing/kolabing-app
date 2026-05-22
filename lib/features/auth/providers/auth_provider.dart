@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../services/notification_service.dart';
 import '../utils/auth_navigation.dart';
+import '../utils/session_reset.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -115,6 +116,14 @@ class AuthNotifier extends Notifier<AuthState> {
         password: password,
       );
 
+      // A new session has started (same or different account). The auth
+      // service has already written the new token and rotated its session
+      // epoch, so tear down any user-scoped provider state left over from a
+      // previous session BEFORE those providers fire their first request.
+      // Without this, Explore/Home/Applications/Profile keep serving the
+      // previous account's cached data until a full app restart.
+      invalidateUserScopedProviders(ref);
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
@@ -156,6 +165,10 @@ class AuthNotifier extends Notifier<AuthState> {
 
     try {
       final response = await _authService.loginWithGoogle();
+
+      // Tear down previous-session provider state before the new session's
+      // providers fire their first request (see signInWithEmail).
+      invalidateUserScopedProviders(ref);
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
@@ -238,6 +251,12 @@ class AuthNotifier extends Notifier<AuthState> {
     } on Exception catch (e) {
       debugPrint('Logout error: $e');
     } finally {
+      // Centralised teardown of all user-scoped provider state. This runs for
+      // EVERY logout path (profile screens, router error page, account
+      // deletion), not just the profile screen's signOut(), so no stale
+      // per-account data survives into the next session. The auth service has
+      // already purged the cached token + rotated its session epoch.
+      invalidateUserScopedProviders(ref);
       state = const AuthState(status: AuthStatus.unauthenticated);
     }
   }
@@ -286,6 +305,10 @@ class AuthNotifier extends Notifier<AuthState> {
 
     try {
       final response = await _authService.loginWithApple();
+
+      // Tear down previous-session provider state before the new session's
+      // providers fire their first request (see signInWithEmail).
+      invalidateUserScopedProviders(ref);
 
       state = state.copyWith(
         status: AuthStatus.authenticated,

@@ -82,7 +82,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       final errorMessage = state.error ?? 'Failed to publish';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Kollab published!' : errorMessage),
+          content: Text(success ? 'Kolab published!' : errorMessage),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
               ? KolabingColors.success
@@ -99,7 +99,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       final errorMessage = state.error ?? 'Failed to close';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Kollab closed' : errorMessage),
+          content: Text(success ? 'Kolab closed' : errorMessage),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
               ? KolabingColors.success
@@ -113,9 +113,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Kollab'),
+        title: const Text('Delete Kolab'),
         content: const Text(
-          'Are you sure you want to delete this kollab? This action cannot be undone.',
+          'Are you sure you want to delete this kolab? This action cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -138,7 +138,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         final errorMessage = state.error ?? 'Failed to delete';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(success ? 'Kollab deleted' : errorMessage),
+            content: Text(success ? 'Kolab deleted' : errorMessage),
             behavior: SnackBarBehavior.floating,
             backgroundColor: success
                 ? KolabingColors.success
@@ -213,7 +213,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MY KOLLABS',
+          'MY KOLABS',
           style: GoogleFonts.rubik(
             fontSize: 28,
             fontWeight: FontWeight.w800,
@@ -225,7 +225,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Manage your kollabs',
+          'Manage your kolabs',
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -302,7 +302,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           vertical: KolabingSpacing.sm,
         ),
         child: Text(
-          '${listState.total} ${listState.total == 1 ? 'kollab' : 'kollabs'}',
+          '${listState.total} ${listState.total == 1 ? 'kolab' : 'kolabs'}',
           style: GoogleFonts.openSans(
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -415,7 +415,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'No kollabs yet',
+            'No kolabs yet',
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -426,7 +426,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Create your first kollab to start connecting with communities',
+            'Create your first kolab to start connecting with communities',
             style: GoogleFonts.openSans(
               fontSize: 14,
               color: KolabingColors.textSecondary,
@@ -437,7 +437,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ElevatedButton.icon(
             onPressed: _onCreateNew,
             icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('Create Kollab'),
+            label: const Text('Create Kolab'),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,

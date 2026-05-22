@@ -1,15 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../application/providers/application_provider.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
-import '../../dashboard/providers/dashboard_provider.dart';
-import '../../notification/providers/notification_provider.dart';
-import '../../opportunity/providers/opportunity_provider.dart';
-import '../../kolab/providers/my_kolabs_provider.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../services/profile_service.dart';
@@ -246,26 +241,15 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
-  /// Sign out user — clears token, storage, and all cached provider state
+  /// Sign out user — clears token, storage, and all cached provider state.
+  ///
+  /// The full teardown of user-scoped providers (including this provider via
+  /// `invalidateUserScopedProviders`) now lives in
+  /// `AuthNotifier.logout()`, so every logout path resets the same state. We
+  /// only delegate here.
   Future<void> signOut() async {
     state = state.copyWith(isUpdating: true, clearError: true);
-
     await ref.read(authProvider.notifier).logout();
-
-    // Invalidate all user-scoped providers so stale data
-    // is not visible if another user signs in
-    ref.invalidate(dashboardProvider);
-    ref.invalidate(myApplicationsProvider);
-    ref.invalidate(receivedApplicationsProvider);
-    ref.invalidate(chatMessagesProvider);
-    ref.invalidate(unreadMessagesCountProvider);
-    ref.invalidate(opportunityListProvider);
-    ref.invalidate(myOpportunitiesProvider);
-    ref.invalidate(myKolabsProvider);
-    ref.invalidate(notificationProvider);
-
-    // Reset own state last
-    state = const ProfileState();
   }
 
   /// Delete account

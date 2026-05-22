@@ -265,7 +265,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Description
               Text(
-                "You've used your 1 free kollab request. Subscribe to create unlimited requests and connect with more communities.",
+                "You've used your 1 free kolab request. Subscribe to create unlimited requests and connect with more communities.",
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textSecondary,
                 ),
@@ -276,7 +276,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               // Benefits
               _buildBenefitRow(
                 LucideIcons.infinity,
-                'Publish unlimited kollab requests',
+                'Publish unlimited kolab requests',
               ),
               _buildBenefitRow(
                 LucideIcons.users,

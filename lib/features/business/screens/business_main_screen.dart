@@ -83,7 +83,7 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       const NavItem(
         icon: LucideIcons.briefcase,
         activeIcon: LucideIcons.briefcase,
-        label: 'My Kollabs',
+        label: 'My Kolabs',
       ),
       NavItem(
         icon: LucideIcons.inbox,
