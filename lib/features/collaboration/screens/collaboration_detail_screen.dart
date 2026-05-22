@@ -67,8 +67,12 @@ class _CollaborationContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).user;
-    final isBusiness = user?.isBusiness ?? true;
-    final partner = collaboration.partnerFor(isBusiness: isBusiness);
+    final isBusiness = user?.isBusiness ?? false;
+    // Show the OTHER party. Uses the backend `my_role` when available (always
+    // correct) so a community viewer is never shown their own side.
+    final partner = collaboration.partnerForViewer(
+      isBusinessViewer: isBusiness,
+    );
 
     // Subscription-lapse re-gate (docs/ROLES-AND-PERMISSIONS.md §2.8). Only a
     // business viewer with a lapsed subscription on an ongoing collaboration is

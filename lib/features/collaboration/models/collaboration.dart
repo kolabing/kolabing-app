@@ -178,6 +178,9 @@ class Collaboration {
     this.scheduledTime,
     required this.businessPartner,
     required this.communityPartner,
+    this.creatorPartner,
+    this.applicantPartner,
+    this.viewerIsCreator,
     required this.opportunity,
     required this.contactMethods,
     required this.businessOffer,
@@ -202,6 +205,23 @@ class Collaboration {
     // tolerated so the detail screen never crashes with "Failed to load Kolab".)
     final partners = _resolvePartners(json);
 
+    // `my_role` ('creator' | 'applicant') is the backend's authoritative,
+    // role-aware signal for which side the VIEWER is on in this collaboration.
+    // It is the correct basis for "show me the OTHER party" — far more reliable
+    // than guessing from the viewer's business/community type (which breaks for
+    // either side and has no safe default when the auth user is momentarily null).
+    final myRole = json['my_role']?.toString();
+    final creatorPartner = json['creator_profile'] is Map<String, dynamic>
+        ? CollaborationPartner.fromJson(
+            json['creator_profile'] as Map<String, dynamic>,
+          )
+        : null;
+    final applicantPartner = json['applicant_profile'] is Map<String, dynamic>
+        ? CollaborationPartner.fromJson(
+            json['applicant_profile'] as Map<String, dynamic>,
+          )
+        : null;
+
     // `collab_opportunity` (OpportunitySummaryResource) carries the nested
     // `business_offer` + `community_deliverables`, so source them from there
     // when the top-level keys are absent (the real API never sends them top-level).
@@ -225,6 +245,13 @@ class Collaboration {
       scheduledTime: json['scheduled_time'] as String?,
       businessPartner: partners.business,
       communityPartner: partners.community,
+      creatorPartner: creatorPartner,
+      applicantPartner: applicantPartner,
+      viewerIsCreator: myRole == 'creator'
+          ? true
+          : myRole == 'applicant'
+          ? false
+          : null,
       opportunity: opportunityJson != null
           ? Opportunity.fromJson(opportunityJson)
           : null,
@@ -329,6 +356,17 @@ class Collaboration {
   final String? scheduledTime;
   final CollaborationPartner businessPartner;
   final CollaborationPartner communityPartner;
+
+  /// The collaboration's creator + applicant sides (from `creator_profile` /
+  /// `applicant_profile`). Combined with [viewerIsCreator] these let the UI
+  /// show the OTHER party regardless of business/community role.
+  final CollaborationPartner? creatorPartner;
+  final CollaborationPartner? applicantPartner;
+
+  /// From the backend `my_role`: true if the viewer is the creator, false if
+  /// the applicant, null if unknown (e.g. list payloads without `my_role`).
+  final bool? viewerIsCreator;
+
   final Opportunity? opportunity;
   final ContactMethods contactMethods;
   final BusinessOffer businessOffer;
@@ -354,6 +392,19 @@ class Collaboration {
   /// Get the other party based on current user type
   CollaborationPartner partnerFor({required bool isBusiness}) =>
       isBusiness ? communityPartner : businessPartner;
+
+  /// Resolve the OTHER party to show the viewer. Prefers the backend
+  /// `my_role` (role-aware, always correct: a creator sees the applicant and
+  /// vice versa) so a community viewer is never shown their own side. Falls
+  /// back to the business/community split only when `my_role` is unavailable.
+  CollaborationPartner partnerForViewer({required bool isBusinessViewer}) {
+    if (viewerIsCreator != null &&
+        creatorPartner != null &&
+        applicantPartner != null) {
+      return viewerIsCreator! ? applicantPartner! : creatorPartner!;
+    }
+    return partnerFor(isBusiness: isBusinessViewer);
+  }
 
   /// Display date like "Sat, 15 Mar 2026"
   String get formattedDate {

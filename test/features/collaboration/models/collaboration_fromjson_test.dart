@@ -32,6 +32,7 @@ void main() {
         'business_type': 'cafe',
         'city': {'name': 'Barcelona'},
       },
+      'my_role': 'creator',
       'collab_opportunity': {
         'id': 'opp-1',
         'title': 'Sunday Run + Coffee',
@@ -48,10 +49,16 @@ void main() {
       final c = Collaboration.fromJson(realResourcePayload());
 
       expect(c.id, '019e518b-eff7-7165-9ac2-458d0e00824c');
-      expect(c.status, CollaborationStatus.inProgress); // 'active' -> inProgress
+      expect(
+        c.status,
+        CollaborationStatus.inProgress,
+      ); // 'active' -> inProgress
       expect(c.businessPartner.name, 'Eixample 46');
       expect(c.businessPartner.isBusiness, isTrue);
-      expect(c.businessPartner.profilePhoto, 'https://cdn.example.com/business.jpg');
+      expect(
+        c.businessPartner.profilePhoto,
+        'https://cdn.example.com/business.jpg',
+      );
       expect(c.communityPartner.name, 'Real Run Club');
       expect(c.communityPartner.isCommunity, isTrue);
     });
@@ -65,34 +72,70 @@ void main() {
     });
 
     test('does not throw and keeps null contact methods', () {
-      final c = Collaboration.fromJson(realResourcePayload(status: 'completed'));
+      final c = Collaboration.fromJson(
+        realResourcePayload(status: 'completed'),
+      );
       expect(c.status, CollaborationStatus.completed);
       expect(c.contactMethods.hasAny, isFalse);
       expect(c.feedbackSubmittedAt, isNull); // review CTA stays available
     });
 
-    test('still parses the legacy business_partner/community_partner shape', () {
-      final c = Collaboration.fromJson({
-        'id': 'legacy-1',
-        'status': 'scheduled',
-        'scheduled_date': '2026-06-15',
-        'created_at': '2026-05-01T10:00:00+00:00',
-        'business_partner': {
-          'id': 'b1',
-          'name': 'Legacy Cafe',
-          'user_type': 'business',
-          'profile_photo': 'https://cdn.example.com/legacy.jpg',
-        },
-        'community_partner': {
-          'id': 'c1',
-          'name': 'Legacy Club',
-          'user_type': 'community',
-        },
-      });
+    test('partnerForViewer uses my_role to show the OTHER party', () {
+      // Viewer is the creator (community Real Run Club). The partner shown must
+      // be the applicant (business Eixample 46), NOT the viewer's own side,
+      // regardless of the isBusinessViewer hint.
+      final c = Collaboration.fromJson(realResourcePayload());
+      expect(c.viewerIsCreator, isTrue);
 
-      expect(c.businessPartner.name, 'Legacy Cafe');
-      expect(c.communityPartner.name, 'Legacy Club');
-      expect(c.status, CollaborationStatus.scheduled);
+      final partner = c.partnerForViewer(isBusinessViewer: false);
+      expect(partner.name, 'Eixample 46');
+      expect(partner.isBusiness, isTrue);
+
+      // Even if the auth hint is wrong/missing, my_role wins.
+      expect(c.partnerForViewer(isBusinessViewer: true).name, 'Eixample 46');
     });
+
+    test(
+      'partnerForViewer falls back to business/community split without my_role',
+      () {
+        final payload = realResourcePayload()..remove('my_role');
+        final c = Collaboration.fromJson(payload);
+        expect(c.viewerIsCreator, isNull);
+        // community viewer -> business partner
+        expect(c.partnerForViewer(isBusinessViewer: false).name, 'Eixample 46');
+        // business viewer -> community partner
+        expect(
+          c.partnerForViewer(isBusinessViewer: true).name,
+          'Real Run Club',
+        );
+      },
+    );
+
+    test(
+      'still parses the legacy business_partner/community_partner shape',
+      () {
+        final c = Collaboration.fromJson({
+          'id': 'legacy-1',
+          'status': 'scheduled',
+          'scheduled_date': '2026-06-15',
+          'created_at': '2026-05-01T10:00:00+00:00',
+          'business_partner': {
+            'id': 'b1',
+            'name': 'Legacy Cafe',
+            'user_type': 'business',
+            'profile_photo': 'https://cdn.example.com/legacy.jpg',
+          },
+          'community_partner': {
+            'id': 'c1',
+            'name': 'Legacy Club',
+            'user_type': 'community',
+          },
+        });
+
+        expect(c.businessPartner.name, 'Legacy Cafe');
+        expect(c.communityPartner.name, 'Legacy Club');
+        expect(c.status, CollaborationStatus.scheduled);
+      },
+    );
   });
 }
