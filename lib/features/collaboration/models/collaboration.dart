@@ -79,12 +79,21 @@ class CollaborationPartner {
     required this.userType,
   });
 
+  /// Parses a partner from either the legacy `business_partner`/
+  /// `community_partner` shape (`name`, `profile_photo`, `category`) or the
+  /// backend `ProfileSummaryResource` shape used by `CollaborationResource`
+  /// (`display_name`, `avatar_url`, `business_type`/`community_type`). The
+  /// collaboration list + detail endpoints return the latter, so tolerate both.
   factory CollaborationPartner.fromJson(Map<String, dynamic> json) {
+    final category =
+        json['category'] as String? ??
+        json['business_type'] as String? ??
+        json['community_type'] as String?;
     return CollaborationPartner(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      profilePhoto: json['profile_photo'] as String?,
-      category: json['category'] as String?,
+      id: json['id']?.toString() ?? '',
+      name: (json['name'] ?? json['display_name'] ?? '') as String,
+      profilePhoto: (json['profile_photo'] ?? json['avatar_url']) as String?,
+      category: category,
       city: json['city'] is Map
           ? (json['city'] as Map<String, dynamic>)['name'] as String?
           : json['city'] as String?,
@@ -184,34 +193,51 @@ class Collaboration {
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) {
+    // The backend `CollaborationResource` (used for BOTH list and detail) does
+    // NOT send `business_partner`/`community_partner`/`opportunity`. It sends
+    // `creator_profile`/`applicant_profile` (ProfileSummaryResource), an
+    // optional `business_profile`/`community_profile`, and `collab_opportunity`.
+    // Resolve the two partners from whichever profiles are present, bucketed by
+    // `user_type`. (Older mock payloads used the legacy keys; both are
+    // tolerated so the detail screen never crashes with "Failed to load Kolab".)
+    final partners = _resolvePartners(json);
+
+    // `collab_opportunity` (OpportunitySummaryResource) carries the nested
+    // `business_offer` + `community_deliverables`, so source them from there
+    // when the top-level keys are absent (the real API never sends them top-level).
+    final opportunityJson =
+        (json['opportunity'] ?? json['collab_opportunity'])
+            as Map<String, dynamic>?;
+
+    final businessOfferJson =
+        (json['business_offer'] ?? opportunityJson?['business_offer'])
+            as Map<String, dynamic>?;
+    final communityDeliverablesJson =
+        (json['community_deliverables'] ??
+                opportunityJson?['community_deliverables'])
+            as Map<String, dynamic>?;
+
     return Collaboration(
       id: json['id'] as String,
       status: CollaborationStatus.fromString(json['status'] as String),
+      // Real API only sends a date; legacy mock sent scheduled_time too.
       scheduledDate: DateTime.parse(json['scheduled_date'] as String),
       scheduledTime: json['scheduled_time'] as String?,
-      businessPartner: CollaborationPartner.fromJson(
-        json['business_partner'] as Map<String, dynamic>,
-      ),
-      communityPartner: CollaborationPartner.fromJson(
-        json['community_partner'] as Map<String, dynamic>,
-      ),
-      opportunity: json['opportunity'] != null
-          ? Opportunity.fromJson(json['opportunity'] as Map<String, dynamic>)
+      businessPartner: partners.business,
+      communityPartner: partners.community,
+      opportunity: opportunityJson != null
+          ? Opportunity.fromJson(opportunityJson)
           : null,
-      contactMethods: json['contact_methods'] != null
+      contactMethods: json['contact_methods'] is Map
           ? ContactMethods.fromJson(
               json['contact_methods'] as Map<String, dynamic>,
             )
           : const ContactMethods(),
-      businessOffer: json['business_offer'] != null
-          ? BusinessOffer.fromJson(
-              json['business_offer'] as Map<String, dynamic>,
-            )
+      businessOffer: businessOfferJson != null
+          ? BusinessOffer.fromJson(businessOfferJson)
           : const BusinessOffer(),
-      communityDeliverables: json['community_deliverables'] != null
-          ? CommunityDeliverables.fromJson(
-              json['community_deliverables'] as Map<String, dynamic>,
-            )
+      communityDeliverables: communityDeliverablesJson != null
+          ? CommunityDeliverables.fromJson(communityDeliverablesJson)
           : const CommunityDeliverables(),
       eventId: json['event_id'] as String?,
       qrCodeUrl: json['qr_code_url'] as String?,
@@ -219,12 +245,16 @@ class Collaboration {
           ?.map((e) => Challenge.fromJson(e as Map<String, dynamic>))
           .toList(),
       selectedChallengeIds: (json['selected_challenge_ids'] as List<dynamic>?)
-          ?.map((e) => e as String)
+          ?.map((e) => e.toString())
           .toList(),
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
           : null,
+      // The real API exposes `completed_at` (no `feedback_submitted_at`); the
+      // detail screen uses this only to decide whether to show the review CTA.
       feedbackSubmittedAt: json['feedback_submitted_at'] != null
           ? DateTime.parse(json['feedback_submitted_at'] as String)
           : null,
@@ -249,6 +279,48 @@ class Collaboration {
       return v == 'true' || v == '1';
     }
     return false;
+  }
+
+  /// Resolve the business + community partner from a `CollaborationResource`
+  /// payload. Order of preference:
+  ///   1. Legacy explicit keys `business_partner` / `community_partner`.
+  ///   2. Backend `business_profile` / `community_profile` (only present on
+  ///      some endpoints).
+  ///   3. `creator_profile` / `applicant_profile`, bucketed by `user_type`
+  ///      (a collaboration is always business <-> community, so exactly one of
+  ///      each). This is what the list + detail endpoints actually return.
+  /// Falls back to an empty partner so the detail screen renders rather than
+  /// throwing if a side is somehow missing.
+  static ({CollaborationPartner business, CollaborationPartner community})
+  _resolvePartners(Map<String, dynamic> json) {
+    CollaborationPartner? business;
+    CollaborationPartner? community;
+
+    final explicitBusiness =
+        json['business_partner'] ?? json['business_profile'];
+    final explicitCommunity =
+        json['community_partner'] ?? json['community_profile'];
+    if (explicitBusiness is Map<String, dynamic>) {
+      business = CollaborationPartner.fromJson(explicitBusiness);
+    }
+    if (explicitCommunity is Map<String, dynamic>) {
+      community = CollaborationPartner.fromJson(explicitCommunity);
+    }
+
+    // Fall back to creator/applicant profiles bucketed by user_type.
+    for (final key in const ['creator_profile', 'applicant_profile']) {
+      final raw = json[key];
+      if (raw is! Map<String, dynamic>) continue;
+      final partner = CollaborationPartner.fromJson(raw);
+      if (partner.isBusiness) {
+        business ??= partner;
+      } else {
+        community ??= partner;
+      }
+    }
+
+    const empty = CollaborationPartner(id: '', name: '', userType: 'community');
+    return (business: business ?? empty, community: community ?? empty);
   }
 
   final String id;
