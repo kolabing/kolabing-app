@@ -68,13 +68,22 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   void _onCardTap(DiscoveryItem item, {required bool hasSubscription}) {
     final opportunity = item.toOpportunity();
-    final hideCreatorIdentity = !_isCommunityViewer && item.isCommunityRequest;
+    // Free business viewing a community Kolab: blur the community identity only.
+    // Per ROLES-AND-PERMISSIONS.md golden rules 4 & 5, the business STILL opens
+    // the detail and sees every Kolab detail; only name/logo are blurred and
+    // the apply BUTTON is gated. We never hard-block the screen. Subscribing
+    // REVEALS the identity (§2.6), so a subscribed business is never blurred.
+    final hideCreatorIdentity =
+        !_isCommunityViewer && item.isCommunityRequest && !hasSubscription;
 
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
       discoveryItem: item,
       hideCreatorIdentity: hideCreatorIdentity,
+      // Apply is BUTTON-gated, not screen-gated: a free business can always open
+      // the sheet and read everything. Tapping Apply either runs the apply flow
+      // (subscribed / community) or surfaces the paywall (free business).
       onApply: hasSubscription
           ? () {
               Navigator.of(context).pop();
@@ -93,6 +102,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               Navigator.of(context).pop();
               context.push('/profile/${item.creatorProfile.id}');
             },
+      // When the business is free, the Apply button becomes an "unlock" CTA that
+      // opens the paywall sheet. This is the gate — there is NO discovery-level
+      // block; the user remains on Explore the whole time.
       onSubscribe: !_isCommunityViewer && !hasSubscription
           ? () async {
               Navigator.of(context).pop();
@@ -315,8 +327,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         }
 
         final item = activeItems[index];
+        // Blur the community identity only for a FREE business; subscribing
+        // reveals it (§2.6).
         final hideCreatorIdentity =
-            !_isCommunityViewer && item.isCommunityRequest;
+            !_isCommunityViewer &&
+            item.isCommunityRequest &&
+            !hasBusinessSubscription;
         return ExploreSwipeCard(
           item: item,
           showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,

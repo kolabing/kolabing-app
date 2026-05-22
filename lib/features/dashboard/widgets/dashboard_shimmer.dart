@@ -26,10 +26,7 @@ class _DashboardShimmerState extends State<DashboardShimmer>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
   }
 
   @override
@@ -52,25 +49,43 @@ class _DashboardShimmerState extends State<DashboardShimmer>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header placeholder
-              _ShimmerBox(width: 200, height: 24, opacity: opacity, isDark: isDark),
+              _ShimmerBox(
+                width: 200,
+                height: 24,
+                opacity: opacity,
+                isDark: isDark,
+              ),
               const SizedBox(height: KolabingSpacing.xs),
-              _ShimmerBox(width: 160, height: 16, opacity: opacity, isDark: isDark),
+              _ShimmerBox(
+                width: 160,
+                height: 16,
+                opacity: opacity,
+                isDark: isDark,
+              ),
               const SizedBox(height: KolabingSpacing.lg),
 
               // Stats grid 2x2
               Row(
                 children: [
-                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
+                  Expanded(
+                    child: _ShimmerStatCard(opacity: opacity, isDark: isDark),
+                  ),
                   const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
+                  Expanded(
+                    child: _ShimmerStatCard(opacity: opacity, isDark: isDark),
+                  ),
                 ],
               ),
               const SizedBox(height: KolabingSpacing.sm),
               Row(
                 children: [
-                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
+                  Expanded(
+                    child: _ShimmerStatCard(opacity: opacity, isDark: isDark),
+                  ),
                   const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(child: _ShimmerStatCard(opacity: opacity, isDark: isDark)),
+                  Expanded(
+                    child: _ShimmerStatCard(opacity: opacity, isDark: isDark),
+                  ),
                 ],
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -79,18 +94,31 @@ class _DashboardShimmerState extends State<DashboardShimmer>
               Row(
                 children: [
                   Expanded(
-                    child: _ShimmerBox(height: 48, opacity: opacity, isDark: isDark),
+                    child: _ShimmerBox(
+                      height: 48,
+                      opacity: opacity,
+                      isDark: isDark,
+                    ),
                   ),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
-                    child: _ShimmerBox(height: 48, opacity: opacity, isDark: isDark),
+                    child: _ShimmerBox(
+                      height: 48,
+                      opacity: opacity,
+                      isDark: isDark,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: KolabingSpacing.lg),
 
               // Section title
-              _ShimmerBox(width: 180, height: 18, opacity: opacity, isDark: isDark),
+              _ShimmerBox(
+                width: 180,
+                height: 18,
+                opacity: opacity,
+                isDark: isDark,
+              ),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Upcoming items
@@ -165,7 +193,12 @@ class _ShimmerStatCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _ShimmerBox(width: 40, height: 28, opacity: opacity, isDark: isDark),
+              _ShimmerBox(
+                width: 40,
+                height: 28,
+                opacity: opacity,
+                isDark: isDark,
+              ),
               Container(
                 width: 40,
                 height: 40,
@@ -218,11 +251,26 @@ class _ShimmerListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _ShimmerBox(width: 120, height: 14, opacity: opacity, isDark: isDark),
+                _ShimmerBox(
+                  width: 120,
+                  height: 14,
+                  opacity: opacity,
+                  isDark: isDark,
+                ),
                 const SizedBox(height: KolabingSpacing.xxs),
-                _ShimmerBox(width: 180, height: 12, opacity: opacity, isDark: isDark),
+                _ShimmerBox(
+                  width: 180,
+                  height: 12,
+                  opacity: opacity,
+                  isDark: isDark,
+                ),
                 const SizedBox(height: KolabingSpacing.xs),
-                _ShimmerBox(width: 80, height: 16, opacity: opacity, isDark: isDark),
+                _ShimmerBox(
+                  width: 80,
+                  height: 16,
+                  opacity: opacity,
+                  isDark: isDark,
+                ),
               ],
             ),
           ),

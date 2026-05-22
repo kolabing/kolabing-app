@@ -26,7 +26,7 @@ class PastCollaboration {
         partnerAvatarUrl: json['partner_avatar_url'] as String?,
         completedAt: json['completed_at'] != null
             ? DateTime.tryParse(json['completed_at'] as String) ??
-                DateTime.now()
+                  DateTime.now()
             : DateTime.now(),
         status: json['status'] as String? ?? 'completed',
       );
@@ -55,6 +55,7 @@ class PublicProfile {
     this.avatarUrl,
     this.about,
     this.type,
+    this.serverTypeLabel,
     this.cityName,
     this.instagram,
     this.tiktok,
@@ -64,26 +65,38 @@ class PublicProfile {
   });
 
   factory PublicProfile.fromJson(Map<String, dynamic> json) => PublicProfile(
-        id: json['id']?.toString() ?? '',
-        userType: json['user_type'] as String? ?? '',
-        displayName: json['display_name'] as String? ?? 'Unknown',
-        avatarUrl: json['avatar_url'] as String?,
-        about: json['about'] as String?,
-        type: json['type'] as String?,
-        cityName: json['city_name'] as String?,
-        instagram: json['instagram'] as String?,
-        tiktok: json['tiktok'] as String?,
-        website: json['website'] as String?,
-        gallery: (json['gallery'] as List<dynamic>?)
-                ?.map((e) => GalleryPhoto.fromJson(e as Map<String, dynamic>))
-                .toList() ??
-            const [],
-        pastCollaborations: (json['past_collaborations'] as List<dynamic>?)
-                ?.map((e) =>
-                    PastCollaboration.fromJson(e as Map<String, dynamic>))
-                .toList() ??
-            const [],
-      );
+    id: json['id']?.toString() ?? '',
+    userType: json['user_type'] as String? ?? '',
+    displayName: json['display_name'] as String? ?? 'Unknown',
+    // Logo is returned as an absolute URL. `PublicProfileResource` exposes
+    // it under three identical keys (`avatar_url`, `logo_url`,
+    // `profile_photo`); read them in order so the model is resilient to the
+    // backend trimming any single key later.
+    avatarUrl: _firstNonEmpty([
+      json['avatar_url'] as String?,
+      json['logo_url'] as String?,
+      json['profile_photo'] as String?,
+    ]),
+    about: json['about'] as String?,
+    type: json['type'] as String?,
+    // Server-formatted, human-readable type label (e.g. "Run Club"). When
+    // present we display it verbatim and never re-format it client-side.
+    serverTypeLabel: json['type_label'] as String?,
+    cityName: json['city_name'] as String?,
+    instagram: json['instagram'] as String?,
+    tiktok: json['tiktok'] as String?,
+    website: json['website'] as String?,
+    gallery:
+        (json['gallery'] as List<dynamic>?)
+            ?.map((e) => GalleryPhoto.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        const [],
+    pastCollaborations:
+        (json['past_collaborations'] as List<dynamic>?)
+            ?.map((e) => PastCollaboration.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        const [],
+  );
 
   final String id;
   final String userType;
@@ -91,6 +104,10 @@ class PublicProfile {
   final String? avatarUrl;
   final String? about;
   final String? type;
+
+  /// Pre-formatted type label from the backend (`type_label`). Preferred for
+  /// display. Null on older payloads, in which case we format [type] locally.
+  final String? serverTypeLabel;
   final String? cityName;
   final String? instagram;
   final String? tiktok;
@@ -111,25 +128,47 @@ class PublicProfile {
       (instagram != null && instagram!.isNotEmpty) ||
       (tiktok != null && tiktok!.isNotEmpty) ||
       (website != null && website!.isNotEmpty);
-  String? get typeLabel =>
-      type == null || type!.isEmpty ? null : formatProfileTypeLabel(type!);
+
+  /// Display label for the profile type. Prefers the backend's pre-formatted
+  /// `type_label`; falls back to formatting the raw [type] slug locally so we
+  /// never show e.g. "run_club". Never double-transforms the server label.
+  String? get typeLabel {
+    final server = serverTypeLabel;
+    if (server != null && server.trim().isNotEmpty) {
+      return server;
+    }
+    if (type == null || type!.isEmpty) {
+      return null;
+    }
+    return formatProfileTypeLabel(type!);
+  }
 
   PublicProfile copyWith({
     List<GalleryPhoto>? gallery,
     List<PastCollaboration>? pastCollaborations,
-  }) =>
-      PublicProfile(
-        id: id,
-        userType: userType,
-        displayName: displayName,
-        avatarUrl: avatarUrl,
-        about: about,
-        type: type,
-        cityName: cityName,
-        instagram: instagram,
-        tiktok: tiktok,
-        website: website,
-        gallery: gallery ?? this.gallery,
-        pastCollaborations: pastCollaborations ?? this.pastCollaborations,
-      );
+  }) => PublicProfile(
+    id: id,
+    userType: userType,
+    displayName: displayName,
+    avatarUrl: avatarUrl,
+    about: about,
+    type: type,
+    serverTypeLabel: serverTypeLabel,
+    cityName: cityName,
+    instagram: instagram,
+    tiktok: tiktok,
+    website: website,
+    gallery: gallery ?? this.gallery,
+    pastCollaborations: pastCollaborations ?? this.pastCollaborations,
+  );
+}
+
+/// Returns the first non-null, non-blank string from [candidates], or null.
+String? _firstNonEmpty(List<String?> candidates) {
+  for (final value in candidates) {
+    if (value != null && value.trim().isNotEmpty) {
+      return value;
+    }
+  }
+  return null;
 }

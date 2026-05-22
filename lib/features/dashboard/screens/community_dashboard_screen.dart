@@ -68,7 +68,11 @@ class _CommunityDashboardScreenState
     );
   }
 
-  Widget _buildBody(DashboardState dashboardState, String userName, bool isDark) {
+  Widget _buildBody(
+    DashboardState dashboardState,
+    String userName,
+    bool isDark,
+  ) {
     // Loading state
     if (dashboardState.isLoading && !dashboardState.isInitialized) {
       return const DashboardShimmer();
@@ -98,24 +102,27 @@ class _CommunityDashboardScreenState
         const SizedBox(height: KolabingSpacing.lg),
 
         // Wallet card (rewards)
-        Consumer(builder: (context, ref, _) {
-          final wallet = ref.watch(walletSummaryProvider);
-          if (wallet == null) return const SizedBox.shrink();
-          return Column(
-            children: [
-              PointsWalletCard(
-                points: wallet.availablePoints,
-                onTap: () => context.push(KolabingRoutes.communityWallet),
-                onWithdraw: wallet.canWithdraw
-                    ? () => context.push(KolabingRoutes.communityWalletWithdraw)
-                    : null,
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-              const ReferralBannerCard(),
-              const SizedBox(height: KolabingSpacing.lg),
-            ],
-          );
-        }),
+        Consumer(
+          builder: (context, ref, _) {
+            final wallet = ref.watch(walletSummaryProvider);
+            if (wallet == null) return const SizedBox.shrink();
+            return Column(
+              children: [
+                PointsWalletCard(
+                  points: wallet.availablePoints,
+                  onTap: () => context.push(KolabingRoutes.communityWallet),
+                  onWithdraw: wallet.canWithdraw
+                      ? () =>
+                            context.push(KolabingRoutes.communityWalletWithdraw)
+                      : null,
+                ),
+                const SizedBox(height: KolabingSpacing.md),
+                const ReferralBannerCard(),
+                const SizedBox(height: KolabingSpacing.lg),
+              ],
+            );
+          },
+        ),
 
         // Quick actions
         _buildQuickActions(isDark),
@@ -274,8 +281,9 @@ class _CommunityDashboardScreenState
                     ? KolabingColors.textOnDark
                     : KolabingColors.textPrimary,
                 side: BorderSide(
-                  color:
-                      isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                  color: isDark
+                      ? KolabingColors.darkBorder
+                      : KolabingColors.border,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

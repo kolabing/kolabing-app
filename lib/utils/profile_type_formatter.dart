@@ -4,10 +4,7 @@ String formatProfileTypeLabel(String value) {
     return value.trim();
   }
 
-  return normalized
-      .split(RegExp(r'\s+'))
-      .map(_formatProfileTypeWord)
-      .join(' ');
+  return normalized.split(RegExp(r'\s+')).map(_formatProfileTypeWord).join(' ');
 }
 
 String _formatProfileTypeWord(String word) {

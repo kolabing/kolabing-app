@@ -519,6 +519,9 @@ class _AvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // `avatarUrl` is the ABSOLUTE logo URL returned by `PublicProfileResource`
+    // (`avatar_url` / `logo_url` / `profile_photo`). On load failure or when
+    // the profile has no logo, we fall back to the initial-letter circle.
     if (avatarUrl != null && avatarUrl!.isNotEmpty) {
       return ClipOval(
         child: CachedNetworkImage(

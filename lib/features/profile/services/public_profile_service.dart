@@ -12,19 +12,27 @@ import 'gallery_service.dart';
 
 /// Service for fetching public profile data.
 ///
-/// Community profiles: `GET /api/v1/communities/{id}/public-profile`
-/// (live as of 2026-05-21 contract update).
+/// Canonical endpoints (backend `kolabing-v2`, confirmed 2026-05-22):
+/// - Profile:        `GET /api/v1/profiles/{profileId}` -> `PublicProfileResource`
+///   Returns the logo as an ABSOLUTE URL under `avatar_url` / `logo_url` /
+///   `profile_photo`, plus a server-formatted `type_label` (e.g. "Run Club").
+///   The `{profileId}` path segment is a `profiles.id` (NOT a business/community
+///   profile id).
+/// - Collaborations: `GET /api/v1/profiles/{profileId}/collaborations`
+///   -> paginated `PublicCollaborationResource` (`title`, `partner_name`,
+///   `partner_avatar_url`, `completed_at`, `status`). The backend eager-loads
+///   the event and only returns completed collaborations.
 ///
-/// Business profile endpoint is still TBD; for businesses we fall back to
-/// mock data until the equivalent endpoint ships.
+/// Both endpoints work for business AND community profiles, so there is no
+/// longer a per-type branch. Gallery photos still come from the gallery API.
 class PublicProfileService {
   PublicProfileService({
     GalleryService? galleryService,
     AuthService? authService,
     http.Client? httpClient,
-  })  : _galleryService = galleryService ?? GalleryService(),
-        _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  }) : _galleryService = galleryService ?? GalleryService(),
+       _authService = authService ?? AuthService(),
+       _httpClient = httpClient ?? http.Client();
 
   final GalleryService _galleryService;
   final AuthService _authService;
@@ -32,19 +40,30 @@ class PublicProfileService {
 
   /// Fetch a public profile by ID.
   ///
-  /// Tries the live community endpoint first. Falls back to mock data if the
-  /// endpoint is not available for this profile type (e.g. business viewers).
-  /// Gallery photos always come from the real API.
+  /// Loads the profile, its completed collaborations, and its gallery in
+  /// parallel-ish (sequential awaits, each failure isolated) and merges them.
+  /// Falls back to mock profile data only if the profile endpoint itself
+  /// fails, so the screen still renders something during development.
   Future<PublicProfile> getPublicProfile(String profileId) async {
     PublicProfile? remote;
     try {
-      remote = await _fetchCommunityPublicProfile(profileId);
+      remote = await _fetchPublicProfile(profileId);
     } on Exception catch (e) {
       debugPrint('PublicProfileService: remote profile fetch failed: $e');
     }
 
+    // Past collaborations live on a dedicated endpoint, not embedded in the
+    // profile resource. Fetch them separately; an empty list is a valid
+    // (and common) result that the UI renders as an empty state.
+    var pastCollaborations = const <PastCollaboration>[];
+    try {
+      pastCollaborations = await _fetchPastCollaborations(profileId);
+    } on Exception catch (e) {
+      debugPrint('PublicProfileService: collaborations fetch failed: $e');
+    }
+
     // Fetch gallery photos from real API
-    List<GalleryPhoto> gallery = [];
+    var gallery = const <GalleryPhoto>[];
     try {
       gallery = await _galleryService.getProfileGallery(profileId);
     } catch (e) {
@@ -52,20 +71,31 @@ class PublicProfileService {
     }
 
     final base = remote ?? _getMockProfile(profileId);
-    return base.copyWith(gallery: gallery);
+    return base.copyWith(
+      gallery: gallery,
+      // Prefer the live collaborations. Only keep the (mock) fallback list when
+      // the profile itself fell back to mock AND the live fetch returned empty.
+      pastCollaborations: pastCollaborations.isNotEmpty
+          ? pastCollaborations
+          : (remote == null ? base.pastCollaborations : const []),
+    );
   }
 
-  Future<PublicProfile?> _fetchCommunityPublicProfile(String id) async {
-    return _fetchCommunityPublicProfileInner(id, allowRetry: true);
+  // ---------------------------------------------------------------------------
+  // GET /profiles/{id}
+  // ---------------------------------------------------------------------------
+
+  Future<PublicProfile?> _fetchPublicProfile(String id) {
+    return _fetchPublicProfileInner(id, allowRetry: true);
   }
 
-  Future<PublicProfile?> _fetchCommunityPublicProfileInner(
+  Future<PublicProfile?> _fetchPublicProfileInner(
     String id, {
     required bool allowRetry,
   }) async {
-    final url = '${ApiConfig.baseUrl}/communities/$id/public-profile';
+    final url = '${ApiConfig.baseUrl}/profiles/$id';
     final token = await _authService.getToken();
-    debugPrint('[C9] GET $url');
+    debugPrint('PublicProfileService: GET $url');
 
     final response = await _httpClient.get(
       Uri.parse(url),
@@ -75,7 +105,7 @@ class PublicProfileService {
       },
     );
 
-    debugPrint('[C9] response status=${response.statusCode}');
+    debugPrint('PublicProfileService: profile status=${response.statusCode}');
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -86,11 +116,12 @@ class PublicProfileService {
 
     if (response.statusCode == 401 && allowRetry) {
       await _authService.refreshSession();
-      return _fetchCommunityPublicProfileInner(id, allowRetry: false);
+      return _fetchPublicProfileInner(id, allowRetry: false);
     }
 
     if (response.statusCode == 404) {
-      // Likely a business profile id — endpoint is community-only for now.
+      // Profile not found (e.g. a stale or wrong id). Surface as null so the
+      // caller can fall back rather than throwing a hard error.
       return null;
     }
 
@@ -103,12 +134,70 @@ class PublicProfileService {
   }
 
   // ---------------------------------------------------------------------------
-  // Mock Data
+  // GET /profiles/{id}/collaborations
+  // ---------------------------------------------------------------------------
+
+  Future<List<PastCollaboration>> _fetchPastCollaborations(String id) {
+    return _fetchPastCollaborationsInner(id, allowRetry: true);
+  }
+
+  Future<List<PastCollaboration>> _fetchPastCollaborationsInner(
+    String id, {
+    required bool allowRetry,
+  }) async {
+    final url = '${ApiConfig.baseUrl}/profiles/$id/collaborations';
+    final token = await _authService.getToken();
+    debugPrint('PublicProfileService: GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+    );
+
+    debugPrint(
+      'PublicProfileService: collaborations status=${response.statusCode}',
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      // The endpoint is paginated: `data` is the list of completed
+      // collaborations (each a PublicCollaborationResource), with `meta` for
+      // paging. We only render the first page on the profile screen.
+      final data = json['data'];
+      if (data is List) {
+        return data
+            .whereType<Map<String, dynamic>>()
+            .map(PastCollaboration.fromJson)
+            .toList();
+      }
+      return const [];
+    }
+
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _fetchPastCollaborationsInner(id, allowRetry: false);
+    }
+
+    if (response.statusCode == 404) {
+      return const [];
+    }
+
+    final body = response.body.isEmpty
+        ? <String, dynamic>{'message': 'Failed to load collaborations'}
+        : jsonDecode(response.body) as Map<String, dynamic>;
+    throw ApiException(
+      error: ApiError.fromJson(body, statusCode: response.statusCode),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mock Data (fallback only when the profile endpoint is unreachable)
   // ---------------------------------------------------------------------------
 
   PublicProfile _getMockProfile(String profileId) {
-    // Return mock data with the given profile ID
-    // This will be replaced by: GET /api/v1/profiles/{profileId}
     return PublicProfile(
       id: profileId,
       userType: 'community',
@@ -125,7 +214,6 @@ class PublicProfileService {
   }
 
   List<PastCollaboration> _getMockCollaborations() {
-    // This will be replaced by: GET /api/v1/profiles/{id}/collaborations
     return [
       PastCollaboration(
         id: 'collab_1',

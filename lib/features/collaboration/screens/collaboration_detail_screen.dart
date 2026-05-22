@@ -17,10 +17,7 @@ import '../widgets/collaboration_feedback_sheet.dart';
 /// Collaboration detail screen shown after a kolabing request is accepted.
 /// Both business and community users see this screen with role-aware content.
 class CollaborationDetailScreen extends ConsumerWidget {
-  const CollaborationDetailScreen({
-    super.key,
-    required this.collaborationId,
-  });
+  const CollaborationDetailScreen({super.key, required this.collaborationId});
 
   final String collaborationId;
 
@@ -77,8 +74,10 @@ class _CollaborationContent extends ConsumerWidget {
           elevation: 0,
           pinned: true,
           leading: IconButton(
-            icon: const Icon(LucideIcons.arrowLeft,
-                color: KolabingColors.textPrimary),
+            icon: const Icon(
+              LucideIcons.arrowLeft,
+              color: KolabingColors.textPrimary,
+            ),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -92,8 +91,10 @@ class _CollaborationContent extends ConsumerWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(LucideIcons.moreVertical,
-                  color: KolabingColors.textSecondary),
+              icon: const Icon(
+                LucideIcons.moreVertical,
+                color: KolabingColors.textSecondary,
+              ),
               onPressed: () {},
             ),
           ],
@@ -141,9 +142,7 @@ class _CollaborationContent extends ConsumerWidget {
               // in-progress collaboration to completed once the event has run.
               if (collaboration.status == CollaborationStatus.scheduled ||
                   collaboration.status == CollaborationStatus.inProgress)
-                _FinishCollaborationSection(
-                  collaborationId: collaborationId,
-                ),
+                _FinishCollaborationSection(collaborationId: collaborationId),
 
               // Post-completion: businesses who haven't yet submitted feedback
               // see a "Leave review" CTA. Hidden once feedback_submitted_at lands.
@@ -186,21 +185,21 @@ class _StatusHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bgColor, textColor) = switch (collaboration.status) {
       CollaborationStatus.scheduled => (
-          KolabingColors.pendingBg,
-          KolabingColors.pendingText
-        ),
+        KolabingColors.pendingBg,
+        KolabingColors.pendingText,
+      ),
       CollaborationStatus.inProgress => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText
-        ),
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+      ),
       CollaborationStatus.completed => (
-          KolabingColors.completedBg,
-          KolabingColors.completedText
-        ),
+        KolabingColors.completedBg,
+        KolabingColors.completedText,
+      ),
       CollaborationStatus.cancelled => (
-          KolabingColors.errorBg,
-          KolabingColors.errorText
-        ),
+        KolabingColors.errorBg,
+        KolabingColors.errorText,
+      ),
     };
 
     return Container(
@@ -333,7 +332,17 @@ class _PartnerInfoCard extends StatelessWidget {
       icon: LucideIcons.users2,
       title: partner.isBusiness ? 'BUSINESS PARTNER' : 'COMMUNITY PARTNER',
       child: InkWell(
-        onTap: () => context.push('/profile/${partner.id}'),
+        // "View business/creator profile" opens the public profile route
+        // `/profile/:id`, whose `:id` MUST be a `profiles.id` (the route binds
+        // to a Profile -> PublicProfileResource). `partner.id` is sourced from
+        // the collaboration's `business_partner`/`community_partner` object,
+        // which carries the partner's `profiles.id` (mirrors the backend's
+        // ProfileSummaryResource `id`), NOT a business/community-profile id.
+        // Guard against an empty id so we never push `/profile/` (which would
+        // 404 and look like the link is broken).
+        onTap: partner.id.isEmpty
+            ? null
+            : () => context.push('/profile/${partner.id}'),
         borderRadius: KolabingRadius.borderRadiusMd,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
@@ -404,8 +413,11 @@ class _PartnerInfoCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          const Icon(LucideIcons.mapPin,
-                              size: 12, color: KolabingColors.textTertiary),
+                          const Icon(
+                            LucideIcons.mapPin,
+                            size: 12,
+                            color: KolabingColors.textTertiary,
+                          ),
                           const SizedBox(width: 3),
                           Text(
                             partner.city!,
@@ -438,10 +450,7 @@ class _PartnerInfoCard extends StatelessWidget {
 // =============================================================================
 
 class _OffersSection extends StatelessWidget {
-  const _OffersSection({
-    required this.businessOffer,
-    required this.isBusiness,
-  });
+  const _OffersSection({required this.businessOffer, required this.isBusiness});
 
   final BusinessOffer businessOffer;
   final bool isBusiness;
@@ -463,10 +472,12 @@ class _OffersSection extends StatelessWidget {
       items.add(const _CheckItem('Content creation support', true));
     }
     if (businessOffer.discount.enabled) {
-      items.add(_CheckItem(
-        'Discount: ${businessOffer.discount.percentage ?? 0}%',
-        true,
-      ));
+      items.add(
+        _CheckItem(
+          'Discount: ${businessOffer.discount.percentage ?? 0}%',
+          true,
+        ),
+      );
     }
     for (final product in businessOffer.products) {
       items.add(_CheckItem(product, true));
@@ -482,31 +493,32 @@ class _OffersSection extends StatelessWidget {
       title: isBusiness ? "WHAT YOU'RE OFFERING" : "WHAT'S OFFERED",
       child: Column(
         children: items
-            .map((item) => Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: KolabingSpacing.xs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        LucideIcons.checkCircle2,
-                        size: 16,
-                        color: KolabingColors.success,
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          item.label,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            color: KolabingColors.textPrimary,
-                            height: 1.4,
-                          ),
+            .map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      LucideIcons.checkCircle2,
+                      size: 16,
+                      color: KolabingColors.success,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.textPrimary,
+                          height: 1.4,
                         ),
                       ),
-                    ],
-                  ),
-                ))
+                    ),
+                  ],
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -556,31 +568,32 @@ class _DeliverablesSection extends StatelessWidget {
       title: isBusiness ? 'EXPECTED DELIVERABLES' : "WHAT YOU'LL DELIVER",
       child: Column(
         children: items
-            .map((item) => Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: KolabingSpacing.xs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        LucideIcons.checkCircle2,
-                        size: 16,
-                        color: KolabingColors.info,
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          item.label,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            color: KolabingColors.textPrimary,
-                            height: 1.4,
-                          ),
+            .map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      LucideIcons.checkCircle2,
+                      size: 16,
+                      color: KolabingColors.info,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.textPrimary,
+                          height: 1.4,
                         ),
                       ),
-                    ],
-                  ),
-                ))
+                    ),
+                  ],
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -689,8 +702,11 @@ class _TimelineSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(LucideIcons.gitBranch,
-                  size: 16, color: KolabingColors.textTertiary),
+              const Icon(
+                LucideIcons.gitBranch,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'PROCESS',
@@ -716,10 +732,7 @@ class _TimelineSection extends StatelessWidget {
 }
 
 class _TimelineStepWidget extends StatelessWidget {
-  const _TimelineStepWidget({
-    required this.step,
-    required this.isLast,
-  });
+  const _TimelineStepWidget({required this.step, required this.isLast});
 
   final TimelineStep step;
   final bool isLast;
@@ -728,20 +741,20 @@ class _TimelineStepWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final (dotColor, lineColor, textColor) = switch (step.status) {
       TimelineStepStatus.completed => (
-          KolabingColors.success,
-          KolabingColors.success.withValues(alpha: 0.3),
-          KolabingColors.textPrimary,
-        ),
+        KolabingColors.success,
+        KolabingColors.success.withValues(alpha: 0.3),
+        KolabingColors.textPrimary,
+      ),
       TimelineStepStatus.current => (
-          KolabingColors.primary,
-          KolabingColors.border,
-          KolabingColors.textPrimary,
-        ),
+        KolabingColors.primary,
+        KolabingColors.border,
+        KolabingColors.textPrimary,
+      ),
       TimelineStepStatus.upcoming => (
-          KolabingColors.border,
-          KolabingColors.border,
-          KolabingColors.textTertiary,
-        ),
+        KolabingColors.border,
+        KolabingColors.border,
+        KolabingColors.textTertiary,
+      ),
     };
 
     return IntrinsicHeight(
@@ -761,23 +774,23 @@ class _TimelineStepWidget extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: step.status == TimelineStepStatus.current
                         ? Border.all(
-                            color: KolabingColors.primary.withValues(alpha: 0.3),
+                            color: KolabingColors.primary.withValues(
+                              alpha: 0.3,
+                            ),
                             width: 3,
                           )
                         : null,
                   ),
                   child: step.status == TimelineStepStatus.completed
-                      ? const Icon(LucideIcons.check,
-                          size: 7, color: Colors.white)
+                      ? const Icon(
+                          LucideIcons.check,
+                          size: 7,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
                 if (!isLast)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      color: lineColor,
-                    ),
-                  ),
+                  Expanded(child: Container(width: 2, color: lineColor)),
               ],
             ),
           ),
@@ -785,9 +798,7 @@ class _TimelineStepWidget extends StatelessWidget {
           // Content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: isLast ? 0 : KolabingSpacing.md,
-              ),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : KolabingSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -832,8 +843,18 @@ class _TimelineStepWidget extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${date.day} ${monthNames[date.month - 1]} ${date.year}';
   }
@@ -864,8 +885,11 @@ class _ChallengesSection extends ConsumerWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(LucideIcons.trophy,
-                  size: 16, color: KolabingColors.textTertiary),
+              const Icon(
+                LucideIcons.trophy,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'GAMIFICATION SETUP',
@@ -899,8 +923,11 @@ class _ChallengesSection extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              const Icon(LucideIcons.info,
-                  size: 14, color: KolabingColors.onPrimary),
+              const Icon(
+                LucideIcons.info,
+                size: 14,
+                color: KolabingColors.onPrimary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
@@ -1037,17 +1064,17 @@ class _ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final (diffColor, diffBgColor) = switch (challenge.difficulty) {
       ChallengeDifficulty.easy => (
-          const Color(0xFF155724),
-          const Color(0xFFD4EDDA),
-        ),
+        const Color(0xFF155724),
+        const Color(0xFFD4EDDA),
+      ),
       ChallengeDifficulty.medium => (
-          const Color(0xFF856404),
-          const Color(0xFFFFF3CD),
-        ),
+        const Color(0xFF856404),
+        const Color(0xFFFFF3CD),
+      ),
       ChallengeDifficulty.hard => (
-          const Color(0xFF721C24),
-          const Color(0xFFF8D7DA),
-        ),
+        const Color(0xFF721C24),
+        const Color(0xFFF8D7DA),
+      ),
     };
 
     return Material(
@@ -1076,8 +1103,9 @@ class _ChallengeCard extends StatelessWidget {
                 width: 22,
                 height: 22,
                 decoration: BoxDecoration(
-                  color:
-                      isSelected ? KolabingColors.primary : Colors.transparent,
+                  color: isSelected
+                      ? KolabingColors.primary
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isSelected
@@ -1087,8 +1115,11 @@ class _ChallengeCard extends StatelessWidget {
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(LucideIcons.check,
-                        size: 14, color: KolabingColors.onPrimary)
+                    ? const Icon(
+                        LucideIcons.check,
+                        size: 14,
+                        color: KolabingColors.onPrimary,
+                      )
                     : null,
               ),
               const SizedBox(width: KolabingSpacing.sm),
@@ -1182,10 +1213,7 @@ class _ChallengeCard extends StatelessWidget {
 // =============================================================================
 
 class _QRCodeSection extends StatelessWidget {
-  const _QRCodeSection({
-    required this.collaborationId,
-    required this.eventId,
-  });
+  const _QRCodeSection({required this.collaborationId, required this.eventId});
 
   final String collaborationId;
   final String? eventId;
@@ -1199,8 +1227,11 @@ class _QRCodeSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(LucideIcons.qrCode,
-                  size: 16, color: KolabingColors.textTertiary),
+              const Icon(
+                LucideIcons.qrCode,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'QR CODE CHECK-IN',
@@ -1233,10 +1264,7 @@ class _QRCodeSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: KolabingColors.background,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: KolabingColors.border,
-                    width: 2,
-                  ),
+                  border: Border.all(color: KolabingColors.border, width: 2),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1307,8 +1335,7 @@ class _QRCodeSection extends StatelessWidget {
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(KolabingRadius.md),
+                      borderRadius: BorderRadius.circular(KolabingRadius.md),
                     ),
                     elevation: 0,
                   ),
@@ -1463,8 +1490,11 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.alertCircle,
-                size: 48, color: KolabingColors.error),
+            const Icon(
+              LucideIcons.alertCircle,
+              size: 48,
+              color: KolabingColors.error,
+            ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to load collaboration',
@@ -1514,9 +1544,7 @@ class _FinishCollaborationSectionState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Mark as completed?',
           style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 18),
@@ -1570,8 +1598,7 @@ class _FinishCollaborationSectionState
         ),
       );
       // v1: only the business party fills out the post-completion survey.
-      final isBusiness =
-          ref.read(authProvider).user?.isBusiness ?? false;
+      final isBusiness = ref.read(authProvider).user?.isBusiness ?? false;
       if (isBusiness && mounted) {
         await CollaborationFeedbackSheet.show(
           context,
@@ -1599,41 +1626,41 @@ class _FinishCollaborationSectionState
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
-        child: SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton.icon(
-            onPressed: _isSubmitting ? null : _confirmAndFinish,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.success,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.md),
-              ),
-              elevation: 0,
-            ),
-            icon: _isSubmitting
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Icon(LucideIcons.checkCircle, size: 18),
-            label: Text(
-              _isSubmitting ? 'COMPLETING…' : 'MARK AS COMPLETED',
-              style: GoogleFonts.dmSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-            ),
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
+    child: SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton.icon(
+        onPressed: _isSubmitting ? null : _confirmAndFinish,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: KolabingColors.success,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
+          ),
+          elevation: 0,
+        ),
+        icon: _isSubmitting
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Icon(LucideIcons.checkCircle, size: 18),
+        label: Text(
+          _isSubmitting ? 'COMPLETING…' : 'MARK AS COMPLETED',
+          style: GoogleFonts.dmSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================

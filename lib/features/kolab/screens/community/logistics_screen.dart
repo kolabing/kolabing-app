@@ -8,6 +8,12 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../widgets/time_picker.dart';
+import '../../../onboarding/models/place_suggestion.dart';
+// Only the Places autocomplete provider is needed here. Hide the names that
+// also exist in opportunity_provider (e.g. citiesProvider) to avoid an
+// ambiguous import; the city dropdown keeps using opportunity_provider's.
+import '../../../onboarding/providers/onboarding_provider.dart'
+    show placeSuggestionsProvider;
 import '../../../opportunity/models/opportunity.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../models/kolab.dart';
@@ -26,6 +32,12 @@ class LogisticsScreen extends ConsumerStatefulWidget {
 
 class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
   final _areaController = TextEditingController();
+  final _areaFocusNode = FocusNode();
+
+  /// Live query text driving the neighbourhood/area Places autocomplete.
+  /// Kept separate from the persisted `kolab.area` so suggestions only show
+  /// while the user is actively typing a new search.
+  String _areaQuery = '';
 
   static const _dayNames = [
     'Monday',
@@ -43,6 +55,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _syncControllers();
     });
+    // Hide the suggestion list once the field loses focus so a confirmed
+    // selection (or manual entry) stays put without a dangling dropdown.
+    _areaFocusNode.addListener(() {
+      if (!_areaFocusNode.hasFocus && _areaQuery.isNotEmpty) {
+        setState(() => _areaQuery = '');
+      }
+    });
   }
 
   void _syncControllers() {
@@ -56,7 +75,24 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
   @override
   void dispose() {
     _areaController.dispose();
+    _areaFocusNode.dispose();
     super.dispose();
+  }
+
+  /// Persist a Places suggestion as the preferred neighbourhood/area.
+  ///
+  /// We store the place title (e.g. "Shoreditch") rather than the full
+  /// formatted address so the area reads naturally alongside the city.
+  void _selectAreaSuggestion(PlaceSuggestion place) {
+    final label = place.title.trim().isNotEmpty
+        ? place.title.trim()
+        : place.formattedAddress.trim();
+    _areaController.text = label;
+    ref
+        .read(kolabFormProvider.notifier)
+        .updateArea(label.isEmpty ? null : label);
+    setState(() => _areaQuery = '');
+    _areaFocusNode.unfocus();
   }
 
   @override
@@ -173,23 +209,109 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
           const SizedBox(height: KolabingSpacing.md),
 
-          // Preferred Area (optional)
-          _buildLabel('Preferred Area (optional)'),
+          // Preferred Neighbourhood / Area (optional).
+          //
+          // Backed by the same Google Places autocomplete used in business
+          // venue onboarding (placeSuggestionsProvider) so the area is a real
+          // place lookup rather than free text. The city field above is kept.
+          _buildLabel('Preferred Neighbourhood / Area (optional)'),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _areaController,
-            onChanged: (value) => ref
-                .read(kolabFormProvider.notifier)
-                .updateArea(value.isEmpty ? null : value),
-            onTapOutside: (_) => FocusScope.of(context).unfocus(),
+            focusNode: _areaFocusNode,
+            onChanged: (value) {
+              setState(() => _areaQuery = value);
+              // Mirror manual edits into the form so typing without selecting a
+              // suggestion still persists the area.
+              ref
+                  .read(kolabFormProvider.notifier)
+                  .updateArea(value.trim().isEmpty ? null : value.trim());
+            },
             style: GoogleFonts.openSans(
               fontSize: 15,
               color: KolabingColors.textPrimary,
             ),
-            decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg'),
+            decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg')
+                .copyWith(
+                  prefixIcon: const Icon(
+                    LucideIcons.mapPin,
+                    size: 18,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
           ),
+          _buildAreaSuggestions(),
         ],
       ),
+    );
+  }
+
+  /// Renders Places autocomplete results beneath the area field while the user
+  /// is typing a search of at least two characters.
+  Widget _buildAreaSuggestions() {
+    final query = _areaQuery.trim();
+    if (query.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final suggestions = ref.watch(placeSuggestionsProvider(query));
+
+    return suggestions.when(
+      data: (items) {
+        if (items.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return Container(
+          margin: const EdgeInsets.only(top: KolabingSpacing.xxs),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            borderRadius: KolabingRadius.borderRadiusSm,
+            border: Border.all(color: KolabingColors.border),
+          ),
+          child: Column(
+            children: [
+              for (var i = 0; i < items.length; i++) ...[
+                if (i != 0)
+                  const Divider(height: 1, color: KolabingColors.border),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(
+                    LucideIcons.mapPin,
+                    size: 18,
+                    color: KolabingColors.textTertiary,
+                  ),
+                  title: Text(
+                    items[i].title,
+                    style: GoogleFonts.openSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: KolabingColors.textPrimary,
+                    ),
+                  ),
+                  subtitle: Text(
+                    items[i].formattedAddress,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.openSans(
+                      fontSize: 12,
+                      color: KolabingColors.textSecondary,
+                    ),
+                  ),
+                  onTap: () => _selectAreaSuggestion(items[i]),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.only(top: KolabingSpacing.xs),
+        child: LinearProgressIndicator(
+          color: KolabingColors.primary,
+          backgroundColor: KolabingColors.border,
+        ),
+      ),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 

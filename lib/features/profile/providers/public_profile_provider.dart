@@ -9,8 +9,10 @@ import '../services/public_profile_service.dart';
 /// ```dart
 /// final profileAsync = ref.watch(publicProfileProvider(profileId));
 /// ```
-final publicProfileProvider =
-    FutureProvider.family<PublicProfile, String>((ref, profileId) {
+final publicProfileProvider = FutureProvider.family<PublicProfile, String>((
+  ref,
+  profileId,
+) {
   final service = PublicProfileService();
   return service.getPublicProfile(profileId);
 });

@@ -41,7 +41,10 @@ void main() {
     expect(find.text('Community Provides'), findsNothing);
     expect(find.text('No Venue Needed'), findsNothing);
     expect(find.text('Preferred City'), findsOneWidget);
-    expect(find.text('Preferred Area (optional)'), findsOneWidget);
+    expect(
+      find.text('Preferred Neighbourhood / Area (optional)'),
+      findsOneWidget,
+    );
   });
 
   testWidgets(

@@ -74,7 +74,10 @@ class UpcomingCollaborationCard extends StatelessWidget {
                   const SizedBox(height: KolabingSpacing.xs),
 
                   // Date chip
-                  _DateChip(dateText: collaboration.dateDisplay, isDark: isDark),
+                  _DateChip(
+                    dateText: collaboration.dateDisplay,
+                    isDark: isDark,
+                  ),
                 ],
               ),
             ),
@@ -132,8 +135,9 @@ class _DateChip extends StatelessWidget {
         vertical: KolabingSpacing.xxxs,
       ),
       decoration: BoxDecoration(
-        color:
-            isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
+        color: isDark
+            ? KolabingColors.darkBorder
+            : KolabingColors.surfaceVariant,
         borderRadius: KolabingRadius.borderRadiusXs,
       ),
       child: Text(

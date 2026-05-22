@@ -35,17 +35,21 @@ class DashboardState {
     bool clearError = false,
     bool clearBusiness = false,
     bool clearCommunity = false,
-  }) =>
-      DashboardState(
-        businessData:
-            clearBusiness ? businessData : (businessData ?? this.businessData),
-        communityData: clearCommunity
-            ? communityData
-            : (communityData ?? this.communityData),
-        isLoading: isLoading ?? this.isLoading,
-        isInitialized: isInitialized ?? this.isInitialized,
-        error: clearError ? null : (error ?? this.error),
-      );
+  }) => DashboardState(
+    // `clearBusiness` / `clearCommunity` force the field to null. This is
+    // how loading one role's dashboard drops the OTHER role's stale data:
+    // without it, a leftover `businessData` keeps `isBusiness` true and the
+    // wrong (or a blank) dashboard renders, which read as "broken". The
+    // previous implementation had this inverted (it returned the new value
+    // when clearing instead of null).
+    businessData: clearBusiness ? null : (businessData ?? this.businessData),
+    communityData: clearCommunity
+        ? null
+        : (communityData ?? this.communityData),
+    isLoading: isLoading ?? this.isLoading,
+    isInitialized: isInitialized ?? this.isInitialized,
+    error: clearError ? null : (error ?? this.error),
+  );
 }
 
 /// Dashboard notifier for managing dashboard state
@@ -78,14 +82,16 @@ class DashboardNotifier extends Notifier<DashboardState> {
           businessData: response.businessDashboard,
           isLoading: false,
           isInitialized: true,
-          clearBusiness: true,
+          // Clear any stale community data so the role switch is clean.
+          clearCommunity: true,
         );
       } else if (response.isCommunity) {
         state = state.copyWith(
           communityData: response.communityDashboard,
           isLoading: false,
           isInitialized: true,
-          clearCommunity: true,
+          // Clear any stale business data so the role switch is clean.
+          clearBusiness: true,
         );
       } else {
         state = state.copyWith(
@@ -133,5 +139,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
 }
 
 /// Dashboard provider
-final dashboardProvider =
-    NotifierProvider<DashboardNotifier, DashboardState>(DashboardNotifier.new);
+final dashboardProvider = NotifierProvider<DashboardNotifier, DashboardState>(
+  DashboardNotifier.new,
+);

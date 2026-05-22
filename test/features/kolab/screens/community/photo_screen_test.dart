@@ -82,7 +82,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Choose from library'), findsOneWidget);
+    expect(find.text('Choose from gallery or past events'), findsOneWidget);
   });
 }
 

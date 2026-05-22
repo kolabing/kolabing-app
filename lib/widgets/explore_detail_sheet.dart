@@ -11,6 +11,7 @@ import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
+import 'blurred_identity.dart';
 
 /// Modal bottom sheet displaying full opportunity details.
 ///
@@ -160,18 +161,25 @@ class ExploreDetailSheet extends ConsumerWidget {
 
   Widget _buildHeaderRow(BuildContext context) {
     final creator = opportunity.creatorProfile;
-    final displayName = hideCreatorIdentity
-        ? 'Community hidden'
-        : (creator?.displayName ?? 'Unknown');
-    final initial = hideCreatorIdentity ? '?' : (creator?.initial ?? '?');
-    final avatarUrl = hideCreatorIdentity ? null : creator?.avatarUrl;
+    // Per ROLES-AND-PERMISSIONS.md §2.5: a free business sees the community's
+    // real name + logo BLURRED (not replaced by a placeholder). We therefore
+    // render the true values and let [BlurredIdentity] obscure them. Everything
+    // else in this sheet stays fully visible.
+    final displayName = creator?.displayName ?? 'Unknown';
+    final initial = creator?.initial ?? '?';
+    final avatarUrl = creator?.avatarUrl;
     final userType = creator?.userType ?? '';
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Creator avatar
-        _buildAvatar(avatarUrl, initial),
+        // Creator avatar (logo) — Gaussian-blurred when identity is hidden.
+        BlurredIdentity(
+          enabled: hideCreatorIdentity,
+          sigma: 14,
+          borderRadius: BorderRadius.circular(32),
+          child: _buildAvatar(avatarUrl, initial),
+        ),
         const SizedBox(width: KolabingSpacing.sm),
 
         // Creator name + type badge
@@ -179,16 +187,31 @@ class ExploreDetailSheet extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                displayName,
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+              BlurredIdentity(
+                enabled: hideCreatorIdentity,
+                sigma: 8,
+                child: Text(
+                  displayName,
+                  style: GoogleFonts.rubik(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
+              if (hideCreatorIdentity) ...[
+                const SizedBox(height: KolabingSpacing.xxs),
+                Text(
+                  'Subscribe to reveal this community',
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
+              ],
               const SizedBox(height: KolabingSpacing.xxs),
               _buildTypeBadge(userType),
             ],

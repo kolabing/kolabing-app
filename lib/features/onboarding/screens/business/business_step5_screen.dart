@@ -6,8 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../widgets/imported_photo_grid.dart';
 import '../../../auth/models/user_model.dart';
 import '../../models/business_type.dart';
+import '../../models/onboarding_photo.dart';
 import '../../models/place_suggestion.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../services/onboarding_service.dart';
@@ -29,6 +31,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
   PlaceSuggestion? _selectedPlace;
   String _query = '';
   bool _isImporting = false;
+
+  /// After a successful Google import we show an inline, persistent preview of
+  /// the imported photos (with per-photo delete) on this step rather than
+  /// navigating away immediately, so the user actually sees what was imported.
+  bool _showImportedPreview = false;
 
   @override
   void initState() {
@@ -125,12 +132,29 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
         if (!mounted) return;
       }
 
-      ref.read(onboardingProvider.notifier).applyPlaceImport(
-        placeImport,
-        businessTypes: businessTypes,
-        allowedPhotoResourceNames: allowedPhotoResourceNames,
-      );
-      context.push('/onboarding/business/step2');
+      ref
+          .read(onboardingProvider.notifier)
+          .applyPlaceImport(
+            placeImport,
+            businessTypes: businessTypes,
+            allowedPhotoResourceNames: allowedPhotoResourceNames,
+          );
+
+      if (!mounted) return;
+
+      // If the import brought in any photos, stay on this step and show them
+      // in a persistent preview grid so the user can review/delete them before
+      // continuing. Otherwise proceed straight to the details step.
+      final importedPhotos = ref
+          .read(onboardingProvider)
+          ?.venuePhotos
+          .where((photo) => photo.isGoogleImported)
+          .toList(growable: false);
+      if (importedPhotos != null && importedPhotos.isNotEmpty) {
+        setState(() => _showImportedPreview = true);
+      } else {
+        context.push('/onboarding/business/step2');
+      }
     } on PlaceImportUnavailableException {
       if (!mounted) return;
       _showImportFallbackToast();
@@ -149,14 +173,32 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
   void _showImportFallbackToast() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("We couldn't import from Google, please fill in manually."),
+        content: Text(
+          "We couldn't import from Google, please fill in manually.",
+        ),
         backgroundColor: KolabingColors.error,
       ),
     );
   }
 
+  void _handleContinueFromPreview() {
+    if (_isImporting) return;
+    context.push('/onboarding/business/step2');
+  }
+
+  void _removeImportedPhoto(String id) {
+    final photos = ref.read(onboardingProvider)?.venuePhotos ?? const [];
+    final index = photos.indexWhere((photo) => photo.id == id);
+    if (index < 0) return;
+    ref.read(onboardingProvider.notifier).removeVenuePhoto(index);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_showImportedPreview) {
+      return _buildImportedPreviewScaffold();
+    }
+
     final suggestions = ref.watch(placeSuggestionsProvider(_query.trim()));
 
     return Scaffold(
@@ -448,6 +490,121 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
       textAlign: TextAlign.center,
     ),
   );
+
+  /// Persistent in-step preview of the photos imported from Google, with a
+  /// per-photo delete control. Shown after a successful import so the user can
+  /// see and curate the imported photos before continuing.
+  Widget _buildImportedPreviewScaffold() {
+    final data = ref.watch(onboardingProvider);
+    final importedPhotos = (data?.venuePhotos ?? const <OnboardingPhoto>[])
+        .where((photo) => photo.isGoogleImported)
+        .toList(growable: false);
+
+    // If the user deletes every imported photo, fall back to the search view
+    // so they can pick a different venue or proceed manually.
+    final gridItems = importedPhotos
+        .map(
+          (photo) => ImportedPhotoItem(
+            id: photo.id,
+            url: photo.previewUrl ?? photo.remoteUrl ?? '',
+          ),
+        )
+        .toList(growable: false);
+
+    return Scaffold(
+      backgroundColor: KolabingColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            OnboardingHeader(
+              currentStep: 1,
+              totalSteps: 3,
+              onBack: () => setState(() => _showImportedPreview = false),
+              showSkip: false,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 32),
+                    Center(
+                      child: Text(
+                        'PHOTOS FROM GOOGLE',
+                        style: GoogleFonts.rubik(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: KolabingColors.textPrimary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        'We imported these photos for your venue. Tap the X to remove any you do not want before continuing. You can add your own later.',
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    if (gridItems.isEmpty)
+                      _buildHint(
+                        'No photos left. Continue to add your own, or go back to pick a different venue.',
+                      )
+                    else ...[
+                      ImportedPhotoGrid(
+                        photos: gridItems,
+                        onRemove: _removeImportedPhoto,
+                      ),
+                      const SizedBox(height: 12),
+                      const GoogleAttributionLabel(),
+                    ],
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _isImporting ? null : _handleContinueFromPreview,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: KolabingColors.primary,
+                    foregroundColor: KolabingColors.onPrimary,
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                      alpha: 0.5,
+                    ),
+                    disabledForegroundColor: KolabingColors.onPrimary
+                        .withValues(alpha: 0.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'CONTINUE',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _SelectedAddressCard extends StatelessWidget {

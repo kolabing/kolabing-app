@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../auth/models/user_model.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
@@ -48,8 +49,14 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
     final isProfileStillResolving =
         !isProfileTypeResolved &&
         (profileState.isLoading || !profileState.isInitialized);
-    final isCommunity = userType?.name == 'community';
-    final isBusiness = userType?.name == 'business';
+    // Enum-safe role detection. Comparing the raw enum value (not its `.name`
+    // string) avoids any casing mismatch: previously `userType?.name ==
+    // 'community'` could silently fail if the parsed enum's name differed in
+    // case, dropping a COMMUNITY into the business `else` branch and wrongly
+    // gating it (ROLES-BACKEND-DB-MAP.md §3, "community blocked from creating").
+    // UserType.fromString already normalizes API casing on parse.
+    final isCommunity = userType == UserType.community;
+    final isBusiness = userType == UserType.business;
     final businessRequiresSubscription =
         isBusiness && !profileState.isSubscribed;
 

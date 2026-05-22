@@ -11,6 +11,7 @@ import 'package:kolabing_app/features/discovery/models/discovery_filters.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_item.dart';
 import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
 import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
+import 'package:kolabing_app/widgets/blurred_identity.dart';
 
 void main() {
   testWidgets('explore screen renders segmented feed and updates feed filter', (
@@ -200,21 +201,31 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Training & Brunch'), findsOneWidget);
-      expect(find.text('Community hidden'), findsOneWidget);
-      expect(find.text('Move Club'), findsNothing);
+      // Free business: the real community name is RENDERED but visually blurred
+      // (not replaced by a placeholder), per the blur-not-block decision.
+      expect(find.text('Move Club'), findsWidgets);
+      expect(
+        find.byWidgetPredicate((w) => w is BlurredIdentity && w.enabled),
+        findsWidgets,
+      );
 
       await tester.tap(find.text('Training & Brunch'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Community hidden'), findsWidgets);
+      expect(find.text('Move Club'), findsWidgets);
+      expect(
+        find.byWidgetPredicate((w) => w is BlurredIdentity && w.enabled),
+        findsWidgets,
+      );
       expect(find.text('UNLOCK TO APPLY'), findsOneWidget);
       expect(find.text('Jun 12 - Jun 14'), findsOneWidget);
-      expect(find.text('Move Club'), findsNothing);
+      // Free business cannot open the community's full profile.
+      expect(find.text('View creator profile'), findsNothing);
     },
   );
 
   testWidgets(
-    'business explore still hides the community identity after subscribing',
+    'business explore reveals the community identity after subscribing',
     (WidgetTester tester) async {
       final container = ProviderContainer(
         overrides: [
@@ -313,15 +324,24 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Training & Brunch'), findsOneWidget);
-      expect(find.text('Community hidden'), findsOneWidget);
-      expect(find.text('Move Club'), findsNothing);
+      // Subscribed business: identity is REVEALED — the real name shows and no
+      // BlurredIdentity is active (§2.6 reveal-on-subscribe).
+      expect(find.text('Move Club'), findsWidgets);
+      expect(
+        find.byWidgetPredicate((w) => w is BlurredIdentity && w.enabled),
+        findsNothing,
+      );
 
       await tester.tap(find.text('Training & Brunch'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Community hidden'), findsWidgets);
-      expect(find.text('Move Club'), findsNothing);
-      expect(find.text('View creator profile'), findsNothing);
+      expect(find.text('Move Club'), findsWidgets);
+      expect(
+        find.byWidgetPredicate((w) => w is BlurredIdentity && w.enabled),
+        findsNothing,
+      );
+      // Subscribed business can open the community's full profile.
+      expect(find.text('View creator profile'), findsOneWidget);
     },
   );
 }

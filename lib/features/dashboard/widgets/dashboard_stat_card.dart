@@ -93,11 +93,7 @@ class DashboardStatCard extends StatelessWidget {
                   color: accentColor.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: accentColor,
-                ),
+                child: Icon(icon, size: 20, color: accentColor),
               ),
             ],
           ),

@@ -11,6 +11,8 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
+import '../../../../utils/remote_media_url.dart';
+import '../../../event/providers/event_provider.dart';
 import '../../../profile/providers/gallery_provider.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -39,7 +41,30 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
       if (!galleryState.isLoading && galleryState.photos.isEmpty) {
         ref.read(galleryProvider.notifier).loadGallery();
       }
+      // Ensure the community's past-event photos are available to surface as
+      // selectable thumbnails (eventsProvider auto-loads on first build, but
+      // re-trigger if it's empty and idle, e.g. after a reset).
+      final eventsState = ref.read(eventsProvider);
+      if (!eventsState.isLoading && eventsState.events.isEmpty) {
+        ref.read(eventsProvider.notifier).loadEvents();
+      }
     });
+  }
+
+  /// Collect de-duplicated past-event photo URLs from the community's events so
+  /// they can be offered alongside the profile gallery in the picker.
+  List<String> _pastEventPhotoUrls() {
+    final events = ref.read(eventsProvider).events;
+    final urls = <String>[];
+    final seen = <String>{};
+    for (final event in events) {
+      for (final photo in event.photos) {
+        final url = normalizeRemoteMediaUrl(photo.url);
+        if (url.isEmpty || !seen.add(url)) continue;
+        urls.add(url);
+      }
+    }
+    return urls;
   }
 
   Future<void> _pickAndUploadPhoto() async {
@@ -61,9 +86,9 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
         folder: 'kolabs',
       );
       ref.read(kolabFormProvider.notifier).updateMedia([
-            // Backend rejects 'photo' (B7). Use 'image' consistently.
-            KolabMedia(url: url, type: 'image', sortOrder: 0),
-          ]);
+        // Backend rejects 'photo' (B7). Use 'image' consistently.
+        KolabMedia(url: url, type: 'image', sortOrder: 0),
+      ]);
     } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -83,7 +108,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
   Future<void> _selectExistingPhoto() async {
     final selectedPhotos = await ExistingPhotoPickerSheet.show(
       context,
-      title: 'Select a photo',
+      title: 'Use a gallery or past-event photo',
       confirmLabel: 'Use photo',
       maxSelection: 1,
       initiallySelectedUrls: ref
@@ -92,26 +117,38 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           .media
           .map((media) => media.url)
           .toSet(),
+      // Surface the community's past-event photos in addition to the profile
+      // gallery. The picker merges these into the same selectable grid.
+      fallbackUrls: _pastEventPhotoUrls(),
     );
     if (!mounted || selectedPhotos == null || selectedPhotos.isEmpty) {
       return;
     }
 
     ref.read(kolabFormProvider.notifier).updateMedia([
-          KolabMedia(url: selectedPhotos.first.url, type: 'image', sortOrder: 0),
-        ]);
+      KolabMedia(url: selectedPhotos.first.url, type: 'image', sortOrder: 0),
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(kolabFormProvider);
     final galleryState = ref.watch(galleryProvider);
+    final eventsState = ref.watch(eventsProvider);
     final useProfilePhoto = state.kolab.media.isEmpty;
     final uploadedPhoto = state.kolab.media.isNotEmpty
         ? state.kolab.media.first
         : null;
+    final hasPastEventPhotos = eventsState.events.any(
+      (event) => event.photos.isNotEmpty,
+    );
+    // Offer the library picker when either the profile gallery or past-event
+    // photos are (or are still being) loaded.
     final showGalleryChoice =
-        galleryState.isLoading || galleryState.photos.isNotEmpty;
+        galleryState.isLoading ||
+        galleryState.photos.isNotEmpty ||
+        eventsState.isLoading ||
+        hasPastEventPhotos;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -209,8 +246,9 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
             children: [
               const Expanded(child: Divider(color: KolabingColors.border)),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.sm,
+                ),
                 child: Text(
                   'OR',
                   style: GoogleFonts.openSans(
@@ -230,7 +268,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
             OutlinedButton.icon(
               onPressed: _isUploading ? null : _selectExistingPhoto,
               icon: const Icon(LucideIcons.imagePlus, size: 18),
-              label: const Text('Choose from library'),
+              label: const Text('Choose from gallery or past events'),
             ),
             const SizedBox(height: KolabingSpacing.md),
           ],
@@ -250,10 +288,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 decoration: BoxDecoration(
                   color: KolabingColors.surface,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: KolabingColors.border,
-                    width: 1,
-                  ),
+                  border: Border.all(color: KolabingColors.border, width: 1),
                 ),
                 child: CustomPaint(
                   painter: _DashedBorderPainter(
@@ -325,95 +360,89 @@ class _UploadedPhotoCard extends StatelessWidget {
   final VoidCallback onReplace;
   final VoidCallback onRemove;
 
-  bool get _isLocalFile => photo.url.isNotEmpty && !photo.url.startsWith('http');
+  bool get _isLocalFile =>
+      photo.url.isNotEmpty && !photo.url.startsWith('http');
 
   @override
   Widget build(BuildContext context) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
+    width: double.infinity,
+    padding: const EdgeInsets.all(KolabingSpacing.sm),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusMd,
+      border: Border.all(color: KolabingColors.primary, width: 1.5),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
           borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: KolabingColors.primary, width: 1.5),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              child: AspectRatio(
-                aspectRatio: 16 / 10,
-                child: _isLocalFile
-                    ? Image.file(
-                        File(photo.url),
-                        fit: BoxFit.cover,
-                      )
-                    : Image.network(
-                        photo.url,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Container(
-                          color: KolabingColors.surfaceVariant,
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            LucideIcons.imageOff,
-                            color: KolabingColors.textTertiary,
-                            size: 28,
-                          ),
-                        ),
+          child: AspectRatio(
+            aspectRatio: 16 / 10,
+            child: _isLocalFile
+                ? Image.file(File(photo.url), fit: BoxFit.cover)
+                : Image.network(
+                    photo.url,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: KolabingColors.surfaceVariant,
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        LucideIcons.imageOff,
+                        color: KolabingColors.textTertiary,
+                        size: 28,
                       ),
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            Text(
-              'Uploaded photo selected',
-              style: GoogleFonts.openSans(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.xxs),
-            Text(
-              'This image will appear on your kolab card in Explore.',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                color: KolabingColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: isUploading ? null : onRemove,
-                    child: const Text('Use profile photo'),
-                  ),
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: isUploading ? null : onReplace,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
                     ),
-                    child: const Text('Replace photo'),
                   ),
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Text(
+          'Uploaded photo selected',
+          style: GoogleFonts.openSans(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: KolabingColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'This image will appear on your kolab card in Explore.',
+          style: GoogleFonts.openSans(
+            fontSize: 13,
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: isUploading ? null : onRemove,
+                child: const Text('Use profile photo'),
+              ),
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: isUploading ? null : onReplace,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: KolabingColors.primary,
+                  foregroundColor: KolabingColors.onPrimary,
                 ),
-              ],
+                child: const Text('Replace photo'),
+              ),
             ),
           ],
         ),
-      );
+      ],
+    ),
+  );
 }
 
 /// Paints a dashed rounded rectangle border.
 class _DashedBorderPainter extends CustomPainter {
-  _DashedBorderPainter({
-    required this.color,
-    required this.borderRadius,
-  });
+  _DashedBorderPainter({required this.color, required this.borderRadius});
 
   final Color color;
   final double borderRadius;

@@ -7,6 +7,7 @@ import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../features/discovery/models/discovery_item.dart';
 import '../features/opportunity/models/opportunity.dart';
+import 'blurred_identity.dart';
 import 'match_breakdown.dart';
 
 class ExploreSwipeCard extends StatefulWidget {
@@ -39,11 +40,26 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     final urls = <String>[];
     final cover = _item.coverPhotoUrl;
     if (cover != null && cover.isNotEmpty) urls.add(cover);
-    if (urls.isEmpty && !widget.hideCreatorIdentity) {
+    // Fall back to the creator's logo/avatar only when there is no Kolab cover
+    // photo. We now keep it even when identity is hidden, because the blur (not
+    // removal) is what protects the community logo — see [_isIdentityLogo].
+    if (urls.isEmpty) {
       final avatar = _item.creatorProfile.avatarUrl;
       if (avatar != null && avatar.isNotEmpty) urls.add(avatar);
     }
     return urls;
+  }
+
+  /// The community LOGO (creator avatar) used as the fallback hero image. The
+  /// Kolab cover photo is Kolab content and is NEVER blurred; only this logo is.
+  bool _isIdentityLogo(String url) {
+    final avatar = _item.creatorProfile.avatarUrl;
+    final cover = _item.coverPhotoUrl;
+    final usingAvatarFallback = cover == null || cover.isEmpty;
+    return usingAvatarFallback &&
+        avatar != null &&
+        avatar.isNotEmpty &&
+        url == avatar;
   }
 
   @override
@@ -92,18 +108,31 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       controller: _imagePageController,
       itemCount: urls.length,
       onPageChanged: (int index) => setState(() => _currentImagePage = index),
-      itemBuilder: (BuildContext context, int index) => Image.network(
-        urls[index],
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
-        errorBuilder: (context, error, stackTrace) => _buildGradientFallback(),
-        loadingBuilder:
-            (BuildContext context, Widget child, ImageChunkEvent? progress) {
-              if (progress == null) return child;
-              return _buildImagePlaceholder(progress);
-            },
-      ),
+      itemBuilder: (BuildContext context, int index) {
+        final url = urls[index];
+        final image = Image.network(
+          url,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (context, error, stackTrace) =>
+              _buildGradientFallback(),
+          loadingBuilder:
+              (BuildContext context, Widget child, ImageChunkEvent? progress) {
+                if (progress == null) return child;
+                return _buildImagePlaceholder(progress);
+              },
+        );
+
+        // Blur ONLY the community logo (avatar fallback) for a free business.
+        // Kolab cover photos stay sharp so all Kolab details remain visible.
+        return BlurredIdentity(
+          enabled: widget.hideCreatorIdentity && _isIdentityLogo(url),
+          sigma: 18,
+          showLockHint: true,
+          child: image,
+        );
+      },
     );
   }
 
@@ -416,9 +445,19 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   Widget _buildCreatorIdentity() {
     final isHidden = widget.hideCreatorIdentity;
-    final label = isHidden
-        ? 'Community hidden'
-        : _item.creatorProfile.displayName;
+    // Per ROLES-AND-PERMISSIONS.md §2.5: do NOT hide the name behind a
+    // placeholder. Render the real community name and Gaussian-blur it so the
+    // free business sees there IS an identity to unlock by subscribing.
+    final nameText = Text(
+      _item.creatorProfile.displayName,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: GoogleFonts.openSans(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: Colors.white.withValues(alpha: 0.82),
+      ),
+    );
 
     return Row(
       children: [
@@ -429,15 +468,12 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
         const SizedBox(width: 6),
         Expanded(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Colors.white.withValues(alpha: 0.82),
-            ),
+          child: BlurredIdentity(
+            enabled: isHidden,
+            sigma: 6,
+            // Lock hint already provided by the leading icon + the card sheet
+            // CTA; keep the inline text clean.
+            child: nameText,
           ),
         ),
       ],
