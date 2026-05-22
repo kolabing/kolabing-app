@@ -109,6 +109,20 @@ void main() {
       );
     });
 
+    test('viewerPartner is the viewer own side (drives feedback variant)', () {
+      // Viewer is the creator = the community Real Run Club -> community variant.
+      final asCreator = Collaboration.fromJson(realResourcePayload());
+      expect(asCreator.viewerPartner?.name, 'Real Run Club');
+      expect(asCreator.viewerPartner?.isBusiness, isFalse);
+
+      // Viewer is the applicant = the business Eixample 46 -> business variant.
+      final asApplicant = Collaboration.fromJson(
+        realResourcePayload()..['my_role'] = 'applicant',
+      );
+      expect(asApplicant.viewerPartner?.name, 'Eixample 46');
+      expect(asApplicant.viewerPartner?.isBusiness, isTrue);
+    });
+
     test('partnerForViewer uses my_role to show the OTHER party', () {
       // Viewer is the creator (community Real Run Club). The partner shown must
       // be the applicant (business Eixample 46), NOT the viewer's own side,

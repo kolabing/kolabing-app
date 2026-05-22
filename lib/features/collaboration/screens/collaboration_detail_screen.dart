@@ -232,7 +232,9 @@ class _CollaborationBody extends ConsumerWidget {
             !collaboration.viewerHasSubmittedFeedback)
           _LeaveReviewSection(
             collaborationId: collaborationId,
-            variant: isBusiness
+            // Derive the variant from the collaboration's own view of the
+            // viewer (my_role) so the business never gets the community flow.
+            variant: (collaboration.viewerPartner?.isBusiness ?? isBusiness)
                 ? FeedbackVariant.business
                 : FeedbackVariant.community,
           ),
@@ -1850,8 +1852,17 @@ class _FinishCollaborationSectionState
   /// If the user backs out of the sheet, nothing is finished and no feedback is
   /// sent — feedback truly gates the finish action.
   Future<void> _confirmAndFinish() async {
-    final isBusiness = ref.read(authProvider).user?.isBusiness ?? false;
-    final variant = isBusiness
+    // Pick the variant from the collaboration's own view of the viewer
+    // (backend my_role) so a business never gets the community benefits flow
+    // when the auth user is momentarily null; fall back to auth only if needed.
+    final collaboration = ref
+        .read(collaborationDetailProvider(widget.collaborationId))
+        .asData
+        ?.value;
+    final viewerIsBusiness =
+        collaboration?.viewerPartner?.isBusiness ??
+        (ref.read(authProvider).user?.isBusiness ?? false);
+    final variant = viewerIsBusiness
         ? FeedbackVariant.business
         : FeedbackVariant.community;
 

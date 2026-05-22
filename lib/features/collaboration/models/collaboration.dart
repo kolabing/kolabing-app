@@ -414,6 +414,20 @@ class Collaboration {
   CollaborationPartner partnerFor({required bool isBusiness}) =>
       isBusiness ? communityPartner : businessPartner;
 
+  /// The VIEWER's own side, resolved from the backend `my_role` (a creator's
+  /// own side is the creator profile, an applicant's is the applicant profile).
+  /// Null when `my_role` or the partners are unavailable. Use this to pick the
+  /// viewer's feedback variant so it never depends on a momentarily-null auth
+  /// user (which wrongly showed a business the community benefits flow).
+  CollaborationPartner? get viewerPartner {
+    if (viewerIsCreator == null ||
+        creatorPartner == null ||
+        applicantPartner == null) {
+      return null;
+    }
+    return viewerIsCreator! ? creatorPartner : applicantPartner;
+  }
+
   /// Resolve the OTHER party to show the viewer. Prefers the backend
   /// `my_role` (role-aware, always correct: a creator sees the applicant and
   /// vice versa) so a community viewer is never shown their own side. Falls
