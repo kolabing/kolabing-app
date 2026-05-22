@@ -67,11 +67,14 @@ class ProfileState {
 
 /// Profile notifier for managing profile state
 class ProfileNotifier extends Notifier<ProfileState> {
-  late final ProfileService _profileService;
+  // Resolved lazily via a getter (NOT a `late final` assigned in build()):
+  // build() can re-run on the same notifier instance (e.g. when the provider is
+  // invalidated on logout/login), and re-assigning a `late final` throws
+  // LateInitializationError. A getter is idempotent across rebuilds.
+  ProfileService get _profileService => ref.read(profileServiceProvider);
 
   @override
   ProfileState build() {
-    _profileService = ref.read(profileServiceProvider);
     // Auto-load profile on initialization
     Future.microtask(() => loadProfile());
     return const ProfileState();
