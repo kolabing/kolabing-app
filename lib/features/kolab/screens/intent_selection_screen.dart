@@ -8,16 +8,14 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
 import '../providers/kolab_form_provider.dart';
 
 /// Unified entry screen for creating a new Kolab.
 /// Shows different options based on user type (community vs business).
 class IntentSelectionScreen extends ConsumerStatefulWidget {
-  const IntentSelectionScreen({
-    super.key,
-    this.recipientCommunityId,
-  });
+  const IntentSelectionScreen({super.key, this.recipientCommunityId});
 
   /// When set, the resulting Kolab is targeted at this specific community
   /// (Send-Kolab CTA from a community public profile, C9 follow-up).
@@ -37,9 +35,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
       // Stash on the form state immediately so downstream steps see it even
       // if the user backs out and re-enters the intent picker.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref
-            .read(kolabFormProvider.notifier)
-            .setRecipientCommunityId(recipient);
+        ref.read(kolabFormProvider.notifier).setRecipientCommunityId(recipient);
       });
     }
   }
@@ -53,6 +49,9 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         !isProfileTypeResolved &&
         (profileState.isLoading || !profileState.isInitialized);
     final isCommunity = userType?.name == 'community';
+    final isBusiness = userType?.name == 'business';
+    final businessRequiresSubscription =
+        isBusiness && !profileState.isSubscribed;
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -80,6 +79,20 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
       body: SafeArea(
         child: isProfileStillResolving
             ? const Center(child: CircularProgressIndicator())
+            : businessRequiresSubscription
+            ? _LockedBusinessCreateState(
+                onUpgrade: () async {
+                  final allowed = await SubscriptionPaywall.checkAndShow(
+                    context,
+                    ref,
+                  );
+                  if (allowed) {
+                    await ref
+                        .read(profileProvider.notifier)
+                        .refreshSubscription();
+                  }
+                },
+              )
             : isProfileTypeResolved
             ? Padding(
                 padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -196,6 +209,65 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
       ),
     );
   }
+}
+
+/// A single intent option card
+class _LockedBusinessCreateState extends StatelessWidget {
+  const _LockedBusinessCreateState({required this.onUpgrade});
+
+  final Future<void> Function() onUpgrade;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(KolabingSpacing.lg),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 72,
+          height: 72,
+          decoration: const BoxDecoration(
+            color: KolabingColors.softYellow,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            LucideIcons.crown,
+            size: 34,
+            color: KolabingColors.primary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
+        Text(
+          'An active subscription is required to create Kolabs.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.rubik(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: KolabingColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Text(
+          'Upgrade your business plan to publish venue or product opportunities for communities.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            height: 1.5,
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xl),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: onUpgrade,
+            icon: const Icon(LucideIcons.crown, size: 18),
+            label: const Text('Upgrade to create'),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// A single intent option card

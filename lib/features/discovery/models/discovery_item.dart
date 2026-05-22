@@ -20,6 +20,10 @@ class DiscoveryItem {
     this.businessOffer,
     this.communityRequest,
     this.match,
+    this.offerHeadline,
+    this.pastEventsCount,
+    this.activeThisMonth,
+    this.activeThisMonthLabel,
   });
 
   factory DiscoveryItem.fromJson(Map<String, dynamic> json) => DiscoveryItem(
@@ -33,6 +37,23 @@ class DiscoveryItem {
     area: json['area']?.toString(),
     coverPhotoUrl: json['cover_photo_url']?.toString(),
     publishedAt: _parseDateTime(json['published_at']),
+    offerHeadline: _firstNonEmptyString(<Object?>[
+      json['offer_headline'],
+      (json['business_offer'] as Map<String, dynamic>?)?['offer_headline'],
+      (json['community_request'] as Map<String, dynamic>?)?['request_headline'],
+    ]),
+    pastEventsCount: _parseInt(
+      json['past_events_count'] ??
+          json['profile_past_events_count'] ??
+          json['completed_events_count'],
+    ),
+    activeThisMonth: _parseBool(
+      json['active_this_month'] ?? json['creator_active_this_month'],
+    ),
+    activeThisMonthLabel: _firstNonEmptyString(<Object?>[
+      json['active_this_month_label'],
+      json['activity_badge_label'],
+    ]),
     availability: DiscoveryAvailability.fromJson(
       (json['availability'] as Map<String, dynamic>?) ?? <String, dynamic>{},
     ),
@@ -56,17 +77,18 @@ class DiscoveryItem {
             // alongside `match`. Surface it inside the match object.
             if (json['match_breakdown'] is List)
               'match_breakdown': json['match_breakdown'],
-            if (json['match_score'] != null && json['match'] is Map<String, dynamic>
-                && (json['match'] as Map<String, dynamic>)['score'] == null)
+            if (json['match_score'] != null &&
+                json['match'] is Map<String, dynamic> &&
+                (json['match'] as Map<String, dynamic>)['score'] == null)
               'score': json['match_score'],
           })
         : json['match_score'] != null || json['match_breakdown'] is List
-            ? DiscoveryMatch.fromJson({
-                'score': json['match_score'],
-                if (json['match_breakdown'] is List)
-                  'match_breakdown': json['match_breakdown'],
-              })
-            : null,
+        ? DiscoveryMatch.fromJson({
+            'score': json['match_score'],
+            if (json['match_breakdown'] is List)
+              'match_breakdown': json['match_breakdown'],
+          })
+        : null,
   );
 
   final String id;
@@ -84,9 +106,56 @@ class DiscoveryItem {
   final BusinessOfferSummary? businessOffer;
   final CommunityRequestSummary? communityRequest;
   final DiscoveryMatch? match;
+  final String? offerHeadline;
+  final int? pastEventsCount;
+  final bool? activeThisMonth;
+  final String? activeThisMonthLabel;
 
   bool get isBusinessOffer => businessOffer != null;
   bool get isCommunityRequest => communityRequest != null;
+  String get locationLabel {
+    final trimmedArea = area?.trim();
+    final trimmedCity = preferredCity.trim();
+    if (trimmedArea != null && trimmedArea.isNotEmpty) {
+      if (trimmedCity.isNotEmpty) {
+        return '$trimmedArea, $trimmedCity';
+      }
+      return trimmedArea;
+    }
+    return trimmedCity;
+  }
+
+  String? get displayHeadline {
+    final trimmedHeadline = offerHeadline?.trim();
+    if (trimmedHeadline != null && trimmedHeadline.isNotEmpty) {
+      return trimmedHeadline;
+    }
+
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isNotEmpty &&
+        trimmedTitle != creatorProfile.displayName.trim()) {
+      return trimmedTitle;
+    }
+
+    return null;
+  }
+
+  String? get activityBadgeLabel {
+    if (activeThisMonth ?? false) {
+      final customLabel = activeThisMonthLabel?.trim();
+      if (customLabel != null && customLabel.isNotEmpty) {
+        return customLabel;
+      }
+      return 'Active this month';
+    }
+
+    final count = pastEventsCount;
+    if (count != null && count > 0) {
+      return '$count past event${count == 1 ? '' : 's'}';
+    }
+
+    return null;
+  }
 
   List<String> get primaryBadges {
     if (isBusinessOffer) {
@@ -276,7 +345,7 @@ class DiscoveryAvailability {
 
   factory DiscoveryAvailability.fromJson(Map<String, dynamic> json) =>
       DiscoveryAvailability(
-        mode: json['mode']?.toString() ?? 'flexible',
+        mode: json['mode']?.toString() ?? 'one_time',
         start: _parseDate(json['start']),
         end: _parseDate(json['end']),
         selectedTime: json['selected_time']?.toString(),
@@ -422,6 +491,8 @@ class CommunityRequestSummary {
       needTypes.map(_discoveryLabelFromKey).toList();
   List<String> get communityTypeLabels =>
       communityTypes.map((item) => item.label).toList();
+  List<String> get offerInReturnLabels =>
+      offersInReturn.map(_discoveryLabelFromKey).toList();
 }
 
 @immutable
@@ -506,6 +577,26 @@ int? _parseInt(Object? value) {
   if (value is int) return value;
   if (value is num) return value.toInt();
   return int.tryParse(value.toString());
+}
+
+bool? _parseBool(Object? value) {
+  if (value == null) return null;
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  final normalized = value.toString().trim().toLowerCase();
+  if (normalized == 'true' || normalized == '1') return true;
+  if (normalized == 'false' || normalized == '0') return false;
+  return null;
+}
+
+String? _firstNonEmptyString(List<Object?> values) {
+  for (final value in values) {
+    final text = value?.toString().trim();
+    if (text != null && text.isNotEmpty) {
+      return text;
+    }
+  }
+  return null;
 }
 
 String _matchReasonLabel(String reason) => switch (reason) {

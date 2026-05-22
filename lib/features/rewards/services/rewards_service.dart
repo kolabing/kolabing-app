@@ -36,6 +36,18 @@ class RewardsService {
     };
   }
 
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
+
   // ---------------------------------------------------------------------------
   // Wallet
   // ---------------------------------------------------------------------------
@@ -46,7 +58,10 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Wallet response: ${response.statusCode}');
 
@@ -84,7 +99,10 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Ledger response: ${response.statusCode}');
 
@@ -119,7 +137,10 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Badges response: ${response.statusCode}');
 
@@ -155,7 +176,10 @@ class RewardsService {
     debugPrint('RewardsService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Referral code response: ${response.statusCode}');
 
@@ -196,10 +220,13 @@ class RewardsService {
     debugPrint('RewardsService: POST $uri');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
-        body: jsonEncode({'iban': iban, 'account_holder': accountHolder}),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+          body: jsonEncode({'iban': iban, 'account_holder': accountHolder}),
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Withdrawal response: ${response.statusCode}');

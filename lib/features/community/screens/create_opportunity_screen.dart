@@ -1169,8 +1169,7 @@ class _CreateOpportunityScreenState
                 _buildReviewInfoRow(
                   LucideIcons.calendar,
                   '${dateFormat.format(opp.availabilityStart)} – ${dateFormat.format(opp.availabilityEnd)}'
-                  '${opp.availabilityMode == AvailabilityMode.oneTime && opp.selectedTime != null ? ' at ${opp.selectedTime!.format(context)}' : ''}'
-                  '${opp.availabilityMode == AvailabilityMode.flexible ? ' (flexible time)' : ''}',
+                  '${opp.selectedTime != null ? ' at ${opp.selectedTime!.format(context)}' : ''}',
                 ),
               ],
               const SizedBox(height: KolabingSpacing.xs),
@@ -1695,8 +1694,6 @@ class _CreateOpportunityScreenState
         return _buildOneTimeFields(opp, formState);
       case AvailabilityMode.recurring:
         return _buildRecurringFields(opp, formState);
-      case AvailabilityMode.flexible:
-        return _buildFlexibleFields(opp, formState);
     }
   }
 
@@ -1827,82 +1824,6 @@ class _CreateOpportunityScreenState
       Text(
         'e.g. Every $selectedDaysSummary '
         'at ${opp.selectedTime != null ? opp.selectedTime!.format(context) : '—'}',
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          color: KolabingColors.textTertiary,
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    ];
-  }
-
-  /// C) Flexible Window — Available From, Available Until, no fixed time
-  List<Widget> _buildFlexibleFields(
-    Opportunity opp,
-    OpportunityFormState formState,
-  ) {
-    return [
-      Row(
-        children: [
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available From',
-              value: opp.availabilityStart,
-              error: formState.fieldErrors['availability_start'],
-              onChanged: (date) => ref
-                  .read(opportunityFormProvider.notifier)
-                  .updateStartDate(date),
-            ),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available Until',
-              value: opp.availabilityEnd,
-              error: formState.fieldErrors['availability_end'],
-              minDate: opp.availabilityStart,
-              onChanged: (date) => ref
-                  .read(opportunityFormProvider.notifier)
-                  .updateEndDate(date),
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: KolabingSpacing.sm),
-      Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs + 2,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.softYellow.withValues(alpha: 0.5),
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.clock,
-              size: 16,
-              color: KolabingColors.textSecondary,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Text(
-              'Time: Flexible — no fixed time',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                color: KolabingColors.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(height: KolabingSpacing.xs),
-      Text(
-        'Businesses will propose a specific date and time within this window.',
         style: GoogleFonts.openSans(
           fontSize: 12,
           color: KolabingColors.textTertiary,
@@ -2139,8 +2060,6 @@ class _CreateOpportunityScreenState
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
-      case AvailabilityMode.flexible:
-        return LucideIcons.calendarRange;
     }
   }
 

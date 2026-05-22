@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart'
     hide NegotiationTrigger;
 
+import '../../../utils/remote_media_url.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -119,8 +120,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   void setRecipientCommunityId(String? id) {
     final trimmed = id?.trim();
     state = state.copyWith(
-      recipientCommunityId:
-          (trimmed == null || trimmed.isEmpty) ? null : trimmed,
+      recipientCommunityId: (trimmed == null || trimmed.isEmpty)
+          ? null
+          : trimmed,
       clearRecipientCommunityId: trimmed == null || trimmed.isEmpty,
     );
   }
@@ -267,7 +269,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     final trimmed = headline?.trim();
     state = state.copyWith(
       kolab: state.kolab.copyWith(
-        offerHeadline: trimmed?.isEmpty == true ? null : trimmed,
+        offerHeadline: trimmed?.isEmpty ?? true ? null : trimmed,
         clearOfferHeadline: trimmed == null || trimmed.isEmpty,
       ),
       clearError: true,
@@ -279,7 +281,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     final trimmed = baseOffer?.trim();
     state = state.copyWith(
       kolab: state.kolab.copyWith(
-        baseOffer: trimmed?.isEmpty == true ? null : trimmed,
+        baseOffer: trimmed?.isEmpty ?? true ? null : trimmed,
         clearBaseOffer: trimmed == null || trimmed.isEmpty,
       ),
       clearError: true,
@@ -344,7 +346,6 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       kolab: state.kolab.copyWith(
         availabilityMode: mode,
         recurringDays: mode != AvailabilityMode.recurring ? const [] : null,
-        clearSelectedTime: mode == AvailabilityMode.flexible,
       ),
       clearError: true,
     );
@@ -731,15 +732,6 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
               if (kolab.selectedTime == null) {
                 errors['selected_time'] = 'Select a time for your availability';
               }
-            case AvailabilityMode.flexible:
-              if (kolab.availabilityStart == null) {
-                errors['availability_start'] =
-                    'Pick a start date for your availability window';
-              }
-              if (kolab.availabilityEnd == null) {
-                errors['availability_end'] =
-                    'Pick an end date for your availability window';
-              }
           }
         }
         if (kolab.preferredCity.isEmpty) {
@@ -768,7 +760,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['description'] = 'Description is required';
         }
         // H2: offer headline is required on venue promotion.
-        if (kolab.offerHeadline == null || kolab.offerHeadline!.trim().isEmpty) {
+        if (kolab.offerHeadline == null ||
+            kolab.offerHeadline!.trim().isEmpty) {
           errors['offer_headline'] =
               'Add a one-line offer headline (e.g. "20% off Tuesdays")';
         }
@@ -828,7 +821,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['preferred_city'] = 'Preferred city is required';
         }
         // H2: offer headline is required on product promotion.
-        if (kolab.offerHeadline == null || kolab.offerHeadline!.trim().isEmpty) {
+        if (kolab.offerHeadline == null ||
+            kolab.offerHeadline!.trim().isEmpty) {
           errors['offer_headline'] =
               'Add a one-line offer headline (e.g. "Free with any 5+ order")';
         }
@@ -932,9 +926,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       } else {
         saved = await _service.create(kolabToPersist);
       }
-      debugPrint(
-        '[B1B7] save ok: id=${saved.id} status=${saved.status}',
-      );
+      debugPrint('[B1B7] save ok: id=${saved.id} status=${saved.status}');
 
       // Persist the saved record immediately and flip to edit-mode so a
       // subsequent retry (e.g. publish fails below) updates the existing
@@ -1064,11 +1056,26 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   }
 
   Kolab _normalizeKolabForSubmit(Kolab kolab) {
-    if (kolab.intentType != IntentType.communitySeeking) {
-      return kolab;
+    final normalizedAvailability = kolab.availabilityMode == null
+        ? null
+        : AvailabilityMode.fromString(kolab.availabilityMode!.toApiValue());
+    final normalizedKolab = kolab.copyWith(
+      availabilityMode: normalizedAvailability,
+      media: kolab.media
+          .map(
+            (media) => media.copyWith(
+              url: normalizeRemoteMediaUrl(media.url),
+            ),
+          )
+          .where((media) => media.url.isNotEmpty)
+          .toList(growable: false),
+    );
+
+    if (normalizedKolab.intentType != IntentType.communitySeeking) {
+      return normalizedKolab;
     }
 
-    return _syncVenuePreferenceForNeeds(kolab, kolab.needs);
+    return _syncVenuePreferenceForNeeds(normalizedKolab, normalizedKolab.needs);
   }
 }
 

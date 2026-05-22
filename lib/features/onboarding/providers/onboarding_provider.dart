@@ -275,9 +275,15 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   }
 
   /// Apply a successful Google place import into local onboarding state.
+  ///
+  /// [allowedPhotoResourceNames] optionally restricts which photos from the
+  /// Google import are kept. When `null`, all photos returned by Google are
+  /// imported (legacy behavior). When non-null, only photos whose
+  /// `resourceName` is in the set are imported — used by the preview step.
   void applyPlaceImport(
     PlaceDetailsImport placeImport, {
     List<BusinessType> businessTypes = const [],
+    Set<String>? allowedPhotoResourceNames,
   }) {
     if (state == null) return;
 
@@ -293,7 +299,9 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         .where(
           (photo) =>
               photo.resourceName.trim().isNotEmpty &&
-              photo.previewUrl.trim().isNotEmpty,
+              photo.previewUrl.trim().isNotEmpty &&
+              (allowedPhotoResourceNames == null ||
+                  allowedPhotoResourceNames.contains(photo.resourceName)),
         )
         .map(
           (photo) => OnboardingPhoto.googleImported(

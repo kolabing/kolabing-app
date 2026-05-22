@@ -10,8 +10,7 @@ import 'package:flutter/material.dart';
 /// Availability mode for an opportunity
 enum AvailabilityMode {
   oneTime,
-  recurring,
-  flexible;
+  recurring;
 
   String get displayName {
     switch (this) {
@@ -19,8 +18,6 @@ enum AvailabilityMode {
         return 'One Time';
       case AvailabilityMode.recurring:
         return 'Recurring';
-      case AvailabilityMode.flexible:
-        return 'Flexible';
     }
   }
 
@@ -30,8 +27,6 @@ enum AvailabilityMode {
         return 'Available for one occasion';
       case AvailabilityMode.recurring:
         return 'Open to multiple sessions';
-      case AvailabilityMode.flexible:
-        return 'Anytime — let the business pick';
     }
   }
 
@@ -41,8 +36,6 @@ enum AvailabilityMode {
         return 'one_time';
       case AvailabilityMode.recurring:
         return 'recurring';
-      case AvailabilityMode.flexible:
-        return 'flexible';
     }
   }
 
@@ -53,9 +46,8 @@ enum AvailabilityMode {
       case 'recurring':
         return AvailabilityMode.recurring;
       case 'flexible':
-        return AvailabilityMode.flexible;
       default:
-        return AvailabilityMode.flexible;
+        return AvailabilityMode.oneTime;
     }
   }
 }
@@ -165,15 +157,12 @@ enum OpportunityStatus {
 /// Discount offer within business_offer
 @immutable
 class DiscountOffer {
-  const DiscountOffer({
-    this.enabled = false,
-    this.percentage,
-  });
+  const DiscountOffer({this.enabled = false, this.percentage});
 
   factory DiscountOffer.fromJson(Map<String, dynamic> json) => DiscountOffer(
-        enabled: _parseBool(json['enabled']),
-        percentage: _parseInt(json['percentage']),
-      );
+    enabled: _parseBool(json['enabled']),
+    percentage: _parseInt(json['percentage']),
+  );
 
   static bool _parseBool(dynamic value) {
     if (value == null) return false;
@@ -195,19 +184,18 @@ class DiscountOffer {
   final int? percentage;
 
   Map<String, dynamic> toJson() => {
-        'enabled': enabled,
-        if (enabled && percentage != null) 'percentage': percentage,
-      };
+    'enabled': enabled,
+    if (enabled && percentage != null) 'percentage': percentage,
+  };
 
   DiscountOffer copyWith({
     bool? enabled,
     int? percentage,
     bool clearPercentage = false,
-  }) =>
-      DiscountOffer(
-        enabled: enabled ?? this.enabled,
-        percentage: clearPercentage ? null : (percentage ?? this.percentage),
-      );
+  }) => DiscountOffer(
+    enabled: enabled ?? this.enabled,
+    percentage: clearPercentage ? null : (percentage ?? this.percentage),
+  );
 }
 
 /// What the business offers (JSONB)
@@ -224,18 +212,18 @@ class BusinessOffer {
   });
 
   factory BusinessOffer.fromJson(Map<String, dynamic> json) => BusinessOffer(
-        venue: _parseBool(json['venue']),
-        foodDrink: _parseBool(json['food_drink']),
-        socialMediaExposure: _parseBool(json['social_media_exposure']),
-        contentCreation: _parseBool(json['content_creation']),
-        discount: json['discount'] is Map<String, dynamic>
-            ? DiscountOffer.fromJson(json['discount'] as Map<String, dynamic>)
-            : const DiscountOffer(),
-        products: json['products'] is List
-                ? (json['products'] as List).map((e) => e.toString()).toList()
-                : const [],
-        other: json['other']?.toString(),
-      );
+    venue: _parseBool(json['venue']),
+    foodDrink: _parseBool(json['food_drink']),
+    socialMediaExposure: _parseBool(json['social_media_exposure']),
+    contentCreation: _parseBool(json['content_creation']),
+    discount: json['discount'] is Map<String, dynamic>
+        ? DiscountOffer.fromJson(json['discount'] as Map<String, dynamic>)
+        : const DiscountOffer(),
+    products: json['products'] is List
+        ? (json['products'] as List).map((e) => e.toString()).toList()
+        : const [],
+    other: json['other']?.toString(),
+  );
 
   static bool _parseBool(dynamic value) {
     if (value == null) return false;
@@ -264,14 +252,14 @@ class BusinessOffer {
       (other?.isNotEmpty ?? false);
 
   Map<String, dynamic> toJson() => {
-        'venue': venue,
-        'food_drink': foodDrink,
-        'social_media_exposure': socialMediaExposure,
-        'content_creation': contentCreation,
-        'discount': discount.toJson(),
-        if (products.isNotEmpty) 'products': products,
-        if (other != null && other!.isNotEmpty) 'other': other,
-      };
+    'venue': venue,
+    'food_drink': foodDrink,
+    'social_media_exposure': socialMediaExposure,
+    'content_creation': contentCreation,
+    'discount': discount.toJson(),
+    if (products.isNotEmpty) 'products': products,
+    if (other != null && other!.isNotEmpty) 'other': other,
+  };
 
   BusinessOffer copyWith({
     bool? venue,
@@ -282,16 +270,15 @@ class BusinessOffer {
     List<String>? products,
     String? other,
     bool clearOther = false,
-  }) =>
-      BusinessOffer(
-        venue: venue ?? this.venue,
-        foodDrink: foodDrink ?? this.foodDrink,
-        socialMediaExposure: socialMediaExposure ?? this.socialMediaExposure,
-        contentCreation: contentCreation ?? this.contentCreation,
-        discount: discount ?? this.discount,
-        products: products ?? this.products,
-        other: clearOther ? null : (other ?? this.other),
-      );
+  }) => BusinessOffer(
+    venue: venue ?? this.venue,
+    foodDrink: foodDrink ?? this.foodDrink,
+    socialMediaExposure: socialMediaExposure ?? this.socialMediaExposure,
+    contentCreation: contentCreation ?? this.contentCreation,
+    discount: discount ?? this.discount,
+    products: products ?? this.products,
+    other: clearOther ? null : (other ?? this.other),
+  );
 }
 
 /// What the community will deliver (JSONB)
@@ -341,13 +328,13 @@ class CommunityDeliverables {
       (other?.isNotEmpty ?? false);
 
   Map<String, dynamic> toJson() => {
-        'social_media_content': socialMediaContent,
-        'event_activation': eventActivation,
-        'product_placement': productPlacement,
-        'community_reach': communityReach,
-        'review_feedback': reviewFeedback,
-        if (other != null && other!.isNotEmpty) 'other': other,
-      };
+    'social_media_content': socialMediaContent,
+    'event_activation': eventActivation,
+    'product_placement': productPlacement,
+    'community_reach': communityReach,
+    'review_feedback': reviewFeedback,
+    if (other != null && other!.isNotEmpty) 'other': other,
+  };
 
   CommunityDeliverables copyWith({
     bool? socialMediaContent,
@@ -357,15 +344,14 @@ class CommunityDeliverables {
     bool? reviewFeedback,
     String? other,
     bool clearOther = false,
-  }) =>
-      CommunityDeliverables(
-        socialMediaContent: socialMediaContent ?? this.socialMediaContent,
-        eventActivation: eventActivation ?? this.eventActivation,
-        productPlacement: productPlacement ?? this.productPlacement,
-        communityReach: communityReach ?? this.communityReach,
-        reviewFeedback: reviewFeedback ?? this.reviewFeedback,
-        other: clearOther ? null : (other ?? this.other),
-      );
+  }) => CommunityDeliverables(
+    socialMediaContent: socialMediaContent ?? this.socialMediaContent,
+    eventActivation: eventActivation ?? this.eventActivation,
+    productPlacement: productPlacement ?? this.productPlacement,
+    communityReach: communityReach ?? this.communityReach,
+    reviewFeedback: reviewFeedback ?? this.reviewFeedback,
+    other: clearOther ? null : (other ?? this.other),
+  );
 }
 
 /// Creator profile from API response
@@ -380,12 +366,12 @@ class CreatorProfile {
   });
 
   factory CreatorProfile.fromJson(Map<String, dynamic> json) => CreatorProfile(
-        id: json['id']?.toString() ?? '',
-        userType: json['user_type']?.toString() ?? '',
-        displayNameValue: json['display_name']?.toString(),
-        businessName: json['business_name']?.toString(),
-        avatarUrl: json['avatar_url']?.toString(),
-      );
+    id: json['id']?.toString() ?? '',
+    userType: json['user_type']?.toString() ?? '',
+    displayNameValue: json['display_name']?.toString(),
+    businessName: json['business_name']?.toString(),
+    avatarUrl: json['avatar_url']?.toString(),
+  );
 
   final String id;
   final String userType;
@@ -394,8 +380,7 @@ class CreatorProfile {
   final String? avatarUrl;
 
   /// Display name from API, with fallbacks
-  String get displayName =>
-      displayNameValue ?? businessName ?? 'Unknown';
+  String get displayName => displayNameValue ?? businessName ?? 'Unknown';
 
   /// Initial letter for avatar fallback
   String get initial =>
@@ -416,13 +401,13 @@ class MyApplication {
   });
 
   factory MyApplication.fromJson(Map<String, dynamic> json) => MyApplication(
-        id: json['id']?.toString() ?? '',
-        status: json['status']?.toString() ?? 'pending',
-        message: json['message']?.toString(),
-        createdAt: json['created_at'] != null
-            ? DateTime.tryParse(json['created_at'].toString())
-            : null,
-      );
+    id: json['id']?.toString() ?? '',
+    status: json['status']?.toString() ?? 'pending',
+    message: json['message']?.toString(),
+    createdAt: json['created_at'] != null
+        ? DateTime.tryParse(json['created_at'].toString())
+        : null,
+  );
 
   final String id;
   final String status;
@@ -497,66 +482,75 @@ class Opportunity {
       description: json['description']?.toString() ?? '',
       businessOffer: json['business_offer'] is Map<String, dynamic>
           ? BusinessOffer.fromJson(
-              json['business_offer'] as Map<String, dynamic>)
+              json['business_offer'] as Map<String, dynamic>,
+            )
           : const BusinessOffer(),
       communityDeliverables:
           json['community_deliverables'] is Map<String, dynamic>
-              ? CommunityDeliverables.fromJson(
-                  json['community_deliverables'] as Map<String, dynamic>)
-              : const CommunityDeliverables(),
+          ? CommunityDeliverables.fromJson(
+              json['community_deliverables'] as Map<String, dynamic>,
+            )
+          : const CommunityDeliverables(),
       categories: categories,
       availabilityMode: AvailabilityMode.fromString(
-          json['availability_mode']?.toString() ?? 'flexible'),
+        json['availability_mode']?.toString() ?? 'one_time',
+      ),
       availabilityStart: _parseDate(json['availability_start']),
       availabilityEnd: _parseDate(json['availability_end']),
       selectedTime: _parseTimeOfDay(json['selected_time']?.toString()),
-      recurringDays: _parseIntList(json['recurring_days'] ?? json['recurring_day']),
-      venueMode:
-          VenueMode.fromString(json['venue_mode']?.toString() ?? 'no_venue'),
+      recurringDays: _parseIntList(
+        json['recurring_days'] ?? json['recurring_day'],
+      ),
+      venueMode: VenueMode.fromString(
+        json['venue_mode']?.toString() ?? 'no_venue',
+      ),
       address: json['address']?.toString(),
       preferredCity: json['preferred_city']?.toString() ?? '',
       offerPhoto: json['offer_photo']?.toString(),
       status: OpportunityStatus.fromString(
-          json['status']?.toString() ?? 'draft'),
+        json['status']?.toString() ?? 'draft',
+      ),
       createdAt: _parseDateTimeNullable(json['created_at']),
       updatedAt: _parseDateTimeNullable(json['updated_at']),
       publishedAt: _parseDateTimeNullable(json['published_at']),
       creatorProfile: json['creator_profile'] is Map<String, dynamic>
           ? CreatorProfile.fromJson(
-              json['creator_profile'] as Map<String, dynamic>)
+              json['creator_profile'] as Map<String, dynamic>,
+            )
           : null,
       applicationsCount: _parseInt(json['applications_count']),
       isOwn: _parseBool(json['is_own']),
       hasApplied: _parseBool(json['has_applied']),
       myApplication: json['my_application'] is Map<String, dynamic>
           ? MyApplication.fromJson(
-              json['my_application'] as Map<String, dynamic>)
+              json['my_application'] as Map<String, dynamic>,
+            )
           : null,
       offerHeadline: json['offer_headline']?.toString(),
       baseOffer: json['base_offer']?.toString(),
       negotiationTriggers: json['negotiation_triggers'] is List
           ? (json['negotiation_triggers'] as List)
-              .whereType<Map<String, dynamic>>()
-              .map(NegotiationTrigger.fromJson)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(NegotiationTrigger.fromJson)
+                .toList()
           : const [],
     );
   }
 
   /// Creates a default empty opportunity for form initialization
   factory Opportunity.empty() => Opportunity(
-        title: '',
-        description: '',
-        businessOffer: const BusinessOffer(),
-        communityDeliverables: const CommunityDeliverables(),
-        categories: const [],
-        availabilityMode: AvailabilityMode.oneTime,
-        availabilityStart: DateTime.now().add(const Duration(days: 7)),
-        availabilityEnd: DateTime.now().add(const Duration(days: 67)),
-        selectedTime: const TimeOfDay(hour: 10, minute: 0),
-        venueMode: VenueMode.noVenue,
-        preferredCity: '',
-      );
+    title: '',
+    description: '',
+    businessOffer: const BusinessOffer(),
+    communityDeliverables: const CommunityDeliverables(),
+    categories: const [],
+    availabilityMode: AvailabilityMode.oneTime,
+    availabilityStart: DateTime.now().add(const Duration(days: 7)),
+    availabilityEnd: DateTime.now().add(const Duration(days: 67)),
+    selectedTime: const TimeOfDay(hour: 10, minute: 0),
+    venueMode: VenueMode.noVenue,
+    preferredCity: '',
+  );
 
   // Fields matching API
   final String? id;
@@ -589,6 +583,7 @@ class Opportunity {
   // Phase 5 discovery & matching (2026-05-21).
   final String? offerHeadline;
   final String? baseOffer;
+
   /// Backend gates `negotiation_triggers` so they only arrive after the
   /// viewer has applied. An empty list means either "no triggers configured"
   /// OR "you can't see them yet" — UI shouldn't infer the difference.
@@ -596,26 +591,24 @@ class Opportunity {
 
   /// JSON body for POST/PUT requests (excludes response-only fields)
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'description': description,
-        'business_offer': businessOffer.toJson(),
-        'community_deliverables': communityDeliverables.toJson(),
-        'categories': categories,
-        'availability_mode': availabilityMode.toApiValue(),
-        'availability_start':
-            availabilityStart.toIso8601String().split('T').first,
-        'availability_end': availabilityEnd.toIso8601String().split('T').first,
-        if (selectedTime != null)
-          'selected_time':
-              '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}',
-        if (recurringDays.isNotEmpty) 'recurring_days': recurringDays,
-        'venue_mode': venueMode.toApiValue(),
-        if (address != null && address!.isNotEmpty) 'address': address,
-        'preferred_city': preferredCity,
-        if (offerPhoto != null && offerPhoto!.isNotEmpty)
-          'offer_photo': offerPhoto,
-        'status': status.toApiValue(),
-      };
+    'title': title,
+    'description': description,
+    'business_offer': businessOffer.toJson(),
+    'community_deliverables': communityDeliverables.toJson(),
+    'categories': categories,
+    'availability_mode': availabilityMode.toApiValue(),
+    'availability_start': availabilityStart.toIso8601String().split('T').first,
+    'availability_end': availabilityEnd.toIso8601String().split('T').first,
+    if (selectedTime != null)
+      'selected_time':
+          '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}',
+    if (recurringDays.isNotEmpty) 'recurring_days': recurringDays,
+    'venue_mode': venueMode.toApiValue(),
+    if (address != null && address!.isNotEmpty) 'address': address,
+    'preferred_city': preferredCity,
+    if (offerPhoto != null && offerPhoto!.isNotEmpty) 'offer_photo': offerPhoto,
+    'status': status.toApiValue(),
+  };
 
   Opportunity copyWith({
     String? id,
@@ -646,38 +639,36 @@ class Opportunity {
     MyApplication? myApplication,
     bool clearAddress = false,
     bool clearOfferPhoto = false,
-  }) =>
-      Opportunity(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        businessOffer: businessOffer ?? this.businessOffer,
-        communityDeliverables:
-            communityDeliverables ?? this.communityDeliverables,
-        categories: categories ?? this.categories,
-        availabilityMode: availabilityMode ?? this.availabilityMode,
-        availabilityStart: availabilityStart ?? this.availabilityStart,
-        availabilityEnd: availabilityEnd ?? this.availabilityEnd,
-        selectedTime: clearSelectedTime
-            ? null
-            : (selectedTime ?? this.selectedTime),
-        recurringDays: clearRecurringDays
-            ? const []
-            : (recurringDays ?? this.recurringDays),
-        venueMode: venueMode ?? this.venueMode,
-        address: clearAddress ? null : (address ?? this.address),
-        preferredCity: preferredCity ?? this.preferredCity,
-        offerPhoto: clearOfferPhoto ? null : (offerPhoto ?? this.offerPhoto),
-        status: status ?? this.status,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        publishedAt: publishedAt ?? this.publishedAt,
-        creatorProfile: creatorProfile ?? this.creatorProfile,
-        applicationsCount: applicationsCount ?? this.applicationsCount,
-        isOwn: isOwn ?? this.isOwn,
-        hasApplied: hasApplied ?? this.hasApplied,
-        myApplication: myApplication ?? this.myApplication,
-      );
+  }) => Opportunity(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    businessOffer: businessOffer ?? this.businessOffer,
+    communityDeliverables: communityDeliverables ?? this.communityDeliverables,
+    categories: categories ?? this.categories,
+    availabilityMode: availabilityMode ?? this.availabilityMode,
+    availabilityStart: availabilityStart ?? this.availabilityStart,
+    availabilityEnd: availabilityEnd ?? this.availabilityEnd,
+    selectedTime: clearSelectedTime
+        ? null
+        : (selectedTime ?? this.selectedTime),
+    recurringDays: clearRecurringDays
+        ? const []
+        : (recurringDays ?? this.recurringDays),
+    venueMode: venueMode ?? this.venueMode,
+    address: clearAddress ? null : (address ?? this.address),
+    preferredCity: preferredCity ?? this.preferredCity,
+    offerPhoto: clearOfferPhoto ? null : (offerPhoto ?? this.offerPhoto),
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    publishedAt: publishedAt ?? this.publishedAt,
+    creatorProfile: creatorProfile ?? this.creatorProfile,
+    applicationsCount: applicationsCount ?? this.applicationsCount,
+    isOwn: isOwn ?? this.isOwn,
+    hasApplied: hasApplied ?? this.hasApplied,
+    myApplication: myApplication ?? this.myApplication,
+  );
 
   /// Summary of what the business offers (for card display)
   String get offerSummary {
@@ -717,8 +708,7 @@ class Opportunity {
   }
 
   @override
-  String toString() =>
-      'Opportunity(id: $id, title: $title, status: $status)';
+  String toString() => 'Opportunity(id: $id, title: $title, status: $status)';
 
   // ---------------------------------------------------------------------------
   // Type-safe parsing helpers
@@ -847,7 +837,7 @@ class NegotiationTrigger {
   final String additionalOffer;
 
   Map<String, dynamic> toJson() => {
-        'condition': condition,
-        'additional_offer': additionalOffer,
-      };
+    'condition': condition,
+    'additional_offer': additionalOffer,
+  };
 }

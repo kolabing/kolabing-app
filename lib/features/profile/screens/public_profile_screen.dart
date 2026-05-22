@@ -16,6 +16,7 @@ import '../../../widgets/gallery/public_gallery_section.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/public_profile.dart';
 import '../providers/public_profile_provider.dart';
 import '../widgets/past_collaboration_card.dart';
@@ -49,10 +50,8 @@ class PublicProfileScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: KolabingColors.background,
       body: profileAsync.when(
-        loading: () => _buildWithOptimisticHeader(
-          context,
-          body: _buildLoadingBody(),
-        ),
+        loading: () =>
+            _buildWithOptimisticHeader(context, body: _buildLoadingBody()),
         error: (error, _) => _buildWithOptimisticHeader(
           context,
           body: _buildErrorBody(context, ref, error.toString()),
@@ -63,9 +62,8 @@ class PublicProfileScreen extends ConsumerWidget {
       // Until then the user could only "Not right now" out of this screen.
       bottomNavigationBar: profileAsync.maybeWhen(
         data: (profile) {
-          final shouldShowCta = viewer != null &&
-              viewer.isBusiness &&
-              profile.isCommunity;
+          final shouldShowCta =
+              viewer != null && viewer.isBusiness && profile.isCommunity;
           if (!shouldShowCta) return const SizedBox.shrink();
           return _SendKolabBottomBar(community: profile);
         },
@@ -78,61 +76,60 @@ class PublicProfileScreen extends ConsumerWidget {
   // Full profile content
   // ---------------------------------------------------------------------------
 
-  Widget _buildProfileContent(BuildContext context, PublicProfile profile) {
-    return CustomScrollView(
-      slivers: [
-        // Hero header
-        _ProfileSliverHeader(profile: profile),
+  Widget _buildProfileContent(BuildContext context, PublicProfile profile) =>
+      CustomScrollView(
+        slivers: [
+          // Hero header
+          _ProfileSliverHeader(profile: profile),
 
-        // Body sections
-        SliverPadding(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              // About
-              if (profile.hasAbout) ...[
-                _SectionCard(
-                  icon: LucideIcons.fileText,
-                  title: 'About',
-                  child: Text(
-                    profile.about!,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textSecondary,
-                      height: 1.5,
+          // Body sections
+          SliverPadding(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                // About
+                if (profile.hasAbout) ...[
+                  _SectionCard(
+                    icon: LucideIcons.fileText,
+                    title: 'About',
+                    child: Text(
+                      profile.about!,
+                      style: KolabingTextStyles.bodyMedium.copyWith(
+                        color: KolabingColors.textSecondary,
+                        height: 1.5,
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
+
+                // Gallery
+                if (profile.hasGallery) ...[
+                  PublicGallerySection(photos: profile.gallery),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
+
+                // Past Events
+                PastEventsSection(profileId: profileId),
                 const SizedBox(height: KolabingSpacing.md),
-              ],
 
-              // Gallery
-              if (profile.hasGallery) ...[
-                PublicGallerySection(photos: profile.gallery),
+                // Past collaborations
+                _buildCollaborationsSection(profile),
                 const SizedBox(height: KolabingSpacing.md),
-              ],
 
-              // Past Events
-              PastEventsSection(profileId: profileId),
-              const SizedBox(height: KolabingSpacing.md),
+                // Social links
+                if (profile.hasSocialLinks) ...[
+                  _buildSocialLinksSection(context, profile),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
 
-              // Past collaborations
-              _buildCollaborationsSection(profile),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Social links
-              if (profile.hasSocialLinks) ...[
-                _buildSocialLinksSection(context, profile),
-                const SizedBox(height: KolabingSpacing.md),
-              ],
-
-              // Bottom spacing
-              const SizedBox(height: KolabingSpacing.xl),
-            ]),
+                // Bottom spacing
+                const SizedBox(height: KolabingSpacing.xl),
+              ]),
+            ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 
   // ---------------------------------------------------------------------------
   // Optimistic header (shows creator info while loading full profile)
@@ -141,59 +138,57 @@ class PublicProfileScreen extends ConsumerWidget {
   Widget _buildWithOptimisticHeader(
     BuildContext context, {
     required Widget body,
-  }) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          expandedHeight: 160,
-          pinned: true,
-          backgroundColor: KolabingColors.primary,
-          leading: _BackButton(),
-          flexibleSpace: FlexibleSpaceBar(
-            background: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    KolabingColors.primary,
-                    KolabingColors.primary.withValues(alpha: 0.7),
-                  ],
-                ),
+  }) => CustomScrollView(
+    slivers: [
+      SliverAppBar(
+        expandedHeight: 160,
+        pinned: true,
+        backgroundColor: KolabingColors.primary,
+        leading: const _BackButton(),
+        flexibleSpace: FlexibleSpaceBar(
+          background: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  KolabingColors.primary,
+                  KolabingColors.primary.withValues(alpha: 0.7),
+                ],
               ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    KolabingSpacing.md,
-                    56,
-                    KolabingSpacing.md,
-                    KolabingSpacing.md,
-                  ),
-                  child: creatorProfile != null
-                      ? _buildOptimisticHeaderContent()
-                      : const SizedBox.shrink(),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  KolabingSpacing.md,
+                  56,
+                  KolabingSpacing.md,
+                  KolabingSpacing.md,
                 ),
+                child: creatorProfile != null
+                    ? _buildOptimisticHeaderContent()
+                    : const SizedBox.shrink(),
               ),
             ),
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          sliver: SliverToBoxAdapter(child: body),
-        ),
-      ],
-    );
-  }
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        sliver: SliverToBoxAdapter(child: body),
+      ),
+    ],
+  );
 
   Widget _buildOptimisticHeaderContent() {
-    final cp = creatorProfile!;
+    final cp = creatorProfile;
+    if (cp == null) {
+      return const SizedBox.shrink();
+    }
+
     return Row(
       children: [
-        _AvatarWidget(
-          avatarUrl: cp.avatarUrl,
-          initial: cp.initial,
-          size: 56,
-        ),
+        _AvatarWidget(avatarUrl: cp.avatarUrl, initial: cp.initial, size: 56),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Column(
@@ -230,33 +225,33 @@ class PublicProfileScreen extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildLoadingBody() => Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
-        child: Column(
-          children: [
-            _buildShimmerBlock(80),
-            const SizedBox(height: KolabingSpacing.md),
-            _buildShimmerBlock(120),
-            const SizedBox(height: KolabingSpacing.md),
-            _buildShimmerBlock(100),
-          ],
-        ),
-      );
+    baseColor: KolabingColors.surfaceVariant,
+    highlightColor: KolabingColors.surface,
+    child: Column(
+      children: [
+        _buildShimmerBlock(80),
+        const SizedBox(height: KolabingSpacing.md),
+        _buildShimmerBlock(120),
+        const SizedBox(height: KolabingSpacing.md),
+        _buildShimmerBlock(100),
+      ],
+    ),
+  );
 
   Widget _buildShimmerBlock(double height) => Container(
-        height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: KolabingRadius.borderRadiusLg,
-        ),
-      );
+    height: height,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: KolabingRadius.borderRadiusLg,
+    ),
+  );
 
   Widget _buildErrorBody(BuildContext context, WidgetRef ref, String error) =>
       Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               LucideIcons.alertCircle,
               size: 48,
               color: KolabingColors.textTertiary,
@@ -278,8 +273,7 @@ class PublicProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             OutlinedButton.icon(
-              onPressed: () =>
-                  ref.invalidate(publicProfileProvider(profileId)),
+              onPressed: () => ref.invalidate(publicProfileProvider(profileId)),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: const Text('Retry'),
             ),
@@ -291,47 +285,45 @@ class PublicProfileScreen extends ConsumerWidget {
   // Collaborations Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildCollaborationsSection(PublicProfile profile) {
-    return _SectionCard(
-      icon: LucideIcons.trophy,
-      title: 'Past Collaborations',
-      count: profile.pastCollaborations.length,
-      child: profile.hasCollaborations
-          ? SizedBox(
-              height: 110,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: profile.pastCollaborations.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(width: KolabingSpacing.sm),
-                itemBuilder: (context, index) => PastCollaborationCard(
-                  collaboration: profile.pastCollaborations[index],
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
-              child: Center(
-                child: Column(
-                  children: [
-                    Icon(
-                      LucideIcons.users,
-                      size: 32,
-                      color: KolabingColors.textTertiary,
-                    ),
-                    const SizedBox(height: KolabingSpacing.xs),
-                    Text(
-                      'No past collaborations yet',
-                      style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: KolabingColors.textTertiary,
-                      ),
-                    ),
-                  ],
-                ),
+  Widget _buildCollaborationsSection(PublicProfile profile) => _SectionCard(
+    icon: LucideIcons.trophy,
+    title: 'Past Collaborations',
+    count: profile.pastCollaborations.length,
+    child: profile.hasCollaborations
+        ? SizedBox(
+            height: 110,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: profile.pastCollaborations.length,
+              separatorBuilder: (context, index) =>
+                  const SizedBox(width: KolabingSpacing.sm),
+              itemBuilder: (context, index) => PastCollaborationCard(
+                collaboration: profile.pastCollaborations[index],
               ),
             ),
-    );
-  }
+          )
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+            child: Center(
+              child: Column(
+                children: [
+                  const Icon(
+                    LucideIcons.users,
+                    size: 32,
+                    color: KolabingColors.textTertiary,
+                  ),
+                  const SizedBox(height: KolabingSpacing.xs),
+                  Text(
+                    'No past collaborations yet',
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: KolabingColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+  );
 
   // ---------------------------------------------------------------------------
   // Social Links Section
@@ -340,40 +332,35 @@ class PublicProfileScreen extends ConsumerWidget {
   Widget _buildSocialLinksSection(
     BuildContext context,
     PublicProfile profile,
-  ) {
-    return _SectionCard(
-      icon: LucideIcons.link,
-      title: 'Social Links',
-      child: Wrap(
-        spacing: KolabingSpacing.sm,
-        runSpacing: KolabingSpacing.sm,
-        children: [
-          if (profile.instagram != null && profile.instagram!.isNotEmpty)
-            _SocialLinkChip(
-              icon: LucideIcons.instagram,
-              label: '@${profile.instagram}',
-              onTap: () => _launchUrl(
-                'https://instagram.com/${profile.instagram}',
-              ),
-            ),
-          if (profile.tiktok != null && profile.tiktok!.isNotEmpty)
-            _SocialLinkChip(
-              icon: LucideIcons.music,
-              label: '@${profile.tiktok}',
-              onTap: () => _launchUrl(
-                'https://tiktok.com/@${profile.tiktok}',
-              ),
-            ),
-          if (profile.website != null && profile.website!.isNotEmpty)
-            _SocialLinkChip(
-              icon: LucideIcons.globe,
-              label: profile.website!,
-              onTap: () => _launchUrl(profile.website!),
-            ),
-        ],
-      ),
-    );
-  }
+  ) => _SectionCard(
+    icon: LucideIcons.link,
+    title: 'Social Links',
+    child: Wrap(
+      spacing: KolabingSpacing.sm,
+      runSpacing: KolabingSpacing.sm,
+      children: [
+        if (profile.instagram != null && profile.instagram!.isNotEmpty)
+          _SocialLinkChip(
+            icon: LucideIcons.instagram,
+            label: '@${profile.instagram}',
+            onTap: () =>
+                _launchUrl('https://instagram.com/${profile.instagram}'),
+          ),
+        if (profile.tiktok != null && profile.tiktok!.isNotEmpty)
+          _SocialLinkChip(
+            icon: LucideIcons.music,
+            label: '@${profile.tiktok}',
+            onTap: () => _launchUrl('https://tiktok.com/@${profile.tiktok}'),
+          ),
+        if (profile.website != null && profile.website!.isNotEmpty)
+          _SocialLinkChip(
+            icon: LucideIcons.globe,
+            label: profile.website!,
+            onTap: () => _launchUrl(profile.website!),
+          ),
+      ],
+    ),
+  );
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url.startsWith('http') ? url : 'https://$url');
@@ -394,94 +381,94 @@ class _ProfileSliverHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
-        expandedHeight: 180,
-        pinned: true,
-        backgroundColor: KolabingColors.primary,
-        leading: const _BackButton(),
-        flexibleSpace: FlexibleSpaceBar(
-          background: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  KolabingColors.primary,
-                  KolabingColors.primary.withValues(alpha: 0.7),
-                ],
-              ),
+    expandedHeight: 180,
+    pinned: true,
+    backgroundColor: KolabingColors.primary,
+    leading: const _BackButton(),
+    flexibleSpace: FlexibleSpaceBar(
+      background: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              KolabingColors.primary,
+              KolabingColors.primary.withValues(alpha: 0.7),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              KolabingSpacing.md,
+              56,
+              KolabingSpacing.md,
+              KolabingSpacing.md,
             ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  KolabingSpacing.md,
-                  56,
-                  KolabingSpacing.md,
-                  KolabingSpacing.md,
+            child: Row(
+              children: [
+                _AvatarWidget(
+                  avatarUrl: profile.avatarUrl,
+                  initial: profile.initial,
+                  size: 64,
                 ),
-                child: Row(
-                  children: [
-                    _AvatarWidget(
-                      avatarUrl: profile.avatarUrl,
-                      initial: profile.initial,
-                      size: 64,
-                    ),
-                    const SizedBox(width: KolabingSpacing.md),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profile.displayName,
-                            style: GoogleFonts.rubik(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: KolabingColors.textPrimary,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                const SizedBox(width: KolabingSpacing.md),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        profile.displayName,
+                        style: GoogleFonts.rubik(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: KolabingColors.textPrimary,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      if (profile.typeLabel != null)
+                        Text(
+                          profile.typeLabel!,
+                          style: GoogleFonts.openSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: KolabingColors.textSecondary,
                           ),
-                          const SizedBox(height: 2),
-                          if (profile.type != null && profile.type!.isNotEmpty)
+                        ),
+                      if (profile.cityName != null &&
+                          profile.cityName!.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.mapPin,
+                              size: 12,
+                              color: KolabingColors.textSecondary,
+                            ),
+                            const SizedBox(width: 4),
                             Text(
-                              profile.type!,
+                              profile.cityName!,
                               style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
                                 color: KolabingColors.textSecondary,
                               ),
                             ),
-                          if (profile.cityName != null &&
-                              profile.cityName!.isNotEmpty) ...[
-                            const SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Icon(
-                                  LucideIcons.mapPin,
-                                  size: 12,
-                                  color: KolabingColors.textSecondary,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  profile.cityName!,
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 13,
-                                    color: KolabingColors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ],
-                        ],
-                      ),
-                    ),
-                  ],
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -493,24 +480,26 @@ class _BackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(8),
-        child: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              LucideIcons.arrowLeft,
-              size: 20,
-              color: KolabingColors.textPrimary,
-            ),
+    padding: const EdgeInsets.all(8),
+    child: GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: SizedBox(
+        width: 36,
+        height: 36,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            LucideIcons.arrowLeft,
+            size: 20,
+            color: KolabingColors.textPrimary,
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -537,7 +526,7 @@ class _AvatarWidget extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorWidget: (_, _, _) => _buildInitialCircle(),
+          errorWidget: (context, error, stackTrace) => _buildInitialCircle(),
         ),
       );
     }
@@ -545,23 +534,23 @@ class _AvatarWidget extends StatelessWidget {
   }
 
   Widget _buildInitialCircle() => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.3),
-          shape: BoxShape.circle,
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: 0.3),
+      shape: BoxShape.circle,
+    ),
+    child: Center(
+      child: Text(
+        initial,
+        style: GoogleFonts.rubik(
+          fontSize: size * 0.4,
+          fontWeight: FontWeight.w700,
+          color: KolabingColors.textPrimary,
         ),
-        child: Center(
-          child: Text(
-            initial,
-            style: GoogleFonts.rubik(
-              fontSize: size * 0.4,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -583,60 +572,57 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Icon(icon, size: 20, color: KolabingColors.primary),
-                const SizedBox(width: KolabingSpacing.xs),
-                Text(
-                  title,
-                  style: KolabingTextStyles.titleMedium.copyWith(
+            Icon(icon, size: 20, color: KolabingColors.primary),
+            const SizedBox(width: KolabingSpacing.xs),
+            Text(
+              title,
+              style: KolabingTextStyles.titleMedium.copyWith(
+                color: KolabingColors.textPrimary,
+              ),
+            ),
+            if (count != null && count! > 0) ...[
+              const SizedBox(width: KolabingSpacing.xs),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: KolabingColors.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '$count',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                     color: KolabingColors.textPrimary,
                   ),
                 ),
-                if (count != null && count! > 0) ...[
-                  const SizedBox(width: KolabingSpacing.xs),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: KolabingColors.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '$count',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            child,
+              ),
+            ],
           ],
         ),
-      );
+        const SizedBox(height: KolabingSpacing.md),
+        child,
+      ],
+    ),
+  );
 }
 
 // =============================================================================
@@ -656,122 +642,124 @@ class _SocialLinkChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.sm,
-            vertical: KolabingSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: KolabingColors.surfaceVariant,
-            borderRadius: KolabingRadius.borderRadiusRound,
-            border: Border.all(
-              color: KolabingColors.border,
-              width: 1,
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.surfaceVariant,
+        borderRadius: KolabingRadius.borderRadiusRound,
+        border: Border.all(color: KolabingColors.border, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: KolabingColors.primary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: KolabingColors.textPrimary,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 16, color: KolabingColors.primary),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
 // C9: Send Kolab proposal CTA — business viewing a community
 // =============================================================================
 
-class _SendKolabBottomBar extends StatelessWidget {
+class _SendKolabBottomBar extends ConsumerWidget {
   const _SendKolabBottomBar({required this.community});
 
   final PublicProfile community;
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-        top: false,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(
-            KolabingSpacing.md,
-            KolabingSpacing.sm,
-            KolabingSpacing.md,
-            KolabingSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: KolabingColors.surface,
-            border: Border(
-              top: BorderSide(
-                color: KolabingColors.border.withValues(alpha: 0.5),
+  Widget build(BuildContext context, WidgetRef ref) => SafeArea(
+    top: false,
+    child: Container(
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.sm,
+        KolabingSpacing.md,
+        KolabingSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        border: Border(
+          top: BorderSide(color: KolabingColors.border.withValues(alpha: 0.5)),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextButton(
+              onPressed: () => Navigator.of(context).maybePop(),
+              style: TextButton.styleFrom(
+                foregroundColor: KolabingColors.textSecondary,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child: Text(
+                'Save for later',
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  style: TextButton.styleFrom(
-                    foregroundColor: KolabingColors.textSecondary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            flex: 2,
+            child: SizedBox(
+              height: 48,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final allowed = await SubscriptionPaywall.checkAndShow(
+                    context,
+                    ref,
+                  );
+                  if (!allowed || !context.mounted) {
+                    return;
+                  }
+
+                  // Route to the Kolab create flow with the community
+                  // pre-selected as the recipient. The flow reads the
+                  // `recipient_community_id` query param.
+                  await context.push(
+                    '${KolabingRoutes.kolabNew}'
+                    '?recipient_community_id=${Uri.encodeComponent(community.id)}',
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: KolabingColors.primary,
+                  foregroundColor: KolabingColors.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(KolabingRadius.md),
                   ),
-                  child: Text(
-                    'Save for later',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  elevation: 0,
+                ),
+                icon: const Icon(LucideIcons.send, size: 18),
+                label: Text(
+                  'SEND A KOLAB PROPOSAL',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Route to the Kolab create flow with the community
-                      // pre-selected as the recipient. The flow reads the
-                      // `recipient_community_id` query param.
-                      context.push(
-                        '${KolabingRoutes.kolabNew}'
-                        '?recipient_community_id=${Uri.encodeComponent(community.id)}',
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(KolabingRadius.md),
-                      ),
-                      elevation: 0,
-                    ),
-                    icon: const Icon(LucideIcons.send, size: 18),
-                    label: Text(
-                      'SEND A KOLAB PROPOSAL',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

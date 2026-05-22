@@ -12,9 +12,11 @@ import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
 import '../../../business/providers/profile_provider.dart';
+import '../../../profile/providers/gallery_provider.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../widgets/existing_photo_picker_sheet.dart';
 
 /// Step 1 (both venue and product flows): Media upload.
 ///
@@ -35,6 +37,17 @@ class MediaScreen extends ConsumerStatefulWidget {
 class _MediaScreenState extends ConsumerState<MediaScreen> {
   bool _isUploading = false;
   final _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final galleryState = ref.read(galleryProvider);
+      if (!galleryState.isLoading && galleryState.photos.isEmpty) {
+        ref.read(galleryProvider.notifier).loadGallery();
+      }
+    });
+  }
 
   Future<void> _pickAndUploadPhoto() async {
     final image = await _picker.pickImage(
@@ -83,36 +96,41 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     }
   }
 
-  /// C7: pull-in unused venue photos from the business profile so users don't
-  /// have to re-upload the same shots for every Kolab.
-  void _addVenuePhotos() {
+  Future<void> _selectExistingPhotos() async {
     final profile = ref.read(profileProvider).profile;
     final venuePhotoUrls =
         profile?.businessProfile?.primaryVenue?.photos ?? const <String>[];
-    if (venuePhotoUrls.isEmpty) return;
-
-    final notifier = ref.read(kolabFormProvider.notifier);
     final existing = ref.read(kolabFormProvider).kolab.media;
     final existingUrls = existing.map((m) => m.url).toSet();
-
     final maxToAdd = 5 - existing.length;
     if (maxToAdd <= 0) return;
 
+    final selectedPhotos = await ExistingPhotoPickerSheet.show(
+      context,
+      title: 'Select existing photos',
+      confirmLabel: maxToAdd == 1 ? 'Use photo' : 'Use photos',
+      maxSelection: maxToAdd,
+      fallbackUrls: venuePhotoUrls,
+    );
+    if (!mounted || selectedPhotos == null || selectedPhotos.isEmpty) {
+      return;
+    }
+
+    final notifier = ref.read(kolabFormProvider.notifier);
     final nextSortStart = existing.isEmpty
         ? 0
         : existing.map((m) => m.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
-
-    final toAdd = venuePhotoUrls
-        .where((url) => url.isNotEmpty && !existingUrls.contains(url))
+    final toAdd = selectedPhotos
+        .where((photo) => photo.url.isNotEmpty && !existingUrls.contains(photo.url))
         .take(maxToAdd)
-        .toList();
+        .toList(growable: false);
 
     if (toAdd.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'All your venue photos are already in this Kolab.',
+              'Those photos are already in this Kolab.',
               style: GoogleFonts.openSans(color: Colors.white),
             ),
             backgroundColor: KolabingColors.textSecondary,
@@ -126,7 +144,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     for (var i = 0; i < toAdd.length; i++) {
       notifier.addMedia(
         KolabMedia(
-          url: toAdd[i],
+          url: toAdd[i].url,
           type: 'image',
           sortOrder: nextSortStart + i,
         ),
@@ -137,7 +155,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Added ${toAdd.length} venue photo${toAdd.length == 1 ? '' : 's'}.',
+            'Added ${toAdd.length} existing photo${toAdd.length == 1 ? '' : 's'}.',
             style: GoogleFonts.openSans(color: Colors.white),
           ),
           backgroundColor: KolabingColors.success,
@@ -162,9 +180,11 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     final venuePhotoUrls = ref.watch(
       profileProvider.select((s) => s.profile?.businessProfile?.primaryVenue?.photos),
     );
-    final showReuseCta = isVenue &&
-        kolab.media.length < 5 &&
-        (venuePhotoUrls?.isNotEmpty ?? false);
+    final galleryState = ref.watch(galleryProvider);
+    final showReuseCta = kolab.media.length < 5 &&
+        (galleryState.isLoading ||
+            galleryState.photos.isNotEmpty ||
+            (isVenue && (venuePhotoUrls?.isNotEmpty ?? false)));
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -194,13 +214,13 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             child: Text(errors['media']!, style: GoogleFonts.openSans(fontSize: 12, color: KolabingColors.error)),
           ),
 
-        // C7: one-tap import of existing venue photos.
+        // Reuse previously uploaded profile gallery photos, plus venue fallback.
         if (showReuseCta) ...[
           OutlinedButton.icon(
-            onPressed: _isUploading ? null : _addVenuePhotos,
+            onPressed: _isUploading ? null : _selectExistingPhotos,
             icon: const Icon(LucideIcons.imagePlus, size: 18),
             label: Text(
-              'USE VENUE PHOTOS (${venuePhotoUrls!.length})',
+              'SELECT FROM LIBRARY',
               style: GoogleFonts.dmSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,

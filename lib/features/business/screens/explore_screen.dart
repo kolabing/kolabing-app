@@ -15,12 +15,14 @@ import '../../../widgets/explore_swipe_card.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../business/providers/profile_provider.dart';
 import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
@@ -64,32 +66,46 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     }
   }
 
-  void _onCardTap(DiscoveryItem item) {
+  void _onCardTap(DiscoveryItem item, {required bool hasSubscription}) {
     final opportunity = item.toOpportunity();
+    final hideCreatorIdentity = !_isCommunityViewer && item.isCommunityRequest;
 
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
-      onApply: () {
-        Navigator.of(context).pop();
-        _openApplyFlow(opportunity);
-      },
-      onView: () {
-        Navigator.of(context).pop();
-        context.push(
-          '${widget.detailRoutePrefix}/${opportunity.id ?? item.id}',
-          extra: opportunity,
-        );
-      },
+      discoveryItem: item,
+      hideCreatorIdentity: hideCreatorIdentity,
+      onApply: hasSubscription
+          ? () {
+              Navigator.of(context).pop();
+              _openApplyFlow(opportunity);
+            }
+          : null,
       // C9: business viewer tapping a community card needs a path to the
       // community's public profile (Send Kolab CTA lives there). Hidden when
       // the creator profile id isn't usable.
-      onViewCreatorProfile: item.creatorProfile.id.isEmpty
+      onViewCreatorProfile:
+          hideCreatorIdentity ||
+              !hasSubscription ||
+              item.creatorProfile.id.isEmpty
           ? null
           : () {
               Navigator.of(context).pop();
               context.push('/profile/${item.creatorProfile.id}');
             },
+      onSubscribe: !_isCommunityViewer && !hasSubscription
+          ? () async {
+              Navigator.of(context).pop();
+              final allowed = await SubscriptionPaywall.checkAndShow(
+                context,
+                ref,
+              );
+              if (allowed) {
+                await ref.read(profileProvider.notifier).refreshSubscription();
+              }
+            }
+          : null,
+      canApply: _isCommunityViewer || hasSubscription,
     );
   }
 
@@ -120,6 +136,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   Widget build(BuildContext context) {
     final listState = ref.watch(discoveryListProvider);
     final filters = ref.watch(discoveryFiltersProvider);
+    final profileState = ref.watch(profileProvider);
+    final authUser = ref.watch(authProvider).user;
+    final hasBusinessSubscription =
+        _isCommunityViewer ||
+        profileState.isSubscribed ||
+        (authUser?.hasActiveSubscription ?? false) ||
+        (authUser?.subscription?.isActive ?? false);
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -148,7 +171,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   ? _buildErrorState(listState.error!)
                   : listState.isEmpty
                   ? _buildEmptyState(filters)
-                  : _buildCardPageView(listState),
+                  : _buildCardPageView(
+                      listState,
+                      hasBusinessSubscription: hasBusinessSubscription,
+                    ),
             ),
           ],
         ),
@@ -261,7 +287,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return parts.join(' · ');
   }
 
-  Widget _buildCardPageView(DiscoveryListState listState) {
+  Widget _buildCardPageView(
+    DiscoveryListState listState, {
+    required bool hasBusinessSubscription,
+  }) {
     final today = DateTime.now();
     final activeItems = listState.items.where((DiscoveryItem item) {
       final end = item.availability.end;
@@ -286,7 +315,15 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         }
 
         final item = activeItems[index];
-        return ExploreSwipeCard(item: item, onTap: () => _onCardTap(item));
+        final hideCreatorIdentity =
+            !_isCommunityViewer && item.isCommunityRequest;
+        return ExploreSwipeCard(
+          item: item,
+          showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
+          hideCreatorIdentity: hideCreatorIdentity,
+          onTap: () =>
+              _onCardTap(item, hasSubscription: hasBusinessSubscription),
+        );
       },
     );
   }

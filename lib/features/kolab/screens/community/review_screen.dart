@@ -80,9 +80,7 @@ class ReviewScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        kolab.title.isEmpty
-                            ? 'Untitled Kolab'
-                            : kolab.title,
+                        kolab.title.isEmpty ? 'Untitled Kolab' : kolab.title,
                         style: GoogleFonts.rubik(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -130,9 +128,9 @@ class ReviewScreen extends ConsumerWidget {
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
-                          children: kolab.needs.map((need) {
-                            return _buildChip(need.displayName);
-                          }).toList(),
+                          children: kolab.needs
+                              .map((need) => _buildChip(need.displayName))
+                              .toList(),
                         ),
                     ],
                   ),
@@ -162,9 +160,9 @@ class ReviewScreen extends ConsumerWidget {
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
-                          children: kolab.offersInReturn.map((d) {
-                            return _buildChip(d.displayName);
-                          }).toList(),
+                          children: kolab.offersInReturn
+                              .map((d) => _buildChip(d.displayName))
+                              .toList(),
                         ),
                     ],
                   ),
@@ -186,7 +184,7 @@ class ReviewScreen extends ConsumerWidget {
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
-                          children: kolab.communityTypes
+                          children: kolab.communityTypeLabels
                               .map(_buildChip)
                               .toList(),
                         ),
@@ -223,8 +221,7 @@ class ReviewScreen extends ConsumerWidget {
                             ? kolab.preferredCity
                             : 'No city selected',
                       ),
-                      if (kolab.area != null &&
-                          kolab.area!.isNotEmpty) ...[
+                      if (kolab.area != null && kolab.area!.isNotEmpty) ...[
                         const SizedBox(height: KolabingSpacing.xxs),
                         _buildReviewInfoRow(
                           LucideIcons.navigation,
@@ -310,82 +307,74 @@ class ReviewScreen extends ConsumerWidget {
     required WidgetRef ref,
     required int step,
     required Widget child,
-  }) {
-    return InkWell(
-      onTap: () => ref.read(kolabFormProvider.notifier).goToStep(step),
-      borderRadius: KolabingRadius.borderRadiusSm,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xxs),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: child),
-            const SizedBox(width: KolabingSpacing.xs),
-            const Padding(
-              padding: EdgeInsets.only(top: 2),
-              child: Icon(
-                LucideIcons.pencil,
-                size: 16,
-                color: KolabingColors.textTertiary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildReviewLabel(String label) => Text(
-        label.toUpperCase(),
-        style: GoogleFonts.rubik(
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textTertiary,
-          letterSpacing: 0.8,
-        ),
-      );
-
-  Widget _buildReviewInfoRow(IconData icon, String label) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: KolabingColors.textSecondary),
-        const SizedBox(width: KolabingSpacing.xs),
-        Expanded(
-          child: Text(
-            label,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
+  }) => InkWell(
+    onTap: () => ref.read(kolabFormProvider.notifier).goToStep(step),
+    borderRadius: KolabingRadius.borderRadiusSm,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xxs),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: child),
+          const SizedBox(width: KolabingSpacing.xs),
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(
+              LucideIcons.pencil,
+              size: 16,
+              color: KolabingColors.textTertiary,
             ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      ),
+    ),
+  );
 
-  Widget _buildChip(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.xs,
-        vertical: KolabingSpacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: KolabingColors.softYellow,
-        borderRadius: KolabingRadius.borderRadiusSm,
-        border: Border.all(
-          color: KolabingColors.softYellowBorder,
+  Widget _buildReviewLabel(String label) => Text(
+    label.toUpperCase(),
+    style: GoogleFonts.rubik(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      color: KolabingColors.textTertiary,
+      letterSpacing: 0.8,
+    ),
+  );
+
+  Widget _buildReviewInfoRow(IconData icon, String label) => Row(
+    children: [
+      Icon(icon, size: 16, color: KolabingColors.textSecondary),
+      const SizedBox(width: KolabingSpacing.xs),
+      Expanded(
+        child: Text(
+          label,
+          style: GoogleFonts.openSans(
+            fontSize: 13,
+            color: KolabingColors.textSecondary,
+          ),
         ),
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
-        ),
+    ],
+  );
+
+  Widget _buildChip(String label) => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.xs,
+      vertical: KolabingSpacing.xxs,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.softYellow,
+      borderRadius: KolabingRadius.borderRadiusSm,
+      border: Border.all(color: KolabingColors.softYellowBorder),
+    ),
+    child: Text(
+      label,
+      style: GoogleFonts.openSans(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: KolabingColors.textPrimary,
       ),
-    );
-  }
+    ),
+  );
 
   IconData _availabilityModeIcon(AvailabilityMode mode) {
     switch (mode) {
@@ -393,8 +382,6 @@ class ReviewScreen extends ConsumerWidget {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
-      case AvailabilityMode.flexible:
-        return LucideIcons.calendarRange;
     }
   }
 }

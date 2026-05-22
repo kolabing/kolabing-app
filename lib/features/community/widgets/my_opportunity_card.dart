@@ -318,61 +318,95 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final foregroundColor = primary
+        ? KolabingColors.onPrimary
+        : danger
+        ? KolabingColors.error
+        : KolabingColors.textPrimary;
+
     if (primary) {
       return SizedBox(
         height: 36,
-        child: ElevatedButton.icon(
+        child: ElevatedButton(
           onPressed: onTap,
-          icon: Icon(icon, size: 14),
-          label: Text(
-            label,
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-            ),
-          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: KolabingColors.primary,
             foregroundColor: KolabingColors.onPrimary,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusSm,
             ),
+          ),
+          child: _ActionButtonContent(
+            icon: icon,
+            label: label,
+            color: foregroundColor,
           ),
         ),
       );
     }
 
-    final color = danger ? KolabingColors.error : KolabingColors.textPrimary;
-
     return SizedBox(
       height: 36,
-      child: OutlinedButton.icon(
+      child: OutlinedButton(
         onPressed: onTap,
-        icon: Icon(icon, size: 14),
-        label: Text(
-          label,
-          style: GoogleFonts.rubik(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.0,
-          ),
-        ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: color,
+          foregroundColor: foregroundColor,
           side: BorderSide(
             color: danger
                 ? KolabingColors.error.withValues(alpha: 0.5)
                 : KolabingColors.border,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
+          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
           shape: RoundedRectangleBorder(
             borderRadius: KolabingRadius.borderRadiusSm,
           ),
         ),
+        child: _ActionButtonContent(
+          icon: icon,
+          label: label,
+          color: foregroundColor,
+        ),
       ),
     );
   }
+}
+
+class _ActionButtonContent extends StatelessWidget {
+  const _ActionButtonContent({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(icon, size: 14, color: color),
+      const SizedBox(width: KolabingSpacing.xxs),
+      Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.fade,
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
+              color: color,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }

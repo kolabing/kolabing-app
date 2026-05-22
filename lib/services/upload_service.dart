@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 
 import '../config/constants/api.dart';
 import '../features/auth/models/auth_response.dart';
+import '../features/auth/providers/auth_provider.dart';
 import '../features/auth/services/auth_service.dart';
+import '../utils/remote_media_url.dart';
 
 const String _baseUrl = ApiConfig.baseUrl;
 
@@ -41,9 +43,7 @@ class UploadService {
   Future<String> upload({
     required String filePath,
     required String folder,
-  }) async {
-    return _upload(filePath: filePath, folder: folder, allowRetry: true);
-  }
+  }) => _upload(filePath: filePath, folder: folder, allowRetry: true);
 
   Future<String> _upload({
     required String filePath,
@@ -67,7 +67,7 @@ class UploadService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
-        final url = data['url'] as String;
+        final url = normalizeRemoteMediaUrl(data['url']?.toString() ?? '');
         debugPrint('Upload success: $url');
         return url;
       } else if (response.statusCode == 401) {
@@ -96,4 +96,7 @@ class UploadService {
   }
 }
 
-final uploadServiceProvider = Provider<UploadService>((ref) => UploadService());
+final uploadServiceProvider = Provider<UploadService>((ref) {
+  final authService = ref.watch(authServiceProvider);
+  return UploadService(authService: authService);
+});

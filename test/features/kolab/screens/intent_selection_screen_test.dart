@@ -93,6 +93,45 @@ void main() {
       expect(notifier.loadProfileCalls, 1);
     },
   );
+
+  testWidgets(
+    'blocks business users without a subscription from creating kolabs',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            profileProvider.overrideWith(
+              () => _FakeProfileNotifier(
+                const ProfileState(
+                  profile: UserModel(
+                    id: 'business-1',
+                    email: 'business@example.com',
+                    userType: UserType.business,
+                    hasActiveSubscription: false,
+                    businessProfile: BusinessProfile(
+                      id: 'business-profile-1',
+                      name: 'Casa Sol',
+                    ),
+                  ),
+                  isLoading: false,
+                  isInitialized: true,
+                ),
+              ),
+            ),
+          ],
+          child: const MaterialApp(home: IntentSelectionScreen()),
+        ),
+      );
+
+      expect(
+        find.text('An active subscription is required to create Kolabs.'),
+        findsOneWidget,
+      );
+      expect(find.text('Upgrade to create'), findsOneWidget);
+      expect(find.text('Promote my Venue'), findsNothing);
+      expect(find.text('Promote a Product or Service'), findsNothing);
+    },
+  );
 }
 
 class _FakeProfileNotifier extends ProfileNotifier {

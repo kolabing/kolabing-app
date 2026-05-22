@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../config/constants/api.dart';
+import '../../../utils/image_picker_normalize.dart';
+import '../../../utils/remote_media_url.dart';
 import '../services/gallery_service.dart';
 
 // =============================================================================
@@ -41,7 +42,7 @@ class GalleryPhoto {
     int sortOrder = 0,
   }) => GalleryPhoto(
     id: id,
-    url: _normalizeUrl(rawUrl),
+    url: normalizeRemoteMediaUrl(rawUrl),
     caption: caption,
     sortOrder: sortOrder,
   );
@@ -67,25 +68,11 @@ class GalleryPhoto {
             : null) ??
         '';
 
-    final normalizedUrl = _normalizeUrl(rawUrl);
+    final normalizedUrl = normalizeRemoteMediaUrl(rawUrl);
     debugPrint(
       'GalleryPhoto.fromJson: id=${json['id']}, url=$normalizedUrl, keys=${json.keys.toList()}',
     );
     return normalizedUrl;
-  }
-
-  static String _normalizeUrl(String rawUrl) {
-    final trimmed = rawUrl.trim();
-    if (trimmed.isEmpty) return '';
-    if (trimmed.startsWith('data:')) return trimmed;
-
-    final parsed = Uri.tryParse(trimmed);
-    if (parsed != null && parsed.hasScheme) {
-      return trimmed;
-    }
-
-    final origin = Uri.parse(ApiConfig.baseUrl).replace(path: '/');
-    return origin.resolve(trimmed).toString();
   }
 }
 
@@ -139,9 +126,7 @@ class GalleryNotifier extends Notifier<GalleryState> {
   final GalleryService _galleryService = GalleryService();
 
   @override
-  GalleryState build() {
-    return const GalleryState();
-  }
+  GalleryState build() => const GalleryState();
 
   /// Load gallery photos from the API
   Future<void> loadGallery() async {
@@ -151,7 +136,7 @@ class GalleryNotifier extends Notifier<GalleryState> {
     try {
       final photos = await _galleryService.getMyGallery();
       state = state.copyWith(photos: photos, isLoading: false);
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Gallery load error: $e');
       state = state.copyWith(isLoading: false, error: 'Failed to load gallery');
     }
@@ -176,19 +161,21 @@ class GalleryNotifier extends Notifier<GalleryState> {
 
       if (pickedFile == null) return false;
 
+      final localPath = await normalizePickedImage(pickedFile);
+
       // Verify file exists
-      final file = File(pickedFile.path);
+      final file = File(localPath);
       if (!file.existsSync()) return false;
 
       state = state.copyWith(isUploading: true, clearError: true);
 
-      await _galleryService.uploadPhoto(filePath: pickedFile.path);
+      await _galleryService.uploadPhoto(filePath: localPath);
 
       // Reload the full gallery from API to get correct URLs
       final photos = await _galleryService.getMyGallery();
       state = state.copyWith(photos: photos, isUploading: false);
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Gallery add photo error: $e');
       state = state.copyWith(
         isUploading: false,
@@ -208,7 +195,7 @@ class GalleryNotifier extends Notifier<GalleryState> {
         photos: state.photos.where((p) => p.id != id).toList(),
         isDeleting: false,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Gallery delete photo error: $e');
       state = state.copyWith(
         isDeleting: false,

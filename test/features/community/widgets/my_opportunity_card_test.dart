@@ -28,4 +28,42 @@ void main() {
     expect(find.text('Share'), findsOneWidget);
     expect(find.text('Close'), findsOneWidget);
   });
+
+  testWidgets('action labels stay on a single line on compact widths', (
+    tester,
+  ) async {
+    final opportunity = Opportunity.empty().copyWith(
+      id: 'opp-43',
+      title: 'Sunday Run',
+      preferredCity: 'Barcelona',
+      status: OpportunityStatus.published,
+    );
+
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(size: Size(320, 800)),
+        child: MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 320,
+              child: MyOpportunityCard(
+                opportunity: opportunity,
+                onView: () {},
+                onEdit: () {},
+                onShare: () {},
+                onClose: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    for (final label in ['View', 'Edit', 'Share', 'Close']) {
+      final text = tester.widget<Text>(find.text(label));
+      expect(text.maxLines, 1);
+      expect(text.softWrap, isFalse);
+      expect(text.overflow, TextOverflow.fade);
+    }
+  });
 }

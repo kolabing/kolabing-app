@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../services/permission_service.dart';
-import '../services/auth_service.dart';
+import 'auth_provider.dart';
 
 /// Represents the navigation destination after splash screen
 enum SplashNavigationTarget {
@@ -64,7 +64,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
   /// Returns the navigation target route path.
   Future<String> initialize() async {
     try {
-      final authService = AuthService();
+      final authService = ref.read(authServiceProvider);
       final token = await authService.getToken();
       final storedUser = await authService.getStoredUser();
 

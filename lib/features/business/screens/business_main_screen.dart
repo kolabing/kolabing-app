@@ -10,6 +10,7 @@ import '../../application/providers/application_provider.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/business_dashboard_screen.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import 'business_profile_screen.dart';
 import 'explore_screen.dart';
 import 'my_kollabs_screen.dart';
@@ -19,10 +20,7 @@ import 'my_kollabs_screen.dart';
 /// This is the main container for business users after login.
 /// Contains 5 tabs: Home, Explore, My Kollabs, Applications, Profile
 class BusinessMainScreen extends ConsumerStatefulWidget {
-  const BusinessMainScreen({
-    super.key,
-    this.initialTab = 0,
-  });
+  const BusinessMainScreen({super.key, this.initialTab = 0});
 
   final int initialTab;
 
@@ -46,6 +44,11 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
+    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (!allowed || !mounted) {
+      return;
+    }
+
     await context.push(KolabingRoutes.kolabNew);
     // Refresh dashboard stats when returning from create form
     if (mounted) {
@@ -98,8 +101,9 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+      backgroundColor: isDark
+          ? KolabingColors.darkBackground
+          : KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex,
         children: [
@@ -110,7 +114,9 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
           const _BusinessProfileTab(),
         ],
       ),
-      floatingActionButton: _currentIndex != 4 // Hide on profile tab
+      floatingActionButton:
+          _currentIndex !=
+              4 // Hide on profile tab
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: 'Create Collab Request',
@@ -135,43 +141,34 @@ class _BusinessHomeTab extends StatelessWidget {
   final ValueChanged<int> onSwitchTab;
 
   @override
-  Widget build(BuildContext context) {
-    return BusinessDashboardScreen(onSwitchTab: onSwitchTab);
-  }
+  Widget build(BuildContext context) =>
+      BusinessDashboardScreen(onSwitchTab: onSwitchTab);
 }
 
 class _BusinessExploreTab extends StatelessWidget {
   const _BusinessExploreTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const ExploreScreen();
-  }
+  Widget build(BuildContext context) => const ExploreScreen();
 }
 
 class _BusinessKollabsTab extends StatelessWidget {
   const _BusinessKollabsTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const MyKollabsScreen();
-  }
+  Widget build(BuildContext context) => const MyKollabsScreen();
 }
 
 class _BusinessApplicationsTab extends StatelessWidget {
   const _BusinessApplicationsTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const ApplicationsScreen();
-  }
+  Widget build(BuildContext context) => const ApplicationsScreen();
 }
 
 class _BusinessProfileTab extends StatelessWidget {
   const _BusinessProfileTab();
 
   @override
-  Widget build(BuildContext context) {
-    return const BusinessProfileScreen();
-  }
+  Widget build(BuildContext context) => const BusinessProfileScreen();
 }

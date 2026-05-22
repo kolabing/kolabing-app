@@ -11,8 +11,10 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
+import '../../../profile/providers/gallery_provider.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../widgets/existing_photo_picker_sheet.dart';
 
 /// Community step 4: "ADD A PHOTO"
 ///
@@ -28,6 +30,17 @@ class PhotoScreen extends ConsumerStatefulWidget {
 class _PhotoScreenState extends ConsumerState<PhotoScreen> {
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final galleryState = ref.read(galleryProvider);
+      if (!galleryState.isLoading && galleryState.photos.isEmpty) {
+        ref.read(galleryProvider.notifier).loadGallery();
+      }
+    });
+  }
 
   Future<void> _pickAndUploadPhoto() async {
     final image = await _picker.pickImage(
@@ -67,13 +80,38 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
     }
   }
 
+  Future<void> _selectExistingPhoto() async {
+    final selectedPhotos = await ExistingPhotoPickerSheet.show(
+      context,
+      title: 'Select a photo',
+      confirmLabel: 'Use photo',
+      maxSelection: 1,
+      initiallySelectedUrls: ref
+          .read(kolabFormProvider)
+          .kolab
+          .media
+          .map((media) => media.url)
+          .toSet(),
+    );
+    if (!mounted || selectedPhotos == null || selectedPhotos.isEmpty) {
+      return;
+    }
+
+    ref.read(kolabFormProvider.notifier).updateMedia([
+          KolabMedia(url: selectedPhotos.first.url, type: 'image', sortOrder: 0),
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(kolabFormProvider);
+    final galleryState = ref.watch(galleryProvider);
     final useProfilePhoto = state.kolab.media.isEmpty;
     final uploadedPhoto = state.kolab.media.isNotEmpty
         ? state.kolab.media.first
         : null;
+    final showGalleryChoice =
+        galleryState.isLoading || galleryState.photos.isNotEmpty;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -187,6 +225,15 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           ),
 
           const SizedBox(height: KolabingSpacing.md),
+
+          if (showGalleryChoice && uploadedPhoto == null) ...[
+            OutlinedButton.icon(
+              onPressed: _isUploading ? null : _selectExistingPhoto,
+              icon: const Icon(LucideIcons.imagePlus, size: 18),
+              label: const Text('Choose from library'),
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+          ],
 
           if (_isUploading) ...[
             const LinearProgressIndicator(color: KolabingColors.primary),

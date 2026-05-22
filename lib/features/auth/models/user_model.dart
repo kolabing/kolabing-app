@@ -1,3 +1,6 @@
+import '../../../utils/profile_type_formatter.dart';
+import '../../../utils/remote_media_url.dart';
+
 /// User type enumeration
 enum UserType {
   business,
@@ -85,7 +88,10 @@ class PrimaryVenueProfile {
         venueType: json['venue_type']?.toString(),
         capacity: _parseInt(json['capacity']),
         photos: json['photos'] is List
-            ? (json['photos'] as List).map((e) => e.toString()).toList()
+            ? (json['photos'] as List)
+                  .map((e) => normalizeRemoteMediaUrl(e.toString()))
+                  .where((url) => url.isNotEmpty)
+                  .toList()
             : const [],
       );
 
@@ -168,9 +174,9 @@ class BusinessProfile {
 
   String get businessTypesSummary {
     if (businessTypes.isNotEmpty) {
-      return businessTypes.join(' · ');
+      return businessTypes.map(formatProfileTypeLabel).join(' · ');
     }
-    return businessType ?? 'Business';
+    return formatProfileTypeLabel(businessType ?? 'Business');
   }
 
   Map<String, dynamic> toJson() => {
@@ -240,6 +246,9 @@ class CommunityProfile {
   final String? tiktok;
   final String? website;
   final String? profilePhoto;
+
+  String get communityTypeLabel =>
+      formatProfileTypeLabel(communityType ?? 'Community');
 
   Map<String, dynamic> toJson() => {
     'id': id,

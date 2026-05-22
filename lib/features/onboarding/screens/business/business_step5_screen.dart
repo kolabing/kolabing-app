@@ -11,6 +11,7 @@ import '../../models/business_type.dart';
 import '../../models/place_suggestion.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../services/onboarding_service.dart';
+import '../../widgets/google_photos_preview_sheet.dart';
 import '../../widgets/onboarding_header.dart';
 
 /// Business onboarding step 1: capture the primary venue address and import
@@ -104,9 +105,30 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
       }
 
       if (!mounted) return;
+
+      Set<String>? allowedPhotoResourceNames;
+      final importablePhotos = placeImport.primaryVenue.photos
+          .where(
+            (photo) =>
+                photo.resourceName.trim().isNotEmpty &&
+                photo.previewUrl.trim().isNotEmpty,
+          )
+          .toList(growable: false);
+      if (importablePhotos.isNotEmpty) {
+        // Pause the loading overlay while the user reviews — the overlay sits
+        // above the modal otherwise.
+        setState(() => _isImporting = false);
+        allowedPhotoResourceNames = await GooglePhotosPreviewSheet.show(
+          context,
+          photos: importablePhotos,
+        );
+        if (!mounted) return;
+      }
+
       ref.read(onboardingProvider.notifier).applyPlaceImport(
         placeImport,
         businessTypes: businessTypes,
+        allowedPhotoResourceNames: allowedPhotoResourceNames,
       );
       context.push('/onboarding/business/step2');
     } on PlaceImportUnavailableException {

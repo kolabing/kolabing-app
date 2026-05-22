@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -17,7 +18,7 @@ void main() {
     FlutterSecureStorage.setMockInitialValues(<String, String>{});
   });
 
-  test('getCurrentUser does not clear stored auth on 401', () async {
+  test('getCurrentUser clears stored auth on 401 without a refresh token', () async {
     const user = UserModel(
       id: 'user-1',
       email: 'owner@example.com',
@@ -41,12 +42,12 @@ void main() {
 
     await expectLater(service.getCurrentUser(), throwsA(isA<AuthException>()));
 
-    expect(await service.getToken(), 'token-123');
-    expect((await service.getStoredUser())?.email, 'owner@example.com');
+    expect(await service.getToken(), isNull);
+    expect(await service.getStoredUser(), isNull);
   });
 
   test(
-    'restoreSessionUser falls back to stored user when auth refresh fails',
+    'restoreSessionUser falls back to stored user on network failure',
     () async {
       const user = UserModel(
         id: 'user-1',
@@ -62,10 +63,7 @@ void main() {
       final service = AuthService(
         secureStorage: const FlutterSecureStorage(),
         httpClient: MockClient(
-          (_) async => http.Response(
-            jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
-            401,
-          ),
+          (_) async => throw Exception('network down'),
         ),
       );
 
@@ -73,6 +71,7 @@ void main() {
 
       expect(restored?.email, 'owner@example.com');
       expect(await service.getToken(), 'token-123');
+      expect((await service.getStoredUser())?.email, 'owner@example.com');
     },
   );
 
@@ -178,6 +177,194 @@ void main() {
       expect(await service.getToken(), 'token-456');
       expect(await service.getRefreshToken(), 'refresh-456');
       expect(meCalls, 2);
+    },
+  );
+
+  test(
+    'logout prevents an in-flight refresh from restoring the session',
+    () async {
+      const user = UserModel(
+        id: 'user-1',
+        email: 'owner@example.com',
+        userType: UserType.business,
+      );
+
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+        'auth_user': jsonEncode(user.toJson()),
+      });
+
+      final refreshResponse = Completer<http.Response>();
+      final service = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: MockClient((request) async {
+          if (request.url.path == '/api/v1/auth/refresh') {
+            return refreshResponse.future;
+          }
+
+          if (request.url.path == '/api/v1/auth/logout') {
+            return http.Response(
+              jsonEncode(<String, dynamic>{'success': true}),
+              200,
+            );
+          }
+
+          throw AssertionError('Unexpected request: ${request.url}');
+        }),
+      );
+
+      final pendingRefresh = service.refreshSession();
+      await Future<void>.delayed(Duration.zero);
+
+      await service.logout();
+
+      refreshResponse.complete(
+        http.Response(
+          jsonEncode(<String, dynamic>{
+            'data': <String, dynamic>{
+              'token': 'token-456',
+              'refresh_token': 'refresh-456',
+              'token_type': 'Bearer',
+            },
+          }),
+          200,
+        ),
+      );
+
+      await expectLater(
+        pendingRefresh,
+        throwsA(
+          isA<AuthException>().having(
+            (e) => e.message,
+            'message',
+            'Session expired. Please sign in again.',
+          ),
+        ),
+      );
+      expect(await service.getToken(), isNull);
+      expect(await service.getRefreshToken(), isNull);
+      expect(await service.getStoredUser(), isNull);
+    },
+  );
+
+  test(
+    'logout from another auth service instance prevents restoring the session',
+    () async {
+      const user = UserModel(
+        id: 'user-1',
+        email: 'owner@example.com',
+        userType: UserType.business,
+      );
+
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+        'auth_user': jsonEncode(user.toJson()),
+      });
+
+      final refreshResponse = Completer<http.Response>();
+      final sharedStorage = const FlutterSecureStorage();
+      final refreshingService = AuthService(
+        secureStorage: sharedStorage,
+        httpClient: MockClient((request) async {
+          if (request.url.path == '/api/v1/auth/refresh') {
+            return refreshResponse.future;
+          }
+
+          throw AssertionError('Unexpected request: ${request.url}');
+        }),
+      );
+      final logoutService = AuthService(
+        secureStorage: sharedStorage,
+        httpClient: MockClient((request) async {
+          if (request.url.path == '/api/v1/auth/logout') {
+            return http.Response(
+              jsonEncode(<String, dynamic>{'success': true}),
+              200,
+            );
+          }
+
+          throw AssertionError('Unexpected request: ${request.url}');
+        }),
+      );
+
+      final pendingRefresh = refreshingService.refreshSession();
+      await Future<void>.delayed(Duration.zero);
+
+      await logoutService.logout();
+
+      refreshResponse.complete(
+        http.Response(
+          jsonEncode(<String, dynamic>{
+            'data': <String, dynamic>{
+              'token': 'token-456',
+              'refresh_token': 'refresh-456',
+              'token_type': 'Bearer',
+            },
+          }),
+          200,
+        ),
+      );
+
+      await expectLater(
+        pendingRefresh,
+        throwsA(
+          isA<AuthException>().having(
+            (e) => e.message,
+            'message',
+            'Session expired. Please sign in again.',
+          ),
+        ),
+      );
+      expect(await refreshingService.getToken(), isNull);
+      expect(await refreshingService.getRefreshToken(), isNull);
+      expect(await refreshingService.getStoredUser(), isNull);
+    },
+  );
+
+  test(
+    'restoreSessionUser clears persisted auth when both me and refresh are unauthorized',
+    () async {
+      const user = UserModel(
+        id: 'user-1',
+        email: 'owner@example.com',
+        userType: UserType.business,
+      );
+
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+        'auth_user': jsonEncode(user.toJson()),
+      });
+
+      final service = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: MockClient((request) async {
+          if (request.url.path == '/api/v1/auth/me') {
+            return http.Response(
+              jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+              401,
+            );
+          }
+
+          if (request.url.path == '/api/v1/auth/refresh') {
+            return http.Response(
+              jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+              401,
+            );
+          }
+
+          throw AssertionError('Unexpected request: ${request.url}');
+        }),
+      );
+
+      final restored = await service.restoreSessionUser();
+
+      expect(restored, isNull);
+      expect(await service.getToken(), isNull);
+      expect(await service.getRefreshToken(), isNull);
+      expect(await service.getStoredUser(), isNull);
     },
   );
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -6,6 +7,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../features/discovery/models/discovery_item.dart';
+import '../features/event/models/event.dart';
+import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
 
 /// Modal bottom sheet displaying full opportunity details.
@@ -13,23 +17,29 @@ import '../features/opportunity/models/opportunity.dart';
 /// Shown when the user taps a card in the Explore tab. Contains scrollable
 /// content with creator info, description, offer summary, location details,
 /// availability days, and categories. Action buttons are pinned at the bottom.
-class ExploreDetailSheet extends StatelessWidget {
+class ExploreDetailSheet extends ConsumerWidget {
   const ExploreDetailSheet({
     required this.opportunity,
     this.onApply,
     this.onView,
     this.onViewCreatorProfile,
     this.canApply = true,
+    this.discoveryItem,
+    this.hideCreatorIdentity = false,
+    this.onSubscribe,
     super.key,
   });
 
   final Opportunity opportunity;
   final VoidCallback? onApply;
   final VoidCallback? onView;
+  final DiscoveryItem? discoveryItem;
   // C9: optional CTA that opens the creator's public profile so a business
   // viewer can reach the Send-Kolab proposal flow.
   final VoidCallback? onViewCreatorProfile;
   final bool canApply;
+  final bool hideCreatorIdentity;
+  final VoidCallback? onSubscribe;
 
   /// Day labels indexed 1..7 (Mon..Sun) matching [Opportunity.recurringDays].
   static const _dayLabels = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
@@ -42,90 +52,107 @@ class ExploreDetailSheet extends StatelessWidget {
     VoidCallback? onView,
     VoidCallback? onViewCreatorProfile,
     bool canApply = true,
-  }) =>
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => ExploreDetailSheet(
-          opportunity: opportunity,
-          onApply: onApply,
-          onView: onView,
-          onViewCreatorProfile: onViewCreatorProfile,
-          canApply: canApply,
-        ),
-      );
+    DiscoveryItem? discoveryItem,
+    bool hideCreatorIdentity = false,
+    VoidCallback? onSubscribe,
+  }) => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => ExploreDetailSheet(
+      opportunity: opportunity,
+      onApply: onApply,
+      onView: onView,
+      onViewCreatorProfile: onViewCreatorProfile,
+      canApply: canApply,
+      discoveryItem: discoveryItem,
+      hideCreatorIdentity: hideCreatorIdentity,
+      onSubscribe: onSubscribe,
+    ),
+  );
 
   @override
-  Widget build(BuildContext context) => Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
+  Widget build(BuildContext context, WidgetRef ref) => Container(
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height * 0.85,
+    ),
+    decoration: const BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(KolabingRadius.xxl),
       ),
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(KolabingRadius.xxl),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Drag handle
+        Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: KolabingSpacing.sm),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: KolabingColors.border,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Drag handle
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: KolabingSpacing.sm),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: KolabingColors.border,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
 
-          // Scrollable content
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                KolabingSpacing.lg,
-                KolabingSpacing.md,
-                KolabingSpacing.lg,
-                KolabingSpacing.md,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeaderRow(context),
+        // Scrollable content
+        Flexible(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+              KolabingSpacing.lg,
+              KolabingSpacing.md,
+              KolabingSpacing.lg,
+              KolabingSpacing.md,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderRow(context),
+                const SizedBox(height: KolabingSpacing.lg),
+                _buildTitleSection(),
+                const SizedBox(height: KolabingSpacing.lg),
+                if (discoveryItem?.isCommunityRequest ?? false) ...[
+                  _buildBusinessExploreSummary(),
                   const SizedBox(height: KolabingSpacing.lg),
-                  _buildTitleSection(),
-                  const SizedBox(height: KolabingSpacing.lg),
-                  if (opportunity.businessOffer.hasAnyOffer) ...[
-                    _buildOfferSummarySection(),
-                    const SizedBox(height: KolabingSpacing.lg),
-                  ],
-                  _buildLocationAndDetails(),
-                  if (opportunity.availabilityMode ==
-                          AvailabilityMode.recurring &&
-                      opportunity.recurringDays.isNotEmpty) ...[
-                    const SizedBox(height: KolabingSpacing.lg),
-                    _buildAvailabilityDays(),
-                  ],
-                  if (opportunity.categories.isNotEmpty) ...[
-                    const SizedBox(height: KolabingSpacing.lg),
-                    _buildCategoriesSection(),
-                  ],
-                  // Bottom spacing so content does not sit flush against buttons
-                  const SizedBox(height: KolabingSpacing.md),
                 ],
-              ),
+                if (opportunity.businessOffer.hasAnyOffer) ...[
+                  _buildOfferSummarySection(),
+                  const SizedBox(height: KolabingSpacing.lg),
+                ],
+                _buildLocationAndDetails(),
+                if (opportunity.availabilityMode ==
+                        AvailabilityMode.recurring &&
+                    opportunity.recurringDays.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.lg),
+                  _buildAvailabilityDays(),
+                ],
+                if (opportunity.categories.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.lg),
+                  _buildCategoriesSection(),
+                ],
+                if (!hideCreatorIdentity &&
+                    (discoveryItem?.isCommunityRequest ?? false) &&
+                    (opportunity.creatorProfile?.id.isNotEmpty ?? false)) ...[
+                  const SizedBox(height: KolabingSpacing.lg),
+                  _PastEventPhotosSection(
+                    profileId: opportunity.creatorProfile!.id,
+                  ),
+                ],
+                // Bottom spacing so content does not sit flush against buttons
+                const SizedBox(height: KolabingSpacing.md),
+              ],
             ),
           ),
+        ),
 
-          // Sticky action buttons
-          _buildActionButtons(context),
-        ],
-      ),
-    );
+        // Sticky action buttons
+        _buildActionButtons(context),
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Header Row
@@ -133,9 +160,11 @@ class ExploreDetailSheet extends StatelessWidget {
 
   Widget _buildHeaderRow(BuildContext context) {
     final creator = opportunity.creatorProfile;
-    final displayName = creator?.displayName ?? 'Unknown';
-    final initial = creator?.initial ?? '?';
-    final avatarUrl = creator?.avatarUrl;
+    final displayName = hideCreatorIdentity
+        ? 'Community hidden'
+        : (creator?.displayName ?? 'Unknown');
+    final initial = hideCreatorIdentity ? '?' : (creator?.initial ?? '?');
+    final avatarUrl = hideCreatorIdentity ? null : creator?.avatarUrl;
     final userType = creator?.userType ?? '';
 
     return Row(
@@ -179,35 +208,35 @@ class ExploreDetailSheet extends StatelessWidget {
   }
 
   Widget _buildAvatar(String? avatarUrl, String initial) => Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: avatarUrl != null && avatarUrl.isNotEmpty
-          ? ClipOval(
-              child: Image.network(
-                avatarUrl,
-                width: 64,
-                height: 64,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildAvatarFallback(initial),
-              ),
-            )
-          : _buildAvatarFallback(initial),
-    );
+    width: 64,
+    height: 64,
+    decoration: BoxDecoration(
+      color: KolabingColors.primary.withValues(alpha: 0.1),
+      shape: BoxShape.circle,
+    ),
+    child: avatarUrl != null && avatarUrl.isNotEmpty
+        ? ClipOval(
+            child: Image.network(
+              avatarUrl,
+              width: 64,
+              height: 64,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => _buildAvatarFallback(initial),
+            ),
+          )
+        : _buildAvatarFallback(initial),
+  );
 
   Widget _buildAvatarFallback(String initial) => Center(
-      child: Text(
-        initial,
-        style: GoogleFonts.rubik(
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.primary,
-        ),
+    child: Text(
+      initial,
+      style: GoogleFonts.rubik(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: KolabingColors.primary,
       ),
-    );
+    ),
+  );
 
   Widget _buildTypeBadge(String userType) {
     final label = userType.isNotEmpty
@@ -239,79 +268,175 @@ class ExploreDetailSheet extends StatelessWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildTitleSection() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        opportunity.title,
+        style: GoogleFonts.rubik(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.textPrimary,
+        ),
+      ),
+      if (opportunity.description.isNotEmpty) ...[
+        const SizedBox(height: KolabingSpacing.xs),
         Text(
-          opportunity.title,
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+          opportunity.description,
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: KolabingColors.textSecondary,
           ),
         ),
-        if (opportunity.description.isNotEmpty) ...[
-          const SizedBox(height: KolabingSpacing.xs),
-          Text(
-            opportunity.description,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: KolabingColors.textSecondary,
-            ),
-          ),
+      ],
+    ],
+  );
+
+  Widget _buildBusinessExploreSummary() {
+    final request = discoveryItem?.communityRequest;
+    if (request == null) {
+      return const SizedBox.shrink();
+    }
+
+    final sections = <Widget>[
+      if (request.needTypeLabels.isNotEmpty)
+        _buildSummaryCard(
+          icon: LucideIcons.search,
+          title: 'What they are looking for',
+          value: request.needTypeLabels.join(', '),
+        ),
+      if (request.offerInReturnLabels.isNotEmpty)
+        _buildSummaryCard(
+          icon: LucideIcons.gift,
+          title: 'What they offer',
+          value: request.offerInReturnLabels.join(', '),
+        ),
+      if (request.communitySize != null || request.typicalAttendance != null)
+        _buildSummaryCard(
+          icon: LucideIcons.users,
+          title: 'Community size',
+          value: _buildScaleLabel(request),
+        ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < sections.length; i++) ...[
+          sections[i],
+          if (i < sections.length - 1)
+            const SizedBox(height: KolabingSpacing.sm),
         ],
       ],
     );
+  }
 
-  // ---------------------------------------------------------------------------
-  // Offer Summary Section
-  // ---------------------------------------------------------------------------
-
-  Widget _buildOfferSummarySection() => Column(
+  Widget _buildSummaryCard({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.surfaceVariant,
+      borderRadius: KolabingRadius.borderRadiusMd,
+    ),
+    child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "What's Offered",
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: KolabingSpacing.xs),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          decoration: BoxDecoration(
-            color: KolabingColors.success.withValues(alpha: 0.1),
-            borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(
-              color: KolabingColors.success.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
+        Icon(icon, size: 18, color: KolabingColors.textSecondary),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                LucideIcons.gift,
-                size: 18,
-                color: KolabingColors.success,
+              Text(
+                title,
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.6,
+                  color: KolabingColors.textTertiary,
+                ),
               ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: Text(
-                  opportunity.offerSummary,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.textPrimary,
-                  ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.textPrimary,
+                  height: 1.45,
                 ),
               ),
             ],
           ),
         ),
       ],
-    );
+    ),
+  );
+
+  String _buildScaleLabel(CommunityRequestSummary request) {
+    final parts = <String>[];
+    if (request.communitySize != null) {
+      parts.add('${request.communitySize} community');
+    }
+    if (request.typicalAttendance != null) {
+      parts.add('${request.typicalAttendance} expected');
+    }
+    return parts.join(' · ');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Offer Summary Section
+  // ---------------------------------------------------------------------------
+
+  Widget _buildOfferSummarySection() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "What's Offered",
+        style: GoogleFonts.openSans(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.textPrimary,
+        ),
+      ),
+      const SizedBox(height: KolabingSpacing.xs),
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: KolabingColors.success.withValues(alpha: 0.1),
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(
+            color: KolabingColors.success.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              LucideIcons.gift,
+              size: 18,
+              color: KolabingColors.success,
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: Text(
+                opportunity.offerSummary,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 
   // ---------------------------------------------------------------------------
   // Location & Details Section
@@ -324,10 +449,7 @@ class ExploreDetailSheet extends StatelessWidget {
 
     final items = <_DetailItem>[
       if (opportunity.preferredCity.isNotEmpty)
-        _DetailItem(
-          icon: LucideIcons.mapPin,
-          label: opportunity.preferredCity,
-        ),
+        _DetailItem(icon: LucideIcons.mapPin, label: opportunity.preferredCity),
       _DetailItem(
         icon: LucideIcons.building2,
         label: opportunity.venueMode.displayName,
@@ -350,38 +472,34 @@ class ExploreDetailSheet extends StatelessWidget {
   }
 
   Widget _buildDetailPill(_DetailItem item) => Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(KolabingRadius.round),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            item.icon,
-            size: 14,
-            color: KolabingColors.textSecondary,
-          ),
-          const SizedBox(width: KolabingSpacing.xxs),
-          Flexible(
-            child: Text(
-              item.label,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.textSecondary,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.surfaceVariant,
+      borderRadius: BorderRadius.circular(KolabingRadius.round),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(item.icon, size: 14, color: KolabingColors.textSecondary),
+        const SizedBox(width: KolabingSpacing.xxs),
+        Flexible(
+          child: Text(
+            item.label,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: KolabingColors.textSecondary,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // Availability Days (Recurring Mode)
@@ -440,29 +558,31 @@ class ExploreDetailSheet extends StatelessWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildCategoriesSection() => Wrap(
-        spacing: KolabingSpacing.xs,
-        runSpacing: KolabingSpacing.xs,
-        children: opportunity.categories
-            .map((category) => Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.sm,
-                    vertical: KolabingSpacing.xxs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: KolabingColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(KolabingRadius.round),
-                  ),
-                  child: Text(
-                    category,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                ))
-            .toList(),
-      );
+    spacing: KolabingSpacing.xs,
+    runSpacing: KolabingSpacing.xs,
+    children: opportunity.categories
+        .map(
+          (category) => Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.sm,
+              vertical: KolabingSpacing.xxs,
+            ),
+            decoration: BoxDecoration(
+              color: KolabingColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(KolabingRadius.round),
+            ),
+            child: Text(
+              category,
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.textPrimary,
+              ),
+            ),
+          ),
+        )
+        .toList(),
+  );
 
   // ---------------------------------------------------------------------------
   // Action Buttons (Sticky)
@@ -470,6 +590,7 @@ class ExploreDetailSheet extends StatelessWidget {
 
   Widget _buildActionButtons(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    final showsSubscribeAction = !canApply && onSubscribe != null;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -495,10 +616,13 @@ class ExploreDetailSheet extends StatelessWidget {
             width: double.infinity,
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: onApply,
-              icon: const Icon(LucideIcons.send, size: 18),
+              onPressed: canApply ? onApply : onSubscribe,
+              icon: Icon(
+                showsSubscribeAction ? LucideIcons.crown : LucideIcons.send,
+                size: 18,
+              ),
               label: Text(
-                'APPLY NOW',
+                showsSubscribeAction ? 'UNLOCK TO APPLY' : 'APPLY NOW',
                 style: GoogleFonts.rubik(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -515,7 +639,7 @@ class ExploreDetailSheet extends StatelessWidget {
               ),
             ),
           ),
-          if (onViewCreatorProfile != null) ...[
+          if (onViewCreatorProfile != null && !hideCreatorIdentity) ...[
             const SizedBox(height: KolabingSpacing.xs),
             // C9: secondary link to the creator's public profile. Routes
             // through PublicProfileScreen so a business viewer reaches the
@@ -543,11 +667,204 @@ class ExploreDetailSheet extends StatelessWidget {
 
 /// Internal helper for detail pill items.
 class _DetailItem {
-  const _DetailItem({
-    required this.icon,
-    required this.label,
-  });
+  const _DetailItem({required this.icon, required this.label});
 
   final IconData icon;
   final String label;
+}
+
+class _PastEventPhotosSection extends StatefulWidget {
+  const _PastEventPhotosSection({required this.profileId});
+
+  final String profileId;
+
+  @override
+  State<_PastEventPhotosSection> createState() =>
+      _PastEventPhotosSectionState();
+}
+
+class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
+  final PageController _pageController = PageController(viewportFraction: 0.9);
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Consumer(
+    builder: (context, ref, _) {
+      final asyncEvents = ref.watch(profileEventsProvider(widget.profileId));
+
+      return asyncEvents.when(
+        loading: () => const SizedBox.shrink(),
+        error: (_, _) => const SizedBox.shrink(),
+        data: (events) {
+          final slides = _buildSlides(events);
+          if (slides.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Past event photos',
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                'Recent moments from this community',
+                style: GoogleFonts.openSans(
+                  fontSize: 12,
+                  color: KolabingColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.sm),
+              SizedBox(
+                height: 190,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: slides.length,
+                  onPageChanged: (index) {
+                    setState(() => _currentPage = index);
+                  },
+                  itemBuilder: (context, index) =>
+                      _PastEventPhotoCard(slide: slides[index]),
+                ),
+              ),
+              if (slides.length > 1) ...[
+                const SizedBox(height: KolabingSpacing.sm),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(slides.length, (index) {
+                    final isActive = index == _currentPage;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: isActive ? 18 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? KolabingColors.primary
+                            : KolabingColors.border,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ],
+          );
+        },
+      );
+    },
+  );
+
+  List<_PastEventPhotoSlide> _buildSlides(List<Event> events) {
+    final sorted = [...events]..sort((a, b) => b.date.compareTo(a.date));
+    return sorted
+        .take(5)
+        .expand(
+          (event) => event.photos.map(
+            (photo) => _PastEventPhotoSlide(
+              photoUrl: photo.thumbnailUrl ?? photo.url,
+              title: event.name,
+              subtitle: event.formattedDate,
+            ),
+          ),
+        )
+        .take(8)
+        .toList();
+  }
+}
+
+class _PastEventPhotoCard extends StatelessWidget {
+  const _PastEventPhotoCard({required this.slide});
+
+  final _PastEventPhotoSlide slide;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(right: KolabingSpacing.xs),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(KolabingRadius.lg),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            slide.photoUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              color: KolabingColors.surfaceVariant,
+              alignment: Alignment.center,
+              child: const Icon(
+                LucideIcons.imageOff,
+                color: KolabingColors.textTertiary,
+              ),
+            ),
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.04),
+                  Colors.black.withValues(alpha: 0.7),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: KolabingSpacing.md,
+            right: KolabingSpacing.md,
+            bottom: KolabingSpacing.md,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  slide.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.rubik(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  slide.subtitle,
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _PastEventPhotoSlide {
+  const _PastEventPhotoSlide({
+    required this.photoUrl,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String photoUrl;
+  final String title;
+  final String subtitle;
 }

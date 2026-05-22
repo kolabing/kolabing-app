@@ -284,7 +284,6 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
         availabilityMode: mode,
         // Clear mode-specific fields when switching
         clearRecurringDays: mode != AvailabilityMode.recurring,
-        clearSelectedTime: mode == AvailabilityMode.flexible,
       ),
       clearError: true,
     );
@@ -414,15 +413,13 @@ class OpportunityFormNotifier extends Notifier<OpportunityFormState> {
             errors['selected_time'] = 'Select a time';
           }
         } else {
-          // oneTime and flexible both need date range
           if (opp.availabilityStart.isBefore(DateTime.now())) {
             errors['availability_start'] = 'Start date must be in the future';
           }
           if (opp.availabilityEnd.isBefore(opp.availabilityStart)) {
             errors['availability_end'] = 'End date must be after start date';
           }
-          if (opp.availabilityMode == AvailabilityMode.oneTime &&
-              opp.selectedTime == null) {
+          if (opp.selectedTime == null) {
             errors['selected_time'] = 'Select a time';
           }
         }

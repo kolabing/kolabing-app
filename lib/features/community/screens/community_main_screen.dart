@@ -12,13 +12,14 @@ import '../../business/screens/explore_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
 
 /// Community user main screen with bottom navigation
 ///
 /// This is the main container for community users after login.
-/// Contains 5 tabs: Home, Explore, My Opportunities, Applications, Profile
+/// Contains 5 tabs: Home, Explore, My Kolabs, Applications, Profile
 class CommunityMainScreen extends ConsumerStatefulWidget {
   const CommunityMainScreen({super.key, this.initialTab = 0});
 
@@ -45,6 +46,11 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
+    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (!allowed || !mounted) {
+      return;
+    }
+
     await context.push(KolabingRoutes.communityOpportunitiesNew);
     if (mounted) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -81,7 +87,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
       const NavItem(
         icon: LucideIcons.star,
         activeIcon: LucideIcons.star,
-        label: 'My Opportunities',
+        label: 'My Kolabs',
       ),
       NavItem(
         icon: LucideIcons.send,
@@ -115,7 +121,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
       floatingActionButton:
           _currentIndex != 4 &&
               _currentIndex !=
-                  2 // Hide on profile and My Opportunities tabs
+                  2 // Hide on profile and My Kolabs tabs
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: 'Create Opportunity',

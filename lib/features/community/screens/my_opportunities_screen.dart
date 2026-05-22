@@ -86,8 +86,24 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     }
   }
 
-  void _onCreateNew() {
-    context.push(KolabingRoutes.communityOpportunitiesNew);
+  Future<void> _onCreateNew() async {
+    final profileState = ref.read(profileProvider);
+    if (profileState.isSubscribed) {
+      await context.push(KolabingRoutes.communityOpportunitiesNew);
+      return;
+    }
+
+    final allowed = await widget.showSubscriptionPaywall(context);
+    if (!(allowed ?? false) || !mounted) {
+      return;
+    }
+
+    await ref.read(profileProvider.notifier).refreshSubscription();
+    if (!mounted) {
+      return;
+    }
+
+    await context.push(KolabingRoutes.communityOpportunitiesNew);
   }
 
   void _onEdit(Opportunity opportunity) {

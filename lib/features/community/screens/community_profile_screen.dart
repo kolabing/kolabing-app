@@ -15,10 +15,10 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
-import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../event/widgets/past_events_section.dart';
 
 /// Community profile screen
@@ -507,7 +507,7 @@ class _CommunityProfileScreenState
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final name = profile.communityProfile?.name ?? profile.displayName;
     final communityType =
-        profile.communityProfile?.communityType ?? 'Community';
+        profile.communityProfile?.communityTypeLabel ?? 'Community';
     final photoUrl =
         profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
 
@@ -632,7 +632,7 @@ class _CommunityProfileScreenState
               ),
             ),
             child: Text(
-              communityType.toUpperCase(),
+              communityType,
               style: KolabingTextStyles.labelSmall.copyWith(
                 color: KolabingColors.info,
                 fontWeight: FontWeight.w600,

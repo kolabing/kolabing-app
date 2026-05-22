@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../utils/profile_type_formatter.dart';
 import '../providers/gallery_provider.dart';
 
 // =============================================================================
@@ -110,6 +111,8 @@ class PublicProfile {
       (instagram != null && instagram!.isNotEmpty) ||
       (tiktok != null && tiktok!.isNotEmpty) ||
       (website != null && website!.isNotEmpty);
+  String? get typeLabel =>
+      type == null || type!.isEmpty ? null : formatProfileTypeLabel(type!);
 
   PublicProfile copyWith({
     List<GalleryPhoto>? gallery,

@@ -12,6 +12,7 @@ class AppleSignInButton extends StatefulWidget {
     this.isLoading = false,
     this.showSuccess = false,
     this.isEnabled = true,
+    this.height = 52,
   });
 
   final VoidCallback? onPressed;
@@ -19,6 +20,7 @@ class AppleSignInButton extends StatefulWidget {
   final bool isLoading;
   final bool showSuccess;
   final bool isEnabled;
+  final double height;
 
   @override
   State<AppleSignInButton> createState() => _AppleSignInButtonState();
@@ -33,24 +35,25 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () {
-          if (!_canInteract) return;
-          HapticFeedback.mediumImpact();
-          widget.onPressed?.call();
-        },
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 100),
-          opacity: _canInteract ? 1.0 : 0.6,
-          child: Container(
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: _buildContent(),
-          ),
+    onTap: () {
+      if (!_canInteract) return;
+      HapticFeedback.mediumImpact();
+      widget.onPressed?.call();
+    },
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 100),
+      opacity: _canInteract ? 1.0 : 0.6,
+      child: Container(
+        height: widget.height,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
         ),
-      );
+        child: _buildContent(),
+      ),
+    ),
+  );
 
   Widget _buildContent() {
     if (widget.isLoading) {
@@ -71,20 +74,26 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
       );
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.apple, size: 24, color: Colors.white),
-          const SizedBox(width: 12),
-          Text(
-            widget.buttonText.toUpperCase(),
-            style: KolabingTextStyles.button.copyWith(
-              color: Colors.white,
-              letterSpacing: 1.0,
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.apple, size: 24, color: Colors.white),
+              const SizedBox(width: 10),
+              Text(
+                widget.buttonText.toUpperCase(),
+                style: KolabingTextStyles.button.copyWith(
+                  color: Colors.white,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

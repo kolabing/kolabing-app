@@ -10,10 +10,18 @@ import '../features/opportunity/models/opportunity.dart';
 import 'match_breakdown.dart';
 
 class ExploreSwipeCard extends StatefulWidget {
-  const ExploreSwipeCard({required this.item, this.onTap, super.key});
+  const ExploreSwipeCard({
+    required this.item,
+    this.onTap,
+    this.showKolabFirst = false,
+    this.hideCreatorIdentity = false,
+    super.key,
+  });
 
   final DiscoveryItem item;
   final VoidCallback? onTap;
+  final bool showKolabFirst;
+  final bool hideCreatorIdentity;
 
   @override
   State<ExploreSwipeCard> createState() => _ExploreSwipeCardState();
@@ -24,13 +32,17 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   int _currentImagePage = 0;
 
   DiscoveryItem get _item => widget.item;
+  bool get _isBusinessExploreCommunityCard =>
+      widget.showKolabFirst && _item.isCommunityRequest;
 
   List<String> get _imageUrls {
     final urls = <String>[];
     final cover = _item.coverPhotoUrl;
     if (cover != null && cover.isNotEmpty) urls.add(cover);
-    final avatar = _item.creatorProfile.avatarUrl;
-    if (avatar != null && avatar.isNotEmpty) urls.add(avatar);
+    if (urls.isEmpty && !widget.hideCreatorIdentity) {
+      final avatar = _item.creatorProfile.avatarUrl;
+      if (avatar != null && avatar.isNotEmpty) urls.add(avatar);
+    }
     return urls;
   }
 
@@ -120,7 +132,8 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
         alignment: Alignment.center,
         child: Text(
-          _item.creatorProfile.displayName.isNotEmpty
+          !widget.hideCreatorIdentity &&
+                  _item.creatorProfile.displayName.isNotEmpty
               ? _item.creatorProfile.displayName[0].toUpperCase()
               : '?',
           style: GoogleFonts.rubik(
@@ -226,17 +239,15 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           _buildDotIndicators(),
           const SizedBox(height: KolabingSpacing.xs),
         ],
-        _buildCreatorName(),
-        const SizedBox(height: KolabingSpacing.xs),
-        _buildPrimaryBadges(),
-        if (_item.fitReasonLabels.isNotEmpty) ...[
+        if (_isBusinessExploreCommunityCard) ...[
+          _buildKolabTitle(),
           const SizedBox(height: KolabingSpacing.xs),
-          _buildFitReasonBadges(),
+          _buildCreatorIdentity(),
+          const SizedBox(height: KolabingSpacing.sm),
+          _buildBusinessExploreHighlights(),
+        ] else ...[
+          _buildStandardInfoPanel(),
         ],
-        const SizedBox(height: KolabingSpacing.xs),
-        _buildDescription(),
-        const SizedBox(height: KolabingSpacing.xs),
-        _buildAvailabilityRow(),
       ],
     ),
   );
@@ -250,7 +261,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   );
 
   Widget _buildCreatorTypeBadge() {
-    final label = _item.isBusinessOffer
+    final label = _isBusinessExploreCommunityCard
+        ? 'Kolab'
+        : _item.isBusinessOffer
         ? 'Business Offer'
         : 'Community Request';
 
@@ -337,6 +350,18 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
+  Widget _buildKolabTitle() => Text(
+    _item.title,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: GoogleFonts.rubik(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: Colors.white,
+      height: 1.15,
+    ),
+  );
+
   Widget _buildCreatorName() => Text(
     _item.creatorProfile.displayName,
     maxLines: 1,
@@ -348,164 +373,330 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     ),
   );
 
-  Widget _buildPrimaryBadges() {
-    final badges = _item.primaryBadges;
-    if (badges.isEmpty) return const SizedBox.shrink();
+  Widget _buildStandardInfoPanel() {
+    final headline = _item.displayHeadline;
+    final activityBadge = _item.activityBadgeLabel;
 
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: badges
-          .map(
-            (String badge) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: KolabingColors.primary,
-                borderRadius: BorderRadius.circular(KolabingRadius.round),
-              ),
-              child: Text(
-                badge,
-                style: GoogleFonts.dmSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildFitReasonBadges() {
-    final reasons = _item.fitReasonLabels.take(2).toList();
-
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: reasons
-          .map(
-            (String reason) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(KolabingRadius.round),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-              ),
-              child: Text(
-                reason,
-                style: GoogleFonts.dmSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildDescription() {
-    final description = _item.description;
-    if (description.isEmpty) return const SizedBox.shrink();
-
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final textStyle = GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Colors.white.withValues(alpha: 0.82),
-        );
-
-        final textPainter = TextPainter(
-          text: TextSpan(text: description, style: textStyle),
-          maxLines: 2,
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: constraints.maxWidth);
-
-        final isOverflowing = textPainter.didExceedMaxLines;
-
-        return RichText(
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          text: TextSpan(
-            style: textStyle,
-            children: [
-              TextSpan(text: description),
-              if (isOverflowing)
-                TextSpan(
-                  text: ' show more',
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.white,
-                  ),
-                ),
-            ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.34),
+        borderRadius: BorderRadius.circular(KolabingRadius.lg),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAvailabilityRow() {
-    final availability = _item.availability;
-    if (availability.toOpportunityAvailabilityMode() ==
-        AvailabilityMode.recurring) {
-      return _buildRecurringDays(availability.recurringDays);
-    }
-
-    return Text(
-      '${DateFormat('MMM d').format(availability.start)}'
-      ' - '
-      '${DateFormat('MMM d').format(availability.end)}'
-      '  ·  '
-      '${availability.toOpportunityAvailabilityMode().displayName}',
-      style: GoogleFonts.openSans(
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
-        color: Colors.white.withValues(alpha: 0.7),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildCreatorName(),
+          if (_item.locationLabel.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            _buildLocationRow(),
+          ],
+          if (headline != null) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            _buildHeadlineBanner(headline),
+          ],
+          const SizedBox(height: KolabingSpacing.sm),
+          _buildMetaChips(activityBadge: activityBadge),
+          const SizedBox(height: KolabingSpacing.sm),
+          _buildAvailabilityRow(),
+        ],
       ),
     );
   }
 
-  Widget _buildRecurringDays(List<int> recurringDays) {
-    const dayLabels = <String>['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
+  Widget _buildCreatorIdentity() {
+    final isHidden = widget.hideCreatorIdentity;
+    final label = isHidden
+        ? 'Community hidden'
+        : _item.creatorProfile.displayName;
 
     return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(7, (int index) {
-        final dayNumber = index + 1;
-        final isAvailable = recurringDays.contains(dayNumber);
-
-        return Padding(
-          padding: EdgeInsets.only(right: index < 6 ? 6.0 : 0),
-          child: Container(
-            width: 36,
-            height: 36,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isAvailable
-                  ? KolabingColors.info
-                  : Colors.white.withValues(alpha: 0.15),
-            ),
-            child: Text(
-              dayLabels[index],
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isAvailable
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: 0.4),
-              ),
+      children: [
+        Icon(
+          isHidden ? Icons.lock_outline_rounded : Icons.groups_rounded,
+          size: 14,
+          color: Colors.white.withValues(alpha: 0.78),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.white.withValues(alpha: 0.82),
             ),
           ),
-        );
-      }),
+        ),
+      ],
     );
+  }
+
+  Widget _buildLocationRow() => Row(
+    children: [
+      Icon(
+        Icons.location_on_outlined,
+        size: 14,
+        color: Colors.white.withValues(alpha: 0.78),
+      ),
+      const SizedBox(width: 6),
+      Expanded(
+        child: Text(
+          _item.locationLabel,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.openSans(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.white.withValues(alpha: 0.84),
+          ),
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildHeadlineBanner(String headline) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: 10,
+    ),
+    decoration: BoxDecoration(
+      color: KolabingColors.softYellow.withValues(alpha: 0.94),
+      borderRadius: BorderRadius.circular(KolabingRadius.md),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 1),
+          child: Icon(Icons.bolt_rounded, size: 16, color: Colors.black),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            headline,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.dmSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              height: 1.25,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildMetaChips({required String? activityBadge}) {
+    final badges = _item.primaryBadges.take(2).toList();
+    final chips = <Widget>[
+      if (activityBadge != null)
+        _buildMetaChip(label: activityBadge, filled: true),
+      ...badges.map(
+        (String badge) => _buildMetaChip(label: badge, filled: false),
+      ),
+    ];
+
+    if (chips.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Wrap(spacing: 6, runSpacing: 6, children: chips);
+  }
+
+  Widget _buildMetaChip({required String label, required bool filled}) =>
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: filled
+              ? Colors.white.withValues(alpha: 0.16)
+              : KolabingColors.primary.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(KolabingRadius.round),
+          border: Border.all(
+            color: filled
+                ? Colors.white.withValues(alpha: 0.14)
+                : KolabingColors.primary.withValues(alpha: 0.32),
+          ),
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.dmSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: filled ? Colors.white : Colors.black,
+          ),
+        ),
+      );
+
+  Widget _buildBusinessExploreHighlights() {
+    final request = _item.communityRequest;
+    if (request == null) {
+      return const SizedBox.shrink();
+    }
+
+    final rows = <Widget>[
+      if (request.needTypeLabels.isNotEmpty)
+        _buildHighlightRow(
+          icon: Icons.search_rounded,
+          label: 'Looking for',
+          value: request.needTypeLabels.join(', '),
+        ),
+      if (request.offerInReturnLabels.isNotEmpty)
+        _buildHighlightRow(
+          icon: Icons.redeem_rounded,
+          label: 'They offer',
+          value: request.offerInReturnLabels.join(', '),
+        ),
+      if (request.communitySize != null || request.typicalAttendance != null)
+        _buildHighlightRow(
+          icon: Icons.people_alt_rounded,
+          label: 'Size',
+          value: _buildScaleText(request),
+        ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < rows.length; i++) ...[
+          rows[i],
+          if (i < rows.length - 1) const SizedBox(height: 6),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildHighlightRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(icon, size: 14, color: Colors.white.withValues(alpha: 0.72)),
+      const SizedBox(width: 6),
+      Expanded(
+        child: RichText(
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: '$label: ',
+                style: GoogleFonts.openSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+              ),
+              TextSpan(
+                text: value,
+                style: GoogleFonts.openSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withValues(alpha: 0.8),
+                  height: 1.35,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
+
+  String _buildScaleText(CommunityRequestSummary request) {
+    final parts = <String>[];
+    if (request.communitySize != null) {
+      parts.add('${request.communitySize} community');
+    }
+    if (request.typicalAttendance != null) {
+      parts.add('${request.typicalAttendance} expected');
+    }
+    return parts.join(' · ');
+  }
+
+  Widget _buildAvailabilityRow() {
+    final label = _availabilityLabel;
+    if (label.isEmpty) return const SizedBox.shrink();
+
+    return Row(
+      children: [
+        Icon(
+          Icons.calendar_today_rounded,
+          size: 13,
+          color: Colors.white.withValues(alpha: 0.7),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white.withValues(alpha: 0.72),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String get _availabilityLabel {
+    final availability = _item.availability;
+    final mode = availability.toOpportunityAvailabilityMode();
+    final dateLabel = _formatDateRange(availability.start, availability.end);
+
+    if (mode == AvailabilityMode.recurring) {
+      final dayLabels = <String>[
+        'Mon',
+        'Tue',
+        'Wed',
+        'Thu',
+        'Fri',
+        'Sat',
+        'Sun',
+      ];
+      final recurringLabel = availability.recurringDays
+          .where((int day) => day >= 1 && day <= 7)
+          .map((int day) => dayLabels[day - 1])
+          .join(', ');
+      if (recurringLabel.isNotEmpty) {
+        return '$recurringLabel · $dateLabel';
+      }
+      return '$dateLabel · ${mode.displayName}';
+    }
+
+    return '$dateLabel · ${mode.displayName}';
+  }
+
+  String _formatDateRange(DateTime start, DateTime end) {
+    final startLabel = DateFormat('MMM d').format(start);
+    final endLabel = DateFormat('MMM d').format(end);
+    if (start.year == end.year &&
+        start.month == end.month &&
+        start.day == end.day) {
+      return startLabel;
+    }
+    return '$startLabel - $endLabel';
   }
 }

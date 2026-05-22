@@ -1,9 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/providers/auth_provider.dart';
 import '../models/event.dart';
 import '../services/event_service.dart';
 
-final eventServiceProvider = Provider<EventService>((ref) => EventService());
+final eventServiceProvider = Provider<EventService>((ref) {
+  final authService = ref.watch(authServiceProvider);
+  return EventService(authService: authService);
+});
 
 /// State for the events list
 class EventsState {

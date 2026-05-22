@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/enums/product_type.dart';
 import 'package:kolabing_app/features/kolab/enums/venue_type.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
+
+import '../../../utils/profile_type_formatter.dart';
+import '../../../utils/remote_media_url.dart';
 
 // =============================================================================
 // Venue Preference
@@ -74,7 +76,7 @@ class KolabMedia {
   const KolabMedia({required this.url, required this.type, this.sortOrder = 0});
 
   factory KolabMedia.fromJson(Map<String, dynamic> json) => KolabMedia(
-    url: json['url']?.toString() ?? '',
+    url: normalizeRemoteMediaUrl(json['url']?.toString() ?? ''),
     type: json['type']?.toString() ?? 'image',
     sortOrder: _parseInt(json['sort_order']) ?? 0,
   );
@@ -193,9 +195,9 @@ class NegotiationTrigger {
   final String additionalOffer;
 
   Map<String, dynamic> toJson() => {
-        'condition': condition,
-        'additional_offer': additionalOffer,
-      };
+    'condition': condition,
+    'additional_offer': additionalOffer,
+  };
 }
 
 // =============================================================================
@@ -215,11 +217,11 @@ class MatchSignal {
   });
 
   factory MatchSignal.fromJson(Map<String, dynamic> json) => MatchSignal(
-        key: json['key']?.toString() ?? '',
-        label: json['label']?.toString() ?? '',
-        weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
-        score: (json['score'] as num?)?.toDouble() ?? 0.0,
-      );
+    key: json['key']?.toString() ?? '',
+    label: json['label']?.toString() ?? '',
+    weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+    score: (json['score'] as num?)?.toDouble() ?? 0.0,
+  );
 
   final String key;
   final String label;
@@ -373,14 +375,16 @@ class Kolab {
     baseOffer: json['base_offer']?.toString(),
     negotiationTriggers: json['negotiation_triggers'] is List
         ? (json['negotiation_triggers'] as List)
-            .map((e) => NegotiationTrigger.fromJson(e as Map<String, dynamic>))
-            .toList()
+              .map(
+                (e) => NegotiationTrigger.fromJson(e as Map<String, dynamic>),
+              )
+              .toList()
         : const [],
     matchScore: _parseInt(json['match_score']),
     matchBreakdown: json['match_breakdown'] is List
         ? (json['match_breakdown'] as List)
-            .map((e) => MatchSignal.fromJson(e as Map<String, dynamic>))
-            .toList()
+              .map((e) => MatchSignal.fromJson(e as Map<String, dynamic>))
+              .toList()
         : const [],
   );
 
@@ -503,8 +507,9 @@ class Kolab {
       'offer_headline': offerHeadline,
     if (baseOffer != null && baseOffer!.isNotEmpty) 'base_offer': baseOffer,
     if (negotiationTriggers.isNotEmpty)
-      'negotiation_triggers':
-          negotiationTriggers.map((t) => t.toJson()).toList(),
+      'negotiation_triggers': negotiationTriggers
+          .map((t) => t.toJson())
+          .toList(),
   };
 
   // ---------------------------------------------------------------------------
@@ -613,8 +618,9 @@ class Kolab {
     productType: clearProductType ? null : (productType ?? this.productType),
     offering: offering ?? this.offering,
     seekingCommunities: seekingCommunities ?? this.seekingCommunities,
-    offerHeadline:
-        clearOfferHeadline ? null : (offerHeadline ?? this.offerHeadline),
+    offerHeadline: clearOfferHeadline
+        ? null
+        : (offerHeadline ?? this.offerHeadline),
     baseOffer: clearBaseOffer ? null : (baseOffer ?? this.baseOffer),
     negotiationTriggers: negotiationTriggers ?? this.negotiationTriggers,
     matchScore: matchScore ?? this.matchScore,
@@ -631,6 +637,9 @@ class Kolab {
   @override
   String toString() =>
       'Kolab(id: $id, intentType: $intentType, title: $title, status: $status)';
+
+  List<String> get communityTypeLabels =>
+      communityTypes.map(formatProfileTypeLabel).toList(growable: false);
 
   // ---------------------------------------------------------------------------
   // Parsing helpers

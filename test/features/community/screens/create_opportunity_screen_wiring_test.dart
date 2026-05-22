@@ -58,8 +58,10 @@ class _TestOpportunityFormNotifier extends OpportunityFormNotifier {
     description: 'Draft description',
     categories: const ['Food'],
     businessOffer: const BusinessOffer(venue: true),
-    communityDeliverables: const CommunityDeliverables(socialMediaContent: true),
-    availabilityMode: AvailabilityMode.flexible,
+    communityDeliverables: const CommunityDeliverables(
+      socialMediaContent: true,
+    ),
+    availabilityMode: AvailabilityMode.oneTime,
     preferredCity: 'Madrid',
     status: OpportunityStatus.draft,
   );
@@ -71,10 +73,8 @@ class _TestOpportunityFormNotifier extends OpportunityFormNotifier {
   );
 
   @override
-  OpportunityFormState build() => OpportunityFormState(
-    currentStep: 4,
-    opportunity: _draftOpportunity,
-  );
+  OpportunityFormState build() =>
+      OpportunityFormState(currentStep: 4, opportunity: _draftOpportunity);
 
   @override
   Future<bool> saveAndPublish() async {

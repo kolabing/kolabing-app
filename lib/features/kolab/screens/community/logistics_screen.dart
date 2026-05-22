@@ -15,7 +15,7 @@ import '../../providers/kolab_form_provider.dart';
 
 /// Community step 3: "AVAILABILITY" + "LOCATION"
 ///
-/// Lets the user select availability mode (one-time, recurring, flexible),
+/// Lets the user select availability mode (one-time or recurring),
 /// dates/times, city, and optional area.
 class LogisticsScreen extends ConsumerStatefulWidget {
   const LogisticsScreen({super.key});
@@ -203,8 +203,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return _buildOneTimeFields(kolab, formState);
       case AvailabilityMode.recurring:
         return _buildRecurringFields(kolab, formState);
-      case AvailabilityMode.flexible:
-        return _buildFlexibleFields(kolab, formState);
     }
   }
 
@@ -302,76 +300,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
       error: formState.fieldErrors['selected_time'],
       onChanged: (time) =>
           ref.read(kolabFormProvider.notifier).updateSelectedTime(time),
-    ),
-  ];
-
-  List<Widget> _buildFlexibleFields(Kolab kolab, KolabFormState formState) => [
-    Row(
-      children: [
-        Expanded(
-          child: _buildDatePicker(
-            label: 'Available From',
-            value: kolab.availabilityStart,
-            error: formState.fieldErrors['availability_start'],
-            onChanged: (date) => ref
-                .read(kolabFormProvider.notifier)
-                .updateAvailabilityStart(date),
-          ),
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-        Expanded(
-          child: _buildDatePicker(
-            label: 'Available Until',
-            value: kolab.availabilityEnd,
-            error: formState.fieldErrors['availability_end'],
-            minDate: kolab.availabilityStart,
-            onChanged: (date) => ref
-                .read(kolabFormProvider.notifier)
-                .updateAvailabilityEnd(date),
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: KolabingSpacing.sm),
-    Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xs + 2,
-      ),
-      decoration: BoxDecoration(
-        color: KolabingColors.softYellow.withValues(alpha: 0.5),
-        borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(
-          color: KolabingColors.primary.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            LucideIcons.clock,
-            size: 16,
-            color: KolabingColors.textSecondary,
-          ),
-          const SizedBox(width: KolabingSpacing.xs),
-          Text(
-            'Time: Flexible -- no fixed time',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    ),
-    const SizedBox(height: KolabingSpacing.xs),
-    Text(
-      'Businesses will propose a specific date and time within this window.',
-      style: GoogleFonts.openSans(
-        fontSize: 12,
-        color: KolabingColors.textTertiary,
-        fontStyle: FontStyle.italic,
-      ),
     ),
   ];
 
@@ -658,8 +586,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
-      case AvailabilityMode.flexible:
-        return LucideIcons.calendarRange;
     }
   }
 }

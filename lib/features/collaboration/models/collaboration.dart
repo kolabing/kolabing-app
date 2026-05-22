@@ -187,6 +187,7 @@ class Collaboration {
     this.selectedChallengeIds,
     required this.createdAt,
     this.updatedAt,
+    this.feedbackSubmittedAt,
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) {
@@ -226,6 +227,9 @@ class Collaboration {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
           : null,
+      feedbackSubmittedAt: json['feedback_submitted_at'] != null
+          ? DateTime.parse(json['feedback_submitted_at'] as String)
+          : null,
     );
   }
 
@@ -245,6 +249,10 @@ class Collaboration {
   final List<String>? selectedChallengeIds;
   final DateTime createdAt;
   final DateTime? updatedAt;
+
+  /// Set once the business has submitted post-completion feedback. When null,
+  /// the mobile "Leave review" CTA is shown on completed collaborations.
+  final DateTime? feedbackSubmittedAt;
 
   /// Get the other party based on current user type
   CollaborationPartner partnerFor({required bool isBusiness}) =>

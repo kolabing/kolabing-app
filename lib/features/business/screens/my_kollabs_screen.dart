@@ -57,24 +57,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     }
   }
 
-  void _onCreateNew() {
-    final profileState = ref.read(profileProvider);
-    final listState = ref.read(myKolabsProvider);
-
-    // Free tier: 1 kollab allowed without subscription.
-    // If no active subscription and already has 1+ kollab, show paywall.
-    final hasSubscription = profileState.isSubscribed;
-    if (!hasSubscription && !listState.isLoading && listState.total >= 1) {
-      showModalBottomSheet<bool>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const SubscriptionPaywall(),
-      );
+  Future<void> _onCreateNew() async {
+    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (!allowed || !mounted) {
       return;
     }
 
-    context.push(KolabingRoutes.kolabNew);
+    await context.push(KolabingRoutes.kolabNew);
   }
 
   void _onEdit(Kolab kolab) {

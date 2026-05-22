@@ -8,6 +8,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../utils/image_picker_normalize.dart';
+
+Future<File> materializePickedImageFile(XFile image) async {
+  final normalizedPath = await normalizePickedImage(image);
+  return File(normalizedPath);
+}
 
 /// Photo upload widget for profile picture
 class PhotoUploadWidget extends StatefulWidget {
@@ -62,10 +68,10 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
   }
 
   Future<void> _pickImageFromSource(ImageSource source) async {
-    HapticFeedback.mediumImpact();
+    await HapticFeedback.mediumImpact();
 
     try {
-      final XFile? image = await _picker.pickImage(
+      final image = await _picker.pickImage(
         source: source,
         maxWidth: 800,
         maxHeight: 800,
@@ -73,7 +79,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
       );
 
       if (image != null) {
-        final file = File(image.path);
+        final file = await materializePickedImageFile(image);
         final fileSize = await file.length();
 
         // Check file size (max 5MB)
@@ -101,7 +107,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
           ),
         );
       }
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Error picking image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -280,7 +286,9 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
 
                 // Label
                 Text(
-                  widget.photoBase64 == null ? widget.addLabel : 'Tap to change',
+                  widget.photoBase64 == null
+                      ? widget.addLabel
+                      : 'Tap to change',
                   style: GoogleFonts.openSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,

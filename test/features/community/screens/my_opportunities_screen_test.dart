@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
 import 'package:kolabing_app/features/community/screens/my_opportunities_screen.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
@@ -130,6 +131,68 @@ void main() {
     expect(notifier.clearSubscriptionCalls, 1);
     expect(notifier.refreshCalls, 1);
     expect(profileNotifier.refreshSubscriptionCalls, 1);
+  });
+
+  testWidgets('create new opportunity is blocked behind the paywall', (
+    tester,
+  ) async {
+    var paywallShown = 0;
+
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => MyOpportunitiesScreen(
+            showSubscriptionPaywall: (_) async {
+              paywallShown++;
+              return false;
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/community/opportunities/new',
+          builder: (context, state) =>
+              const Scaffold(body: Text('create-opportunity')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          myOpportunitiesProvider.overrideWith(
+            () => _FakeMyOpportunitiesNotifier(const OpportunityListState()),
+          ),
+          profileProvider.overrideWith(
+            () => _FakeProfileNotifier(
+              const ProfileState(
+                profile: UserModel(
+                  id: 'community-1',
+                  email: 'community@example.com',
+                  userType: UserType.community,
+                  hasActiveSubscription: false,
+                  communityProfile: CommunityProfile(
+                    id: 'profile-1',
+                    name: 'Move Club',
+                  ),
+                ),
+                isLoading: false,
+                isInitialized: true,
+              ),
+            ),
+          ),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    expect(paywallShown, 1);
+    expect(find.text('create-opportunity'), findsNothing);
   });
 
   testWidgets('published opportunity View navigates to opportunity detail', (

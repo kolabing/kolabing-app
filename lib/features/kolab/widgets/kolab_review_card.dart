@@ -30,15 +30,13 @@ class KolabReviewCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          border: Border.all(color: KolabingColors.border),
-        ),
-        child: Column(
-          children: _buildSections(),
-        ),
-      );
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      border: Border.all(color: KolabingColors.border),
+    ),
+    child: Column(children: _buildSections()),
+  );
 
   // ---------------------------------------------------------------------------
   // Section dispatcher based on intent type
@@ -60,357 +58,326 @@ class KolabReviewCard extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   List<Widget> _buildCommunitySeekingSections() => [
-        // Step 0 -- Title & Description
-        _ReviewSection(
-          icon: LucideIcons.fileText,
-          title: 'Title & Description',
-          step: 0,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReviewField(
-                label: 'Title',
-                value: kolab.title.isNotEmpty ? kolab.title : '--',
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              _ReviewField(
-                label: 'Description',
-                value:
-                    kolab.description.isNotEmpty ? kolab.description : '--',
-              ),
-            ],
+    // Step 0 -- Title & Description
+    _ReviewSection(
+      icon: LucideIcons.fileText,
+      title: 'Title & Description',
+      step: 0,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReviewField(
+            label: 'Title',
+            value: kolab.title.isNotEmpty ? kolab.title : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 1 -- Needs
-        _ReviewSection(
-          icon: LucideIcons.heart,
-          title: 'What You Need',
-          step: 1,
-          onEdit: onEditSection,
-          child: kolab.needs.isNotEmpty
-              ? _ChipList(
-                  items: kolab.needs.map((n) => n.displayName).toList(),
-                )
-              : const _EmptyHint(text: 'No needs selected'),
-        ),
-        const _SectionDivider(),
-        // Step 2 -- Community Info
-        _ReviewSection(
-          icon: LucideIcons.users,
-          title: 'Community Info',
-          step: 2,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (kolab.communityTypes.isNotEmpty)
-                _ReviewField(
-                  label: 'Types',
-                  value: kolab.communityTypes.join(', '),
-                ),
-              if (kolab.communitySize != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Community Size',
-                  value: '${kolab.communitySize}',
-                ),
-              ],
-              if (kolab.typicalAttendance != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Typical Attendance',
-                  value: '${kolab.typicalAttendance}',
-                ),
-              ],
-              if (kolab.communityTypes.isEmpty &&
-                  kolab.communitySize == null &&
-                  kolab.typicalAttendance == null)
-                const _EmptyHint(text: 'No community info provided'),
-            ],
+          const SizedBox(height: KolabingSpacing.xs),
+          _ReviewField(
+            label: 'Description',
+            value: kolab.description.isNotEmpty ? kolab.description : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 3 -- Offers in Return
-        _ReviewSection(
-          icon: LucideIcons.gift,
-          title: 'Offers in Return',
-          step: 3,
-          onEdit: onEditSection,
-          child: kolab.offersInReturn.isNotEmpty
-              ? _ChipList(
-                  items: kolab.offersInReturn
-                      .map((o) => o.displayName)
-                      .toList(),
-                )
-              : const _EmptyHint(text: 'No offers selected'),
-        ),
-        const _SectionDivider(),
-        // Step 4 -- Location
-        _ReviewSection(
-          icon: LucideIcons.mapPin,
-          title: 'Location',
-          step: 4,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReviewField(
-                label: 'City',
-                value: kolab.preferredCity.isNotEmpty
-                    ? kolab.preferredCity
-                    : '--',
-              ),
-              if (kolab.area != null && kolab.area!.isNotEmpty) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(label: 'Area', value: kolab.area!),
-              ],
-            ],
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 1 -- Needs
+    _ReviewSection(
+      icon: LucideIcons.heart,
+      title: 'What You Need',
+      step: 1,
+      onEdit: onEditSection,
+      child: kolab.needs.isNotEmpty
+          ? _ChipList(items: kolab.needs.map((n) => n.displayName).toList())
+          : const _EmptyHint(text: 'No needs selected'),
+    ),
+    const _SectionDivider(),
+    // Step 2 -- Community Info
+    _ReviewSection(
+      icon: LucideIcons.users,
+      title: 'Community Info',
+      step: 2,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (kolab.communityTypes.isNotEmpty)
+            _ReviewField(
+              label: 'Types',
+              value: kolab.communityTypeLabels.join(', '),
+            ),
+          if (kolab.communitySize != null) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(
+              label: 'Community Size',
+              value: '${kolab.communitySize}',
+            ),
+          ],
+          if (kolab.typicalAttendance != null) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(
+              label: 'Typical Attendance',
+              value: '${kolab.typicalAttendance}',
+            ),
+          ],
+          if (kolab.communityTypes.isEmpty &&
+              kolab.communitySize == null &&
+              kolab.typicalAttendance == null)
+            const _EmptyHint(text: 'No community info provided'),
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 3 -- Offers in Return
+    _ReviewSection(
+      icon: LucideIcons.gift,
+      title: 'Offers in Return',
+      step: 3,
+      onEdit: onEditSection,
+      child: kolab.offersInReturn.isNotEmpty
+          ? _ChipList(
+              items: kolab.offersInReturn.map((o) => o.displayName).toList(),
+            )
+          : const _EmptyHint(text: 'No offers selected'),
+    ),
+    const _SectionDivider(),
+    // Step 4 -- Location
+    _ReviewSection(
+      icon: LucideIcons.mapPin,
+      title: 'Location',
+      step: 4,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReviewField(
+            label: 'City',
+            value: kolab.preferredCity.isNotEmpty ? kolab.preferredCity : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 5 -- Availability
-        _buildAvailabilitySection(5),
-      ];
+          if (kolab.area != null && kolab.area!.isNotEmpty) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Area', value: kolab.area!),
+          ],
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 5 -- Availability
+    _buildAvailabilitySection(5),
+  ];
 
   // ---------------------------------------------------------------------------
   // Venue Promotion sections
   // ---------------------------------------------------------------------------
 
   List<Widget> _buildVenuePromotionSections() => [
-        // Step 0 -- Campaign & Venue
-        _ReviewSection(
-          icon: LucideIcons.building2,
-          title: 'Campaign & Venue',
-          step: 0,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReviewField(
-                label: 'Title',
-                value: kolab.title.isNotEmpty ? kolab.title : '--',
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              _ReviewField(
-                label: 'Description',
-                value: kolab.description.isNotEmpty ? kolab.description : '--',
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              _ReviewField(
-                label: 'Venue',
-                value: kolab.venueName ?? '--',
-              ),
-              if (kolab.venueType != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Type',
-                  value: kolab.venueType!.displayName,
-                ),
-              ],
-              if (kolab.capacity != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Capacity',
-                  value: '${kolab.capacity}',
-                ),
-              ],
-              if (kolab.venueAddress != null &&
-                  kolab.venueAddress!.isNotEmpty) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Address',
-                  value: kolab.venueAddress!,
-                ),
-              ],
-            ],
+    // Step 0 -- Campaign & Venue
+    _ReviewSection(
+      icon: LucideIcons.building2,
+      title: 'Campaign & Venue',
+      step: 0,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReviewField(
+            label: 'Title',
+            value: kolab.title.isNotEmpty ? kolab.title : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 1 -- Media
-        _ReviewSection(
-          icon: LucideIcons.image,
-          title: 'Media',
-          step: 1,
-          onEdit: onEditSection,
-          child: _ReviewField(
-            label: 'Photos / Videos',
-            value: kolab.media.isNotEmpty
-                ? '${kolab.media.length} item${kolab.media.length == 1 ? '' : 's'}'
-                : 'No media added',
+          const SizedBox(height: KolabingSpacing.xs),
+          _ReviewField(
+            label: 'Description',
+            value: kolab.description.isNotEmpty ? kolab.description : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 2 -- Offering
-        _ReviewSection(
-          icon: LucideIcons.gift,
-          title: 'What You Offer',
-          step: 2,
-          onEdit: onEditSection,
-          child: kolab.offering.isNotEmpty
-              ? _ChipList(items: kolab.offering)
-              : const _EmptyHint(text: 'No offerings listed'),
-        ),
-        const _SectionDivider(),
-        // Step 3 -- Seeking Communities
-        _ReviewSection(
-          icon: LucideIcons.users,
-          title: 'Seeking Communities',
-          step: 3,
-          onEdit: onEditSection,
-          child: kolab.seekingCommunities.isNotEmpty
-              ? _ChipList(items: kolab.seekingCommunities)
-              : const _EmptyHint(text: 'No communities selected'),
-        ),
-        const _SectionDivider(),
-        // Step 4 -- Past Events
-        _ReviewSection(
-          icon: LucideIcons.calendar,
-          title: 'Past Events',
-          step: 4,
-          onEdit: onEditSection,
-          child: _ReviewField(
-            label: 'Events',
-            value: kolab.pastEvents.isNotEmpty
-                ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'}'
-                : 'No past events added',
+          const SizedBox(height: KolabingSpacing.xs),
+          _ReviewField(label: 'Venue', value: kolab.venueName ?? '--'),
+          if (kolab.venueType != null) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Type', value: kolab.venueType!.displayName),
+          ],
+          if (kolab.capacity != null) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Capacity', value: '${kolab.capacity}'),
+          ],
+          if (kolab.venueAddress != null && kolab.venueAddress!.isNotEmpty) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Address', value: kolab.venueAddress!),
+          ],
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 1 -- Media
+    _ReviewSection(
+      icon: LucideIcons.image,
+      title: 'Media',
+      step: 1,
+      onEdit: onEditSection,
+      child: _ReviewField(
+        label: 'Photos / Videos',
+        value: kolab.media.isNotEmpty
+            ? '${kolab.media.length} item${kolab.media.length == 1 ? '' : 's'}'
+            : 'No media added',
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 2 -- Offering
+    _ReviewSection(
+      icon: LucideIcons.gift,
+      title: 'What You Offer',
+      step: 2,
+      onEdit: onEditSection,
+      child: kolab.offering.isNotEmpty
+          ? _ChipList(items: kolab.offering)
+          : const _EmptyHint(text: 'No offerings listed'),
+    ),
+    const _SectionDivider(),
+    // Step 3 -- Seeking Communities
+    _ReviewSection(
+      icon: LucideIcons.users,
+      title: 'Seeking Communities',
+      step: 3,
+      onEdit: onEditSection,
+      child: kolab.seekingCommunities.isNotEmpty
+          ? _ChipList(items: kolab.seekingCommunities)
+          : const _EmptyHint(text: 'No communities selected'),
+    ),
+    const _SectionDivider(),
+    // Step 4 -- Past Events
+    _ReviewSection(
+      icon: LucideIcons.calendar,
+      title: 'Past Events',
+      step: 4,
+      onEdit: onEditSection,
+      child: _ReviewField(
+        label: 'Events',
+        value: kolab.pastEvents.isNotEmpty
+            ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'}'
+            : 'No past events added',
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 5 -- Location
+    _ReviewSection(
+      icon: LucideIcons.mapPin,
+      title: 'Location',
+      step: 5,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReviewField(
+            label: 'City',
+            value: kolab.preferredCity.isNotEmpty ? kolab.preferredCity : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 5 -- Location
-        _ReviewSection(
-          icon: LucideIcons.mapPin,
-          title: 'Location',
-          step: 5,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReviewField(
-                label: 'City',
-                value: kolab.preferredCity.isNotEmpty
-                    ? kolab.preferredCity
-                    : '--',
-              ),
-              if (kolab.venueAddress != null &&
-                  kolab.venueAddress!.isNotEmpty) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(label: 'Address', value: kolab.venueAddress!),
-              ],
-            ],
-          ),
-        ),
-        const _SectionDivider(),
-        // Step 6 -- Availability
-        _buildAvailabilitySection(6),
-      ];
+          if (kolab.venueAddress != null && kolab.venueAddress!.isNotEmpty) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Address', value: kolab.venueAddress!),
+          ],
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 6 -- Availability
+    _buildAvailabilitySection(6),
+  ];
 
   // ---------------------------------------------------------------------------
   // Product Promotion sections
   // ---------------------------------------------------------------------------
 
   List<Widget> _buildProductPromotionSections() => [
-        // Step 0 -- Product Info
-        _ReviewSection(
-          icon: LucideIcons.box,
-          title: 'Product Info',
-          step: 0,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReviewField(
-                label: 'Name',
-                value: kolab.productName ?? '--',
-              ),
-              if (kolab.productType != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(
-                  label: 'Type',
-                  value: kolab.productType!.displayName,
-                ),
-              ],
-            ],
+    // Step 0 -- Product Info
+    _ReviewSection(
+      icon: LucideIcons.box,
+      title: 'Product Info',
+      step: 0,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReviewField(label: 'Name', value: kolab.productName ?? '--'),
+          if (kolab.productType != null) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Type', value: kolab.productType!.displayName),
+          ],
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 1 -- Media
+    _ReviewSection(
+      icon: LucideIcons.image,
+      title: 'Media',
+      step: 1,
+      onEdit: onEditSection,
+      child: _ReviewField(
+        label: 'Photos / Videos',
+        value: kolab.media.isNotEmpty
+            ? '${kolab.media.length} item${kolab.media.length == 1 ? '' : 's'}'
+            : 'No media added',
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 2 -- Offering
+    _ReviewSection(
+      icon: LucideIcons.gift,
+      title: 'What You Offer',
+      step: 2,
+      onEdit: onEditSection,
+      child: kolab.offering.isNotEmpty
+          ? _ChipList(items: kolab.offering)
+          : const _EmptyHint(text: 'No offerings listed'),
+    ),
+    const _SectionDivider(),
+    // Step 3 -- Seeking Communities
+    _ReviewSection(
+      icon: LucideIcons.users,
+      title: 'Seeking Communities',
+      step: 3,
+      onEdit: onEditSection,
+      child: kolab.seekingCommunities.isNotEmpty
+          ? _ChipList(items: kolab.seekingCommunities)
+          : const _EmptyHint(text: 'No communities selected'),
+    ),
+    const _SectionDivider(),
+    // Step 4 -- Past Events
+    _ReviewSection(
+      icon: LucideIcons.calendar,
+      title: 'Past Events',
+      step: 4,
+      onEdit: onEditSection,
+      child: _ReviewField(
+        label: 'Events',
+        value: kolab.pastEvents.isNotEmpty
+            ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'}'
+            : 'No past events added',
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 5 -- Location
+    _ReviewSection(
+      icon: LucideIcons.mapPin,
+      title: 'Location',
+      step: 5,
+      onEdit: onEditSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReviewField(
+            label: 'City',
+            value: kolab.preferredCity.isNotEmpty ? kolab.preferredCity : '--',
           ),
-        ),
-        const _SectionDivider(),
-        // Step 1 -- Media
-        _ReviewSection(
-          icon: LucideIcons.image,
-          title: 'Media',
-          step: 1,
-          onEdit: onEditSection,
-          child: _ReviewField(
-            label: 'Photos / Videos',
-            value: kolab.media.isNotEmpty
-                ? '${kolab.media.length} item${kolab.media.length == 1 ? '' : 's'}'
-                : 'No media added',
-          ),
-        ),
-        const _SectionDivider(),
-        // Step 2 -- Offering
-        _ReviewSection(
-          icon: LucideIcons.gift,
-          title: 'What You Offer',
-          step: 2,
-          onEdit: onEditSection,
-          child: kolab.offering.isNotEmpty
-              ? _ChipList(items: kolab.offering)
-              : const _EmptyHint(text: 'No offerings listed'),
-        ),
-        const _SectionDivider(),
-        // Step 3 -- Seeking Communities
-        _ReviewSection(
-          icon: LucideIcons.users,
-          title: 'Seeking Communities',
-          step: 3,
-          onEdit: onEditSection,
-          child: kolab.seekingCommunities.isNotEmpty
-              ? _ChipList(items: kolab.seekingCommunities)
-              : const _EmptyHint(text: 'No communities selected'),
-        ),
-        const _SectionDivider(),
-        // Step 4 -- Past Events
-        _ReviewSection(
-          icon: LucideIcons.calendar,
-          title: 'Past Events',
-          step: 4,
-          onEdit: onEditSection,
-          child: _ReviewField(
-            label: 'Events',
-            value: kolab.pastEvents.isNotEmpty
-                ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'}'
-                : 'No past events added',
-          ),
-        ),
-        const _SectionDivider(),
-        // Step 5 -- Location
-        _ReviewSection(
-          icon: LucideIcons.mapPin,
-          title: 'Location',
-          step: 5,
-          onEdit: onEditSection,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ReviewField(
-                label: 'City',
-                value: kolab.preferredCity.isNotEmpty
-                    ? kolab.preferredCity
-                    : '--',
-              ),
-              if (kolab.area != null && kolab.area!.isNotEmpty) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                _ReviewField(label: 'Area', value: kolab.area!),
-              ],
-            ],
-          ),
-        ),
-        const _SectionDivider(),
-        // Step 6 -- Availability
-        _buildAvailabilitySection(6),
-      ];
+          if (kolab.area != null && kolab.area!.isNotEmpty) ...[
+            const SizedBox(height: KolabingSpacing.xs),
+            _ReviewField(label: 'Area', value: kolab.area!),
+          ],
+        ],
+      ),
+    ),
+    const _SectionDivider(),
+    // Step 6 -- Availability
+    _buildAvailabilitySection(6),
+  ];
 
   // ---------------------------------------------------------------------------
   // Shared availability section
@@ -437,10 +404,7 @@ class KolabReviewCard extends ConsumerWidget {
       title: 'Availability',
       step: step,
       onEdit: onEditSection,
-      child: _ReviewField(
-        label: 'Schedule',
-        value: availabilityText,
-      ),
+      child: _ReviewField(label: 'Schedule', value: availabilityText),
     );
   }
 }
@@ -467,44 +431,40 @@ class _ReviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: () => onEdit(step),
-        borderRadius: KolabingRadius.borderRadiusMd,
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    onTap: () => onEdit(step),
+    borderRadius: KolabingRadius.borderRadiusMd,
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    icon,
-                    size: 18,
-                    color: KolabingColors.textSecondary,
+              Icon(icon, size: 18, color: KolabingColors.textSecondary),
+              const SizedBox(width: KolabingSpacing.xs),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.rubik(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
                   ),
-                  const SizedBox(width: KolabingSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                  const Icon(
-                    LucideIcons.pencil,
-                    size: 16,
-                    color: KolabingColors.textTertiary,
-                  ),
-                ],
+                ),
               ),
-              const SizedBox(height: KolabingSpacing.sm),
-              child,
+              const Icon(
+                LucideIcons.pencil,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
             ],
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.sm),
+          child,
+        ],
+      ),
+    ),
+  );
 }
 
 /// Horizontal divider between review sections.
@@ -512,45 +472,39 @@ class _SectionDivider extends StatelessWidget {
   const _SectionDivider();
 
   @override
-  Widget build(BuildContext context) => const Divider(
-        height: 1,
-        thickness: 1,
-        color: KolabingColors.border,
-      );
+  Widget build(BuildContext context) =>
+      const Divider(height: 1, thickness: 1, color: KolabingColors.border);
 }
 
 /// A labelled field in a review section.
 class _ReviewField extends StatelessWidget {
-  const _ReviewField({
-    required this.label,
-    required this.value,
-  });
+  const _ReviewField({required this.label, required this.value});
 
   final String label;
   final String value;
 
   @override
   Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textTertiary,
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.xxxs),
-          Text(
-            value,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textPrimary,
-            ),
-          ),
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: GoogleFonts.openSans(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.textTertiary,
+        ),
+      ),
+      const SizedBox(height: KolabingSpacing.xxxs),
+      Text(
+        value,
+        style: GoogleFonts.openSans(
+          fontSize: 14,
+          color: KolabingColors.textPrimary,
+        ),
+      ),
+    ],
+  );
 }
 
 /// Row of small chips for displaying lists of items.
@@ -561,31 +515,31 @@ class _ChipList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Wrap(
-        spacing: KolabingSpacing.xxs,
-        runSpacing: KolabingSpacing.xxs,
-        children: items
-            .map(
-              (item) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.xs,
-                  vertical: KolabingSpacing.xxs,
-                ),
-                decoration: BoxDecoration(
-                  color: KolabingColors.softYellow,
-                  borderRadius: KolabingRadius.borderRadiusXs,
-                ),
-                child: Text(
-                  item,
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.textPrimary,
-                  ),
-                ),
+    spacing: KolabingSpacing.xxs,
+    runSpacing: KolabingSpacing.xxs,
+    children: items
+        .map(
+          (item) => Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.xs,
+              vertical: KolabingSpacing.xxs,
+            ),
+            decoration: BoxDecoration(
+              color: KolabingColors.softYellow,
+              borderRadius: KolabingRadius.borderRadiusXs,
+            ),
+            child: Text(
+              item,
+              style: GoogleFonts.openSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: KolabingColors.textPrimary,
               ),
-            )
-            .toList(),
-      );
+            ),
+          ),
+        )
+        .toList(),
+  );
 }
 
 /// Placeholder text for empty sections.
@@ -596,11 +550,11 @@ class _EmptyHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        text,
-        style: GoogleFonts.openSans(
-          fontSize: 13,
-          fontStyle: FontStyle.italic,
-          color: KolabingColors.textTertiary,
-        ),
-      );
+    text,
+    style: GoogleFonts.openSans(
+      fontSize: 13,
+      fontStyle: FontStyle.italic,
+      color: KolabingColors.textTertiary,
+    ),
+  );
 }
