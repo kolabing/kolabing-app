@@ -9,8 +9,9 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
-import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../utils/remote_media_url.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -142,6 +143,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         return _buildScaffold(
           application: application,
           counterpartyName: _counterpartyName(application),
+          counterpartyAvatarUrl: _counterpartyAvatar(application),
+          // The header avatar belongs to the counterparty's identity. A lapsed
+          // business (§2.8) has the whole conversation blurred, so blur the
+          // header photo too for consistency. Communities are never blurred.
+          blurHeaderAvatar: mustResubscribe,
           body: Column(
             children: [
               _buildApplicationHeader(application),
@@ -244,10 +250,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return application.recipientName;
   }
 
+  /// Resolve the OTHER party's avatar URL for the chat header, mirroring
+  /// [_counterpartyName]. Returns the normalised absolute URL or null when the
+  /// counterparty has no photo (the header then falls back to the initial).
+  String? _counterpartyAvatar(Application application) {
+    final user = ref.read(authProvider).user;
+    final myId = user?.id ?? '';
+
+    String? raw;
+    if (myId.isNotEmpty && application.applicantId == myId) {
+      raw = application.recipientAvatar;
+    } else if (myId.isNotEmpty && application.recipientId == myId) {
+      raw = application.applicantAvatar;
+    } else {
+      // Last resort (ids unavailable): mirror the name fallback above and
+      // prefer the applicant's avatar when the applicant is a real party.
+      final applicant = application.applicantName;
+      raw = (applicant.isNotEmpty && applicant != 'Unknown')
+          ? application.applicantAvatar
+          : application.recipientAvatar;
+    }
+
+    if (raw == null || raw.isEmpty) return null;
+    final normalized = normalizeRemoteMediaUrl(raw);
+    return normalized.isEmpty ? null : normalized;
+  }
+
   Widget _buildScaffold({
     required Widget body,
     Application? application,
     String? counterpartyName,
+    String? counterpartyAvatarUrl,
+    bool blurHeaderAvatar = false,
     bool isLoading = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -273,7 +307,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: application != null
             ? Row(
                 children: [
-                  _buildAvatar(displayName, isDark: isDark),
+                  _buildAvatar(
+                    displayName,
+                    avatarUrl: counterpartyAvatarUrl,
+                    blurred: blurHeaderAvatar,
+                    isDark: isDark,
+                  ),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: Column(
@@ -335,21 +374,55 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _buildAvatar(String name, {bool isDark = false}) => Container(
-    width: 36,
-    height: 36,
-    decoration: BoxDecoration(
-      color: KolabingColors.primary.withValues(alpha: 0.1),
-      shape: BoxShape.circle,
-    ),
-    child: Center(
-      child: Text(
-        name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.primary,
-        ),
+  Widget _buildAvatar(
+    String name, {
+    String? avatarUrl,
+    bool blurred = false,
+    bool isDark = false,
+  }) {
+    const size = 36.0;
+    final hasPhoto = avatarUrl != null && avatarUrl.isNotEmpty;
+
+    final inner = Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: KolabingColors.primary.withValues(alpha: 0.1),
+        shape: BoxShape.circle,
+      ),
+      // Render the counterparty's real photo when one exists; the initial
+      // circle is only a fallback (no URL or image load failure).
+      child: hasPhoto
+          ? ClipOval(
+              child: Image.network(
+                avatarUrl,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => _avatarInitial(name),
+              ),
+            )
+          : _avatarInitial(name),
+    );
+
+    // §2.8 lapse: blur the header identity for a re-gated business, matching
+    // the blurred conversation. Communities / subscribed businesses pass
+    // [blurred] == false and see it clear.
+    return BlurredIdentity(
+      enabled: blurred,
+      sigma: 6,
+      borderRadius: BorderRadius.circular(size / 2),
+      child: inner,
+    );
+  }
+
+  Widget _avatarInitial(String name) => Center(
+    child: Text(
+      name.isNotEmpty ? name[0].toUpperCase() : '?',
+      style: GoogleFonts.rubik(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: KolabingColors.primary,
       ),
     ),
   );
@@ -974,16 +1047,20 @@ class _MessageBubble extends StatelessWidget {
   }
 
   Widget _buildAvatar(SenderProfile profile) {
-    if (profile.profilePhoto != null && profile.profilePhoto!.isNotEmpty) {
-      return ClipOval(
-        child: Image.network(
-          profile.profilePhoto!,
-          width: 28,
-          height: 28,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _buildFallbackAvatar(profile),
-        ),
-      );
+    final photo = profile.profilePhoto;
+    if (photo != null && photo.isNotEmpty) {
+      final url = normalizeRemoteMediaUrl(photo);
+      if (url.isNotEmpty) {
+        return ClipOval(
+          child: Image.network(
+            url,
+            width: 28,
+            height: 28,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _buildFallbackAvatar(profile),
+          ),
+        );
+      }
     }
     return _buildFallbackAvatar(profile);
   }

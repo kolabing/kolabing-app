@@ -148,6 +148,9 @@ class _CollaborationFeedbackSheetState
         return _draft.starRating != null;
       case _FbStep.recommend:
         return _draft.wouldRecommend != null;
+      case _FbStep.benefits:
+        // Required for community: the backend `benefits` field is mandatory.
+        return _draft.hasValidBenefits;
       case _FbStep.review:
         return _draft.canSubmit && !_isSubmitting;
       default:
@@ -169,6 +172,7 @@ class _CollaborationFeedbackSheetState
   bool _isOptionalStep(_FbStep step) =>
       step != _FbStep.star &&
       step != _FbStep.recommend &&
+      step != _FbStep.benefits &&
       step != _FbStep.review;
 
   bool _isStepAnswered(_FbStep step) {
@@ -180,7 +184,7 @@ class _CollaborationFeedbackSheetState
       case _FbStep.revenue:
         return _draft.revenueAmountCents != null || _draft.revenueSkipped;
       case _FbStep.benefits:
-        return _draft.benefitsReceived?.trim().isNotEmpty ?? false;
+        return _draft.hasValidBenefits;
       case _FbStep.expectations:
         return _draft.metExpectationsRating != null ||
             (_draft.metExpectationsComment?.trim().isNotEmpty ?? false);
@@ -370,11 +374,13 @@ class _CollaborationFeedbackSheetState
         );
       case _FbStep.benefits:
         return _BenefitsStep(
-          value: _draft.benefitsReceived,
-          onChanged: (value) => setState(
+          selected: _draft.benefits,
+          otherText: _draft.benefitsOther,
+          onChanged: (selected, otherText) => setState(
             () => _draft = _draft.copyWith(
-              benefitsReceived: value,
-              clearBenefitsReceived: value == null,
+              benefits: selected,
+              benefitsOther: otherText,
+              clearBenefitsOther: otherText == null,
             ),
           ),
         );
@@ -972,75 +978,157 @@ class _ExpectationsStepState extends State<_ExpectationsStep> {
   );
 }
 
-/// Community-only: free-text describing the benefits the community received
-/// (e.g. free venue, discounts, exposure). Optional / skippable.
+/// Community-only: multiselect of the benefits the community received (free
+/// venue, discounts, freebies, professional content, or a custom "Other").
+/// Required — at least one benefit must be picked to finish.
 class _BenefitsStep extends StatefulWidget {
-  const _BenefitsStep({required this.value, required this.onChanged});
+  const _BenefitsStep({
+    required this.selected,
+    required this.otherText,
+    required this.onChanged,
+  });
 
-  final String? value;
-  final ValueChanged<String?> onChanged;
+  final Set<BenefitType> selected;
+  final String? otherText;
+  final void Function(Set<BenefitType> selected, String? otherText) onChanged;
 
   @override
   State<_BenefitsStep> createState() => _BenefitsStepState();
 }
 
 class _BenefitsStepState extends State<_BenefitsStep> {
-  late final TextEditingController _controller;
+  late final TextEditingController _otherController;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.value ?? '');
+    _otherController = TextEditingController(text: widget.otherText ?? '');
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _otherController.dispose();
     super.dispose();
   }
 
+  void _toggle(BenefitType benefit) {
+    HapticFeedback.selectionClick();
+    final next = Set<BenefitType>.from(widget.selected);
+    if (next.contains(benefit)) {
+      next.remove(benefit);
+    } else {
+      next.add(benefit);
+    }
+    final otherText = next.contains(BenefitType.other)
+        ? (_otherController.text.trim().isEmpty
+              ? null
+              : _otherController.text.trim())
+        : null;
+    widget.onChanged(next, otherText);
+  }
+
   @override
-  Widget build(BuildContext context) => _StepFrame(
-    title: 'What benefits did you receive?',
-    subtitle:
-        'Optional — e.g. free venue, discounts, products, or exposure to the '
-        "business's followers.",
-    child: TextField(
-      controller: _controller,
-      maxLines: 4,
-      maxLength: 400,
-      style: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textPrimary,
-      ),
-      decoration: InputDecoration(
-        hintText: 'List what the business provided (optional)',
-        hintStyle: GoogleFonts.openSans(
-          fontSize: 14,
-          color: KolabingColors.textTertiary,
-        ),
-        filled: true,
-        fillColor: KolabingColors.surfaceVariant,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: KolabingColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: KolabingColors.primary,
-            width: 1.5,
+  Widget build(BuildContext context) {
+    final showOther = widget.selected.contains(BenefitType.other);
+    return _StepFrame(
+      title: 'What benefits did you receive?',
+      subtitle: 'Select all that apply — what the business provided to you.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: BenefitType.values.map((benefit) {
+              final selected = widget.selected.contains(benefit);
+              return GestureDetector(
+                onTap: () => _toggle(benefit),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? KolabingColors.primary
+                        : KolabingColors.surfaceVariant,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: selected
+                          ? KolabingColors.primary
+                          : KolabingColors.border,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        selected ? LucideIcons.check : LucideIcons.plus,
+                        size: 15,
+                        color: selected
+                            ? KolabingColors.onPrimary
+                            : KolabingColors.textSecondary,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        benefit.label,
+                        style: GoogleFonts.dmSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: selected
+                              ? KolabingColors.onPrimary
+                              : KolabingColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-        ),
+          if (showOther) ...[
+            const SizedBox(height: 16),
+            TextField(
+              controller: _otherController,
+              maxLength: 120,
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                color: KolabingColors.textPrimary,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Describe the other benefit',
+                hintStyle: GoogleFonts.openSans(
+                  fontSize: 14,
+                  color: KolabingColors.textTertiary,
+                ),
+                filled: true,
+                fillColor: KolabingColors.surfaceVariant,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: KolabingColors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: KolabingColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(
+                    color: KolabingColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+              onChanged: (value) => widget.onChanged(
+                widget.selected,
+                value.trim().isEmpty ? null : value.trim(),
+              ),
+            ),
+          ],
+        ],
       ),
-      onChanged: (value) =>
-          widget.onChanged(value.trim().isEmpty ? null : value),
-    ),
-  );
+    );
+  }
 }
 
 class _RecommendStep extends StatelessWidget {
@@ -1184,12 +1272,8 @@ class _ReviewStep extends StatelessWidget {
             ),
           ],
           // Community-only rows
-          if (draft.variant.isCommunity &&
-              (draft.benefitsReceived?.trim().isNotEmpty ?? false))
-            _ReviewRow(
-              label: 'Benefits',
-              value: draft.benefitsReceived!.trim(),
-            ),
+          if (draft.variant.isCommunity && draft.benefits.isNotEmpty)
+            _ReviewRow(label: 'Benefits', value: draft.benefitsAsText),
           _ReviewRow(
             label: 'Posts / reels',
             value: _bucketLabel(draft.postsReels),

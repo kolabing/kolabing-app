@@ -21,19 +21,38 @@ enum FeedbackVariant {
 }
 
 /// Output volume buckets used by BOTH sides when reporting how much content was
-/// produced. Wire values match the backend enum exactly.
+/// produced. The backend `posts_reels` / `stories_posted` fields are plain
+/// integers, so [apiCount] maps each bucket to a representative count (its lower
+/// bound) for the wire payload.
 enum OutputBucket {
-  zero('0', 'None'),
-  oneToFive('1-5', '1–5'),
-  sixToTen('6-10', '6–10'),
-  elevenToFifteen('11-15', '11–15'),
-  sixteenToThirty('16-30', '16–30'),
-  thirtyOneToFifty('31-50', '31–50'),
-  fiftyPlus('50+', '50+');
+  zero('0', 'None', 0),
+  oneToFive('1-5', '1–5', 1),
+  sixToTen('6-10', '6–10', 6),
+  elevenToFifteen('11-15', '11–15', 11),
+  sixteenToThirty('16-30', '16–30', 16),
+  thirtyOneToFifty('31-50', '31–50', 31),
+  fiftyPlus('50+', '50+', 50);
 
-  const OutputBucket(this.apiValue, this.label);
+  const OutputBucket(this.apiValue, this.label, this.apiCount);
 
   final String apiValue;
+  final String label;
+
+  /// Representative integer count sent to the backend (the bucket's lower bound).
+  final int apiCount;
+}
+
+/// Community-only multiselect: the kinds of benefits the community received from
+/// the business. Serialized into the backend's free-text `benefits` field.
+enum BenefitType {
+  freebies('Freebies'),
+  discount('Discount'),
+  freeVenue('Free venue'),
+  professionalContent('Professional content creator'),
+  other('Other');
+
+  const BenefitType(this.label);
+
   final String label;
 }
 
@@ -48,7 +67,8 @@ class CollaborationFeedbackDraft {
     this.postsReels,
     this.revenueAmountCents,
     this.revenueSkipped = false,
-    this.benefitsReceived,
+    this.benefits = const <BenefitType>{},
+    this.benefitsOther,
     this.metExpectationsRating,
     this.metExpectationsComment,
     this.wouldRecommend,
@@ -72,9 +92,12 @@ class CollaborationFeedbackDraft {
   /// Business-only: explicit "I'd rather not say" (distinct from "unanswered").
   final bool revenueSkipped;
 
-  /// Community-only: free-text of the benefits the community received from the
-  /// business (e.g. "free venue, -20% on drinks, exposure to followers").
-  final String? benefitsReceived;
+  /// Community-only: the benefits the community received from the business,
+  /// chosen from [BenefitType]. Serialized to the backend `benefits` string.
+  final Set<BenefitType> benefits;
+
+  /// Community-only free text accompanying [BenefitType.other].
+  final String? benefitsOther;
 
   final int? metExpectationsRating;
   final String? metExpectationsComment;
@@ -83,9 +106,38 @@ class CollaborationFeedbackDraft {
   /// this business". Required for both.
   final bool? wouldRecommend;
 
-  /// The two questions both variants gate on: a star rating and a recommend
-  /// answer. Everything else is optional / skippable for either side.
-  bool get canSubmit => starRating != null && wouldRecommend != null;
+  /// Gate before the draft can be submitted/finished. Both variants need a star
+  /// rating and a recommend answer; a community must also pick at least one
+  /// benefit (the backend `benefits` field is required for community reviewers).
+  bool get canSubmit {
+    if (starRating == null || wouldRecommend == null) return false;
+    if (variant.isCommunity && !hasValidBenefits) return false;
+    return true;
+  }
+
+  /// At least one benefit picked, and if "Other" is chosen its text is filled.
+  bool get hasValidBenefits {
+    if (benefits.isEmpty) return false;
+    if (benefits.contains(BenefitType.other)) {
+      return benefitsOther?.trim().isNotEmpty ?? false;
+    }
+    return true;
+  }
+
+  /// The benefits rendered as the backend's free-text `benefits` value.
+  String get benefitsAsText {
+    final parts = <String>[];
+    for (final benefit in BenefitType.values) {
+      if (!benefits.contains(benefit)) continue;
+      if (benefit == BenefitType.other) {
+        final text = benefitsOther?.trim();
+        parts.add(text != null && text.isNotEmpty ? 'Other: $text' : 'Other');
+      } else {
+        parts.add(benefit.label);
+      }
+    }
+    return parts.join(', ');
+  }
 
   CollaborationFeedbackDraft copyWith({
     FeedbackVariant? variant,
@@ -94,14 +146,15 @@ class CollaborationFeedbackDraft {
     OutputBucket? postsReels,
     int? revenueAmountCents,
     bool? revenueSkipped,
-    String? benefitsReceived,
+    Set<BenefitType>? benefits,
+    String? benefitsOther,
     int? metExpectationsRating,
     String? metExpectationsComment,
     bool? wouldRecommend,
     bool clearStoriesPosted = false,
     bool clearPostsReels = false,
     bool clearRevenueAmount = false,
-    bool clearBenefitsReceived = false,
+    bool clearBenefitsOther = false,
     bool clearMetExpectationsRating = false,
     bool clearMetExpectationsComment = false,
   }) => CollaborationFeedbackDraft(
@@ -115,9 +168,10 @@ class CollaborationFeedbackDraft {
         ? null
         : (revenueAmountCents ?? this.revenueAmountCents),
     revenueSkipped: revenueSkipped ?? this.revenueSkipped,
-    benefitsReceived: clearBenefitsReceived
+    benefits: benefits ?? this.benefits,
+    benefitsOther: clearBenefitsOther
         ? null
-        : (benefitsReceived ?? this.benefitsReceived),
+        : (benefitsOther ?? this.benefitsOther),
     metExpectationsRating: clearMetExpectationsRating
         ? null
         : (metExpectationsRating ?? this.metExpectationsRating),
@@ -127,31 +181,38 @@ class CollaborationFeedbackDraft {
     wouldRecommend: wouldRecommend ?? this.wouldRecommend,
   );
 
-  /// Serialize for the finish endpoint. Common keys are sent for both sides;
-  /// variant-specific keys are only included for the relevant role so the
-  /// backend never receives, e.g., a "revenue" key from a community.
-  Map<String, dynamic> toPayload() => <String, dynamic>{
-    'reviewer_role': variant.apiValue,
-    'star_rating': starRating,
-    if (postsReels != null) 'posts_reels_bucket': postsReels!.apiValue,
-    if (metExpectationsRating != null)
-      'met_expectations_rating': metExpectationsRating,
-    if (metExpectationsComment != null &&
-        metExpectationsComment!.trim().isNotEmpty)
-      'met_expectations_comment': metExpectationsComment!.trim(),
-    'would_recommend': wouldRecommend,
-    // Business-only keys
-    if (variant.isBusiness) ...<String, dynamic>{
-      if (storiesPosted != null)
-        'stories_posted_bucket': storiesPosted!.apiValue,
-      if (revenueAmountCents != null)
-        'revenue_amount_cents': revenueAmountCents,
-      'revenue_currency': 'EUR',
-    },
-    // Community-only keys
-    if (variant.isCommunity &&
-        benefitsReceived != null &&
-        benefitsReceived!.trim().isNotEmpty)
-      'benefits_received': benefitsReceived!.trim(),
-  };
+  /// Serialize for the `POST /collaborations/{id}/finish` endpoint. Keys MUST
+  /// match `FinishCollaborationRequest` exactly:
+  ///   shared:    rating, posts_reels, expectation_match, would_recommend, note
+  ///   business:  stories_posted (int), revenue (numeric, EUR units)
+  ///   community: benefits (string)
+  /// Required-but-skippable numeric fields default to 0 so the finish never
+  /// 422s on a step the user skipped.
+  Map<String, dynamic> toPayload() {
+    final payload = <String, dynamic>{
+      'rating': starRating,
+      'posts_reels': postsReels?.apiCount ?? 0,
+      // The backend wants a boolean. Treat a 3+ rating (or an unanswered step)
+      // as "expectations met"; only an explicit 1–2 rating is "not met".
+      'expectation_match': (metExpectationsRating ?? 3) >= 3,
+      'would_recommend': wouldRecommend,
+    };
+
+    final note = metExpectationsComment?.trim();
+    if (note != null && note.isNotEmpty) {
+      // Backend caps `note` at 200 chars.
+      payload['note'] = note.length > 200 ? note.substring(0, 200) : note;
+    }
+
+    if (variant.isBusiness) {
+      payload['stories_posted'] = storiesPosted?.apiCount ?? 0;
+      payload['revenue'] = revenueAmountCents != null
+          ? revenueAmountCents! / 100
+          : 0;
+    } else {
+      payload['benefits'] = benefitsAsText;
+    }
+
+    return payload;
+  }
 }

@@ -9,6 +9,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../utils/remote_media_url.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 import '../widgets/listed_offers_tab.dart';
@@ -528,16 +529,22 @@ class _ApplicationCard extends StatelessWidget {
   );
 
   Widget _buildAvatar() {
-    final String? avatarUrl;
+    final String? rawAvatarUrl;
     final String name;
 
     if (isReceived) {
-      avatarUrl = application.applicantAvatar;
+      rawAvatarUrl = application.applicantAvatar;
       name = application.applicantName;
     } else {
-      avatarUrl = application.recipientAvatar;
+      rawAvatarUrl = application.recipientAvatar;
       name = application.recipientName;
     }
+
+    // Normalise so a relative path from the API resolves against the API
+    // origin, matching the rest of the app's media handling.
+    final avatarUrl = (rawAvatarUrl != null && rawAvatarUrl.isNotEmpty)
+        ? normalizeRemoteMediaUrl(rawAvatarUrl)
+        : null;
 
     return Container(
       width: 48,
@@ -546,7 +553,7 @@ class _ApplicationCard extends StatelessWidget {
         color: KolabingColors.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
-      child: avatarUrl != null
+      child: (avatarUrl != null && avatarUrl.isNotEmpty)
           ? ClipOval(
               child: Image.network(
                 avatarUrl,
