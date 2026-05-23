@@ -12,6 +12,27 @@ import 'package:kolabing_app/features/subscription/services/iap_service.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('initialize loads the subscription from a bundle-based product id', () async {
+    final iap = _TestInAppPurchase(
+      availableProducts: <ProductDetails>[_bundleMonthlyProduct],
+    );
+    addTearDown(iap.dispose);
+
+    final service = IAPService(
+      iap: iap,
+      isIosPlatform: () => true,
+    );
+
+    await service.initialize();
+
+    expect(
+      iap.lastQueriedProductIds,
+      contains('com.kolabing.kolabingApp.subscription.monthly'),
+    );
+    expect(service.isAvailable, isTrue);
+    expect(service.monthlyProduct?.id, _bundleMonthlyProduct.id);
+  });
+
   test(
     'restored purchases verify with original transaction id when available',
     () async {
@@ -90,10 +111,16 @@ class _CapturingProfileService extends ProfileService {
 }
 
 class _TestInAppPurchase implements InAppPurchase {
+  _TestInAppPurchase({
+    List<ProductDetails>? availableProducts,
+  }) : _availableProducts = availableProducts ?? <ProductDetails>[_monthlyProduct];
+
   final StreamController<List<PurchaseDetails>> _controller =
       StreamController<List<PurchaseDetails>>.broadcast();
+  final List<ProductDetails> _availableProducts;
 
   PurchaseParam? lastPurchaseParam;
+  Set<String>? lastQueriedProductIds;
 
   @override
   Stream<List<PurchaseDetails>> get purchaseStream => _controller.stream;
@@ -112,10 +139,19 @@ class _TestInAppPurchase implements InAppPurchase {
   @override
   Future<ProductDetailsResponse> queryProductDetails(
     Set<String> identifiers,
-  ) async => ProductDetailsResponse(
-    productDetails: <ProductDetails>[_monthlyProduct],
-    notFoundIDs: <String>[],
-  );
+  ) async {
+    lastQueriedProductIds = identifiers;
+    final matchingProducts = _availableProducts
+        .where((product) => identifiers.contains(product.id))
+        .toList();
+    final notFoundIDs = identifiers
+        .where((identifier) => !matchingProducts.any((p) => p.id == identifier))
+        .toList();
+    return ProductDetailsResponse(
+      productDetails: matchingProducts,
+      notFoundIDs: notFoundIDs,
+    );
+  }
 
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
@@ -144,6 +180,16 @@ class _TestInAppPurchase implements InAppPurchase {
 
 final ProductDetails _monthlyProduct = ProductDetails(
   id: kMonthlySubscriptionId,
+  title: 'Premium Monthly',
+  description: 'Monthly premium subscription',
+  price: '29.99 EUR',
+  rawPrice: 29.99,
+  currencyCode: 'EUR',
+  currencySymbol: 'EUR',
+);
+
+final ProductDetails _bundleMonthlyProduct = ProductDetails(
+  id: 'com.kolabing.kolabingApp.subscription.monthly',
   title: 'Premium Monthly',
   description: 'Monthly premium subscription',
   price: '29.99 EUR',

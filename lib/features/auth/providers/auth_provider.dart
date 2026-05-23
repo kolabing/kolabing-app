@@ -6,11 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../services/notification_service.dart';
-import '../utils/auth_navigation.dart';
-import '../utils/session_reset.dart';
+import '../../../services/one_signal_service.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
+import '../utils/auth_navigation.dart';
+import '../utils/session_reset.dart';
 
 /// Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -131,7 +132,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isNewUser: false,
       );
 
-      unawaited(_registerFcmToken());
+      unawaited(_syncPushIdentity(response.user));
 
       return AuthResult(success: true, isNewUser: false, user: response.user);
     } on ApiException catch (e) {
@@ -177,7 +178,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isNewUser: false,
       );
 
-      unawaited(_registerFcmToken());
+      unawaited(_syncPushIdentity(response.user));
 
       return AuthResult(success: true, isNewUser: false, user: response.user);
     } on AuthCancelledException {
@@ -223,14 +224,18 @@ class AuthNotifier extends Notifier<AuthState> {
             user: user,
             token: token,
           );
+          unawaited(_syncPushIdentity(user));
         } else {
+          unawaited(OneSignalService.instance.logout());
           state = state.copyWith(status: AuthStatus.unauthenticated);
         }
       } else {
+        unawaited(OneSignalService.instance.logout());
         state = state.copyWith(status: AuthStatus.unauthenticated);
       }
     } on Exception catch (e) {
       debugPrint('Check auth status error: $e');
+      unawaited(OneSignalService.instance.logout());
       state = state.copyWith(status: AuthStatus.unauthenticated);
     }
   }
@@ -261,6 +266,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
       // Delete FCM token so this device stops receiving notifications
       await NotificationService.instance.deleteToken();
+      await OneSignalService.instance.logout();
       await _authService.logout();
     } on Exception catch (e) {
       debugPrint('Logout error: $e');
@@ -291,6 +297,16 @@ class AuthNotifier extends Notifier<AuthState> {
     } on Exception catch (e) {
       debugPrint('[FCM] Token registration error: $e');
     }
+  }
+
+  Future<void> _syncPushIdentity(UserModel user) async {
+    try {
+      await OneSignalService.instance.loginUser(user);
+    } on Exception catch (e) {
+      debugPrint('[OneSignal] Identity sync error: $e');
+    }
+
+    await _registerFcmToken();
   }
 
   Future<void> _registerDeviceToken(String fcmToken) async {
@@ -331,7 +347,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isNewUser: response.isNewUser,
       );
 
-      unawaited(_registerFcmToken());
+      unawaited(_syncPushIdentity(response.user));
 
       return AuthResult(
         success: true,
