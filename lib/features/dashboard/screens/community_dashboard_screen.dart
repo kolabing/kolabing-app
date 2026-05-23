@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
@@ -101,6 +102,10 @@ class _CommunityDashboardScreenState
         _buildStatsGrid(data),
         const SizedBox(height: KolabingSpacing.lg),
 
+        // Referral banner first — community-growth action
+        const ReferralBannerCard(),
+        const SizedBox(height: KolabingSpacing.md),
+
         // Wallet card (rewards)
         Consumer(
           builder: (context, ref, _) {
@@ -116,8 +121,6 @@ class _CommunityDashboardScreenState
                             context.push(KolabingRoutes.communityWalletWithdraw)
                       : null,
                 ),
-                const SizedBox(height: KolabingSpacing.md),
-                const ReferralBannerCard(),
                 const SizedBox(height: KolabingSpacing.lg),
               ],
             );
@@ -183,11 +186,12 @@ class _CommunityDashboardScreenState
           children: [
             Expanded(
               child: DashboardStatCard(
-                title: 'Pending Applications',
+                title: 'Pending',
                 count: data.applicationsSent.pending,
                 icon: LucideIcons.clock,
+                iconSlug: UiIconSlug.clock,
+                iconVariant: UiIconVariant.expressive,
                 accentColor: const Color(0xFFFF9800),
-                subtitle: '${data.applicationsSent.total} total sent',
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -196,8 +200,9 @@ class _CommunityDashboardScreenState
                 title: 'Accepted',
                 count: data.applicationsSent.accepted,
                 icon: LucideIcons.checkCircle,
+                iconSlug: UiIconSlug.checkCircle,
+                iconVariant: UiIconVariant.expressive,
                 accentColor: const Color(0xFF4CAF50),
-                subtitle: '${data.applicationsSent.declined} declined',
               ),
             ),
           ],
@@ -210,8 +215,9 @@ class _CommunityDashboardScreenState
                 title: 'Active Collabs',
                 count: data.collaborations.active,
                 icon: LucideIcons.users,
+                iconSlug: UiIconSlug.target,
+                iconVariant: UiIconVariant.expressive,
                 accentColor: KolabingColors.info,
-                subtitle: '${data.collaborations.upcoming} upcoming',
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -220,8 +226,9 @@ class _CommunityDashboardScreenState
                 title: 'Completed',
                 count: data.collaborations.completed,
                 icon: LucideIcons.trophy,
+                iconSlug: UiIconSlug.trophy,
+                iconVariant: UiIconVariant.expressive,
                 accentColor: const Color(0xFF9C27B0),
-                subtitle: '${data.collaborations.total} total',
               ),
             ),
           ],
@@ -351,8 +358,8 @@ class _CommunityDashboardScreenState
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
       child: Column(
         children: [
-          Icon(
-            LucideIcons.calendar,
+          UiIcon(
+            icon: UiIconSlug.calendar,
             size: 40,
             color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)

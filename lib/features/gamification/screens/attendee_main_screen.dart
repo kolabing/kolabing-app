@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../../widgets/ui_icon.dart';
 import 'attendee_home_screen.dart';
 import 'attendee_profile_screen.dart';
 import 'qr_scanner_screen.dart';
@@ -64,6 +65,7 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
         label: 'Home',
+        iconSlug: UiIconSlug.home,
       ),
       const NavItem(
         icon: LucideIcons.qrCode,
@@ -74,6 +76,7 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
+        iconSlug: UiIconSlug.user,
       ),
     ];
 

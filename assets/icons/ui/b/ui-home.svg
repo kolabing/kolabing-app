@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- House body fill -->
+  <path d="M14 28v28h36V28L32 10 14 28z" fill="#FFE28C" stroke="#0D0D0D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Roof accent -->
+  <path d="M8 30L32 10l24 20" stroke="#0D0D0D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Door (purple) -->
+  <rect x="24" y="38" width="16" height="18" rx="2" fill="#7F77DD" stroke="#0D0D0D" stroke-width="2"/>
+  <!-- Windows (white) -->
+  <rect x="16" y="34" width="9" height="8" rx="1.5" fill="white" stroke="#0D0D0D" stroke-width="1.5"/>
+  <rect x="39" y="34" width="9" height="8" rx="1.5" fill="white" stroke="#0D0D0D" stroke-width="1.5"/>
+  <!-- Door knob -->
+  <circle cx="37" cy="48" r="1.5" fill="#FFE28C"/>
+</svg>

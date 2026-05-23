@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
@@ -173,6 +174,7 @@ class _BusinessDashboardScreenState
               title: 'Pending Applications',
               count: data.applicationsReceived.pending,
               icon: LucideIcons.clock,
+              iconSlug: UiIconSlug.clock,
               accentColor: const Color(0xFFFF9800),
               subtitle: '${data.applicationsReceived.total} total',
             ),
@@ -197,6 +199,7 @@ class _BusinessDashboardScreenState
               title: 'Completed',
               count: data.collaborations.completed,
               icon: LucideIcons.checkCircle,
+              iconSlug: UiIconSlug.checkCircle,
               accentColor: KolabingColors.info,
               subtitle: '${data.collaborations.total} total',
             ),
@@ -333,8 +336,8 @@ class _BusinessDashboardScreenState
     padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
     child: Column(
       children: [
-        Icon(
-          LucideIcons.calendar,
+        UiIcon(
+          icon: UiIconSlug.calendar,
           size: 40,
           color: isDark
               ? KolabingColors.textOnDark.withValues(alpha: 0.5)

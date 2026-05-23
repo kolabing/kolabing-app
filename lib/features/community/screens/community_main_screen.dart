@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../business/screens/explore_screen.dart';
@@ -78,27 +79,32 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
         label: 'Home',
+        iconSlug: UiIconSlug.home,
       ),
       const NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
         label: 'Explore',
+        iconSlug: UiIconSlug.compass,
       ),
       const NavItem(
         icon: LucideIcons.star,
         activeIcon: LucideIcons.star,
         label: 'My Kolabs',
+        iconSlug: UiIconSlug.star,
       ),
       NavItem(
         icon: LucideIcons.send,
         activeIcon: LucideIcons.send,
         label: 'Applications',
         badgeCount: badgeCount > 0 ? badgeCount : null,
+        iconSlug: UiIconSlug.send,
       ),
       const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
+        iconSlug: UiIconSlug.user,
       ),
     ];
 
