@@ -1,15 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../application/providers/application_provider.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
-import '../../dashboard/providers/dashboard_provider.dart';
-import '../../notification/providers/notification_provider.dart';
-import '../../opportunity/providers/opportunity_provider.dart';
-import '../../kolab/providers/my_kolabs_provider.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../services/profile_service.dart';
@@ -45,7 +40,8 @@ class ProfileState {
   /// Checks both the subscription object AND the backend's has_active_subscription flag
   /// (which covers test users who bypass subscription requirements).
   bool get isSubscribed =>
-      subscription?.isActive == true || profile?.hasActiveSubscription == true;
+      (subscription?.isActive ?? false) ||
+      (profile?.hasActiveSubscription ?? false);
 
   ProfileState copyWith({
     UserModel? profile,
@@ -72,30 +68,88 @@ class ProfileState {
 
 /// Profile notifier for managing profile state
 class ProfileNotifier extends Notifier<ProfileState> {
-  late final ProfileService _profileService;
+  // Resolved lazily via a getter (NOT a `late final` assigned in build()):
+  // build() can re-run on the same notifier instance (e.g. when the provider is
+  // invalidated on logout/login), and re-assigning a `late final` throws
+  // LateInitializationError. A getter is idempotent across rebuilds.
+  ProfileService get _profileService => ref.read(profileServiceProvider);
+  bool _isLoadingInProgress = false;
+  int _activeSessionVersion = 0;
+  String? _activeUserId;
 
   @override
   ProfileState build() {
-    _profileService = ref.read(profileServiceProvider);
-    // Auto-load profile on initialization
-    Future.microtask(() => loadProfile());
+    ref.listen<AuthState>(authProvider, _handleAuthStateChanged);
+    Future.microtask(_loadProfileIfAuthenticated);
     return const ProfileState();
   }
 
-  bool _isLoadingInProgress = false;
+  void _handleAuthStateChanged(AuthState? previous, AuthState next) {
+    final nextUserId = next.user?.id;
+
+    if (!next.isAuthenticated || nextUserId == null) {
+      _activeUserId = null;
+      _invalidateActiveProfileWork();
+      _clearSignedOutState();
+      return;
+    }
+
+    if (_activeUserId != nextUserId) {
+      _activeUserId = nextUserId;
+      _invalidateActiveProfileWork();
+      _clearSignedOutState();
+      Future.microtask(_loadProfileIfAuthenticated);
+    }
+  }
+
+  void _invalidateActiveProfileWork() {
+    _activeSessionVersion++;
+    _isLoadingInProgress = false;
+  }
+
+  void _clearSignedOutState() {
+    state = const ProfileState(isLoading: false, isInitialized: false);
+  }
+
+  bool _isStaleLoad(int sessionVersion) =>
+      sessionVersion != _activeSessionVersion;
+
+  Future<void> _loadProfileIfAuthenticated() async {
+    final authState = ref.read(authProvider);
+    if (!authState.isAuthenticated || authState.user == null) {
+      _activeUserId = null;
+      _clearSignedOutState();
+      return;
+    }
+
+    _activeUserId = authState.user!.id;
+    await loadProfile();
+  }
 
   /// Load all profile data
   Future<void> loadProfile() async {
+    final authState = ref.read(authProvider);
+    if (!authState.isAuthenticated || authState.user == null) {
+      _activeUserId = null;
+      _isLoadingInProgress = false;
+      _clearSignedOutState();
+      return;
+    }
+
     // Prevent multiple simultaneous loads
     if (_isLoadingInProgress) {
       return;
     }
     _isLoadingInProgress = true;
+    final sessionVersion = _activeSessionVersion;
 
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final profile = await _profileService.getProfile();
+      if (_isStaleLoad(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         profile: profile,
         isLoading: true,
@@ -105,7 +159,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
         clearSubscription: true,
       );
 
-      NotificationPreferences? notificationPrefs = state.notificationPrefs;
+      var notificationPrefs = state.notificationPrefs;
       try {
         notificationPrefs = await _profileService.getNotificationPreferences();
       } on ApiException catch (e) {
@@ -114,6 +168,9 @@ class ProfileNotifier extends Notifier<ProfileState> {
         debugPrint('Load notification preferences network error: $e');
       } on Exception catch (e) {
         debugPrint('Load notification preferences error: $e');
+      }
+      if (_isStaleLoad(sessionVersion)) {
+        return;
       }
 
       Subscription? subscription;
@@ -128,6 +185,9 @@ class ProfileNotifier extends Notifier<ProfileState> {
           debugPrint('Load subscription error: $e');
         }
       }
+      if (_isStaleLoad(sessionVersion)) {
+        return;
+      }
 
       state = state.copyWith(
         profile: profile,
@@ -138,31 +198,45 @@ class ProfileNotifier extends Notifier<ProfileState> {
         clearSubscription: true,
       );
     } on ApiException catch (e) {
+      if (_isStaleLoad(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: e.error.message,
       );
     } on AuthException catch (e) {
+      if (_isStaleLoad(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: e.message,
       );
     } on NetworkException catch (e) {
+      if (_isStaleLoad(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: e.message,
       );
-    } catch (e) {
+    } on Exception {
+      if (_isStaleLoad(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: 'An unexpected error occurred',
       );
     } finally {
-      _isLoadingInProgress = false;
+      if (!_isStaleLoad(sessionVersion)) {
+        _isLoadingInProgress = false;
+      }
     }
   }
 
@@ -171,15 +245,17 @@ class ProfileNotifier extends Notifier<ProfileState> {
     await loadProfile();
   }
 
-  /// Update profile photo
-  Future<bool> updateProfilePhoto(String base64Photo, String mimeType) async {
+  /// Update profile photo from a picked image file.
+  ///
+  /// Sends the image as a multipart file (the backend validates `profile_photo`
+  /// as an uploaded image file; a base64 string is rejected with 422).
+  Future<bool> updateProfilePhoto(String filePath) async {
     state = state.copyWith(isUpdating: true, clearError: true);
 
     try {
-      final dataUri = 'data:$mimeType;base64,$base64Photo';
-      final updatedProfile = await _profileService.updateProfile({
-        'profile_photo': dataUri,
-      });
+      final updatedProfile = await _profileService.updateProfilePhotoFile(
+        filePath: filePath,
+      );
 
       state = state.copyWith(profile: updatedProfile, isUpdating: false);
       return true;
@@ -246,26 +322,17 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
-  /// Sign out user — clears token, storage, and all cached provider state
+  /// Sign out user — clears token, storage, and all cached provider state.
+  ///
+  /// The full teardown of user-scoped providers (including this provider via
+  /// `invalidateUserScopedProviders`) now lives in
+  /// `AuthNotifier.logout()`, so every logout path resets the same state. We
+  /// only delegate here.
   Future<void> signOut() async {
+    _invalidateActiveProfileWork();
     state = state.copyWith(isUpdating: true, clearError: true);
-
     await ref.read(authProvider.notifier).logout();
-
-    // Invalidate all user-scoped providers so stale data
-    // is not visible if another user signs in
-    ref.invalidate(dashboardProvider);
-    ref.invalidate(myApplicationsProvider);
-    ref.invalidate(receivedApplicationsProvider);
-    ref.invalidate(chatMessagesProvider);
-    ref.invalidate(unreadMessagesCountProvider);
-    ref.invalidate(opportunityListProvider);
-    ref.invalidate(myOpportunitiesProvider);
-    ref.invalidate(myKolabsProvider);
-    ref.invalidate(notificationProvider);
-
-    // Reset own state last
-    state = const ProfileState();
+    _clearSignedOutState();
   }
 
   /// Delete account
@@ -274,8 +341,9 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
     try {
       await _profileService.deleteAccount();
+      _invalidateActiveProfileWork();
       await ref.read(authProvider.notifier).logout();
-      state = const ProfileState();
+      _clearSignedOutState();
       return true;
     } on ApiException catch (e) {
       state = state.copyWith(isUpdating: false, error: e.error.message);

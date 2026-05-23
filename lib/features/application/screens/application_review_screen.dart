@@ -794,14 +794,13 @@ class _AcceptFormSheet extends StatefulWidget {
 
 class _AcceptFormSheetState extends State<_AcceptFormSheet> {
   DateTime? _selectedDate;
-  final _whatsappController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _instagramController = TextEditingController();
   bool _isSubmitting = false;
   String? _error;
 
-  /// Build available dates from the opportunity's availability range
-  /// Only future dates (after today) as required by API
+  /// Build available dates from the opportunity's availability range,
+  /// constrained by the publisher's mode (C12). One-time → single date,
+  /// recurring → only matching weekdays, flexible → full range.
+  /// Only future dates (after today) as required by API.
   List<DateTime> get _availableDates {
     final opportunity = widget.application.opportunity;
     if (opportunity == null) return [];
@@ -814,29 +813,32 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
     if (effectiveStart.isAfter(end)) return [];
 
+    final modeName = opportunity.availabilityMode.toApiValue();
+
+    // One-time: publisher locked a single date. Offer only that date.
+    if (modeName == 'one_time') {
+      return start.isBefore(tomorrow) ? const [] : [start];
+    }
+
+    // Recurring: publisher picked specific weekdays. Filter the daily walk.
+    final filterByWeekday = modeName == 'recurring' &&
+        opportunity.recurringDays.isNotEmpty;
+
     final dates = <DateTime>[];
     var current = effectiveStart;
     while (!current.isAfter(end)) {
-      dates.add(current);
+      if (!filterByWeekday || opportunity.recurringDays.contains(current.weekday)) {
+        dates.add(current);
+      }
       current = current.add(const Duration(days: 1));
     }
     return dates;
   }
 
-  bool get _hasContact =>
-      _whatsappController.text.trim().isNotEmpty ||
-      _emailController.text.trim().isNotEmpty ||
-      _instagramController.text.trim().isNotEmpty;
-
-  bool get _isValid => _selectedDate != null && _hasContact;
-
-  @override
-  void dispose() {
-    _whatsappController.dispose();
-    _emailController.dispose();
-    _instagramController.dispose();
-    super.dispose();
-  }
+  // C13: Contact-methods exchange was dropped from the accept flow. The
+  // in-app chat (routed in `_handleAccept.onAccepted`) is the canonical
+  // post-accept communication channel.
+  bool get _isValid => _selectedDate != null;
 
   @override
   Widget build(BuildContext context) {
@@ -887,7 +889,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
-                'Pick a collaboration date and share your contact info.',
+                "Pick a collaboration date — you'll continue the conversation in chat after accepting.",
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   color: KolabingColors.textSecondary,
@@ -940,46 +942,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 ),
               const SizedBox(height: KolabingSpacing.lg),
 
-              // Contact methods section
-              Text(
-                'CONTACT METHODS (at least one)',
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-
-              // WhatsApp
-              _buildContactField(
-                controller: _whatsappController,
-                icon: LucideIcons.messageSquare,
-                label: 'WhatsApp',
-                hint: '+34612345678',
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-
-              // Email
-              _buildContactField(
-                controller: _emailController,
-                icon: LucideIcons.mail,
-                label: 'Email',
-                hint: 'contact@mybusiness.com',
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-
-              // Instagram
-              _buildContactField(
-                controller: _instagramController,
-                icon: LucideIcons.atSign,
-                label: 'Instagram',
-                hint: '@mybusiness',
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
+              // C13: Contact-methods inputs removed. After accept we route
+              // straight to the in-app chat.
 
               // Error
               if (_error != null) ...[
@@ -1099,54 +1063,6 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
     );
   }
 
-  Widget _buildContactField({
-    required TextEditingController controller,
-    required IconData icon,
-    required String label,
-    required String hint,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      onChanged: (_) => setState(() {}),
-      style: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textPrimary,
-      ),
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, size: 18, color: KolabingColors.textTertiary),
-        labelText: label,
-        labelStyle: GoogleFonts.dmSans(
-          fontSize: 13,
-          color: KolabingColors.textTertiary,
-        ),
-        hintText: hint,
-        hintStyle: GoogleFonts.openSans(
-          fontSize: 14,
-          color: KolabingColors.textTertiary.withValues(alpha: 0.5),
-        ),
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.sm,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: KolabingColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: KolabingColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: KolabingColors.primary, width: 1.5),
-        ),
-      ),
-    );
-  }
-
   Future<void> _submit() async {
     if (!_isValid) return;
 
@@ -1158,14 +1074,10 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
     final dateStr =
         '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
 
-    // Build contact_methods object — only include non-empty fields
-    final contactMethods = <String, String>{};
-    final whatsapp = _whatsappController.text.trim();
-    final email = _emailController.text.trim();
-    final instagram = _instagramController.text.trim();
-    if (whatsapp.isNotEmpty) contactMethods['whatsapp'] = whatsapp;
-    if (email.isNotEmpty) contactMethods['email'] = email;
-    if (instagram.isNotEmpty) contactMethods['instagram'] = instagram;
+    // C13: contact_methods exchange dropped. Send empty map — backend either
+    // already accepts empty, or the next backend pass will drop the
+    // requirement entirely. After accept the user lands in chat.
+    const contactMethods = <String, String>{};
 
     try {
       await widget.ref

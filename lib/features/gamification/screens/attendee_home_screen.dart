@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/discovery_provider.dart';
@@ -369,7 +370,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               ),
               child: DiscoveredEventCard(
                 event: event,
-                onTap: () => context.push('/event/${event.id}'),
+                onTap: () => context.push(
+                  KolabingRoutes.buildEventDetailPath(event.id),
+                ),
               ),
             );
           },

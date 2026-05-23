@@ -16,88 +16,96 @@ class MyOpportunityCard extends StatelessWidget {
   const MyOpportunityCard({
     required this.opportunity,
     super.key,
+    this.onView,
     this.onEdit,
     this.onPublish,
+    this.onShare,
     this.onClose,
     this.onDelete,
   });
 
   final Opportunity opportunity;
+  final VoidCallback? onView;
   final VoidCallback? onEdit;
   final VoidCallback? onPublish;
+  final VoidCallback? onShare;
   final VoidCallback? onClose;
   final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Status badge and applications count
+          Row(
             children: [
-              // Status badge and applications count
-              Row(
-                children: [
-                  _StatusBadge(status: opportunity.status),
-                  const Spacer(),
-                  if (opportunity.applicationsCount != null &&
-                      opportunity.applicationsCount! > 0)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.users, size: 14, color: KolabingColors.textTertiary),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${opportunity.applicationsCount} app${opportunity.applicationsCount == 1 ? '' : 's'}',
-                          style: GoogleFonts.openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: KolabingColors.textTertiary,
-                          ),
-                        ),
-                      ],
+              _StatusBadge(status: opportunity.status),
+              const Spacer(),
+              if (opportunity.applicationsCount != null &&
+                  opportunity.applicationsCount! > 0)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      LucideIcons.users,
+                      size: 14,
+                      color: KolabingColors.textTertiary,
                     ),
-                ],
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-
-              // Title
-              Text(
-                opportunity.title.isNotEmpty
-                    ? opportunity.title
-                    : 'Untitled Opportunity',
-                style: GoogleFonts.openSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                  height: 1.3,
+                    const SizedBox(width: 4),
+                    Text(
+                      '${opportunity.applicationsCount} app${opportunity.applicationsCount == 1 ? '' : 's'}',
+                      style: GoogleFonts.openSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: KolabingColors.textTertiary,
+                      ),
+                    ),
+                  ],
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-
-              // Date range and categories
-              _buildInfoRow(),
-              const SizedBox(height: KolabingSpacing.sm),
-
-              // Action buttons
-              _buildActions(),
             ],
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.sm),
+
+          // Title
+          Text(
+            opportunity.title.isNotEmpty
+                ? opportunity.title
+                : 'Untitled Opportunity',
+            style: GoogleFonts.openSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textPrimary,
+              height: 1.3,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+
+          // Date range and categories
+          _buildInfoRow(),
+          const SizedBox(height: KolabingSpacing.sm),
+
+          // Action buttons
+          _buildActions(),
+        ],
+      ),
+    ),
+  );
 
   Widget _buildInfoRow() {
     final dateFormat = DateFormat('MMM d');
@@ -109,20 +117,11 @@ class MyOpportunityCard extends StatelessWidget {
       spacing: KolabingSpacing.xs,
       runSpacing: KolabingSpacing.xs,
       children: [
-        _InfoPill(
-          icon: LucideIcons.calendar,
-          label: dateText,
-        ),
+        _InfoPill(icon: LucideIcons.calendar, label: dateText),
         if (opportunity.preferredCity.isNotEmpty)
-          _InfoPill(
-            icon: LucideIcons.mapPin,
-            label: opportunity.preferredCity,
-          ),
+          _InfoPill(icon: LucideIcons.mapPin, label: opportunity.preferredCity),
         if (categoriesText.isNotEmpty)
-          _InfoPill(
-            icon: LucideIcons.tag,
-            label: categoriesText,
-          ),
+          _InfoPill(icon: LucideIcons.tag, label: categoriesText),
       ],
     );
   }
@@ -130,6 +129,17 @@ class MyOpportunityCard extends StatelessWidget {
   Widget _buildActions() {
     final status = opportunity.status;
     final actions = <Widget>[];
+
+    if (status == OpportunityStatus.published && onView != null) {
+      actions.add(
+        _ActionButton(
+          label: 'View',
+          icon: LucideIcons.eye,
+          onTap: onView!,
+          primary: true,
+        ),
+      );
+    }
 
     // Edit button (draft or published)
     if (status.canEdit && onEdit != null) {
@@ -151,6 +161,17 @@ class MyOpportunityCard extends StatelessWidget {
           icon: LucideIcons.upload,
           onTap: onPublish!,
           primary: true,
+        ),
+      );
+    }
+
+    if (status == OpportunityStatus.published && onShare != null) {
+      actions.add(
+        _ActionButton(
+          label: 'Share',
+          icon: LucideIcons.share2,
+          onTap: onShare!,
+          outlined: true,
         ),
       );
     }
@@ -184,10 +205,16 @@ class MyOpportunityCard extends StatelessWidget {
     if (actions.isEmpty) return const SizedBox.shrink();
 
     return Row(
-      children: actions
-          .expand((w) => [Expanded(child: w), const SizedBox(width: KolabingSpacing.xs)])
-          .toList()
-        ..removeLast(), // Remove trailing spacer
+      children:
+          actions
+              .expand(
+                (w) => [
+                  Expanded(child: w),
+                  const SizedBox(width: KolabingSpacing.xs),
+                ],
+              )
+              .toList()
+            ..removeLast(), // Remove trailing spacer
     );
   }
 }
@@ -200,14 +227,22 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (backgroundColor, textColor) = switch (status) {
-      OpportunityStatus.draft =>
-        (KolabingColors.pendingBg, KolabingColors.pendingText),
-      OpportunityStatus.published =>
-        (KolabingColors.activeBg, KolabingColors.activeText),
-      OpportunityStatus.closed =>
-        (KolabingColors.completedBg, KolabingColors.completedText),
-      OpportunityStatus.completed =>
-        (KolabingColors.completedBg, KolabingColors.completedText),
+      OpportunityStatus.draft => (
+        KolabingColors.pendingBg,
+        KolabingColors.pendingText,
+      ),
+      OpportunityStatus.published => (
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+      ),
+      OpportunityStatus.closed => (
+        KolabingColors.completedBg,
+        KolabingColors.completedText,
+      ),
+      OpportunityStatus.completed => (
+        KolabingColors.completedBg,
+        KolabingColors.completedText,
+      ),
     };
 
     return Container(
@@ -233,38 +268,35 @@ class _StatusBadge extends StatelessWidget {
 }
 
 class _InfoPill extends StatelessWidget {
-  const _InfoPill({
-    required this.icon,
-    required this.label,
-  });
+  const _InfoPill({required this.icon, required this.label});
 
   final IconData icon;
   final String label;
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 26,
-        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-        decoration: BoxDecoration(
-          color: KolabingColors.surfaceVariant,
-          borderRadius: KolabingRadius.borderRadiusRound,
+    height: 26,
+    padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
+    decoration: BoxDecoration(
+      color: KolabingColors.surfaceVariant,
+      borderRadius: KolabingRadius.borderRadiusRound,
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: KolabingColors.textTertiary),
+        const SizedBox(width: KolabingSpacing.xxs),
+        Text(
+          label,
+          style: GoogleFonts.openSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: KolabingColors.textSecondary,
+          ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 12, color: KolabingColors.textTertiary),
-            const SizedBox(width: KolabingSpacing.xxs),
-            Text(
-              label,
-              style: GoogleFonts.openSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
 
 class _ActionButton extends StatelessWidget {
@@ -286,61 +318,95 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final foregroundColor = primary
+        ? KolabingColors.onPrimary
+        : danger
+        ? KolabingColors.error
+        : KolabingColors.textPrimary;
+
     if (primary) {
       return SizedBox(
         height: 36,
-        child: ElevatedButton.icon(
+        child: ElevatedButton(
           onPressed: onTap,
-          icon: Icon(icon, size: 14),
-          label: Text(
-            label.toUpperCase(),
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-            ),
-          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: KolabingColors.primary,
             foregroundColor: KolabingColors.onPrimary,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusSm,
             ),
+          ),
+          child: _ActionButtonContent(
+            icon: icon,
+            label: label,
+            color: foregroundColor,
           ),
         ),
       );
     }
 
-    final color = danger ? KolabingColors.error : KolabingColors.textPrimary;
-
     return SizedBox(
       height: 36,
-      child: OutlinedButton.icon(
+      child: OutlinedButton(
         onPressed: onTap,
-        icon: Icon(icon, size: 14),
-        label: Text(
-          label.toUpperCase(),
-          style: GoogleFonts.rubik(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.0,
-          ),
-        ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: color,
+          foregroundColor: foregroundColor,
           side: BorderSide(
             color: danger
                 ? KolabingColors.error.withValues(alpha: 0.5)
                 : KolabingColors.border,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
+          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
           shape: RoundedRectangleBorder(
             borderRadius: KolabingRadius.borderRadiusSm,
           ),
         ),
+        child: _ActionButtonContent(
+          icon: icon,
+          label: label,
+          color: foregroundColor,
+        ),
       ),
     );
   }
+}
+
+class _ActionButtonContent extends StatelessWidget {
+  const _ActionButtonContent({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(icon, size: 14, color: color),
+      const SizedBox(width: KolabingSpacing.xxs),
+      Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.fade,
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
+              color: color,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }

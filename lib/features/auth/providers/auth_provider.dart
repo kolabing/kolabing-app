@@ -1,14 +1,17 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../services/notification_service.dart';
-import '../utils/auth_navigation.dart';
+import '../../../services/one_signal_service.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
+import '../utils/auth_navigation.dart';
+import '../utils/session_reset.dart';
 
 /// Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -89,9 +92,11 @@ enum AuthStatus {
 class AuthNotifier extends Notifier<AuthState> {
   @override
   AuthState build() {
-    NotificationService.instance.onTokenRefresh((token) {
-      unawaited(_registerDeviceToken(token));
-    });
+    if (Firebase.apps.isNotEmpty) {
+      NotificationService.instance.onTokenRefresh((token) {
+        unawaited(_registerDeviceToken(token));
+      });
+    }
     return const AuthState();
   }
 
@@ -112,6 +117,14 @@ class AuthNotifier extends Notifier<AuthState> {
         password: password,
       );
 
+      // A new session has started (same or different account). The auth
+      // service has already written the new token and rotated its session
+      // epoch, so tear down any user-scoped provider state left over from a
+      // previous session BEFORE those providers fire their first request.
+      // Without this, Explore/Home/Applications/Profile keep serving the
+      // previous account's cached data until a full app restart.
+      invalidateUserScopedProviders(ref);
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
@@ -119,7 +132,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isNewUser: false,
       );
 
-      unawaited(_registerFcmToken());
+      unawaited(_syncPushIdentity(response.user));
 
       return AuthResult(success: true, isNewUser: false, user: response.user);
     } on ApiException catch (e) {
@@ -154,6 +167,10 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final response = await _authService.loginWithGoogle();
 
+      // Tear down previous-session provider state before the new session's
+      // providers fire their first request (see signInWithEmail).
+      invalidateUserScopedProviders(ref);
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
@@ -161,7 +178,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isNewUser: false,
       );
 
-      unawaited(_registerFcmToken());
+      unawaited(_syncPushIdentity(response.user));
 
       return AuthResult(success: true, isNewUser: false, user: response.user);
     } on AuthCancelledException {
@@ -207,16 +224,34 @@ class AuthNotifier extends Notifier<AuthState> {
             user: user,
             token: token,
           );
+          unawaited(_syncPushIdentity(user));
         } else {
+          unawaited(OneSignalService.instance.logout());
           state = state.copyWith(status: AuthStatus.unauthenticated);
         }
       } else {
+        unawaited(OneSignalService.instance.logout());
         state = state.copyWith(status: AuthStatus.unauthenticated);
       }
     } on Exception catch (e) {
       debugPrint('Check auth status error: $e');
+      unawaited(OneSignalService.instance.logout());
       state = state.copyWith(status: AuthStatus.unauthenticated);
     }
+  }
+
+  /// Call after a successful REGISTRATION (account creation) — onboarding
+  /// (business/community) and attendee register. Mirrors the post-login
+  /// sequence: tear down any user-scoped provider state left over from a
+  /// previous (signed-out) session BEFORE the new session's providers fire,
+  /// then resolve the authenticated user. Without this, a sign-out ->
+  /// create-account leaves Home/Explore/Applications/Profile showing
+  /// "session expired" until a full app restart (same root cause the login
+  /// path already handles).
+  Future<void> onRegistered() async {
+    invalidateUserScopedProviders(ref);
+    await checkAuthStatus();
+    unawaited(_registerFcmToken());
   }
 
   /// Logout current user
@@ -231,10 +266,17 @@ class AuthNotifier extends Notifier<AuthState> {
 
       // Delete FCM token so this device stops receiving notifications
       await NotificationService.instance.deleteToken();
+      await OneSignalService.instance.logout();
       await _authService.logout();
     } on Exception catch (e) {
       debugPrint('Logout error: $e');
     } finally {
+      // Centralised teardown of all user-scoped provider state. This runs for
+      // EVERY logout path (profile screens, router error page, account
+      // deletion), not just the profile screen's signOut(), so no stale
+      // per-account data survives into the next session. The auth service has
+      // already purged the cached token + rotated its session epoch.
+      invalidateUserScopedProviders(ref);
       state = const AuthState(status: AuthStatus.unauthenticated);
     }
   }
@@ -255,6 +297,16 @@ class AuthNotifier extends Notifier<AuthState> {
     } on Exception catch (e) {
       debugPrint('[FCM] Token registration error: $e');
     }
+  }
+
+  Future<void> _syncPushIdentity(UserModel user) async {
+    try {
+      await OneSignalService.instance.loginUser(user);
+    } on Exception catch (e) {
+      debugPrint('[OneSignal] Identity sync error: $e');
+    }
+
+    await _registerFcmToken();
   }
 
   Future<void> _registerDeviceToken(String fcmToken) async {
@@ -284,6 +336,10 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final response = await _authService.loginWithApple();
 
+      // Tear down previous-session provider state before the new session's
+      // providers fire their first request (see signInWithEmail).
+      invalidateUserScopedProviders(ref);
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
@@ -291,7 +347,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isNewUser: response.isNewUser,
       );
 
-      unawaited(_registerFcmToken());
+      unawaited(_syncPushIdentity(response.user));
 
       return AuthResult(
         success: true,

@@ -12,11 +12,43 @@ import '../../opportunity/models/opportunity.dart';
 import '../providers/application_provider.dart';
 
 /// Modal bottom sheet for applying to an opportunity
+@visibleForTesting
+List<DateTime> buildSelectableApplicationDates(
+  Opportunity opportunity, {
+  DateTime? today,
+}) {
+  final start = DateUtils.dateOnly(opportunity.availabilityStart);
+  final end = DateUtils.dateOnly(opportunity.availabilityEnd);
+  final todayDate = DateUtils.dateOnly(today ?? DateTime.now());
+
+  final effectiveStart = end.isBefore(todayDate)
+      ? start
+      : (start.isBefore(todayDate) ? todayDate : start);
+
+  if (effectiveStart.isAfter(end)) {
+    return const <DateTime>[];
+  }
+
+  final recurringDays =
+      opportunity.availabilityMode == AvailabilityMode.recurring
+      ? opportunity.recurringDays.toSet()
+      : const <int>{};
+
+  final dates = <DateTime>[];
+  var current = effectiveStart;
+  while (!current.isAfter(end)) {
+    final isAllowed =
+        recurringDays.isEmpty || recurringDays.contains(current.weekday);
+    if (isAllowed) {
+      dates.add(current);
+    }
+    current = current.add(const Duration(days: 1));
+  }
+  return dates;
+}
+
 class ApplyModal extends ConsumerStatefulWidget {
-  const ApplyModal({
-    required this.opportunity,
-    super.key,
-  });
+  const ApplyModal({required this.opportunity, super.key});
 
   final Opportunity opportunity;
 
@@ -50,34 +82,25 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   late final List<DateTime> _availableDates;
   static const _dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   static const _monthLabels = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   @override
   void initState() {
     super.initState();
     // Build list of selectable dates from opportunity's availability range
-    _availableDates = _buildAvailableDates();
-  }
-
-  List<DateTime> _buildAvailableDates() {
-    final start = DateUtils.dateOnly(widget.opportunity.availabilityStart);
-    final end = DateUtils.dateOnly(widget.opportunity.availabilityEnd);
-    final today = DateUtils.dateOnly(DateTime.now());
-
-    // If some future dates exist, start from today to hide past dates.
-    // Otherwise show the full original range so users can still apply.
-    final effectiveStart =
-        end.isBefore(today) ? start : (start.isBefore(today) ? today : start);
-
-    final dates = <DateTime>[];
-    var current = effectiveStart;
-    while (!current.isAfter(end)) {
-      dates.add(current);
-      current = current.add(const Duration(days: 1));
-    }
-    return dates;
+    _availableDates = buildSelectableApplicationDates(widget.opportunity);
   }
 
   @override
@@ -91,12 +114,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   String _buildAvailabilityString() {
     if (_selectedDates.isEmpty) return '';
 
-    final sortedDates = _selectedDates.toList()
-      ..sort((a, b) => a.compareTo(b));
+    final sortedDates = _selectedDates.toList()..sort((a, b) => a.compareTo(b));
 
-    final dateStrings = sortedDates.map((d) =>
-      '${_monthLabels[d.month - 1]} ${d.day}, ${d.year}',
-    ).join(', ');
+    final dateStrings = sortedDates
+        .map((d) => '${_monthLabels[d.month - 1]} ${d.day}, ${d.year}')
+        .join(', ');
 
     final timePart = '${_formatTime(_startTime)} - ${_formatTime(_endTime)}';
     final notes = _availabilityNotesController.text.trim();
@@ -148,19 +170,19 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         // overlapping with the closing modal.
         Navigator.of(context).pop(true);
       }
-    } catch (e) {
+    } on Object catch (error) {
       setState(() {
         _isSubmitting = false;
-        _errorMessage = _parseError(e);
+        _errorMessage = _parseError(error);
       });
     }
   }
 
-  String _parseError(dynamic e) {
-    if (e is ApiException) {
-      return e.error.allErrorMessages;
+  String _parseError(Object error) {
+    if (error is ApiException) {
+      return error.error.allErrorMessages;
     }
-    final errorString = e.toString();
+    final errorString = error.toString();
     if (errorString.contains('already applied')) {
       return 'You have already applied to this opportunity';
     }
@@ -197,9 +219,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
           // Header — minimal, just an escape route
           Padding(
-            padding: const EdgeInsets.only(
-              right: KolabingSpacing.xs,
-            ),
+            padding: const EdgeInsets.only(right: KolabingSpacing.xs),
             child: Row(
               children: [
                 Padding(
@@ -365,7 +385,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         maxLines: 2,
                         minLines: 1,
                         decoration: _buildInputDecoration(
-                          hintText: 'e.g., Flexible on timing, prefer mornings...',
+                          hintText:
+                              'e.g., Flexible on timing, prefer mornings...',
                         ),
                         style: GoogleFonts.openSans(
                           fontSize: 14,
@@ -403,8 +424,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: KolabingColors.primary,
                           foregroundColor: KolabingColors.onPrimary,
-                          disabledBackgroundColor:
-                              KolabingColors.primary.withValues(alpha: 0.6),
+                          disabledBackgroundColor: KolabingColors.primary
+                              .withValues(alpha: 0.6),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: KolabingRadius.borderRadiusMd,
@@ -454,7 +475,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _availableDates.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (context, index) =>
             const SizedBox(width: KolabingSpacing.xs),
         itemBuilder: (context, index) {
           final date = _availableDates[index];
@@ -486,8 +507,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                   color: isSelected
                       ? KolabingColors.primary
                       : _availabilityError != null
-                          ? KolabingColors.error
-                          : KolabingColors.border,
+                      ? KolabingColors.error
+                      : KolabingColors.border,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -535,87 +556,86 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   }
 
   Widget _buildTimeRangePicker() => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.background,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: KolabingColors.border),
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.background,
+      borderRadius: KolabingRadius.borderRadiusMd,
+      border: Border.all(color: KolabingColors.border),
+    ),
+    child: Row(
+      children: [
+        const Icon(
+          LucideIcons.clock,
+          size: 18,
+          color: KolabingColors.textTertiary,
         ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.clock,
-              size: 18,
-              color: KolabingColors.textTertiary,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            // Start time
-            Expanded(
-              child: _buildTimePicker(
-                label: 'From',
-                time: _startTime,
-                onTap: () => _pickTime(isStart: true),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
-              child: Icon(
-                LucideIcons.arrowRight,
-                size: 16,
-                color: KolabingColors.textTertiary,
-              ),
-            ),
-            // End time
-            Expanded(
-              child: _buildTimePicker(
-                label: 'To',
-                time: _endTime,
-                onTap: () => _pickTime(isStart: false),
-              ),
-            ),
-          ],
+        const SizedBox(width: KolabingSpacing.sm),
+        // Start time
+        Expanded(
+          child: _buildTimePicker(
+            label: 'From',
+            time: _startTime,
+            onTap: () => _pickTime(isStart: true),
+          ),
         ),
-      );
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
+          child: Icon(
+            LucideIcons.arrowRight,
+            size: 16,
+            color: KolabingColors.textTertiary,
+          ),
+        ),
+        // End time
+        Expanded(
+          child: _buildTimePicker(
+            label: 'To',
+            time: _endTime,
+            onTap: () => _pickTime(isStart: false),
+          ),
+        ),
+      ],
+    ),
+  );
 
   Widget _buildTimePicker({
     required String label,
     required TimeOfDay time,
     required VoidCallback onTap,
-  }) =>
-      GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.sm,
-            vertical: KolabingSpacing.xs,
+  }) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusSm,
+        border: Border.all(color: KolabingColors.border),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.openSans(
+              fontSize: 10,
+              color: KolabingColors.textTertiary,
+            ),
           ),
-          decoration: BoxDecoration(
-            color: KolabingColors.surface,
-            borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: KolabingColors.border),
+          const SizedBox(height: 2),
+          Text(
+            _formatTime(time),
+            style: GoogleFonts.dmSans(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textPrimary,
+            ),
           ),
-          child: Column(
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.openSans(
-                  fontSize: 10,
-                  color: KolabingColors.textTertiary,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                _formatTime(time),
-                style: GoogleFonts.dmSans(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 
   Future<void> _pickTime({required bool isStart}) async {
     final initialTime = isStart ? _startTime : _endTime;
@@ -643,52 +663,48 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     String title, {
     bool required = false,
     bool optional = false,
-  }) =>
-      Row(
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+  }) => Row(
+    children: [
+      Text(
+        title,
+        style: GoogleFonts.openSans(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: KolabingColors.textPrimary,
+        ),
+      ),
+      if (required) ...[
+        const SizedBox(width: 4),
+        Text(
+          '*',
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.error,
+          ),
+        ),
+      ],
+      if (optional) ...[
+        const SizedBox(width: KolabingSpacing.xs),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: KolabingColors.surfaceVariant,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            'Optional',
+            style: GoogleFonts.dmSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.textTertiary,
+              letterSpacing: 0.4,
             ),
           ),
-          if (required) ...[
-            const SizedBox(width: 4),
-            Text(
-              '*',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.error,
-              ),
-            ),
-          ],
-          if (optional) ...[
-            const SizedBox(width: KolabingSpacing.xs),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
-              ),
-              decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'Optional',
-                style: GoogleFonts.dmSans(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textTertiary,
-                  letterSpacing: 0.4,
-                ),
-              ),
-            ),
-          ],
-        ],
-      );
+        ),
+      ],
+    ],
+  );
 
   InputDecoration _buildInputDecoration({required String hintText}) =>
       InputDecoration(
@@ -701,15 +717,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         fillColor: KolabingColors.background,
         border: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(
-            color: KolabingColors.border,
-          ),
+          borderSide: const BorderSide(color: KolabingColors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(
-            color: KolabingColors.border,
-          ),
+          borderSide: const BorderSide(color: KolabingColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
@@ -720,9 +732,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(
-            color: KolabingColors.error,
-          ),
+          borderSide: const BorderSide(color: KolabingColors.error),
         ),
         contentPadding: const EdgeInsets.all(KolabingSpacing.md),
         counterStyle: GoogleFonts.openSans(
@@ -764,13 +774,14 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     color: KolabingColors.primary.withValues(alpha: 0.4),
                   ),
                 ),
-                child: creator?.avatarUrl != null &&
-                        creator!.avatarUrl!.isNotEmpty
+                child:
+                    creator?.avatarUrl != null && creator!.avatarUrl!.isNotEmpty
                     ? ClipOval(
                         child: Image.network(
                           creator.avatarUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(),
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildAvatarPlaceholder(),
                         ),
                       )
                     : _buildAvatarPlaceholder(),
@@ -905,81 +916,75 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   }
 
   Widget _buildOfferHighlight() => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.success.withValues(alpha: 0.1),
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: KolabingColors.success.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(
-              LucideIcons.gift,
-              size: 18,
-              color: KolabingColors.success,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "What's offered",
-                    style: GoogleFonts.openSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                      color: KolabingColors.success,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.opportunity.offerSummary,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      height: 1.4,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildTipCard() => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        decoration: BoxDecoration(
-          color: KolabingColors.surfaceVariant,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(
-              LucideIcons.sparkles,
-              size: 16,
-              color: KolabingColors.textTertiary,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                'Pick the dates that work for you and add a short message — applications with specifics get accepted faster.',
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.success.withValues(alpha: 0.1),
+      borderRadius: KolabingRadius.borderRadiusMd,
+      border: Border.all(color: KolabingColors.success.withValues(alpha: 0.3)),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(LucideIcons.gift, size: 18, color: KolabingColors.success),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "What's offered",
                 style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  height: 1.5,
-                  color: KolabingColors.textTertiary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.6,
+                  color: KolabingColors.success,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 2),
+              Text(
+                widget.opportunity.offerSummary,
+                style: GoogleFonts.openSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 1.4,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
+
+  Widget _buildTipCard() => Container(
+    padding: const EdgeInsets.all(KolabingSpacing.sm),
+    decoration: BoxDecoration(
+      color: KolabingColors.surfaceVariant,
+      borderRadius: KolabingRadius.borderRadiusSm,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(
+          LucideIcons.sparkles,
+          size: 16,
+          color: KolabingColors.textTertiary,
+        ),
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
+            'Pick the dates that work for you and add a short message — applications with specifics get accepted faster.',
+            style: GoogleFonts.openSans(
+              fontSize: 12,
+              height: 1.5,
+              color: KolabingColors.textTertiary,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 
   String _formatDateRange() {
     final start = widget.opportunity.availabilityStart;
@@ -987,8 +992,18 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
     String formatDate(DateTime date) {
       final months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
       return '${months[date.month - 1]} ${date.day}, ${date.year}';
     }
@@ -1000,15 +1015,15 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   }
 
   Widget _buildAvatarPlaceholder() => Center(
-        child: Text(
-          widget.opportunity.creatorProfile?.initial ?? '?',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.primary,
-          ),
-        ),
-      );
+    child: Text(
+      widget.opportunity.creatorProfile?.initial ?? '?',
+      style: GoogleFonts.rubik(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: KolabingColors.primary,
+      ),
+    ),
+  );
 }
 
 class _FactItem {

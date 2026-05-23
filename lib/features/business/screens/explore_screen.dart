@@ -15,12 +15,14 @@ import '../../../widgets/explore_swipe_card.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../business/providers/profile_provider.dart';
 import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
@@ -64,23 +66,58 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     }
   }
 
-  void _onCardTap(DiscoveryItem item) {
+  void _onCardTap(DiscoveryItem item, {required bool hasSubscription}) {
     final opportunity = item.toOpportunity();
+    // Free business viewing a community Kolab: blur the community identity only.
+    // Per ROLES-AND-PERMISSIONS.md golden rules 4 & 5, the business STILL opens
+    // the detail and sees every Kolab detail; only name/logo are blurred and
+    // the apply BUTTON is gated. We never hard-block the screen. Subscribing
+    // REVEALS the identity (§2.6), so a subscribed business is never blurred.
+    final hideCreatorIdentity =
+        !_isCommunityViewer && item.isCommunityRequest && !hasSubscription;
 
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
-      onApply: () {
-        Navigator.of(context).pop();
-        _openApplyFlow(opportunity);
-      },
-      onView: () {
-        Navigator.of(context).pop();
-        context.push(
-          '${widget.detailRoutePrefix}/${opportunity.id ?? item.id}',
-          extra: opportunity,
-        );
-      },
+      discoveryItem: item,
+      hideCreatorIdentity: hideCreatorIdentity,
+      // Apply is BUTTON-gated, not screen-gated: a free business can always open
+      // the sheet and read everything. Tapping Apply either runs the apply flow
+      // (subscribed / community) or surfaces the paywall (free business).
+      onApply: hasSubscription
+          ? () {
+              Navigator.of(context).pop();
+              _openApplyFlow(opportunity);
+            }
+          : null,
+      // C9: business viewer tapping a community card needs a path to the
+      // community's public profile (Send Kolab CTA lives there). Hidden when
+      // the creator profile id isn't usable.
+      onViewCreatorProfile:
+          hideCreatorIdentity ||
+              !hasSubscription ||
+              item.creatorProfile.id.isEmpty
+          ? null
+          : () {
+              Navigator.of(context).pop();
+              context.push('/profile/${item.creatorProfile.id}');
+            },
+      // When the business is free, the Apply button becomes an "unlock" CTA that
+      // opens the paywall sheet. This is the gate — there is NO discovery-level
+      // block; the user remains on Explore the whole time.
+      onSubscribe: !_isCommunityViewer && !hasSubscription
+          ? () async {
+              Navigator.of(context).pop();
+              final allowed = await SubscriptionPaywall.checkAndShow(
+                context,
+                ref,
+              );
+              if (allowed) {
+                await ref.read(profileProvider.notifier).refreshSubscription();
+              }
+            }
+          : null,
+      canApply: _isCommunityViewer || hasSubscription,
     );
   }
 
@@ -111,6 +148,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   Widget build(BuildContext context) {
     final listState = ref.watch(discoveryListProvider);
     final filters = ref.watch(discoveryFiltersProvider);
+    final profileState = ref.watch(profileProvider);
+    final authUser = ref.watch(authProvider).user;
+    final hasBusinessSubscription =
+        _isCommunityViewer ||
+        profileState.isSubscribed ||
+        (authUser?.hasActiveSubscription ?? false) ||
+        (authUser?.subscription?.isActive ?? false);
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -139,7 +183,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   ? _buildErrorState(listState.error!)
                   : listState.isEmpty
                   ? _buildEmptyState(filters)
-                  : _buildCardPageView(listState),
+                  : _buildCardPageView(
+                      listState,
+                      hasBusinessSubscription: hasBusinessSubscription,
+                    ),
             ),
           ],
         ),
@@ -252,7 +299,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return parts.join(' · ');
   }
 
-  Widget _buildCardPageView(DiscoveryListState listState) {
+  Widget _buildCardPageView(
+    DiscoveryListState listState, {
+    required bool hasBusinessSubscription,
+  }) {
     final today = DateTime.now();
     final activeItems = listState.items.where((DiscoveryItem item) {
       final end = item.availability.end;
@@ -277,7 +327,19 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         }
 
         final item = activeItems[index];
-        return ExploreSwipeCard(item: item, onTap: () => _onCardTap(item));
+        // Blur the community identity only for a FREE business; subscribing
+        // reveals it (§2.6).
+        final hideCreatorIdentity =
+            !_isCommunityViewer &&
+            item.isCommunityRequest &&
+            !hasBusinessSubscription;
+        return ExploreSwipeCard(
+          item: item,
+          showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
+          hideCreatorIdentity: hideCreatorIdentity,
+          onTap: () =>
+              _onCardTap(item, hasSubscription: hasBusinessSubscription),
+        );
       },
     );
   }

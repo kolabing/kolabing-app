@@ -10,6 +10,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
@@ -290,6 +291,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'Subscription',
@@ -305,14 +307,17 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ),
       ),
       body: SafeArea(
-        child: state.isLoading && !state.isInitialized
-            ? _buildLoadingState()
-            : _buildContent(state.subscription, state.isSubscribed, iapState),
+        child: KeyboardAvoidingContent(
+          child: state.isLoading && !state.isInitialized
+              ? _buildLoadingState()
+              : _buildContent(state.subscription, state.isSubscribed, iapState),
+        ),
       ),
     );
   }
 
   Widget _buildLoadingState() => SingleChildScrollView(
+    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
     padding: const EdgeInsets.all(KolabingSpacing.md),
     child: Column(
       children: List.generate(
@@ -345,6 +350,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     final isCancelPending = subscription?.cancelAtPeriodEnd ?? false;
 
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

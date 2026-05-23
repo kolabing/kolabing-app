@@ -12,9 +12,8 @@ import '../../application/screens/applications_screen.dart';
 import '../../business/screens/explore_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
-import '../../kolab/enums/intent_type.dart';
-import '../../kolab/providers/kolab_form_provider.dart';
-import '../../kolab/providers/my_kolabs_provider.dart';
+import '../../opportunity/providers/opportunity_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
 
@@ -48,16 +47,18 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
-    ref
-        .read(kolabFormProvider.notifier)
-        .selectIntent(IntentType.communitySeeking);
-    await context.push(KolabingRoutes.kolabFlow);
+    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (!allowed || !mounted) {
+      return;
+    }
+
+    await context.push(KolabingRoutes.communityOpportunitiesNew);
     if (mounted) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
       if (mounted) {
         ref
           ..invalidate(dashboardProvider)
-          ..invalidate(myKolabsProvider);
+          ..invalidate(myOpportunitiesProvider);
       }
     }
   }
@@ -125,7 +126,8 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
       ),
       floatingActionButton:
           _currentIndex != 4 &&
-              _currentIndex != 2 // Hide on profile and My Kolabs tabs
+              _currentIndex !=
+                  2 // Hide on profile and My Kolabs tabs
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: 'Create Opportunity',

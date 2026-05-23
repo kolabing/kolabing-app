@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../config/routes/routes.dart';
+import '../../../services/one_signal_service.dart';
 import '../../../services/permission_service.dart';
-import '../services/auth_service.dart';
+import 'auth_provider.dart';
 
 /// Represents the navigation destination after splash screen
 enum SplashNavigationTarget {
@@ -64,7 +65,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
   /// Returns the navigation target route path.
   Future<String> initialize() async {
     try {
-      final authService = AuthService();
+      final authService = ref.read(authServiceProvider);
       final token = await authService.getToken();
       final storedUser = await authService.getStoredUser();
 
@@ -72,6 +73,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
       // into onboarding, unless we already know there is an authenticated user
       // who needs to continue onboarding.
       if (token == null) {
+        await OneSignalService.instance.logout();
         state = state.copyWith(
           isLoading: false,
           navigationTarget: SplashNavigationTarget.welcome,
@@ -81,6 +83,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
 
       final user = await authService.restoreSessionUser() ?? storedUser;
       if (user == null) {
+        await OneSignalService.instance.logout();
         state = state.copyWith(
           isLoading: false,
           navigationTarget: SplashNavigationTarget.welcome,
@@ -103,6 +106,8 @@ class SplashStateNotifier extends Notifier<SplashState> {
         navTarget = SplashNavigationTarget.communityDashboard;
       }
 
+      await OneSignalService.instance.loginUser(user);
+
       // Check if the permission screen needs to be shown
       final hasShownPermissions = await PermissionService.instance
           .hasShownPermissionScreen();
@@ -117,6 +122,7 @@ class SplashStateNotifier extends Notifier<SplashState> {
       return dashboard;
     } on Exception catch (e) {
       // On error, default to the safe welcome chooser.
+      await OneSignalService.instance.logout();
       state = state.copyWith(
         isLoading: false,
         navigationTarget: SplashNavigationTarget.welcome,

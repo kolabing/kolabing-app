@@ -24,6 +24,8 @@ class VenueDetailsScreen extends ConsumerStatefulWidget {
 class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  // H2: offer headline pinned to the discovery card.
+  final _headlineController = TextEditingController();
 
   bool _didInit = false;
 
@@ -31,6 +33,7 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _headlineController.dispose();
     super.dispose();
   }
 
@@ -40,6 +43,7 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
     _didInit = true;
     _titleController.text = kolab.title;
     _descriptionController.text = kolab.description;
+    _headlineController.text = kolab.offerHeadline ?? '';
   }
 
   @override
@@ -83,6 +87,8 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           ),
           style: _inputTextStyle,
           onChanged: notifier.updateTitle,
+          // C1: dismiss keyboard on tap-outside so the action bar is reachable.
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.md),
         const _FieldLabel(label: 'Campaign Description'),
@@ -98,6 +104,30 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           ),
           style: _inputTextStyle,
           onChanged: notifier.updateDescription,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        // H2: short, one-line offer headline shown on the discovery card.
+        const _FieldLabel(label: 'Offer Headline'),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'One short line communities will see on your card.',
+          style: GoogleFonts.openSans(
+            fontSize: 12,
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        TextField(
+          controller: _headlineController,
+          maxLength: 50,
+          decoration: _inputDecoration(
+            hint: 'e.g. 20% off Tuesdays for groups of 10+',
+            error: errors['offer_headline'],
+          ),
+          style: _inputTextStyle,
+          onChanged: notifier.updateOfferHeadline,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
       ],
     );

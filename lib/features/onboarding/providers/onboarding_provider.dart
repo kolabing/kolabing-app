@@ -12,6 +12,7 @@ import '../models/city.dart';
 import '../models/community_type.dart';
 import '../models/onboarding_photo.dart';
 import '../models/onboarding_state.dart';
+import '../models/place_details_import.dart';
 import '../models/place_suggestion.dart';
 import '../services/onboarding_service.dart';
 
@@ -188,10 +189,14 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   /// Select the primary business location from autocomplete.
   void updateLocation(PlaceSuggestion location) {
     if (state == null) return;
+    final importedPlaceChanged =
+        state!.importedPlaceId != null &&
+        state!.importedPlaceId != location.placeId;
     state = state!.copyWith(
       location: location,
       cityId: location.cityId ?? state!.cityId,
       cityName: location.city,
+      clearImportedPlace: importedPlaceChanged,
     );
   }
 
@@ -230,7 +235,8 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
 
     try {
       final bytes = await file.readAsBytes();
-      final photo = OnboardingPhoto(
+      final photo = OnboardingPhoto.upload(
+        id: '${DateTime.now().microsecondsSinceEpoch}-${file.path.split('/').last}',
         base64: base64Encode(bytes),
         fileName: file.path.split('/').last,
         mimeType: _inferMimeType(file.path),
@@ -251,13 +257,122 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     state = state!.copyWith(venuePhotos: photos);
   }
 
+  /// Move a venue photo to a new position.
+  void moveVenuePhoto(int fromIndex, int toIndex) {
+    if (state == null ||
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= state!.venuePhotos.length ||
+        toIndex >= state!.venuePhotos.length ||
+        fromIndex == toIndex) {
+      return;
+    }
+
+    final photos = List<OnboardingPhoto>.from(state!.venuePhotos);
+    final photo = photos.removeAt(fromIndex);
+    photos.insert(toIndex, photo);
+    state = state!.copyWith(venuePhotos: photos);
+  }
+
+  /// Apply a successful Google place import into local onboarding state.
+  ///
+  /// [allowedPhotoResourceNames] optionally restricts which photos from the
+  /// Google import are kept. When `null`, all photos returned by Google are
+  /// imported (legacy behavior). When non-null, only photos whose
+  /// `resourceName` is in the set are imported — used by the preview step.
+  void applyPlaceImport(
+    PlaceDetailsImport placeImport, {
+    List<BusinessType> businessTypes = const [],
+    Set<String>? allowedPhotoResourceNames,
+  }) {
+    if (state == null) return;
+
+    final resolvedTypes = _resolveImportedBusinessTypes(
+      placeImport.allCategorySlugs,
+      businessTypes,
+    );
+    final preservedCustomPhotos = state!.venuePhotos
+        .where((photo) => !photo.isGoogleImported)
+        .toList(growable: false);
+
+    final importedPhotos = placeImport.primaryVenue.photos
+        .where(
+          (photo) =>
+              photo.resourceName.trim().isNotEmpty &&
+              photo.previewUrl.trim().isNotEmpty &&
+              (allowedPhotoResourceNames == null ||
+                  allowedPhotoResourceNames.contains(photo.resourceName)),
+        )
+        .map(
+          (photo) => OnboardingPhoto.googleImported(
+            resourceName: photo.resourceName,
+            previewUrl: photo.previewUrl,
+            width: photo.width,
+            height: photo.height,
+            authorAttributions: photo.authorAttributions,
+          ),
+        )
+        .toList(growable: false);
+
+    final placeSuggestion = placeImport.toPlaceSuggestion();
+    final about = placeImport.about?.trim();
+    final normalizedPhone = placeImport.phoneNumber?.trim();
+    final normalizedWebsite = placeImport.website?.trim();
+    final venueDescription = placeImport.primaryVenue.description?.trim();
+
+    state = state!.copyWith(
+      name: placeImport.name.trim().isEmpty ? state!.name : placeImport.name,
+      about: about?.isEmpty ?? true ? state!.about : about,
+      phone: normalizedPhone?.isEmpty ?? true ? state!.phone : normalizedPhone,
+      website: normalizedWebsite?.isEmpty ?? true
+          ? state!.website
+          : normalizedWebsite,
+      cityId: placeImport.cityId ?? placeSuggestion.cityId ?? state!.cityId,
+      cityName: placeImport.cityName ?? placeSuggestion.city,
+      location: placeSuggestion,
+      importedPlaceId: placeSuggestion.placeId,
+      venueName: placeImport.primaryVenue.name.trim().isEmpty
+          ? state!.venueName
+          : placeImport.primaryVenue.name,
+      venueType:
+          placeImport.primaryVenue.venueType ??
+          placeImport.businessType ??
+          resolvedTypes.typeSlug ??
+          state!.venueType,
+      venueCapacity: placeImport.primaryVenue.capacity ?? state!.venueCapacity,
+      venuePhotos: [...importedPhotos, ...preservedCustomPhotos],
+      venuePhone: normalizedPhone?.isEmpty ?? true
+          ? placeImport.primaryVenue.phoneNumber ?? state!.venuePhone
+          : normalizedPhone,
+      venueWebsite: normalizedWebsite?.isEmpty ?? true
+          ? placeImport.primaryVenue.website ?? state!.venueWebsite
+          : normalizedWebsite,
+      venueOpeningHours: placeImport.primaryVenue.openingHours,
+      venueDescription: (about?.isNotEmpty ?? false)
+          ? about
+          : (venueDescription?.isNotEmpty ?? false)
+          ? venueDescription
+          : state!.venueDescription,
+      venuePriceLevel: placeImport.primaryVenue.priceLevel,
+      venueRating: placeImport.primaryVenue.rating,
+      venueUserRatingsTotal: placeImport.primaryVenue.userRatingsTotal,
+      venueGooglePlaceTypes: placeImport.primaryVenue.googlePlaceTypes,
+      type: resolvedTypes.typeId ?? state!.type,
+      typeSlug: resolvedTypes.typeSlug ?? state!.typeSlug,
+      typeName: resolvedTypes.typeName ?? state!.typeName,
+      businessTypeIds: resolvedTypes.businessTypeIds,
+      businessTypeSlugs: resolvedTypes.businessTypeSlugs,
+      businessTypeNames: resolvedTypes.businessTypeNames,
+    );
+  }
+
   /// Update about (step 4)
   void updateAbout(String? about) {
     if (state == null) return;
     if (about == null || about.isEmpty) {
-      state = state!.copyWith(clearAbout: true);
+      state = state!.copyWith(clearAbout: true, clearVenueDescription: true);
     } else {
-      state = state!.copyWith(about: about);
+      state = state!.copyWith(about: about, venueDescription: about);
     }
   }
 
@@ -265,9 +380,9 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   void updatePhone(String? phone) {
     if (state == null) return;
     if (phone == null || phone.isEmpty) {
-      state = state!.copyWith(clearPhone: true);
+      state = state!.copyWith(clearPhone: true, clearVenuePhone: true);
     } else {
-      state = state!.copyWith(phone: phone);
+      state = state!.copyWith(phone: phone, venuePhone: phone);
     }
   }
 
@@ -299,11 +414,11 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   void updateWebsite(String? website) {
     if (state == null) return;
     if (website == null || website.isEmpty) {
-      state = state!.copyWith(clearWebsite: true);
+      state = state!.copyWith(clearWebsite: true, clearVenueWebsite: true);
     } else {
       // Add https:// if not present
       final url = website.startsWith('http') ? website : 'https://$website';
-      state = state!.copyWith(website: url);
+      state = state!.copyWith(website: url, venueWebsite: url);
     }
   }
 
@@ -332,6 +447,71 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         return 'image/jpeg';
     }
   }
+
+  _ResolvedImportedBusinessTypes _resolveImportedBusinessTypes(
+    List<String> importedSlugs,
+    List<BusinessType> availableTypes,
+  ) {
+    if (importedSlugs.isEmpty) {
+      return _ResolvedImportedBusinessTypes.empty();
+    }
+
+    final normalizedSlugs = importedSlugs
+        .map((slug) => slug.trim().toLowerCase())
+        .where((slug) => slug.isNotEmpty)
+        .take(3)
+        .toList(growable: false);
+
+    if (availableTypes.isEmpty) {
+      return _ResolvedImportedBusinessTypes(
+        typeSlug: normalizedSlugs.first,
+        typeName: _humanizeSlug(normalizedSlugs.first),
+        businessTypeSlugs: normalizedSlugs,
+        businessTypeNames: normalizedSlugs
+            .map(_humanizeSlug)
+            .toList(growable: false),
+      );
+    }
+
+    final matched = availableTypes
+        .where(
+          (type) => normalizedSlugs.contains(type.slug.trim().toLowerCase()),
+        )
+        .take(3)
+        .toList(growable: false);
+
+    if (matched.isEmpty) {
+      return _ResolvedImportedBusinessTypes(
+        typeSlug: normalizedSlugs.first,
+        typeName: _humanizeSlug(normalizedSlugs.first),
+        businessTypeSlugs: normalizedSlugs,
+        businessTypeNames: normalizedSlugs
+            .map(_humanizeSlug)
+            .toList(growable: false),
+      );
+    }
+
+    return _ResolvedImportedBusinessTypes(
+      typeId: matched.first.id,
+      typeSlug: matched.first.slug,
+      typeName: matched.first.name,
+      businessTypeIds: matched.map((type) => type.id).toList(growable: false),
+      businessTypeSlugs: matched
+          .map((type) => type.slug)
+          .toList(growable: false),
+      businessTypeNames: matched
+          .map((type) => type.name)
+          .toList(growable: false),
+    );
+  }
+
+  String _humanizeSlug(String slug) => slug
+      .split(RegExp(r'[_-]'))
+      .where((part) => part.isNotEmpty)
+      .map(
+        (part) => '${part[0].toUpperCase()}${part.substring(1).toLowerCase()}',
+      )
+      .join(' ');
 
   /// Go to next step
   void nextStep() {
@@ -384,11 +564,24 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     required String password,
   }) async {
     if (state == null || !state!.isComplete) {
+      debugPrint(
+        '[B6] completeWithEmail aborted: state=${state == null ? "null" : "incomplete"} '
+        '(step1=${state?.isStep1Complete} step2=${state?.isStep2Complete} '
+        'step3=${state?.isStep3Complete})',
+      );
       return const OnboardingResult(
         success: false,
         errorMessage: 'Please complete all required fields',
       );
     }
+
+    debugPrint(
+      '[B6] completeWithEmail: userType=${state!.userType} '
+      'email=$email name=${state!.name} venueType=${state!.venueType} '
+      'venueCapacity=${state!.venueCapacity} '
+      'venuePhotos=${state!.venuePhotos.length} '
+      'businessTypes=${state!.selectedBusinessTypeSlugs.length}',
+    );
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -409,10 +602,70 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         );
       }
 
-      // Update auth state
-      await ref.read(authProvider.notifier).checkAuthStatus();
+      debugPrint(
+        '[B6] register* succeeded — user=${authResponse.user.email} '
+        'hasToken=${authResponse.token.isNotEmpty}',
+      );
+
+      // Update auth state for the new account. onRegistered() also resets any
+      // user-scoped providers left over from a prior (signed-out) session, so a
+      // sign-out -> create-account starts clean instead of showing
+      // "session expired" on every tab.
+      await ref.read(authProvider.notifier).onRegistered();
 
       return OnboardingResult(success: true, user: authResponse.user);
+    } on ApiException catch (e) {
+      debugPrint(
+        '[B6] ApiException: status=${e.error.statusCode} '
+        'message=${e.error.message} '
+        'fieldErrors=${e.error.errors?.keys.toList() ?? []}',
+      );
+      return OnboardingResult(success: false, error: e.error);
+    } on NetworkException catch (e) {
+      debugPrint('[B6] NetworkException: ${e.message}');
+      return OnboardingResult(
+        success: false,
+        errorMessage: e.message,
+        isNetworkError: true,
+      );
+    } on Exception catch (e) {
+      debugPrint('[B6] Unexpected exception: $e');
+      return const OnboardingResult(
+        success: false,
+        errorMessage: 'An unexpected error occurred',
+      );
+    }
+  }
+
+  /// Complete onboarding for an already-authenticated user.
+  Future<OnboardingResult> completeAuthenticatedOnboarding() async {
+    if (state == null || !state!.isComplete) {
+      return const OnboardingResult(
+        success: false,
+        errorMessage: 'Please complete all required fields',
+      );
+    }
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      final service = ref.read(onboardingServiceProvider);
+      final token = await authService.getToken();
+
+      if (token == null || token.isEmpty) {
+        return const OnboardingResult(
+          success: false,
+          errorMessage: 'Your session expired. Please sign in again.',
+        );
+      }
+
+      if (state!.isBusiness) {
+        await service.completeBusinessOnboarding(token, state!);
+      } else {
+        await service.completeCommunityOnboarding(token, state!);
+      }
+
+      await ref.read(authProvider.notifier).checkAuthStatus();
+      return const OnboardingResult(success: true);
     } on ApiException catch (e) {
       return OnboardingResult(success: false, error: e.error);
     } on NetworkException catch (e) {
@@ -422,7 +675,7 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         isNetworkError: true,
       );
     } on Exception catch (e) {
-      debugPrint('Onboarding error: $e');
+      debugPrint('Authenticated onboarding error: $e');
       return const OnboardingResult(
         success: false,
         errorMessage: 'An unexpected error occurred',
@@ -441,6 +694,32 @@ final onboardingProvider =
     NotifierProvider<OnboardingNotifier, OnboardingData?>(
       OnboardingNotifier.new,
     );
+
+class _ResolvedImportedBusinessTypes {
+  const _ResolvedImportedBusinessTypes({
+    this.typeId,
+    this.typeSlug,
+    this.typeName,
+    this.businessTypeIds = const [],
+    this.businessTypeSlugs = const [],
+    this.businessTypeNames = const [],
+  });
+
+  const _ResolvedImportedBusinessTypes.empty()
+    : typeId = null,
+      typeSlug = null,
+      typeName = null,
+      businessTypeIds = const [],
+      businessTypeSlugs = const [],
+      businessTypeNames = const [];
+
+  final String? typeId;
+  final String? typeSlug;
+  final String? typeName;
+  final List<String> businessTypeIds;
+  final List<String> businessTypeSlugs;
+  final List<String> businessTypeNames;
+}
 
 /// Result of onboarding attempt
 class OnboardingResult {

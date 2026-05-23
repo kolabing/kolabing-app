@@ -14,10 +14,7 @@ import '../models/public_profile.dart';
 ///
 /// Shows the collaboration title, partner info, date, and status.
 class PastCollaborationCard extends StatelessWidget {
-  const PastCollaborationCard({
-    required this.collaboration,
-    super.key,
-  });
+  const PastCollaborationCard({required this.collaboration, super.key});
 
   final PastCollaboration collaboration;
 
@@ -29,10 +26,7 @@ class PastCollaborationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(
-          color: KolabingColors.border,
-          width: 1,
-        ),
+        border: Border.all(color: KolabingColors.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,10 +84,7 @@ class PastCollaborationCard extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: KolabingColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
@@ -131,10 +122,7 @@ class PastCollaborationCard extends StatelessWidget {
 // =============================================================================
 
 class _PartnerAvatar extends StatelessWidget {
-  const _PartnerAvatar({
-    required this.initial,
-    this.avatarUrl,
-  });
+  const _PartnerAvatar({required this.initial, this.avatarUrl});
 
   final String? avatarUrl;
   final String initial;
@@ -150,7 +138,8 @@ class _PartnerAvatar extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorWidget: (_, _, _) => _InitialCircle(initial: initial, size: size),
+          errorWidget: (_, _, _) =>
+              _InitialCircle(initial: initial, size: size),
         ),
       );
     }
@@ -160,31 +149,28 @@ class _PartnerAvatar extends StatelessWidget {
 }
 
 class _InitialCircle extends StatelessWidget {
-  const _InitialCircle({
-    required this.initial,
-    required this.size,
-  });
+  const _InitialCircle({required this.initial, required this.size});
 
   final String initial;
   final double size;
 
   @override
   Widget build(BuildContext context) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.2),
-          shape: BoxShape.circle,
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: KolabingColors.primary.withValues(alpha: 0.2),
+      shape: BoxShape.circle,
+    ),
+    child: Center(
+      child: Text(
+        initial,
+        style: GoogleFonts.rubik(
+          fontSize: size * 0.45,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.textPrimary,
         ),
-        child: Center(
-          child: Text(
-            initial,
-            style: GoogleFonts.rubik(
-              fontSize: size * 0.45,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }

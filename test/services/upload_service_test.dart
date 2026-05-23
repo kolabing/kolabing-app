@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -57,10 +57,10 @@ void main() {
     );
 
     final filePath = await _createTempUploadFile();
-    addTearDown(() async {
+    addTearDown(() {
       final file = File(filePath);
-      if (await file.exists()) {
-        await file.delete();
+      if (file.existsSync()) {
+        file.deleteSync();
       }
     });
 
@@ -77,6 +77,49 @@ void main() {
       null,
       'Bearer token-456',
     ]);
+  });
+
+  test('upload normalizes relative media URLs returned by the API', () async {
+    FlutterSecureStorage.setMockInitialValues(<String, String>{
+      'auth_token': 'token-123',
+    });
+
+    final client = _QueuedClient(
+      responses: [
+        _QueuedResponse(
+          statusCode: 201,
+          body: jsonEncode(<String, dynamic>{
+            'data': <String, dynamic>{
+              'url': '/storage/kolabs/photo.jpg',
+            },
+          }),
+        ),
+      ],
+    );
+
+    final authService = AuthService(
+      secureStorage: const FlutterSecureStorage(),
+      httpClient: client,
+    );
+    final uploadService = UploadService(
+      authService: authService,
+      httpClient: client,
+    );
+
+    final filePath = await _createTempUploadFile();
+    addTearDown(() {
+      final file = File(filePath);
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+    });
+
+    final url = await uploadService.upload(
+      filePath: filePath,
+      folder: 'kolabs',
+    );
+
+    expect(url, 'https://kolabing.com/storage/kolabs/photo.jpg');
   });
 }
 

@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/event.dart';
@@ -347,7 +348,12 @@ class PastEventsSection extends ConsumerWidget {
           final event = events[index];
           return EventCard(
             event: event,
-            onTap: () => context.push('/event/${event.id}'),
+            onTap: () => context.push(
+              KolabingRoutes.buildEventDetailPath(
+                event.id,
+                isReadOnly: _isReadOnly,
+              ),
+            ),
           );
         },
       ),

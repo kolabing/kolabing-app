@@ -10,9 +10,13 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
+import '../../../../utils/image_picker_normalize.dart';
+import '../../../business/providers/profile_provider.dart';
+import '../../../profile/providers/gallery_provider.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../widgets/existing_photo_picker_sheet.dart';
 
 /// Step 1 (both venue and product flows): Media upload.
 ///
@@ -34,6 +38,17 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
   bool _isUploading = false;
   final _picker = ImagePicker();
 
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final galleryState = ref.read(galleryProvider);
+      if (!galleryState.isLoading && galleryState.photos.isEmpty) {
+        ref.read(galleryProvider.notifier).loadGallery();
+      }
+    });
+  }
+
   Future<void> _pickAndUploadPhoto() async {
     final image = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -45,17 +60,22 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
     setState(() => _isUploading = true);
     try {
+      // C10: Google Photos / iCloud picks can return content URIs that
+      // dart:io can't read. Normalize to a real temp file before upload.
+      final localPath = await normalizePickedImage(image);
       final uploadService = ref.read(uploadServiceProvider);
       final url = await uploadService.upload(
-        filePath: image.path,
+        filePath: localPath,
         folder: 'kolabs',
       );
       final notifier = ref.read(kolabFormProvider.notifier);
       final kolab = ref.read(kolabFormProvider).kolab;
       // Use max-existing-sort + 1 to guarantee uniqueness even after a slot
       // was removed (count-based formula could collide with a surviving entry).
+      // Backend expects `image` / `video` — `photo` was rejected on publish
+      // (B7). Use `image` consistently across upload + filter.
       final existingPhotos =
-          kolab.media.where((m) => m.type == 'photo');
+          kolab.media.where((m) => m.type == 'image');
       final nextSort = existingPhotos.isEmpty
           ? 0
           : existingPhotos
@@ -63,7 +83,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
                   .reduce((a, b) => a > b ? a : b) +
               1;
       notifier.addMedia(
-        KolabMedia(url: url, type: 'photo', sortOrder: nextSort),
+        KolabMedia(url: url, type: 'image', sortOrder: nextSort),
       );
     } on Exception catch (e) {
       if (mounted) {
@@ -76,6 +96,75 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     }
   }
 
+  Future<void> _selectExistingPhotos() async {
+    final profile = ref.read(profileProvider).profile;
+    final venuePhotoUrls =
+        profile?.businessProfile?.primaryVenue?.photos ?? const <String>[];
+    final existing = ref.read(kolabFormProvider).kolab.media;
+    final existingUrls = existing.map((m) => m.url).toSet();
+    final maxToAdd = 5 - existing.length;
+    if (maxToAdd <= 0) return;
+
+    final selectedPhotos = await ExistingPhotoPickerSheet.show(
+      context,
+      title: 'Select existing photos',
+      confirmLabel: maxToAdd == 1 ? 'Use photo' : 'Use photos',
+      maxSelection: maxToAdd,
+      fallbackUrls: venuePhotoUrls,
+    );
+    if (!mounted || selectedPhotos == null || selectedPhotos.isEmpty) {
+      return;
+    }
+
+    final notifier = ref.read(kolabFormProvider.notifier);
+    final nextSortStart = existing.isEmpty
+        ? 0
+        : existing.map((m) => m.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
+    final toAdd = selectedPhotos
+        .where((photo) => photo.url.isNotEmpty && !existingUrls.contains(photo.url))
+        .take(maxToAdd)
+        .toList(growable: false);
+
+    if (toAdd.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Those photos are already in this Kolab.',
+              style: GoogleFonts.openSans(color: Colors.white),
+            ),
+            backgroundColor: KolabingColors.textSecondary,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    for (var i = 0; i < toAdd.length; i++) {
+      notifier.addMedia(
+        KolabMedia(
+          url: toAdd[i].url,
+          type: 'image',
+          sortOrder: nextSortStart + i,
+        ),
+      );
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Added ${toAdd.length} existing photo${toAdd.length == 1 ? '' : 's'}.',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(kolabFormProvider);
@@ -85,6 +174,17 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
     final isVenue = formState.intentType == IntentType.venuePromotion;
     final title = isVenue ? 'SHOW OFF YOUR VENUE' : 'SHOW YOUR PRODUCT';
+
+    // C7: surface a "Use venue photos" CTA only on venue promotion when the
+    // business profile actually has photos to reuse.
+    final venuePhotoUrls = ref.watch(
+      profileProvider.select((s) => s.profile?.businessProfile?.primaryVenue?.photos),
+    );
+    final galleryState = ref.watch(galleryProvider);
+    final showReuseCta = kolab.media.length < 5 &&
+        (galleryState.isLoading ||
+            galleryState.photos.isNotEmpty ||
+            (isVenue && (venuePhotoUrls?.isNotEmpty ?? false)));
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -113,6 +213,36 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(errors['media']!, style: GoogleFonts.openSans(fontSize: 12, color: KolabingColors.error)),
           ),
+
+        // Reuse previously uploaded profile gallery photos, plus venue fallback.
+        if (showReuseCta) ...[
+          OutlinedButton.icon(
+            onPressed: _isUploading ? null : _selectExistingPhotos,
+            icon: const Icon(LucideIcons.imagePlus, size: 18),
+            label: Text(
+              'SELECT FROM LIBRARY',
+              style: GoogleFonts.dmSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KolabingColors.primary,
+              side: BorderSide(
+                color: KolabingColors.primary.withValues(alpha: 0.5),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KolabingRadius.sm),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+                vertical: 10,
+              ),
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+        ],
 
         // Upload progress
         if (_isUploading)
@@ -149,7 +279,7 @@ class _PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photos = media.where((m) => m.type == 'photo').toList();
+    final photos = media.where((m) => m.type == 'image').toList();
     final canAdd = photos.length < 5;
 
     return Wrap(

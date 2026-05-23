@@ -54,7 +54,14 @@ class AuthService {
   /// Cached refresh token
   String? _cachedRefreshToken;
 
-  Future<String>? _refreshRequest;
+  /// Shared refresh coordination across all auth service instances in-process.
+  static Future<String>? _sharedRefreshRequest;
+
+  /// Shared session version. Any login, logout, or token refresh rotates this
+  /// so stale instances drop cached credentials and ignore late responses.
+  static int _sharedSessionEpoch = 0;
+
+  int _knownSessionEpoch = _sharedSessionEpoch;
 
   // ---------------------------------------------------------------------------
   // Google Sign In
@@ -201,6 +208,16 @@ class AuthService {
       };
 
       debugPrint('🔐 Request body keys: ${body.keys.toList()}');
+
+      // [B6] Audit photo-shape mix — backend rejects mixed shapes silently.
+      final photos = onboardingData.venuePhotos;
+      final uploadCount = photos.where((p) => p.isUploaded).length;
+      final googleCount = photos.where((p) => p.isGoogleImported).length;
+      final hostedCount = photos.where((p) => p.isHosted).length;
+      debugPrint(
+        '[B6] venue photos: total=${photos.length} '
+        'upload=$uploadCount google=$googleCount hosted=$hostedCount',
+      );
 
       final response = await _httpClient.post(
         Uri.parse(url),
@@ -523,8 +540,13 @@ class AuthService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final authResponse = AuthResponse.fromJson(json);
         await _saveAuthData(authResponse);
+        debugPrint(
+          '[AUTH] login success: userType=${authResponse.user.userType} '
+          'hasRefreshToken=${authResponse.refreshToken != null && authResponse.refreshToken!.isNotEmpty}',
+        );
         return authResponse;
       } else {
+        debugPrint('[AUTH] login non-200: ${response.statusCode}');
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw ApiException(
           error: ApiError.fromJson(json, statusCode: response.statusCode),
@@ -534,7 +556,7 @@ class AuthService {
       if (e is ApiException || e is NetworkException) {
         rethrow;
       }
-      debugPrint('🔐 Login error: $e');
+      debugPrint('[AUTH] login network error: $e');
       throw NetworkException('Failed to connect to server: $e');
     }
   }
@@ -801,6 +823,7 @@ class AuthService {
 
   Future<UserModel> _getCurrentUser({required bool allowRefresh}) async {
     final token = await getToken();
+    final sessionEpoch = _sharedSessionEpoch;
 
     if (token == null) {
       throw const AuthException('Not authenticated');
@@ -820,6 +843,9 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
+        if (sessionEpoch != _sharedSessionEpoch) {
+          throw const AuthException('Session expired. Please sign in again.');
+        }
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
         final user = UserModel.fromJson(data);
@@ -831,6 +857,7 @@ class AuthService {
           await refreshSession();
           return _getCurrentUser(allowRefresh: false);
         }
+        await _purgeSession();
         throw const AuthException('Session expired. Please sign in again.');
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -868,18 +895,11 @@ class AuthService {
   ///
   /// POST /api/v1/auth/logout
   Future<void> logout() async {
-    final token = _cachedToken;
+    final token = await getToken();
+    await _purgeSession();
 
     try {
       await signOutGoogle();
-
-      _cachedToken = null;
-      _cachedRefreshToken = null;
-      _cachedUser = null;
-
-      await _secureStorage.delete(key: _tokenKey);
-      await _secureStorage.delete(key: _refreshTokenKey);
-      await _secureStorage.delete(key: _userKey);
 
       if (_useMockApi || token == null) {
         return;
@@ -903,6 +923,7 @@ class AuthService {
 
   /// Get stored auth token
   Future<String?> getToken() async {
+    _syncLocalCachesWithSharedSession();
     if (_cachedToken != null) {
       return _cachedToken;
     }
@@ -912,6 +933,7 @@ class AuthService {
 
   /// Get stored refresh token.
   Future<String?> getRefreshToken() async {
+    _syncLocalCachesWithSharedSession();
     if (_cachedRefreshToken != null) {
       return _cachedRefreshToken;
     }
@@ -936,53 +958,54 @@ class AuthService {
     }
 
     final storedUser = await getStoredUser();
-    if (storedUser == null) {
-      return null;
-    }
 
     try {
       return await getCurrentUser();
     } on AuthException {
-      try {
-        await refreshSession();
-        return await _getCurrentUser(allowRefresh: false);
-      } on AuthException {
-        return storedUser;
-      } on NetworkException {
-        return storedUser;
-      } on ApiException {
-        return storedUser;
-      }
+      await _purgeSession();
+      return null;
     } on NetworkException {
+      return storedUser;
+    } on ApiException {
       return storedUser;
     }
   }
 
   /// Refresh the access token using the persisted refresh token.
   Future<String> refreshSession() async {
-    final existingRequest = _refreshRequest;
+    final existingRequest = _sharedRefreshRequest;
     if (existingRequest != null) {
       return existingRequest;
     }
 
     final refreshRequest = _performRefreshSession();
-    _refreshRequest = refreshRequest;
+    _sharedRefreshRequest = refreshRequest;
 
     try {
       return await refreshRequest;
     } finally {
-      _refreshRequest = null;
+      if (identical(_sharedRefreshRequest, refreshRequest)) {
+        _sharedRefreshRequest = null;
+      }
     }
   }
 
   Future<String> _performRefreshSession() async {
+    _syncLocalCachesWithSharedSession();
+    final sessionEpoch = _sharedSessionEpoch;
     final refreshToken = await getRefreshToken();
     if (refreshToken == null || refreshToken.isEmpty) {
+      debugPrint('[AUTH] refresh aborted: no refresh token stored');
+      await _purgeSession();
       throw const AuthException('Session expired. Please sign in again.');
     }
 
     final url = '$_baseUrl/auth/refresh';
-    debugPrint('🔐 Refresh Session: POST $url');
+    final tokenTail = refreshToken.length >= 6
+        ? refreshToken.substring(refreshToken.length - 6)
+        : refreshToken;
+    final startedAt = DateTime.now();
+    debugPrint('[AUTH] refresh start: tokenTail=…$tokenTail url=$url');
 
     try {
       final response = await _httpClient.post(
@@ -994,16 +1017,23 @@ class AuthService {
         body: jsonEncode({'refresh_token': refreshToken}),
       );
 
-      debugPrint('🔐 Refresh response status: ${response.statusCode}');
+      final elapsed = DateTime.now().difference(startedAt).inMilliseconds;
+      debugPrint(
+        '[AUTH] refresh done: status=${response.statusCode} elapsed=${elapsed}ms',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final refreshResponse = SessionRefreshResponse.fromJson(json);
+        if (sessionEpoch != _sharedSessionEpoch) {
+          throw const AuthException('Session expired. Please sign in again.');
+        }
         await _saveSessionRefreshData(refreshResponse);
         return refreshResponse.token;
       }
 
       if (response.statusCode == 401) {
+        await _purgeSession();
         throw const AuthException('Session expired. Please sign in again.');
       }
 
@@ -1022,6 +1052,7 @@ class AuthService {
 
   /// Save auth data to secure storage
   Future<void> _saveAuthData(AuthResponse response) async {
+    _invalidateSharedSession();
     await _saveTokens(
       token: response.token,
       refreshToken: response.refreshToken,
@@ -1030,6 +1061,7 @@ class AuthService {
   }
 
   Future<void> _saveSessionRefreshData(SessionRefreshResponse response) async {
+    _invalidateSharedSession();
     await _saveTokens(
       token: response.token,
       refreshToken: response.refreshToken,
@@ -1058,10 +1090,14 @@ class AuthService {
   }
 
   /// Get cached user
-  UserModel? get cachedUser => _cachedUser;
+  UserModel? get cachedUser {
+    _syncLocalCachesWithSharedSession();
+    return _cachedUser;
+  }
 
   /// Get stored user from secure storage
   Future<UserModel?> getStoredUser() async {
+    _syncLocalCachesWithSharedSession();
     if (_cachedUser != null) return _cachedUser;
 
     try {
@@ -1075,6 +1111,33 @@ class AuthService {
       debugPrint('Get stored user error: $e');
     }
     return null;
+  }
+
+  void _syncLocalCachesWithSharedSession() {
+    if (_knownSessionEpoch == _sharedSessionEpoch) {
+      return;
+    }
+
+    _cachedToken = null;
+    _cachedRefreshToken = null;
+    _cachedUser = null;
+    _knownSessionEpoch = _sharedSessionEpoch;
+  }
+
+  void _invalidateSharedSession() {
+    _sharedSessionEpoch++;
+    _sharedRefreshRequest = null;
+    _knownSessionEpoch = _sharedSessionEpoch;
+    _cachedToken = null;
+    _cachedRefreshToken = null;
+    _cachedUser = null;
+  }
+
+  Future<void> _purgeSession() async {
+    _invalidateSharedSession();
+    await _secureStorage.delete(key: _tokenKey);
+    await _secureStorage.delete(key: _refreshTokenKey);
+    await _secureStorage.delete(key: _userKey);
   }
 }
 

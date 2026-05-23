@@ -37,6 +37,18 @@ class NotificationService {
     };
   }
 
+  Future<http.Response> _sendWithRefresh(
+    Future<http.Response> Function() request, {
+    required bool allowRetry,
+  }) async {
+    final response = await request();
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _sendWithRefresh(request, allowRetry: false);
+    }
+    return response;
+  }
+
   // ---------------------------------------------------------------------------
   // GET /api/v1/me/notifications
   // ---------------------------------------------------------------------------
@@ -57,7 +69,10 @@ class NotificationService {
     debugPrint('NotificationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Notifications response status: ${response.statusCode}');
 
@@ -88,7 +103,10 @@ class NotificationService {
     debugPrint('NotificationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Unread count response status: ${response.statusCode}');
 
@@ -121,9 +139,12 @@ class NotificationService {
     debugPrint('NotificationService: POST $uri');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Mark as read response status: ${response.statusCode}');
@@ -165,9 +186,12 @@ class NotificationService {
     debugPrint('NotificationService: POST $uri');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Mark all as read response status: ${response.statusCode}');

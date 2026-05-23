@@ -1,5 +1,19 @@
 import 'package:flutter/foundation.dart';
 
+/// Coerce a JSON value into an int.
+///
+/// The `/me/dashboard` stat counts are cast to `int` server-side, but DB
+/// drivers / JSON encoders occasionally surface numeric aggregates as a
+/// `String` ("3") or a `double` (3.0). A bare `as int` cast THROWS on those,
+/// which previously bubbled up and put the whole dashboard into its error
+/// state ("broken" on both roles). This parses defensively instead.
+int _asInt(dynamic value) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) return int.tryParse(value) ?? 0;
+  return 0;
+}
+
 /// Stats count for opportunities (business dashboard)
 @immutable
 class OpportunityStats {
@@ -17,10 +31,10 @@ class OpportunityStats {
 
   factory OpportunityStats.fromJson(Map<String, dynamic> json) {
     return OpportunityStats(
-      total: json['total'] as int? ?? 0,
-      published: json['published'] as int? ?? 0,
-      draft: json['draft'] as int? ?? 0,
-      closed: json['closed'] as int? ?? 0,
+      total: _asInt(json['total']),
+      published: _asInt(json['published']),
+      draft: _asInt(json['draft']),
+      closed: _asInt(json['closed']),
     );
   }
 }
@@ -42,10 +56,10 @@ class ApplicationsReceivedStats {
 
   factory ApplicationsReceivedStats.fromJson(Map<String, dynamic> json) {
     return ApplicationsReceivedStats(
-      total: json['total'] as int? ?? 0,
-      pending: json['pending'] as int? ?? 0,
-      accepted: json['accepted'] as int? ?? 0,
-      declined: json['declined'] as int? ?? 0,
+      total: _asInt(json['total']),
+      pending: _asInt(json['pending']),
+      accepted: _asInt(json['accepted']),
+      declined: _asInt(json['declined']),
     );
   }
 }
@@ -69,11 +83,11 @@ class ApplicationsSentStats {
 
   factory ApplicationsSentStats.fromJson(Map<String, dynamic> json) {
     return ApplicationsSentStats(
-      total: json['total'] as int? ?? 0,
-      pending: json['pending'] as int? ?? 0,
-      accepted: json['accepted'] as int? ?? 0,
-      declined: json['declined'] as int? ?? 0,
-      withdrawn: json['withdrawn'] as int? ?? 0,
+      total: _asInt(json['total']),
+      pending: _asInt(json['pending']),
+      accepted: _asInt(json['accepted']),
+      declined: _asInt(json['declined']),
+      withdrawn: _asInt(json['withdrawn']),
     );
   }
 }
@@ -95,10 +109,10 @@ class CollaborationStats {
 
   factory CollaborationStats.fromJson(Map<String, dynamic> json) {
     return CollaborationStats(
-      total: json['total'] as int? ?? 0,
-      active: json['active'] as int? ?? 0,
-      upcoming: json['upcoming'] as int? ?? 0,
-      completed: json['completed'] as int? ?? 0,
+      total: _asInt(json['total']),
+      active: _asInt(json['active']),
+      upcoming: _asInt(json['upcoming']),
+      completed: _asInt(json['completed']),
     );
   }
 }
@@ -134,11 +148,7 @@ class UpcomingOpportunityInfo {
 /// Partner info nested in upcoming collaboration
 @immutable
 class UpcomingPartnerInfo {
-  const UpcomingPartnerInfo({
-    required this.id,
-    this.name,
-    this.userType,
-  });
+  const UpcomingPartnerInfo({required this.id, this.name, this.userType});
 
   final String id;
   final String? name;
@@ -205,8 +215,18 @@ class UpcomingCollaboration {
     final date = DateTime.tryParse(scheduledDate!);
     if (date == null) return scheduledDate!;
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -265,10 +285,10 @@ class BusinessDashboard {
           : const OpportunityStats(),
       applicationsReceived:
           json['applications_received'] is Map<String, dynamic>
-              ? ApplicationsReceivedStats.fromJson(
-                  json['applications_received'] as Map<String, dynamic>,
-                )
-              : const ApplicationsReceivedStats(),
+          ? ApplicationsReceivedStats.fromJson(
+              json['applications_received'] as Map<String, dynamic>,
+            )
+          : const ApplicationsReceivedStats(),
       collaborations: json['collaborations'] is Map<String, dynamic>
           ? CollaborationStats.fromJson(
               json['collaborations'] as Map<String, dynamic>,
@@ -312,10 +332,10 @@ class CommunityDashboard {
           : const ApplicationsSentStats(),
       applicationsReceived:
           json['applications_received'] is Map<String, dynamic>
-              ? ApplicationsReceivedStats.fromJson(
-                  json['applications_received'] as Map<String, dynamic>,
-                )
-              : const ApplicationsReceivedStats(),
+          ? ApplicationsReceivedStats.fromJson(
+              json['applications_received'] as Map<String, dynamic>,
+            )
+          : const ApplicationsReceivedStats(),
       collaborations: json['collaborations'] is Map<String, dynamic>
           ? CollaborationStats.fromJson(
               json['collaborations'] as Map<String, dynamic>,

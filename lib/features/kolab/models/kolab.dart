@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/enums/product_type.dart';
 import 'package:kolabing_app/features/kolab/enums/venue_type.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
+
+import '../../../utils/profile_type_formatter.dart';
+import '../../../utils/remote_media_url.dart';
 
 // =============================================================================
 // Venue Preference
@@ -74,7 +76,7 @@ class KolabMedia {
   const KolabMedia({required this.url, required this.type, this.sortOrder = 0});
 
   factory KolabMedia.fromJson(Map<String, dynamic> json) => KolabMedia(
-    url: json['url']?.toString() ?? '',
+    url: normalizeRemoteMediaUrl(json['url']?.toString() ?? ''),
     type: json['type']?.toString() ?? 'image',
     sortOrder: _parseInt(json['sort_order']) ?? 0,
   );
@@ -171,6 +173,68 @@ class PastEvent {
 }
 
 // =============================================================================
+// Negotiation Trigger (H3)
+// =============================================================================
+
+/// A negotiation trigger surfaces additional offer terms once a community has
+/// sent a proposal. The base offer is always public; triggers are gated.
+@immutable
+class NegotiationTrigger {
+  const NegotiationTrigger({
+    required this.condition,
+    required this.additionalOffer,
+  });
+
+  factory NegotiationTrigger.fromJson(Map<String, dynamic> json) =>
+      NegotiationTrigger(
+        condition: json['condition']?.toString() ?? '',
+        additionalOffer: json['additional_offer']?.toString() ?? '',
+      );
+
+  final String condition;
+  final String additionalOffer;
+
+  Map<String, dynamic> toJson() => {
+    'condition': condition,
+    'additional_offer': additionalOffer,
+  };
+}
+
+// =============================================================================
+// Match Signal (H1)
+// =============================================================================
+
+/// A single component of the discovery match score, e.g. category fit or
+/// location proximity. Frontend renders these as the mini-model breakdown
+/// pinned to the discovery card.
+@immutable
+class MatchSignal {
+  const MatchSignal({
+    required this.key,
+    required this.label,
+    required this.weight,
+    required this.score,
+  });
+
+  factory MatchSignal.fromJson(Map<String, dynamic> json) => MatchSignal(
+    key: json['key']?.toString() ?? '',
+    label: json['label']?.toString() ?? '',
+    weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+    score: (json['score'] as num?)?.toDouble() ?? 0.0,
+  );
+
+  final String key;
+  final String label;
+
+  /// Algorithm weight in `[0, 1]`. Sum of all weights ≈ 1.
+  final double weight;
+
+  /// Per-signal score in `[0, 1]`. The displayed `match_score` ≈
+  /// `Σ(weight × score) × 100`.
+  final double score;
+}
+
+// =============================================================================
 // Kolab Model
 // =============================================================================
 
@@ -210,6 +274,12 @@ class Kolab {
     this.pastEvents = const [],
     this.publishedAt,
     this.createdAt,
+    // Phase 5 discovery & matching (2026-05-21 backend contract update)
+    this.offerHeadline,
+    this.baseOffer,
+    this.negotiationTriggers = const [],
+    this.matchScore,
+    this.matchBreakdown = const [],
   });
 
   /// Creates an empty Kolab with sensible defaults for the given intent type.
@@ -301,6 +371,21 @@ class Kolab {
         : const [],
     publishedAt: _parseDateTimeNullable(json['published_at']),
     createdAt: _parseDateTimeNullable(json['created_at']),
+    offerHeadline: json['offer_headline']?.toString(),
+    baseOffer: json['base_offer']?.toString(),
+    negotiationTriggers: json['negotiation_triggers'] is List
+        ? (json['negotiation_triggers'] as List)
+              .map(
+                (e) => NegotiationTrigger.fromJson(e as Map<String, dynamic>),
+              )
+              .toList()
+        : const [],
+    matchScore: _parseInt(json['match_score']),
+    matchBreakdown: json['match_breakdown'] is List
+        ? (json['match_breakdown'] as List)
+              .map((e) => MatchSignal.fromJson(e as Map<String, dynamic>))
+              .toList()
+        : const [],
   );
 
   // ---------------------------------------------------------------------------
@@ -356,6 +441,14 @@ class Kolab {
   final DateTime? publishedAt;
   final DateTime? createdAt;
 
+  // Phase 5 discovery & matching (read-only on detail responses;
+  // offerHeadline + baseOffer + negotiationTriggers are write-on-publish).
+  final String? offerHeadline;
+  final String? baseOffer;
+  final List<NegotiationTrigger> negotiationTriggers;
+  final int? matchScore;
+  final List<MatchSignal> matchBreakdown;
+
   // ---------------------------------------------------------------------------
   // Serialization
   // ---------------------------------------------------------------------------
@@ -408,6 +501,15 @@ class Kolab {
       'past_events': pastEvents.map((e) => e.toJson()).toList(),
     if (publishedAt != null) 'published_at': publishedAt!.toIso8601String(),
     if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+    // Phase 5 write-on-publish fields. match_score / match_breakdown are
+    // read-only — backend computes them.
+    if (offerHeadline != null && offerHeadline!.isNotEmpty)
+      'offer_headline': offerHeadline,
+    if (baseOffer != null && baseOffer!.isNotEmpty) 'base_offer': baseOffer,
+    if (negotiationTriggers.isNotEmpty)
+      'negotiation_triggers': negotiationTriggers
+          .map((t) => t.toJson())
+          .toList(),
   };
 
   // ---------------------------------------------------------------------------
@@ -447,6 +549,13 @@ class Kolab {
     List<PastEvent>? pastEvents,
     DateTime? publishedAt,
     DateTime? createdAt,
+    String? offerHeadline,
+    String? baseOffer,
+    List<NegotiationTrigger>? negotiationTriggers,
+    int? matchScore,
+    List<MatchSignal>? matchBreakdown,
+    bool clearOfferHeadline = false,
+    bool clearBaseOffer = false,
     bool clearId = false,
     bool clearArea = false,
     bool clearAvailabilityMode = false,
@@ -509,6 +618,13 @@ class Kolab {
     productType: clearProductType ? null : (productType ?? this.productType),
     offering: offering ?? this.offering,
     seekingCommunities: seekingCommunities ?? this.seekingCommunities,
+    offerHeadline: clearOfferHeadline
+        ? null
+        : (offerHeadline ?? this.offerHeadline),
+    baseOffer: clearBaseOffer ? null : (baseOffer ?? this.baseOffer),
+    negotiationTriggers: negotiationTriggers ?? this.negotiationTriggers,
+    matchScore: matchScore ?? this.matchScore,
+    matchBreakdown: matchBreakdown ?? this.matchBreakdown,
     minCommunitySize: clearMinCommunitySize
         ? null
         : (minCommunitySize ?? this.minCommunitySize),
@@ -521,6 +637,9 @@ class Kolab {
   @override
   String toString() =>
       'Kolab(id: $id, intentType: $intentType, title: $title, status: $status)';
+
+  List<String> get communityTypeLabels =>
+      communityTypes.map(formatProfileTypeLabel).toList(growable: false);
 
   // ---------------------------------------------------------------------------
   // Parsing helpers

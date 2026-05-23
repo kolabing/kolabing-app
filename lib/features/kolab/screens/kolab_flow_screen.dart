@@ -7,10 +7,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/kolab_form_provider.dart';
-import '../../subscription/widgets/subscription_paywall.dart';
+import '../providers/my_kolabs_provider.dart';
 import '../widgets/kolab_action_bar.dart';
 import '../widgets/kolab_step_indicator.dart';
 import 'business/availability_screen.dart';
@@ -339,6 +340,9 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
               onPressed: () {
                 Navigator.pop(ctx);
                 ref.read(kolabFormProvider.notifier).reset();
+                // Force the dashboard's drafts/published list to refetch so the
+                // freshly created/published kolab is visible (B3).
+                ref.invalidate(myKolabsProvider);
                 // Pop back to dashboard (IntentSelection + FlowScreen)
                 if (context.canPop()) context.pop();
                 if (context.canPop()) context.pop();

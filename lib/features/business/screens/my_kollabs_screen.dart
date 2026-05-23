@@ -57,24 +57,12 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     }
   }
 
-  void _onCreateNew() {
-    final profileState = ref.read(profileProvider);
-    final listState = ref.read(myKolabsProvider);
-
-    // Free tier: 1 kollab allowed without subscription.
-    // If no active subscription and already has 1+ kollab, show paywall.
-    final hasSubscription = profileState.isSubscribed;
-    if (!hasSubscription && !listState.isLoading && listState.total >= 1) {
-      showModalBottomSheet<bool>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const SubscriptionPaywall(),
-      );
-      return;
-    }
-
-    context.push(KolabingRoutes.kolabNew);
+  Future<void> _onCreateNew() async {
+    // B1 (2026-05-22): route all NEW creation through the unified /kolab/flow
+    // via /kolab/new (IntentSelectionScreen). The subscription gate for a
+    // non-subscribed business is enforced inside IntentSelectionScreen
+    // (_LockedBusinessCreateState), so we no longer pre-gate here.
+    await context.push(KolabingRoutes.kolabNew);
   }
 
   void _onEdit(Kolab kolab) {
@@ -93,7 +81,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       final errorMessage = state.error ?? 'Failed to publish';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Kollab published!' : errorMessage),
+          content: Text(success ? 'Kolab published!' : errorMessage),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
               ? KolabingColors.success
@@ -110,7 +98,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       final errorMessage = state.error ?? 'Failed to close';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Kollab closed' : errorMessage),
+          content: Text(success ? 'Kolab closed' : errorMessage),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
               ? KolabingColors.success
@@ -124,9 +112,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Kollab'),
+        title: const Text('Delete Kolab'),
         content: const Text(
-          'Are you sure you want to delete this kollab? This action cannot be undone.',
+          'Are you sure you want to delete this kolab? This action cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -149,7 +137,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         final errorMessage = state.error ?? 'Failed to delete';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(success ? 'Kollab deleted' : errorMessage),
+            content: Text(success ? 'Kolab deleted' : errorMessage),
             behavior: SnackBarBehavior.floating,
             backgroundColor: success
                 ? KolabingColors.success
@@ -224,7 +212,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MY KOLLABS',
+          'MY KOLABS',
           style: GoogleFonts.rubik(
             fontSize: 28,
             fontWeight: FontWeight.w800,
@@ -236,7 +224,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Manage your kollabs',
+          'Manage your kolabs',
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -313,7 +301,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           vertical: KolabingSpacing.sm,
         ),
         child: Text(
-          '${listState.total} ${listState.total == 1 ? 'kollab' : 'kollabs'}',
+          '${listState.total} ${listState.total == 1 ? 'kolab' : 'kolabs'}',
           style: GoogleFonts.openSans(
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -426,7 +414,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'No kollabs yet',
+            'No kolabs yet',
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -437,7 +425,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Create your first kollab to start connecting with communities',
+            'Create your first kolab to start connecting with communities',
             style: GoogleFonts.openSans(
               fontSize: 14,
               color: KolabingColors.textSecondary,
@@ -448,7 +436,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ElevatedButton.icon(
             onPressed: _onCreateNew,
             icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('Create Kollab'),
+            label: const Text('Create Kolab'),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,

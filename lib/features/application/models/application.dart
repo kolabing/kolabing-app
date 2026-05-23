@@ -134,9 +134,10 @@ class ChatMessage {
       applicationId: json['application_id']?.toString() ?? '',
       senderProfile: senderProfile,
       content: json['content']?.toString() ?? '',
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ??
-                 DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
-                 DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['created_at']?.toString() ?? '') ??
+          DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
+          DateTime.now(),
       isOwn: parseBool(json['is_own']),
       isRead: parseBool(json['is_read']),
       readAt: json['read_at'] != null
@@ -154,17 +155,16 @@ class ChatMessage {
     bool? isOwn,
     bool? isRead,
     DateTime? readAt,
-  }) =>
-      ChatMessage(
-        id: id ?? this.id,
-        applicationId: applicationId ?? this.applicationId,
-        senderProfile: senderProfile ?? this.senderProfile,
-        content: content ?? this.content,
-        createdAt: createdAt ?? this.createdAt,
-        isOwn: isOwn ?? this.isOwn,
-        isRead: isRead ?? this.isRead,
-        readAt: readAt ?? this.readAt,
-      );
+  }) => ChatMessage(
+    id: id ?? this.id,
+    applicationId: applicationId ?? this.applicationId,
+    senderProfile: senderProfile ?? this.senderProfile,
+    content: content ?? this.content,
+    createdAt: createdAt ?? this.createdAt,
+    isOwn: isOwn ?? this.isOwn,
+    isRead: isRead ?? this.isRead,
+    readAt: readAt ?? this.readAt,
+  );
 }
 
 /// Applicant profile from API response
@@ -184,7 +184,8 @@ class ApplicantProfile {
   final String? city;
   final String? category;
 
-  String get initial => displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
+  String get initial =>
+      displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
 
   factory ApplicantProfile.fromJson(Map<String, dynamic> json) {
     // city can be a String or a Map with 'name' key
@@ -231,6 +232,7 @@ class Application {
     this.opportunity,
     this.messages = const [],
     this.unreadCount = 0,
+    this.viewerMustResubscribe = false,
   });
 
   final String id;
@@ -246,6 +248,13 @@ class Application {
   final List<ChatMessage> messages;
   final int unreadCount;
 
+  /// Subscription-lapse re-gate (docs/ROLES-AND-PERMISSIONS.md §2.8). True only
+  /// when the VIEWER is a business whose subscription lapsed on the ongoing
+  /// collaboration behind this application. The community counterparty is never
+  /// re-gated, so this is always false for a community viewer. Used to blur the
+  /// chat for the lapsed business while keeping the community's chat intact.
+  final bool viewerMustResubscribe;
+
   /// Get opportunity title
   String get opportunityTitle => opportunity?.title ?? 'Unknown Opportunity';
 
@@ -256,7 +265,8 @@ class Application {
   String? get applicantAvatar => applicantProfile?.avatarUrl;
 
   /// Get opportunity owner name
-  String get recipientName => opportunity?.creatorProfile?.displayName ?? 'Unknown';
+  String get recipientName =>
+      opportunity?.creatorProfile?.displayName ?? 'Unknown';
 
   /// Get opportunity owner avatar
   String? get recipientAvatar => opportunity?.creatorProfile?.avatarUrl;
@@ -291,7 +301,10 @@ class Application {
     return '${createdAt.day}/${createdAt.month}/${createdAt.year}';
   }
 
-  factory Application.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
+  factory Application.fromJson(
+    Map<String, dynamic> json, {
+    String? currentUserId,
+  }) {
     // Parse nested collab_opportunity if present
     Opportunity? opportunity;
     final collabOpp = json['collab_opportunity'];
@@ -313,8 +326,8 @@ class Application {
       availability = rawAvailability;
     } else if (rawAvailability is Map<String, dynamic>) {
       // Extract readable text from structured availability
-      availability = rawAvailability['text']?.toString() ??
-          rawAvailability.toString();
+      availability =
+          rawAvailability['text']?.toString() ?? rawAvailability.toString();
     } else {
       availability = '';
     }
@@ -326,6 +339,22 @@ class Application {
       if (v is String) return int.tryParse(v) ?? 0;
       return 0;
     }
+
+    // Safe bool parser for the lapse flag.
+    bool parseFlag(dynamic v) {
+      if (v is bool) return v;
+      if (v is num) return v != 0;
+      if (v is String) return v.toLowerCase() == 'true' || v == '1';
+      return false;
+    }
+
+    // The lapse flag may sit on the application root or on a nested
+    // `collaboration` object — accept either while the contract settles.
+    final collab = json['collaboration'];
+    final viewerMustResubscribe =
+        parseFlag(json['viewer_must_resubscribe']) ||
+        (collab is Map<String, dynamic> &&
+            parseFlag(collab['viewer_must_resubscribe']));
 
     // Parse messages list safely
     List<ChatMessage> messages = const [];
@@ -339,12 +368,18 @@ class Application {
 
     return Application(
       id: json['id']?.toString() ?? '',
-      opportunityId: json['collab_opportunity_id']?.toString() ??
-                     json['opportunity_id']?.toString() ?? '',
+      opportunityId:
+          json['collab_opportunity_id']?.toString() ??
+          json['opportunity_id']?.toString() ??
+          '',
       message: json['message']?.toString() ?? '',
       availability: availability,
-      status: ApplicationStatus.fromString(json['status']?.toString() ?? 'pending'),
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
+      status: ApplicationStatus.fromString(
+        json['status']?.toString() ?? 'pending',
+      ),
+      createdAt:
+          DateTime.tryParse(json['created_at']?.toString() ?? '') ??
+          DateTime.now(),
       updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'].toString())
           : null,
@@ -353,14 +388,15 @@ class Application {
       opportunity: opportunity,
       messages: messages,
       unreadCount: parseInt(json['unread_count']),
+      viewerMustResubscribe: viewerMustResubscribe,
     );
   }
 
   /// Create JSON for submitting application
   Map<String, dynamic> toSubmitJson() => {
-        'message': message,
-        'availability': availability,
-      };
+    'message': message,
+    'availability': availability,
+  };
 
   Application copyWith({
     String? id,
@@ -375,30 +411,28 @@ class Application {
     Opportunity? opportunity,
     List<ChatMessage>? messages,
     int? unreadCount,
-  }) =>
-      Application(
-        id: id ?? this.id,
-        opportunityId: opportunityId ?? this.opportunityId,
-        message: message ?? this.message,
-        availability: availability ?? this.availability,
-        status: status ?? this.status,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        declineReason: declineReason ?? this.declineReason,
-        applicantProfile: applicantProfile ?? this.applicantProfile,
-        opportunity: opportunity ?? this.opportunity,
-        messages: messages ?? this.messages,
-        unreadCount: unreadCount ?? this.unreadCount,
-      );
+    bool? viewerMustResubscribe,
+  }) => Application(
+    id: id ?? this.id,
+    opportunityId: opportunityId ?? this.opportunityId,
+    message: message ?? this.message,
+    availability: availability ?? this.availability,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    declineReason: declineReason ?? this.declineReason,
+    applicantProfile: applicantProfile ?? this.applicantProfile,
+    opportunity: opportunity ?? this.opportunity,
+    messages: messages ?? this.messages,
+    unreadCount: unreadCount ?? this.unreadCount,
+    viewerMustResubscribe: viewerMustResubscribe ?? this.viewerMustResubscribe,
+  );
 }
 
 /// Unread messages count model
 @immutable
 class UnreadMessagesCount {
-  const UnreadMessagesCount({
-    required this.total,
-    required this.byApplication,
-  });
+  const UnreadMessagesCount({required this.total, required this.byApplication});
 
   final int total;
   final Map<String, int> byApplication;
@@ -430,10 +464,7 @@ class UnreadMessagesCount {
       total = int.tryParse(rawTotal) ?? 0;
     }
 
-    return UnreadMessagesCount(
-      total: total,
-      byApplication: byApp,
-    );
+    return UnreadMessagesCount(total: total, byApplication: byApp);
   }
 
   /// Get unread count for a specific application

@@ -68,10 +68,13 @@ class ApplicationService {
     debugPrint('Request body: $body');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
-        body: body,
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+          body: body,
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Submit application response status: ${response.statusCode}');
@@ -238,7 +241,10 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Application detail response status: ${response.statusCode}');
 
@@ -370,10 +376,13 @@ class ApplicationService {
     debugPrint('ApplicationService: POST $uri');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
-        body: body,
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+          body: body,
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Decline application response status: ${response.statusCode}');
@@ -417,9 +426,12 @@ class ApplicationService {
     debugPrint('ApplicationService: POST $uri');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+        ),
+        allowRetry: true,
       );
 
       debugPrint(
@@ -476,7 +488,10 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Get messages response status: ${response.statusCode}');
 
@@ -530,10 +545,13 @@ class ApplicationService {
     debugPrint('Request body: $body');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
-        body: body,
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+          body: body,
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Send message response status: ${response.statusCode}');
@@ -576,9 +594,12 @@ class ApplicationService {
     debugPrint('ApplicationService: POST $uri');
 
     try {
-      final response = await _httpClient.post(
-        uri,
-        headers: await _getHeaders(),
+      final response = await _sendWithRefresh(
+        () async => _httpClient.post(
+          uri,
+          headers: await _getHeaders(),
+        ),
+        allowRetry: true,
       );
 
       debugPrint('Mark as read response status: ${response.statusCode}');
@@ -612,7 +633,10 @@ class ApplicationService {
     debugPrint('ApplicationService: GET $uri');
 
     try {
-      final response = await _httpClient.get(uri, headers: await _getHeaders());
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: true,
+      );
 
       debugPrint('Unread count response status: ${response.statusCode}');
 

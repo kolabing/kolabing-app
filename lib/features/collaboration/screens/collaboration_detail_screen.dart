@@ -6,21 +6,23 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../../widgets/blurred_identity.dart';
 import '../models/collaboration.dart';
+import '../models/collaboration_feedback.dart';
 import '../providers/collaboration_detail_provider.dart';
+import '../providers/collaboration_feedback_provider.dart';
+import '../widgets/collaboration_feedback_sheet.dart';
 import '../../../widgets/category_icon.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
 /// Both business and community users see this screen with role-aware content.
 class CollaborationDetailScreen extends ConsumerWidget {
-  const CollaborationDetailScreen({
-    super.key,
-    required this.collaborationId,
-  });
+  const CollaborationDetailScreen({super.key, required this.collaborationId});
 
   final String collaborationId;
 
@@ -69,6 +71,13 @@ class _CollaborationContent extends ConsumerWidget {
     final isBusiness = user?.isBusiness ?? true;
     final partner = collaboration.partnerFor(isBusiness: isBusiness);
 
+    // Subscription-lapse re-gate (docs/ROLES-AND-PERMISSIONS.md §2.8). Only a
+    // business viewer with a lapsed subscription on an ongoing collaboration is
+    // re-gated; the community counterparty is NEVER blurred. The backend flag
+    // is already one-sided, but we AND it with isBusiness as a belt-and-braces
+    // guard so a community can never be blurred even if the flag is wrong.
+    final mustResubscribe = isBusiness && collaboration.viewerMustResubscribe;
+
     return CustomScrollView(
       slivers: [
         // App bar
@@ -77,8 +86,10 @@ class _CollaborationContent extends ConsumerWidget {
           elevation: 0,
           pinned: true,
           leading: IconButton(
-            icon: const Icon(LucideIcons.arrowLeft,
-                color: KolabingColors.textPrimary),
+            icon: const Icon(
+              LucideIcons.arrowLeft,
+              color: KolabingColors.textPrimary,
+            ),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -92,8 +103,10 @@ class _CollaborationContent extends ConsumerWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(LucideIcons.moreVertical,
-                  color: KolabingColors.textSecondary),
+              icon: const Icon(
+                LucideIcons.moreVertical,
+                color: KolabingColors.textSecondary,
+              ),
               onPressed: () {},
             ),
           ],
@@ -103,56 +116,128 @@ class _CollaborationContent extends ConsumerWidget {
           padding: const EdgeInsets.all(KolabingSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              // Status & Title Header
-              _StatusHeader(collaboration: collaboration),
-              const SizedBox(height: KolabingSpacing.md),
+              // Lapse re-gate: business with a lapsed subscription sees a
+              // "Resubscribe to continue" prompt above the (blurred) details.
+              // The community counterparty never reaches this branch.
+              if (mustResubscribe) ...[
+                const _ResubscribePrompt(),
+                const SizedBox(height: KolabingSpacing.md),
+              ],
 
-              // Event Info Card
-              _EventInfoCard(collaboration: collaboration),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Partner Info Card
-              _PartnerInfoCard(partner: partner),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // What's Offered (Business side)
-              _OffersSection(
-                businessOffer: collaboration.businessOffer,
-                isBusiness: isBusiness,
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Expected Deliverables (Community side)
-              _DeliverablesSection(
-                deliverables: collaboration.communityDeliverables,
-                isBusiness: isBusiness,
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-
-              // Contact Methods
-              _ContactSection(contact: collaboration.contactMethods),
-              const SizedBox(height: KolabingSpacing.lg),
-
-              // Process Timeline
-              _TimelineSection(steps: collaboration.timeline),
-              const SizedBox(height: KolabingSpacing.lg),
-
-              // Gamification: Challenges Setup
-              _ChallengesSection(
-                collaborationId: collaborationId,
-                challenges: collaboration.challenges ?? [],
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-
-              // QR Code Section
-              _QRCodeSection(
-                collaborationId: collaborationId,
-                eventId: collaboration.eventId,
+              // The collaboration body. When re-gated we blur it so the
+              // business can tell a collaboration exists but cannot read the
+              // ongoing details until it resubscribes. We do NOT hard-block or
+              // full-screen-overlay (golden rule 5) — the prompt sits above and
+              // the content stays on screen, blurred.
+              _BlurGate(
+                enabled: mustResubscribe,
+                child: _CollaborationBody(
+                  collaboration: collaboration,
+                  collaborationId: collaborationId,
+                  partner: partner,
+                  isBusiness: isBusiness,
+                  // While re-gated, suppress interactive actions (finish, edit,
+                  // profile tap) — they would be illegible/blocked anyway.
+                  interactive: !mustResubscribe,
+                ),
               ),
 
               const SizedBox(height: KolabingSpacing.xxl),
             ]),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The scrollable body of the collaboration detail, extracted so it can be
+/// wrapped in a blur when the business is re-gated.
+class _CollaborationBody extends ConsumerWidget {
+  const _CollaborationBody({
+    required this.collaboration,
+    required this.collaborationId,
+    required this.partner,
+    required this.isBusiness,
+    required this.interactive,
+  });
+
+  final Collaboration collaboration;
+  final String collaborationId;
+  final CollaborationPartner partner;
+  final bool isBusiness;
+  final bool interactive;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Status & Title Header
+        _StatusHeader(collaboration: collaboration),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // Event Info Card (with edit date/time action when interactive)
+        _EventInfoCard(
+          collaboration: collaboration,
+          collaborationId: collaborationId,
+          canEdit: interactive,
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // Partner Info Card
+        _PartnerInfoCard(partner: partner),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // What's Offered (Business side)
+        _OffersSection(
+          businessOffer: collaboration.businessOffer,
+          isBusiness: isBusiness,
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // Expected Deliverables (Community side)
+        _DeliverablesSection(
+          deliverables: collaboration.communityDeliverables,
+          isBusiness: isBusiness,
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // Contact Methods
+        _ContactSection(contact: collaboration.contactMethods),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // Process Timeline
+        _TimelineSection(steps: collaboration.timeline),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // Finish action (both parties). Requires feedback before it can
+        // complete — see _FinishCollaborationSection. Hidden while
+        // re-gated (interactive == false).
+        if (interactive &&
+            (collaboration.status == CollaborationStatus.scheduled ||
+                collaboration.status == CollaborationStatus.inProgress))
+          _FinishCollaborationSection(collaborationId: collaborationId),
+
+        // Post-completion: businesses who haven't yet submitted feedback
+        // see a "Leave review" CTA. Hidden once feedback_submitted_at lands.
+        if (interactive &&
+            collaboration.status == CollaborationStatus.completed &&
+            collaboration.feedbackSubmittedAt == null &&
+            isBusiness)
+          _LeaveReviewSection(collaborationId: collaborationId),
+
+        // Gamification: Challenges Setup
+        _ChallengesSection(
+          collaborationId: collaborationId,
+          challenges: collaboration.challenges ?? [],
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // QR Code Section
+        _QRCodeSection(
+          collaborationId: collaborationId,
+          eventId: collaboration.eventId,
         ),
       ],
     );
@@ -171,21 +256,21 @@ class _StatusHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bgColor, textColor) = switch (collaboration.status) {
       CollaborationStatus.scheduled => (
-          KolabingColors.pendingBg,
-          KolabingColors.pendingText
-        ),
+        KolabingColors.pendingBg,
+        KolabingColors.pendingText,
+      ),
       CollaborationStatus.inProgress => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText
-        ),
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+      ),
       CollaborationStatus.completed => (
-          KolabingColors.completedBg,
-          KolabingColors.completedText
-        ),
+        KolabingColors.completedBg,
+        KolabingColors.completedText,
+      ),
       CollaborationStatus.cancelled => (
-          KolabingColors.errorBg,
-          KolabingColors.errorText
-        ),
+        KolabingColors.errorBg,
+        KolabingColors.errorText,
+      ),
     };
 
     return Container(
@@ -258,15 +343,126 @@ class _StatusHeader extends StatelessWidget {
 // Event Info Card
 // =============================================================================
 
-class _EventInfoCard extends StatelessWidget {
-  const _EventInfoCard({required this.collaboration});
+class _EventInfoCard extends ConsumerStatefulWidget {
+  const _EventInfoCard({
+    required this.collaboration,
+    required this.collaborationId,
+    required this.canEdit,
+  });
   final Collaboration collaboration;
+  final String collaborationId;
+
+  /// §4: either party can edit the scheduled date/time. False when re-gated or
+  /// when the collaboration is in a terminal state.
+  final bool canEdit;
+
+  @override
+  ConsumerState<_EventInfoCard> createState() => _EventInfoCardState();
+}
+
+class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
+  bool _isSaving = false;
+
+  /// Pick a new date (and optional time range) and PATCH it to the backend.
+  /// Both parties may reschedule a non-terminal collaboration.
+  Future<void> _editSchedule() async {
+    final collaboration = widget.collaboration;
+    final messenger = ScaffoldMessenger.of(context);
+
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: collaboration.scheduledDate,
+      firstDate: DateTime.now().subtract(const Duration(days: 1)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      helpText: 'Reschedule collaboration',
+    );
+    if (pickedDate == null || !mounted) return;
+
+    // Optional time refinement. We keep the existing free-text time as a hint
+    // and let the user pick a start time; the backend stores `scheduled_time`
+    // as a string so we format a single time. (A full range editor can be
+    // added later; this satisfies "edit the date or time".)
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 10, minute: 0),
+      helpText: 'Start time (optional)',
+    );
+    if (!mounted) return;
+
+    final timeString = pickedTime != null
+        ? pickedTime.format(context)
+        : collaboration.scheduledTime;
+
+    setState(() => _isSaving = true);
+    try {
+      await updateCollaborationSchedule(
+        widget.collaborationId,
+        scheduledDate: pickedDate,
+        scheduledTime: timeString,
+      );
+      if (!mounted) return;
+      ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            'Schedule updated.',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } on Exception catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            'Could not update schedule: $e',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final collaboration = widget.collaboration;
+    final canEditNow =
+        widget.canEdit && collaboration.status.isActive && !_isSaving;
+
     return _SectionCard(
       icon: LucideIcons.calendar,
       title: 'EVENT DETAILS',
+      trailing: canEditNow
+          ? _isSaving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : TextButton.icon(
+                    onPressed: _editSchedule,
+                    style: TextButton.styleFrom(
+                      foregroundColor: KolabingColors.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      minimumSize: const Size(0, 32),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: const Icon(LucideIcons.pencil, size: 14),
+                    label: Text(
+                      'EDIT',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  )
+          : null,
       child: Column(
         children: [
           _InfoRow(
@@ -318,7 +514,17 @@ class _PartnerInfoCard extends StatelessWidget {
       icon: LucideIcons.users2,
       title: partner.isBusiness ? 'BUSINESS PARTNER' : 'COMMUNITY PARTNER',
       child: InkWell(
-        onTap: () => context.push('/profile/${partner.id}'),
+        // "View business/creator profile" opens the public profile route
+        // `/profile/:id`, whose `:id` MUST be a `profiles.id` (the route binds
+        // to a Profile -> PublicProfileResource). `partner.id` is sourced from
+        // the collaboration's `business_partner`/`community_partner` object,
+        // which carries the partner's `profiles.id` (mirrors the backend's
+        // ProfileSummaryResource `id`), NOT a business/community-profile id.
+        // Guard against an empty id so we never push `/profile/` (which would
+        // 404 and look like the link is broken).
+        onTap: partner.id.isEmpty
+            ? null
+            : () => context.push('/profile/${partner.id}'),
         borderRadius: KolabingRadius.borderRadiusMd,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
@@ -395,8 +601,11 @@ class _PartnerInfoCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          const Icon(LucideIcons.mapPin,
-                              size: 12, color: KolabingColors.textTertiary),
+                          const Icon(
+                            LucideIcons.mapPin,
+                            size: 12,
+                            color: KolabingColors.textTertiary,
+                          ),
                           const SizedBox(width: 3),
                           Text(
                             partner.city!,
@@ -429,10 +638,7 @@ class _PartnerInfoCard extends StatelessWidget {
 // =============================================================================
 
 class _OffersSection extends StatelessWidget {
-  const _OffersSection({
-    required this.businessOffer,
-    required this.isBusiness,
-  });
+  const _OffersSection({required this.businessOffer, required this.isBusiness});
 
   final BusinessOffer businessOffer;
   final bool isBusiness;
@@ -454,10 +660,12 @@ class _OffersSection extends StatelessWidget {
       items.add(const _CheckItem('Content creation support', true));
     }
     if (businessOffer.discount.enabled) {
-      items.add(_CheckItem(
-        'Discount: ${businessOffer.discount.percentage ?? 0}%',
-        true,
-      ));
+      items.add(
+        _CheckItem(
+          'Discount: ${businessOffer.discount.percentage ?? 0}%',
+          true,
+        ),
+      );
     }
     for (final product in businessOffer.products) {
       items.add(_CheckItem(product, true));
@@ -473,31 +681,32 @@ class _OffersSection extends StatelessWidget {
       title: isBusiness ? "WHAT YOU'RE OFFERING" : "WHAT'S OFFERED",
       child: Column(
         children: items
-            .map((item) => Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: KolabingSpacing.xs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        LucideIcons.checkCircle2,
-                        size: 16,
-                        color: KolabingColors.success,
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          item.label,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            color: KolabingColors.textPrimary,
-                            height: 1.4,
-                          ),
+            .map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      LucideIcons.checkCircle2,
+                      size: 16,
+                      color: KolabingColors.success,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.textPrimary,
+                          height: 1.4,
                         ),
                       ),
-                    ],
-                  ),
-                ))
+                    ),
+                  ],
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -547,31 +756,32 @@ class _DeliverablesSection extends StatelessWidget {
       title: isBusiness ? 'EXPECTED DELIVERABLES' : "WHAT YOU'LL DELIVER",
       child: Column(
         children: items
-            .map((item) => Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: KolabingSpacing.xs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        LucideIcons.checkCircle2,
-                        size: 16,
-                        color: KolabingColors.info,
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          item.label,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            color: KolabingColors.textPrimary,
-                            height: 1.4,
-                          ),
+            .map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      LucideIcons.checkCircle2,
+                      size: 16,
+                      color: KolabingColors.info,
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        style: GoogleFonts.openSans(
+                          fontSize: 14,
+                          color: KolabingColors.textPrimary,
+                          height: 1.4,
                         ),
                       ),
-                    ],
-                  ),
-                ))
+                    ),
+                  ],
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -680,8 +890,11 @@ class _TimelineSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(LucideIcons.gitBranch,
-                  size: 16, color: KolabingColors.textTertiary),
+              const Icon(
+                LucideIcons.gitBranch,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'PROCESS',
@@ -707,10 +920,7 @@ class _TimelineSection extends StatelessWidget {
 }
 
 class _TimelineStepWidget extends StatelessWidget {
-  const _TimelineStepWidget({
-    required this.step,
-    required this.isLast,
-  });
+  const _TimelineStepWidget({required this.step, required this.isLast});
 
   final TimelineStep step;
   final bool isLast;
@@ -719,20 +929,20 @@ class _TimelineStepWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final (dotColor, lineColor, textColor) = switch (step.status) {
       TimelineStepStatus.completed => (
-          KolabingColors.success,
-          KolabingColors.success.withValues(alpha: 0.3),
-          KolabingColors.textPrimary,
-        ),
+        KolabingColors.success,
+        KolabingColors.success.withValues(alpha: 0.3),
+        KolabingColors.textPrimary,
+      ),
       TimelineStepStatus.current => (
-          KolabingColors.primary,
-          KolabingColors.border,
-          KolabingColors.textPrimary,
-        ),
+        KolabingColors.primary,
+        KolabingColors.border,
+        KolabingColors.textPrimary,
+      ),
       TimelineStepStatus.upcoming => (
-          KolabingColors.border,
-          KolabingColors.border,
-          KolabingColors.textTertiary,
-        ),
+        KolabingColors.border,
+        KolabingColors.border,
+        KolabingColors.textTertiary,
+      ),
     };
 
     return IntrinsicHeight(
@@ -752,23 +962,23 @@ class _TimelineStepWidget extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: step.status == TimelineStepStatus.current
                         ? Border.all(
-                            color: KolabingColors.primary.withValues(alpha: 0.3),
+                            color: KolabingColors.primary.withValues(
+                              alpha: 0.3,
+                            ),
                             width: 3,
                           )
                         : null,
                   ),
                   child: step.status == TimelineStepStatus.completed
-                      ? const Icon(LucideIcons.check,
-                          size: 7, color: Colors.white)
+                      ? const Icon(
+                          LucideIcons.check,
+                          size: 7,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
                 if (!isLast)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      color: lineColor,
-                    ),
-                  ),
+                  Expanded(child: Container(width: 2, color: lineColor)),
               ],
             ),
           ),
@@ -776,9 +986,7 @@ class _TimelineStepWidget extends StatelessWidget {
           // Content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: isLast ? 0 : KolabingSpacing.md,
-              ),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : KolabingSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -823,8 +1031,18 @@ class _TimelineStepWidget extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${date.day} ${monthNames[date.month - 1]} ${date.year}';
   }
@@ -855,8 +1073,11 @@ class _ChallengesSection extends ConsumerWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(LucideIcons.trophy,
-                  size: 16, color: KolabingColors.textTertiary),
+              const Icon(
+                LucideIcons.trophy,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'GAMIFICATION SETUP',
@@ -890,8 +1111,11 @@ class _ChallengesSection extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              const Icon(LucideIcons.info,
-                  size: 14, color: KolabingColors.onPrimary),
+              const Icon(
+                LucideIcons.info,
+                size: 14,
+                color: KolabingColors.onPrimary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
@@ -1028,17 +1252,17 @@ class _ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final (diffColor, diffBgColor) = switch (challenge.difficulty) {
       ChallengeDifficulty.easy => (
-          const Color(0xFF155724),
-          const Color(0xFFD4EDDA),
-        ),
+        const Color(0xFF155724),
+        const Color(0xFFD4EDDA),
+      ),
       ChallengeDifficulty.medium => (
-          const Color(0xFF856404),
-          const Color(0xFFFFF3CD),
-        ),
+        const Color(0xFF856404),
+        const Color(0xFFFFF3CD),
+      ),
       ChallengeDifficulty.hard => (
-          const Color(0xFF721C24),
-          const Color(0xFFF8D7DA),
-        ),
+        const Color(0xFF721C24),
+        const Color(0xFFF8D7DA),
+      ),
     };
 
     return Material(
@@ -1067,8 +1291,9 @@ class _ChallengeCard extends StatelessWidget {
                 width: 22,
                 height: 22,
                 decoration: BoxDecoration(
-                  color:
-                      isSelected ? KolabingColors.primary : Colors.transparent,
+                  color: isSelected
+                      ? KolabingColors.primary
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isSelected
@@ -1078,8 +1303,11 @@ class _ChallengeCard extends StatelessWidget {
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(LucideIcons.check,
-                        size: 14, color: KolabingColors.onPrimary)
+                    ? const Icon(
+                        LucideIcons.check,
+                        size: 14,
+                        color: KolabingColors.onPrimary,
+                      )
                     : null,
               ),
               const SizedBox(width: KolabingSpacing.sm),
@@ -1173,10 +1401,7 @@ class _ChallengeCard extends StatelessWidget {
 // =============================================================================
 
 class _QRCodeSection extends StatelessWidget {
-  const _QRCodeSection({
-    required this.collaborationId,
-    required this.eventId,
-  });
+  const _QRCodeSection({required this.collaborationId, required this.eventId});
 
   final String collaborationId;
   final String? eventId;
@@ -1190,8 +1415,11 @@ class _QRCodeSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(LucideIcons.qrCode,
-                  size: 16, color: KolabingColors.textTertiary),
+              const Icon(
+                LucideIcons.qrCode,
+                size: 16,
+                color: KolabingColors.textTertiary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'QR CODE CHECK-IN',
@@ -1224,10 +1452,7 @@ class _QRCodeSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: KolabingColors.background,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: KolabingColors.border,
-                    width: 2,
-                  ),
+                  border: Border.all(color: KolabingColors.border, width: 2),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1298,8 +1523,7 @@ class _QRCodeSection extends StatelessWidget {
                     backgroundColor: KolabingColors.primary,
                     foregroundColor: KolabingColors.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(KolabingRadius.md),
+                      borderRadius: BorderRadius.circular(KolabingRadius.md),
                     ),
                     elevation: 0,
                   ),
@@ -1331,11 +1555,16 @@ class _SectionCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.child,
+    this.trailing,
   });
 
   final IconData icon;
   final String title;
   final Widget child;
+
+  /// Optional widget pinned to the right of the section title (e.g. an Edit
+  /// button on the event card).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -1368,6 +1597,7 @@ class _SectionCard extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
+              if (trailing != null) ...[const Spacer(), trailing!],
             ],
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -1424,6 +1654,110 @@ class _CheckItem {
 }
 
 // =============================================================================
+// Subscription-lapse re-gate (§2.8)
+// =============================================================================
+
+/// Wraps the collaboration body and blurs it when [enabled]. Reuses the shared
+/// [BlurredIdentity] widget (client-side Gaussian blur). When blurred we also
+/// wrap in IgnorePointer so the unreadable content can't be tapped — without a
+/// full-screen overlay (golden rule 5: blur, don't hard-block).
+class _BlurGate extends StatelessWidget {
+  const _BlurGate({required this.enabled, required this.child});
+
+  final bool enabled;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!enabled) return child;
+    return IgnorePointer(
+      // Slightly stronger blur than the Explore identity blur so multi-line
+      // body text is not legible.
+      child: BlurredIdentity(enabled: true, sigma: 6, child: child),
+    );
+  }
+}
+
+/// "Resubscribe to continue" prompt shown to a business whose subscription
+/// lapsed on an ongoing collaboration (§2.8). Routes to the subscription flow.
+class _ResubscribePrompt extends StatelessWidget {
+  const _ResubscribePrompt();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.softYellow,
+        borderRadius: BorderRadius.circular(KolabingRadius.lg),
+        border: Border.all(color: KolabingColors.softYellowBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                LucideIcons.lock,
+                size: 18,
+                color: KolabingColors.onPrimary,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Resubscribe to continue',
+                  style: GoogleFonts.rubik(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Your subscription has lapsed, so this ongoing collaboration and its '
+            'chat are paused on your side. The community keeps full access. '
+            'Resubscribe to pick up where you left off.',
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: KolabingColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: ElevatedButton.icon(
+              onPressed: () => context.push(KolabingRoutes.businessPlans),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.primary,
+                foregroundColor: KolabingColors.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(KolabingRadius.md),
+                ),
+                elevation: 0,
+              ),
+              icon: const Icon(LucideIcons.creditCard, size: 18),
+              label: Text(
+                'RESUBSCRIBE',
+                style: GoogleFonts.dmSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// =============================================================================
 // Loading State
 // =============================================================================
 
@@ -1454,8 +1788,11 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.alertCircle,
-                size: 48, color: KolabingColors.error),
+            const Icon(
+              LucideIcons.alertCircle,
+              size: 48,
+              color: KolabingColors.error,
+            ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to load collaboration',
@@ -1481,4 +1818,257 @@ class _ErrorState extends StatelessWidget {
       ),
     );
   }
+}
+
+// =============================================================================
+// D3: Finish Collaboration section
+// =============================================================================
+
+class _FinishCollaborationSection extends ConsumerStatefulWidget {
+  const _FinishCollaborationSection({required this.collaborationId});
+
+  final String collaborationId;
+
+  @override
+  ConsumerState<_FinishCollaborationSection> createState() =>
+      _FinishCollaborationSectionState();
+}
+
+class _FinishCollaborationSectionState
+    extends ConsumerState<_FinishCollaborationSection> {
+  bool _isSubmitting = false;
+
+  /// Finishing a collaboration REQUIRES feedback (docs §4). The flow is:
+  ///   1. confirm intent,
+  ///   2. open the feedback sheet for the caller's role variant — finish is
+  ///      BLOCKED until the required questions (star + recommend) are filled,
+  ///   3. submit feedback + finish together via the single `/finish` call.
+  /// If the user backs out of the sheet, nothing is finished and no feedback is
+  /// sent — feedback truly gates the finish action.
+  Future<void> _confirmAndFinish() async {
+    final isBusiness = ref.read(authProvider).user?.isBusiness ?? false;
+    final variant = isBusiness
+        ? FeedbackVariant.business
+        : FeedbackVariant.community;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Finish collaboration?',
+          style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 18),
+        ),
+        content: Text(
+          'To finish, share a quick review of how it went. Both parties will '
+          'then see this collaboration in the Completed list.',
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            color: KolabingColors.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.dmSans(color: KolabingColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: KolabingColors.primary,
+              foregroundColor: KolabingColors.onPrimary,
+            ),
+            child: Text(
+              'Continue',
+              style: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    // Required feedback gate: collect (but don't submit) the draft. Returns
+    // null if the user dismissed the sheet — in which case we do NOT finish.
+    final draft = await CollaborationFeedbackSheet.collectForFinish(
+      context,
+      collaborationId: widget.collaborationId,
+      variant: variant,
+    );
+    if (draft == null || !mounted) return;
+
+    setState(() => _isSubmitting = true);
+    try {
+      // Submit feedback + finish in one call. Falls back to the legacy
+      // complete endpoint only if the new finish route isn't deployed yet.
+      try {
+        await finishCollaborationWithFeedback(widget.collaborationId, draft);
+      } on FeedbackEndpointMissingException {
+        // Finish route not live yet: complete via the legacy endpoint and
+        // submit the feedback separately so the user isn't blocked.
+        await markCollaborationCompleted(widget.collaborationId);
+        try {
+          await submitCollaborationFeedback(widget.collaborationId, draft);
+        } on FeedbackEndpointMissingException {
+          // Both endpoints pending — completion still succeeded.
+        }
+      }
+      if (!mounted) return;
+      ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Collaboration finished. Thanks for the feedback!',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } on Exception catch (e) {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Could not finish collaboration: $e',
+            style: GoogleFonts.openSans(color: Colors.white),
+          ),
+          backgroundColor: KolabingColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
+    child: SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton.icon(
+        onPressed: _isSubmitting ? null : _confirmAndFinish,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: KolabingColors.success,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
+          ),
+          elevation: 0,
+        ),
+        icon: _isSubmitting
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Icon(LucideIcons.checkCircle, size: 18),
+        label: Text(
+          _isSubmitting ? 'FINISHING…' : 'FINISH & MARK COMPLETE',
+          style: GoogleFonts.dmSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+// =============================================================================
+// Post-completion: "Leave review" entry point
+// =============================================================================
+
+class _LeaveReviewSection extends ConsumerWidget {
+  const _LeaveReviewSection({required this.collaborationId});
+
+  final String collaborationId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => Padding(
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.lg),
+    child: Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.softYellow,
+        borderRadius: BorderRadius.circular(KolabingRadius.lg),
+        border: Border.all(color: KolabingColors.softYellowBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                LucideIcons.messageSquare,
+                size: 18,
+                color: KolabingColors.onPrimary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Share your feedback',
+                style: GoogleFonts.rubik(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'A 30-second review helps other businesses pick the right communities.',
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: KolabingColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final submitted = await CollaborationFeedbackSheet.show(
+                  context,
+                  collaborationId: collaborationId,
+                  variant: FeedbackVariant.business,
+                );
+                if (submitted && context.mounted) {
+                  ref.invalidate(collaborationDetailProvider(collaborationId));
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: KolabingColors.primary,
+                foregroundColor: KolabingColors.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(KolabingRadius.md),
+                ),
+                elevation: 0,
+              ),
+              icon: const Icon(LucideIcons.star, size: 18),
+              label: Text(
+                'LEAVE REVIEW',
+                style: GoogleFonts.dmSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

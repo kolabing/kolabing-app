@@ -110,30 +110,20 @@ void main() {
       });
     });
 
-    test('flexible mode requires start and end', () {
+    test('legacy flexible edit normalizes to one-time mode', () {
       final container = createContainer();
-      final notifier = buildCommunitySeekingNotifier(container)
-        ..updateAvailabilityMode(AvailabilityMode.flexible)
-        ..updateAvailabilityStart(DateTime(2026, 5, 20))
-        ..updatePreferredCity('Barcelona');
+      final legacyKolab = Kolab.empty(IntentType.communitySeeking).copyWith(
+        availabilityMode: AvailabilityMode.fromString('flexible'),
+        availabilityStart: DateTime(2026, 5, 20),
+        availabilityEnd: DateTime(2026, 5, 21),
+      );
 
-      expect(notifier.validateCurrentStep(), isFalse);
-      expect(container.read(kolabFormProvider).fieldErrors, {
-        'availability_end': 'Pick an end date for your availability window',
-      });
-    });
+      container.read(kolabFormProvider.notifier).initForEdit(legacyKolab);
 
-    test('flexible mode requires start when end is present', () {
-      final container = createContainer();
-      final notifier = buildCommunitySeekingNotifier(container)
-        ..updateAvailabilityMode(AvailabilityMode.flexible)
-        ..updateAvailabilityEnd(DateTime(2026, 5, 21))
-        ..updatePreferredCity('Barcelona');
-
-      expect(notifier.validateCurrentStep(), isFalse);
-      expect(container.read(kolabFormProvider).fieldErrors, {
-        'availability_start': 'Pick a start date for your availability window',
-      });
+      expect(
+        container.read(kolabFormProvider).kolab.availabilityMode,
+        AvailabilityMode.oneTime,
+      );
     });
 
     test('all logistics modes still require preferred city', () {
@@ -148,11 +138,6 @@ void main() {
           notifier
             ..toggleRecurringDay(1)
             ..updateSelectedTime(const TimeOfDay(hour: 18, minute: 0));
-        },
-        AvailabilityMode.flexible: (notifier) {
-          notifier
-            ..updateAvailabilityStart(DateTime(2026, 5, 20))
-            ..updateAvailabilityEnd(DateTime(2026, 5, 21));
         },
       };
 

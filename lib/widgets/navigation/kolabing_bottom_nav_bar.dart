@@ -32,10 +32,10 @@ class NavItem {
 /// Supports numeric badges and dot indicators.
 class KolabingBottomNavBar extends StatelessWidget {
   const KolabingBottomNavBar({
-    super.key,
     required this.items,
     required this.currentIndex,
     required this.onTap,
+    super.key,
   });
 
   final List<NavItem> items;
@@ -46,7 +46,7 @@ class KolabingBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         border: Border(
@@ -157,15 +157,27 @@ class _NavBarItem extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  item.label,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: labelColor,
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        item.label,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: labelColor,
+                        ),
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

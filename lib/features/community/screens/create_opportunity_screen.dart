@@ -9,13 +9,15 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/time_picker.dart';
 import '../../onboarding/widgets/photo_upload_widget.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../opportunity/utils/opportunity_share_launcher.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../../../widgets/category_icon.dart';
-import '../../../widgets/time_picker.dart';
+import '../widgets/opportunity_publish_success_dialog.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
 ///
@@ -26,10 +28,15 @@ import '../../../widgets/time_picker.dart';
 ///   3 - Location & Availability (availability mode, dates, venue mode, city)
 ///   4 - Review & Publish
 class CreateOpportunityScreen extends ConsumerStatefulWidget {
-  const CreateOpportunityScreen({super.key, this.editOpportunity});
+  const CreateOpportunityScreen({
+    super.key,
+    this.editOpportunity,
+    this.opportunityShareLauncher = const OpportunityShareLauncher(),
+  });
 
   /// If non-null the form opens in **edit** mode pre-filled with this data.
   final Opportunity? editOpportunity;
+  final OpportunityShareLauncher opportunityShareLauncher;
 
   @override
   ConsumerState<CreateOpportunityScreen> createState() =>
@@ -151,82 +158,57 @@ class _CreateOpportunityScreenState
         .read(opportunityFormProvider.notifier)
         .saveAndPublish();
     if (success && mounted) {
-      _showSuccessDialog(isDraft: false);
+      final opportunity = ref.read(opportunityFormProvider).opportunity;
+      _showSuccessDialog(isDraft: false, opportunity: opportunity);
     }
   }
 
-  void _showSuccessDialog({required bool isDraft}) {
+  Future<void> _sharePublishedOpportunity(Opportunity opportunity) async {
+    final opportunityId = opportunity.id;
+    if (opportunityId == null || opportunityId.isEmpty) {
+      return;
+    }
+
+    final box = context.findRenderObject() as RenderBox?;
+    final shareOrigin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
+
+    await widget.opportunityShareLauncher.launchOpportunityShare(
+      title: opportunity.title,
+      opportunityId: opportunityId,
+      sharePositionOrigin: shareOrigin,
+      onFallbackMessage: _showOpportunityShareFallbackMessage,
+    );
+  }
+
+  void _showOpportunityShareFallbackMessage(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: KolabingColors.textPrimary,
+      ),
+    );
+  }
+
+  void _showSuccessDialog({required bool isDraft, Opportunity? opportunity}) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: KolabingRadius.borderRadiusLg,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: KolabingColors.success.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                LucideIcons.checkCircle,
-                size: 48,
-                color: KolabingColors.success,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            Text(
-              isDraft ? 'Draft Saved!' : 'Kolab Published!',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Text(
-              isDraft
-                  ? 'Your kolab has been saved as a draft. You can edit and publish it later.'
-                  : 'Your kolab is now live. Businesses can start applying!',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-              child: Text(
-                'VIEW MY KOLABS',
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-          ),
-        ],
+      builder: (context) => OpportunityPublishSuccessDialog(
+        isDraft: isDraft,
+        opportunity: opportunity,
+        onShare: opportunity == null
+            ? null
+            : () => _sharePublishedOpportunity(opportunity),
+        onViewOpportunities: () {
+          Navigator.of(context).pop();
+          this.context.pop();
+        },
       ),
     );
   }
@@ -1195,8 +1177,7 @@ class _CreateOpportunityScreenState
                 _buildReviewInfoRow(
                   LucideIcons.calendar,
                   '${dateFormat.format(opp.availabilityStart)} – ${dateFormat.format(opp.availabilityEnd)}'
-                  '${opp.availabilityMode == AvailabilityMode.oneTime && opp.selectedTime != null ? ' at ${opp.selectedTime!.format(context)}' : ''}'
-                  '${opp.availabilityMode == AvailabilityMode.flexible ? ' (flexible time)' : ''}',
+                  '${opp.selectedTime != null ? ' at ${opp.selectedTime!.format(context)}' : ''}',
                 ),
               ],
               const SizedBox(height: KolabingSpacing.xs),
@@ -1721,8 +1702,6 @@ class _CreateOpportunityScreenState
         return _buildOneTimeFields(opp, formState);
       case AvailabilityMode.recurring:
         return _buildRecurringFields(opp, formState);
-      case AvailabilityMode.flexible:
-        return _buildFlexibleFields(opp, formState);
     }
   }
 
@@ -1853,82 +1832,6 @@ class _CreateOpportunityScreenState
       Text(
         'e.g. Every $selectedDaysSummary '
         'at ${opp.selectedTime != null ? opp.selectedTime!.format(context) : '—'}',
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          color: KolabingColors.textTertiary,
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    ];
-  }
-
-  /// C) Flexible Window — Available From, Available Until, no fixed time
-  List<Widget> _buildFlexibleFields(
-    Opportunity opp,
-    OpportunityFormState formState,
-  ) {
-    return [
-      Row(
-        children: [
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available From',
-              value: opp.availabilityStart,
-              error: formState.fieldErrors['availability_start'],
-              onChanged: (date) => ref
-                  .read(opportunityFormProvider.notifier)
-                  .updateStartDate(date),
-            ),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: _buildDatePicker(
-              label: 'Available Until',
-              value: opp.availabilityEnd,
-              error: formState.fieldErrors['availability_end'],
-              minDate: opp.availabilityStart,
-              onChanged: (date) => ref
-                  .read(opportunityFormProvider.notifier)
-                  .updateEndDate(date),
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: KolabingSpacing.sm),
-      Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs + 2,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.softYellow.withValues(alpha: 0.5),
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              LucideIcons.clock,
-              size: 16,
-              color: KolabingColors.textSecondary,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Text(
-              'Time: Flexible — no fixed time',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                color: KolabingColors.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(height: KolabingSpacing.xs),
-      Text(
-        'Businesses will propose a specific date and time within this window.',
         style: GoogleFonts.openSans(
           fontSize: 12,
           color: KolabingColors.textTertiary,
@@ -2165,8 +2068,6 @@ class _CreateOpportunityScreenState
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
-      case AvailabilityMode.flexible:
-        return LucideIcons.calendarRange;
     }
   }
 

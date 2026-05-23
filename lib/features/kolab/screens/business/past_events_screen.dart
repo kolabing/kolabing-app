@@ -11,8 +11,13 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../services/upload_service.dart';
+import '../../../../utils/image_picker_normalize.dart';
+import '../../../../utils/remote_media_url.dart';
+import '../../../event/models/event.dart';
+import '../../../event/providers/event_provider.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../widgets/profile_event_picker_sheet.dart';
 
 /// Step 4 (venue / product flows): "PAST COLLABORATIONS (optional)"
 ///
@@ -32,10 +37,18 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(kolabFormProvider);
+    final profileEventsState = ref.watch(eventsProvider);
     final kolab = formState.kolab;
     final notifier = ref.read(kolabFormProvider.notifier);
     final events = kolab.pastEvents;
     final canAdd = events.length < 5;
+    final importableEvents = profileEventsState.events
+        .where(
+          (event) => !_containsImportedEvent(events, event),
+        )
+        .toList(growable: false);
+    final showImportButton = canAdd &&
+        (profileEventsState.isLoading || importableEvents.isNotEmpty);
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -63,6 +76,40 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
+
+        if (showImportButton) ...[
+          OutlinedButton.icon(
+            onPressed: profileEventsState.isLoading
+                ? null
+                : () => _importFromProfile(importableEvents),
+            icon: profileEventsState.isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(LucideIcons.calendarPlus, size: 18),
+            label: Text(
+              profileEventsState.isLoading
+                  ? 'Loading profile events...'
+                  : 'Select from profile',
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KolabingColors.primary,
+              side: BorderSide(
+                color: KolabingColors.primary.withValues(alpha: 0.5),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+                vertical: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KolabingRadius.sm),
+              ),
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+        ],
 
         // -- Existing events
         for (int i = 0; i < events.length; i++) ...[
@@ -117,7 +164,86 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
       ],
     );
   }
+
+  Future<void> _importFromProfile(List<Event> importableEvents) async {
+    if (importableEvents.isEmpty) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All profile events are already added.')),
+      );
+      return;
+    }
+
+    final remainingSlots = 5 - ref.read(kolabFormProvider).kolab.pastEvents.length;
+    final selectedEvents = await ProfileEventPickerSheet.show(
+      context,
+      events: importableEvents,
+      maxSelection: remainingSlots,
+    );
+    if (!mounted || selectedEvents == null || selectedEvents.isEmpty) {
+      return;
+    }
+
+    final notifier = ref.read(kolabFormProvider.notifier);
+    for (final event in selectedEvents) {
+      notifier.addPastEvent(_mapProfileEvent(event));
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Imported ${selectedEvents.length} profile event${selectedEvents.length == 1 ? '' : 's'}.',
+        ),
+        backgroundColor: KolabingColors.success,
+      ),
+    );
+  }
+
+  bool _containsImportedEvent(List<PastEvent> currentEvents, Event event) {
+    final incomingKey = _eventKey(
+      name: event.name,
+      date: event.date,
+      partnerName: event.partner.name,
+    );
+
+    for (final currentEvent in currentEvents) {
+      if (_eventKey(
+            name: currentEvent.name,
+            date: currentEvent.date,
+            partnerName: currentEvent.partnerName,
+          ) ==
+          incomingKey) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  PastEvent _mapProfileEvent(Event event) => PastEvent(
+    name: event.name,
+    date: event.date,
+    partnerName: event.partner.name.isEmpty ? null : event.partner.name,
+    photos: event.photos
+        .map((photo) => normalizeRemoteMediaUrl(photo.url))
+        .where((url) => url.isNotEmpty)
+        .toList(growable: false),
+    videos: event.videos
+        .map((video) => normalizeRemoteMediaUrl(video.url))
+        .where((url) => url.isNotEmpty)
+        .toList(growable: false),
+  );
 }
+
+String _eventKey({
+  required String name,
+  required DateTime date,
+  String? partnerName,
+}) => '${name.trim().toLowerCase()}|'
+    '${DateUtils.dateOnly(date).toIso8601String()}|'
+    '${(partnerName ?? '').trim().toLowerCase()}';
 
 // =============================================================================
 // Past Event Entry Card
@@ -324,9 +450,11 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               );
               if (image == null) return;
               try {
+                // C10: normalize before upload so the preview path is usable.
+                final localPath = await normalizePickedImage(image);
                 final uploadService = UploadService();
                 final url = await uploadService.upload(
-                  filePath: image.path,
+                  filePath: localPath,
                   folder: 'kolabs',
                 );
                 final updated = [...widget.event.photos, url];

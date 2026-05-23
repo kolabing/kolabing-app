@@ -15,7 +15,7 @@ import '../../providers/kolab_form_provider.dart';
 /// Step 5 (venue / product flows): "AVAILABILITY"
 ///
 /// Same pattern as the community logistics screen but WITHOUT a location
-/// section. Offers three availability modes: One Time, Recurring, Flexible.
+/// section. Offers two availability modes: One Time and Recurring.
 /// Conditional sub-fields: date range picker, time picker, day selector.
 ///
 /// This is a plain widget -- the parent provides Scaffold, AppBar, step
@@ -24,8 +24,7 @@ class AvailabilityScreen extends ConsumerStatefulWidget {
   const AvailabilityScreen({super.key});
 
   @override
-  ConsumerState<AvailabilityScreen> createState() =>
-      _AvailabilityScreenState();
+  ConsumerState<AvailabilityScreen> createState() => _AvailabilityScreenState();
 }
 
 class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
@@ -42,12 +41,15 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   Future<void> _pickDateRange(KolabFormNotifier notifier, Kolab kolab) async {
     final today = DateUtils.dateOnly(DateTime.now());
     final firstAllowedDate = today;
-    final initialStart = kolab.availabilityStart != null &&
-            !DateUtils.dateOnly(kolab.availabilityStart!)
-                .isBefore(firstAllowedDate)
+    final initialStart =
+        kolab.availabilityStart != null &&
+            !DateUtils.dateOnly(
+              kolab.availabilityStart!,
+            ).isBefore(firstAllowedDate)
         ? kolab.availabilityStart!
         : firstAllowedDate;
-    final initialEnd = kolab.availabilityEnd != null &&
+    final initialEnd =
+        kolab.availabilityEnd != null &&
             !DateUtils.dateOnly(kolab.availabilityEnd!).isBefore(initialStart)
         ? kolab.availabilityEnd!
         : initialStart.add(const Duration(days: 30));
@@ -56,19 +58,16 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       context: context,
       firstDate: firstAllowedDate,
       lastDate: firstAllowedDate.add(const Duration(days: 365)),
-      initialDateRange: DateTimeRange(
-        start: initialStart,
-        end: initialEnd,
-      ),
+      initialDateRange: DateTimeRange(start: initialStart, end: initialEnd),
       builder: (context, child) => Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: KolabingColors.primary,
-                  onPrimary: KolabingColors.onPrimary,
-                ),
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: KolabingColors.primary,
+            onPrimary: KolabingColors.onPrimary,
           ),
-          child: child!,
         ),
+        child: child!,
+      ),
     );
 
     if (picked != null) {
@@ -79,12 +78,8 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   }
 
   Future<void> _pickTime(KolabFormNotifier notifier, Kolab kolab) async {
-    final initial =
-        kolab.selectedTime ?? const TimeOfDay(hour: 10, minute: 0);
-    final picked = await KolabingTimePicker.show(
-      context,
-      initialTime: initial,
-    );
+    final initial = kolab.selectedTime ?? const TimeOfDay(hour: 10, minute: 0);
+    final picked = await KolabingTimePicker.show(context, initialTime: initial);
     if (picked != null) {
       notifier.updateSelectedTime(picked);
     }
@@ -158,37 +153,6 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           const SizedBox(height: KolabingSpacing.md),
           _buildDateRangeSection(kolab, notifier, errors),
         ],
-
-        if (kolab.availabilityMode == AvailabilityMode.flexible)
-          Padding(
-            padding: const EdgeInsets.only(top: KolabingSpacing.xs),
-            child: Container(
-              padding: const EdgeInsets.all(KolabingSpacing.md),
-              decoration: BoxDecoration(
-                color: KolabingColors.softYellow,
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    LucideIcons.info,
-                    size: 20,
-                    color: KolabingColors.textSecondary,
-                  ),
-                  const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      'Communities will propose a time and you can accept or suggest an alternative.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 13,
-                        color: KolabingColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
 
         const SizedBox(height: KolabingSpacing.lg),
       ],
@@ -333,59 +297,58 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   }
 
   Widget _buildDaySelector(Kolab kolab, KolabFormNotifier notifier) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'RECURRING DAYS',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'RECURRING DAYS',
+        style: GoogleFonts.rubik(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.0,
+          color: KolabingColors.textSecondary,
         ),
-        const SizedBox(height: KolabingSpacing.xs),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(7, (index) {
-            final day = index + 1; // 1=Monday .. 7=Sunday
-            final isSelected = kolab.recurringDays.contains(day);
-            return GestureDetector(
-              onTap: () => notifier.toggleRecurringDay(day),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
+      ),
+      const SizedBox(height: KolabingSpacing.xs),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(7, (index) {
+          final day = index + 1; // 1=Monday .. 7=Sunday
+          final isSelected = kolab.recurringDays.contains(day);
+          return GestureDetector(
+            onTap: () => notifier.toggleRecurringDay(day),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? KolabingColors.primary
+                    : KolabingColors.surface,
+                borderRadius: KolabingRadius.borderRadiusSm,
+                border: Border.all(
                   color: isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.surface,
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                  border: Border.all(
-                    color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.border,
-                  ),
+                      : KolabingColors.border,
                 ),
-                child: Center(
-                  child: Text(
-                    _dayLabels[index],
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected
-                          ? KolabingColors.onPrimary
-                          : KolabingColors.textPrimary,
-                    ),
+              ),
+              child: Center(
+                child: Text(
+                  _dayLabels[index],
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    color: isSelected
+                        ? KolabingColors.onPrimary
+                        : KolabingColors.textPrimary,
                   ),
                 ),
               ),
-            );
-          }),
-        ),
-      ],
-    );
+            ),
+          );
+        }),
+      ),
+    ],
+  );
 
   IconData _iconForMode(AvailabilityMode mode) {
     switch (mode) {
@@ -393,8 +356,6 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
-      case AvailabilityMode.flexible:
-        return LucideIcons.clock;
     }
   }
 }
@@ -420,84 +381,80 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color:
-              isSelected ? KolabingColors.softYellow : KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color:
-                isSelected ? KolabingColors.primary : KolabingColors.border,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Radio-like indicator
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? KolabingColors.primary
-                    : Colors.transparent,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.border,
-                  width: 1.5,
-                ),
-              ),
-              child: isSelected
-                  ? const Icon(
-                      LucideIcons.check,
-                      size: 14,
-                      color: KolabingColors.onPrimary,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Icon
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? KolabingColors.textPrimary
-                  : KolabingColors.textSecondary,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Title + subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: isSelected ? KolabingColors.primary : KolabingColors.border,
         ),
       ),
-    );
+      child: Row(
+        children: [
+          // Radio-like indicator
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isSelected ? KolabingColors.primary : Colors.transparent,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected
+                    ? KolabingColors.primary
+                    : KolabingColors.border,
+                width: 1.5,
+              ),
+            ),
+            child: isSelected
+                ? const Icon(
+                    LucideIcons.check,
+                    size: 14,
+                    color: KolabingColors.onPrimary,
+                  )
+                : null,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Icon
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected
+                ? KolabingColors.textPrimary
+                : KolabingColors.textSecondary,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Title + subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.openSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

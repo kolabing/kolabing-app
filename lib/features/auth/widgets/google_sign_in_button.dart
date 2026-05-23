@@ -6,12 +6,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 
 /// Button states for visual feedback
-enum _ButtonState {
-  idle,
-  pressed,
-  loading,
-  success,
-}
+enum _ButtonState { idle, pressed, loading, success }
 
 /// Google Sign In button with loading and success states
 ///
@@ -25,6 +20,7 @@ class GoogleSignInButton extends StatefulWidget {
     this.isLoading = false,
     this.showSuccess = false,
     this.isEnabled = true,
+    this.height = 52,
   });
 
   /// Callback when button is pressed
@@ -41,6 +37,9 @@ class GoogleSignInButton extends StatefulWidget {
 
   /// Whether button is enabled
   final bool isEnabled;
+
+  /// Button height
+  final double height;
 
   @override
   State<GoogleSignInButton> createState() => _GoogleSignInButtonState();
@@ -66,13 +65,9 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.98,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   @override
@@ -141,64 +136,66 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        button: true,
-        enabled: _canInteract,
-        label: widget.isLoading
-            ? 'Signing in with Google'
-            : widget.showSuccess
-                ? 'Sign in successful'
-                : '${widget.buttonText} button. Tap to authenticate with your Google account.',
-        child: GestureDetector(
-          onTapDown: _handleTapDown,
-          onTapUp: _handleTapUp,
-          onTapCancel: _handleTapCancel,
-          onTap: _handleTap,
-          child: AnimatedBuilder(
-            animation: _scaleAnimation,
-            builder: (context, child) => Transform.scale(
-              scale: _scaleAnimation.value,
-              child: child,
-            ),
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 100),
-              opacity: _canInteract ? 1.0 : 0.6,
-              child: Container(
-                height: 52,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF374957).withValues(alpha: 0.11),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1.5),
-                    ),
-                  ],
+    button: true,
+    enabled: _canInteract,
+    label: widget.isLoading
+        ? 'Signing in with Google'
+        : widget.showSuccess
+        ? 'Sign in successful'
+        : '${widget.buttonText} button. Tap to authenticate with your Google account.',
+    child: GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: _handleTap,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) =>
+            Transform.scale(scale: _scaleAnimation.value, child: child),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 100),
+          opacity: _canInteract ? 1.0 : 0.6,
+          child: Container(
+            height: widget.height,
+            decoration: BoxDecoration(
+              color: KolabingColors.primary,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF374957).withValues(alpha: 0.11),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1.5),
                 ),
-                child: _buildContent(),
-              ),
+              ],
             ),
+            child: _buildContent(),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildContent() => AnimatedSwitcher(
-        duration: const Duration(milliseconds: 150),
-        child: _state == _ButtonState.loading
-            ? _buildLoadingContent()
-            : _state == _ButtonState.success
-                ? _buildSuccessContent()
-                : _buildDefaultContent(),
-      );
+    duration: const Duration(milliseconds: 150),
+    child: _state == _ButtonState.loading
+        ? _buildLoadingContent()
+        : _state == _ButtonState.success
+        ? _buildSuccessContent()
+        : _buildDefaultContent(),
+  );
 
   Widget _buildDefaultContent() => Padding(
-        key: const ValueKey('default'),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+    key: const ValueKey('default'),
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    child: Center(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             _GoogleIcon(),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Text(
               widget.buttonText.toUpperCase(),
               style: KolabingTextStyles.button.copyWith(
@@ -208,42 +205,36 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
             ),
           ],
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildLoadingContent() => const Center(
-        key: ValueKey('loading'),
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-            valueColor: AlwaysStoppedAnimation<Color>(KolabingColors.onPrimary),
-          ),
-        ),
-      );
+    key: ValueKey('loading'),
+    child: SizedBox(
+      width: 24,
+      height: 24,
+      child: CircularProgressIndicator(
+        strokeWidth: 2.5,
+        valueColor: AlwaysStoppedAnimation<Color>(KolabingColors.onPrimary),
+      ),
+    ),
+  );
 
   Widget _buildSuccessContent() => const Center(
-        key: ValueKey('success'),
-        child: Icon(
-          Icons.check_rounded,
-          size: 24,
-          color: KolabingColors.onPrimary,
-        ),
-      );
+    key: ValueKey('success'),
+    child: Icon(Icons.check_rounded, size: 24, color: KolabingColors.onPrimary),
+  );
 }
 
 /// Google "G" icon widget
 class _GoogleIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: 24,
-        height: 24,
-        child: SvgPicture.string(
-          _googleIconSvg,
-          width: 24,
-          height: 24,
-        ),
-      );
+    width: 24,
+    height: 24,
+    child: SvgPicture.string(_googleIconSvg, width: 24, height: 24),
+  );
 }
 
 /// Google "G" logo SVG

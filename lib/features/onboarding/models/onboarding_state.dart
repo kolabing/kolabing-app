@@ -20,10 +20,19 @@ class OnboardingData {
     this.cityId,
     this.cityName,
     this.location,
+    this.importedPlaceId,
     this.venueName,
     this.venueType,
     this.venueCapacity,
     this.venuePhotos = const [],
+    this.venuePhone,
+    this.venueWebsite,
+    this.venueOpeningHours = const [],
+    this.venueDescription,
+    this.venuePriceLevel,
+    this.venueRating,
+    this.venueUserRatingsTotal,
+    this.venueGooglePlaceTypes = const [],
     this.about,
     this.phone,
     this.instagram,
@@ -75,6 +84,9 @@ class OnboardingData {
   /// Selected business place from autocomplete
   final PlaceSuggestion? location;
 
+  /// Place id that was last successfully imported from Google.
+  final String? importedPlaceId;
+
   /// Primary venue name (business only)
   final String? venueName;
 
@@ -86,6 +98,30 @@ class OnboardingData {
 
   /// Primary venue photos (business only)
   final List<OnboardingPhoto> venuePhotos;
+
+  /// Primary venue phone number (business only)
+  final String? venuePhone;
+
+  /// Primary venue website (business only)
+  final String? venueWebsite;
+
+  /// Primary venue opening hours copied from Google import when available.
+  final List<String> venueOpeningHours;
+
+  /// Primary venue description sent alongside the top-level business about.
+  final String? venueDescription;
+
+  /// Primary venue Google price level.
+  final String? venuePriceLevel;
+
+  /// Primary venue Google rating.
+  final double? venueRating;
+
+  /// Primary venue Google review count.
+  final int? venueUserRatingsTotal;
+
+  /// Primary venue Google place types.
+  final List<String> venueGooglePlaceTypes;
 
   /// About text (optional)
   final String? about;
@@ -207,10 +243,19 @@ class OnboardingData {
     String? cityId,
     String? cityName,
     PlaceSuggestion? location,
+    String? importedPlaceId,
     String? venueName,
     String? venueType,
     int? venueCapacity,
     List<OnboardingPhoto>? venuePhotos,
+    String? venuePhone,
+    String? venueWebsite,
+    List<String>? venueOpeningHours,
+    String? venueDescription,
+    String? venuePriceLevel,
+    double? venueRating,
+    int? venueUserRatingsTotal,
+    List<String>? venueGooglePlaceTypes,
     String? about,
     String? phone,
     String? instagram,
@@ -225,9 +270,16 @@ class OnboardingData {
     bool clearTiktok = false,
     bool clearWebsite = false,
     bool clearLocation = false,
+    bool clearImportedPlace = false,
     bool clearVenueName = false,
     bool clearVenueType = false,
     bool clearVenueCapacity = false,
+    bool clearVenuePhone = false,
+    bool clearVenueWebsite = false,
+    bool clearVenueDescription = false,
+    bool clearVenuePriceLevel = false,
+    bool clearVenueRating = false,
+    bool clearVenueUserRatingsTotal = false,
     bool clearTypeSelection = false,
     bool clearReferralCode = false,
   }) => OnboardingData(
@@ -245,12 +297,31 @@ class OnboardingData {
     cityId: cityId ?? this.cityId,
     cityName: cityName ?? this.cityName,
     location: clearLocation ? null : (location ?? this.location),
+    importedPlaceId: clearImportedPlace
+        ? null
+        : (importedPlaceId ?? this.importedPlaceId),
     venueName: clearVenueName ? null : (venueName ?? this.venueName),
     venueType: clearVenueType ? null : (venueType ?? this.venueType),
     venueCapacity: clearVenueCapacity
         ? null
         : (venueCapacity ?? this.venueCapacity),
     venuePhotos: venuePhotos ?? this.venuePhotos,
+    venuePhone: clearVenuePhone ? null : (venuePhone ?? this.venuePhone),
+    venueWebsite: clearVenueWebsite
+        ? null
+        : (venueWebsite ?? this.venueWebsite),
+    venueOpeningHours: venueOpeningHours ?? this.venueOpeningHours,
+    venueDescription: clearVenueDescription
+        ? null
+        : (venueDescription ?? this.venueDescription),
+    venuePriceLevel: clearVenuePriceLevel
+        ? null
+        : (venuePriceLevel ?? this.venuePriceLevel),
+    venueRating: clearVenueRating ? null : (venueRating ?? this.venueRating),
+    venueUserRatingsTotal: clearVenueUserRatingsTotal
+        ? null
+        : (venueUserRatingsTotal ?? this.venueUserRatingsTotal),
+    venueGooglePlaceTypes: venueGooglePlaceTypes ?? this.venueGooglePlaceTypes,
     about: clearAbout ? null : (about ?? this.about),
     phone: clearPhone ? null : (phone ?? this.phone),
     instagram: clearInstagram ? null : (instagram ?? this.instagram),
@@ -285,6 +356,7 @@ class OnboardingData {
         'business_type': resolvedBusinessSlugs.first,
       if (resolvedBusinessSlugs.isNotEmpty)
         'business_types': resolvedBusinessSlugs,
+      if (resolvedBusinessSlugs.isNotEmpty) 'categories': resolvedBusinessSlugs,
       if (resolvedCityId != null && resolvedCityId.isNotEmpty)
         'city_id': resolvedCityId,
       if (resolvedCityName != null && resolvedCityName.isNotEmpty)
@@ -306,8 +378,25 @@ class OnboardingData {
         if (location?.country != null) 'country': location?.country,
         if (location?.latitude != null) 'latitude': location?.latitude,
         if (location?.longitude != null) 'longitude': location?.longitude,
+        if (venuePhone != null && venuePhone!.isNotEmpty)
+          'phone_number': venuePhone?.trim(),
+        if (venueWebsite != null && venueWebsite!.isNotEmpty)
+          'website': venueWebsite?.trim(),
+        if (venueOpeningHours.isNotEmpty) 'opening_hours': venueOpeningHours,
+        if (venueDescription != null && venueDescription!.isNotEmpty)
+          'description': venueDescription?.trim(),
+        if (venuePriceLevel != null && venuePriceLevel!.isNotEmpty)
+          'price_level': venuePriceLevel,
+        if (venueRating != null) 'rating': venueRating,
+        if (venueUserRatingsTotal != null)
+          'user_ratings_total': venueUserRatingsTotal,
+        if (venueGooglePlaceTypes.isNotEmpty)
+          'google_place_types': venueGooglePlaceTypes,
         if (venuePhotos.isNotEmpty)
-          'photos': venuePhotos.map((photo) => photo.dataUri).toList(),
+          'photos': venuePhotos
+              .map((photo) => photo.payloadValue)
+              .where((value) => value.trim().isNotEmpty)
+              .toList(),
       },
     };
   }
@@ -328,5 +417,5 @@ class OnboardingData {
 
   @override
   String toString() =>
-      'OnboardingData(userType: $userType, name: $name, type: $type, cityId: $cityId, place: ${location?.placeId}, step: $currentStep)';
+      'OnboardingData(userType: $userType, name: $name, type: $type, cityId: $cityId, place: ${location?.placeId}, importedPlaceId: $importedPlaceId, step: $currentStep)';
 }

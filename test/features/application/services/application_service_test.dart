@@ -226,6 +226,136 @@ void main() {
       ]);
     },
   );
+
+  test(
+    'submitApplication refreshes once on 401 before succeeding',
+    () async {
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+      });
+
+      final client = _QueuedClient(
+        responses: [
+          _QueuedResponse(
+            statusCode: 401,
+            body: jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'token': 'token-456',
+                'refresh_token': 'refresh-456',
+                'token_type': 'Bearer',
+              },
+            }),
+          ),
+          _QueuedResponse(
+            statusCode: 201,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'id': 'app-3',
+                'collab_opportunity_id': 'opp-3',
+                'message': 'Count us in',
+                'availability': 'Saturday morning',
+                'status': 'pending',
+                'created_at': '2026-05-01T10:00:00Z',
+              },
+            }),
+          ),
+        ],
+      );
+
+      final authService = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: client,
+      );
+      final service = ApplicationService(
+        authService: authService,
+        httpClient: client,
+      );
+
+      final application = await service.submitApplication(
+        opportunityId: 'opp-3',
+        message: 'Count us in',
+        availability: 'Saturday morning',
+      );
+
+      expect(application.id, 'app-3');
+      expect(application.status.name, 'pending');
+      expect(await authService.getToken(), 'token-456');
+      expect(await authService.getRefreshToken(), 'refresh-456');
+      expect(client.sentAuthHeaders, <String?>[
+        'Bearer token-123',
+        null,
+        'Bearer token-456',
+      ]);
+    },
+  );
+
+  test(
+    'getApplication refreshes once on 401 before returning details',
+    () async {
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_refresh_token': 'refresh-123',
+      });
+
+      final client = _QueuedClient(
+        responses: [
+          _QueuedResponse(
+            statusCode: 401,
+            body: jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'token': 'token-456',
+                'refresh_token': 'refresh-456',
+                'token_type': 'Bearer',
+              },
+            }),
+          ),
+          _QueuedResponse(
+            statusCode: 200,
+            body: jsonEncode(<String, dynamic>{
+              'data': <String, dynamic>{
+                'id': 'app-4',
+                'collab_opportunity_id': 'opp-4',
+                'message': 'Details please',
+                'availability': 'Weeknights',
+                'status': 'accepted',
+                'created_at': '2026-05-02T10:00:00Z',
+              },
+            }),
+          ),
+        ],
+      );
+
+      final authService = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: client,
+      );
+      final service = ApplicationService(
+        authService: authService,
+        httpClient: client,
+      );
+
+      final application = await service.getApplication('app-4');
+
+      expect(application.id, 'app-4');
+      expect(application.status.name, 'accepted');
+      expect(await authService.getToken(), 'token-456');
+      expect(await authService.getRefreshToken(), 'refresh-456');
+      expect(client.sentAuthHeaders, <String?>[
+        'Bearer token-123',
+        null,
+        'Bearer token-456',
+      ]);
+    },
+  );
 }
 
 class _QueuedClient extends http.BaseClient {

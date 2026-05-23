@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,10 +12,10 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
-import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../event/widgets/past_events_section.dart';
 
 /// Community profile screen
@@ -210,15 +207,12 @@ class _CommunityProfileScreenState
         );
       }
 
-      // Read file and convert to base64
-      final bytes = await File(pickedFile.path).readAsBytes();
-      final base64Image = base64Encode(bytes);
-      final mimeType = pickedFile.mimeType ?? 'image/jpeg';
-
-      // Upload
+      // Upload the picked image as a multipart file. The backend validates
+      // profile_photo as an uploaded image file (a base64 string is rejected
+      // with 422), so we pass the file path.
       final success = await ref
           .read(profileProvider.notifier)
-          .updateProfilePhoto(base64Image, mimeType);
+          .updateProfilePhoto(pickedFile.path);
 
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -507,7 +501,7 @@ class _CommunityProfileScreenState
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final name = profile.communityProfile?.name ?? profile.displayName;
     final communityType =
-        profile.communityProfile?.communityType ?? 'Community';
+        profile.communityProfile?.communityTypeLabel ?? 'Community';
     final photoUrl =
         profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
 
@@ -632,7 +626,7 @@ class _CommunityProfileScreenState
               ),
             ),
             child: Text(
-              communityType.toUpperCase(),
+              communityType,
               style: KolabingTextStyles.labelSmall.copyWith(
                 color: KolabingColors.info,
                 fontWeight: FontWeight.w600,

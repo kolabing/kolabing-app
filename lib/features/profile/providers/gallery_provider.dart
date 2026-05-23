@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../config/constants/api.dart';
+import '../../../utils/image_picker_normalize.dart';
+import '../../../utils/remote_media_url.dart';
 import '../services/gallery_service.dart';
 
 // =============================================================================
@@ -21,14 +24,7 @@ class GalleryPhoto {
   });
 
   factory GalleryPhoto.fromJson(Map<String, dynamic> json) {
-    // Try multiple possible URL field names from API
-    final url = json['url'] as String? ??
-        json['photo_url'] as String? ??
-        json['file_url'] as String? ??
-        json['image_url'] as String? ??
-        json['path'] as String? ??
-        '';
-    debugPrint('GalleryPhoto.fromJson: id=${json['id']}, url=$url, keys=${json.keys.toList()}');
+    final url = _resolveUrl(json);
     return GalleryPhoto(
       id: json['id']?.toString() ?? '',
       url: url,
@@ -40,11 +36,77 @@ class GalleryPhoto {
     );
   }
 
+  factory GalleryPhoto.fromUrl({
+    required String id,
+    required String rawUrl,
+    String? caption,
+    int sortOrder = 0,
+  }) => GalleryPhoto(
+    id: id,
+    url: normalizeRemoteMediaUrl(rawUrl),
+    caption: caption,
+    sortOrder: sortOrder,
+  );
+
   final String id;
   final String url;
   final String? caption;
   final int sortOrder;
   final DateTime? createdAt;
+
+  static String _resolveUrl(Map<String, dynamic> json) {
+    final rawUrl =
+        json['url'] as String? ??
+        json['photo_url'] as String? ??
+        json['file_url'] as String? ??
+        json['image_url'] as String? ??
+        json['path'] as String? ??
+        (json['photo'] is Map<String, dynamic>
+            ? (json['photo'] as Map<String, dynamic>)['url'] as String?
+            : null) ??
+        (json['media'] is Map<String, dynamic>
+            ? (json['media'] as Map<String, dynamic>)['url'] as String?
+            : null) ??
+        '';
+
+    final normalizedUrl = _resolveAgainstHostRoot(rawUrl);
+    debugPrint(
+      'GalleryPhoto.fromJson: id=${json['id']}, url=$normalizedUrl, keys=${json.keys.toList()}',
+    );
+    return normalizedUrl;
+  }
+
+  /// Resolves a gallery/media URL to an absolute URL.
+  ///
+  /// Already-absolute and `data:` URLs are returned untouched (delegated to
+  /// [normalizeRemoteMediaUrl]). Relative URLs (whether or not they carry a
+  /// leading slash, e.g. `storage/...` or `/storage/...`) are resolved against
+  /// the API HOST ROOT rather than the `/api/v1/` path. Stored media lives at
+  /// the domain root (`https://host/storage/...`), so resolving against the API
+  /// path would incorrectly yield `https://host/api/v1/storage/...`.
+  static String _resolveAgainstHostRoot(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty || trimmed.startsWith('data:')) {
+      return trimmed;
+    }
+
+    final parsed = Uri.tryParse(trimmed);
+    if (parsed != null && parsed.hasScheme) {
+      // Already absolute; keep as-is.
+      return normalizeRemoteMediaUrl(trimmed);
+    }
+
+    // Resolve relative paths against the scheme+host origin (drops `/api/v1`).
+    final apiUri = Uri.parse(ApiConfig.baseUrl);
+    final hostRoot = Uri(
+      scheme: apiUri.scheme,
+      host: apiUri.host,
+      port: apiUri.hasPort ? apiUri.port : null,
+      path: '/',
+    );
+    final relative = trimmed.startsWith('/') ? trimmed.substring(1) : trimmed;
+    return hostRoot.resolve(relative).toString();
+  }
 }
 
 // =============================================================================
@@ -79,14 +141,13 @@ class GalleryState {
     bool? isDeleting,
     String? error,
     bool clearError = false,
-  }) =>
-      GalleryState(
-        photos: photos ?? this.photos,
-        isLoading: isLoading ?? this.isLoading,
-        isUploading: isUploading ?? this.isUploading,
-        isDeleting: isDeleting ?? this.isDeleting,
-        error: clearError ? null : (error ?? this.error),
-      );
+  }) => GalleryState(
+    photos: photos ?? this.photos,
+    isLoading: isLoading ?? this.isLoading,
+    isUploading: isUploading ?? this.isUploading,
+    isDeleting: isDeleting ?? this.isDeleting,
+    error: clearError ? null : (error ?? this.error),
+  );
 }
 
 // =============================================================================
@@ -98,9 +159,7 @@ class GalleryNotifier extends Notifier<GalleryState> {
   final GalleryService _galleryService = GalleryService();
 
   @override
-  GalleryState build() {
-    return const GalleryState();
-  }
+  GalleryState build() => const GalleryState();
 
   /// Load gallery photos from the API
   Future<void> loadGallery() async {
@@ -110,12 +169,9 @@ class GalleryNotifier extends Notifier<GalleryState> {
     try {
       final photos = await _galleryService.getMyGallery();
       state = state.copyWith(photos: photos, isLoading: false);
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Gallery load error: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Failed to load gallery',
-      );
+      state = state.copyWith(isLoading: false, error: 'Failed to load gallery');
     }
   }
 
@@ -138,24 +194,21 @@ class GalleryNotifier extends Notifier<GalleryState> {
 
       if (pickedFile == null) return false;
 
+      final localPath = await normalizePickedImage(pickedFile);
+
       // Verify file exists
-      final file = File(pickedFile.path);
+      final file = File(localPath);
       if (!file.existsSync()) return false;
 
       state = state.copyWith(isUploading: true, clearError: true);
 
-      await _galleryService.uploadPhoto(
-        filePath: pickedFile.path,
-      );
+      await _galleryService.uploadPhoto(filePath: localPath);
 
       // Reload the full gallery from API to get correct URLs
       final photos = await _galleryService.getMyGallery();
-      state = state.copyWith(
-        photos: photos,
-        isUploading: false,
-      );
+      state = state.copyWith(photos: photos, isUploading: false);
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Gallery add photo error: $e');
       state = state.copyWith(
         isUploading: false,
@@ -175,7 +228,7 @@ class GalleryNotifier extends Notifier<GalleryState> {
         photos: state.photos.where((p) => p.id != id).toList(),
         isDeleting: false,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Gallery delete photo error: $e');
       state = state.copyWith(
         isDeleting: false,
@@ -194,5 +247,6 @@ class GalleryNotifier extends Notifier<GalleryState> {
 // Provider
 // =============================================================================
 
-final galleryProvider =
-    NotifierProvider<GalleryNotifier, GalleryState>(GalleryNotifier.new);
+final galleryProvider = NotifierProvider<GalleryNotifier, GalleryState>(
+  GalleryNotifier.new,
+);

@@ -12,20 +12,37 @@ import '../../business/services/profile_service.dart';
 
 /// App Store product ID for the monthly subscription
 const String kMonthlySubscriptionId = 'com.kolabing.app.subscription.monthly';
+const String kBundleMonthlySubscriptionId =
+    'com.kolabing.kolabingApp.subscription.monthly';
+
+/// Prefer the current bundle-scoped product id first, but keep the legacy
+/// identifier as a fallback so existing App Store Connect setups continue to
+/// work during migration.
+const List<String> kSubscriptionProductIdPriority = <String>[
+  kBundleMonthlySubscriptionId,
+  kMonthlySubscriptionId,
+];
 
 /// Set of all subscription product IDs
-const Set<String> kSubscriptionProductIds = {kMonthlySubscriptionId};
+final Set<String> kSubscriptionProductIds =
+    kSubscriptionProductIdPriority.toSet();
 
 typedef PurchaseStartResult = ({bool started, String? validatedReferralCode});
 
 /// Service for handling iOS In-App Purchase operations
 class IAPService {
-  IAPService({ProfileService? profileService, InAppPurchase? iap})
+  IAPService({
+    ProfileService? profileService,
+    InAppPurchase? iap,
+    bool Function()? isIosPlatform,
+  })
     : _profileService = profileService ?? ProfileService(),
-      _iap = iap ?? InAppPurchase.instance;
+      _iap = iap ?? InAppPurchase.instance,
+      _isIosPlatform = isIosPlatform ?? (() => Platform.isIOS);
 
   final ProfileService _profileService;
   final InAppPurchase _iap;
+  final bool Function() _isIosPlatform;
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
   String? _pendingReferralCode;
 
@@ -38,12 +55,21 @@ class IAPService {
   List<ProductDetails> get products => _products;
 
   /// Get the monthly subscription product
-  ProductDetails? get monthlyProduct =>
-      _products.isEmpty ? null : _products.first;
+  ProductDetails? get monthlyProduct {
+    for (final productId in kSubscriptionProductIdPriority) {
+      for (final product in _products) {
+        if (product.id == productId) {
+          return product;
+        }
+      }
+    }
+
+    return _products.isEmpty ? null : _products.first;
+  }
 
   /// Initialize the IAP service — call once at app start on iOS
   Future<void> initialize() async {
-    if (!Platform.isIOS) return;
+    if (!_isIosPlatform()) return;
 
     _isAvailable = await _iap.isAvailable();
     if (!_isAvailable) {
@@ -52,6 +78,7 @@ class IAPService {
     }
 
     // Load products
+    debugPrint('IAP: Querying product ids: $kSubscriptionProductIds');
     final response = await _iap.queryProductDetails(kSubscriptionProductIds);
     if (response.error != null) {
       debugPrint('IAP: Error loading products: ${response.error}');

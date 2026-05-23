@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,11 +12,11 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../auth/models/user_model.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../providers/profile_provider.dart';
-import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../event/widgets/past_events_section.dart';
 
 /// Business profile screen
@@ -216,15 +213,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         );
       }
 
-      // Read file and convert to base64
-      final bytes = await File(pickedFile.path).readAsBytes();
-      final base64Image = base64Encode(bytes);
-      final mimeType = pickedFile.mimeType ?? 'image/jpeg';
-
-      // Upload
+      // Upload the picked image as a multipart file. The backend validates
+      // profile_photo as an uploaded image file (a base64 string is rejected
+      // with 422), so we pass the file path.
       final success = await ref
           .read(profileProvider.notifier)
-          .updateProfilePhoto(base64Image, mimeType);
+          .updateProfilePhoto(pickedFile.path);
 
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -640,7 +634,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               border: Border.all(color: KolabingColors.softYellowBorder),
             ),
             child: Text(
-              businessType.toUpperCase(),
+              businessType,
               style: KolabingTextStyles.labelSmall.copyWith(
                 color: KolabingColors.accentOrangeText,
                 fontWeight: FontWeight.w600,

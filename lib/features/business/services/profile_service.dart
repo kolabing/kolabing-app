@@ -129,6 +129,66 @@ class ProfileService {
     }
   }
 
+  /// Update the profile photo as a MULTIPART FILE upload.
+  ///
+  /// The backend validates `profile_photo` as an uploaded image file
+  /// (`image|mimes:jpeg,jpg,png,gif,webp|max:5120`), so it must be sent as
+  /// multipart form-data — NOT a base64 data-URI string in JSON, which fails
+  /// with HTTP 422 ("validation failed"). Uses POST with `_method=PUT` because
+  /// PHP/Laravel does not parse multipart bodies on a real PUT request.
+  Future<UserModel> updateProfilePhotoFile({required String filePath}) =>
+      _updateProfilePhotoFile(filePath: filePath, allowRetry: true);
+
+  Future<UserModel> _updateProfilePhotoFile({
+    required String filePath,
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/me/profile');
+    debugPrint('Profile: POST(_method=PUT) $uri [multipart profile_photo]');
+
+    try {
+      final token = await _authService.getToken();
+      final request = http.MultipartRequest('POST', uri)
+        ..headers['Accept'] = 'application/json'
+        ..fields['_method'] = 'PUT'
+        ..files.add(
+          await http.MultipartFile.fromPath('profile_photo', filePath),
+        );
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final streamed = await _httpClient.send(request);
+      final response = await http.Response.fromStream(streamed);
+
+      debugPrint('Update profile photo status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'] as Map<String, dynamic>;
+        return UserModel.fromJson(data);
+      } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _updateProfilePhotoFile(filePath: filePath, allowRetry: false);
+        }
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        throw ApiException(
+          error: ApiError.fromJson(json, statusCode: response.statusCode),
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Update profile photo error: $e');
+      throw NetworkException('Failed to update profile photo: $e');
+    }
+  }
+
   /// Delete account
   ///
   /// DELETE /api/v1/me/account

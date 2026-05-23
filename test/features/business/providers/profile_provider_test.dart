@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kolabing_app/features/auth/models/auth_response.dart';
 import 'package:kolabing_app/features/auth/models/user_model.dart';
+import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/business/models/notification_preferences.dart';
 import 'package:kolabing_app/features/business/models/subscription.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
@@ -23,6 +22,7 @@ void main() {
     () async {
       final container = ProviderContainer(
         overrides: [
+          authProvider.overrideWith(() => _TestAuthNotifier(_communityUser)),
           profileServiceProvider.overrideWith(
             (ref) => _FakeProfileService(
               profile: _communityUser,
@@ -53,6 +53,7 @@ void main() {
     () async {
       final container = ProviderContainer(
         overrides: [
+          authProvider.overrideWith(() => _TestAuthNotifier(_businessUser)),
           profileServiceProvider.overrideWith(
             (ref) => _FakeProfileService(
               profile: _businessUser,
@@ -103,7 +104,12 @@ void main() {
       );
 
       final container = ProviderContainer(
-        overrides: [profileServiceProvider.overrideWith((ref) => service)],
+        overrides: [
+          authProvider.overrideWith(
+            () => _TestAuthNotifier(_businessUserWithActiveFlag),
+          ),
+          profileServiceProvider.overrideWith((ref) => service),
+        ],
       );
       addTearDown(container.dispose);
 
@@ -252,5 +258,23 @@ class _ScriptedProfileService extends ProfileService {
       return value as T;
     }
     throw StateError('Unexpected scripted value: $value');
+  }
+}
+
+class _TestAuthNotifier extends AuthNotifier {
+  _TestAuthNotifier(this._user);
+
+  final UserModel _user;
+
+  @override
+  AuthState build() => AuthState(
+    status: AuthStatus.authenticated,
+    user: _user,
+    token: 'token-123',
+  );
+
+  @override
+  Future<void> logout() async {
+    state = const AuthState(status: AuthStatus.unauthenticated);
   }
 }

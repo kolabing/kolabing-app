@@ -138,22 +138,41 @@ class KolabService {
   // ---------------------------------------------------------------------------
 
   /// POST /api/v1/kolabs/{id}/publish
-  Future<Kolab> publish(String id, Kolab kolab) async {
-    return _publish(id, kolab, allowRetry: true);
+  ///
+  /// [recipientCommunityId] scopes the publish to a direct proposal to that
+  /// community (Send-Kolab CTA from a public community profile, C9).
+  Future<Kolab> publish(
+    String id,
+    Kolab kolab, {
+    String? recipientCommunityId,
+  }) async {
+    return _publish(
+      id,
+      kolab,
+      recipientCommunityId: recipientCommunityId,
+      allowRetry: true,
+    );
   }
 
   Future<Kolab> _publish(
     String id,
     Kolab kolab, {
+    String? recipientCommunityId,
     required bool allowRetry,
   }) async {
     final uri = Uri.parse('$_baseUrl/kolabs/$id/publish');
-    debugPrint('KolabService: POST $uri');
+    debugPrint(
+      'KolabService: POST $uri '
+      '(recipient=${recipientCommunityId ?? '-'})',
+    );
 
     try {
       final response = await _httpClient.post(
         uri,
         headers: await _getHeaders(),
+        body: recipientCommunityId == null || recipientCommunityId.isEmpty
+            ? null
+            : jsonEncode({'recipient_community_id': recipientCommunityId}),
       );
 
       debugPrint('Publish kolab response: ${response.statusCode}');
@@ -165,7 +184,12 @@ class KolabService {
       } else if (response.statusCode == 401) {
         if (allowRetry) {
           await _authService.refreshSession();
-          return _publish(id, kolab, allowRetry: false);
+          return _publish(
+            id,
+            kolab,
+            recipientCommunityId: recipientCommunityId,
+            allowRetry: false,
+          );
         }
         throw const AuthException('Session expired. Please sign in again.');
       } else if (response.statusCode == 402) {

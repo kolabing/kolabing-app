@@ -16,6 +16,7 @@ import '../features/onboarding/models/city.dart';
 import '../features/onboarding/providers/onboarding_provider.dart'
     as onboarding;
 import '../features/opportunity/models/opportunity.dart';
+import 'keyboard_avoiding_content.dart';
 
 class ExploreFilterSheet extends ConsumerStatefulWidget {
   const ExploreFilterSheet({super.key, this.totalResults});
@@ -120,115 +121,117 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
   Widget build(BuildContext context) {
     final filters = ref.watch(discoveryFiltersProvider);
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.82,
-      ),
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(KolabingRadius.xxl),
+    return KeyboardAvoidingContent(
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.82,
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const _DragHandle(),
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _HeaderRow(
-                    hasActiveFilters: filters.hasActiveFilters,
-                    onClearAll: _clearAll,
-                    onClose: () => Navigator.of(context).pop(),
-                  ),
-                  const SizedBox(height: KolabingSpacing.md),
-                  _FilterTextField(
-                    controller: _searchController,
-                    hintText: 'Search by title, description, or creator...',
-                    icon: LucideIcons.search,
-                    onChanged: _onSearchChanged,
-                    onClear: _clearSearch,
-                  ),
-                  const SizedBox(height: KolabingSpacing.md),
-                  const _SectionLabel(label: 'City'),
-                  const SizedBox(height: KolabingSpacing.xs),
-                  ValueListenableBuilder<TextEditingValue>(
-                    valueListenable: _cityController,
-                    builder: (
-                      BuildContext context,
-                      TextEditingValue value,
-                      _,
-                    ) {
-                      final cityQuery = value.text.trim();
-
-                      return Column(
-                        children: [
-                          _FilterTextField(
-                            controller: _cityController,
-                            focusNode: _cityFocusNode,
-                            hintText: 'Type a city',
-                            icon: LucideIcons.mapPin,
-                            onChanged: _onCityChanged,
-                            onClear: _clearCity,
-                          ),
-                          if (_cityFocusNode.hasFocus && cityQuery.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: KolabingSpacing.xs,
-                              ),
-                              child: _CityAutocompleteResults(
-                                query: cityQuery,
-                                selectedCity: filters.city,
-                                onSelected: _selectCity,
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: KolabingSpacing.lg),
-                  const _SectionLabel(label: 'Availability'),
-                  const SizedBox(height: KolabingSpacing.xs),
-                  _SingleSelectChipGroup(
-                    options: AvailabilityMode.values
-                        .map(
-                          (AvailabilityMode item) => DiscoveryFilterOption(
-                            key: item.toApiValue(),
-                            label: item.displayName,
-                          ),
-                        )
-                        .toList(growable: false),
-                    selectedValue: filters.availabilityMode,
-                    onSelected: (String? value) => ref
-                        .read(discoveryFiltersProvider.notifier)
-                        .setAvailabilityMode(value),
-                  ),
-                  const SizedBox(height: KolabingSpacing.lg),
-                  if (_isCommunityViewer)
-                    _CommunitySections(filters: filters)
-                  else
-                    _BusinessSections(filters: filters),
-                  if (widget.totalResults != null) ...[
-                    const SizedBox(height: KolabingSpacing.lg),
-                    _ResultsCount(total: widget.totalResults!),
+        decoration: const BoxDecoration(
+          color: KolabingColors.surface,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(KolabingRadius.xxl),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const _DragHandle(),
+            Flexible(
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.lg,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _HeaderRow(
+                      hasActiveFilters: filters.hasActiveFilters,
+                      onClearAll: _clearAll,
+                      onClose: () => Navigator.of(context).pop(),
+                    ),
                     const SizedBox(height: KolabingSpacing.md),
+                    _FilterTextField(
+                      controller: _searchController,
+                      hintText: 'Search by title, description, or creator...',
+                      icon: LucideIcons.search,
+                      onChanged: _onSearchChanged,
+                      onClear: _clearSearch,
+                    ),
+                    const SizedBox(height: KolabingSpacing.md),
+                    const _SectionLabel(label: 'City'),
+                    const SizedBox(height: KolabingSpacing.xs),
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _cityController,
+                      builder:
+                          (BuildContext context, TextEditingValue value, _) {
+                            final cityQuery = value.text.trim();
+
+                            return Column(
+                              children: [
+                                _FilterTextField(
+                                  controller: _cityController,
+                                  focusNode: _cityFocusNode,
+                                  hintText: 'Type a city',
+                                  icon: LucideIcons.mapPin,
+                                  onChanged: _onCityChanged,
+                                  onClear: _clearCity,
+                                ),
+                                if (_cityFocusNode.hasFocus &&
+                                    cityQuery.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: KolabingSpacing.xs,
+                                    ),
+                                    child: _CityAutocompleteResults(
+                                      query: cityQuery,
+                                      selectedCity: filters.city,
+                                      onSelected: _selectCity,
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                    ),
+                    const SizedBox(height: KolabingSpacing.lg),
+                    const _SectionLabel(label: 'Availability'),
+                    const SizedBox(height: KolabingSpacing.xs),
+                    _SingleSelectChipGroup(
+                      options: AvailabilityMode.values
+                          .map(
+                            (AvailabilityMode item) => DiscoveryFilterOption(
+                              key: item.toApiValue(),
+                              label: item.displayName,
+                            ),
+                          )
+                          .toList(growable: false),
+                      selectedValue: filters.availabilityMode,
+                      onSelected: (String? value) => ref
+                          .read(discoveryFiltersProvider.notifier)
+                          .setAvailabilityMode(value),
+                    ),
+                    const SizedBox(height: KolabingSpacing.lg),
+                    if (_isCommunityViewer)
+                      _CommunitySections(filters: filters)
+                    else
+                      _BusinessSections(filters: filters),
+                    if (widget.totalResults != null) ...[
+                      const SizedBox(height: KolabingSpacing.lg),
+                      _ResultsCount(total: widget.totalResults!),
+                      const SizedBox(height: KolabingSpacing.md),
+                    ],
+                    SizedBox(
+                      height:
+                          MediaQuery.of(context).viewPadding.bottom +
+                          KolabingSpacing.md,
+                    ),
                   ],
-                  SizedBox(
-                    height:
-                        MediaQuery.of(context).viewPadding.bottom +
-                        KolabingSpacing.md,
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -601,18 +604,18 @@ class _CityAutocompleteResults extends ConsumerWidget {
       ),
       error: (Object error, StackTrace stackTrace) =>
           const _CityAutocompleteMessage(
-        message: 'Could not load city suggestions',
-      ),
+            message: 'Could not load city suggestions',
+          ),
     );
   }
 }
 
 class _CityAutocompleteMessage extends StatelessWidget {
   const _CityAutocompleteMessage({this.message, this.child})
-      : assert(
-          message != null || child != null,
-          'Provide either a message or a child widget.',
-        );
+    : assert(
+        message != null || child != null,
+        'Provide either a message or a child widget.',
+      );
 
   final String? message;
   final Widget? child;
@@ -630,7 +633,8 @@ class _CityAutocompleteMessage extends StatelessWidget {
       border: Border.all(color: KolabingColors.border),
     ),
     child: Center(
-      child: child ??
+      child:
+          child ??
           Text(
             message!,
             style: GoogleFonts.openSans(

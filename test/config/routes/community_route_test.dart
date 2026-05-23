@@ -11,7 +11,6 @@ import 'package:kolabing_app/features/dashboard/models/dashboard_model.dart';
 import 'package:kolabing_app/features/dashboard/providers/dashboard_provider.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_filters.dart';
 import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
-import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
 import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity_filter.dart';
 import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
@@ -53,8 +52,8 @@ void main() {
             opportunityListProvider.overrideWith(
               () => _FakeOpportunityListNotifier(const OpportunityListState()),
             ),
-            myKolabsProvider.overrideWith(
-              () => _FakeMyKolabsNotifier(const MyKolabsState()),
+            myOpportunitiesProvider.overrideWith(
+              () => _FakeMyOpportunitiesNotifier(const OpportunityListState()),
             ),
             myApplicationsProvider.overrideWith(
               () => _FakeMyApplicationsNotifier(const ApplicationsState()),
@@ -156,13 +155,13 @@ class _FakeDiscoveryListNotifier extends DiscoveryListNotifier {
   Future<void> loadMore() async {}
 }
 
-class _FakeMyKolabsNotifier extends MyKolabsNotifier {
-  _FakeMyKolabsNotifier(this._initialState);
+class _FakeMyOpportunitiesNotifier extends MyOpportunitiesNotifier {
+  _FakeMyOpportunitiesNotifier(this._initialState);
 
-  final MyKolabsState _initialState;
+  final OpportunityListState _initialState;
 
   @override
-  MyKolabsState build() => _initialState;
+  OpportunityListState build() => _initialState;
 }
 
 class _FakeMyApplicationsNotifier extends MyApplicationsNotifier {

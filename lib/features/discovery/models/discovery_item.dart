@@ -20,6 +20,10 @@ class DiscoveryItem {
     this.businessOffer,
     this.communityRequest,
     this.match,
+    this.offerHeadline,
+    this.pastEventsCount,
+    this.activeThisMonth,
+    this.activeThisMonthLabel,
   });
 
   factory DiscoveryItem.fromJson(Map<String, dynamic> json) => DiscoveryItem(
@@ -33,6 +37,23 @@ class DiscoveryItem {
     area: json['area']?.toString(),
     coverPhotoUrl: json['cover_photo_url']?.toString(),
     publishedAt: _parseDateTime(json['published_at']),
+    offerHeadline: _firstNonEmptyString(<Object?>[
+      json['offer_headline'],
+      (json['business_offer'] as Map<String, dynamic>?)?['offer_headline'],
+      (json['community_request'] as Map<String, dynamic>?)?['request_headline'],
+    ]),
+    pastEventsCount: _parseInt(
+      json['past_events_count'] ??
+          json['profile_past_events_count'] ??
+          json['completed_events_count'],
+    ),
+    activeThisMonth: _parseBool(
+      json['active_this_month'] ?? json['creator_active_this_month'],
+    ),
+    activeThisMonthLabel: _firstNonEmptyString(<Object?>[
+      json['active_this_month_label'],
+      json['activity_badge_label'],
+    ]),
     availability: DiscoveryAvailability.fromJson(
       (json['availability'] as Map<String, dynamic>?) ?? <String, dynamic>{},
     ),
@@ -50,7 +71,23 @@ class DiscoveryItem {
           )
         : null,
     match: json['match'] is Map<String, dynamic>
-        ? DiscoveryMatch.fromJson(json['match'] as Map<String, dynamic>)
+        ? DiscoveryMatch.fromJson({
+            ...(json['match'] as Map<String, dynamic>),
+            // H1: backend may emit match_breakdown at the item level
+            // alongside `match`. Surface it inside the match object.
+            if (json['match_breakdown'] is List)
+              'match_breakdown': json['match_breakdown'],
+            if (json['match_score'] != null &&
+                json['match'] is Map<String, dynamic> &&
+                (json['match'] as Map<String, dynamic>)['score'] == null)
+              'score': json['match_score'],
+          })
+        : json['match_score'] != null || json['match_breakdown'] is List
+        ? DiscoveryMatch.fromJson({
+            'score': json['match_score'],
+            if (json['match_breakdown'] is List)
+              'match_breakdown': json['match_breakdown'],
+          })
         : null,
   );
 
@@ -69,9 +106,85 @@ class DiscoveryItem {
   final BusinessOfferSummary? businessOffer;
   final CommunityRequestSummary? communityRequest;
   final DiscoveryMatch? match;
+  final String? offerHeadline;
+  final int? pastEventsCount;
+  final bool? activeThisMonth;
+  final String? activeThisMonthLabel;
 
   bool get isBusinessOffer => businessOffer != null;
   bool get isCommunityRequest => communityRequest != null;
+  String get locationLabel {
+    final trimmedArea = area?.trim();
+    final trimmedCity = preferredCity.trim();
+    if (trimmedArea != null && trimmedArea.isNotEmpty) {
+      if (trimmedCity.isNotEmpty) {
+        return '$trimmedArea, $trimmedCity';
+      }
+      return trimmedArea;
+    }
+    return trimmedCity;
+  }
+
+  String? get displayHeadline {
+    final trimmedHeadline = offerHeadline?.trim();
+    if (trimmedHeadline != null && trimmedHeadline.isNotEmpty) {
+      return trimmedHeadline;
+    }
+
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isNotEmpty &&
+        trimmedTitle != creatorProfile.displayName.trim()) {
+      return trimmedTitle;
+    }
+
+    return null;
+  }
+
+  /// Concrete one-line summary of what a COMMUNITY offers in return, used on
+  /// the business-side Explore card so it reads as cleanly as the community
+  /// side (e.g. "Social Media · 30+ people"). Returns null when no concrete
+  /// detail is available, so the caller can fall back gracefully.
+  String? get communityOfferLine {
+    final request = communityRequest;
+    if (request == null) {
+      return null;
+    }
+
+    final parts = <String>[];
+    final offers = request.offerInReturnLabels;
+    if (offers.isNotEmpty) {
+      parts.add(offers.take(2).join(' · '));
+    }
+
+    // Append a concrete people-scale (attendance preferred, else community
+    // size) so the line mirrors the "Social Media · 30+ people" pattern.
+    final scale = request.typicalAttendance ?? request.communitySize;
+    if (scale != null && scale > 0) {
+      parts.add('$scale+ people');
+    }
+
+    if (parts.isEmpty) {
+      return null;
+    }
+    return parts.join(' · ');
+  }
+
+  String? get activityBadgeLabel {
+    if (activeThisMonth ?? false) {
+      final customLabel = activeThisMonthLabel?.trim();
+      if (customLabel != null && customLabel.isNotEmpty) {
+        return customLabel;
+      }
+      return 'Active this month';
+    }
+
+    final count = pastEventsCount;
+    if (count != null && count > 0) {
+      return '$count past event${count == 1 ? '' : 's'}';
+    }
+
+    return null;
+  }
 
   List<String> get primaryBadges {
     if (isBusinessOffer) {
@@ -261,7 +374,7 @@ class DiscoveryAvailability {
 
   factory DiscoveryAvailability.fromJson(Map<String, dynamic> json) =>
       DiscoveryAvailability(
-        mode: json['mode']?.toString() ?? 'flexible',
+        mode: json['mode']?.toString() ?? 'one_time',
         start: _parseDate(json['start']),
         end: _parseDate(json['end']),
         selectedTime: json['selected_time']?.toString(),
@@ -324,6 +437,8 @@ class BusinessOfferSummary {
     this.offerTypes = const <String>[],
     this.venueType,
     this.productType,
+    this.venueTypeLabelRaw,
+    this.productTypeLabelRaw,
     this.seekingCommunities = const <DiscoveryLabelValue>[],
     this.minCommunitySize,
     this.expectedDeliverables = const <String>[],
@@ -336,11 +451,11 @@ class BusinessOfferSummary {
             .toList(),
         venueType: json['venue_type']?.toString(),
         productType: json['product_type']?.toString(),
-        seekingCommunities:
-            (json['seeking_communities'] as List<dynamic>? ?? const <dynamic>[])
-                .whereType<Map<String, dynamic>>()
-                .map(DiscoveryLabelValue.fromJson)
-                .toList(),
+        // Prefer the backend's pre-formatted `*_type_label` slug variants when
+        // present so the card never has to title-case a raw slug.
+        venueTypeLabelRaw: json['venue_type_label']?.toString(),
+        productTypeLabelRaw: json['product_type_label']?.toString(),
+        seekingCommunities: _parseLabelValues(json['seeking_communities']),
         minCommunitySize: _parseInt(json['min_community_size']),
         expectedDeliverables:
             (json['expected_deliverables'] as List<dynamic>? ??
@@ -352,6 +467,8 @@ class BusinessOfferSummary {
   final List<String> offerTypes;
   final String? venueType;
   final String? productType;
+  final String? venueTypeLabelRaw;
+  final String? productTypeLabelRaw;
   final List<DiscoveryLabelValue> seekingCommunities;
   final int? minCommunitySize;
   final List<String> expectedDeliverables;
@@ -360,10 +477,11 @@ class BusinessOfferSummary {
       offerTypes.map(_discoveryLabelFromKey).toList();
   List<String> get seekingCommunityLabels =>
       seekingCommunities.map((item) => item.label).toList();
-  String? get venueTypeLabel =>
-      venueType != null ? _discoveryLabelFromKey(venueType!) : null;
+  // Prefer the backend-formatted label; fall back to title-casing the slug so
+  // a raw value like "coffee_shop" never reaches the UI.
+  String? get venueTypeLabel => _preferFormatted(venueTypeLabelRaw, venueType);
   String? get productTypeLabel =>
-      productType != null ? _discoveryLabelFromKey(productType!) : null;
+      _preferFormatted(productTypeLabelRaw, productType);
 }
 
 @immutable
@@ -382,11 +500,7 @@ class CommunityRequestSummary {
         needTypes: (json['need_types'] as List<dynamic>? ?? const <dynamic>[])
             .map((value) => value.toString())
             .toList(),
-        communityTypes:
-            (json['community_types'] as List<dynamic>? ?? const <dynamic>[])
-                .whereType<Map<String, dynamic>>()
-                .map(DiscoveryLabelValue.fromJson)
-                .toList(),
+        communityTypes: _parseLabelValues(json['community_types']),
         communitySize: _parseInt(json['community_size']),
         typicalAttendance: _parseInt(json['typical_attendance']),
         offersInReturn:
@@ -407,6 +521,8 @@ class CommunityRequestSummary {
       needTypes.map(_discoveryLabelFromKey).toList();
   List<String> get communityTypeLabels =>
       communityTypes.map((item) => item.label).toList();
+  List<String> get offerInReturnLabels =>
+      offersInReturn.map(_discoveryLabelFromKey).toList();
 }
 
 @immutable
@@ -416,6 +532,7 @@ class DiscoveryMatch {
     required this.score,
     this.tier,
     this.reasons = const <String>[],
+    this.breakdown = const <DiscoveryMatchSignal>[],
   });
 
   factory DiscoveryMatch.fromJson(Map<String, dynamic> json) => DiscoveryMatch(
@@ -425,28 +542,92 @@ class DiscoveryMatch {
     reasons: (json['reasons'] as List<dynamic>? ?? const <dynamic>[])
         .map((value) => value.toString())
         .toList(),
+    // H1: ordered signal weights backing the score. Backend returns these as
+    // `breakdown` (nested) or `match_breakdown` (sibling) — support both.
+    breakdown: _parseBreakdown(json['breakdown'] ?? json['match_breakdown']),
   );
 
   final String feed;
   final int score;
   final String? tier;
   final List<String> reasons;
+  final List<DiscoveryMatchSignal> breakdown;
 
   List<String> get reasonLabels => reasons.map(_matchReasonLabel).toList();
+}
+
+/// One signal in the discovery match-score breakdown (H1).
+@immutable
+class DiscoveryMatchSignal {
+  const DiscoveryMatchSignal({
+    required this.key,
+    required this.label,
+    required this.weight,
+    required this.score,
+  });
+
+  factory DiscoveryMatchSignal.fromJson(Map<String, dynamic> json) =>
+      DiscoveryMatchSignal(
+        key: json['key']?.toString() ?? '',
+        label: json['label']?.toString() ?? '',
+        weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+        score: (json['score'] as num?)?.toDouble() ?? 0.0,
+      );
+
+  final String key;
+  final String label;
+  final double weight;
+  final double score;
+}
+
+List<DiscoveryMatchSignal> _parseBreakdown(Object? raw) {
+  if (raw is! List) return const [];
+  return raw
+      .whereType<Map<String, dynamic>>()
+      .map(DiscoveryMatchSignal.fromJson)
+      .toList(growable: false);
 }
 
 @immutable
 class DiscoveryLabelValue {
   const DiscoveryLabelValue({required this.key, required this.label});
 
-  factory DiscoveryLabelValue.fromJson(Map<String, dynamic> json) =>
-      DiscoveryLabelValue(
-        key: json['key']?.toString() ?? '',
-        label: json['label']?.toString() ?? '',
-      );
+  factory DiscoveryLabelValue.fromJson(Map<String, dynamic> json) {
+    final key = json['key']?.toString() ?? '';
+    // Prefer the backend's pre-formatted label (`label`, also accepts
+    // `type_label`). If absent, format the raw slug client-side so we never
+    // surface a raw value like "Run_Club" — it becomes "Run Club".
+    final rawLabel = (json['label'] ?? json['type_label'])?.toString().trim();
+    final label = (rawLabel != null && rawLabel.isNotEmpty)
+        ? rawLabel
+        : _discoveryLabelFromKey(key);
+    return DiscoveryLabelValue(key: key, label: label);
+  }
+
+  /// Builds a label/value from a heterogeneous list entry that may be a
+  /// `{key,label}` map OR a bare slug string. A bare string is title-cased so
+  /// the UI always shows a formatted label (e.g. "run_club" -> "Run Club"),
+  /// never the raw slug.
+  factory DiscoveryLabelValue.fromDynamic(Object? value) {
+    if (value is Map<String, dynamic>) {
+      return DiscoveryLabelValue.fromJson(value);
+    }
+    final slug = value?.toString() ?? '';
+    return DiscoveryLabelValue(key: slug, label: _discoveryLabelFromKey(slug));
+  }
 
   final String key;
   final String label;
+}
+
+/// Parses a discovery type-tag list that may contain `{key,label}` maps and/or
+/// bare slug strings, always yielding formatted labels (never raw slugs).
+List<DiscoveryLabelValue> _parseLabelValues(Object? raw) {
+  if (raw is! List) return const <DiscoveryLabelValue>[];
+  return raw
+      .map(DiscoveryLabelValue.fromDynamic)
+      .where((DiscoveryLabelValue item) => item.label.isNotEmpty)
+      .toList(growable: false);
 }
 
 int? _parseInt(Object? value) {
@@ -454,6 +635,26 @@ int? _parseInt(Object? value) {
   if (value is int) return value;
   if (value is num) return value.toInt();
   return int.tryParse(value.toString());
+}
+
+bool? _parseBool(Object? value) {
+  if (value == null) return null;
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  final normalized = value.toString().trim().toLowerCase();
+  if (normalized == 'true' || normalized == '1') return true;
+  if (normalized == 'false' || normalized == '0') return false;
+  return null;
+}
+
+String? _firstNonEmptyString(List<Object?> values) {
+  for (final value in values) {
+    final text = value?.toString().trim();
+    if (text != null && text.isNotEmpty) {
+      return text;
+    }
+  }
+  return null;
 }
 
 String _matchReasonLabel(String reason) => switch (reason) {
@@ -472,3 +673,17 @@ String _discoveryLabelFromKey(String key) => key
     .where((String part) => part.isNotEmpty)
     .map((String part) => '${part[0].toUpperCase()}${part.substring(1)}')
     .join(' ');
+
+/// Returns the backend-formatted [formatted] label when present and non-empty,
+/// otherwise title-cases the raw [slug]. Returns null when neither is usable.
+/// Guards against raw slugs ("Run_Club") ever reaching the UI.
+String? _preferFormatted(String? formatted, String? slug) {
+  final trimmed = formatted?.trim();
+  if (trimmed != null && trimmed.isNotEmpty) {
+    return trimmed;
+  }
+  if (slug != null && slug.trim().isNotEmpty) {
+    return _discoveryLabelFromKey(slug.trim());
+  }
+  return null;
+}

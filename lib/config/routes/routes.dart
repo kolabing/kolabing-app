@@ -1,46 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../services/notification_service.dart';
 
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
+import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
-import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
-import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/user_type_selection_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
-import '../../features/event/screens/event_detail_screen.dart';
-import '../../features/gamification/gamification.dart';
-import '../../features/opportunity/models/opportunity.dart';
+import '../../features/auth/utils/auth_navigation.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
+import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
-import '../../features/business/screens/create_collab_request_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/gamification/gamification.dart';
+import '../../features/kolab/models/kolab.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
-import '../../features/kolab/models/kolab.dart';
-import '../../features/rewards/screens/referral_screen.dart';
-import '../../features/rewards/screens/wallet_screen.dart';
-import '../../features/rewards/screens/withdrawal_request_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
-import '../../features/profile/screens/public_profile_screen.dart';
-import '../../features/subscription/screens/subscription_screen.dart';
+import '../../features/notification/utils/notification_navigation.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
-import '../../features/onboarding/screens/business/business_step3_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
 import '../../features/onboarding/screens/community/community_step1_screen.dart';
 import '../../features/onboarding/screens/community/community_step2_screen.dart';
 import '../../features/onboarding/screens/community/community_step3_screen.dart';
 import '../../features/onboarding/screens/community/community_step4_screen.dart';
+import '../../features/opportunity/models/opportunity.dart';
+import '../../features/opportunity/providers/opportunity_provider.dart';
 import '../../features/permission/screens/permission_screen.dart';
-import '../../features/notification/utils/notification_navigation.dart';
+import '../../features/profile/screens/public_profile_screen.dart';
+import '../../features/rewards/screens/referral_screen.dart';
+import '../../features/rewards/screens/wallet_screen.dart';
+import '../../features/rewards/screens/withdrawal_request_screen.dart';
+import '../../features/subscription/screens/subscription_screen.dart';
+import '../../services/notification_service.dart';
+import '../../services/one_signal_service.dart';
 
 /// Kolabing route definitions
 ///
@@ -162,6 +164,9 @@ abstract final class KolabingRoutes {
   static const String communityOpportunitiesEdit =
       '/community/opportunities/:id/edit';
 
+  static String buildCommunityOpportunityEditPath(String id) =>
+      '/community/opportunities/$id/edit';
+
   /// Community applications sent
   static const String communityApplications = '/community/applications';
 
@@ -211,6 +216,17 @@ abstract final class KolabingRoutes {
   /// Event detail screen
   static const String eventDetail = '/event/:id';
 
+  /// Build an event detail route with explicit access mode.
+  static String buildEventDetailPath(
+    String eventId, {
+    bool isReadOnly = true,
+  }) => Uri(
+    path: '/event/$eventId',
+    queryParameters: <String, String>{
+      'readonly': isReadOnly ? 'true' : 'false',
+    },
+  ).toString();
+
   // ---------------------------------------------------------------------------
   // Attendee (Gamification) Routes
   // ---------------------------------------------------------------------------
@@ -256,18 +272,17 @@ final GlobalKey<NavigatorState> kolabingNavigatorKey =
 /// Call once in main() after the app widget is running.
 /// Maps FCM `type` → app route and navigates accordingly.
 void connectNotificationRouter() {
-  NotificationService.instance.connectRouter((
-    String? type,
-    String? id,
-    String? deeplink,
-  ) {
+  void navigateFromPush(String? type, String? id, String? deeplink) {
     final route = resolveNotificationRoute(
       type: type,
       id: id,
       deeplink: deeplink,
     );
     kolabingRouter.push(route);
-  });
+  }
+
+  NotificationService.instance.connectRouter(navigateFromPush);
+  OneSignalService.instance.connectRouter(navigateFromPush);
 }
 
 /// Kolabing router configuration
@@ -353,12 +368,12 @@ final GoRouter kolabingRouter = GoRouter(
     ),
 
     // Business Onboarding
-    // Step 1 (location) was removed — redirect any leftover deeplinks to step 2.
+    // Step 1 now starts at the venue picker/import screen.
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep1,
       name: 'businessOnboardingStep1',
       redirect: (BuildContext context, GoRouterState state) =>
-          KolabingRoutes.businessOnboardingStep2,
+          KolabingRoutes.businessOnboardingStep5,
     ),
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep2,
@@ -369,8 +384,8 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep3,
       name: 'businessOnboardingStep3',
-      builder: (BuildContext context, GoRouterState state) =>
-          const BusinessStep3Screen(),
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.businessOnboardingStep2,
     ),
     // Step 4 (legacy business profile screen) was merged into step 2 — keep
     // the route as a redirect so any stale deep links land on the merged form.
@@ -483,8 +498,16 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.kolabNew,
       name: 'kolabNew',
-      builder: (BuildContext context, GoRouterState state) =>
-          const IntentSelectionScreen(),
+      builder: (BuildContext context, GoRouterState state) {
+        // C9: Send-Kolab CTA on a community profile passes the community id
+        // so the form can scope the publish payload to that recipient.
+        final recipientId = state.uri.queryParameters['recipient_community_id'];
+        return IntentSelectionScreen(
+          recipientCommunityId: recipientId == null || recipientId.isEmpty
+              ? null
+              : recipientId,
+        );
+      },
     ),
     GoRoute(
       path: KolabingRoutes.kolabFlow,
@@ -495,22 +518,24 @@ final GoRouter kolabingRouter = GoRouter(
       },
     ),
 
-    // Business sub-routes (pushed on top of main screen)
+    // Business legacy create/edit routes (System A, collab_opportunities).
+    // B1 (2026-05-22): the legacy single-page CreateCollabRequestScreen was
+    // retired. ALL new business creation now goes through the unified
+    // /kolab/flow via /kolab/new. These paths hard-redirect so any stale deep
+    // links or cached navigations land on the new flow. No data migration:
+    // existing collab_opportunities remain readable/closable via their list
+    // and detail screens; only the create entry changed.
     GoRoute(
       path: KolabingRoutes.businessOffersNew,
       name: 'businessOffersNew',
-      builder: (BuildContext context, GoRouterState state) {
-        final opportunity = state.extra as Opportunity?;
-        return CreateCollabRequestScreen(editOpportunity: opportunity);
-      },
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.kolabNew,
     ),
     GoRoute(
       path: KolabingRoutes.businessOffersEdit,
       name: 'businessOffersEdit',
-      builder: (BuildContext context, GoRouterState state) {
-        final opportunity = state.extra as Opportunity?;
-        return CreateCollabRequestScreen(editOpportunity: opportunity);
-      },
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.kolabNew,
     ),
     GoRoute(
       path: KolabingRoutes.businessPlans,
@@ -554,18 +579,48 @@ final GoRouter kolabingRouter = GoRouter(
         return CommunityOfferDetailScreen(offerId: id, offer: offer);
       },
     ),
+    // Community legacy create route (System A, collab_opportunities).
+    // B1 (2026-05-22): NEW community creation now goes through the unified
+    // /kolab/flow via /kolab/new (IntentSelectionScreen offers the FREE
+    // communitySeeking option). This path hard-redirects so the legacy
+    // single-page CreateOpportunityScreen is unreachable for NEW creation.
     GoRoute(
       path: KolabingRoutes.communityOpportunitiesNew,
       name: 'communityOpportunitiesNew',
-      builder: (BuildContext context, GoRouterState state) =>
-          const CreateOpportunityScreen(),
+      redirect: (BuildContext context, GoRouterState state) =>
+          KolabingRoutes.kolabNew,
     ),
+    // EDIT still points at the legacy CreateOpportunityScreen on purpose.
+    // Existing rows are System-A `collab_opportunities` (Opportunity model);
+    // the new /kolab/flow consumes the System-B `Kolab` model. There is no
+    // clean Opportunity -> Kolab mapping, so per the B1 brief we keep editing
+    // legacy opportunities on the legacy screen (no data migration). New
+    // creation is fully on /kolab/flow. See report.
     GoRoute(
       path: KolabingRoutes.communityOpportunitiesEdit,
       name: 'communityOpportunitiesEdit',
       builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
         final opportunity = state.extra as Opportunity?;
-        return CreateOpportunityScreen(editOpportunity: opportunity);
+        if (opportunity != null) {
+          return CreateOpportunityScreen(editOpportunity: opportunity);
+        }
+
+        return Consumer(
+          builder: (context, ref, _) {
+            final opportunityAsync = ref.watch(opportunityDetailProvider(id));
+            return opportunityAsync.when(
+              data: (opportunity) =>
+                  CreateOpportunityScreen(editOpportunity: opportunity),
+              loading: () => const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
+              error: (error, stackTrace) => Scaffold(
+                body: Center(child: Text('Could not load opportunity: $error')),
+              ),
+            );
+          },
+        );
       },
     ),
     GoRoute(
@@ -652,7 +707,11 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'eventDetail',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        return EventDetailScreen(eventId: id);
+        final isReadOnlyParam = state.uri.queryParameters['readonly'];
+        final isReadOnly =
+            isReadOnlyParam == null ||
+            (isReadOnlyParam != 'false' && isReadOnlyParam != '0');
+        return EventDetailScreen(eventId: id, isReadOnly: isReadOnly);
       },
     ),
 
@@ -716,46 +775,83 @@ final GoRouter kolabingRouter = GoRouter(
     ),
   ],
 
-  // Error page
+  // Error page — auth-aware, gives the user a recovery action so a failed
+  // route doesn't leave them stranded (B2 "page not found" stranding).
   errorBuilder: (BuildContext context, GoRouterState state) =>
-      _PlaceholderScreen(
-        title: 'Page Not Found',
-        subtitle: state.uri.toString(),
-      ),
+      _RouteNotFoundScreen(failedUrl: state.uri.toString()),
 );
 
-/// Placeholder screen for routes that are not yet implemented
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title, this.subtitle});
+/// Auth-aware "route not found" page (B2). Logs the failed URL + current
+/// auth state, then offers a recovery action depending on whether the user
+/// is signed in.
+class _RouteNotFoundScreen extends ConsumerWidget {
+  const _RouteNotFoundScreen({required this.failedUrl});
 
-  final String title;
-  final String? subtitle;
+  final String failedUrl;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(title)),
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(title, style: Theme.of(context).textTheme.headlineMedium),
-          if (subtitle != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodyMedium,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authProvider);
+    debugPrint(
+      '[B2] errorBuilder fired: url=$failedUrl '
+      'authStatus=${auth.status} userType=${auth.user?.userType}',
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Page Not Found')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 48,
+                color: Theme.of(context).colorScheme.outline,
               ),
-            ),
-          const SizedBox(height: 24),
-          Text(
-            'Screen not yet implemented',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+              const SizedBox(height: 16),
+              Text(
+                "We couldn't find that page",
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                failedUrl,
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              if (auth.isAuthenticated && auth.user != null) ...[
+                FilledButton(
+                  onPressed: () {
+                    final destination = resolveAuthDestination(
+                      auth.user!,
+                      isNewUser: auth.isNewUser,
+                    );
+                    context.go(destination);
+                  },
+                  child: const Text('Go to dashboard'),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () async {
+                    await ref.read(authProvider.notifier).logout();
+                    if (context.mounted) context.go(KolabingRoutes.login);
+                  },
+                  child: const Text('Sign out'),
+                ),
+              ] else ...[
+                FilledButton(
+                  onPressed: () => context.go(KolabingRoutes.login),
+                  child: const Text('Back to login'),
+                ),
+              ],
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

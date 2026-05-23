@@ -1,3 +1,5 @@
+import '../../../services/global_network_banner_service.dart';
+import '../../../utils/network_error_utils.dart';
 import 'user_model.dart';
 
 /// Auth response from POST /auth/google
@@ -261,19 +263,17 @@ class ApiError {
       return 'This $field is already in use.';
     }
     // Return cleaned up version of raw message
-    return raw.replaceAll(RegExp(r'_'), ' ').replaceFirst(RegExp(r'^The '), '');
+    return raw.replaceAll(RegExp('_'), ' ').replaceFirst(RegExp('^The '), '');
   }
 
   /// Convert snake_case field name to human-readable
-  static String _humanizeField(String field) {
-    return field
-        .replaceAll('_', ' ')
-        .replaceAll('.', ' ')
-        .split(' ')
-        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
-        .join(' ')
-        .trim();
-  }
+  static String _humanizeField(String field) => field
+      .replaceAll('_', ' ')
+      .replaceAll('.', ' ')
+      .split(' ')
+      .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+      .join(' ')
+      .trim();
 
   @override
   String toString() => 'ApiError(statusCode: $statusCode, message: $message)';
@@ -291,9 +291,20 @@ class ApiException implements Exception {
 
 /// Exception for network errors
 class NetworkException implements Exception {
-  const NetworkException([this.message = 'Network error occurred']);
+  const NetworkException([this._rawMessage = 'Network error occurred']);
 
-  final String message;
+  final String _rawMessage;
+
+  String get rawMessage => _rawMessage;
+
+  bool get isOffline => isOfflineNetworkError(_rawMessage);
+
+  String get message {
+    if (isOffline) {
+      GlobalNetworkBannerService.instance.showOfflineBanner();
+    }
+    return userFriendlyNetworkMessage(_rawMessage);
+  }
 
   @override
   String toString() => 'NetworkException: $message';

@@ -4,6 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## MUST READ — Roles & Permissions (before planning OR executing changes)
+
+Before planning or writing any code that touches **user roles, permissions, the paywall, the Explore feed, profiles, onboarding, or the create/apply flows**, read BOTH (kept in sync with the backend repo `kolabing-v2`):
+1. [`docs/ROLES-AND-PERMISSIONS.md`](docs/ROLES-AND-PERMISSIONS.md) — the authoritative *what*: exactly what Business and Community users can see and do.
+2. [`docs/ROLES-BACKEND-DB-MAP.md`](docs/ROLES-BACKEND-DB-MAP.md) — the authoritative *where*: how each rule maps to backend code + DB tables/columns, and every known role-handling mistake.
+
+Non-negotiable: **Communities are 100% free and are NEVER paywalled or blocked.** The paywall is Business-only, on exactly two actions (create a collaboration, apply to a Kolab). A free business gets a **blur** of the community's name+logo on Explore, never a hard block. "Opportunity" (community-created) and "collaboration" (business-created) are distinct — never merge them. Most regressions come from applying one role's rules to the other; if a fix seems to contradict these docs, STOP and ask before changing role behaviour.
+
+---
+
 ## 🤖 Agent Workflow System
 
 This project uses an **AI Agent-powered task management system**. All development work MUST go through the agent workflow.

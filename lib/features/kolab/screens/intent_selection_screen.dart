@@ -7,24 +7,58 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../auth/models/user_model.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
 import '../providers/kolab_form_provider.dart';
 
 /// Unified entry screen for creating a new Kolab.
 /// Shows different options based on user type (community vs business).
-class IntentSelectionScreen extends ConsumerWidget {
-  const IntentSelectionScreen({super.key});
+class IntentSelectionScreen extends ConsumerStatefulWidget {
+  const IntentSelectionScreen({super.key, this.recipientCommunityId});
+
+  /// When set, the resulting Kolab is targeted at this specific community
+  /// (Send-Kolab CTA from a community public profile, C9 follow-up).
+  final String? recipientCommunityId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<IntentSelectionScreen> createState() =>
+      _IntentSelectionScreenState();
+}
+
+class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final recipient = widget.recipientCommunityId;
+    if (recipient != null && recipient.isNotEmpty) {
+      // Stash on the form state immediately so downstream steps see it even
+      // if the user backs out and re-enters the intent picker.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(kolabFormProvider.notifier).setRecipientCommunityId(recipient);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final profileState = ref.watch(profileProvider);
     final userType = profileState.profile?.userType;
     final isProfileTypeResolved = userType != null;
     final isProfileStillResolving =
         !isProfileTypeResolved &&
         (profileState.isLoading || !profileState.isInitialized);
-    final isCommunity = userType?.name == 'community';
+    // Enum-safe role detection. Comparing the raw enum value (not its `.name`
+    // string) avoids any casing mismatch: previously `userType?.name ==
+    // 'community'` could silently fail if the parsed enum's name differed in
+    // case, dropping a COMMUNITY into the business `else` branch and wrongly
+    // gating it (ROLES-BACKEND-DB-MAP.md §3, "community blocked from creating").
+    // UserType.fromString already normalizes API casing on parse.
+    final isCommunity = userType == UserType.community;
+    final isBusiness = userType == UserType.business;
+    final businessRequiresSubscription =
+        isBusiness && !profileState.isSubscribed;
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -52,6 +86,20 @@ class IntentSelectionScreen extends ConsumerWidget {
       body: SafeArea(
         child: isProfileStillResolving
             ? const Center(child: CircularProgressIndicator())
+            : businessRequiresSubscription
+            ? _LockedBusinessCreateState(
+                onUpgrade: () async {
+                  final allowed = await SubscriptionPaywall.checkAndShow(
+                    context,
+                    ref,
+                  );
+                  if (allowed) {
+                    await ref
+                        .read(profileProvider.notifier)
+                        .refreshSubscription();
+                  }
+                },
+              )
             : isProfileTypeResolved
             ? Padding(
                 padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -168,6 +216,65 @@ class IntentSelectionScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// A single intent option card
+class _LockedBusinessCreateState extends StatelessWidget {
+  const _LockedBusinessCreateState({required this.onUpgrade});
+
+  final Future<void> Function() onUpgrade;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(KolabingSpacing.lg),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 72,
+          height: 72,
+          decoration: const BoxDecoration(
+            color: KolabingColors.softYellow,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            LucideIcons.crown,
+            size: 34,
+            color: KolabingColors.primary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
+        Text(
+          'An active subscription is required to create Kolabs.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.rubik(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: KolabingColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Text(
+          'Upgrade your business plan to publish venue or product opportunities for communities.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.openSans(
+            fontSize: 14,
+            height: 1.5,
+            color: KolabingColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xl),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: onUpgrade,
+            icon: const Icon(LucideIcons.crown, size: 18),
+            label: const Text('Upgrade to create'),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// A single intent option card

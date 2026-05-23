@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../models/onboarding_photo.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 
@@ -150,7 +150,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                       children: [
                         for (int i = 0; i < photos.length; i++)
                           _VenuePhotoTile(
-                            base64: photos[i].base64,
+                            photo: photos[i],
                             onRemove: () => notifier.removeVenuePhoto(i),
                           ),
                         if (photos.length < 5) _AddPhotoTile(onTap: _pickPhoto),
@@ -233,9 +233,9 @@ class _AddPhotoTile extends StatelessWidget {
 }
 
 class _VenuePhotoTile extends StatelessWidget {
-  const _VenuePhotoTile({required this.base64, required this.onRemove});
+  const _VenuePhotoTile({required this.photo, required this.onRemove});
 
-  final String base64;
+  final OnboardingPhoto photo;
   final VoidCallback onRemove;
 
   @override
@@ -243,12 +243,7 @@ class _VenuePhotoTile extends StatelessWidget {
     children: [
       ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Image.memory(
-          base64Decode(base64),
-          width: 104,
-          height: 104,
-          fit: BoxFit.cover,
-        ),
+        child: _buildImage(),
       ),
       Positioned(
         top: 6,
@@ -268,4 +263,28 @@ class _VenuePhotoTile extends StatelessWidget {
       ),
     ],
   );
+
+  Widget _buildImage() {
+    final memoryBytes = photo.memoryBytes;
+    if (memoryBytes != null) {
+      return Image.memory(
+        memoryBytes,
+        width: 104,
+        height: 104,
+        fit: BoxFit.cover,
+      );
+    }
+
+    final previewUrl = photo.previewUrl;
+    if (previewUrl != null && previewUrl.isNotEmpty) {
+      return Image.network(
+        previewUrl,
+        width: 104,
+        height: 104,
+        fit: BoxFit.cover,
+      );
+    }
+
+    return const SizedBox(width: 104, height: 104);
+  }
 }

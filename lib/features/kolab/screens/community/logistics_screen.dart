@@ -8,6 +8,12 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../widgets/time_picker.dart';
+import '../../../onboarding/models/place_suggestion.dart';
+// Only the Places autocomplete provider is needed here. Hide the names that
+// also exist in opportunity_provider (e.g. citiesProvider) to avoid an
+// ambiguous import; the city dropdown keeps using opportunity_provider's.
+import '../../../onboarding/providers/onboarding_provider.dart'
+    show placeSuggestionsProvider;
 import '../../../opportunity/models/opportunity.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../models/kolab.dart';
@@ -15,7 +21,7 @@ import '../../providers/kolab_form_provider.dart';
 
 /// Community step 3: "AVAILABILITY" + "LOCATION"
 ///
-/// Lets the user select availability mode (one-time, recurring, flexible),
+/// Lets the user select availability mode (one-time or recurring),
 /// dates/times, city, and optional area.
 class LogisticsScreen extends ConsumerStatefulWidget {
   const LogisticsScreen({super.key});
@@ -26,6 +32,12 @@ class LogisticsScreen extends ConsumerStatefulWidget {
 
 class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
   final _areaController = TextEditingController();
+  final _areaFocusNode = FocusNode();
+
+  /// Live query text driving the neighbourhood/area Places autocomplete.
+  /// Kept separate from the persisted `kolab.area` so suggestions only show
+  /// while the user is actively typing a new search.
+  String _areaQuery = '';
 
   static const _dayNames = [
     'Monday',
@@ -43,6 +55,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _syncControllers();
     });
+    // Hide the suggestion list once the field loses focus so a confirmed
+    // selection (or manual entry) stays put without a dangling dropdown.
+    _areaFocusNode.addListener(() {
+      if (!_areaFocusNode.hasFocus && _areaQuery.isNotEmpty) {
+        setState(() => _areaQuery = '');
+      }
+    });
   }
 
   void _syncControllers() {
@@ -56,7 +75,24 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
   @override
   void dispose() {
     _areaController.dispose();
+    _areaFocusNode.dispose();
     super.dispose();
+  }
+
+  /// Persist a Places suggestion as the preferred neighbourhood/area.
+  ///
+  /// We store the place title (e.g. "Shoreditch") rather than the full
+  /// formatted address so the area reads naturally alongside the city.
+  void _selectAreaSuggestion(PlaceSuggestion place) {
+    final label = place.title.trim().isNotEmpty
+        ? place.title.trim()
+        : place.formattedAddress.trim();
+    _areaController.text = label;
+    ref
+        .read(kolabFormProvider.notifier)
+        .updateArea(label.isEmpty ? null : label);
+    setState(() => _areaQuery = '');
+    _areaFocusNode.unfocus();
   }
 
   @override
@@ -173,22 +209,109 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
           const SizedBox(height: KolabingSpacing.md),
 
-          // Preferred Area (optional)
-          _buildLabel('Preferred Area (optional)'),
+          // Preferred Neighbourhood / Area (optional).
+          //
+          // Backed by the same Google Places autocomplete used in business
+          // venue onboarding (placeSuggestionsProvider) so the area is a real
+          // place lookup rather than free text. The city field above is kept.
+          _buildLabel('Preferred Neighbourhood / Area (optional)'),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _areaController,
-            onChanged: (value) => ref
-                .read(kolabFormProvider.notifier)
-                .updateArea(value.isEmpty ? null : value),
+            focusNode: _areaFocusNode,
+            onChanged: (value) {
+              setState(() => _areaQuery = value);
+              // Mirror manual edits into the form so typing without selecting a
+              // suggestion still persists the area.
+              ref
+                  .read(kolabFormProvider.notifier)
+                  .updateArea(value.trim().isEmpty ? null : value.trim());
+            },
             style: GoogleFonts.openSans(
               fontSize: 15,
               color: KolabingColors.textPrimary,
             ),
-            decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg'),
+            decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg')
+                .copyWith(
+                  prefixIcon: const Icon(
+                    LucideIcons.mapPin,
+                    size: 18,
+                    color: KolabingColors.textTertiary,
+                  ),
+                ),
           ),
+          _buildAreaSuggestions(),
         ],
       ),
+    );
+  }
+
+  /// Renders Places autocomplete results beneath the area field while the user
+  /// is typing a search of at least two characters.
+  Widget _buildAreaSuggestions() {
+    final query = _areaQuery.trim();
+    if (query.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final suggestions = ref.watch(placeSuggestionsProvider(query));
+
+    return suggestions.when(
+      data: (items) {
+        if (items.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return Container(
+          margin: const EdgeInsets.only(top: KolabingSpacing.xxs),
+          decoration: BoxDecoration(
+            color: KolabingColors.surface,
+            borderRadius: KolabingRadius.borderRadiusSm,
+            border: Border.all(color: KolabingColors.border),
+          ),
+          child: Column(
+            children: [
+              for (var i = 0; i < items.length; i++) ...[
+                if (i != 0)
+                  const Divider(height: 1, color: KolabingColors.border),
+                ListTile(
+                  dense: true,
+                  leading: const Icon(
+                    LucideIcons.mapPin,
+                    size: 18,
+                    color: KolabingColors.textTertiary,
+                  ),
+                  title: Text(
+                    items[i].title,
+                    style: GoogleFonts.openSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: KolabingColors.textPrimary,
+                    ),
+                  ),
+                  subtitle: Text(
+                    items[i].formattedAddress,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.openSans(
+                      fontSize: 12,
+                      color: KolabingColors.textSecondary,
+                    ),
+                  ),
+                  onTap: () => _selectAreaSuggestion(items[i]),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.only(top: KolabingSpacing.xs),
+        child: LinearProgressIndicator(
+          color: KolabingColors.primary,
+          backgroundColor: KolabingColors.border,
+        ),
+      ),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 
@@ -202,8 +325,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return _buildOneTimeFields(kolab, formState);
       case AvailabilityMode.recurring:
         return _buildRecurringFields(kolab, formState);
-      case AvailabilityMode.flexible:
-        return _buildFlexibleFields(kolab, formState);
     }
   }
 
@@ -301,76 +422,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
       error: formState.fieldErrors['selected_time'],
       onChanged: (time) =>
           ref.read(kolabFormProvider.notifier).updateSelectedTime(time),
-    ),
-  ];
-
-  List<Widget> _buildFlexibleFields(Kolab kolab, KolabFormState formState) => [
-    Row(
-      children: [
-        Expanded(
-          child: _buildDatePicker(
-            label: 'Available From',
-            value: kolab.availabilityStart,
-            error: formState.fieldErrors['availability_start'],
-            onChanged: (date) => ref
-                .read(kolabFormProvider.notifier)
-                .updateAvailabilityStart(date),
-          ),
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-        Expanded(
-          child: _buildDatePicker(
-            label: 'Available Until',
-            value: kolab.availabilityEnd,
-            error: formState.fieldErrors['availability_end'],
-            minDate: kolab.availabilityStart,
-            onChanged: (date) => ref
-                .read(kolabFormProvider.notifier)
-                .updateAvailabilityEnd(date),
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: KolabingSpacing.sm),
-    Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xs + 2,
-      ),
-      decoration: BoxDecoration(
-        color: KolabingColors.softYellow.withValues(alpha: 0.5),
-        borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(
-          color: KolabingColors.primary.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            LucideIcons.clock,
-            size: 16,
-            color: KolabingColors.textSecondary,
-          ),
-          const SizedBox(width: KolabingSpacing.xs),
-          Text(
-            'Time: Flexible -- no fixed time',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    ),
-    const SizedBox(height: KolabingSpacing.xs),
-    Text(
-      'Businesses will propose a specific date and time within this window.',
-      style: GoogleFonts.openSans(
-        fontSize: 12,
-        color: KolabingColors.textTertiary,
-        fontStyle: FontStyle.italic,
-      ),
     ),
   ];
 
@@ -657,8 +708,6 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
-      case AvailabilityMode.flexible:
-        return LucideIcons.calendarRange;
     }
   }
 }

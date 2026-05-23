@@ -166,6 +166,8 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             controller: _communitySizeController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            // C1: number-pad has no return key — tap-outside is the only way out.
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             onChanged: (value) {
               final parsed = int.tryParse(value);
               ref.read(kolabFormProvider.notifier).updateCommunitySize(parsed);
@@ -211,6 +213,8 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             controller: _attendanceController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            // C1: number-pad has no return key — tap-outside is the only way out.
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             onChanged: (value) {
               final parsed = int.tryParse(value);
               ref

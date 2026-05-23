@@ -23,10 +23,7 @@ void main() {
             body: SingleChildScrollView(
               child: SizedBox(
                 width: 800,
-                child: KolabReviewCard(
-                  kolab: kolab,
-                  onEditSection: (_) {},
-                ),
+                child: KolabReviewCard(kolab: kolab, onEditSection: (_) {}),
               ),
             ),
           ),
@@ -38,5 +35,31 @@ void main() {
     expect(find.text('Business Provides'), findsNothing);
     expect(find.text('City'), findsOneWidget);
     expect(find.text('Area'), findsOneWidget);
+  });
+
+  testWidgets('community review card humanizes underscored community tags', (
+    WidgetTester tester,
+  ) async {
+    final kolab = Kolab.empty(
+      IntentType.communitySeeking,
+    ).copyWith(communityTypes: const ['Run_Club']);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                width: 800,
+                child: KolabReviewCard(kolab: kolab, onEditSection: (_) {}),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Run Club'), findsOneWidget);
+    expect(find.text('Run_Club'), findsNothing);
   });
 }
