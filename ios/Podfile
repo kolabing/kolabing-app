@@ -3,6 +3,7 @@ platform :ios, '15.5'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+install! 'cocoapods', :disable_input_output_paths => true
 
 project 'Runner', {
   'Debug' => :debug,
@@ -34,6 +35,11 @@ target 'Runner' do
   target 'RunnerTests' do
     inherit! :search_paths
   end
+end
+
+target 'NotificationServiceExtension' do
+  use_frameworks!
+  pod 'OneSignalXCFramework/OneSignalExtension', '5.5.1'
 end
 
 post_install do |installer|
