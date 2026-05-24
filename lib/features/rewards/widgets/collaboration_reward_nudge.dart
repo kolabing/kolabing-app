@@ -41,7 +41,7 @@ class CollaborationRewardNudge extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  '+1 point earned',
+                  '+10 XP earned',
                   style: GoogleFonts.openSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -51,7 +51,7 @@ class CollaborationRewardNudge extends StatelessWidget {
                 const SizedBox(width: KolabingSpacing.xxs),
                 Flexible(
                   child: Text(
-                    'Post a review to earn another',
+                    'Post a review to earn +10 XP more',
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.openSans(
                       fontSize: 13,

@@ -17,6 +17,7 @@ import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../../rewards/providers/wallet_provider.dart';
 
 /// Community profile screen
 class CommunityProfileScreen extends ConsumerStatefulWidget {
@@ -632,6 +633,42 @@ class _CommunityProfileScreenState
                 fontWeight: FontWeight.w600,
               ),
             ),
+          ),
+
+          const SizedBox(height: KolabingSpacing.xs),
+
+          // XP level chip
+          Consumer(
+            builder: (_, ref, __) {
+              final wallet = ref.watch(walletSummaryProvider);
+              if (wallet == null) return const SizedBox.shrink();
+              final level = wallet.level;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.sm,
+                  vertical: KolabingSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: KolabingColors.softYellow,
+                  borderRadius: KolabingRadius.borderRadiusRound,
+                  border: Border.all(color: KolabingColors.softYellowBorder),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(LucideIcons.shield, size: 12),
+                    const SizedBox(width: 4),
+                    Text(
+                      'LVL ${level.number} · ${level.title} · ${wallet.totalXp} XP',
+                      style: KolabingTextStyles.labelSmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: KolabingColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

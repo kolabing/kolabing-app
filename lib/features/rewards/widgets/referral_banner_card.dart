@@ -60,7 +60,7 @@ class ReferralBannerCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
-                  'Invite a business & earn 75\u20AC \uD83E\uDD11',
+                  'Refer 3 businesses \u2192 earn \u20AC75 cash',
                   style: GoogleFonts.rubik(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
