@@ -10,7 +10,6 @@ import '../services/rewards_service.dart';
 // Wallet State
 // =============================================================================
 
-/// Aggregate state for the rewards wallet, ledger, badges, and referral.
 @immutable
 class WalletState {
   const WalletState({
@@ -19,45 +18,36 @@ class WalletState {
     this.badges = const [],
     this.referralCode,
     this.referralLink,
+    this.referralConversions = 0,
     this.isLoading = false,
     this.isWithdrawing = false,
     this.error,
     this.newlyEarnedBadges = const [],
   });
 
-  /// Current wallet balance information.
-  final WalletModel? wallet;
-
-  /// Paginated list of ledger entries.
+  final XpModel? wallet;
   final List<LedgerEntry> ledger;
-
-  /// All reward badges with unlock status.
   final List<RewardBadge> badges;
-
-  /// The user's referral code.
   final String? referralCode;
-
-  /// The full referral link from backend.
   final String? referralLink;
 
-  /// Whether the initial data load is in progress.
+  /// Number of qualified business referral conversions (0/3 milestone display).
+  final int referralConversions;
+
   final bool isLoading;
-
-  /// Whether a withdrawal request is in progress.
   final bool isWithdrawing;
-
-  /// Error message from the last failed operation, if any.
   final String? error;
 
-  /// Badge slugs that were newly earned (triggers celebration overlay).
+  /// Badge slugs newly earned since last clear (triggers celebration overlay).
   final List<RewardBadgeSlug> newlyEarnedBadges;
 
   WalletState copyWith({
-    WalletModel? wallet,
+    XpModel? wallet,
     List<LedgerEntry>? ledger,
     List<RewardBadge>? badges,
     String? referralCode,
     String? referralLink,
+    int? referralConversions,
     bool? isLoading,
     bool? isWithdrawing,
     String? error,
@@ -70,6 +60,7 @@ class WalletState {
         badges: badges ?? this.badges,
         referralCode: referralCode ?? this.referralCode,
         referralLink: referralLink ?? this.referralLink,
+        referralConversions: referralConversions ?? this.referralConversions,
         isLoading: isLoading ?? this.isLoading,
         isWithdrawing: isWithdrawing ?? this.isWithdrawing,
         error: clearError ? null : (error ?? this.error),
@@ -81,7 +72,6 @@ class WalletState {
 // Wallet Notifier
 // =============================================================================
 
-/// Manages all rewards state: wallet, badges, referral code, and withdrawals.
 class WalletNotifier extends Notifier<WalletState> {
   late final RewardsService _service;
 
@@ -96,7 +86,6 @@ class WalletNotifier extends Notifier<WalletState> {
   // Load
   // ---------------------------------------------------------------------------
 
-  /// Fetch wallet, badges, and referral code in parallel.
   Future<void> load() async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
@@ -108,12 +97,28 @@ class WalletNotifier extends Notifier<WalletState> {
       final badges = await badgesFuture;
       final referral = await referralFuture;
 
+      // Detect newly unlocked badges; skip on first load.
+      final prevUnlocked = state.badges
+          .where((b) => b.isUnlocked)
+          .map((b) => b.slug)
+          .toSet();
+      final nowUnlocked =
+          badges.where((b) => b.isUnlocked).map((b) => b.slug).toSet();
+      final newBadges = state.badges.isEmpty
+          ? <RewardBadgeSlug>[]
+          : nowUnlocked.difference(prevUnlocked).toList();
+
       state = state.copyWith(
         wallet: wallet,
         badges: badges,
         referralCode: referral.code,
         referralLink: referral.link,
+        referralConversions: referral.totalConversions,
         isLoading: false,
+        newlyEarnedBadges: [
+          ...state.newlyEarnedBadges,
+          ...newBadges,
+        ],
       );
     } on Exception catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -124,7 +129,6 @@ class WalletNotifier extends Notifier<WalletState> {
   // Ledger
   // ---------------------------------------------------------------------------
 
-  /// Load the next page of ledger entries (appended to existing list).
   Future<void> loadLedger({int page = 1}) async {
     try {
       final entries = await _service.getLedger(page: page);
@@ -138,7 +142,6 @@ class WalletNotifier extends Notifier<WalletState> {
   // Withdrawal
   // ---------------------------------------------------------------------------
 
-  /// Request a withdrawal. Returns `true` on success.
   Future<bool> requestWithdrawal({
     required String iban,
     required String accountHolder,
@@ -149,7 +152,7 @@ class WalletNotifier extends Notifier<WalletState> {
         iban: iban,
         accountHolder: accountHolder,
       );
-      await load(); // refresh wallet after successful withdrawal
+      await load();
       state = state.copyWith(isWithdrawing: false);
       return true;
     } on Exception catch (e) {
@@ -162,7 +165,6 @@ class WalletNotifier extends Notifier<WalletState> {
   // Badges
   // ---------------------------------------------------------------------------
 
-  /// Clear the newly-earned badges list (after celebration is shown).
   void clearNewBadges() {
     state = state.copyWith(newlyEarnedBadges: const []);
   }
@@ -171,7 +173,6 @@ class WalletNotifier extends Notifier<WalletState> {
   // Refresh
   // ---------------------------------------------------------------------------
 
-  /// Convenience alias for [load].
   Future<void> refresh() => load();
 }
 
@@ -179,12 +180,10 @@ class WalletNotifier extends Notifier<WalletState> {
 // Providers
 // =============================================================================
 
-/// Main wallet provider containing all rewards state.
 final walletProvider =
     NotifierProvider<WalletNotifier, WalletState>(WalletNotifier.new);
 
-/// Convenience provider that extracts just the wallet model for lightweight
-/// consumers (dashboard cards, etc.).
-final walletSummaryProvider = Provider<WalletModel?>(
+/// Convenience provider for lightweight consumers that only need the XP model.
+final walletSummaryProvider = Provider<XpModel?>(
   (ref) => ref.watch(walletProvider).wallet,
 );

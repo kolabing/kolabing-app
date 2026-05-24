@@ -11,8 +11,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
-import '../../rewards/providers/wallet_provider.dart';
-import '../../rewards/widgets/points_wallet_card.dart';
+import '../../rewards/widgets/xp_progress_card.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
@@ -106,26 +105,11 @@ class _CommunityDashboardScreenState
         const ReferralBannerCard(),
         const SizedBox(height: KolabingSpacing.md),
 
-        // Wallet card (rewards)
-        Consumer(
-          builder: (context, ref, _) {
-            final wallet = ref.watch(walletSummaryProvider);
-            if (wallet == null) return const SizedBox.shrink();
-            return Column(
-              children: [
-                PointsWalletCard(
-                  points: wallet.availablePoints,
-                  onTap: () => context.push(KolabingRoutes.communityWallet),
-                  onWithdraw: wallet.canWithdraw
-                      ? () =>
-                            context.push(KolabingRoutes.communityWalletWithdraw)
-                      : null,
-                ),
-                const SizedBox(height: KolabingSpacing.lg),
-              ],
-            );
-          },
+        // XP progress card
+        XpProgressCard(
+          onTap: () => context.push(KolabingRoutes.communityWallet),
         ),
+        const SizedBox(height: KolabingSpacing.lg),
 
         // Quick actions
         _buildQuickActions(isDark),

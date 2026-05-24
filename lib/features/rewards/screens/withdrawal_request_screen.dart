@@ -84,8 +84,7 @@ class _WithdrawalRequestScreenState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(walletProvider);
-    final wallet = state.wallet;
-    final eurValue = wallet?.eurValue ?? 0.0;
+    const eurValue = 75.0; // fixed referral cash milestone
 
     return Scaffold(
       backgroundColor: KolabingColors.background,

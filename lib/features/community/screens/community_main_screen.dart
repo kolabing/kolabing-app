@@ -13,6 +13,8 @@ import '../../business/screens/explore_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../rewards/providers/wallet_provider.dart';
+import '../../rewards/widgets/badge_celebration_overlay.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
@@ -65,6 +67,22 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Show badge celebration overlay whenever new badges are unlocked.
+    // Clear newlyEarnedBadges immediately (before the overlay shows) so that
+    // any subsequent wallet reload does not re-trigger the listener.
+    ref.listen<WalletState>(walletProvider, (_, next) {
+      if (next.newlyEarnedBadges.isEmpty) return;
+      final badge = next.badges.firstWhere(
+        (b) => b.slug == next.newlyEarnedBadges.first,
+        orElse: () => next.badges.first,
+      );
+      ref.read(walletProvider.notifier).clearNewBadges();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        BadgeCelebrationOverlay.show(context, badge, () {});
+      });
+    });
+
     // Badge counts from providers
     final dashboardState = ref.watch(dashboardProvider);
     final pendingSentCount =

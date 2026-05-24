@@ -11,6 +11,8 @@ import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../rewards/providers/wallet_provider.dart';
+import '../../rewards/widgets/collaboration_reward_nudge.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../models/collaboration.dart';
 import '../models/collaboration_feedback.dart';
@@ -226,6 +228,16 @@ class _CollaborationBody extends ConsumerWidget {
             collaboration.feedbackSubmittedAt == null &&
             isBusiness)
           _LeaveReviewSection(collaborationId: collaborationId),
+
+        // Post-completion: community users see a reward nudge (+1 point earned,
+        // prompt to post a review for another point).
+        if (interactive &&
+            collaboration.status == CollaborationStatus.completed &&
+            !isBusiness)
+          const Padding(
+            padding: EdgeInsets.only(bottom: KolabingSpacing.md),
+            child: CollaborationRewardNudge(),
+          ),
 
         // Gamification: Challenges Setup
         _ChallengesSection(
@@ -1919,6 +1931,7 @@ class _FinishCollaborationSectionState
       }
       if (!mounted) return;
       ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      ref.invalidate(walletProvider);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
