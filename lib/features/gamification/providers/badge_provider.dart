@@ -15,7 +15,9 @@ final badgeServiceProvider = Provider<BadgeService>((ref) {
 // =============================================================================
 
 /// Provider for all system badges
-final allBadgesProvider = FutureProvider<BadgesResponse>((ref) async {
+final allBadgesProvider = FutureProvider.autoDispose<BadgesResponse>((
+  ref,
+) async {
   final service = ref.watch(badgeServiceProvider);
   return service.getAllBadges();
 });
@@ -25,7 +27,14 @@ final allBadgesProvider = FutureProvider<BadgesResponse>((ref) async {
 // =============================================================================
 
 /// Provider for user's earned badges
-final myBadgesProvider = FutureProvider<MyBadgesResponse>((ref) async {
+final myBadgesProvider = FutureProvider.autoDispose<MyBadgesResponse>((
+  ref,
+) async {
+  final authState = ref.watch(authProvider);
+  if (!authState.isAuthenticated || authState.user == null) {
+    return const MyBadgesResponse(badges: <BadgeAward>[]);
+  }
+
   final service = ref.watch(badgeServiceProvider);
   return service.getMyBadges();
 });

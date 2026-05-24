@@ -11,6 +11,7 @@ import '../models/auth_response.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../utils/auth_navigation.dart';
+import '../utils/session_reset.dart';
 
 /// Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -91,6 +92,7 @@ enum AuthStatus {
 class AuthNotifier extends Notifier<AuthState> {
   StreamSubscription<AuthSessionChange>? _sessionChangeSubscription;
   bool _isExplicitLogoutInProgress = false;
+  bool _userScopedInvalidationScheduled = false;
 
   @override
   AuthState build() {
@@ -124,7 +126,20 @@ class AuthNotifier extends Notifier<AuthState> {
     }
 
     state = const AuthState(status: AuthStatus.unauthenticated);
+    _scheduleUserScopedInvalidation();
     unawaited(OneSignalService.instance.logout());
+  }
+
+  void _scheduleUserScopedInvalidation() {
+    if (_userScopedInvalidationScheduled) {
+      return;
+    }
+
+    _userScopedInvalidationScheduled = true;
+    Future<void>.microtask(() {
+      _userScopedInvalidationScheduled = false;
+      invalidateUserScopedProviders(ref);
+    });
   }
 
   /// Sign in with email and password
@@ -284,6 +299,7 @@ class AuthNotifier extends Notifier<AuthState> {
       // leave protected shells before any always-mounted tab provider rebuilds
       // into a "session expired" error screen during teardown.
       state = const AuthState(status: AuthStatus.unauthenticated);
+      _scheduleUserScopedInvalidation();
 
       _isExplicitLogoutInProgress = false;
     }
@@ -307,7 +323,7 @@ class AuthNotifier extends Notifier<AuthState> {
     }
 
     try {
-      await OneSignalService.instance.loginUser(user);
+      await OneSignalService.instance.syncUserAfterPermissionGrant(user);
     } on Exception catch (e) {
       debugPrint('[OneSignal] Post-permission sync error: $e');
     }

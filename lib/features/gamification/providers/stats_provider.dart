@@ -15,7 +15,20 @@ final statsServiceProvider = Provider<StatsService>((ref) {
 // =============================================================================
 
 /// Provider for current user's gamification stats
-final myStatsProvider = FutureProvider<GamificationStats>((ref) async {
+final myStatsProvider = FutureProvider.autoDispose<GamificationStats>((
+  ref,
+) async {
+  final authState = ref.watch(authProvider);
+  if (!authState.isAuthenticated || authState.user == null) {
+    return const GamificationStats(
+      totalPoints: 0,
+      totalChallengesCompleted: 0,
+      totalEventsAttended: 0,
+      badgesCount: 0,
+      rewardsCount: 0,
+    );
+  }
+
   final service = ref.watch(statsServiceProvider);
   return service.getMyStats();
 });
@@ -26,7 +39,7 @@ final myStatsProvider = FutureProvider<GamificationStats>((ref) async {
 
 /// Provider for user's public game card
 final gameCardProvider =
-    FutureProvider.family<GameCard, String>((ref, profileId) async {
+    FutureProvider.autoDispose.family<GameCard, String>((ref, profileId) async {
   final service = ref.watch(statsServiceProvider);
   return service.getGameCard(profileId);
 });

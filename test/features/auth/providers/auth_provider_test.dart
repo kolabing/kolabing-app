@@ -13,6 +13,9 @@ import 'package:kolabing_app/features/auth/services/auth_service.dart';
 import 'package:kolabing_app/features/dashboard/models/dashboard_model.dart';
 import 'package:kolabing_app/features/dashboard/providers/dashboard_provider.dart';
 import 'package:kolabing_app/features/dashboard/services/dashboard_service.dart';
+import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
+import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
+import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -59,22 +62,42 @@ void main() {
       );
       addTearDown(container.dispose);
 
+      container.read(authProvider);
       container.read(authProvider.notifier).state = const AuthState(
         status: AuthStatus.authenticated,
         user: user,
         token: 'token-123',
       );
+      container.read(discoveryFiltersProvider.notifier).setSearch('venue');
+      container.read(opportunityFiltersProvider.notifier).setSearch('music');
+      container.read(myKolabsStatusProvider.notifier).setStatus('draft');
+      container.read(myOpportunitiesStatusProvider.notifier).status =
+          'published';
 
       await expectLater(
         authService.refreshSession(),
         throwsA(isA<AuthException>()),
       );
       await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final authState = container.read(authProvider);
       expect(authState.status, AuthStatus.unauthenticated);
       expect(authState.user, isNull);
       expect(authState.token, isNull);
+
+      final discoveryFilters = container.read(discoveryFiltersProvider);
+      expect(discoveryFilters.searchQuery, isEmpty);
+      expect(discoveryFilters.city, isNull);
+      expect(discoveryFilters.hasActiveFilters, isFalse);
+
+      final opportunityFilters = container.read(opportunityFiltersProvider);
+      expect(opportunityFilters.searchQuery, isEmpty);
+      expect(opportunityFilters.creatorType, isNull);
+      expect(opportunityFilters.hasActiveFilters, isFalse);
+
+      expect(container.read(myKolabsStatusProvider), isNull);
+      expect(container.read(myOpportunitiesStatusProvider), isNull);
     },
   );
 
@@ -110,6 +133,42 @@ void main() {
       expect(authState.token, 'token-123');
     },
   );
+
+  test('explicit logout invalidates user-scoped filter state', () async {
+    final container = ProviderContainer(
+      overrides: [
+        authServiceProvider.overrideWith((ref) => _SuccessfulLoginAuthService()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    container.read(authProvider);
+    container.read(authProvider.notifier).state = const AuthState(
+      status: AuthStatus.authenticated,
+      user: const UserModel(
+        id: 'business-1',
+        email: 'business@example.com',
+        userType: UserType.business,
+        businessProfile: BusinessProfile(id: 'bp-1', name: 'Venue Works'),
+      ),
+      token: 'token-123',
+    );
+
+    container.read(discoveryFiltersProvider.notifier).setSearch('afterwork');
+    container.read(opportunityFiltersProvider.notifier).setSearch('launch');
+    container.read(myKolabsStatusProvider.notifier).setStatus('draft');
+    container.read(myOpportunitiesStatusProvider.notifier).status = 'closed';
+
+    await container.read(authProvider.notifier).logout();
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(container.read(authProvider).status, AuthStatus.unauthenticated);
+    expect(container.read(discoveryFiltersProvider).searchQuery, isEmpty);
+    expect(container.read(opportunityFiltersProvider).searchQuery, isEmpty);
+    expect(container.read(myKolabsStatusProvider), isNull);
+    expect(container.read(myOpportunitiesStatusProvider), isNull);
+  });
 }
 
 class _SuccessfulLoginAuthService extends AuthService {
@@ -117,8 +176,7 @@ class _SuccessfulLoginAuthService extends AuthService {
   Future<AuthResponse> loginWithEmail({
     required String email,
     required String password,
-  }) async {
-    return AuthResponse(
+  }) async => const AuthResponse(
       success: true,
       message: 'Login successful',
       token: 'token-123',
@@ -132,16 +190,16 @@ class _SuccessfulLoginAuthService extends AuthService {
         businessProfile: BusinessProfile(id: 'bp-1', name: 'Venue Works'),
       ),
     );
-  }
+
+  @override
+  Future<void> logout() => Future<void>.value();
 }
 
 class _FakeDashboardService extends DashboardService {
   @override
-  Future<DashboardResponse> getDashboard() async {
-    return const DashboardResponse(
+  Future<DashboardResponse> getDashboard() async => const DashboardResponse(
       businessDashboard: BusinessDashboard(
         opportunities: OpportunityStats(total: 1),
       ),
     );
-  }
 }
