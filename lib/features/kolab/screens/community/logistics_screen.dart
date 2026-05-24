@@ -500,11 +500,22 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         GestureDetector(
           onTap: () async {
+            final firstDate = DateUtils.dateOnly(minDate ?? DateTime.now());
+            final lastDate = DateUtils.dateOnly(
+              DateTime.now().add(const Duration(days: 365 * 2)),
+            );
+            final normalizedDisplayDate = DateUtils.dateOnly(displayDate);
+            final initialDate = normalizedDisplayDate.isBefore(firstDate)
+                ? firstDate
+                : normalizedDisplayDate.isAfter(lastDate)
+                ? lastDate
+                : normalizedDisplayDate;
+
             final date = await showDatePicker(
               context: context,
-              initialDate: displayDate,
-              firstDate: minDate ?? DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+              initialDate: initialDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
               builder: (context, child) => Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: const ColorScheme.light(

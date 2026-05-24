@@ -195,45 +195,53 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     setState(() => _isLoading = true);
 
-    final result = await ref
-        .read(authProvider.notifier)
-        .signInWithEmail(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+    try {
+      final result = await ref
+          .read(authProvider.notifier)
+          .signInWithEmail(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+
+      if (!mounted) return;
+
+      if (result.success) {
+        setState(() {
+          _isLoading = false;
+          _showSuccess = true;
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        if (!mounted) return;
+
+        await _exitController.forward();
+        if (!mounted) return;
+
+        final route = await _getNavigationRoute(result);
+        debugPrint(
+          '[B2] login success → routing to "$route" '
+          '(userType=${result.user?.userType} isNewUser=${result.isNewUser})',
         );
-
-    if (!mounted) return;
-
-    if (result.success) {
-      setState(() {
-        _isLoading = false;
-        _showSuccess = true;
-      });
-
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+        if (!mounted) return;
+        context.go(route);
+      } else if (result.isNetworkError) {
+        debugPrint('[B2] login network error: ${result.errorMessage}');
+        setState(() => _isLoading = false);
+        _showNetworkErrorSnackBar(isGoogle: false);
+      } else {
+        debugPrint(
+          '[B2] login failed: status=${result.error?.statusCode} '
+          'message=${result.displayError}',
+        );
+        setState(() => _isLoading = false);
+        _showErrorSnackBar(result.displayError);
+      }
+    } on Object catch (e, st) {
+      debugPrint('[AUTH][UI] email login unexpected error: $e');
+      debugPrint('$st');
       if (!mounted) return;
-
-      await _exitController.forward();
-      if (!mounted) return;
-
-      final route = await _getNavigationRoute(result);
-      debugPrint(
-        '[B2] login success → routing to "$route" '
-        '(userType=${result.user?.userType} isNewUser=${result.isNewUser})',
-      );
-      if (!mounted) return;
-      context.go(route);
-    } else if (result.isNetworkError) {
-      debugPrint('[B2] login network error: ${result.errorMessage}');
       setState(() => _isLoading = false);
-      _showNetworkErrorSnackBar(isGoogle: false);
-    } else {
-      debugPrint(
-        '[B2] login failed: status=${result.error?.statusCode} '
-        'message=${result.displayError}',
-      );
-      setState(() => _isLoading = false);
-      _showErrorSnackBar(result.displayError);
+      _showErrorSnackBar('Something went wrong. Please try again.');
     }
   }
 
@@ -245,36 +253,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     setState(() => _isGoogleLoading = true);
 
-    final result = await ref.read(authProvider.notifier).signInWithGoogle();
+    try {
+      final result = await ref.read(authProvider.notifier).signInWithGoogle();
 
-    if (!mounted) return;
-
-    if (result.success) {
-      setState(() {
-        _isGoogleLoading = false;
-        _showSuccess = true;
-      });
-
-      await Future<void>.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
 
-      await _exitController.forward();
-      if (!mounted) return;
+      if (result.success) {
+        setState(() {
+          _isGoogleLoading = false;
+          _showSuccess = true;
+        });
 
-      final route = await _getNavigationRoute(result);
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        if (!mounted) return;
+
+        await _exitController.forward();
+        if (!mounted) return;
+
+        final route = await _getNavigationRoute(result);
+        if (!mounted) return;
+        context.go(route);
+      } else if (result.cancelled) {
+        setState(() => _isGoogleLoading = false);
+      } else if (result.isUserNotFound) {
+        setState(() => _isGoogleLoading = false);
+        _showUserNotFoundDialog();
+      } else if (result.isNetworkError) {
+        setState(() => _isGoogleLoading = false);
+        _showNetworkErrorSnackBar(isGoogle: true);
+      } else {
+        setState(() => _isGoogleLoading = false);
+        _showErrorSnackBar(result.displayError);
+      }
+    } on Object catch (e, st) {
+      debugPrint('[AUTH][UI] google login unexpected error: $e');
+      debugPrint('$st');
       if (!mounted) return;
-      context.go(route);
-    } else if (result.cancelled) {
       setState(() => _isGoogleLoading = false);
-    } else if (result.isUserNotFound) {
-      setState(() => _isGoogleLoading = false);
-      _showUserNotFoundDialog();
-    } else if (result.isNetworkError) {
-      setState(() => _isGoogleLoading = false);
-      _showNetworkErrorSnackBar(isGoogle: true);
-    } else {
-      setState(() => _isGoogleLoading = false);
-      _showErrorSnackBar(result.displayError);
+      _showErrorSnackBar('Something went wrong. Please try again.');
     }
   }
 
@@ -286,33 +302,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     FocusScope.of(context).unfocus();
     setState(() => _isAppleLoading = true);
 
-    final result = await ref.read(authProvider.notifier).signInWithApple();
+    try {
+      final result = await ref.read(authProvider.notifier).signInWithApple();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (result.success) {
-      setState(() {
-        _isAppleLoading = false;
-        _showSuccess = true;
-      });
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (result.success) {
+        setState(() {
+          _isAppleLoading = false;
+          _showSuccess = true;
+        });
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        if (!mounted) return;
+        await _exitController.forward();
+        if (!mounted) return;
+        final route = await _getNavigationRoute(result);
+        if (!mounted) return;
+        context.go(route);
+      } else if (result.cancelled) {
+        setState(() => _isAppleLoading = false);
+      } else if (result.isUserNotFound) {
+        setState(() => _isAppleLoading = false);
+        _showUserNotFoundDialog();
+      } else if (result.isNetworkError) {
+        setState(() => _isAppleLoading = false);
+        _showNetworkErrorSnackBar(isGoogle: false);
+      } else {
+        setState(() => _isAppleLoading = false);
+        _showErrorSnackBar(result.displayError);
+      }
+    } on Object catch (e, st) {
+      debugPrint('[AUTH][UI] apple login unexpected error: $e');
+      debugPrint('$st');
       if (!mounted) return;
-      await _exitController.forward();
-      if (!mounted) return;
-      final route = await _getNavigationRoute(result);
-      if (!mounted) return;
-      context.go(route);
-    } else if (result.cancelled) {
       setState(() => _isAppleLoading = false);
-    } else if (result.isUserNotFound) {
-      setState(() => _isAppleLoading = false);
-      _showUserNotFoundDialog();
-    } else if (result.isNetworkError) {
-      setState(() => _isAppleLoading = false);
-      _showNetworkErrorSnackBar(isGoogle: false);
-    } else {
-      setState(() => _isAppleLoading = false);
-      _showErrorSnackBar(result.displayError);
+      _showErrorSnackBar('Something went wrong. Please try again.');
     }
   }
 

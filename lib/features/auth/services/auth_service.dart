@@ -9,10 +9,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../../../config/constants/api.dart';
+import '../../onboarding/models/onboarding_state.dart';
 import '../models/auth_response.dart';
 import '../models/user_model.dart';
-import '../../onboarding/models/onboarding_state.dart';
-import '../../../config/constants/api.dart';
 
 /// Storage keys for auth data
 const String _tokenKey = 'auth_token';
@@ -24,6 +24,8 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Mock mode flag - set to false to use real API
 const bool _useMockApi = false;
+
+enum AuthSessionChange { cleared }
 
 /// Auth service for handling authentication
 class AuthService {
@@ -60,8 +62,13 @@ class AuthService {
   /// Shared session version. Any login, logout, or token refresh rotates this
   /// so stale instances drop cached credentials and ignore late responses.
   static int _sharedSessionEpoch = 0;
+  static final StreamController<AuthSessionChange> _sessionChangesController =
+      StreamController<AuthSessionChange>.broadcast(sync: true);
 
   int _knownSessionEpoch = _sharedSessionEpoch;
+
+  static Stream<AuthSessionChange> get sessionChanges =>
+      _sessionChangesController.stream;
 
   // ---------------------------------------------------------------------------
   // Google Sign In
@@ -142,8 +149,8 @@ class AuthService {
           if (lastLocationLat != null) 'last_location_lat': lastLocationLat,
           if (lastLocationLng != null) 'last_location_lng': lastLocationLng,
           if (locationPermissionGrantedAt != null)
-            'location_permission_granted_at':
-                locationPermissionGrantedAt.toIso8601String(),
+            'location_permission_granted_at': locationPermissionGrantedAt
+                .toIso8601String(),
         }),
       );
       debugPrint('[FCM] Register token response: ${response.statusCode}');
@@ -1138,6 +1145,7 @@ class AuthService {
     await _secureStorage.delete(key: _tokenKey);
     await _secureStorage.delete(key: _refreshTokenKey);
     await _secureStorage.delete(key: _userKey);
+    _sessionChangesController.add(AuthSessionChange.cleared);
   }
 }
 

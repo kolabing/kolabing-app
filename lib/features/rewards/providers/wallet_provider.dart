@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/models/auth_response.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
 import '../models/wallet_model.dart';
@@ -53,33 +57,50 @@ class WalletState {
     String? error,
     List<RewardBadgeSlug>? newlyEarnedBadges,
     bool clearError = false,
-  }) =>
-      WalletState(
-        wallet: wallet ?? this.wallet,
-        ledger: ledger ?? this.ledger,
-        badges: badges ?? this.badges,
-        referralCode: referralCode ?? this.referralCode,
-        referralLink: referralLink ?? this.referralLink,
-        referralConversions: referralConversions ?? this.referralConversions,
-        isLoading: isLoading ?? this.isLoading,
-        isWithdrawing: isWithdrawing ?? this.isWithdrawing,
-        error: clearError ? null : (error ?? this.error),
-        newlyEarnedBadges: newlyEarnedBadges ?? this.newlyEarnedBadges,
-      );
+  }) => WalletState(
+    wallet: wallet ?? this.wallet,
+    ledger: ledger ?? this.ledger,
+    badges: badges ?? this.badges,
+    referralCode: referralCode ?? this.referralCode,
+    referralLink: referralLink ?? this.referralLink,
+    referralConversions: referralConversions ?? this.referralConversions,
+    isLoading: isLoading ?? this.isLoading,
+    isWithdrawing: isWithdrawing ?? this.isWithdrawing,
+    error: clearError ? null : (error ?? this.error),
+    newlyEarnedBadges: newlyEarnedBadges ?? this.newlyEarnedBadges,
+  );
 }
 
 // =============================================================================
 // Wallet Notifier
 // =============================================================================
 
-class WalletNotifier extends Notifier<WalletState> {
+class WalletNotifier extends Notifier<WalletState>
+    with AuthScopeGuard<WalletState> {
   late final RewardsService _service;
 
   @override
   WalletState build() {
     _service = ref.read(rewardsServiceProvider);
-    Future.microtask(load);
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: load,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: load,
+      );
+    });
     return const WalletState();
+  }
+
+  void _clearSignedOutState() {
+    state = const WalletState();
   }
 
   // ---------------------------------------------------------------------------
@@ -87,6 +108,11 @@ class WalletNotifier extends Notifier<WalletState> {
   // ---------------------------------------------------------------------------
 
   Future<void> load() async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
+
+    final sessionVersion = activeAuthSessionVersion;
     state = state.copyWith(isLoading: true, clearError: true);
     try {
       final walletFuture = _service.getWallet();
@@ -96,14 +122,19 @@ class WalletNotifier extends Notifier<WalletState> {
       final wallet = await walletFuture;
       final badges = await badgesFuture;
       final referral = await referralFuture;
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
 
       // Detect newly unlocked badges; skip on first load.
       final prevUnlocked = state.badges
           .where((b) => b.isUnlocked)
           .map((b) => b.slug)
           .toSet();
-      final nowUnlocked =
-          badges.where((b) => b.isUnlocked).map((b) => b.slug).toSet();
+      final nowUnlocked = badges
+          .where((b) => b.isUnlocked)
+          .map((b) => b.slug)
+          .toSet();
       final newBadges = state.badges.isEmpty
           ? <RewardBadgeSlug>[]
           : nowUnlocked.difference(prevUnlocked).toList();
@@ -115,12 +146,22 @@ class WalletNotifier extends Notifier<WalletState> {
         referralLink: referral.link,
         referralConversions: referral.totalConversions,
         isLoading: false,
-        newlyEarnedBadges: [
-          ...state.newlyEarnedBadges,
-          ...newBadges,
-        ],
+        newlyEarnedBadges: [...state.newlyEarnedBadges, ...newBadges],
       );
+    } on ApiException catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
+      state = state.copyWith(isLoading: false, error: e.error.message);
+    } on AuthException catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
+      state = state.copyWith(isLoading: false, error: e.message);
     } on Exception catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
@@ -130,6 +171,9 @@ class WalletNotifier extends Notifier<WalletState> {
   // ---------------------------------------------------------------------------
 
   Future<void> loadLedger({int page = 1}) async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
     try {
       final entries = await _service.getLedger(page: page);
       state = state.copyWith(ledger: [...state.ledger, ...entries]);
@@ -146,6 +190,9 @@ class WalletNotifier extends Notifier<WalletState> {
     required String iban,
     required String accountHolder,
   }) async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return false;
+    }
     state = state.copyWith(isWithdrawing: true, clearError: true);
     try {
       await _service.requestWithdrawal(
@@ -180,8 +227,9 @@ class WalletNotifier extends Notifier<WalletState> {
 // Providers
 // =============================================================================
 
-final walletProvider =
-    NotifierProvider<WalletNotifier, WalletState>(WalletNotifier.new);
+final walletProvider = NotifierProvider<WalletNotifier, WalletState>(
+  WalletNotifier.new,
+);
 
 /// Convenience provider for lightweight consumers that only need the XP model.
 final walletSummaryProvider = Provider<XpModel?>(

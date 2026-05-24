@@ -1931,11 +1931,22 @@ class _CreateOpportunityScreenState
         const SizedBox(height: KolabingSpacing.xxs),
         GestureDetector(
           onTap: () async {
+            final firstDate = DateUtils.dateOnly(minDate ?? DateTime.now());
+            final lastDate = DateUtils.dateOnly(
+              DateTime.now().add(const Duration(days: 365 * 2)),
+            );
+            final normalizedValue = DateUtils.dateOnly(value);
+            final initialDate = normalizedValue.isBefore(firstDate)
+                ? firstDate
+                : normalizedValue.isAfter(lastDate)
+                ? lastDate
+                : normalizedValue;
+
             final date = await showDatePicker(
               context: context,
-              initialDate: value,
-              firstDate: minDate ?? DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+              initialDate: initialDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
               builder: (context, child) => Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: const ColorScheme.light(

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
+import 'package:kolabing_app/features/onboarding/models/city.dart';
 import 'package:kolabing_app/features/community/screens/create_opportunity_screen.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 import 'package:kolabing_app/features/opportunity/providers/opportunity_form_provider.dart';
+import 'package:kolabing_app/features/opportunity/providers/opportunity_provider.dart';
 import 'package:kolabing_app/features/opportunity/utils/opportunity_share_launcher.dart';
 
 void main() {
@@ -48,6 +51,62 @@ void main() {
       expect(shareLauncher.lastTitle, 'Sunset Rooftop Collab');
       expect(shareLauncher.lastOpportunityId, 'opp-42');
       expect(shareLauncher.lastSharePositionOrigin, isNotNull);
+    },
+  );
+
+  testWidgets(
+    'editing an opportunity with a past start date still opens the start date picker',
+    (tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          opportunityFormProvider.overrideWith(
+            _EditOpportunityFormNotifier.new,
+          ),
+          citiesProvider.overrideWith(
+            (ref) async => <OnboardingCity>[],
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final pastStartDate = DateUtils.dateOnly(
+        DateTime.now().subtract(const Duration(days: 7)),
+      );
+      final futureEndDate = DateUtils.dateOnly(
+        DateTime.now().add(const Duration(days: 30)),
+      );
+      final editOpportunity = Opportunity.empty().copyWith(
+        id: 'opp-edit-1',
+        title: 'Past date edit',
+        description: 'Editing a published opportunity',
+        categories: const ['Food'],
+        businessOffer: const BusinessOffer(venue: true),
+        communityDeliverables: const CommunityDeliverables(
+          socialMediaContent: true,
+        ),
+        availabilityMode: AvailabilityMode.oneTime,
+        availabilityStart: pastStartDate,
+        availabilityEnd: futureEndDate,
+        preferredCity: 'Madrid',
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(home: CreateOpportunityScreen(editOpportunity: editOpportunity)),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.tap(
+        find.text(DateFormat('MMM d, yyyy').format(pastStartDate)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(CalendarDatePicker), findsOneWidget);
     },
   );
 }
@@ -112,5 +171,20 @@ class _RecordingOpportunityShareLauncher extends OpportunityShareLauncher {
     lastTitle = title;
     lastOpportunityId = opportunityId;
     lastSharePositionOrigin = sharePositionOrigin;
+  }
+}
+
+class _EditOpportunityFormNotifier extends OpportunityFormNotifier {
+  @override
+  OpportunityFormState build() =>
+      OpportunityFormState(currentStep: 3, opportunity: Opportunity.empty());
+
+  @override
+  void initForEdit(Opportunity opportunity) {
+    state = OpportunityFormState(
+      currentStep: 3,
+      opportunity: opportunity,
+      isEditing: true,
+    );
   }
 }

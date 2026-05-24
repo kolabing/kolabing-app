@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../models/app_notification.dart';
 import '../services/notification_service.dart';
 
@@ -69,34 +70,69 @@ class NotificationState {
 // Notification Notifier
 // =============================================================================
 
-class NotificationNotifier extends Notifier<NotificationState> {
+class NotificationNotifier extends Notifier<NotificationState>
+    with AuthScopeGuard<NotificationState> {
   late NotificationService _service;
 
   @override
   NotificationState build() {
     _service = ref.read(notificationServiceProvider);
-    // Auto-load unread count on build
-    Future.microtask(() => loadUnreadCount());
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: loadUnreadCount,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: loadUnreadCount,
+      );
+    });
     return const NotificationState();
+  }
+
+  void _clearSignedOutState() {
+    state = const NotificationState();
   }
 
   /// Load unread notification count (for badge display)
   Future<void> loadUnreadCount() async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
+
+    final sessionVersion = activeAuthSessionVersion;
     try {
       final count = await _service.getUnreadCount();
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(unreadCount: count);
     } catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       debugPrint('Load unread count error: $e');
     }
   }
 
   /// Load first page of notifications
   Future<void> loadNotifications() async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
     if (state.isLoading) return;
+    final sessionVersion = activeAuthSessionVersion;
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final response = await _service.getNotifications(page: 1);
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       final unreadCount = response.data.where((n) => !n.isRead).length;
       state = NotificationState(
         notifications: response.data,
@@ -106,6 +142,9 @@ class NotificationNotifier extends Notifier<NotificationState> {
         total: response.total,
       );
     } catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       debugPrint('Load notifications error: $e');
       state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
@@ -113,14 +152,21 @@ class NotificationNotifier extends Notifier<NotificationState> {
 
   /// Load next page of notifications (infinite scroll)
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
     if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
+    final sessionVersion = activeAuthSessionVersion;
 
     try {
       final response = await _service.getNotifications(
         page: state.currentPage + 1,
       );
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         notifications: [...state.notifications, ...response.data],
         isLoadingMore: false,
@@ -129,6 +175,9 @@ class NotificationNotifier extends Notifier<NotificationState> {
         total: response.total,
       );
     } catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       debugPrint('Load more notifications error: $e');
       state = state.copyWith(isLoadingMore: false, error: _getErrorMessage(e));
     }
@@ -136,6 +185,9 @@ class NotificationNotifier extends Notifier<NotificationState> {
 
   /// Mark a single notification as read
   Future<void> markAsRead(String notificationId) async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
     try {
       await _service.markAsRead(notificationId);
 
@@ -155,6 +207,9 @@ class NotificationNotifier extends Notifier<NotificationState> {
 
   /// Mark all notifications as read
   Future<void> markAllAsRead() async {
+    if (!ensureAuthenticatedUser(clearSignedOutState: _clearSignedOutState)) {
+      return;
+    }
     try {
       await _service.markAllAsRead();
 

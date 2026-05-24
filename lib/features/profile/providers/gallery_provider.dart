@@ -5,6 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../config/constants/api.dart';
+import '../../auth/models/auth_response.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../../../utils/image_picker_normalize.dart';
 import '../../../utils/remote_media_url.dart';
 import '../services/gallery_service.dart';
@@ -154,22 +158,76 @@ class GalleryState {
 // Gallery Notifier
 // =============================================================================
 
-class GalleryNotifier extends Notifier<GalleryState> {
+final galleryServiceProvider = Provider<GalleryService>((ref) {
+  return GalleryService();
+});
+
+class GalleryNotifier extends Notifier<GalleryState>
+    with AuthScopeGuard<GalleryState> {
   final ImagePicker _imagePicker = ImagePicker();
-  final GalleryService _galleryService = GalleryService();
+  late final GalleryService _galleryService;
+  int _activeRequestGeneration = 0;
 
   @override
-  GalleryState build() => const GalleryState();
+  GalleryState build() {
+    _galleryService = ref.read(galleryServiceProvider);
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: loadGallery,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+    return const GalleryState();
+  }
+
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const GalleryState();
+  }
 
   /// Load gallery photos from the API
   Future<void> loadGallery() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoading) return;
+    final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final photos = await _galleryService.getMyGallery();
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(photos: photos, isLoading: false);
+    } on AuthException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(isLoading: false, error: e.message);
+    } on ApiException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(isLoading: false, error: e.error.message);
+    } on NetworkException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(isLoading: false, error: e.message);
     } on Exception catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Gallery load error: $e');
       state = state.copyWith(isLoading: false, error: 'Failed to load gallery');
     }

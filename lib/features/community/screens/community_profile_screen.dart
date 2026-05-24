@@ -68,7 +68,7 @@ class _CommunityProfileScreenState
     if (confirmed == true && mounted) {
       await ref.read(profileProvider.notifier).signOut();
       if (mounted) {
-        context.go(KolabingRoutes.welcome);
+        context.go(KolabingRoutes.login);
       }
     }
   }

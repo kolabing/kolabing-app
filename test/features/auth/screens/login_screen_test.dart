@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/auth/screens/login_screen.dart';
 import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
@@ -49,7 +50,9 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(SingleChildScrollView), findsNothing);
     final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    final logoRenderSize = tester.getSize(find.bySemanticsLabel('Kolabing logo'));
+    final logoRenderSize = tester.getSize(
+      find.bySemanticsLabel('Kolabing logo'),
+    );
     expect(logo.variant, KolabingLogoVariant.yellowTransparent);
     expect(logoRenderSize.width, greaterThanOrEqualTo(80));
     expect(find.text('REAL MATCHES.'), findsOneWidget);
@@ -75,4 +78,54 @@ void main() {
     expect(find.text('REAL MATCHES.'), findsOneWidget);
     expect(find.text('APPLE'), findsOneWidget);
   });
+
+  testWidgets(
+    'login screen exits loading state when auth throws unexpectedly',
+    (WidgetTester tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+        tester.view.resetViewPadding();
+      });
+
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1.0;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [authProvider.overrideWith(_ThrowingAuthNotifier.new)],
+          child: const MaterialApp(home: LoginScreen()),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 900));
+
+      final fields = find.byType(TextFormField);
+      await tester.enterText(fields.at(0), 'community@example.com');
+      await tester.enterText(fields.at(1), 'password123');
+      await tester.tap(find.text('SIGN IN'));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('SIGN IN'), findsOneWidget);
+      expect(
+        find.text('Something went wrong. Please try again.'),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+}
+
+class _ThrowingAuthNotifier extends AuthNotifier {
+  @override
+  AuthState build() => const AuthState();
+
+  @override
+  Future<AuthResult> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    throw AssertionError('unexpected auth failure');
+  }
 }

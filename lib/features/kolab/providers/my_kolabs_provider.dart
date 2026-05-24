@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/models/auth_response.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../services/kolab_service.dart';
@@ -68,7 +70,8 @@ final myKolabsStatusProvider =
       MyKolabsStatusNotifier.new,
     );
 
-class MyKolabsNotifier extends Notifier<MyKolabsState> {
+class MyKolabsNotifier extends Notifier<MyKolabsState>
+    with AuthScopeGuard<MyKolabsState> {
   late KolabService _service;
   int _activeRequestGeneration = 0;
 
@@ -76,11 +79,40 @@ class MyKolabsNotifier extends Notifier<MyKolabsState> {
   MyKolabsState build() {
     _service = ref.read(kolabServiceProvider);
     final status = ref.watch(myKolabsStatusProvider);
-    Future.microtask(() => _load(status));
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: refresh,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: () => _load(status),
+      );
+    });
     return const MyKolabsState(isLoading: true);
   }
 
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const MyKolabsState();
+  }
+
   Future<void> _load(String? status) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
     final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(
       isLoading: true,
@@ -133,6 +165,12 @@ class MyKolabsNotifier extends Notifier<MyKolabsState> {
   }
 
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoading || state.isLoadingMore || !state.hasMore) {
       return;
     }

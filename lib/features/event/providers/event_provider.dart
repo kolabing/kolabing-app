@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../models/event.dart';
 import '../services/event_service.dart';
 
@@ -50,20 +53,49 @@ class EventsState {
 }
 
 /// Notifier for managing events state
-class EventsNotifier extends Notifier<EventsState> {
+class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsState> {
   late final EventService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   EventsState build() {
     _service = ref.read(eventServiceProvider);
-    // Auto-load events on initialization
-    Future.microtask(() => loadEvents());
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: loadEvents,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: loadEvents,
+      );
+    });
     return const EventsState();
+  }
+
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const EventsState();
   }
 
   /// Load initial events
   Future<void> loadEvents({String? profileId}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoading) return;
+    final requestGeneration = ++_activeRequestGeneration;
 
     state = state.copyWith(isLoading: true, error: null);
 
@@ -72,6 +104,9 @@ class EventsNotifier extends Notifier<EventsState> {
         page: 1,
         profileId: profileId,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         events: result.events,
         isLoading: false,
@@ -79,7 +114,34 @@ class EventsNotifier extends Notifier<EventsState> {
         hasMore: result.pagination.hasMore,
         totalCount: result.pagination.totalCount,
       );
+    } on AuthException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(
+        isLoading: false,
+        error: e.message,
+      );
+    } on ApiException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(
+        isLoading: false,
+        error: e.error.message,
+      );
+    } on NetworkException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(
+        isLoading: false,
+        error: e.message,
+      );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -89,9 +151,16 @@ class EventsNotifier extends Notifier<EventsState> {
 
   /// Load more events (pagination)
   Future<void> loadMoreEvents({String? profileId}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
+    final requestGeneration = _activeRequestGeneration;
 
     try {
       final nextPage = state.currentPage + 1;
@@ -99,6 +168,9 @@ class EventsNotifier extends Notifier<EventsState> {
         page: nextPage,
         profileId: profileId,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
 
       state = state.copyWith(
         events: [...state.events, ...result.events],
@@ -108,6 +180,9 @@ class EventsNotifier extends Notifier<EventsState> {
         totalCount: result.pagination.totalCount,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         isLoadingMore: false,
         error: e.toString(),
@@ -117,6 +192,13 @@ class EventsNotifier extends Notifier<EventsState> {
 
   /// Refresh events
   Future<void> refresh({String? profileId}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+    final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(
       isLoading: true,
       error: null,
@@ -129,6 +211,9 @@ class EventsNotifier extends Notifier<EventsState> {
         page: 1,
         profileId: profileId,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         events: result.events,
         isLoading: false,
@@ -137,6 +222,9 @@ class EventsNotifier extends Notifier<EventsState> {
         totalCount: result.pagination.totalCount,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
