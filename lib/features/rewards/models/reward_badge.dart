@@ -19,13 +19,13 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.firstKolab:
         return 'First Kolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Content Creator';
+        return 'Storyteller';
       case RewardBadgeSlug.communityEarner:
-        return 'Community Earner';
+        return 'Momentum Club';
       case RewardBadgeSlug.referralPioneer:
         return 'Referral Pioneer';
       case RewardBadgeSlug.powerPartner:
-        return 'Power Partner';
+        return 'Trusted Voice';
     }
   }
 
@@ -35,13 +35,13 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.firstKolab:
         return 'First\nKolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Content\nCreator';
+        return 'Story\nteller';
       case RewardBadgeSlug.communityEarner:
-        return 'Community\nEarner';
+        return 'Momentum\nClub';
       case RewardBadgeSlug.referralPioneer:
         return 'Referral\nPioneer';
       case RewardBadgeSlug.powerPartner:
-        return 'Power\nPartner';
+        return 'Trusted\nVoice';
     }
   }
 
@@ -51,13 +51,13 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.firstKolab:
         return 'Complete your first collaboration';
       case RewardBadgeSlug.contentCreator:
-        return 'Post 3 reviews for collaborations';
+        return 'Share your story — post 3 collaboration reviews';
       case RewardBadgeSlug.communityEarner:
-        return 'Earn 100 points through activities';
+        return 'Keep the momentum — reach 100 XP';
       case RewardBadgeSlug.referralPioneer:
-        return 'Refer your first user to Kolabing';
+        return 'Grow the community — refer your first partner';
       case RewardBadgeSlug.powerPartner:
-        return 'Complete 5 collaborations';
+        return 'A trusted voice — complete 5 Kolabs';
     }
   }
 
@@ -69,7 +69,7 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.contentCreator:
         return '3 reviews needed';
       case RewardBadgeSlug.communityEarner:
-        return '100 pts needed';
+        return '100 XP needed';
       case RewardBadgeSlug.referralPioneer:
         return '1 referral needed';
       case RewardBadgeSlug.powerPartner:

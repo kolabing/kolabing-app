@@ -9,6 +9,7 @@ import '../../opportunity/models/opportunity.dart';
 enum CollaborationStatus {
   scheduled,
   inProgress,
+  pendingConfirmation,
   completed,
   cancelled;
 
@@ -17,7 +18,10 @@ enum CollaborationStatus {
       case 'scheduled':
         return CollaborationStatus.scheduled;
       case 'in_progress':
+      case 'active':
         return CollaborationStatus.inProgress;
+      case 'pending_confirmation':
+        return CollaborationStatus.pendingConfirmation;
       case 'completed':
         return CollaborationStatus.completed;
       case 'cancelled':
@@ -32,7 +36,9 @@ enum CollaborationStatus {
       case CollaborationStatus.scheduled:
         return 'scheduled';
       case CollaborationStatus.inProgress:
-        return 'in_progress';
+        return 'active';
+      case CollaborationStatus.pendingConfirmation:
+        return 'pending_confirmation';
       case CollaborationStatus.completed:
         return 'completed';
       case CollaborationStatus.cancelled:
@@ -46,6 +52,8 @@ enum CollaborationStatus {
         return 'Scheduled';
       case CollaborationStatus.inProgress:
         return 'In Progress';
+      case CollaborationStatus.pendingConfirmation:
+        return 'Waiting Confirmation';
       case CollaborationStatus.completed:
         return 'Completed';
       case CollaborationStatus.cancelled:
@@ -56,6 +64,8 @@ enum CollaborationStatus {
   bool get isActive =>
       this == CollaborationStatus.scheduled ||
       this == CollaborationStatus.inProgress;
+
+  bool get canBeCompleted => this == CollaborationStatus.inProgress;
 }
 
 /// Timeline step status
@@ -176,8 +186,12 @@ class Collaboration {
     this.selectedChallengeIds,
     required this.createdAt,
     this.updatedAt,
+    this.completedAt,
+    this.isToday = false,
+    this.myRole,
     this.feedbackSubmittedAt,
     this.viewerMustResubscribe = false,
+    this.hasReviewed = false,
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) {
@@ -222,6 +236,12 @@ class Collaboration {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
           : null,
+      completedAt: json['completed_at'] != null
+          ? DateTime.parse(json['completed_at'] as String)
+          : null,
+      isToday: _isScheduledToday(json['scheduled_date'] as String?),
+      myRole: json['my_role'] as String?,
+      hasReviewed: json['has_reviewed'] as bool? ?? false,
       feedbackSubmittedAt: json['feedback_submitted_at'] != null
           ? DateTime.parse(json['feedback_submitted_at'] as String)
           : null,
@@ -236,6 +256,17 @@ class Collaboration {
             json['viewer_resubscribe_required'],
       ),
     );
+  }
+
+  static bool _isScheduledToday(String? dateStr) {
+    if (dateStr == null) return false;
+    try {
+      final d = DateTime.parse(dateStr);
+      final now = DateTime.now();
+      return d.year == now.year && d.month == now.month && d.day == now.day;
+    } catch (_) {
+      return false;
+    }
   }
 
   static bool _parseBool(dynamic value) {
@@ -264,9 +295,15 @@ class Collaboration {
   final List<String>? selectedChallengeIds;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final DateTime? completedAt;
+  final bool isToday;
+  /// 'creator' | 'applicant' | null — set by the API for the authenticated viewer
+  final String? myRole;
 
-  /// Set once the business has submitted post-completion feedback. When null,
-  /// the mobile "Leave review" CTA is shown on completed collaborations.
+  /// True when the current viewer has already submitted a review for this collab.
+  final bool hasReviewed;
+
+  /// Set once the business has submitted post-completion feedback.
   final DateTime? feedbackSubmittedAt;
 
   /// True only when the VIEWER is a business whose subscription lapsed while

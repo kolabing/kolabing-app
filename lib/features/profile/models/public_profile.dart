@@ -62,6 +62,9 @@ class PublicProfile {
     this.website,
     this.gallery = const [],
     this.pastCollaborations = const [],
+    this.completedKolabsCount,
+    this.reviewCount = 0,
+    this.averageRating,
   });
 
   factory PublicProfile.fromJson(Map<String, dynamic> json) => PublicProfile(
@@ -96,6 +99,13 @@ class PublicProfile {
             ?.map((e) => PastCollaboration.fromJson(e as Map<String, dynamic>))
             .toList() ??
         const [],
+    completedKolabsCount: json['completed_kolabs_count'] as int?,
+    reviewCount:
+        (json['review_stats'] as Map<String, dynamic>?)?['review_count']
+            as int? ?? 0,
+    averageRating:
+        (json['review_stats'] as Map<String, dynamic>?)?['average_rating']
+            as double?,
   );
 
   final String id;
@@ -115,6 +125,16 @@ class PublicProfile {
   final List<GalleryPhoto> gallery;
   final List<PastCollaboration> pastCollaborations;
 
+  /// Authoritative count from backend. Falls back to pastCollaborations.length
+  /// when backend hasn't returned the field yet (older payloads).
+  final int? completedKolabsCount;
+
+  /// Number of reviews received.
+  final int reviewCount;
+
+  /// Average star rating (null when no reviews yet).
+  final double? averageRating;
+
   String get initial =>
       displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
 
@@ -123,7 +143,8 @@ class PublicProfile {
 
   bool get hasAbout => about != null && about!.isNotEmpty;
   bool get hasGallery => gallery.isNotEmpty;
-  bool get hasCollaborations => pastCollaborations.isNotEmpty;
+  int get kolabsCount => completedKolabsCount ?? pastCollaborations.length;
+  bool get hasCollaborations => kolabsCount > 0;
   bool get hasSocialLinks =>
       (instagram != null && instagram!.isNotEmpty) ||
       (tiktok != null && tiktok!.isNotEmpty) ||
@@ -146,6 +167,9 @@ class PublicProfile {
   PublicProfile copyWith({
     List<GalleryPhoto>? gallery,
     List<PastCollaboration>? pastCollaborations,
+    int? completedKolabsCount,
+    int? reviewCount,
+    double? averageRating,
   }) => PublicProfile(
     id: id,
     userType: userType,
@@ -160,6 +184,9 @@ class PublicProfile {
     website: website,
     gallery: gallery ?? this.gallery,
     pastCollaborations: pastCollaborations ?? this.pastCollaborations,
+    completedKolabsCount: completedKolabsCount ?? this.completedKolabsCount,
+    reviewCount: reviewCount ?? this.reviewCount,
+    averageRating: averageRating ?? this.averageRating,
   );
 }
 

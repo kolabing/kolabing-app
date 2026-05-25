@@ -129,38 +129,6 @@ class StatsScreen extends ConsumerWidget {
               color: KolabingColors.onPrimary.withValues(alpha: 0.9),
             ),
           ),
-          const SizedBox(height: KolabingSpacing.md),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const UiIcon(
-                  icon: UiIconSlug.trophy,
-                  size: 16,
-                  color: KolabingColors.onPrimary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  stats.globalRank != null
-                      ? 'Global Rank #${stats.globalRank}'
-                      : 'Unranked',
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -327,16 +295,6 @@ class StatsScreen extends ConsumerWidget {
         const SizedBox(height: KolabingSpacing.sm),
         Row(
           children: [
-            Expanded(
-              child: _buildActionButton(
-                context,
-                LucideIcons.trophy,
-                'Leaderboard',
-                () => context.push('/attendee/leaderboard'),
-                iconSlug: UiIconSlug.trophy,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: _buildActionButton(
                 context,

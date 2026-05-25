@@ -117,6 +117,12 @@ class PublicProfileScreen extends ConsumerWidget {
                 _buildCollaborationsSection(profile),
                 const SizedBox(height: KolabingSpacing.md),
 
+                // Review reputation (shown only when reviews exist)
+                if (profile.reviewCount > 0) ...[
+                  _ReviewReputationCard(profile: profile),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
+
                 // Social links
                 if (profile.hasSocialLinks) ...[
                   _buildSocialLinksSection(context, profile),
@@ -288,7 +294,7 @@ class PublicProfileScreen extends ConsumerWidget {
   Widget _buildCollaborationsSection(PublicProfile profile) => _SectionCard(
     icon: LucideIcons.trophy,
     title: 'Past Collaborations',
-    count: profile.pastCollaborations.length,
+    count: profile.kolabsCount,
     child: profile.hasCollaborations
         ? SizedBox(
             height: 110,
@@ -765,4 +771,54 @@ class _SendKolabBottomBar extends ConsumerWidget {
       ),
     ),
   );
+}
+
+// =============================================================================
+// Review Reputation Card
+// =============================================================================
+
+class _ReviewReputationCard extends StatelessWidget {
+  const _ReviewReputationCard({required this.profile});
+
+  final PublicProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final avg = profile.averageRating;
+    final count = profile.reviewCount;
+
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(color: KolabingColors.border),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.star_rounded,
+            size: 22,
+            color: KolabingColors.primary,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            avg != null ? avg.toStringAsFixed(1) : '—',
+            style: GoogleFonts.rubik(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.textPrimary,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '($count ${count == 1 ? 'review' : 'reviews'})',
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.textTertiary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -13,6 +13,7 @@ import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
 import '../models/wallet_model.dart';
 import '../providers/wallet_provider.dart';
+import '../utils/xp_tier.dart';
 
 /// Wallet screen showing points balance, badges, referral code, and history.
 ///
@@ -56,7 +57,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         backgroundColor: KolabingColors.background,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'MY WALLET',
+          'XP & REPUTATION',
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -94,8 +95,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
             const SizedBox(height: KolabingSpacing.lg),
 
-            // Section 4 - Points History
-            _buildSectionHeader('POINTS HISTORY'),
+            // Section 4 - XP History
+            _buildSectionHeader('XP HISTORY'),
             const SizedBox(height: KolabingSpacing.sm),
             _buildPointsHistory(state),
 
@@ -155,7 +156,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'AVAILABLE POINTS',
+            'XP POINTS',
             style: GoogleFonts.rubik(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -166,81 +167,81 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
           const SizedBox(height: KolabingSpacing.md),
 
-          // EUR value and progress
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'EUR ${wallet.eurValue.toStringAsFixed(2)}',
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
-                ),
-              ),
-              Text(
-                '${wallet.availablePoints} / ${WalletModel.withdrawalThreshold} pts',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: KolabingSpacing.xs),
-
-          // Progress bar
-          ClipRRect(
-            borderRadius: KolabingRadius.borderRadiusRound,
-            child: LinearProgressIndicator(
-              value: wallet.progress,
-              minHeight: 8,
-              backgroundColor: KolabingColors.onPrimary.withValues(alpha: 0.15),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                KolabingColors.onPrimary,
-              ),
-            ),
-          ),
+          // Tier badge
+          _buildTierBadge(wallet.availablePoints),
 
           const SizedBox(height: KolabingSpacing.sm),
 
-          // Status row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (wallet.pendingWithdrawal)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.sm,
-                    vertical: KolabingSpacing.xxs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: KolabingColors.onPrimary.withValues(alpha: 0.15),
-                    borderRadius: KolabingRadius.borderRadiusRound,
-                  ),
-                  child: Text(
-                    'WITHDRAWAL PENDING',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                      color: KolabingColors.onPrimary,
-                    ),
-                  ),
-                )
-              else
-                const SizedBox.shrink(),
-              Text(
-                'Total earned: ${wallet.points} pts',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
+          // Tier progress bar
+          _buildTierProgress(wallet.availablePoints),
+
+          const SizedBox(height: KolabingSpacing.xs),
+
+          // Total XP label
+          Text(
+            'Total XP: ${wallet.points}',
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTierBadge(int points) {
+    final tier = XpTier.fromPoints(points);
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.onPrimary.withValues(alpha: 0.2),
+        borderRadius: KolabingRadius.borderRadiusRound,
+      ),
+      child: Text(
+        tier.displayName.toUpperCase(),
+        style: GoogleFonts.rubik(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
+          color: KolabingColors.onPrimary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTierProgress(int points) {
+    final tier = XpTier.fromPoints(points);
+    final progress = tier.progressFor(points);
+    final nextThreshold = tier.nextThreshold;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ClipRRect(
+          borderRadius: KolabingRadius.borderRadiusRound,
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 6,
+            backgroundColor: KolabingColors.onPrimary.withValues(alpha: 0.15),
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              KolabingColors.onPrimary,
+            ),
+          ),
+        ),
+        if (nextThreshold != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            '$points / $nextThreshold XP to next tier',
+            style: GoogleFonts.openSans(
+              fontSize: 11,
+              color: KolabingColors.onPrimary.withValues(alpha: 0.65),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -397,12 +398,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           // Tier explanation
           _buildTierRow(
             '1-month referral',
-            '50 pts (EUR 10)',
+            '+50 XP',
           ),
           const SizedBox(height: KolabingSpacing.xs),
           _buildTierRow(
             '4-month referral',
-            '100 pts (EUR 20)',
+            '+100 XP',
           ),
         ],
       ),
