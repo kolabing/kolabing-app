@@ -90,8 +90,20 @@ enum AuthStatus {
 
 /// Auth state notifier for managing authentication
 class AuthNotifier extends Notifier<AuthState> {
+  StreamSubscription<AuthSessionChange>? _sessionChangeSubscription;
+  bool _isExplicitLogoutInProgress = false;
+  bool _userScopedInvalidationScheduled = false;
+
   @override
   AuthState build() {
+    _sessionChangeSubscription ??= AuthService.sessionChanges.listen(
+      _handleSessionChange,
+    );
+    ref.onDispose(() {
+      unawaited(_sessionChangeSubscription?.cancel());
+      _sessionChangeSubscription = null;
+    });
+
     if (Firebase.apps.isNotEmpty) {
       NotificationService.instance.onTokenRefresh((token) {
         unawaited(_registerDeviceToken(token));
@@ -101,6 +113,34 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   AuthService get _authService => ref.read(authServiceProvider);
+
+  void _handleSessionChange(AuthSessionChange change) {
+    if (change != AuthSessionChange.cleared || _isExplicitLogoutInProgress) {
+      return;
+    }
+
+    if (state.status == AuthStatus.unauthenticated &&
+        state.user == null &&
+        state.token == null) {
+      return;
+    }
+
+    state = const AuthState(status: AuthStatus.unauthenticated);
+    _scheduleUserScopedInvalidation();
+    unawaited(OneSignalService.instance.logout());
+  }
+
+  void _scheduleUserScopedInvalidation() {
+    if (_userScopedInvalidationScheduled) {
+      return;
+    }
+
+    _userScopedInvalidationScheduled = true;
+    Future<void>.microtask(() {
+      _userScopedInvalidationScheduled = false;
+      invalidateUserScopedProviders(ref);
+    });
+  }
 
   /// Sign in with email and password
   ///
@@ -116,14 +156,6 @@ class AuthNotifier extends Notifier<AuthState> {
         email: email,
         password: password,
       );
-
-      // A new session has started (same or different account). The auth
-      // service has already written the new token and rotated its session
-      // epoch, so tear down any user-scoped provider state left over from a
-      // previous session BEFORE those providers fire their first request.
-      // Without this, Explore/Home/Applications/Profile keep serving the
-      // previous account's cached data until a full app restart.
-      invalidateUserScopedProviders(ref);
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
@@ -145,8 +177,9 @@ class AuthNotifier extends Notifier<AuthState> {
         errorMessage: e.message,
         isNetworkError: true,
       );
-    } on Exception catch (e) {
+    } on Object catch (e, st) {
       debugPrint('Sign in error: $e');
+      debugPrint('$st');
       state = state.copyWith(
         status: AuthStatus.error,
         error: 'An unexpected error occurred',
@@ -166,10 +199,6 @@ class AuthNotifier extends Notifier<AuthState> {
 
     try {
       final response = await _authService.loginWithGoogle();
-
-      // Tear down previous-session provider state before the new session's
-      // providers fire their first request (see signInWithEmail).
-      invalidateUserScopedProviders(ref);
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
@@ -195,8 +224,9 @@ class AuthNotifier extends Notifier<AuthState> {
         errorMessage: e.message,
         isNetworkError: true,
       );
-    } on Exception catch (e) {
+    } on Object catch (e, st) {
       debugPrint('Sign in error: $e');
+      debugPrint('$st');
       state = state.copyWith(
         status: AuthStatus.error,
         error: 'An unexpected error occurred',
@@ -241,21 +271,15 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Call after a successful REGISTRATION (account creation) — onboarding
-  /// (business/community) and attendee register. Mirrors the post-login
-  /// sequence: tear down any user-scoped provider state left over from a
-  /// previous (signed-out) session BEFORE the new session's providers fire,
-  /// then resolve the authenticated user. Without this, a sign-out ->
-  /// create-account leaves Home/Explore/Applications/Profile showing
-  /// "session expired" until a full app restart (same root cause the login
-  /// path already handles).
+  /// (business/community) and attendee register.
   Future<void> onRegistered() async {
-    invalidateUserScopedProviders(ref);
     await checkAuthStatus();
     unawaited(_registerFcmToken());
   }
 
   /// Logout current user
   Future<void> logout() async {
+    _isExplicitLogoutInProgress = true;
     state = state.copyWith(status: AuthStatus.loading);
 
     try {
@@ -271,13 +295,13 @@ class AuthNotifier extends Notifier<AuthState> {
     } on Exception catch (e) {
       debugPrint('Logout error: $e');
     } finally {
-      // Centralised teardown of all user-scoped provider state. This runs for
-      // EVERY logout path (profile screens, router error page, account
-      // deletion), not just the profile screen's signOut(), so no stale
-      // per-account data survives into the next session. The auth service has
-      // already purged the cached token + rotated its session epoch.
-      invalidateUserScopedProviders(ref);
+      // Publish the signed-out auth state FIRST so the app can immediately
+      // leave protected shells before any always-mounted tab provider rebuilds
+      // into a "session expired" error screen during teardown.
       state = const AuthState(status: AuthStatus.unauthenticated);
+      _scheduleUserScopedInvalidation();
+
+      _isExplicitLogoutInProgress = false;
     }
   }
 
@@ -289,10 +313,36 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> _registerFcmToken() async {
+    await _registerFcmTokenWithRetry();
+  }
+
+  Future<void> syncPushPermissionGrant() async {
+    final user = state.user;
+    if (!state.isAuthenticated || user == null) {
+      return;
+    }
+
     try {
-      final fcmToken = await NotificationService.instance.getToken();
-      if (fcmToken != null) {
-        await _registerDeviceToken(fcmToken);
+      await OneSignalService.instance.syncUserAfterPermissionGrant(user);
+    } on Exception catch (e) {
+      debugPrint('[OneSignal] Post-permission sync error: $e');
+    }
+
+    await _registerFcmTokenWithRetry(attempts: 4);
+  }
+
+  Future<void> _registerFcmTokenWithRetry({int attempts = 1}) async {
+    try {
+      for (var attempt = 0; attempt < attempts; attempt++) {
+        final fcmToken = await NotificationService.instance.getToken();
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          await _registerDeviceToken(fcmToken);
+          return;
+        }
+
+        if (attempt < attempts - 1) {
+          await Future<void>.delayed(const Duration(milliseconds: 750));
+        }
       }
     } on Exception catch (e) {
       debugPrint('[FCM] Token registration error: $e');
@@ -336,10 +386,6 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final response = await _authService.loginWithApple();
 
-      // Tear down previous-session provider state before the new session's
-      // providers fire their first request (see signInWithEmail).
-      invalidateUserScopedProviders(ref);
-
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
@@ -367,8 +413,9 @@ class AuthNotifier extends Notifier<AuthState> {
         errorMessage: e.message,
         isNetworkError: true,
       );
-    } on Exception catch (e) {
+    } on Object catch (e, st) {
       debugPrint('Apple sign in error: $e');
+      debugPrint('$st');
       state = state.copyWith(
         status: AuthStatus.error,
         error: 'An unexpected error occurred',

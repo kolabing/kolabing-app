@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Box outline (open/empty) -->
+  <path d="M10 28l22-16 22 16v26H10V28z" stroke="#0D0D0D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Open lid flaps -->
+  <path d="M10 28l10-6" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/>
+  <path d="M54 28l-10-6" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/>
+  <path d="M22 22l10-10 10 10" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Dash inside (empty indicator) -->
+  <line x1="24" y1="40" x2="40" y2="40" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3"/>
+</svg>

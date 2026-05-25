@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
+import 'features/auth/providers/auth_provider.dart';
 import 'services/global_network_banner_service.dart';
 import 'services/notification_service.dart';
 import 'services/one_signal_service.dart';
@@ -59,5 +60,82 @@ class KolabingApp extends StatelessWidget {
     theme: KolabingTheme.lightTheme,
     themeMode: ThemeMode.light,
     routerConfig: kolabingRouter,
+    builder: (context, child) =>
+        _AuthSessionRedirector(child: child ?? const SizedBox.shrink()),
   );
+}
+
+class _AuthSessionRedirector extends ConsumerStatefulWidget {
+  const _AuthSessionRedirector({required this.child});
+
+  final Widget child;
+
+  @override
+  ConsumerState<_AuthSessionRedirector> createState() =>
+      _AuthSessionRedirectorState();
+}
+
+class _AuthSessionRedirectorState
+    extends ConsumerState<_AuthSessionRedirector> {
+  static const Set<String> _publicPaths = <String>{
+    KolabingRoutes.splash,
+    KolabingRoutes.welcome,
+    KolabingRoutes.login,
+    KolabingRoutes.userTypeSelection,
+    KolabingRoutes.attendeeRegister,
+    KolabingRoutes.forgotPassword,
+    KolabingRoutes.resetPassword,
+  };
+
+  bool _hadAuthenticatedSession = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _hadAuthenticatedSession = ref.read(authProvider).isAuthenticated;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.isAuthenticated) {
+        _hadAuthenticatedSession = true;
+        return;
+      }
+
+      if (next.status == AuthStatus.loading) {
+        return;
+      }
+
+      final lostActiveSession =
+          _hadAuthenticatedSession ||
+          (previous?.isAuthenticated ?? false) ||
+          (previous?.status == AuthStatus.loading && previous?.user != null);
+      if (!lostActiveSession) {
+        return;
+      }
+
+      _hadAuthenticatedSession = false;
+
+      final currentPath =
+          kolabingRouter.routeInformationProvider.value.uri.path;
+      if (_publicPaths.contains(currentPath)) {
+        return;
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        final activePath =
+            kolabingRouter.routeInformationProvider.value.uri.path;
+        if (_publicPaths.contains(activePath)) {
+          return;
+        }
+        kolabingRouter.go(KolabingRoutes.login);
+      });
+    });
+
+    return widget.child;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/ui_icon.dart';
 
 /// A card widget displaying a stat with icon, label, and value
 class StatCard extends StatelessWidget {
@@ -13,6 +14,8 @@ class StatCard extends StatelessWidget {
     required this.label,
     required this.value,
     this.showBackground = false,
+    this.iconSlug,
+    this.iconVariant = UiIconVariant.minimal,
   });
 
   final IconData icon;
@@ -20,6 +23,11 @@ class StatCard extends StatelessWidget {
   final String label;
   final String value;
   final bool showBackground;
+
+  /// Optional UiIconSlug. When provided, [UiIcon] is rendered in place of
+  /// the [icon] IconData.
+  final UiIconSlug? iconSlug;
+  final UiIconVariant iconVariant;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +49,19 @@ class StatCard extends StatelessWidget {
             color: iconColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: iconColor,
+          child: Center(
+            child: iconSlug != null
+                ? UiIcon(
+                    icon: iconSlug!,
+                    size: 20,
+                    variant: iconVariant,
+                    color: iconColor,
+                  )
+                : Icon(
+                    icon,
+                    size: 20,
+                    color: iconColor,
+                  ),
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),

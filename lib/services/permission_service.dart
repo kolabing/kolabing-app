@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'notification_service.dart';
 import 'one_signal_service.dart';
 
 /// Service for managing app permissions (location & notifications).
@@ -64,6 +65,12 @@ class PermissionService {
   /// Request notification permission. Returns the resulting status.
   Future<PermissionStatus> requestNotificationPermission() async {
     try {
+      try {
+        await NotificationService.instance.requestPermission();
+      } on Exception catch (e) {
+        debugPrint('[PermissionService] FCM permission error: $e');
+      }
+
       await OneSignalService.instance.requestPermission();
       final status = await Permission.notification.status;
       debugPrint('[PermissionService] Notification permission: $status');

@@ -5,16 +5,14 @@ import 'package:lucide_icons/lucide_icons.dart';
 // Point Event Type
 // =============================================================================
 
-/// Types of point events that can appear in the ledger.
+/// Types of XP events that can appear in the ledger.
 enum PointEventType {
   collaborationComplete,
   reviewPosted,
   ugcPosted,
-  referral1m,
-  referral4m,
+  referralConversion,
   withdrawal;
 
-  /// Human-readable label for display.
   String get displayLabel {
     switch (this) {
       case PointEventType.collaborationComplete:
@@ -22,17 +20,14 @@ enum PointEventType {
       case PointEventType.reviewPosted:
         return 'Review Posted';
       case PointEventType.ugcPosted:
-        return 'UGC Posted';
-      case PointEventType.referral1m:
-        return 'Referral (1 month)';
-      case PointEventType.referral4m:
-        return 'Referral (4 months)';
+        return 'Content Posted';
+      case PointEventType.referralConversion:
+        return 'Referral Bonus';
       case PointEventType.withdrawal:
         return 'Withdrawal';
     }
   }
 
-  /// Snake-case value used for API serialization.
   String toApiValue() {
     switch (this) {
       case PointEventType.collaborationComplete:
@@ -41,16 +36,13 @@ enum PointEventType {
         return 'review_posted';
       case PointEventType.ugcPosted:
         return 'ugc_posted';
-      case PointEventType.referral1m:
-        return 'referral_1m';
-      case PointEventType.referral4m:
-        return 'referral_4m';
+      case PointEventType.referralConversion:
+        return 'referral_conversion';
       case PointEventType.withdrawal:
         return 'withdrawal';
     }
   }
 
-  /// Parse an API string back to the enum value.
   static PointEventType fromString(String value) {
     switch (value) {
       case 'collaboration_complete':
@@ -59,10 +51,11 @@ enum PointEventType {
         return PointEventType.reviewPosted;
       case 'ugc_posted':
         return PointEventType.ugcPosted;
+      // backend may send either; both map to referralConversion
+      case 'referral_conversion':
       case 'referral_1m':
-        return PointEventType.referral1m;
       case 'referral_4m':
-        return PointEventType.referral4m;
+        return PointEventType.referralConversion;
       case 'withdrawal':
         return PointEventType.withdrawal;
       default:
@@ -70,7 +63,6 @@ enum PointEventType {
     }
   }
 
-  /// Icon representing this event type.
   IconData get icon {
     switch (this) {
       case PointEventType.collaborationComplete:
@@ -79,9 +71,7 @@ enum PointEventType {
         return LucideIcons.star;
       case PointEventType.ugcPosted:
         return LucideIcons.camera;
-      case PointEventType.referral1m:
-        return LucideIcons.userPlus;
-      case PointEventType.referral4m:
+      case PointEventType.referralConversion:
         return LucideIcons.userPlus;
       case PointEventType.withdrawal:
         return LucideIcons.arrowDownToLine;
@@ -93,7 +83,6 @@ enum PointEventType {
 // Ledger Entry
 // =============================================================================
 
-/// A single entry in the user's points ledger (earned or spent).
 @immutable
 class LedgerEntry {
   const LedgerEntry({
@@ -114,31 +103,17 @@ class LedgerEntry {
     createdAt: _parseDateTime(json['created_at']),
   );
 
-  /// Unique identifier.
   final String id;
-
-  /// Points earned (positive) or spent (negative).
   final int points;
-
-  /// Type of event that triggered this entry.
   final PointEventType eventType;
-
-  /// Human-readable description.
   final String description;
-
-  /// When this entry was created.
   final DateTime createdAt;
 
-  /// Whether this entry represents earned points (positive value).
   bool get isEarned => points > 0;
 
   @override
   String toString() =>
       'LedgerEntry(id: $id, points: $points, type: ${eventType.toApiValue()})';
-
-  // ---------------------------------------------------------------------------
-  // Parsing helpers
-  // ---------------------------------------------------------------------------
 
   static int? _parseInt(Object? value) {
     if (value == null) return null;

@@ -12,6 +12,7 @@ import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
 import 'blurred_identity.dart';
+import 'category_icon.dart';
 
 /// Modal bottom sheet displaying full opportunity details.
 ///
@@ -603,13 +604,20 @@ class ExploreDetailSheet extends ConsumerWidget {
               color: KolabingColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(KolabingRadius.round),
             ),
-            child: Text(
-              category,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CategoryIcon(name: category, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  category,
+                  style: GoogleFonts.openSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.textPrimary,
+                  ),
+                ),
+              ],
             ),
           ),
         )

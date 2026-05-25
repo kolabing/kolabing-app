@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../../onboarding/models/city.dart';
 import '../models/opportunity.dart';
 import '../models/opportunity_filter.dart';
@@ -151,8 +152,10 @@ class OpportunityListState {
   );
 }
 
-class OpportunityListNotifier extends Notifier<OpportunityListState> {
+class OpportunityListNotifier extends Notifier<OpportunityListState>
+    with AuthScopeGuard<OpportunityListState> {
   late OpportunityService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   OpportunityListState build() {
@@ -161,13 +164,44 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
     // Watch filters and reload when they change
     final filters = ref.watch(opportunityFiltersProvider);
 
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: refresh,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+
     // Schedule initial load after build
-    Future.microtask(() => _load(filters));
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: () => _load(filters),
+      );
+    });
 
     return const OpportunityListState(isLoading: true);
   }
 
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const OpportunityListState();
+  }
+
   Future<void> _load(OpportunityFilters filters) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
+    final requestGeneration = ++_activeRequestGeneration;
     debugPrint(
       '[OpportunityList] _load called, filters: search=${filters.searchQuery}, creator=${filters.creatorType}',
     );
@@ -175,6 +209,9 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
 
     try {
       final result = await _service.getOpportunities(filters: filters, page: 1);
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint(
         '[OpportunityList] Loaded ${result.data.length} items, total=${result.total}',
       );
@@ -188,15 +225,27 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
         '[OpportunityList] State updated: isEmpty=${state.isEmpty}, isLoading=${state.isLoading}, error=${state.error}',
       );
     } on AuthException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('[OpportunityList] AuthException: ${e.message}');
       state = state.copyWith(isLoading: false, error: e.message);
     } on ApiException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('[OpportunityList] ApiException: ${e.error.message}');
       state = state.copyWith(isLoading: false, error: e.error.message);
     } on NetworkException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('[OpportunityList] NetworkException: ${e.message}');
       state = state.copyWith(isLoading: false, error: e.message);
     } on Exception catch (e, st) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('[OpportunityList] Error: $e');
       debugPrint('[OpportunityList] Stack: $st');
       state = state.copyWith(isLoading: false, error: 'Failed to load Kolabs');
@@ -209,16 +258,26 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
   }
 
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
     final filters = ref.read(opportunityFiltersProvider);
+    final requestGeneration = _activeRequestGeneration;
 
     try {
       final result = await _service.getOpportunities(
         filters: filters,
         page: state.currentPage + 1,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         opportunities: [...state.opportunities, ...result.data],
         currentPage: result.currentPage,
@@ -227,6 +286,9 @@ class OpportunityListNotifier extends Notifier<OpportunityListState> {
         isLoadingMore: false,
       );
     } on Exception catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load more error: $e');
       state = state.copyWith(isLoadingMore: false);
     }
@@ -259,7 +321,8 @@ final myOpportunitiesStatusProvider =
       MyOpportunitiesStatusNotifier.new,
     );
 
-class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
+class MyOpportunitiesNotifier extends Notifier<OpportunityListState>
+    with AuthScopeGuard<OpportunityListState> {
   late OpportunityService _service;
   int _activeRequestGeneration = 0;
 
@@ -269,12 +332,42 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
 
     final status = ref.watch(myOpportunitiesStatusProvider);
 
-    Future.microtask(() => _load(status));
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: refresh,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: () => _load(status),
+      );
+    });
 
     return const OpportunityListState(isLoading: true);
   }
 
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const OpportunityListState();
+  }
+
   Future<void> _load(String? status) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
     final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(
       isLoading: true,
@@ -327,6 +420,12 @@ class MyOpportunitiesNotifier extends Notifier<OpportunityListState> {
   }
 
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);

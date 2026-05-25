@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../widgets/category_icon.dart';
 import '../../opportunity/models/opportunity.dart';
 
 /// Card widget for displaying an opportunity in the explore list
@@ -167,15 +168,22 @@ class OpportunityCard extends StatelessWidget {
                     color: KolabingColors.primary.withValues(alpha: 0.1),
                     borderRadius: KolabingRadius.borderRadiusRound,
                   ),
-                  child: Text(
-                    cat,
-                    style: GoogleFonts.openSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CategoryIcon(name: cat, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        cat,
+                        style: GoogleFonts.openSans(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? KolabingColors.textOnDark
+                              : KolabingColors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
                 ))
             .toList(),

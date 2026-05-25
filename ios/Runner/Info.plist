@@ -57,6 +57,8 @@
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Kolabing sends you notifications for new messages, collaboration updates, and application status changes.</string>
+	<key>OneSignal_app_groups_key</key>
+	<string>group.com.kolabing.kolabingapp.onesignal</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

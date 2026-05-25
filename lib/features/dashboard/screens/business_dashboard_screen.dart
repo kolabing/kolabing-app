@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
@@ -15,6 +16,7 @@ import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
+import '../widgets/dashboard_stat_card.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 
 /// Business Dashboard Screen
@@ -95,6 +97,10 @@ class _BusinessDashboardScreenState
         _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
+        // Stats grid 2x2
+        _buildStatsGrid(data),
+        const SizedBox(height: KolabingSpacing.lg),
+
         // Referral banner (rewards)
         const ReferralBannerCard(),
         const SizedBox(height: KolabingSpacing.lg),
@@ -146,6 +152,64 @@ class _BusinessDashboardScreenState
   );
 
   // ---------------------------------------------------------------------------
+  // Stats Grid
+  // ---------------------------------------------------------------------------
+
+  Widget _buildStatsGrid(BusinessDashboard data) => Column(
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: DashboardStatCard(
+              title: 'Published',
+              count: data.opportunities.published,
+              icon: LucideIcons.megaphone,
+              accentColor: KolabingColors.primary,
+              subtitle: '${data.opportunities.total} total requests',
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: DashboardStatCard(
+              title: 'Pending Applications',
+              count: data.applicationsReceived.pending,
+              icon: LucideIcons.clock,
+              iconSlug: UiIconSlug.clock,
+              accentColor: const Color(0xFFFF9800),
+              subtitle: '${data.applicationsReceived.total} total',
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: KolabingSpacing.sm),
+      Row(
+        children: [
+          Expanded(
+            child: DashboardStatCard(
+              title: 'Active Collabs',
+              count: data.collaborations.active,
+              icon: LucideIcons.users,
+              accentColor: const Color(0xFF4CAF50),
+              subtitle: '${data.collaborations.upcoming} upcoming',
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: DashboardStatCard(
+              title: 'Completed',
+              count: data.collaborations.completed,
+              icon: LucideIcons.checkCircle,
+              iconSlug: UiIconSlug.checkCircle,
+              accentColor: KolabingColors.info,
+              subtitle: '${data.collaborations.total} total',
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+
+  // ---------------------------------------------------------------------------
   // Quick Actions
   // ---------------------------------------------------------------------------
 
@@ -182,7 +246,7 @@ class _BusinessDashboardScreenState
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'CREATE KOLAB',
+                'CREATE COLLAB REQUEST',
                 maxLines: 1,
                 style: GoogleFonts.rubik(
                   fontSize: 13,
@@ -219,7 +283,7 @@ class _BusinessDashboardScreenState
               ),
             ),
             child: Text(
-              'FIND A KOLAB',
+              'FIND A COLLAB',
               style: GoogleFonts.rubik(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -240,7 +304,7 @@ class _BusinessDashboardScreenState
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        'UPCOMING KOLABS',
+        'UPCOMING COLLABORATIONS',
         style: GoogleFonts.rubik(
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -272,8 +336,8 @@ class _BusinessDashboardScreenState
     padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
     child: Column(
       children: [
-        Icon(
-          LucideIcons.calendar,
+        UiIcon(
+          icon: UiIconSlug.calendar,
           size: 40,
           color: isDark
               ? KolabingColors.textOnDark.withValues(alpha: 0.5)
@@ -281,7 +345,7 @@ class _BusinessDashboardScreenState
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
-          'No upcoming Kolabs yet',
+          'No upcoming collaborations yet',
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,

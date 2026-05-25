@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
 import '../services/application_service.dart';
@@ -68,17 +69,49 @@ class ApplicationsState {
 // My Applications Provider (Sent applications)
 // =============================================================================
 
-class MyApplicationsNotifier extends Notifier<ApplicationsState> {
+class MyApplicationsNotifier extends Notifier<ApplicationsState>
+    with AuthScopeGuard<ApplicationsState> {
   late ApplicationService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   ApplicationsState build() {
     _service = ref.read(applicationServiceProvider);
-    Future.microtask(() => load());
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: load,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: load,
+      );
+    });
     return const ApplicationsState(isLoading: true);
   }
 
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const ApplicationsState();
+  }
+
   Future<void> load({String? status}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
+    final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
@@ -86,6 +119,9 @@ class MyApplicationsNotifier extends Notifier<ApplicationsState> {
         status: status,
         page: 1,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = ApplicationsState(
         applications: response.data,
         currentPage: response.currentPage,
@@ -93,20 +129,33 @@ class MyApplicationsNotifier extends Notifier<ApplicationsState> {
         total: response.total,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load applications error: $e');
       state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoading || !state.hasMore) return;
 
     state = state.copyWith(isLoading: true);
+    final requestGeneration = _activeRequestGeneration;
 
     try {
       final response = await _service.getMyApplications(
         page: state.currentPage + 1,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         applications: [...state.applications, ...response.data],
         isLoading: false,
@@ -115,6 +164,9 @@ class MyApplicationsNotifier extends Notifier<ApplicationsState> {
         total: response.total,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load more applications error: $e');
       state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
@@ -190,17 +242,49 @@ final myApplicationsProvider =
 // Received Applications Provider (For opportunity owners)
 // =============================================================================
 
-class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
+class ReceivedApplicationsNotifier extends Notifier<ApplicationsState>
+    with AuthScopeGuard<ApplicationsState> {
   late ApplicationService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   ApplicationsState build() {
     _service = ref.read(applicationServiceProvider);
-    Future.microtask(() => load());
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: load,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: load,
+      );
+    });
     return const ApplicationsState(isLoading: true);
   }
 
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const ApplicationsState();
+  }
+
   Future<void> load({String? status}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
+    final requestGeneration = ++_activeRequestGeneration;
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
@@ -208,6 +292,9 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
         status: status,
         page: 1,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = ApplicationsState(
         applications: response.data,
         currentPage: response.currentPage,
@@ -215,20 +302,33 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
         total: response.total,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load received applications error: $e');
       state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoading || !state.hasMore) return;
 
     state = state.copyWith(isLoading: true);
+    final requestGeneration = _activeRequestGeneration;
 
     try {
       final response = await _service.getReceivedApplications(
         page: state.currentPage + 1,
       );
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(
         applications: [...state.applications, ...response.data],
         isLoading: false,
@@ -237,6 +337,9 @@ class ReceivedApplicationsNotifier extends Notifier<ApplicationsState> {
         total: response.total,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       debugPrint('Load more received applications error: $e');
       state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
@@ -535,6 +638,11 @@ final chatMessagesProvider = NotifierProvider<ChatMessagesNotifier, ChatState>(
 
 final unreadMessagesCountProvider =
     FutureProvider.autoDispose<UnreadMessagesCount>((ref) async {
+      final authState = ref.watch(authProvider);
+      if (!authState.isAuthenticated || authState.user == null) {
+        return const UnreadMessagesCount(total: 0, byApplication: {});
+      }
+
       final service = ref.read(applicationServiceProvider);
       try {
         return await service.getUnreadMessagesCount();

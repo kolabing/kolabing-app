@@ -6,12 +6,15 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../business/screens/explore_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../rewards/providers/wallet_provider.dart';
+import '../../rewards/widgets/badge_celebration_overlay.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
@@ -64,6 +67,22 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Show badge celebration overlay whenever new badges are unlocked.
+    // Clear newlyEarnedBadges immediately (before the overlay shows) so that
+    // any subsequent wallet reload does not re-trigger the listener.
+    ref.listen<WalletState>(walletProvider, (_, next) {
+      if (next.newlyEarnedBadges.isEmpty) return;
+      final badge = next.badges.firstWhere(
+        (b) => b.slug == next.newlyEarnedBadges.first,
+        orElse: () => next.badges.first,
+      );
+      ref.read(walletProvider.notifier).clearNewBadges();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        BadgeCelebrationOverlay.show(context, badge, () {});
+      });
+    });
+
     // Badge counts from providers
     final dashboardState = ref.watch(dashboardProvider);
     final pendingSentCount =
@@ -78,27 +97,32 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
         label: 'Home',
+        iconSlug: UiIconSlug.home,
       ),
       const NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
         label: 'Explore',
+        iconSlug: UiIconSlug.compass,
       ),
       const NavItem(
         icon: LucideIcons.star,
         activeIcon: LucideIcons.star,
         label: 'My Kolabs',
+        iconSlug: UiIconSlug.star,
       ),
       NavItem(
         icon: LucideIcons.send,
         activeIcon: LucideIcons.send,
         label: 'Applications',
         badgeCount: badgeCount > 0 ? badgeCount : null,
+        iconSlug: UiIconSlug.send,
       ),
       const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
+        iconSlug: UiIconSlug.user,
       ),
     ];
 

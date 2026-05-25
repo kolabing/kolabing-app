@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../config/theme/colors.dart';
+import '../ui_icon.dart';
 
 /// Kolabing floating action button
 ///
@@ -46,7 +47,9 @@ class KolabingFAB extends StatelessWidget {
         backgroundColor: KolabingColors.primary,
         foregroundColor: KolabingColors.onPrimary,
         shape: const CircleBorder(),
-        child: Icon(icon, size: 24),
+        child: icon == LucideIcons.plus
+            ? const UiIcon(icon: UiIconSlug.plus, size: 24)
+            : Icon(icon, size: 24),
       ),
     );
   }

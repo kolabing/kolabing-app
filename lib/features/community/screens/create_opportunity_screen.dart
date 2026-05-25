@@ -16,6 +16,7 @@ import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../opportunity/utils/opportunity_share_launcher.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import '../../../widgets/category_icon.dart';
 import '../widgets/opportunity_publish_success_dialog.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
@@ -484,15 +485,22 @@ class _CreateOpportunityScreenState
                     width: isSelected ? 2 : 1,
                   ),
                 ),
-                child: Text(
-                  category,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected
-                        ? KolabingColors.textPrimary
-                        : KolabingColors.textSecondary,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CategoryIcon(name: category, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      category,
+                      style: GoogleFonts.openSans(
+                        fontSize: 13,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                        color: isSelected
+                            ? KolabingColors.textPrimary
+                            : KolabingColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -1922,11 +1930,22 @@ class _CreateOpportunityScreenState
         const SizedBox(height: KolabingSpacing.xxs),
         GestureDetector(
           onTap: () async {
+            final firstDate = DateUtils.dateOnly(minDate ?? DateTime.now());
+            final lastDate = DateUtils.dateOnly(
+              DateTime.now().add(const Duration(days: 365 * 2)),
+            );
+            final normalizedValue = DateUtils.dateOnly(value);
+            final initialDate = normalizedValue.isBefore(firstDate)
+                ? firstDate
+                : normalizedValue.isAfter(lastDate)
+                ? lastDate
+                : normalizedValue;
+
             final date = await showDatePicker(
               context: context,
-              initialDate: value,
-              firstDate: minDate ?? DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+              initialDate: initialDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
               builder: (context, child) => Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: const ColorScheme.light(

@@ -10,7 +10,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
-import '../models/wallet_model.dart';
+import '../models/wallet_model.dart' show XpModel;
 
 /// API base URL
 const String _baseUrl = ApiConfig.baseUrl;
@@ -53,7 +53,7 @@ class RewardsService {
   // ---------------------------------------------------------------------------
 
   /// GET /api/v1/gamification/wallet
-  Future<WalletModel> getWallet() async {
+  Future<XpModel> getWallet() async {
     final uri = Uri.parse('$_baseUrl/gamification/wallet');
     debugPrint('RewardsService: GET $uri');
 
@@ -68,7 +68,7 @@ class RewardsService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
-        return WalletModel.fromJson(data);
+        return XpModel.fromJson(data);
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');
       } else {
@@ -170,8 +170,8 @@ class RewardsService {
   // ---------------------------------------------------------------------------
 
   /// GET /api/v1/gamification/referral-code
-  /// Returns (code, referralLink) tuple.
-  Future<({String code, String link})> getReferralCode() async {
+  /// Returns code, referral link, and total qualified conversions.
+  Future<({String code, String link, int totalConversions})> getReferralCode() async {
     final uri = Uri.parse('$_baseUrl/gamification/referral-code');
     debugPrint('RewardsService: GET $uri');
 
@@ -186,11 +186,15 @@ class RewardsService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
+        final rawConversions = data['total_conversions'];
         return (
           code: data['code'] as String,
           link:
               data['referral_link'] as String? ??
               'https://kolabing.com/ref/${data['code']}',
+          totalConversions: rawConversions is int
+              ? rawConversions
+              : int.tryParse(rawConversions?.toString() ?? '') ?? 0,
         );
       } else if (response.statusCode == 401) {
         throw const AuthException('Session expired. Please sign in again.');

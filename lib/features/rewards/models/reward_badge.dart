@@ -5,7 +5,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 // Reward Badge Slug
 // =============================================================================
 
-/// Badge types available in the rewards system.
+/// Badge types available in the XP system.
+///
+/// IMPORTANT: [toApiValue] slug strings are hardcoded in the PHP backend enum
+/// (GamificationBadgeSlug). Never rename them here without a backend change.
 enum RewardBadgeSlug {
   firstKolab,
   contentCreator,
@@ -13,79 +16,74 @@ enum RewardBadgeSlug {
   referralPioneer,
   powerPartner;
 
-  /// Full display name for the badge.
   String get displayName {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
         return 'First Kolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Content Creator';
+        return 'Storyteller';
       case RewardBadgeSlug.communityEarner:
-        return 'Community Earner';
+        return 'Community Builder';
       case RewardBadgeSlug.referralPioneer:
-        return 'Referral Pioneer';
+        return 'Plugged In';
       case RewardBadgeSlug.powerPartner:
-        return 'Power Partner';
+        return 'Momentum Club';
     }
   }
 
-  /// Short name with line break for compact card display.
   String get shortName {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
         return 'First\nKolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Content\nCreator';
+        return 'Story-\nteller';
       case RewardBadgeSlug.communityEarner:
-        return 'Community\nEarner';
+        return 'Community\nBuilder';
       case RewardBadgeSlug.referralPioneer:
-        return 'Referral\nPioneer';
+        return 'Plugged\nIn';
       case RewardBadgeSlug.powerPartner:
-        return 'Power\nPartner';
+        return 'Momentum\nClub';
     }
   }
 
-  /// Longer description of what the badge represents.
   String get description {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
-        return 'Complete your first Kolab';
+        return 'Complete your first collaboration';
       case RewardBadgeSlug.contentCreator:
-        return 'Post 3 reviews for Kolabs';
+        return 'Post 3 reviews or content pieces';
       case RewardBadgeSlug.communityEarner:
-        return 'Earn 100 points through activities';
+        return 'Earn 250 XP through community activity';
       case RewardBadgeSlug.referralPioneer:
-        return 'Refer your first user to Kolabing';
+        return 'Refer your first business to Kolabing';
       case RewardBadgeSlug.powerPartner:
-        return 'Complete 5 Kolabs';
+        return 'Complete 10 collaborations';
     }
   }
 
-  /// Short requirement text shown on the badge card.
   String get requirement {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
-        return '1 Kolab needed';
+        return '1 collab needed';
       case RewardBadgeSlug.contentCreator:
         return '3 reviews needed';
       case RewardBadgeSlug.communityEarner:
-        return '100 pts needed';
+        return '250 XP needed';
       case RewardBadgeSlug.referralPioneer:
         return '1 referral needed';
       case RewardBadgeSlug.powerPartner:
-        return '5 Kolabs needed';
+        return '10 collabs needed';
     }
   }
 
-  /// Icon representing this badge.
   IconData get icon {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
         return LucideIcons.heartHandshake;
       case RewardBadgeSlug.contentCreator:
-        return LucideIcons.camera;
+        return LucideIcons.pencil;
       case RewardBadgeSlug.communityEarner:
-        return LucideIcons.coins;
+        return LucideIcons.users;
       case RewardBadgeSlug.referralPioneer:
         return LucideIcons.userPlus;
       case RewardBadgeSlug.powerPartner:
@@ -93,7 +91,6 @@ enum RewardBadgeSlug {
     }
   }
 
-  /// Snake-case value for API serialization.
   String toApiValue() {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
@@ -109,7 +106,6 @@ enum RewardBadgeSlug {
     }
   }
 
-  /// Parse an API string back to the enum value.
   static RewardBadgeSlug fromString(String value) {
     switch (value) {
       case 'first_kolab':
@@ -132,7 +128,6 @@ enum RewardBadgeSlug {
 // Reward Badge
 // =============================================================================
 
-/// A badge in the rewards system, possibly unlocked by the user.
 @immutable
 class RewardBadge {
   const RewardBadge({
@@ -142,36 +137,21 @@ class RewardBadge {
   });
 
   factory RewardBadge.fromJson(Map<String, dynamic> json) => RewardBadge(
-    slug: RewardBadgeSlug.fromString(json['slug']?.toString() ?? 'first_kolab'),
-    isUnlocked: json['is_unlocked'] == true,
-    earnedAt: _parseDateTimeNullable(json['earned_at']),
-  );
+        slug: RewardBadgeSlug.fromString(
+            json['slug']?.toString() ?? 'first_kolab'),
+        isUnlocked: json['is_unlocked'] == true,
+        earnedAt: _parseDateTimeNullable(json['earned_at']),
+      );
 
-  /// Which badge this is.
   final RewardBadgeSlug slug;
-
-  /// Whether the user has unlocked this badge.
   final bool isUnlocked;
-
-  /// When the badge was earned, if unlocked.
   final DateTime? earnedAt;
 
-  /// Formatted date string for display (e.g. "Mar 15, 2026").
   String get earnedDateFormatted {
     if (earnedAt == null) return '';
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[earnedAt!.month - 1]} ${earnedAt!.day}, ${earnedAt!.year}';
   }
@@ -179,10 +159,6 @@ class RewardBadge {
   @override
   String toString() =>
       'RewardBadge(slug: ${slug.toApiValue()}, unlocked: $isUnlocked)';
-
-  // ---------------------------------------------------------------------------
-  // Parsing helpers
-  // ---------------------------------------------------------------------------
 
   static DateTime? _parseDateTimeNullable(Object? value) {
     if (value == null) return null;

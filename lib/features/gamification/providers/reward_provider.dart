@@ -158,15 +158,40 @@ final spinProvider = NotifierProvider<SpinNotifier, SpinState>(
 // =============================================================================
 
 /// Provider for user's reward wallet
-final myRewardsProvider = FutureProvider<RewardWalletResponse>((ref) async {
+final myRewardsProvider = FutureProvider.autoDispose<RewardWalletResponse>((
+  ref,
+) async {
+  final authState = ref.watch(authProvider);
+  if (!authState.isAuthenticated || authState.user == null) {
+    return const RewardWalletResponse(
+      rewards: <RewardClaim>[],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
+      perPage: 10,
+    );
+  }
+
   final service = ref.watch(rewardServiceProvider);
   return service.getMyRewards();
 });
 
 /// Provider for paginated rewards
 final myRewardsPaginatedProvider =
-    FutureProvider.family<RewardWalletResponse, ({int page, int limit})>(
+    FutureProvider.autoDispose
+        .family<RewardWalletResponse, ({int page, int limit})>(
         (ref, params) async {
+  final authState = ref.watch(authProvider);
+  if (!authState.isAuthenticated || authState.user == null) {
+    return RewardWalletResponse(
+      rewards: const <RewardClaim>[],
+      currentPage: params.page,
+      totalPages: 1,
+      totalCount: 0,
+      perPage: params.limit,
+    );
+  }
+
   final service = ref.watch(rewardServiceProvider);
   return service.getMyRewards(page: params.page, limit: params.limit);
 });

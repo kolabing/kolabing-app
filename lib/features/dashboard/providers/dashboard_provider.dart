@@ -3,8 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../models/dashboard_model.dart';
 import '../services/dashboard_service.dart';
+
+final dashboardServiceProvider = Provider<DashboardService>((ref) {
+  final authService = ref.read(authServiceProvider);
+  return DashboardService(authService: authService);
+});
 
 /// Dashboard state
 class DashboardState {
@@ -53,29 +59,61 @@ class DashboardState {
 }
 
 /// Dashboard notifier for managing dashboard state
-class DashboardNotifier extends Notifier<DashboardState> {
-  late DashboardService _dashboardService;
+class DashboardNotifier extends Notifier<DashboardState>
+    with AuthScopeGuard<DashboardState> {
+  DashboardService get _dashboardService => ref.read(dashboardServiceProvider);
+  bool _isLoadingInProgress = false;
 
   @override
   DashboardState build() {
-    final authService = ref.read(authServiceProvider);
-    _dashboardService = DashboardService(authService: authService);
-    // Auto-load dashboard on initialization
-    Future.microtask(() => load());
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: load,
+        onSessionInvalidated: _invalidateActiveDashboardWork,
+      );
+    });
+    Future.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: load,
+      );
+    });
     return const DashboardState();
+  }
+
+  void _invalidateActiveDashboardWork() {
+    _isLoadingInProgress = false;
+  }
+
+  void _clearSignedOutState() {
+    state = const DashboardState(isLoading: false, isInitialized: false);
   }
 
   /// Load dashboard data from API
   Future<void> load() async {
-    // Prevent multiple simultaneous loads
-    if (state.isLoading && state.isInitialized) {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveDashboardWork,
+    )) {
       return;
     }
+
+    if (_isLoadingInProgress) {
+      return;
+    }
+    _isLoadingInProgress = true;
+    final sessionVersion = activeAuthSessionVersion;
 
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final response = await _dashboardService.getDashboard();
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
 
       if (response.isBusiness) {
         state = state.copyWith(
@@ -101,29 +139,45 @@ class DashboardNotifier extends Notifier<DashboardState> {
         );
       }
     } on ApiException catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: e.error.message,
       );
     } on AuthException catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: e.message,
       );
     } on NetworkException catch (e) {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: e.message,
       );
     } on Exception {
+      if (isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
         error: 'An unexpected error occurred',
       );
+    } finally {
+      if (!isStaleAuthSession(sessionVersion)) {
+        _isLoadingInProgress = false;
+      }
     }
   }
 

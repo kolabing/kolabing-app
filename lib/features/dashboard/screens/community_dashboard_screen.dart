@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
@@ -10,12 +11,12 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
-import '../../rewards/providers/wallet_provider.dart';
-import '../../rewards/widgets/points_wallet_card.dart';
+import '../../rewards/widgets/xp_progress_card.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
+import '../widgets/dashboard_stat_card.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 
 /// Community Dashboard Screen
@@ -96,28 +97,19 @@ class _CommunityDashboardScreenState
         _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
 
-        // Wallet card (rewards)
-        Consumer(
-          builder: (context, ref, _) {
-            final wallet = ref.watch(walletSummaryProvider);
-            if (wallet == null) return const SizedBox.shrink();
-            return Column(
-              children: [
-                PointsWalletCard(
-                  points: wallet.availablePoints,
-                  onTap: () => context.push(KolabingRoutes.communityWallet),
-                  onWithdraw: wallet.canWithdraw
-                      ? () =>
-                            context.push(KolabingRoutes.communityWalletWithdraw)
-                      : null,
-                ),
-                const SizedBox(height: KolabingSpacing.md),
-                const ReferralBannerCard(),
-                const SizedBox(height: KolabingSpacing.lg),
-              ],
-            );
-          },
+        // Stats grid 2x2
+        _buildStatsGrid(data),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // Referral banner first — community-growth action
+        const ReferralBannerCard(),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // XP progress card
+        XpProgressCard(
+          onTap: () => context.push(KolabingRoutes.communityWallet),
         ),
+        const SizedBox(height: KolabingSpacing.lg),
 
         // Quick actions
         _buildQuickActions(isDark),
@@ -168,6 +160,68 @@ class _CommunityDashboardScreenState
   }
 
   // ---------------------------------------------------------------------------
+  // Stats Grid
+  // ---------------------------------------------------------------------------
+
+  Widget _buildStatsGrid(CommunityDashboard data) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: DashboardStatCard(
+                title: 'Pending',
+                count: data.applicationsSent.pending,
+                icon: LucideIcons.clock,
+                iconSlug: UiIconSlug.clock,
+                iconVariant: UiIconVariant.expressive,
+                accentColor: const Color(0xFFFF9800),
+              ),
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: DashboardStatCard(
+                title: 'Accepted',
+                count: data.applicationsSent.accepted,
+                icon: LucideIcons.checkCircle,
+                iconSlug: UiIconSlug.checkCircle,
+                iconVariant: UiIconVariant.expressive,
+                accentColor: const Color(0xFF4CAF50),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: DashboardStatCard(
+                title: 'Active Collabs',
+                count: data.collaborations.active,
+                icon: LucideIcons.users,
+                iconSlug: UiIconSlug.target,
+                iconVariant: UiIconVariant.expressive,
+                accentColor: KolabingColors.info,
+              ),
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: DashboardStatCard(
+                title: 'Completed',
+                count: data.collaborations.completed,
+                icon: LucideIcons.trophy,
+                iconSlug: UiIconSlug.trophy,
+                iconVariant: UiIconVariant.expressive,
+                accentColor: const Color(0xFF9C27B0),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // Quick Actions
   // ---------------------------------------------------------------------------
 
@@ -192,7 +246,7 @@ class _CommunityDashboardScreenState
                 ),
               ),
               child: Text(
-                'FIND A KOLAB',
+                'FIND A COLLAB',
                 style: GoogleFonts.rubik(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -254,7 +308,7 @@ class _CommunityDashboardScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'UPCOMING KOLABS',
+          'UPCOMING COLLABORATIONS',
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -288,8 +342,8 @@ class _CommunityDashboardScreenState
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
       child: Column(
         children: [
-          Icon(
-            LucideIcons.calendar,
+          UiIcon(
+            icon: UiIconSlug.calendar,
             size: 40,
             color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)
@@ -297,7 +351,7 @@ class _CommunityDashboardScreenState
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'No upcoming Kolabs yet',
+            'No upcoming collaborations yet',
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,

@@ -4,10 +4,17 @@ import '../../application/providers/application_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../discovery/providers/discovery_provider.dart';
+import '../../gamification/providers/badge_provider.dart';
+import '../../gamification/providers/checkin_provider.dart';
+import '../../gamification/providers/discovery_provider.dart';
+import '../../gamification/providers/reward_provider.dart';
+import '../../gamification/providers/stats_provider.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../notification/providers/notification_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../profile/providers/gallery_provider.dart';
 import '../../profile/providers/public_profile_provider.dart';
+import '../../rewards/providers/wallet_provider.dart';
 
 /// Tears down every user-scoped Riverpod provider so that no in-memory state
 /// from one account leaks into the next session.
@@ -37,34 +44,49 @@ import '../../profile/providers/public_profile_provider.dart';
 /// listener detaches on navigation away, but we invalidate them defensively
 /// here too in case a listener is still attached at logout time.
 void invalidateUserScopedProviders(Ref ref) {
-  // Home / Dashboard
-  ref.invalidate(dashboardProvider);
+  ref
+    // Home / Dashboard
+    ..invalidate(dashboardProvider)
 
-  // Explore / discovery feed (role-scoped). This was the missing reset that
-  // caused Explore to keep showing the previous account's role feed.
-  ref.invalidate(discoveryListProvider);
-  ref.invalidate(discoveryFiltersProvider);
+    // Explore / discovery feed (role-scoped). This was the missing reset that
+    // caused Explore to keep showing the previous account's role feed.
+    ..invalidate(discoveryListProvider)
+    ..invalidate(discoveryFiltersProvider)
 
-  // Applications + chat
-  ref.invalidate(myApplicationsProvider);
-  ref.invalidate(receivedApplicationsProvider);
-  ref.invalidate(chatMessagesProvider);
-  ref.invalidate(unreadMessagesCountProvider);
+    // Applications + chat
+    ..invalidate(myApplicationsProvider)
+    ..invalidate(receivedApplicationsProvider)
+    ..invalidate(chatMessagesProvider)
+    ..invalidate(unreadMessagesCountProvider)
 
-  // Posts owned by the user (both parallel post systems)
-  ref.invalidate(opportunityListProvider);
-  ref.invalidate(opportunityFiltersProvider);
-  ref.invalidate(myOpportunitiesProvider);
-  ref.invalidate(myOpportunitiesStatusProvider);
-  ref.invalidate(myKolabsProvider);
-  ref.invalidate(myKolabsStatusProvider);
+    // Posts owned by the user (both parallel post systems)
+    ..invalidate(opportunityListProvider)
+    ..invalidate(opportunityFiltersProvider)
+    ..invalidate(myOpportunitiesProvider)
+    ..invalidate(myOpportunitiesStatusProvider)
+    ..invalidate(myKolabsProvider)
+    ..invalidate(myKolabsStatusProvider)
 
-  // Notifications
-  ref.invalidate(notificationProvider);
+    // Notifications
+    ..invalidate(notificationProvider)
 
-  // Public profile previews keyed by id (family)
-  ref.invalidate(publicProfileProvider);
+    // Wallet / XP / badges
+    ..invalidate(walletProvider)
+    ..invalidate(discoveryProvider)
+    ..invalidate(myStatsProvider)
+    ..invalidate(myRewardsProvider)
+    ..invalidate(myRewardsPaginatedProvider)
+    ..invalidate(allBadgesProvider)
+    ..invalidate(myBadgesProvider)
+    ..invalidate(spinProvider)
+    ..invalidate(redeemQRProvider)
+    ..invalidate(confirmRedeemProvider)
+    ..invalidate(checkinProvider)
 
-  // Settings / account profile (logo, subscription, prefs)
-  ref.invalidate(profileProvider);
+    // Public profile previews keyed by id (family)
+    ..invalidate(publicProfileProvider)
+
+    // Settings / account profile (logo, subscription, prefs)
+    ..invalidate(profileProvider)
+    ..invalidate(galleryProvider);
 }

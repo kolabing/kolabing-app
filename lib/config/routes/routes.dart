@@ -281,7 +281,7 @@ void connectNotificationRouter() {
     kolabingRouter.push(route);
   }
 
-  NotificationService.instance.connectRouter(navigateFromPush);
+  NotificationService.instance.registerNotificationTapHandler(navigateFromPush);
   OneSignalService.instance.connectRouter(navigateFromPush);
 }
 

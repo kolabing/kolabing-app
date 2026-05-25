@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../models/discovered_event.dart';
 import '../services/discovery_service.dart';
 
@@ -119,15 +120,52 @@ class DiscoveryState {
 }
 
 /// Notifier for discovery with location and pagination
-class DiscoveryNotifier extends Notifier<DiscoveryState> {
+class DiscoveryNotifier extends Notifier<DiscoveryState>
+    with AuthScopeGuard<DiscoveryState> {
+  int _activeRequestGeneration = 0;
+
   @override
-  DiscoveryState build() => const DiscoveryState();
+  DiscoveryState build() {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: _reloadWithCurrentLocation,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+    return const DiscoveryState();
+  }
 
   DiscoveryService get _service => ref.read(discoveryServiceProvider);
+
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const DiscoveryState();
+  }
+
+  Future<void> _reloadWithCurrentLocation() async {
+    if (!state.hasLocation) {
+      return;
+    }
+
+    await _fetchEvents();
+  }
 
   /// Set location and fetch events
   Future<void> setLocationAndDiscover(double lat, double lng,
       {double? radiusKm}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
     state = state.copyWith(
       latitude: lat,
       longitude: lng,
@@ -144,6 +182,12 @@ class DiscoveryNotifier extends Notifier<DiscoveryState> {
 
   /// Update search radius
   Future<void> updateRadius(double radiusKm) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (!state.hasLocation) return;
 
     state = state.copyWith(
@@ -160,6 +204,12 @@ class DiscoveryNotifier extends Notifier<DiscoveryState> {
 
   /// Load more events (pagination)
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (!state.hasLocation || state.isLoading || !state.hasMore) return;
 
     state = state.copyWith(
@@ -172,6 +222,12 @@ class DiscoveryNotifier extends Notifier<DiscoveryState> {
 
   /// Refresh events
   Future<void> refresh() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (!state.hasLocation) return;
 
     state = state.copyWith(
@@ -185,6 +241,9 @@ class DiscoveryNotifier extends Notifier<DiscoveryState> {
   }
 
   Future<void> _fetchEvents({bool append = false}) async {
+    final requestGeneration = ++_activeRequestGeneration;
+    final sessionVersion = activeAuthSessionVersion;
+
     try {
       final response = await _service.discoverEvents(
         latitude: state.latitude!,
@@ -192,6 +251,11 @@ class DiscoveryNotifier extends Notifier<DiscoveryState> {
         radiusKm: state.radiusKm,
         page: state.currentPage,
       );
+
+      if (requestGeneration != _activeRequestGeneration ||
+          isStaleAuthSession(sessionVersion)) {
+        return;
+      }
 
       final events =
           append ? [...state.events, ...response.events] : response.events;
@@ -202,11 +266,19 @@ class DiscoveryNotifier extends Notifier<DiscoveryState> {
         hasMore: response.hasMore,
       );
     } on DiscoveryException catch (e) {
+      if (requestGeneration != _activeRequestGeneration ||
+          isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: e.message,
       );
     } catch (e) {
+      if (requestGeneration != _activeRequestGeneration ||
+          isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to discover events',

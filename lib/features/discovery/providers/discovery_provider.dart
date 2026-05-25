@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../auth/utils/auth_scope_guard.dart';
 import '../models/discovery_filters.dart';
 import '../models/discovery_item.dart';
 import '../services/discovery_service.dart';
@@ -167,24 +168,62 @@ class DiscoveryListState {
   );
 }
 
-class DiscoveryListNotifier extends Notifier<DiscoveryListState> {
+class DiscoveryListNotifier extends Notifier<DiscoveryListState>
+    with AuthScopeGuard<DiscoveryListState> {
   late DiscoveryService _service;
+  int _activeRequestGeneration = 0;
 
   @override
   DiscoveryListState build() {
     _service = ref.read(discoveryServiceProvider);
     final filters = ref.watch(discoveryFiltersProvider);
 
-    Future<void>.microtask(() => _load(filters));
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      handleAuthStateChange(
+        previous,
+        next,
+        clearSignedOutState: _clearSignedOutState,
+        reloadAuthenticatedData: refresh,
+        onSessionInvalidated: _invalidateActiveRequests,
+      );
+    });
+
+    Future<void>.microtask(() {
+      return loadIfAuthenticated(
+        clearSignedOutState: _clearSignedOutState,
+        loadAuthenticatedData: () => _load(filters),
+      );
+    });
 
     return const DiscoveryListState(isLoading: true);
   }
 
+  void _invalidateActiveRequests() {
+    _activeRequestGeneration++;
+  }
+
+  void _clearSignedOutState() {
+    state = const DiscoveryListState();
+  }
+
   Future<void> _load(DiscoveryFilters filters) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
+    final requestGeneration = ++_activeRequestGeneration;
+    final sessionVersion = activeAuthSessionVersion;
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final result = await _service.getOpportunities(filters: filters, page: 1);
+      if (requestGeneration != _activeRequestGeneration ||
+          isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = DiscoveryListState(
         items: result.data,
         currentPage: result.currentPage,
@@ -192,13 +231,28 @@ class DiscoveryListNotifier extends Notifier<DiscoveryListState> {
         total: result.total,
       );
     } on AuthException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.message);
     } on ApiException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.error.message);
     } on NetworkException catch (e) {
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
       state = state.copyWith(isLoading: false, error: e.message);
     } on Exception {
-      state = state.copyWith(isLoading: false, error: 'Failed to load Kolabs');
+      if (requestGeneration != _activeRequestGeneration) {
+        return;
+      }
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to load discovery opportunities',
+      );
     }
   }
 
@@ -207,15 +261,27 @@ class DiscoveryListNotifier extends Notifier<DiscoveryListState> {
   }
 
   Future<void> loadMore() async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
     if (state.isLoadingMore || !state.hasMore) return;
 
     state = state.copyWith(isLoadingMore: true);
+    final requestGeneration = _activeRequestGeneration;
+    final sessionVersion = activeAuthSessionVersion;
 
     try {
       final result = await _service.getOpportunities(
         filters: ref.read(discoveryFiltersProvider),
         page: state.currentPage + 1,
       );
+      if (requestGeneration != _activeRequestGeneration ||
+          isStaleAuthSession(sessionVersion)) {
+        return;
+      }
 
       state = state.copyWith(
         items: <DiscoveryItem>[...state.items, ...result.data],
@@ -225,6 +291,10 @@ class DiscoveryListNotifier extends Notifier<DiscoveryListState> {
         isLoadingMore: false,
       );
     } on Exception {
+      if (requestGeneration != _activeRequestGeneration ||
+          isStaleAuthSession(sessionVersion)) {
+        return;
+      }
       state = state.copyWith(isLoadingMore: false);
     }
   }

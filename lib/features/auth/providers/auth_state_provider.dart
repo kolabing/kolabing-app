@@ -65,25 +65,24 @@ class SplashStateNotifier extends Notifier<SplashState> {
   /// Returns the navigation target route path.
   Future<String> initialize() async {
     try {
-      final authService = ref.read(authServiceProvider);
-      final token = await authService.getToken();
-      final storedUser = await authService.getStoredUser();
+      // Splash starts initialization from initState, so pushing authProvider
+      // state changes to the next event turn avoids Riverpod's
+      // "modify a provider while the widget tree was building" assertion on
+      // cold start.
+      await Future<void>.delayed(Duration.zero);
 
-      // Fresh launches should land on the welcome chooser, not jump straight
-      // into onboarding, unless we already know there is an authenticated user
-      // who needs to continue onboarding.
-      if (token == null) {
-        await OneSignalService.instance.logout();
-        state = state.copyWith(
-          isLoading: false,
-          navigationTarget: SplashNavigationTarget.welcome,
-        );
-        return KolabingRoutes.welcome;
-      }
+      // Resolve the persisted session through authProvider so the rest of the
+      // app sees the same authenticated state that splash routes on. Without
+      // this, splash could jump straight to a dashboard while authProvider
+      // remained `initial`, leaving providers like profileProvider stuck in an
+      // unauthenticated loading state until a full restart.
+      await ref.read(authProvider.notifier).checkAuthStatus();
+      final authState = ref.read(authProvider);
+      final user = authState.user;
 
-      final user = await authService.restoreSessionUser() ?? storedUser;
-      if (user == null) {
-        await OneSignalService.instance.logout();
+      // Fresh launches should land on the welcome chooser unless a valid
+      // session was restored into authProvider.
+      if (!authState.isAuthenticated || user == null) {
         state = state.copyWith(
           isLoading: false,
           navigationTarget: SplashNavigationTarget.welcome,
@@ -105,8 +104,6 @@ class SplashStateNotifier extends Notifier<SplashState> {
         dashboard = KolabingRoutes.communityDashboard;
         navTarget = SplashNavigationTarget.communityDashboard;
       }
-
-      await OneSignalService.instance.loginUser(user);
 
       // Check if the permission screen needs to be shown
       final hasShownPermissions = await PermissionService.instance

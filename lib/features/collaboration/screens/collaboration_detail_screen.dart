@@ -11,6 +11,8 @@ import '../../../config/theme/colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../rewards/providers/wallet_provider.dart';
+import '../../rewards/widgets/collaboration_reward_nudge.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../models/collaboration.dart';
 import '../models/collaboration_feedback.dart';
@@ -18,6 +20,7 @@ import '../providers/collaboration_detail_provider.dart';
 import '../providers/collaboration_feedback_provider.dart';
 import '../providers/collaborations_list_provider.dart';
 import '../widgets/collaboration_feedback_sheet.dart';
+import '../../../widgets/category_icon.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
 /// Both business and community users see this screen with role-aware content.
@@ -237,6 +240,16 @@ class _CollaborationBody extends ConsumerWidget {
             variant: (collaboration.viewerPartner?.isBusiness ?? isBusiness)
                 ? FeedbackVariant.business
                 : FeedbackVariant.community,
+          ),
+
+        // Post-completion: community users see a reward nudge (+1 point earned,
+        // prompt to post a review for another point).
+        if (interactive &&
+            collaboration.status == CollaborationStatus.completed &&
+            !isBusiness)
+          const Padding(
+            padding: EdgeInsets.only(bottom: KolabingSpacing.md),
+            child: CollaborationRewardNudge(),
           ),
 
         // Gamification: Challenges Setup
@@ -595,12 +608,18 @@ class _PartnerInfoCard extends StatelessWidget {
                     ),
                     if (partner.category != null) ...[
                       const SizedBox(height: 2),
-                      Text(
-                        partner.category!,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          color: KolabingColors.textSecondary,
-                        ),
+                      Row(
+                        children: [
+                          CategoryIcon(name: partner.category!, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            partner.category!,
+                            style: GoogleFonts.openSans(
+                              fontSize: 13,
+                              color: KolabingColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                     if (partner.city != null) ...[
@@ -1938,6 +1957,7 @@ class _FinishCollaborationSectionState
       ref.invalidate(collaborationDetailProvider(widget.collaborationId));
       ref.invalidate(collaborationsListProvider(CollaborationsFilter.active));
       ref.invalidate(collaborationsListProvider(CollaborationsFilter.finished));
+      ref.invalidate(walletProvider);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
