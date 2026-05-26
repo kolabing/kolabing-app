@@ -22,6 +22,9 @@ String resolveNotificationRoute({
     case 'application_accepted':
     case 'application_declined':
       return KolabingRoutes.applicationDetails.replaceFirst(':id', normalizedId);
+    case 'collab_day_reminder':
+    case 'collab_followup_reminder':
+      return KolabingRoutes.collaborationDetails.replaceFirst(':id', normalizedId);
     default:
       return KolabingRoutes.notifications;
   }

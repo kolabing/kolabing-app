@@ -374,6 +374,12 @@ class _NotificationTile extends StatelessWidget {
           KolabingColors.success.withValues(alpha: 0.15),
           const Color(0xFF155724),
         ),
+      NotificationType.collabDayReminder ||
+      NotificationType.collabFollowUpReminder => (
+          LucideIcons.calendarCheck,
+          KolabingColors.primary.withValues(alpha: 0.15),
+          KolabingColors.accentOrangeText,
+        ),
       NotificationType.unknown => (
           LucideIcons.bell,
           KolabingColors.surfaceVariant,

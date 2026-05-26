@@ -23,11 +23,11 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.contentCreator:
         return 'Storyteller';
       case RewardBadgeSlug.communityEarner:
-        return 'Community Builder';
-      case RewardBadgeSlug.referralPioneer:
-        return 'Plugged In';
-      case RewardBadgeSlug.powerPartner:
         return 'Momentum Club';
+      case RewardBadgeSlug.referralPioneer:
+        return 'Referral Pioneer';
+      case RewardBadgeSlug.powerPartner:
+        return 'Trusted Voice';
     }
   }
 
@@ -36,13 +36,13 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.firstKolab:
         return 'First\nKolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Story-\nteller';
+        return 'Story\nteller';
       case RewardBadgeSlug.communityEarner:
-        return 'Community\nBuilder';
-      case RewardBadgeSlug.referralPioneer:
-        return 'Plugged\nIn';
-      case RewardBadgeSlug.powerPartner:
         return 'Momentum\nClub';
+      case RewardBadgeSlug.referralPioneer:
+        return 'Referral\nPioneer';
+      case RewardBadgeSlug.powerPartner:
+        return 'Trusted\nVoice';
     }
   }
 
@@ -51,13 +51,13 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.firstKolab:
         return 'Complete your first collaboration';
       case RewardBadgeSlug.contentCreator:
-        return 'Post 3 reviews or content pieces';
+        return 'Share your story - post 3 collaboration reviews';
       case RewardBadgeSlug.communityEarner:
-        return 'Earn 250 XP through community activity';
+        return 'Keep the momentum - reach 100 XP';
       case RewardBadgeSlug.referralPioneer:
-        return 'Refer your first business to Kolabing';
+        return 'Grow the community - refer your first partner';
       case RewardBadgeSlug.powerPartner:
-        return 'Complete 10 collaborations';
+        return 'A trusted voice - complete 5 Kolabs';
     }
   }
 
@@ -68,11 +68,11 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.contentCreator:
         return '3 reviews needed';
       case RewardBadgeSlug.communityEarner:
-        return '250 XP needed';
+        return '100 XP needed';
       case RewardBadgeSlug.referralPioneer:
         return '1 referral needed';
       case RewardBadgeSlug.powerPartner:
-        return '10 collabs needed';
+        return '5 collabs needed';
     }
   }
 
@@ -137,11 +137,10 @@ class RewardBadge {
   });
 
   factory RewardBadge.fromJson(Map<String, dynamic> json) => RewardBadge(
-        slug: RewardBadgeSlug.fromString(
-            json['slug']?.toString() ?? 'first_kolab'),
-        isUnlocked: json['is_unlocked'] == true,
-        earnedAt: _parseDateTimeNullable(json['earned_at']),
-      );
+    slug: RewardBadgeSlug.fromString(json['slug']?.toString() ?? 'first_kolab'),
+    isUnlocked: json['is_unlocked'] == true,
+    earnedAt: _parseDateTimeNullable(json['earned_at']),
+  );
 
   final RewardBadgeSlug slug;
   final bool isUnlocked;
@@ -150,8 +149,18 @@ class RewardBadge {
   String get earnedDateFormatted {
     if (earnedAt == null) return '';
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[earnedAt!.month - 1]} ${earnedAt!.day}, ${earnedAt!.year}';
   }

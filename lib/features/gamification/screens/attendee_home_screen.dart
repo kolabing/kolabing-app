@@ -149,36 +149,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                             ),
                           ],
                         ),
-                        if (attendeeProfile?.globalRank != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: KolabingColors.primary,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  LucideIcons.trophy,
-                                  size: 16,
-                                  color: KolabingColors.onPrimary,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '#${attendeeProfile!.globalRank}',
-                                  style: GoogleFonts.rubik(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: KolabingColors.onPrimary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                       ],
                     ),
                     const SizedBox(height: KolabingSpacing.lg),

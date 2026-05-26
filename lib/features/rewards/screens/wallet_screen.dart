@@ -14,8 +14,8 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
-import '../models/xp_level.dart';
 import '../providers/wallet_provider.dart';
+import '../utils/xp_tier.dart';
 
 /// XP & Badges hub screen for community users.
 ///
@@ -59,7 +59,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         backgroundColor: KolabingColors.background,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'MY PROGRESS',
+          'XP & REPUTATION',
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -138,10 +138,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final wallet = state.wallet;
     if (wallet == null) return const SizedBox.shrink();
 
-    final level = wallet.level;
-    final progress = wallet.levelProgress;
-    final xpToNext = wallet.xpToNextLevel;
-
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -158,88 +154,104 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Level chip
-          _LevelChip(level: level),
-
-          const SizedBox(height: KolabingSpacing.md),
-
-          // XP total
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '${wallet.totalXp}',
-                style: GoogleFonts.rubik(
-                  fontSize: 52,
-                  fontWeight: FontWeight.w800,
-                  color: KolabingColors.onPrimary,
-                  height: 1.0,
-                ),
-              ),
-              const SizedBox(width: KolabingSpacing.xs),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  'XP',
-                  style: GoogleFonts.rubik(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onPrimary.withValues(alpha: 0.7),
-                  ),
-                ),
-              ),
-            ],
+          // Points display
+          Text(
+            '${wallet.totalXp}',
+            style: GoogleFonts.rubik(
+              fontSize: 48,
+              fontWeight: FontWeight.w800,
+              color: KolabingColors.onPrimary,
+              height: 1.1,
+            ),
           ),
-
-          const SizedBox(height: KolabingSpacing.sm),
-
-          // Progress bar
-          ClipRRect(
-            borderRadius: KolabingRadius.borderRadiusRound,
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: progress),
-              duration: const Duration(milliseconds: 800),
-              curve: Curves.easeOut,
-              builder: (_, value, __) => LinearProgressIndicator(
-                value: value,
-                minHeight: 10,
-                backgroundColor:
-                    KolabingColors.onPrimary.withValues(alpha: 0.2),
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  KolabingColors.onPrimary,
-                ),
-              ),
+          const SizedBox(height: KolabingSpacing.xxs),
+          Text(
+            'XP POINTS',
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+              color: KolabingColors.onPrimary.withValues(alpha: 0.7),
             ),
           ),
 
+          const SizedBox(height: KolabingSpacing.md),
+
+          // Tier badge
+          _buildTierBadge(wallet.totalXp),
+
           const SizedBox(height: KolabingSpacing.xs),
 
-          // Progress labels
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                level.isMaxLevel
-                    ? 'Max level reached!'
-                    : '$xpToNext XP to ${level.next?.title ?? ''}',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.8),
-                ),
-              ),
-              Text(
-                level.isMaxLevel
-                    ? '${wallet.totalXp} XP total'
-                    : '${wallet.totalXp} / ${(level.maxXp ?? 0) + 1} XP',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.6),
-                ),
-              ),
-            ],
+          // Tier progress bar
+          _buildTierProgress(wallet.totalXp),
+
+          const SizedBox(height: KolabingSpacing.xs),
+
+          // Total XP label
+          Text(
+            'Total XP: ${wallet.totalXp}',
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTierBadge(int points) {
+    final tier = XpTier.fromPoints(points);
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.onPrimary.withValues(alpha: 0.2),
+        borderRadius: KolabingRadius.borderRadiusRound,
+      ),
+      child: Text(
+        tier.displayName.toUpperCase(),
+        style: GoogleFonts.rubik(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
+          color: KolabingColors.onPrimary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTierProgress(int points) {
+    final tier = XpTier.fromPoints(points);
+    final progress = tier.progressFor(points);
+    final nextThreshold = tier.nextThreshold;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ClipRRect(
+          borderRadius: KolabingRadius.borderRadiusRound,
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 6,
+            backgroundColor: KolabingColors.onPrimary.withValues(alpha: 0.15),
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              KolabingColors.onPrimary,
+            ),
+          ),
+        ),
+        if (nextThreshold != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            '$points / $nextThreshold XP to next tier',
+            style: GoogleFonts.openSans(
+              fontSize: 11,
+              color: KolabingColors.onPrimary.withValues(alpha: 0.65),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -248,46 +260,46 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _buildMissionsCard() => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
         ),
-        child: Column(
-          children: [
-            _MissionRow(
-              icon: LucideIcons.heartHandshake,
-              label: 'Complete a collaboration',
-              xp: '+10 XP',
-            ),
-            const Divider(height: KolabingSpacing.md),
-            _MissionRow(
-              icon: LucideIcons.star,
-              label: 'Post a review',
-              xp: '+10 XP',
-            ),
-            const Divider(height: KolabingSpacing.md),
-            _MissionRow(
-              icon: LucideIcons.camera,
-              label: 'Share content (UGC)',
-              xp: '+10 XP',
-            ),
-            const Divider(height: KolabingSpacing.md),
-            _MissionRow(
-              icon: LucideIcons.userPlus,
-              label: 'Refer a business',
-              xp: '+50 XP',
-            ),
-          ],
+      ],
+    ),
+    child: Column(
+      children: [
+        _MissionRow(
+          icon: LucideIcons.heartHandshake,
+          label: 'Complete a collaboration',
+          xp: '+10 XP',
         ),
-      );
+        const Divider(height: KolabingSpacing.md),
+        _MissionRow(
+          icon: LucideIcons.star,
+          label: 'Post a review',
+          xp: '+10 XP',
+        ),
+        const Divider(height: KolabingSpacing.md),
+        _MissionRow(
+          icon: LucideIcons.camera,
+          label: 'Share content (UGC)',
+          xp: '+10 XP',
+        ),
+        const Divider(height: KolabingSpacing.md),
+        _MissionRow(
+          icon: LucideIcons.userPlus,
+          label: 'Refer a business',
+          xp: '+50 XP',
+        ),
+      ],
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // 3 — Badges
@@ -407,7 +419,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                      right: i < goal - 1 ? KolabingSpacing.xs : 0),
+                    right: i < goal - 1 ? KolabingSpacing.xs : 0,
+                  ),
                   child: Container(
                     height: 8,
                     decoration: BoxDecoration(
@@ -490,11 +503,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 child: SizedBox(
                   height: 48,
                   child: ElevatedButton.icon(
-                    onPressed: referralLink != null || state.referralCode != null
+                    onPressed:
+                        referralLink != null || state.referralCode != null
                         ? () => Share.share(
-                              referralLink ??
-                                  'Join Kolabing with my code: $referralCode',
-                            )
+                            referralLink ??
+                                'Join Kolabing with my code: $referralCode',
+                          )
                         : null,
                     icon: const Icon(LucideIcons.share2, size: 16),
                     label: Text('SHARE LINK', style: KolabingTextStyles.button),
@@ -514,12 +528,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   child: SizedBox(
                     height: 48,
                     child: OutlinedButton(
-                      onPressed: () => context
-                          .push(KolabingRoutes.communityWalletWithdraw),
+                      onPressed: () =>
+                          context.push(KolabingRoutes.communityWalletWithdraw),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: KolabingColors.textPrimary,
-                        side:
-                            const BorderSide(color: KolabingColors.textPrimary),
+                        side: const BorderSide(
+                          color: KolabingColors.textPrimary,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: KolabingRadius.borderRadiusMd,
                         ),
@@ -612,69 +627,31 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _buildSectionHeader(String title) => Text(
-        title,
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-          color: KolabingColors.textSecondary,
-        ),
-      );
+    title,
+    style: GoogleFonts.rubik(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 1.0,
+      color: KolabingColors.textSecondary,
+    ),
+  );
 
   Widget _buildEmptyPlaceholder(String message) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(KolabingSpacing.xl),
-        decoration: BoxDecoration(
-          color: KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusLg,
-          border: Border.all(color: KolabingColors.border),
-        ),
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textTertiary,
-          ),
-        ),
-      );
-}
-
-// =============================================================================
-// Level Chip
-// =============================================================================
-
-class _LevelChip extends StatelessWidget {
-  const _LevelChip({required this.level});
-
-  final XpLevel level;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xxs,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.onPrimary.withValues(alpha: 0.15),
-          borderRadius: KolabingRadius.borderRadiusRound,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(LucideIcons.shield, size: 12, color: KolabingColors.onPrimary),
-            const SizedBox(width: 4),
-            Text(
-              'LVL ${level.number} · ${level.title}',
-              style: GoogleFonts.rubik(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
-                color: KolabingColors.onPrimary,
-              ),
-            ),
-          ],
-        ),
-      );
+    width: double.infinity,
+    padding: const EdgeInsets.all(KolabingSpacing.xl),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: KolabingRadius.borderRadiusLg,
+      border: Border.all(color: KolabingColors.border),
+    ),
+    child: Text(
+      message,
+      textAlign: TextAlign.center,
+      style: KolabingTextStyles.bodyMedium.copyWith(
+        color: KolabingColors.textTertiary,
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -694,43 +671,38 @@ class _MissionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: KolabingColors.activeBg,
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-            child: Icon(icon, size: 18, color: KolabingColors.activeText),
+    children: [
+      Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: KolabingColors.activeBg,
+          borderRadius: KolabingRadius.borderRadiusMd,
+        ),
+        child: Icon(icon, size: 18, color: KolabingColors.activeText),
+      ),
+      const SizedBox(width: KolabingSpacing.sm),
+      Expanded(child: Text(label, style: KolabingTextStyles.bodyMedium)),
+      Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.sm,
+          vertical: KolabingSpacing.xxs,
+        ),
+        decoration: BoxDecoration(
+          color: KolabingColors.softYellow,
+          borderRadius: KolabingRadius.borderRadiusRound,
+        ),
+        child: Text(
+          xp,
+          style: GoogleFonts.rubik(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: KolabingColors.textPrimary,
           ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: Text(
-              label,
-              style: KolabingTextStyles.bodyMedium,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.sm,
-              vertical: KolabingSpacing.xxs,
-            ),
-            decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
-              borderRadius: KolabingRadius.borderRadiusRound,
-            ),
-            child: Text(
-              xp,
-              style: GoogleFonts.rubik(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-              ),
-            ),
-          ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }
 
 // =============================================================================
@@ -840,7 +812,9 @@ class _LedgerRow extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: isEarned ? KolabingColors.activeBg : KolabingColors.errorBg,
+                color: isEarned
+                    ? KolabingColors.activeBg
+                    : KolabingColors.errorBg,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -883,7 +857,9 @@ class _LedgerRow extends StatelessWidget {
                 vertical: KolabingSpacing.xxs,
               ),
               decoration: BoxDecoration(
-                color: isEarned ? KolabingColors.activeBg : KolabingColors.errorBg,
+                color: isEarned
+                    ? KolabingColors.activeBg
+                    : KolabingColors.errorBg,
                 borderRadius: KolabingRadius.borderRadiusRound,
               ),
               child: Text(
@@ -905,8 +881,18 @@ class _LedgerRow extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

@@ -11,13 +11,66 @@ import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/collaboration.dart';
 
-/// Provider for collaboration detail - uses mock data for now
+/// Provider for collaboration detail.
 final collaborationDetailProvider =
     FutureProvider.family<Collaboration?, String>((ref, id) async {
-      // Simulate network delay
-      await Future<void>.delayed(const Duration(milliseconds: 800));
-      return _mockCollaboration(id);
+      try {
+        return await fetchCollaborationDetail(id);
+      } on Exception catch (e) {
+        debugPrint('CollaborationDetailProvider: remote fetch failed: $e');
+        return _mockCollaboration(id);
+      }
     });
+
+Future<Collaboration?> fetchCollaborationDetail(String id) {
+  return _fetchCollaborationDetail(id, allowRetry: true);
+}
+
+Future<Collaboration?> _fetchCollaborationDetail(
+  String id, {
+  required bool allowRetry,
+}) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/collaborations/$id';
+  debugPrint('[D3] GET $url');
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+  );
+
+  debugPrint('[D3] detail response status=${response.statusCode}');
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = json['data'];
+    final raw = data is Map<String, dynamic>
+        ? (data['collaboration'] as Map<String, dynamic>? ?? data)
+        : json;
+    return Collaboration.fromJson(_normalizeCollaborationResponse(raw));
+  }
+
+  if (response.statusCode == 401 && allowRetry) {
+    await authService.refreshSession();
+    return _fetchCollaborationDetail(id, allowRetry: false);
+  }
+
+  if (response.statusCode == 404) {
+    return null;
+  }
+
+  final body = response.body.isEmpty
+      ? <String, dynamic>{'message': 'Failed to load collaboration'}
+      : jsonDecode(response.body) as Map<String, dynamic>;
+  throw ApiException(
+    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  );
+}
 
 /// Mark a collaboration as completed (D3).
 ///
@@ -61,7 +114,7 @@ Future<Collaboration> _markCompleted(
     final raw = data is Map<String, dynamic>
         ? (data['collaboration'] as Map<String, dynamic>? ?? data)
         : json;
-    return Collaboration.fromJson(raw);
+    return Collaboration.fromJson(_normalizeCollaborationResponse(raw));
   }
 
   if (response.statusCode == 401 && allowRetry) {
@@ -136,7 +189,7 @@ Future<Collaboration> _patchSchedule(
     final raw = data is Map<String, dynamic>
         ? (data['collaboration'] as Map<String, dynamic>? ?? data)
         : json;
-    return Collaboration.fromJson(raw);
+    return Collaboration.fromJson(_normalizeCollaborationResponse(raw));
   }
 
   if (response.statusCode == 401 && allowRetry) {
@@ -184,6 +237,86 @@ final challengeSelectionProvider =
     NotifierProvider<ChallengeSelectionNotifier, List<String>>(
       ChallengeSelectionNotifier.new,
     );
+
+Map<String, dynamic> _normalizeCollaborationResponse(Map<String, dynamic> raw) {
+  final creator = raw['creator_profile'] as Map<String, dynamic>?;
+  final applicant = raw['applicant_profile'] as Map<String, dynamic>?;
+  final opportunity = raw['collab_opportunity'] as Map<String, dynamic>?;
+  final businessProfile = raw['business_profile'] as Map<String, dynamic>?;
+  final communityProfile = raw['community_profile'] as Map<String, dynamic>?;
+
+  final businessSummary = creator?['user_type'] == 'business'
+      ? creator
+      : applicant?['user_type'] == 'business'
+      ? applicant
+      : null;
+  final communitySummary = creator?['user_type'] == 'community'
+      ? creator
+      : applicant?['user_type'] == 'community'
+      ? applicant
+      : null;
+
+  final scheduledDate =
+      raw['scheduled_date']?.toString() ??
+      opportunity?['availability_start']?.toString() ??
+      DateTime.now().toIso8601String().split('T').first;
+
+  return <String, dynamic>{
+    'id': raw['id'],
+    'status': raw['status'],
+    'scheduled_date': scheduledDate,
+    'scheduled_time':
+        raw['scheduled_time']?.toString() ??
+        opportunity?['selected_time']?.toString(),
+    'business_partner': <String, dynamic>{
+      'id': businessSummary?['id']?.toString() ?? '',
+      'name':
+          businessProfile?['name']?.toString() ??
+          businessSummary?['display_name']?.toString() ??
+          'Business Partner',
+      'profile_photo':
+          businessProfile?['profile_photo']?.toString() ??
+          businessSummary?['avatar_url']?.toString(),
+      'category':
+          businessProfile?['type_label']?.toString() ??
+          businessProfile?['business_type']?.toString(),
+      'city': businessProfile?['city'] ?? businessSummary?['city'],
+      'user_type': 'business',
+    },
+    'community_partner': <String, dynamic>{
+      'id': communitySummary?['id']?.toString() ?? '',
+      'name':
+          communityProfile?['name']?.toString() ??
+          communitySummary?['display_name']?.toString() ??
+          'Community Partner',
+      'profile_photo':
+          communityProfile?['profile_photo']?.toString() ??
+          communitySummary?['avatar_url']?.toString(),
+      'category':
+          communityProfile?['type_label']?.toString() ??
+          communityProfile?['community_type']?.toString(),
+      'city': communityProfile?['city'] ?? communitySummary?['city'],
+      'user_type': 'community',
+    },
+    'opportunity': opportunity,
+    'contact_methods': raw['contact_methods'] ?? const <String, dynamic>{},
+    'business_offer':
+        opportunity?['business_offer'] ?? const <String, dynamic>{},
+    'community_deliverables':
+        opportunity?['community_deliverables'] ?? const <String, dynamic>{},
+    'event_id': raw['event_id'],
+    'qr_code_url': raw['qr_code_url'],
+    'challenges': raw['challenges'] ?? const <dynamic>[],
+    'selected_challenge_ids':
+        raw['selected_challenge_ids'] ?? const <dynamic>[],
+    'created_at': raw['created_at'],
+    'updated_at': raw['updated_at'],
+    'completed_at': raw['completed_at'],
+    'my_role': raw['my_role'],
+    'has_reviewed': raw['has_reviewed'],
+    'viewer_must_resubscribe': raw['viewer_must_resubscribe'],
+  };
+}
 
 // =============================================================================
 // Mock Data

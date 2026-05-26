@@ -23,6 +23,12 @@ enum NotificationType {
   /// A reward was won
   rewardWon,
 
+  /// Day-of collab reminder ("Today's your Kolab!")
+  collabDayReminder,
+
+  /// Follow-up reminder for uncompleted collab ("Did it happen?")
+  collabFollowUpReminder,
+
   /// A backend type the current app does not handle explicitly yet
   unknown;
 
@@ -42,6 +48,10 @@ enum NotificationType {
         return NotificationType.challengeVerified;
       case 'reward_won':
         return NotificationType.rewardWon;
+      case 'collab_day_reminder':
+        return NotificationType.collabDayReminder;
+      case 'collab_followup_reminder':
+        return NotificationType.collabFollowUpReminder;
       default:
         return NotificationType.unknown;
     }
@@ -63,6 +73,10 @@ enum NotificationType {
         return 'challenge_verified';
       case NotificationType.rewardWon:
         return 'reward_won';
+      case NotificationType.collabDayReminder:
+        return 'collab_day_reminder';
+      case NotificationType.collabFollowUpReminder:
+        return 'collab_followup_reminder';
       case NotificationType.unknown:
         return 'unknown';
     }

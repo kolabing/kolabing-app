@@ -82,45 +82,6 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: KolabingSpacing.lg),
 
-            // Rank badge (if available)
-            if (attendeeProfile?.globalRank != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  gradient: KolabingColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: KolabingColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      LucideIcons.trophy,
-                      size: 20,
-                      color: KolabingColors.onPrimary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Global Rank #${attendeeProfile!.globalRank}',
-                      style: GoogleFonts.rubik(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.onPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
             const SizedBox(height: KolabingSpacing.xl),
 
             // Stats section
@@ -171,18 +132,6 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     iconColor: KolabingColors.info,
                     label: 'Events Attended',
                     value: '${attendeeProfile?.totalEventsAttended ?? 0}',
-                    showBackground: true,
-                  ),
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: StatCard(
-                    icon: LucideIcons.trophy,
-                    iconColor: KolabingColors.warning,
-                    label: 'Global Rank',
-                    value: attendeeProfile?.globalRank != null
-                        ? '#${attendeeProfile!.globalRank}'
-                        : '-',
                     showBackground: true,
                   ),
                 ),
