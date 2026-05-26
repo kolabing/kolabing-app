@@ -15,7 +15,6 @@ import '../../opportunity/models/opportunity.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
-import '../widgets/collaboration_feedback_sheet.dart';
 import '../widgets/kolab_completion_sheet.dart';
 import '../widgets/kolab_review_sheet.dart';
 import '../../../widgets/category_icon.dart';
@@ -231,7 +230,8 @@ class _CollaborationBody extends ConsumerWidget {
           ),
 
         // Post-completion: leave review CTA
-        if (interactive && collaboration.status == CollaborationStatus.completed)
+        if (interactive &&
+            collaboration.status == CollaborationStatus.completed)
           _PostCompletionReviewSection(
             collaborationId: collaborationId,
             partnerName: isBusiness
@@ -1853,9 +1853,7 @@ class _TodayScheduledBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.primary.withOpacity(0.12),
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(
-          color: KolabingColors.primaryDark.withOpacity(0.4),
-        ),
+        border: Border.all(color: KolabingColors.primaryDark.withOpacity(0.4)),
       ),
       child: Row(
         children: [
@@ -1927,10 +1925,7 @@ class _CompleteKolabSection extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Text(
-                isToday ? '🎉' : '✅',
-                style: const TextStyle(fontSize: 18),
-              ),
+              Text(isToday ? '🎉' : '✅', style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text(
                 isToday ? "Complete today's Kolab!" : 'Kolab completed?',
@@ -2008,14 +2003,10 @@ class _PostCompletionReviewSection extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: hasReviewed
-            ? KolabingColors.activeBg
-            : KolabingColors.surface,
+        color: hasReviewed ? KolabingColors.activeBg : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
-          color: hasReviewed
-              ? KolabingColors.activeBg
-              : KolabingColors.border,
+          color: hasReviewed ? KolabingColors.activeBg : KolabingColors.border,
         ),
       ),
       child: hasReviewed ? _buildReviewed() : _buildUnreviewed(context, ref),
@@ -2023,97 +2014,97 @@ class _PostCompletionReviewSection extends ConsumerWidget {
   }
 
   Widget _buildReviewed() => Row(
-        children: [
-          const Icon(
-            Icons.check_circle_rounded,
-            color: KolabingColors.activeText,
-            size: 18,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'Review submitted ✓',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.activeText,
-            ),
-          ),
-        ],
-      );
+    children: [
+      const Icon(
+        Icons.check_circle_rounded,
+        color: KolabingColors.activeText,
+        size: 18,
+      ),
+      const SizedBox(width: 8),
+      Text(
+        'Review submitted ✓',
+        style: GoogleFonts.rubik(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.activeText,
+        ),
+      ),
+    ],
+  );
 
   Widget _buildUnreviewed(BuildContext context, WidgetRef ref) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Row(
         children: [
-          Row(
-            children: [
-              const Text('⭐', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Leave a review',
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                  ),
-                ),
+          const Text('⭐', style: TextStyle(fontSize: 18)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Leave a review',
+              style: GoogleFonts.rubik(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: KolabingColors.textPrimary,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.sm,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.15),
-                  borderRadius: KolabingRadius.borderRadiusRound,
-                ),
-                child: Text(
-                  '+10 XP',
-                  style: GoogleFonts.rubik(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Help $partnerName build trust on Kolabing.',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
             ),
           ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 44,
-            child: ElevatedButton(
-              onPressed: () async {
-                final submitted = await KolabReviewSheet.show(
-                  context,
-                  collaborationId: collaborationId,
-                  partnerName: partnerName,
-                );
-                if (submitted) {
-                  ref.invalidate(collaborationDetailProvider(collaborationId));
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                'Leave review +10 XP ✨',
-                style: KolabingTextStyles.button,
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.sm,
+              vertical: 2,
+            ),
+            decoration: BoxDecoration(
+              color: KolabingColors.primary.withValues(alpha: 0.15),
+              borderRadius: KolabingRadius.borderRadiusRound,
+            ),
+            child: Text(
+              '+10 XP',
+              style: GoogleFonts.rubik(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: KolabingColors.textPrimary,
               ),
             ),
           ),
         ],
-      );
+      ),
+      const SizedBox(height: 4),
+      Text(
+        'Help $partnerName build trust on Kolabing.',
+        style: GoogleFonts.openSans(
+          fontSize: 13,
+          color: KolabingColors.textSecondary,
+        ),
+      ),
+      const SizedBox(height: 12),
+      SizedBox(
+        height: 44,
+        child: ElevatedButton(
+          onPressed: () async {
+            final submitted = await KolabReviewSheet.show(
+              context,
+              collaborationId: collaborationId,
+              partnerName: partnerName,
+            );
+            if (submitted) {
+              ref.invalidate(collaborationDetailProvider(collaborationId));
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KolabingColors.primary,
+            foregroundColor: KolabingColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            'Leave review +10 XP ✨',
+            style: KolabingTextStyles.button,
+          ),
+        ),
+      ),
+    ],
+  );
 }

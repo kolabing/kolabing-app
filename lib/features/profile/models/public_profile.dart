@@ -42,6 +42,87 @@ class PastCollaboration {
       partnerName.isNotEmpty ? partnerName[0].toUpperCase() : '?';
 }
 
+@immutable
+class PublicProfileReviewAuthor {
+  const PublicProfileReviewAuthor({
+    required this.id,
+    required this.displayName,
+    this.avatarUrl,
+    required this.userType,
+  });
+
+  factory PublicProfileReviewAuthor.fromJson(Map<String, dynamic> json) =>
+      PublicProfileReviewAuthor(
+        id: json['id']?.toString() ?? '',
+        displayName: json['display_name'] as String? ?? 'Unknown',
+        avatarUrl: json['avatar_url'] as String?,
+        userType: json['user_type'] as String? ?? '',
+      );
+
+  final String id;
+  final String displayName;
+  final String? avatarUrl;
+  final String userType;
+
+  String get initial =>
+      displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
+}
+
+@immutable
+class PublicProfileReview {
+  const PublicProfileReview({
+    required this.id,
+    required this.rating,
+    this.body,
+    this.wouldCollaborateAgain,
+    this.createdAt,
+    required this.reviewer,
+  });
+
+  factory PublicProfileReview.fromJson(Map<String, dynamic> json) =>
+      PublicProfileReview(
+        id: json['id']?.toString() ?? '',
+        rating: (json['rating'] as num?)?.toInt() ?? 0,
+        body: json['body'] as String?,
+        wouldCollaborateAgain: json['would_collaborate_again'] as bool?,
+        createdAt: json['created_at'] != null
+            ? DateTime.tryParse(json['created_at'] as String)
+            : null,
+        reviewer: PublicProfileReviewAuthor.fromJson(
+          (json['reviewer'] as Map?)?.cast<String, dynamic>() ??
+              const <String, dynamic>{},
+        ),
+      );
+
+  final String id;
+  final int rating;
+  final String? body;
+  final bool? wouldCollaborateAgain;
+  final DateTime? createdAt;
+  final PublicProfileReviewAuthor reviewer;
+
+  bool get hasBody => body != null && body!.trim().isNotEmpty;
+}
+
+@immutable
+class PaginatedPublicProfileReviews {
+  const PaginatedPublicProfileReviews({
+    required this.reviews,
+    required this.currentPage,
+    required this.lastPage,
+    required this.perPage,
+    required this.total,
+  });
+
+  final List<PublicProfileReview> reviews;
+  final int currentPage;
+  final int lastPage;
+  final int perPage;
+  final int total;
+
+  bool get hasMore => currentPage < lastPage;
+}
+
 // =============================================================================
 // Public Profile Model
 // =============================================================================
@@ -63,8 +144,7 @@ class PublicProfile {
     this.gallery = const [],
     this.pastCollaborations = const [],
     this.completedKolabsCount,
-    this.reviewCount = 0,
-    this.averageRating,
+    this.recentReviews = const [],
   });
 
   factory PublicProfile.fromJson(Map<String, dynamic> json) => PublicProfile(
@@ -100,12 +180,12 @@ class PublicProfile {
             .toList() ??
         const [],
     completedKolabsCount: json['completed_kolabs_count'] as int?,
-    reviewCount:
-        (json['review_stats'] as Map<String, dynamic>?)?['review_count']
-            as int? ?? 0,
-    averageRating:
-        (json['review_stats'] as Map<String, dynamic>?)?['average_rating']
-            as double?,
+    recentReviews:
+        (json['recent_reviews'] as List<dynamic>?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(PublicProfileReview.fromJson)
+            .toList() ??
+        const [],
   );
 
   final String id;
@@ -128,12 +208,7 @@ class PublicProfile {
   /// Authoritative count from backend. Falls back to pastCollaborations.length
   /// when backend hasn't returned the field yet (older payloads).
   final int? completedKolabsCount;
-
-  /// Number of reviews received.
-  final int reviewCount;
-
-  /// Average star rating (null when no reviews yet).
-  final double? averageRating;
+  final List<PublicProfileReview> recentReviews;
 
   String get initial =>
       displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
@@ -168,8 +243,7 @@ class PublicProfile {
     List<GalleryPhoto>? gallery,
     List<PastCollaboration>? pastCollaborations,
     int? completedKolabsCount,
-    int? reviewCount,
-    double? averageRating,
+    List<PublicProfileReview>? recentReviews,
   }) => PublicProfile(
     id: id,
     userType: userType,
@@ -185,8 +259,7 @@ class PublicProfile {
     gallery: gallery ?? this.gallery,
     pastCollaborations: pastCollaborations ?? this.pastCollaborations,
     completedKolabsCount: completedKolabsCount ?? this.completedKolabsCount,
-    reviewCount: reviewCount ?? this.reviewCount,
-    averageRating: averageRating ?? this.averageRating,
+    recentReviews: recentReviews ?? this.recentReviews,
   );
 }
 

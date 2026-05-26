@@ -36,6 +36,7 @@ import '../../features/onboarding/screens/community/community_step4_screen.dart'
 import '../../features/opportunity/models/opportunity.dart';
 import '../../features/opportunity/providers/opportunity_provider.dart';
 import '../../features/permission/screens/permission_screen.dart';
+import '../../features/profile/screens/profile_reviews_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/rewards/screens/referral_screen.dart';
 import '../../features/rewards/screens/wallet_screen.dart';
@@ -212,6 +213,9 @@ abstract final class KolabingRoutes {
 
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
+
+  /// Public profile reviews list
+  static const String publicProfileReviews = '/profile/:id/reviews';
 
   /// Event detail screen
   static const String eventDetail = '/event/:id';
@@ -689,6 +693,15 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'notifications',
       builder: (BuildContext context, GoRouterState state) =>
           const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.publicProfileReviews,
+      name: 'publicProfileReviews',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        final profileName = state.extra as String?;
+        return ProfileReviewsScreen(profileId: id, profileName: profileName);
+      },
     ),
     GoRoute(
       path: '/profile/:id',

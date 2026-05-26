@@ -117,9 +117,9 @@ class PublicProfileScreen extends ConsumerWidget {
                 _buildCollaborationsSection(profile),
                 const SizedBox(height: KolabingSpacing.md),
 
-                // Review reputation (shown only when reviews exist)
-                if (profile.reviewCount > 0) ...[
-                  _ReviewReputationCard(profile: profile),
+                // Recent reviews
+                if (profile.recentReviews.isNotEmpty) ...[
+                  _RecentReviewsSection(profile: profile),
                   const SizedBox(height: KolabingSpacing.md),
                 ],
 
@@ -572,12 +572,14 @@ class _SectionCard extends StatelessWidget {
     required this.title,
     required this.child,
     this.count,
+    this.trailing,
   });
 
   final IconData icon;
   final String title;
   final Widget child;
   final int? count;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -625,6 +627,7 @@ class _SectionCard extends StatelessWidget {
                 ),
               ),
             ],
+            if (trailing != null) ...[const Spacer(), trailing!],
           ],
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -777,48 +780,131 @@ class _SendKolabBottomBar extends ConsumerWidget {
 // Review Reputation Card
 // =============================================================================
 
-class _ReviewReputationCard extends StatelessWidget {
-  const _ReviewReputationCard({required this.profile});
+class _RecentReviewsSection extends StatelessWidget {
+  const _RecentReviewsSection({required this.profile});
 
   final PublicProfile profile;
 
   @override
   Widget build(BuildContext context) {
-    final avg = profile.averageRating;
-    final count = profile.reviewCount;
-
-    return Container(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.border),
+    return _SectionCard(
+      icon: Icons.star_rounded,
+      title: 'Recent Reviews',
+      trailing: TextButton(
+        onPressed: () => context.push(
+          '/profile/${profile.id}/reviews',
+          extra: profile.displayName,
+        ),
+        child: const Text('View more'),
       ),
-      child: Row(
+      child: Column(
         children: [
-          const Icon(
-            Icons.star_rounded,
-            size: 22,
-            color: KolabingColors.primary,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            avg != null ? avg.toStringAsFixed(1) : '—',
-            style: GoogleFonts.rubik(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '($count ${count == 1 ? 'review' : 'reviews'})',
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textTertiary,
-            ),
-          ),
+          for (var i = 0; i < profile.recentReviews.length; i++) ...[
+            _PublicProfileReviewCard(review: profile.recentReviews[i]),
+            if (i != profile.recentReviews.length - 1)
+              const SizedBox(height: KolabingSpacing.sm),
+          ],
         ],
       ),
     );
   }
+}
+
+class _PublicProfileReviewCard extends StatelessWidget {
+  const _PublicProfileReviewCard({required this.review});
+
+  final PublicProfileReview review;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: KolabingColors.background,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: KolabingColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _AvatarWidget(
+                avatarUrl: review.reviewer.avatarUrl,
+                initial: review.reviewer.initial,
+                size: 36,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      review.reviewer.displayName,
+                      style: GoogleFonts.rubik(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: KolabingColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      _formatReviewDate(review.createdAt),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: KolabingColors.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: List.generate(
+                  5,
+                  (index) => Icon(
+                    index < review.rating
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    size: 16,
+                    color: KolabingColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (review.hasBody) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              review.body!,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: KolabingColors.textSecondary,
+                height: 1.45,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+String _formatReviewDate(DateTime? date) {
+  if (date == null) {
+    return '';
+  }
+
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  return '${date.day} ${monthNames[date.month - 1]} ${date.year}';
 }

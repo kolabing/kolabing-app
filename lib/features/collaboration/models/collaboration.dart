@@ -65,7 +65,9 @@ enum CollaborationStatus {
       this == CollaborationStatus.scheduled ||
       this == CollaborationStatus.inProgress;
 
-  bool get canBeCompleted => this == CollaborationStatus.inProgress;
+  bool get canBeCompleted =>
+      this == CollaborationStatus.scheduled ||
+      this == CollaborationStatus.inProgress;
 }
 
 /// Timeline step status
@@ -189,7 +191,6 @@ class Collaboration {
     this.completedAt,
     this.isToday = false,
     this.myRole,
-    this.feedbackSubmittedAt,
     this.viewerMustResubscribe = false,
     this.hasReviewed = false,
   });
@@ -242,9 +243,6 @@ class Collaboration {
       isToday: _isScheduledToday(json['scheduled_date'] as String?),
       myRole: json['my_role'] as String?,
       hasReviewed: json['has_reviewed'] as bool? ?? false,
-      feedbackSubmittedAt: json['feedback_submitted_at'] != null
-          ? DateTime.parse(json['feedback_submitted_at'] as String)
-          : null,
       // Subscription-lapse re-gate (docs/ROLES-AND-PERMISSIONS.md §2.8). The
       // backend sets this true ONLY for a business viewer whose subscription
       // has lapsed on an ongoing collaboration. It is never true for a
@@ -297,14 +295,12 @@ class Collaboration {
   final DateTime? updatedAt;
   final DateTime? completedAt;
   final bool isToday;
+
   /// 'creator' | 'applicant' | null — set by the API for the authenticated viewer
   final String? myRole;
 
   /// True when the current viewer has already submitted a review for this collab.
   final bool hasReviewed;
-
-  /// Set once the business has submitted post-completion feedback.
-  final DateTime? feedbackSubmittedAt;
 
   /// True only when the VIEWER is a business whose subscription lapsed while
   /// this collaboration is still ongoing (docs/ROLES-AND-PERMISSIONS.md §2.8).
