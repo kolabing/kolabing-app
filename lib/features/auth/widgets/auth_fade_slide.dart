@@ -2,9 +2,9 @@ import 'package:flutter/widgets.dart';
 
 /// Reusable fade + translate animation combinator for auth screen staggered entries.
 ///
-/// Wraps a child in a combined opacity + translate animation.
-/// Pass pre-built `Animation<double>` and `Animation<Offset>` from the screen's
-/// AnimationController.
+/// Wraps a child in a combined opacity + translate animation using Flutter's
+/// composited `FadeTransition` and `SlideTransition` for GPU-efficient rendering.
+/// Opacity values outside [0, 1] are clamped by FadeTransition internally.
 class AuthFadeSlide extends StatelessWidget {
   const AuthFadeSlide({
     required this.opacity,
@@ -18,17 +18,17 @@ class AuthFadeSlide extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: Listenable.merge([opacity, offset]),
-    builder: (context, c) => Opacity(
-      opacity: opacity.value.clamp(0.0, 1.0),
-      child: Transform.translate(offset: offset.value, child: c),
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: opacity,
+    child: AnimatedBuilder(
+      animation: offset,
+      builder: (context, c) => Transform.translate(offset: offset.value, child: c),
+      child: child,
     ),
-    child: child,
   );
 }
 
-/// Simplified variant — opacity only, no slide offset needed.
+/// Simplified variant — opacity fade only, no translation.
 class AuthFadeOnly extends StatelessWidget {
   const AuthFadeOnly({
     required this.opacity,
@@ -40,12 +40,5 @@ class AuthFadeOnly extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: opacity,
-    builder: (context, c) => Opacity(
-      opacity: opacity.value.clamp(0.0, 1.0),
-      child: c,
-    ),
-    child: child,
-  );
+  Widget build(BuildContext context) => FadeTransition(opacity: opacity, child: child);
 }
