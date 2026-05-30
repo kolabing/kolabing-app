@@ -17,7 +17,6 @@ import '../widgets/google_sign_in_button.dart';
 import '../widgets/kolabing_logo.dart';
 
 const Color _kLoginBg = Color(0xFF000000);
-// KolabingColors.primary replaced by KolabingColors.primary throughout
 const Color _kLoginPanel = Color(0xB3121212);
 const Color _kLoginPanelBorder = Color(0x26FFFFFF);
 const Color _kLoginFieldFill = Color(0x14FFFFFF);
@@ -512,7 +511,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               child: _AnimatedElement(
                                 opacityAnimation: _headlineAnimation,
                                 slideAnimation: _headlineSlideAnimation,
-                                child: const _HeroCopy(),
+                                child: _HeroCopy(
+                                  headlineSize: ultraCompact ? 28.0 : (compact ? 32.0 : 36.0),
+                                ),
                               ),
                             ),
                           ),
@@ -900,14 +901,16 @@ class _LoginBackdrop extends StatelessWidget {
 }
 
 class _HeroCopy extends StatelessWidget {
-  const _HeroCopy();
+  const _HeroCopy({required this.headlineSize});
+
+  final double headlineSize;
 
   @override
   Widget build(BuildContext context) => Text(
     'Welcome back.',
     style: GoogleFonts.anton(
       color: Colors.white,
-      fontSize: 36,
+      fontSize: headlineSize,
       height: 1.0,
       letterSpacing: 0.3,
     ),
