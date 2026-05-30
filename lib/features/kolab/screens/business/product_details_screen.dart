@@ -142,7 +142,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   border: Border.all(
                     color: isSelected
                         ? KolabingColors.primary
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: Row(
@@ -153,7 +153,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       size: 16,
                       color: isSelected
                           ? KolabingColors.onPrimary
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                     Text(
@@ -164,7 +164,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             isSelected ? FontWeight.w600 : FontWeight.w400,
                         color: isSelected
                             ? KolabingColors.onPrimary
-                            : KolabingColors.textPrimary,
+                            : KolabingColors.onSurface,
                       ),
                     ),
                   ],
@@ -198,7 +198,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           'One short line communities will see on your card.',
           style: GoogleFonts.openSans(
             fontSize: 12,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -231,7 +231,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               icon: const Icon(
                 LucideIcons.chevronDown,
                 size: 20,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               items: cities
                   .map(
@@ -247,7 +247,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             ),
           loading: () => const LinearProgressIndicator(
             color: KolabingColors.primary,
-            backgroundColor: KolabingColors.border,
+            backgroundColor: KolabingColors.darkBorder,
           ),
           error: (_, _) => Text(
             'Failed to load cities',
@@ -288,11 +288,11 @@ InputDecoration _inputDecoration({
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
@@ -310,7 +310,7 @@ InputDecoration _inputDecoration({
 
 TextStyle get _inputTextStyle => GoogleFonts.openSans(
       fontSize: 14,
-      color: KolabingColors.textPrimary,
+      color: KolabingColors.onSurface,
     );
 
 // ---------------------------------------------------------------------------
@@ -328,7 +328,7 @@ class _SectionHeader extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.0,
-        color: KolabingColors.textSecondary,
+        color: KolabingColors.onSurfaceVariant,
       ),
     );
 }
@@ -343,7 +343,7 @@ class _FieldLabel extends StatelessWidget {
       style: GoogleFonts.openSans(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: KolabingColors.textPrimary,
+        color: KolabingColors.onSurface,
       ),
     );
 }

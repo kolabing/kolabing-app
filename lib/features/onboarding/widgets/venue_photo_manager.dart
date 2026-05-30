@@ -59,8 +59,8 @@ class VenuePhotoManager extends StatelessWidget {
                 icon: const Icon(LucideIcons.plus, size: 18),
                 label: const Text('Add photo'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: KolabingColors.textPrimary,
-                  side: const BorderSide(color: KolabingColors.border),
+                  foregroundColor: KolabingColors.onSurface,
+                  side: const BorderSide(color: KolabingColors.darkBorder),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 14,
@@ -97,13 +97,13 @@ class _EmptyPhotoState extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surfaceVariant,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       children: [
         const Icon(
           LucideIcons.imagePlus,
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
           size: 28,
         ),
         const SizedBox(height: 12),
@@ -112,7 +112,7 @@ class _EmptyPhotoState extends StatelessWidget {
           style: GoogleFonts.rubik(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: 6),
@@ -120,7 +120,7 @@ class _EmptyPhotoState extends StatelessWidget {
           'Keep imported Google photos, upload your own, remove what you do not want, and set the final order here.',
           style: GoogleFonts.openSans(
             fontSize: 13,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
             height: 1.4,
           ),
           textAlign: TextAlign.center,
@@ -168,7 +168,7 @@ class _VenuePhotoCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Padding(
       padding: const EdgeInsets.all(12),
@@ -191,7 +191,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       style: GoogleFonts.rubik(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -211,7 +211,7 @@ class _VenuePhotoCard extends StatelessWidget {
                         style: GoogleFonts.openSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                     ),
@@ -225,7 +225,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       icon: const Icon(LucideIcons.arrowLeft, size: 18),
                       color: onMoveLeft == null
                           ? KolabingColors.textTertiary
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                       tooltip: 'Move earlier',
                     ),
                     IconButton(
@@ -233,7 +233,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       icon: const Icon(LucideIcons.arrowRight, size: 18),
                       color: onMoveRight == null
                           ? KolabingColors.textTertiary
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                       tooltip: 'Move later',
                     ),
                     const Spacer(),
@@ -291,7 +291,7 @@ class _VenuePhotoCard extends StatelessWidget {
                   width: 42,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: KolabingColors.border,
+                    color: KolabingColors.darkBorder,
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -302,7 +302,7 @@ class _VenuePhotoCard extends StatelessWidget {
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -312,7 +312,7 @@ class _VenuePhotoCard extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 if (item.uri != null && item.uri!.isNotEmpty)
@@ -322,7 +322,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       item.uri!,
                       style: GoogleFonts.openSans(
                         fontSize: 12,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -333,7 +333,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       item.photoUri!,
                       style: GoogleFonts.openSans(
                         fontSize: 12,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                   ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/collaboration.dart';
 import '../services/collaboration_completion_service.dart';
 
@@ -142,7 +142,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
     return Container(
       margin: const EdgeInsets.only(top: 60),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: KolabingColors.darkSurface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
@@ -153,7 +153,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.border,
+              color: KolabingColors.darkBorder,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -232,18 +232,17 @@ class _StepConfirm extends StatelessWidget {
       children: [
         Text(
           'Did the Kolab happen? 🎯',
-          style: GoogleFonts.rubik(
+          style: KolabingTextStyles.headlineMedium.copyWith(
             fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Mark your Kolab with $partnerName as complete.',
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 32),
@@ -256,7 +255,7 @@ class _StepConfirm extends StatelessWidget {
             ),
             child: Text(
               error!,
-              style: GoogleFonts.openSans(
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 13,
                 color: KolabingColors.error,
               ),
@@ -314,19 +313,16 @@ class _StepCelebration extends StatelessWidget {
             children: [
               Text(
                 'Kolab completed! 🎉',
-                style: GoogleFonts.rubik(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                style: KolabingTextStyles.headlineMedium.copyWith(
+                  color: KolabingColors.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 'You earned XP and your profile now reflects this completed Kolab.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -360,10 +356,9 @@ class _XpPreviewBadge extends StatelessWidget {
       ),
       child: Text(
         '+$baseXp XP earned ⚡',
-        style: GoogleFonts.rubik(
-          fontSize: 16,
+        style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
     );
@@ -390,19 +385,16 @@ class _StepDone extends StatelessWidget {
         const SizedBox(height: 24),
         Text(
           'All done! 🏆',
-          style: GoogleFonts.rubik(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+          style: KolabingTextStyles.headlineMedium.copyWith(
+            color: KolabingColors.onSurface,
           ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
           'This Kolab is complete. Check your profile to see your growing history of collaborations.',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.textSecondary,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: KolabingColors.onSurfaceVariant,
             height: 1.4,
           ),
           textAlign: TextAlign.center,
@@ -425,17 +417,16 @@ class _StepDone extends StatelessWidget {
             children: [
               Text(
                 '+$totalXp XP',
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.headlineLarge.copyWith(
                   fontSize: 36,
-                  fontWeight: FontWeight.w800,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               Text(
                 'XP earned',
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 13,
-                  color: KolabingColors.textPrimary.withOpacity(0.6),
+                  color: KolabingColors.onSurface.withOpacity(0.6),
                 ),
               ),
             ],
@@ -471,7 +462,7 @@ class _PrimaryButton extends StatelessWidget {
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: onTap != null ? KolabingColors.primary : KolabingColors.border,
+          color: onTap != null ? KolabingColors.primary : KolabingColors.darkBorder,
           borderRadius: BorderRadius.circular(14),
         ),
         alignment: Alignment.center,
@@ -483,10 +474,9 @@ class _PrimaryButton extends StatelessWidget {
               )
             : Text(
                 label,
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.button.copyWith(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
       ),
@@ -510,9 +500,9 @@ class _SecondaryButton extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ),

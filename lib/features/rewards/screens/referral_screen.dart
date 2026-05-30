@@ -43,7 +43,7 @@ class ReferralScreen extends ConsumerWidget {
             fontSize: 16,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         centerTitle: true,
@@ -156,8 +156,8 @@ class ReferralScreen extends ConsumerWidget {
             icon: const Icon(LucideIcons.copy, size: 18),
             label: Text('COPY CODE', style: KolabingTextStyles.buttonSmall),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
-              side: const BorderSide(color: KolabingColors.border),
+              foregroundColor: KolabingColors.onSurface,
+              side: const BorderSide(color: KolabingColors.darkBorder),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
@@ -218,7 +218,7 @@ class ReferralScreen extends ConsumerWidget {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
@@ -284,14 +284,14 @@ class ReferralScreen extends ConsumerWidget {
             Text(
               title,
               style: KolabingTextStyles.titleSmall.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               description,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -327,7 +327,7 @@ class ReferralScreen extends ConsumerWidget {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -375,7 +375,7 @@ class ReferralScreen extends ConsumerWidget {
         child: Text(
           condition,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),

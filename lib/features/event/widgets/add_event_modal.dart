@@ -191,7 +191,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.border,
+              color: KolabingColors.darkBorder,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -206,7 +206,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                   style: KolabingTextStyles.headlineSmall.copyWith(
                     color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -223,7 +223,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
 
           Divider(
             height: 1,
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           ),
 
           // Form
@@ -358,7 +358,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         Text(
           label,
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -418,7 +418,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         Text(
           'Event Date',
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -445,7 +445,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                 Text(
                   formattedDate,
                   style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -471,7 +471,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             Text(
               'Event Photos',
               style: KolabingTextStyles.labelMedium.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(width: KolabingSpacing.xs),
@@ -500,7 +500,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                       color: KolabingColors.surfaceVariant,
                       borderRadius: KolabingRadius.borderRadiusMd,
                       border: Border.all(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         style: BorderStyle.solid,
                       ),
                     ),
@@ -581,14 +581,14 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         Text(
           'Recap Video (Optional)',
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           'Add one short video to show how the event felt.',
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -598,8 +598,8 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             icon: const Icon(LucideIcons.video, size: 18),
             label: const Text('ADD VIDEO'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
-              side: const BorderSide(color: KolabingColors.border),
+              foregroundColor: KolabingColors.onSurface,
+              side: const BorderSide(color: KolabingColors.darkBorder),
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -623,21 +623,21 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                 decoration: BoxDecoration(
                   color: KolabingColors.surfaceVariant,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.border),
+                  border: Border.all(color: KolabingColors.darkBorder),
                 ),
                 child: Row(
                   children: [
                     const Icon(
                       LucideIcons.video,
                       size: 18,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                     const SizedBox(width: KolabingSpacing.sm),
                     Expanded(
                       child: Text(
                         fileName,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

@@ -283,7 +283,7 @@ class _QuickChip extends StatelessWidget {
             : KolabingColors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: data.isActive ? KolabingColors.primary : KolabingColors.border,
+          color: data.isActive ? KolabingColors.primary : KolabingColors.darkBorder,
         ),
       ),
       child: Row(
@@ -294,7 +294,7 @@ class _QuickChip extends StatelessWidget {
             style: GoogleFonts.dmSans(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(width: 6),
@@ -302,7 +302,7 @@ class _QuickChip extends StatelessWidget {
             LucideIcons.slidersHorizontal,
             size: 14,
             color: data.isActive
-                ? KolabingColors.textPrimary
+                ? KolabingColors.onSurface
                 : KolabingColors.textTertiary,
           ),
         ],

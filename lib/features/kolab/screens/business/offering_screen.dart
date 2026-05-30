@@ -117,7 +117,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -126,7 +126,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           'Select all that apply',
           style: GoogleFonts.openSans(
             fontSize: 14,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -173,7 +173,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           'What every community will see on your card. Be specific so leaders can evaluate at a glance.',
           style: GoogleFonts.openSans(
             fontSize: 13,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
             height: 1.4,
           ),
         ),
@@ -186,7 +186,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
           style: GoogleFonts.openSans(
             fontSize: 15,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
           decoration: InputDecoration(
             hintText:
@@ -195,7 +195,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             fillColor: KolabingColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
             ),
           ),
         ),
@@ -210,7 +210,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           'They see these after sending you a Kolab.',
           style: GoogleFonts.openSans(
             fontSize: 13,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
             height: 1.4,
           ),
         ),
@@ -294,7 +294,7 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 13,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.0,
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
         ),
       );
 }
@@ -318,7 +318,7 @@ class _TriggerCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: KolabingColors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: KolabingColors.border),
+          border: Border.all(color: KolabingColors.darkBorder),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,7 +341,7 @@ class _TriggerCard extends StatelessWidget {
                     additionalOffer,
                     style: GoogleFonts.openSans(
                       fontSize: 14,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                       height: 1.4,
                     ),
                   ),
@@ -404,7 +404,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -415,7 +415,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -423,7 +423,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             'Surfaces only after a community sends a Kolab proposal.',
             style: GoogleFonts.openSans(
               fontSize: 13,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -541,7 +541,7 @@ class _ToggleCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? KolabingColors.primary
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
         ),
         child: Row(
@@ -559,7 +559,7 @@ class _ToggleCard extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: 1.5,
                 ),
               ),
@@ -578,8 +578,8 @@ class _ToggleCard extends StatelessWidget {
               icon,
               size: 20,
               color: isSelected
-                  ? KolabingColors.textPrimary
-                  : KolabingColors.textSecondary,
+                  ? KolabingColors.onSurface
+                  : KolabingColors.onSurfaceVariant,
             ),
             const SizedBox(width: KolabingSpacing.sm),
 
@@ -593,7 +593,7 @@ class _ToggleCard extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),

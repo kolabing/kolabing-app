@@ -38,9 +38,8 @@ class ReferralBannerCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
+        color: KolabingColors.surfaceContainerLow,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.softYellowBorder),
       ),
       child: Row(
         children: [
@@ -55,7 +54,7 @@ class ReferralBannerCard extends ConsumerWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
-                    color: KolabingColors.accent,
+                    color: KolabingColors.secondary,
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
@@ -64,7 +63,7 @@ class ReferralBannerCard extends ConsumerWidget {
                   style: GoogleFonts.rubik(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
@@ -72,8 +71,8 @@ class ReferralBannerCard extends ConsumerWidget {
                   onPressed: () =>
                       _showReferralCodeSheet(context, referralCode),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: KolabingColors.textPrimary,
-                    side: const BorderSide(color: KolabingColors.textPrimary),
+                    foregroundColor: KolabingColors.onSurface,
+                    side: const BorderSide(color: KolabingColors.onSurface),
                     shape: RoundedRectangleBorder(
                       borderRadius: KolabingRadius.borderRadiusSm,
                     ),
@@ -108,7 +107,7 @@ class ReferralBannerCard extends ConsumerWidget {
             child: const Icon(
               LucideIcons.gift,
               size: 28,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
         ],
@@ -155,7 +154,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             width: 44,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.border,
+              color: KolabingColors.darkBorder,
               borderRadius: BorderRadius.circular(999),
             ),
           ),
@@ -188,7 +187,7 @@ class _ReferralCodeSheet extends StatelessWidget {
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2.5,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ),
@@ -197,7 +196,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             'Ask businesses to use this code during signup.',
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -209,8 +208,8 @@ class _ReferralCodeSheet extends StatelessWidget {
               icon: const Icon(LucideIcons.copy, size: 18),
               label: Text('COPY CODE', style: KolabingTextStyles.buttonSmall),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
+                foregroundColor: KolabingColors.onSurface,
+                side: const BorderSide(color: KolabingColors.darkBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: KolabingRadius.borderRadiusMd,
                 ),
@@ -275,7 +274,7 @@ class _ReferralCodeSheet extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Sharing is unavailable. Referral code copied.'),
-              backgroundColor: KolabingColors.textPrimary,
+              backgroundColor: KolabingColors.onSurface,
             ),
           );
         }
@@ -286,7 +285,7 @@ class _ReferralCodeSheet extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Could not open share sheet. Referral code copied.'),
-            backgroundColor: KolabingColors.textPrimary,
+            backgroundColor: KolabingColors.onSurface,
           ),
         );
       }

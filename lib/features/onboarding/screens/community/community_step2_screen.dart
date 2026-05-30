@@ -93,7 +93,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -107,7 +107,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                         style: GoogleFonts.openSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -157,7 +157,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                               'Failed to load community types',
                               style: GoogleFonts.openSans(
                                 fontSize: 14,
-                                color: KolabingColors.textSecondary,
+                                color: KolabingColors.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: 16),

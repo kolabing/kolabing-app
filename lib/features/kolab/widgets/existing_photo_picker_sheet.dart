@@ -96,7 +96,7 @@ class _ExistingPhotoPickerSheetState
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     ),
@@ -107,7 +107,7 @@ class _ExistingPhotoPickerSheetState
                     style: GoogleFonts.rubik(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
@@ -115,7 +115,7 @@ class _ExistingPhotoPickerSheetState
                     'Select up to ${widget.maxSelection} previously uploaded photo${widget.maxSelection == 1 ? '' : 's'}.',
                     style: GoogleFonts.openSans(
                       fontSize: 13,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
@@ -174,7 +174,7 @@ class _ExistingPhotoPickerSheetState
           'No reusable photos yet.',
           style: GoogleFonts.openSans(
             fontSize: 14,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       );

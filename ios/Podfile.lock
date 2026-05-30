@@ -139,7 +139,7 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - onesignal_flutter (5.5.4):
+  - onesignal_flutter (5.5.6):
     - Flutter
     - OneSignalXCFramework (= 5.5.1)
   - OneSignalXCFramework (5.5.1):
@@ -326,7 +326,7 @@ SPEC CHECKSUMS:
   in_app_purchase_storekit: 22cca7d08eebca9babdf4d07d0baccb73325d3c8
   mobile_scanner: 9157936403f5a0644ca3779a38ff8404c5434a93
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  onesignal_flutter: 3192ae43820471ee056625cbc303676665c9d643
+  onesignal_flutter: 4b1dcdcebf7d586e69360a97403c8da1fcc62107
   OneSignalXCFramework: 2b46c36b38528b65dce33ed9d83375f8c98bf40c
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
@@ -338,6 +338,6 @@ SPEC CHECKSUMS:
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
 
-PODFILE CHECKSUM: 628c302985abdf850848ef76828d03d8807e5ef6
+PODFILE CHECKSUM: 598e871ef5670f09e7885086a45fb90b9ad3522e
 
 COCOAPODS: 1.16.2

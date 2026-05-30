@@ -108,7 +108,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
           leading: IconButton(
             icon: const Icon(
               LucideIcons.arrowLeft,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             onPressed: () {
               if (formState.isSubmitting || formState.isPublishing) return;
@@ -125,7 +125,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
               fontSize: 16,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           centerTitle: true,
@@ -316,7 +316,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -326,7 +326,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                   : 'You can continue editing later.',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),

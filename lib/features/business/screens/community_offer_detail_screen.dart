@@ -178,7 +178,7 @@ class _CommunityOfferDetailScreenState
                   ),
                   child: const Icon(
                     LucideIcons.arrowLeft,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                     size: 20,
                   ),
                 ),
@@ -311,7 +311,7 @@ class _CommunityOfferDetailScreenState
                               style: GoogleFonts.rubik(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -324,7 +324,7 @@ class _CommunityOfferDetailScreenState
                             style: GoogleFonts.openSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: KolabingColors.textSecondary,
+                              color: KolabingColors.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -365,7 +365,7 @@ class _CommunityOfferDetailScreenState
           style: GoogleFonts.rubik(
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
             height: 1.3,
           ),
         ),
@@ -386,7 +386,7 @@ class _CommunityOfferDetailScreenState
             style: GoogleFonts.dmSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
               letterSpacing: 0.5,
             ),
           ),
@@ -415,7 +415,7 @@ class _CommunityOfferDetailScreenState
                 const Icon(
                   LucideIcons.zap,
                   size: 16,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
@@ -424,7 +424,7 @@ class _CommunityOfferDetailScreenState
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                 ),
@@ -439,7 +439,7 @@ class _CommunityOfferDetailScreenState
           style: GoogleFonts.openSans(
             fontSize: 15,
             fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
             height: 1.6,
           ),
         ),
@@ -499,7 +499,7 @@ class _CommunityOfferDetailScreenState
           style: GoogleFonts.rubik(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
             letterSpacing: 1,
           ),
         ),
@@ -523,7 +523,7 @@ class _CommunityOfferDetailScreenState
                     style: GoogleFonts.openSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                 ),
@@ -600,7 +600,7 @@ class _CommunityOfferDetailScreenState
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
         ),
@@ -616,7 +616,7 @@ class _CommunityOfferDetailScreenState
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -626,7 +626,7 @@ class _CommunityOfferDetailScreenState
               const Icon(
                 LucideIcons.checkCircle,
                 size: 18,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
@@ -634,7 +634,7 @@ class _CommunityOfferDetailScreenState
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                   letterSpacing: 1,
                 ),
               ),
@@ -673,7 +673,7 @@ class _CommunityOfferDetailScreenState
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
         ),
@@ -708,7 +708,7 @@ class _CommunityOfferDetailScreenState
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
               letterSpacing: 1,
             ),
           ),
@@ -774,7 +774,7 @@ class _CommunityOfferDetailScreenState
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),
@@ -947,7 +947,7 @@ class _CommunityOfferDetailScreenState
         'Opportunity Details',
         style: GoogleFonts.rubik(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
     ),
@@ -978,7 +978,7 @@ class _CommunityOfferDetailScreenState
               style: GoogleFonts.rubik(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -986,7 +986,7 @@ class _CommunityOfferDetailScreenState
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1039,7 +1039,7 @@ class _PreviewModeBanner extends StatelessWidget {
               style: GoogleFonts.openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ),
@@ -1094,7 +1094,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -1102,7 +1102,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
                 'See this community\'s recent track record before applying.',
                 style: GoogleFonts.openSans(
                   fontSize: 13,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -1184,7 +1184,7 @@ class _CreatorAvatar extends StatelessWidget {
       style: GoogleFonts.rubik(
         fontSize: size * 0.4,
         fontWeight: FontWeight.w600,
-        color: KolabingColors.textPrimary,
+        color: KolabingColors.onSurface,
       ),
     ),
   );
@@ -1254,7 +1254,7 @@ class _BaseOfferCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: BorderRadius.circular(KolabingRadius.md),
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1283,7 +1283,7 @@ class _BaseOfferCard extends StatelessWidget {
           text,
           style: GoogleFonts.openSans(
             fontSize: 14,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
             height: 1.5,
           ),
         ),
@@ -1334,7 +1334,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
           'These only show because you have already applied.',
           style: GoogleFonts.openSans(
             fontSize: 12,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -1373,7 +1373,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
                 trigger.additionalOffer,
                 style: GoogleFonts.openSans(
                   fontSize: 13,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                   height: 1.4,
                 ),
               ),

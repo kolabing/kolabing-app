@@ -31,7 +31,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
           color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           ),
         ),
         child: Row(
@@ -53,7 +53,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -66,7 +66,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -145,7 +145,7 @@ class _DateChip extends StatelessWidget {
         style: GoogleFonts.openSans(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
         ),
       ),
     );

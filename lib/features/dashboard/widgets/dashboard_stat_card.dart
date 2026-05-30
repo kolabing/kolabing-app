@@ -15,6 +15,7 @@ class DashboardStatCard extends StatelessWidget {
     required this.count,
     required this.icon,
     required this.accentColor,
+    required this.index,
     this.subtitle,
     this.iconSlug,
     this.iconVariant = UiIconVariant.minimal,
@@ -41,6 +42,13 @@ class DashboardStatCard extends StatelessWidget {
   /// Optional subtitle text below the count
   final String? subtitle;
 
+  /// Position index — even = lavender, odd = sage
+  final int index;
+
+  Color get _cardColor => index.isEven
+      ? KolabingColors.secondaryContainer
+      : KolabingColors.tertiaryContainer;
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -51,17 +59,8 @@ class DashboardStatCard extends StatelessWidget {
         vertical: KolabingSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? KolabingColors.darkSurface : _cardColor,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +92,7 @@ class DashboardStatCard extends StatelessWidget {
                   letterSpacing: -0.5,
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
 
@@ -127,7 +126,7 @@ class DashboardStatCard extends StatelessWidget {
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: isDark
                     ? KolabingColors.textOnDark.withValues(alpha: 0.45)
-                    : KolabingColors.textSecondary,
+                    : KolabingColors.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

@@ -95,14 +95,14 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
         backgroundColor: KolabingColors.surface,
-        foregroundColor: KolabingColors.textPrimary,
+        foregroundColor: KolabingColors.onSurface,
         elevation: 0,
         title: Text(
           title,
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),
@@ -123,7 +123,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
             Text(
               _error!,
               style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -138,7 +138,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         child: Text(
           'No reviews yet.',
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       );
@@ -187,7 +187,7 @@ class _ProfileReviewListCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +205,7 @@ class _ProfileReviewListCard extends StatelessWidget {
                     style: GoogleFonts.rubik(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                   Text(
@@ -237,7 +237,7 @@ class _ProfileReviewListCard extends StatelessWidget {
           Text(
             review.body!,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               height: 1.5,
             ),
           ),
@@ -266,7 +266,7 @@ class _ReviewAvatar extends StatelessWidget {
         reviewer.initial,
         style: GoogleFonts.rubik(
           fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
     );

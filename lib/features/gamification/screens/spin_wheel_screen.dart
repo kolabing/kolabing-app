@@ -100,7 +100,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: KolabingColors.textPrimary,
+      backgroundColor: KolabingColors.onSurface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -315,7 +315,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
           Icon(
             won ? LucideIcons.partyPopper : LucideIcons.rotateCcw,
             size: 48,
-            color: won ? KolabingColors.success : KolabingColors.textSecondary,
+            color: won ? KolabingColors.success : KolabingColors.onSurfaceVariant,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
@@ -323,7 +323,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
             style: GoogleFonts.rubik(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           if (won && reward != null) ...[
@@ -332,7 +332,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
               'You won: ${reward.name}',
               style: GoogleFonts.openSans(
                 fontSize: 16,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],

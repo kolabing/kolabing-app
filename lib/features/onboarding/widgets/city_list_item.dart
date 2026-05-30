@@ -63,7 +63,7 @@ class _CityListItemState extends State<CityListItem> {
                 width: 4,
               ),
               bottom: const BorderSide(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 width: 1,
               ),
             ),
@@ -90,7 +90,7 @@ class _CityListItemState extends State<CityListItem> {
                       style: GoogleFonts.openSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     if (widget.country != null) ...[

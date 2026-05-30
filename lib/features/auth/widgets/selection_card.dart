@@ -154,7 +154,7 @@ class _SelectionCardState extends State<SelectionCard>
                 border: Border.all(
                   color: _isPressed || widget.isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: 2,
                 ),
                 boxShadow: [
@@ -183,7 +183,7 @@ class _SelectionCardState extends State<SelectionCard>
                     style: GoogleFonts.dmSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                       letterSpacing: 0.5,
                     ),
                     textAlign: TextAlign.center,
@@ -196,7 +196,7 @@ class _SelectionCardState extends State<SelectionCard>
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                       height: 1.4,
                     ),
                     textAlign: TextAlign.center,

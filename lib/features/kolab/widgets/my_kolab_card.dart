@@ -59,7 +59,7 @@ class MyKolabCard extends StatelessWidget {
             style: GoogleFonts.openSans(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
               height: 1.3,
             ),
             maxLines: 2,
@@ -264,7 +264,7 @@ class _InfoPill extends StatelessWidget {
           style: GoogleFonts.openSans(
             fontSize: 11,
             fontWeight: FontWeight.w500,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],
@@ -295,7 +295,7 @@ class _ActionButton extends StatelessWidget {
         ? KolabingColors.onPrimary
         : danger
         ? KolabingColors.error
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
 
     if (primary) {
       return SizedBox(
@@ -326,7 +326,7 @@ class _ActionButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: danger ? KolabingColors.errorBg : KolabingColors.border,
+            color: danger ? KolabingColors.errorBg : KolabingColors.darkBorder,
           ),
           foregroundColor: foregroundColor,
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),

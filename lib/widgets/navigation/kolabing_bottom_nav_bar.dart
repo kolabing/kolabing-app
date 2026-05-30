@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../config/constants/radius.dart';
 import '../../config/theme/colors.dart';
 import '../ui_icon.dart';
 
@@ -48,22 +50,13 @@ class KolabingBottomNavBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: KolabingColors.navBarBackground,
         border: Border(
           top: BorderSide(
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+            color: KolabingColors.charcoal.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
       ),
       child: SafeArea(
         top: false,
@@ -102,84 +95,76 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected
-        ? KolabingColors.accent
-        : isDark
-            ? const Color(0xFF6B7280)
-            : const Color(0xFF9CA3AF); // Gray-400
+    final iconColor = isSelected
+        ? KolabingColors.navBarBackground
+        : KolabingColors.charcoal.withValues(alpha: 0.45);
     final labelColor = isSelected
-        ? KolabingColors.accent
-        : isDark
-            ? const Color(0xFF6B7280)
-            : const Color(0xFF9CA3AF);
+        ? KolabingColors.navBarBackground
+        : KolabingColors.charcoal.withValues(alpha: 0.45);
 
     return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          splashColor: KolabingColors.accent.withValues(alpha: 0.08),
-          highlightColor: KolabingColors.accent.withValues(alpha: 0.04),
-          child: SizedBox(
-            height: 64,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    if (item.iconSlug != null)
-                      UiIcon(
-                        icon: item.iconSlug!,
-                        size: 24,
-                        color: isSelected
-                            ? const Color(0xFF7F77DD)
-                            : const Color(0xFF9CA3AF),
-                      )
-                    else
-                      Icon(
-                        isSelected ? item.activeIcon : item.icon,
-                        color: color,
-                        size: 24,
-                      ),
-                    if (item.badgeCount != null && item.badgeCount! > 0)
-                      Positioned(
-                        right: -8,
-                        top: -4,
-                        child: _NumericBadge(count: item.badgeCount!),
-                      ),
-                    if (item.showDot && item.badgeCount == null)
-                      Positioned(
-                        right: -2,
-                        top: -2,
-                        child: _DotBadge(),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        item.label,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                          color: labelColor,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: SizedBox(
+          height: 64,
+          child: Center(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? KolabingColors.charcoal
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(KolabingRadius.round),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      if (item.iconSlug != null)
+                        UiIcon(
+                          icon: item.iconSlug!,
+                          size: 20,
+                          color: iconColor,
+                        )
+                      else
+                        Icon(
+                          isSelected ? item.activeIcon : item.icon,
+                          color: iconColor,
+                          size: 20,
                         ),
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                      ),
-                    ),
+                      if (item.badgeCount != null && item.badgeCount! > 0)
+                        Positioned(
+                          right: -8,
+                          top: -4,
+                          child: _NumericBadge(count: item.badgeCount!),
+                        ),
+                      if (item.showDot && item.badgeCount == null)
+                        Positioned(
+                          right: -2,
+                          top: -2,
+                          child: _DotBadge(),
+                        ),
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(width: 6),
+                  Text(
+                    item.label.toUpperCase(),
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      color: labelColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -220,15 +205,14 @@ class _NumericBadge extends StatelessWidget {
 class _DotBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: KolabingColors.accent,
+        color: KolabingColors.charcoal,
         shape: BoxShape.circle,
         border: Border.all(
-          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+          color: KolabingColors.navBarBackground,
           width: 2,
         ),
       ),

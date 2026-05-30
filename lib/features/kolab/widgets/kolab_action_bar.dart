@@ -60,7 +60,7 @@ class KolabActionBar extends StatelessWidget {
         decoration: const BoxDecoration(
           color: KolabingColors.surface,
           border: Border(
-            top: BorderSide(color: KolabingColors.border),
+            top: BorderSide(color: KolabingColors.darkBorder),
           ),
         ),
         child: isLastStep ? _buildLastStepRow() : _buildNavigationRow(),
@@ -179,8 +179,8 @@ class _OutlinedActionButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.textPrimary,
-            side: const BorderSide(color: KolabingColors.border),
+            foregroundColor: KolabingColors.onSurface,
+            side: const BorderSide(color: KolabingColors.darkBorder),
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -192,7 +192,7 @@ class _OutlinedActionButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 )
               : Text(

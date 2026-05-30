@@ -27,9 +27,9 @@ class ChallengeCard extends StatelessWidget {
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -42,7 +42,7 @@ class ChallengeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+              color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
             ),
           ),
           child: Row(

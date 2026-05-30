@@ -97,7 +97,7 @@ class DiscoveredEventCard extends StatelessWidget {
                     style: GoogleFonts.rubik(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -108,7 +108,7 @@ class DiscoveredEventCard extends StatelessWidget {
                     'by ${event.partnerName}',
                     style: GoogleFonts.openSans(
                       fontSize: 12,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

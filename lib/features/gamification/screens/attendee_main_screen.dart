@@ -82,7 +82,7 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+          isDark ? KolabingColors.surface : KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex > 1 ? _currentIndex - 1 : _currentIndex,
         children: const [

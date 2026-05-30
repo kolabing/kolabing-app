@@ -107,7 +107,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               height: 4,
               margin: const EdgeInsets.only(top: 6, bottom: KolabingSpacing.lg),
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -133,7 +133,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                   style: GoogleFonts.rubik(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                     height: 1.2,
                   ),
                 ),
@@ -144,7 +144,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                   style: GoogleFonts.openSans(
                     fontSize: 15,
                     height: 1.5,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -228,7 +228,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.textSecondary,
+                foregroundColor: KolabingColors.onSurfaceVariant,
                 shape: RoundedRectangleBorder(
                   borderRadius: KolabingRadius.borderRadiusMd,
                 ),
@@ -334,7 +334,7 @@ class _InfoRow extends StatelessWidget {
               ),
             ),
             alignment: Alignment.center,
-            child: Icon(icon, size: 18, color: KolabingColors.textPrimary),
+            child: Icon(icon, size: 18, color: KolabingColors.onSurface),
           ),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
@@ -346,7 +346,7 @@ class _InfoRow extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                     height: 1.3,
                   ),
                 ),
@@ -356,7 +356,7 @@ class _InfoRow extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 13,
                     height: 1.5,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ],

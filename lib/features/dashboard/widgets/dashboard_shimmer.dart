@@ -154,7 +154,7 @@ class _ShimmerBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? KolabingColors.darkBorder.withValues(alpha: opacity)
-            : KolabingColors.border.withValues(alpha: opacity),
+            : KolabingColors.darkBorder.withValues(alpha: opacity),
         borderRadius: KolabingRadius.borderRadiusSm,
       ),
     );
@@ -205,7 +205,7 @@ class _ShimmerStatCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isDark
                       ? KolabingColors.darkBorder.withValues(alpha: opacity)
-                      : KolabingColors.border.withValues(alpha: opacity),
+                      : KolabingColors.darkBorder.withValues(alpha: opacity),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -231,7 +231,7 @@ class _ShimmerListItem extends StatelessWidget {
         color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
         ),
       ),
       child: Row(
@@ -242,7 +242,7 @@ class _ShimmerListItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDark
                   ? KolabingColors.darkBorder.withValues(alpha: opacity)
-                  : KolabingColors.border.withValues(alpha: opacity),
+                  : KolabingColors.darkBorder.withValues(alpha: opacity),
               shape: BoxShape.circle,
             ),
           ),

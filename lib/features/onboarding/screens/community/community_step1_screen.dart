@@ -106,7 +106,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -120,7 +120,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                         style: GoogleFonts.openSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -147,7 +147,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                           style: GoogleFonts.openSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -175,7 +175,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                       style: GoogleFonts.openSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Your name or handle',

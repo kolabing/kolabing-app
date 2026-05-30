@@ -286,7 +286,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               const Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -294,7 +294,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 style: GoogleFonts.openSans(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textPrimary,
+                                  color: KolabingColors.onSurface,
                                 ),
                               ),
                             ],
@@ -323,7 +323,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             style: GoogleFonts.rubik(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -335,7 +335,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             style: GoogleFonts.openSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: KolabingColors.textSecondary,
+                              color: KolabingColors.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -397,13 +397,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -461,13 +461,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -519,13 +519,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(

@@ -106,7 +106,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               'Later',
               style: GoogleFonts.dmSans(
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ),

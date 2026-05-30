@@ -133,7 +133,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
               'Those photos are already in this Kolab.',
               style: GoogleFonts.openSans(color: Colors.white),
             ),
-            backgroundColor: KolabingColors.textSecondary,
+            backgroundColor: KolabingColors.onSurfaceVariant,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -198,13 +198,13 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           "Add photos so communities can see what you're offering. (Min 1, Max 5)",
-          style: GoogleFonts.openSans(fontSize: 14, color: KolabingColors.textSecondary),
+          style: GoogleFonts.openSans(fontSize: 14, color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -309,7 +309,7 @@ class _PhotoGrid extends StatelessWidget {
                 color: KolabingColors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   style: BorderStyle.solid,
                 ),
               ),
@@ -319,14 +319,14 @@ class _PhotoGrid extends StatelessWidget {
                   const Icon(
                     LucideIcons.plus,
                     size: 24,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     'Add Photo',
                     style: GoogleFonts.openSans(
                       fontSize: 11,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -410,11 +410,11 @@ class _PhotoSlot extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.image, size: 24, color: KolabingColors.textSecondary),
+            const Icon(LucideIcons.image, size: 24, color: KolabingColors.onSurfaceVariant),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               'Photo ${index + 1}',
-              style: GoogleFonts.openSans(fontSize: 11, color: KolabingColors.textSecondary),
+              style: GoogleFonts.openSans(fontSize: 11, color: KolabingColors.onSurfaceVariant),
             ),
           ],
         ),

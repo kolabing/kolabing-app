@@ -53,7 +53,7 @@ class IntentCard extends StatelessWidget {
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
               color:
-                  isSelected ? KolabingColors.primary : KolabingColors.border,
+                  isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -75,7 +75,7 @@ class IntentCard extends StatelessWidget {
                     size: 22,
                     color: isSelected
                         ? KolabingColors.onPrimary
-                        : KolabingColors.textSecondary,
+                        : KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -90,7 +90,7 @@ class IntentCard extends StatelessWidget {
                       style: GoogleFonts.rubik(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.xxxs),
@@ -99,7 +99,7 @@ class IntentCard extends StatelessWidget {
                       style: GoogleFonts.openSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -124,7 +124,7 @@ class IntentCard extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                 ),

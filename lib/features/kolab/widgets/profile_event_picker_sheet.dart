@@ -67,7 +67,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     ),
@@ -78,7 +78,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                     style: GoogleFonts.rubik(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
@@ -86,7 +86,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                     'Select up to ${widget.maxSelection} event${widget.maxSelection == 1 ? '' : 's'} to import.',
                     style: GoogleFonts.openSans(
                       fontSize: 13,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
@@ -111,7 +111,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                               border: Border.all(
                                 color: isSelected
                                     ? KolabingColors.primary
-                                    : KolabingColors.border,
+                                    : KolabingColors.darkBorder,
                               ),
                             ),
                             child: Row(
@@ -129,7 +129,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                         style: GoogleFonts.openSans(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w700,
-                                          color: KolabingColors.textPrimary,
+                                          color: KolabingColors.onSurface,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -137,7 +137,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                         DateFormat('MMM d, yyyy').format(event.date),
                                         style: GoogleFonts.openSans(
                                           fontSize: 12,
-                                          color: KolabingColors.textSecondary,
+                                          color: KolabingColors.onSurfaceVariant,
                                         ),
                                       ),
                                       if (event.partner.name.isNotEmpty) ...[
@@ -148,7 +148,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.openSans(
                                             fontSize: 12,
-                                            color: KolabingColors.textSecondary,
+                                            color: KolabingColors.onSurfaceVariant,
                                           ),
                                         ),
                                       ],

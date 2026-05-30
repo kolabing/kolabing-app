@@ -65,7 +65,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -74,7 +74,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             'Describe your collaboration and what you offer',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -91,7 +91,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: GoogleFonts.openSans(
               fontSize: 15,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: 'e.g., Fitness Community x Local Cafe',
@@ -102,11 +102,11 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -135,7 +135,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: GoogleFonts.openSans(
               fontSize: 15,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText:
@@ -147,11 +147,11 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -174,7 +174,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -204,7 +204,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                     border: Border.all(
                       color: isSelected
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -223,7 +223,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                           border: Border.all(
                             color: isSelected
                                 ? KolabingColors.primary
-                                : KolabingColors.border,
+                                : KolabingColors.darkBorder,
                             width: 2,
                           ),
                         ),
@@ -245,7 +245,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                               style: GoogleFonts.openSans(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -253,7 +253,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                               deliverable.subtitle,
                               style: GoogleFonts.openSans(
                                 fontSize: 12,
-                                color: KolabingColors.textSecondary,
+                                color: KolabingColors.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -275,7 +275,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
         style: GoogleFonts.openSans(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       );
 

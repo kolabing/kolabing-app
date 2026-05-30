@@ -92,7 +92,7 @@ class _InitiateChallengeScreenState
                 style: GoogleFonts.rubik(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -100,7 +100,7 @@ class _InitiateChallengeScreenState
                 'The verifier will be notified to confirm your challenge completion.',
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -152,11 +152,11 @@ class _InitiateChallengeScreenState
     final initiateState = ref.watch(initiateChallengeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
-        ? KolabingColors.darkBackground
+        ? KolabingColors.surface
         : KolabingColors.background;
     final textColor = isDark
         ? KolabingColors.textOnDark
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
     final surfaceColor = isDark
         ? KolabingColors.darkSurface
         : KolabingColors.surface;
@@ -199,7 +199,7 @@ class _InitiateChallengeScreenState
                       border: Border.all(
                         color: isDark
                             ? KolabingColors.darkBorder
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                       ),
                     ),
                     child: Row(
@@ -257,7 +257,7 @@ class _InitiateChallengeScreenState
                                     widget.challenge!.difficulty.label,
                                     style: GoogleFonts.openSans(
                                       fontSize: 12,
-                                      color: KolabingColors.textSecondary,
+                                      color: KolabingColors.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
@@ -326,7 +326,7 @@ class _InitiateChallengeScreenState
                       borderSide: BorderSide(
                         color: isDark
                             ? KolabingColors.darkBorder
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -334,7 +334,7 @@ class _InitiateChallengeScreenState
                       borderSide: BorderSide(
                         color: isDark
                             ? KolabingColors.darkBorder
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -449,7 +449,7 @@ class _InstructionStep extends StatelessWidget {
               text,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ),

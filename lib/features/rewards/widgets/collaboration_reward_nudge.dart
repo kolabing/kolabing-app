@@ -32,7 +32,7 @@ class CollaborationRewardNudge extends StatelessWidget {
           const Icon(
             LucideIcons.star,
             size: 20,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
           const SizedBox(width: KolabingSpacing.xs),
 
@@ -45,7 +45,7 @@ class CollaborationRewardNudge extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(width: KolabingSpacing.xxs),
@@ -56,7 +56,7 @@ class CollaborationRewardNudge extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -72,7 +72,7 @@ class CollaborationRewardNudge extends StatelessWidget {
               // replace this callback as needed.
             },
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
+              foregroundColor: KolabingColors.onSurface,
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.xs,
               ),

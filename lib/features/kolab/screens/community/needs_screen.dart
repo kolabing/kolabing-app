@@ -30,7 +30,7 @@ class NeedsScreen extends ConsumerWidget {
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -39,7 +39,7 @@ class NeedsScreen extends ConsumerWidget {
             'Select all that apply',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
 
@@ -75,7 +75,7 @@ class NeedsScreen extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -97,8 +97,8 @@ class NeedsScreen extends ConsumerWidget {
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w400,
                           color: isSelected
-                              ? KolabingColors.textPrimary
-                              : KolabingColors.textSecondary,
+                              ? KolabingColors.onSurface
+                              : KolabingColors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),

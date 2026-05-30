@@ -21,9 +21,9 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
 
@@ -146,7 +146,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                  color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
                 ),
               ),
               child: Column(
@@ -162,7 +162,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     height: 1,
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.bell,
@@ -175,7 +175,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     height: 1,
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.helpCircle,
@@ -268,7 +268,7 @@ class _SettingsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
 
     return Material(
       color: Colors.transparent,
@@ -285,7 +285,7 @@ class _SettingsItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(

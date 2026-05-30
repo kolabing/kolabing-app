@@ -232,7 +232,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -258,7 +258,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Text(
                 'Upgrade to Premium',
                 style: KolabingTextStyles.headlineMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -267,7 +267,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Text(
                 "You've used your 1 free kolab request. Subscribe to create unlimited requests and connect with more communities.",
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -304,14 +304,14 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       Text(
                         Platform.isIOS ? iapState.priceString : '29 EUR',
                         style: KolabingTextStyles.headlineLarge.copyWith(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(width: KolabingSpacing.xs),
                       Text(
                         '/ month',
                         style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                     ] else
@@ -320,7 +320,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                             ? 'Loading App Store price...'
                             : 'Subscription unavailable',
                         style: KolabingTextStyles.titleMedium.copyWith(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                   ],
@@ -463,7 +463,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           child: Text(
             text,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
         ),

@@ -53,7 +53,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 color: isCurrentUser
                     ? KolabingColors.primary
-                    : KolabingColors.textSecondary,
+                    : KolabingColors.onSurfaceVariant,
               ),
             ),
           ),
@@ -94,7 +94,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                         style: GoogleFonts.rubik(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -142,7 +142,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                 style: GoogleFonts.rubik(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
             ],

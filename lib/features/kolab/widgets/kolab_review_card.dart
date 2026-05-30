@@ -33,7 +33,7 @@ class KolabReviewCard extends ConsumerWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(children: _buildSections()),
   );
@@ -440,7 +440,7 @@ class _ReviewSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: KolabingColors.textSecondary),
+              Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
@@ -448,7 +448,7 @@ class _ReviewSection extends StatelessWidget {
                   style: GoogleFonts.rubik(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
               ),
@@ -473,7 +473,7 @@ class _SectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      const Divider(height: 1, thickness: 1, color: KolabingColors.border);
+      const Divider(height: 1, thickness: 1, color: KolabingColors.darkBorder);
 }
 
 /// A labelled field in a review section.
@@ -500,7 +500,7 @@ class _ReviewField extends StatelessWidget {
         value,
         style: GoogleFonts.openSans(
           fontSize: 14,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
     ],
@@ -533,7 +533,7 @@ class _ChipList extends StatelessWidget {
               style: GoogleFonts.openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ),

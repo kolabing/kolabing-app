@@ -53,7 +53,7 @@ class RewardBadgeCard extends StatelessWidget {
           border: Border.all(
             color: isUnlocked
                 ? KolabingColors.primary
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
             width: isUnlocked ? 2 : 1,
           ),
           boxShadow: isUnlocked
@@ -84,7 +84,7 @@ class RewardBadgeCard extends StatelessWidget {
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: isUnlocked
-                    ? KolabingColors.textPrimary
+                    ? KolabingColors.onSurface
                     : KolabingColors.textTertiary,
               ),
             ),
@@ -102,7 +102,7 @@ class RewardBadgeCard extends StatelessWidget {
                 fontSize: 11,
                 fontWeight: FontWeight.w400,
                 color: isUnlocked
-                    ? KolabingColors.textSecondary
+                    ? KolabingColors.onSurfaceVariant
                     : KolabingColors.textTertiary,
               ),
             ),
@@ -143,7 +143,7 @@ class RewardBadgeCard extends StatelessWidget {
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: isUnlocked
-                    ? KolabingColors.textPrimary
+                    ? KolabingColors.onSurface
                     : KolabingColors.textTertiary,
               ),
             ),
@@ -173,14 +173,14 @@ class RewardBadgeCard extends StatelessWidget {
           border: Border.all(
             color: isUnlocked
                 ? KolabingColors.softYellowBorder
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
         ),
         child: Icon(
           badge.slug.icon,
           size: iconSize,
           color: isUnlocked
-              ? KolabingColors.textPrimary
+              ? KolabingColors.onSurface
               : KolabingColors.textTertiary,
         ),
       );

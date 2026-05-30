@@ -133,7 +133,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                       child: Icon(
                         widget.badge.slug.icon,
                         size: 44,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                   ),

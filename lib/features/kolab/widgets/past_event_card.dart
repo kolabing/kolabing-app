@@ -42,7 +42,7 @@ class PastEventCard extends StatelessWidget {
     onTap: onAdd,
     child: CustomPaint(
       painter: const _DashedBorderPainter(
-        color: KolabingColors.border,
+        color: KolabingColors.darkBorder,
         radius: KolabingRadius.md,
       ),
       child: Container(
@@ -69,7 +69,7 @@ class PastEventCard extends StatelessWidget {
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -91,7 +91,7 @@ class PastEventCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +107,7 @@ class PastEventCard extends StatelessWidget {
             child: const Icon(
               LucideIcons.calendar,
               size: 18,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -121,7 +121,7 @@ class PastEventCard extends StatelessWidget {
                   style: GoogleFonts.rubik(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -131,7 +131,7 @@ class PastEventCard extends StatelessWidget {
                   formattedDate,
                   style: GoogleFonts.openSans(
                     fontSize: 13,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
                 if (e.partnerName != null && e.partnerName!.isNotEmpty) ...[
@@ -149,7 +149,7 @@ class PastEventCard extends StatelessWidget {
                           e.partnerName!,
                           style: GoogleFonts.openSans(
                             fontSize: 13,
-                            color: KolabingColors.textSecondary,
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

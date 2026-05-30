@@ -379,13 +379,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: SelectableText(
                 details,
                 style: GoogleFonts.robotoMono(
                   fontSize: 12,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                   height: 1.5,
                 ),
               ),
@@ -484,7 +484,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               const Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -492,7 +492,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 style: GoogleFonts.openSans(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textPrimary,
+                                  color: KolabingColors.onSurface,
                                 ),
                               ),
                             ],
@@ -528,7 +528,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             style: GoogleFonts.rubik(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -542,7 +542,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             style: GoogleFonts.openSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: KolabingColors.textSecondary,
+                              color: KolabingColors.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -605,13 +605,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -669,13 +669,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -746,13 +746,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -779,7 +779,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 color: KolabingColors.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               child: Row(
@@ -795,7 +795,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                       'Your account is already created. Tapping the button below will save this onboarding data to the business onboarding endpoint.',
                                       style: GoogleFonts.openSans(
                                         fontSize: 13,
-                                        color: KolabingColors.textSecondary,
+                                        color: KolabingColors.onSurfaceVariant,
                                         height: 1.4,
                                       ),
                                     ),

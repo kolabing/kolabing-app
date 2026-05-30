@@ -98,11 +98,18 @@ abstract final class KolabingLayout {
 /// Shadows are minimal. Cards use borders instead of elevation.
 /// No glow effects anywhere. Buttons are flat.
 abstract final class KolabingShadows {
-  /// Card shadow — nearly invisible lift
+  /// Card shadow — ambient, low opacity large blur (Stitch spec)
   static const BoxShadow card = BoxShadow(
-    color: Color(0x0A000000),
-    blurRadius: 4,
-    offset: Offset(0, 1),
+    color: Color(0x0A1C1C16),
+    blurRadius: 24,
+    offset: Offset(0, 4),
+  );
+
+  /// Ambient shadow — softest elevation for floating surfaces
+  static const BoxShadow ambient = BoxShadow(
+    color: Color(0x081C1C16),
+    blurRadius: 40,
+    offset: Offset(0, 8),
   );
 
   /// Card hover shadow — slight lift on interaction
@@ -116,7 +123,7 @@ abstract final class KolabingShadows {
   static const BoxShadow button = BoxShadow(
     color: Color(0x00000000),
     blurRadius: 0,
-    offset: Offset(0, 0),
+    offset: Offset.zero,
   );
 
   /// Bottom navigation shadow — soft upward line
@@ -133,11 +140,43 @@ abstract final class KolabingShadows {
     spreadRadius: 0,
   );
 
+  /// FAB shadow — soft drop shadow beneath the floating action button.
+  /// Matches inline definition in kolabing_fab.dart.
+  static List<BoxShadow> get fab => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.12),
+          blurRadius: 20,
+          spreadRadius: 0,
+          offset: const Offset(0, 4),
+        ),
+      ];
+
+  /// Overlay card shadow — depth behind glass/dark overlay cards on images.
+  /// Matches inline definition in explore_swipe_card.dart.
+  static List<BoxShadow> get overlayCard => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.12),
+          blurRadius: 18,
+          offset: const Offset(0, 10),
+        ),
+      ];
+
+  /// Modal top shadow — upward shadow on sticky bottom action bars in sheets.
+  /// Matches inline definition in explore_detail_sheet.dart.
+  static List<BoxShadow> get modalTop => [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 8,
+          offset: const Offset(0, -2),
+        ),
+      ];
+
   // ---------------------------------------------------------------------------
   // List helpers for decoration
   // ---------------------------------------------------------------------------
 
   static List<BoxShadow> get cardShadow => [card];
+  static List<BoxShadow> get ambientShadow => [ambient];
   static List<BoxShadow> get cardHoverShadow => [cardHover];
   static List<BoxShadow> get buttonShadow => [];
   static List<BoxShadow> get bottomNavShadow => [bottomNav];

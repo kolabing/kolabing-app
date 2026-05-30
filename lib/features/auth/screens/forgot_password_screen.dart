@@ -328,7 +328,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   border: Border.all(color: _kForgotPanelBorder),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.30),
+                      color: KolabingColors.overlayDark30,
                       blurRadius: 32,
                       offset: const Offset(0, 18),
                     ),
@@ -371,7 +371,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           Text(
             'Reset your password',
             style: GoogleFonts.openSans(
-              color: Colors.white,
+              color: KolabingColors.textOnDark,
               fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
               fontWeight: FontWeight.w700,
             ),
@@ -399,7 +399,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => _handleSendResetLink(),
             style: GoogleFonts.openSans(
-              color: Colors.white,
+              color: KolabingColors.textOnDark,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -495,7 +495,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         Text(
           'Check your inbox',
           style: GoogleFonts.openSans(
-            color: Colors.white,
+            color: KolabingColors.textOnDark,
             fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
             fontWeight: FontWeight.w700,
           ),
@@ -530,7 +530,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 child: Text(
                   _emailController.text.trim(),
                   style: GoogleFonts.openSans(
-                    color: Colors.white,
+                    color: KolabingColors.textOnDark,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                   ),
@@ -742,12 +742,12 @@ class _HeroCopy extends StatelessWidget {
     children: [
       _HeroLine(
         text: emailSent ? 'CHECK YOUR EMAIL.' : 'RESET ACCESS.',
-        color: Colors.white,
+        color: KolabingColors.textOnDark,
         size: headlineSize,
       ),
       _HeroLine(
         text: emailSent ? 'OPEN THE LINK.' : 'GET BACK IN.',
-        color: Colors.white,
+        color: KolabingColors.textOnDark,
         size: headlineSize,
       ),
       _HeroLine(
@@ -831,7 +831,7 @@ class _BackButtonState extends State<_BackButton> {
             const Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 14,
-              color: Colors.white,
+              color: KolabingColors.textOnDark,
             ),
             const SizedBox(width: 2),
             Text(
@@ -839,7 +839,7 @@ class _BackButtonState extends State<_BackButton> {
               style: GoogleFonts.openSans(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: KolabingColors.textOnDark,
               ),
             ),
           ],

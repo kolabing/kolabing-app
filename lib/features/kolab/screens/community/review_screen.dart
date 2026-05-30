@@ -44,7 +44,7 @@ class ReviewScreen extends ConsumerWidget {
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -53,7 +53,7 @@ class ReviewScreen extends ConsumerWidget {
             'Make sure everything looks correct before publishing',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -65,7 +65,7 @@ class ReviewScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusLg,
-              border: Border.all(color: KolabingColors.border),
+              border: Border.all(color: KolabingColors.darkBorder),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +84,7 @@ class ReviewScreen extends ConsumerWidget {
                         style: GoogleFonts.rubik(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
@@ -94,7 +94,7 @@ class ReviewScreen extends ConsumerWidget {
                             : kolab.description,
                         style: GoogleFonts.openSans(
                           fontSize: 14,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                           height: 1.5,
                         ),
                         maxLines: 4,
@@ -342,14 +342,14 @@ class ReviewScreen extends ConsumerWidget {
 
   Widget _buildReviewInfoRow(IconData icon, String label) => Row(
     children: [
-      Icon(icon, size: 16, color: KolabingColors.textSecondary),
+      Icon(icon, size: 16, color: KolabingColors.onSurfaceVariant),
       const SizedBox(width: KolabingSpacing.xs),
       Expanded(
         child: Text(
           label,
           style: GoogleFonts.openSans(
             fontSize: 13,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ),
@@ -371,7 +371,7 @@ class ReviewScreen extends ConsumerWidget {
       style: GoogleFonts.openSans(
         fontSize: 12,
         fontWeight: FontWeight.w600,
-        color: KolabingColors.textPrimary,
+        color: KolabingColors.onSurface,
       ),
     ),
   );

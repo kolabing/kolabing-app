@@ -103,7 +103,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           style: GoogleFonts.rubik(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -115,7 +115,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           style: GoogleFonts.openSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -132,7 +132,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           style: GoogleFonts.openSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                           decoration: InputDecoration(
                             hintText: 'Search cities...',
@@ -204,7 +204,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                               'No cities found',
                               style: GoogleFonts.openSans(
                                 fontSize: 14,
-                                color: KolabingColors.textSecondary,
+                                color: KolabingColors.onSurfaceVariant,
                               ),
                             ),
                           );
@@ -244,7 +244,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                               'Failed to load cities',
                               style: GoogleFonts.openSans(
                                 fontSize: 14,
-                                color: KolabingColors.textSecondary,
+                                color: KolabingColors.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: 16),

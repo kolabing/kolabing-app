@@ -26,7 +26,7 @@ class SummaryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: KolabingColors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: KolabingColors.border),
+          border: Border.all(color: KolabingColors.darkBorder),
           boxShadow: [
             BoxShadow(
               color: const Color(0xFF000000).withValues(alpha: 0.06),
@@ -49,7 +49,7 @@ class SummaryCard extends StatelessWidget {
                     border: Border.all(
                       color: data.photoBase64 != null
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: 2,
                     ),
                     image: data.photoBase64 != null
@@ -77,7 +77,7 @@ class SummaryCard extends StatelessWidget {
                         style: GoogleFonts.openSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -86,7 +86,7 @@ class SummaryCard extends StatelessWidget {
                         style: GoogleFonts.openSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -101,7 +101,7 @@ class SummaryCard extends StatelessWidget {
                 data.tiktok != null ||
                 data.website != null) ...[
               const SizedBox(height: 16),
-              const Divider(color: KolabingColors.border, height: 1),
+              const Divider(color: KolabingColors.darkBorder, height: 1),
               const SizedBox(height: 16),
               if (data.isBusiness &&
                   data.venueName != null &&
@@ -138,7 +138,7 @@ class SummaryCard extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                     height: 1.4,
                   ),
                   maxLines: 2,
@@ -207,7 +207,7 @@ class _SummaryDetailItem extends StatelessWidget {
             style: GoogleFonts.openSans(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               height: 1.35,
             ),
             softWrap: true,
@@ -244,7 +244,7 @@ class _SummaryInlineItem extends StatelessWidget {
             style: GoogleFonts.openSans(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ),

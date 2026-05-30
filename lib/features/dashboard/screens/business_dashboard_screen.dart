@@ -132,7 +132,7 @@ class _BusinessDashboardScreenState
               style: KolabingTextStyles.pageTitle.copyWith(
                 color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xxs),
@@ -141,7 +141,7 @@ class _BusinessDashboardScreenState
               style: GoogleFonts.openSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -166,6 +166,7 @@ class _BusinessDashboardScreenState
               icon: LucideIcons.megaphone,
               accentColor: KolabingColors.primary,
               subtitle: '${data.opportunities.total} total requests',
+              index: 0,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -177,6 +178,7 @@ class _BusinessDashboardScreenState
               iconSlug: UiIconSlug.clock,
               accentColor: const Color(0xFFFF9800),
               subtitle: '${data.applicationsReceived.total} total',
+              index: 1,
             ),
           ),
         ],
@@ -191,6 +193,7 @@ class _BusinessDashboardScreenState
               icon: LucideIcons.users,
               accentColor: const Color(0xFF4CAF50),
               subtitle: '${data.collaborations.upcoming} upcoming',
+              index: 2,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -202,6 +205,7 @@ class _BusinessDashboardScreenState
               iconSlug: UiIconSlug.checkCircle,
               accentColor: KolabingColors.info,
               subtitle: '${data.collaborations.total} total',
+              index: 3,
             ),
           ),
         ],
@@ -272,11 +276,11 @@ class _BusinessDashboardScreenState
             style: OutlinedButton.styleFrom(
               foregroundColor: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
               side: BorderSide(
                 color: isDark
                     ? KolabingColors.darkBorder
-                    : KolabingColors.border,
+                    : KolabingColors.darkBorder,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -379,7 +383,7 @@ class _BusinessDashboardScreenState
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

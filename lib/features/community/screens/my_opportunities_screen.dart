@@ -308,7 +308,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         Text(
           'MY OPPORTUNITIES',
           style: KolabingTextStyles.pageTitle.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
@@ -317,7 +317,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],
@@ -355,7 +355,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
                   border: Border.all(
                     color: isSelected
                         ? KolabingColors.primary
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: Text(
@@ -365,7 +365,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
                     fontWeight: FontWeight.w500,
                     color: isSelected
                         ? KolabingColors.onPrimary
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
               ),
@@ -502,7 +502,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -510,7 +510,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             'Create your first opportunity and start connecting.',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -556,7 +556,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -564,7 +564,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             error,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

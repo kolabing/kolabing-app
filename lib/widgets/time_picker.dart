@@ -102,7 +102,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: KolabingColors.border,
+                    color: KolabingColors.darkBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -115,7 +115,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                 style: GoogleFonts.rubik(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -164,7 +164,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                             style: GoogleFonts.rubik(
                               fontSize: 30,
                               fontWeight: FontWeight.w700,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                           ),
                         ),
@@ -240,8 +240,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.textSecondary,
-                        side: const BorderSide(color: KolabingColors.border),
+                        foregroundColor: KolabingColors.onSurfaceVariant,
+                        side: const BorderSide(color: KolabingColors.darkBorder),
                         padding:
                             const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -317,8 +317,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                 fontWeight:
                     isSelected ? FontWeight.w700 : FontWeight.w400,
                 color: isSelected
-                    ? KolabingColors.textPrimary
-                    : KolabingColors.textSecondary.withValues(alpha: 0.45),
+                    ? KolabingColors.onSurface
+                    : KolabingColors.onSurfaceVariant.withValues(alpha: 0.45),
               ),
             ),
           );

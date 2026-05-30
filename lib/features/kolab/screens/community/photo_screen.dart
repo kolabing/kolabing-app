@@ -161,7 +161,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -170,7 +170,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
             'This will appear on your kolab card in Explore.',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
 
@@ -193,7 +193,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 border: Border.all(
                   color: useProfilePhoto
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: useProfilePhoto ? 2 : 1,
                 ),
               ),
@@ -211,7 +211,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                       border: Border.all(
                         color: useProfilePhoto
                             ? KolabingColors.primary
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                         width: 2,
                       ),
                     ),
@@ -230,7 +230,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                       style: GoogleFonts.openSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                   ),
@@ -244,7 +244,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           // Divider with "OR"
           Row(
             children: [
-              const Expanded(child: Divider(color: KolabingColors.border)),
+              const Expanded(child: Divider(color: KolabingColors.darkBorder)),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: KolabingSpacing.sm,
@@ -258,7 +258,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                   ),
                 ),
               ),
-              const Expanded(child: Divider(color: KolabingColors.border)),
+              const Expanded(child: Divider(color: KolabingColors.darkBorder)),
             ],
           ),
 
@@ -288,7 +288,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 decoration: BoxDecoration(
                   color: KolabingColors.surface,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.border, width: 1),
+                  border: Border.all(color: KolabingColors.darkBorder, width: 1),
                 ),
                 child: CustomPaint(
                   painter: _DashedBorderPainter(
@@ -316,7 +316,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                         style: GoogleFonts.openSans(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.xxs),
@@ -402,7 +402,7 @@ class _UploadedPhotoCard extends StatelessWidget {
           style: GoogleFonts.openSans(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
@@ -410,7 +410,7 @@ class _UploadedPhotoCard extends StatelessWidget {
           'This image will appear on your kolab card in Explore.',
           style: GoogleFonts.openSans(
             fontSize: 13,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),

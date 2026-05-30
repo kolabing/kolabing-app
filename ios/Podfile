@@ -53,6 +53,16 @@ post_install do |installer|
         'PERMISSION_NOTIFICATIONS=1',
         'PERMISSION_CAMERA=1',
       ]
+      # Fix deployment target warnings from pods that ship with old minimums
+      if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      end
+      # Suppress incompatible-pointer and nullability warnings in onesignal pods
+      # that are not yet updated for Xcode 26 SDK
+      if target.name.start_with?('onesignal', 'OneSignal')
+        config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+        config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
+      end
     end
   end
 end

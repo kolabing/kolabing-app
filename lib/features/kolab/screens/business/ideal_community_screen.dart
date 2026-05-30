@@ -94,7 +94,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
               fontSize: 14,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -103,7 +103,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
             'What kind of communities would be a great fit?',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -125,7 +125,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
               fontSize: 14,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -156,7 +156,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
               fontSize: 14,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -204,11 +204,11 @@ InputDecoration _inputDecoration({
   ),
   border: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
@@ -225,7 +225,7 @@ InputDecoration _inputDecoration({
 );
 
 TextStyle get _inputTextStyle =>
-    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.textPrimary);
+    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.onSurface);
 
 // =============================================================================
 // Toggle Card
@@ -254,7 +254,7 @@ class _ToggleCard extends StatelessWidget {
         color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.border,
+          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
         ),
       ),
       child: Row(
@@ -270,7 +270,7 @@ class _ToggleCard extends StatelessWidget {
               border: Border.all(
                 color: isSelected
                     ? KolabingColors.primary
-                    : KolabingColors.border,
+                    : KolabingColors.darkBorder,
                 width: 1.5,
               ),
             ),
@@ -294,7 +294,7 @@ class _ToggleCard extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),

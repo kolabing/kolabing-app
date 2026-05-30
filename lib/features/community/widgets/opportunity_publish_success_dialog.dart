@@ -52,7 +52,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
             style: GoogleFonts.rubik(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -62,7 +62,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
                 : 'Your opportunity is now live. Businesses can start applying!',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

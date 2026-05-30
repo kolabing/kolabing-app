@@ -256,7 +256,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -267,7 +267,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         'We imported what we could from Google. Review it, fill in capacity, and curate the final venue gallery before you finish.',
                         style: GoogleFonts.openSans(
                           fontSize: 14,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -341,7 +341,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       'Select up to 3 categories that describe your business.',
                       style: GoogleFonts.openSans(
                         fontSize: 13,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -407,7 +407,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                               border: Border.all(
                                 color: isSelected
                                     ? KolabingColors.primary
-                                    : KolabingColors.border,
+                                    : KolabingColors.darkBorder,
                               ),
                             ),
                             child: Row(
@@ -418,7 +418,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                   size: 16,
                                   color: isSelected
                                       ? KolabingColors.onPrimary
-                                      : KolabingColors.textPrimary,
+                                      : KolabingColors.onSurface,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -430,7 +430,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                         : FontWeight.w500,
                                     color: isSelected
                                         ? KolabingColors.onPrimary
-                                        : KolabingColors.textPrimary,
+                                        : KolabingColors.onSurface,
                                   ),
                                 ),
                               ],
@@ -446,7 +446,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       'Google does not provide venue capacity, so you still need to enter it manually.',
                       style: GoogleFonts.openSans(
                         fontSize: 13,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -613,7 +613,7 @@ class _VenueAddressCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surfaceVariant,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -632,7 +632,7 @@ class _VenueAddressCard extends StatelessWidget {
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
             ),
@@ -644,7 +644,7 @@ class _VenueAddressCard extends StatelessWidget {
             city,
             style: GoogleFonts.openSans(
               fontSize: 13,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -681,7 +681,7 @@ class _FieldLabel extends StatelessWidget {
     style: GoogleFonts.openSans(
       fontSize: 14,
       fontWeight: FontWeight.w700,
-      color: KolabingColors.textPrimary,
+      color: KolabingColors.onSurface,
     ),
   );
 }
@@ -710,11 +710,11 @@ InputDecoration _inputDecoration({
   fillColor: KolabingColors.surfaceVariant,
   border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),

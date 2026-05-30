@@ -130,7 +130,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
       body: IndexedStack(
         index: _currentIndex,

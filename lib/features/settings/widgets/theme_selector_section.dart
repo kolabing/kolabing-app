@@ -50,7 +50,7 @@ class ThemeSelectorSection extends ConsumerWidget {
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
             ],
@@ -122,17 +122,17 @@ class _ThemeOption extends StatelessWidget {
         ? (isDark
             ? KolabingColors.primary.withValues(alpha: 0.15)
             : KolabingColors.softYellow)
-        : (isDark ? KolabingColors.darkBackground : KolabingColors.surfaceVariant);
+        : (isDark ? KolabingColors.surface : KolabingColors.surfaceVariant);
 
     final borderColor = isSelected
         ? KolabingColors.primary
-        : (isDark ? KolabingColors.darkBorder : KolabingColors.border);
+        : (isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder);
 
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
 
     final subtitleColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -169,7 +169,7 @@ class _ThemeOption extends StatelessWidget {
                     ? KolabingColors.onPrimary
                     : (isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textSecondary),
+                        : KolabingColors.onSurfaceVariant),
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),

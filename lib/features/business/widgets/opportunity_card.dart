@@ -60,7 +60,7 @@ class OpportunityCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                   height: 1.3,
                 ),
                 maxLines: 2,
@@ -74,7 +74,7 @@ class OpportunityCard extends StatelessWidget {
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                   height: 1.4,
                 ),
                 maxLines: 2,
@@ -128,7 +128,7 @@ class OpportunityCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -180,7 +180,7 @@ class OpportunityCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
+                              : KolabingColors.onSurface,
                         ),
                       ),
                     ],
@@ -269,11 +269,11 @@ class OpportunityCard extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
                 side: BorderSide(
                   color: isDark
                       ? KolabingColors.darkBorder
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: 1.5,
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -369,7 +369,7 @@ class _CreatorAvatar extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: isDark
                 ? KolabingColors.textOnDark
-                : KolabingColors.textPrimary,
+                : KolabingColors.onSurface,
           ),
         ),
       );
@@ -455,7 +455,7 @@ class _TagPill extends StatelessWidget {
               style: GoogleFonts.openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],

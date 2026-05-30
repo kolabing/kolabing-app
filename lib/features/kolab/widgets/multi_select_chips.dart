@@ -69,8 +69,8 @@ class MultiSelectChips<T> extends StatelessWidget {
               borderRadius: KolabingRadius.borderRadiusSm,
               border: Border.all(
                 color: isSelected
-                    ? KolabingColors.accent
-                    : KolabingColors.border,
+                    ? KolabingColors.secondary
+                    : KolabingColors.darkBorder,
               ),
             ),
             child: AnimatedOpacity(
@@ -84,8 +84,8 @@ class MultiSelectChips<T> extends StatelessWidget {
                       icon,
                       size: 16,
                       color: isSelected
-                          ? KolabingColors.accent
-                          : KolabingColors.textPrimary,
+                          ? KolabingColors.secondary
+                          : KolabingColors.onSurface,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                   ],
@@ -96,8 +96,8 @@ class MultiSelectChips<T> extends StatelessWidget {
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w400,
                       color: isSelected
-                          ? KolabingColors.accent
-                          : KolabingColors.textPrimary,
+                          ? KolabingColors.secondary
+                          : KolabingColors.onSurface,
                     ),
                   ),
                 ],

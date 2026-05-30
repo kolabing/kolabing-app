@@ -277,7 +277,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -285,7 +285,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               _locationError!,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -331,7 +331,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -339,7 +339,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               'Try increasing the search radius\nor check back later for new events.',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -380,7 +380,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -388,7 +388,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -467,7 +467,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -478,7 +478,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),

@@ -102,7 +102,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -245,7 +245,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -253,7 +253,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               'Be the first to earn points\nand claim the top spot!',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -281,7 +281,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -289,7 +289,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),

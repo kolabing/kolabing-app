@@ -26,7 +26,7 @@ class PastCollaborationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.border, width: 1),
+        border: Border.all(color: KolabingColors.darkBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +36,7 @@ class PastCollaborationCard extends StatelessWidget {
           Text(
             collaboration.title,
             style: KolabingTextStyles.titleSmall.copyWith(
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -56,7 +56,7 @@ class PastCollaborationCard extends StatelessWidget {
                 child: Text(
                   'with ${collaboration.partnerName}',
                   style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -168,7 +168,7 @@ class _InitialCircle extends StatelessWidget {
         style: GoogleFonts.rubik(
           fontSize: size * 0.45,
           fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
     ),

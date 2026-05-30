@@ -123,7 +123,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                       style: GoogleFonts.rubik(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -132,7 +132,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                       'These become your reusable venue gallery, so you won’t need to upload them again every time you create a venue Kolab.',
                       style: GoogleFonts.openSans(
                         fontSize: 14,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -212,18 +212,18 @@ class _AddPhotoTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(LucideIcons.plus, color: KolabingColors.textSecondary),
+          const Icon(LucideIcons.plus, color: KolabingColors.onSurfaceVariant),
           const SizedBox(height: 8),
           Text(
             'Add Photo',
             style: GoogleFonts.openSans(
               fontSize: 12,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],

@@ -176,7 +176,7 @@ class LeaderboardPodium extends StatelessWidget {
             style: GoogleFonts.rubik(
               fontSize: rank == 1 ? 14 : 12,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,

@@ -84,7 +84,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               if (visiblePhotos.isNotEmpty)
@@ -118,7 +118,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                           size: 14,
                           color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
+                              : KolabingColors.onSurface,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -128,7 +128,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                             fontWeight: FontWeight.w600,
                             color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
+                                : KolabingColors.onSurface,
                           ),
                         ),
                       ],
@@ -193,7 +193,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -201,7 +201,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               Text(
                 'Add Gallery Photo',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -293,7 +293,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
             style: TextStyle(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
         ],
@@ -312,7 +312,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
       decoration: BoxDecoration(
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           width: 1.5,
           strokeAlign: BorderSide.strokeAlignInside,
         ),
@@ -338,7 +338,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   size: 24,
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.72)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
@@ -350,7 +350,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 style: KolabingTextStyles.titleSmall.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -362,7 +362,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.68)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                   height: 1.45,
                 ),
               ),

@@ -26,9 +26,9 @@ class EventQRCodeScreen extends ConsumerWidget {
     final qrTokenAsync = ref.watch(qrTokenProvider(eventId));
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor =
-        isDark ? KolabingColors.darkBackground : KolabingColors.background;
+        isDark ? KolabingColors.surface : KolabingColors.background;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
 
@@ -92,7 +92,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color:
-                        isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                        isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
                   ),
                   boxShadow: isDark
                       ? null
@@ -139,7 +139,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                           fontSize: 14,
                           color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
+                              : KolabingColors.onSurface,
                         ),
                       ),
                     ),
@@ -189,7 +189,7 @@ class EventQRCodeScreen extends ConsumerWidget {
               'Generating QR Code...',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -217,7 +217,7 @@ class EventQRCodeScreen extends ConsumerWidget {
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -225,7 +225,7 @@ class EventQRCodeScreen extends ConsumerWidget {
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -278,7 +278,7 @@ class EventQRCodeScreen extends ConsumerWidget {
           icon: const Icon(LucideIcons.copy, size: 16),
           label: const Text('Copy Token'),
           style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.textSecondary,
+            foregroundColor: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],

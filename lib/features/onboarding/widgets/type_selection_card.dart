@@ -107,7 +107,7 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
                     style: GoogleFonts.openSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                       height: 1.25,
                     ),
                     textAlign: TextAlign.center,

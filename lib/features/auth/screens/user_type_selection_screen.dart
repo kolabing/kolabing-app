@@ -176,7 +176,7 @@ class _UserTypeSelectionScreenState
                       style: GoogleFonts.rubik(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                         letterSpacing: 1.5,
                       ),
                       textAlign: TextAlign.center,
@@ -194,7 +194,7 @@ class _UserTypeSelectionScreenState
                       style: GoogleFonts.openSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -315,7 +315,7 @@ class _BackButtonState extends State<_BackButton> {
             const Icon(
               Icons.arrow_back_ios_rounded,
               size: 20,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             const SizedBox(width: 4),
             Text(
@@ -323,7 +323,7 @@ class _BackButtonState extends State<_BackButton> {
               style: GoogleFonts.openSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ],
@@ -364,7 +364,7 @@ class _LoginLinkState extends State<_LoginLink> {
             style: GoogleFonts.openSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             children: [
               const TextSpan(text: 'Already have an account? '),
@@ -373,7 +373,7 @@ class _LoginLinkState extends State<_LoginLink> {
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                   decoration: _isPressed ? TextDecoration.underline : null,
                 ),
               ),

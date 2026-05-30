@@ -106,9 +106,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
 
     return SafeArea(
       child: RefreshIndicator(
@@ -425,7 +425,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             style: GoogleFonts.rubik(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -433,7 +433,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             _locationError!,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -476,7 +476,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -522,7 +522,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             style: GoogleFonts.rubik(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -530,7 +530,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             error,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -602,7 +602,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -613,7 +613,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),

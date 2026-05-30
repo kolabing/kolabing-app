@@ -193,7 +193,7 @@ class StatsScreen extends ConsumerWidget {
               fontSize: 12,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -263,7 +263,7 @@ class StatsScreen extends ConsumerWidget {
             label,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ),
@@ -272,7 +272,7 @@ class StatsScreen extends ConsumerWidget {
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ],
@@ -289,7 +289,7 @@ class StatsScreen extends ConsumerWidget {
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -336,7 +336,7 @@ class StatsScreen extends ConsumerWidget {
           color: KolabingColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
         ),
         child: Column(
@@ -351,7 +351,7 @@ class StatsScreen extends ConsumerWidget {
               style: GoogleFonts.openSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ],
@@ -390,7 +390,7 @@ class StatsScreen extends ConsumerWidget {
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -398,7 +398,7 @@ class StatsScreen extends ConsumerWidget {
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),

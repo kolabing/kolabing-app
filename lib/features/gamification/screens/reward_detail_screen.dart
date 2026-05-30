@@ -107,7 +107,7 @@ class RewardDetailScreen extends ConsumerWidget {
             style: GoogleFonts.rubik(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -119,7 +119,7 @@ class RewardDetailScreen extends ConsumerWidget {
               reward.eventReward!.description!,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -249,7 +249,7 @@ class RewardDetailScreen extends ConsumerWidget {
           'Show this QR code to the organizer to redeem your reward',
           style: GoogleFonts.openSans(
             fontSize: 14,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),
@@ -320,7 +320,7 @@ class RewardDetailScreen extends ConsumerWidget {
             'Show this QR code to the organizer',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -331,11 +331,11 @@ class RewardDetailScreen extends ConsumerWidget {
             backgroundColor: Colors.white,
             eyeStyle: const QrEyeStyle(
               eyeShape: QrEyeShape.square,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             dataModuleStyle: const QrDataModuleStyle(
               dataModuleShape: QrDataModuleShape.square,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -380,7 +380,7 @@ class RewardDetailScreen extends ConsumerWidget {
               'Redeemed on ${_formatDate(reward.redeemedAt!)}',
               style: GoogleFonts.openSans(
                 fontSize: 12,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -417,7 +417,7 @@ class RewardDetailScreen extends ConsumerWidget {
             'Rewards must be redeemed before their expiration date',
             style: GoogleFonts.openSans(
               fontSize: 12,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

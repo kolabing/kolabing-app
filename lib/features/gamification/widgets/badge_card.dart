@@ -36,7 +36,7 @@ class BadgeCard extends StatelessWidget {
           border: Border.all(
             color: isEarned
                 ? KolabingColors.primary.withValues(alpha: 0.3)
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
         ),
         child: Column(
@@ -99,7 +99,7 @@ class BadgeCard extends StatelessWidget {
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: isEarned
-                    ? KolabingColors.textPrimary
+                    ? KolabingColors.onSurface
                     : KolabingColors.textTertiary,
               ),
               textAlign: TextAlign.center,
@@ -163,7 +163,7 @@ class BadgeCard extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -204,7 +204,7 @@ class BadgeCard extends StatelessWidget {
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -215,7 +215,7 @@ class BadgeCard extends StatelessWidget {
               badge.description,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),

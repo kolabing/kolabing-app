@@ -377,7 +377,7 @@ class _Headline extends StatelessWidget {
       fontWeight: FontWeight.w400,
       letterSpacing: -0.5,
       height: 1.02,
-      color: Colors.white,
+      color: KolabingColors.textOnDark,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

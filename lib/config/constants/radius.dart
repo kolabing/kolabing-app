@@ -16,14 +16,14 @@ abstract final class KolabingRadius {
   /// Large radius - 16px
   static const double lg = 16;
 
-  /// Extra large radius - 20px
-  static const double xl = 20;
+  /// Extra large radius - 24px
+  static const double xl = 24;
 
-  /// Extra extra large radius - 24px
-  static const double xxl = 24;
+  /// Extra extra large radius - 32px
+  static const double xxl = 32;
 
-  /// Fully rounded (pills) - 999px
-  static const double round = 999;
+  /// Fully rounded (pills) - 9999px
+  static const double round = 9999;
 
   // ---------------------------------------------------------------------------
   // BorderRadius convenience getters
@@ -41,10 +41,10 @@ abstract final class KolabingRadius {
   /// Large BorderRadius - 16px all corners
   static BorderRadius get borderRadiusLg => BorderRadius.circular(lg);
 
-  /// Extra large BorderRadius - 20px all corners
+  /// Extra large BorderRadius - 24px all corners
   static BorderRadius get borderRadiusXl => BorderRadius.circular(xl);
 
-  /// Extra extra large BorderRadius - 24px all corners
+  /// Extra extra large BorderRadius - 32px all corners
   static BorderRadius get borderRadiusXxl => BorderRadius.circular(xxl);
 
   /// Fully rounded BorderRadius

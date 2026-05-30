@@ -83,7 +83,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
               width: 42,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
@@ -98,7 +98,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                     style: GoogleFonts.rubik(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -106,7 +106,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                     'Tap any photo to remove it before we add it to your venue. You can always edit photos later.',
                     style: GoogleFonts.openSans(
                       fontSize: 13,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                       height: 1.4,
                     ),
                   ),
@@ -145,7 +145,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
               decoration: const BoxDecoration(
                 color: KolabingColors.surface,
                 border: Border(
-                  top: BorderSide(color: KolabingColors.border),
+                  top: BorderSide(color: KolabingColors.darkBorder),
                 ),
               ),
               child: Column(

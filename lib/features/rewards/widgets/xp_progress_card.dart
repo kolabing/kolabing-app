@@ -32,15 +32,8 @@ class XpProgressCard extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          gradient: KolabingColors.primaryGradient,
+          color: KolabingColors.secondaryContainer,
           borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: KolabingColors.primary.withValues(alpha: 0.25),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +48,7 @@ class XpProgressCard extends ConsumerWidget {
                   style: GoogleFonts.rubik(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: KolabingColors.onPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
               ],
@@ -74,9 +67,9 @@ class XpProgressCard extends ConsumerWidget {
                   value: value,
                   minHeight: 8,
                   backgroundColor:
-                      KolabingColors.onPrimary.withValues(alpha: 0.2),
+                      KolabingColors.secondary.withValues(alpha: 0.2),
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                    KolabingColors.onPrimary,
+                    KolabingColors.secondary,
                   ),
                 ),
               ),
@@ -94,7 +87,7 @@ class XpProgressCard extends ConsumerWidget {
                       : '$xpToNext XP to ${level.next?.title ?? ''}',
                   style: GoogleFonts.openSans(
                     fontSize: 12,
-                    color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
                 if (onTap != null)
@@ -105,14 +98,14 @@ class XpProgressCard extends ConsumerWidget {
                         style: GoogleFonts.openSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.onPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(width: 2),
                       const Icon(
                         LucideIcons.chevronRight,
                         size: 14,
-                        color: KolabingColors.onPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ],
                   ),
@@ -141,7 +134,7 @@ class _LevelChip extends StatelessWidget {
           vertical: KolabingSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.onPrimary.withValues(alpha: 0.15),
+          color: KolabingColors.secondary.withValues(alpha: 0.15),
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Row(
@@ -150,7 +143,7 @@ class _LevelChip extends StatelessWidget {
             Icon(
               LucideIcons.shield,
               size: 12,
-              color: KolabingColors.onPrimary,
+              color: KolabingColors.secondary,
             ),
             const SizedBox(width: 4),
             Text(
@@ -158,7 +151,7 @@ class _LevelChip extends StatelessWidget {
               style: GoogleFonts.rubik(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.onPrimary,
+                color: KolabingColors.secondary,
                 letterSpacing: 0.3,
               ),
             ),

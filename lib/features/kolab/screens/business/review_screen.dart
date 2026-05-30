@@ -278,7 +278,7 @@ class _PreviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -334,7 +334,7 @@ class _PreviewCard extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     height: 1.2,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
 
@@ -344,7 +344,7 @@ class _PreviewCard extends StatelessWidget {
                     subhead,
                     style: GoogleFonts.openSans(
                       fontSize: 13,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -358,7 +358,7 @@ class _PreviewCard extends StatelessWidget {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       height: 1.5,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -378,7 +378,7 @@ class _PreviewCard extends StatelessWidget {
                         style: GoogleFonts.openSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -487,7 +487,7 @@ class _StatusBanner extends StatelessWidget {
                   style: GoogleFonts.rubik(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -495,7 +495,7 @@ class _StatusBanner extends StatelessWidget {
                   subtitle,
                   style: GoogleFonts.openSans(
                     fontSize: 13,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                     height: 1.4,
                   ),
                 ),
@@ -570,7 +570,7 @@ class _SectionCard extends StatelessWidget {
             border: Border.all(
               color: section.status == _Status.missing
                   ? KolabingColors.error.withValues(alpha: 0.3)
-                  : KolabingColors.border,
+                  : KolabingColors.darkBorder,
             ),
           ),
           child: Row(
@@ -605,7 +605,7 @@ class _SectionCard extends StatelessWidget {
                           style: GoogleFonts.rubik(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                         ),
                       ],
@@ -619,7 +619,7 @@ class _SectionCard extends StatelessWidget {
                         fontSize: 13,
                         color: section.status == _Status.missing
                             ? KolabingColors.error
-                            : KolabingColors.textSecondary,
+                            : KolabingColors.onSurfaceVariant,
                         height: 1.4,
                       ),
                     ),

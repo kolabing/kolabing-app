@@ -63,7 +63,7 @@ class RewardCard extends StatelessWidget {
                     style: GoogleFonts.rubik(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -73,7 +73,7 @@ class RewardCard extends StatelessWidget {
                     'Won ${_formatDate(rewardClaim.wonAt)}',
                     style: GoogleFonts.openSans(
                       fontSize: 12,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -132,7 +132,7 @@ class RewardCard extends StatelessWidget {
       case RewardClaimStatus.available:
         return KolabingColors.success.withValues(alpha: 0.3);
       case RewardClaimStatus.redeemed:
-        return KolabingColors.border;
+        return KolabingColors.darkBorder;
       case RewardClaimStatus.expired:
         return KolabingColors.error.withValues(alpha: 0.3);
     }

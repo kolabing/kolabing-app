@@ -115,7 +115,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             'When is your community available for this kolab?',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
 
@@ -175,7 +175,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           citiesAsync.when(
             loading: () => const LinearProgressIndicator(
               color: KolabingColors.primary,
-              backgroundColor: KolabingColors.border,
+              backgroundColor: KolabingColors.darkBorder,
             ),
             error: (e, _) => Text(
               'Error loading cities: $e',
@@ -229,7 +229,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             },
             style: GoogleFonts.openSans(
               fontSize: 15,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg')
                 .copyWith(
@@ -266,13 +266,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           decoration: BoxDecoration(
             color: KolabingColors.surface,
             borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: KolabingColors.border),
+            border: Border.all(color: KolabingColors.darkBorder),
           ),
           child: Column(
             children: [
               for (var i = 0; i < items.length; i++) ...[
                 if (i != 0)
-                  const Divider(height: 1, color: KolabingColors.border),
+                  const Divider(height: 1, color: KolabingColors.darkBorder),
                 ListTile(
                   dense: true,
                   leading: const Icon(
@@ -285,7 +285,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                   subtitle: Text(
@@ -294,7 +294,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.openSans(
                       fontSize: 12,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                   onTap: () => _selectAreaSuggestion(items[i]),
@@ -308,7 +308,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         padding: EdgeInsets.only(top: KolabingSpacing.xs),
         child: LinearProgressIndicator(
           color: KolabingColors.primary,
-          backgroundColor: KolabingColors.border,
+          backgroundColor: KolabingColors.darkBorder,
         ),
       ),
       error: (error, stackTrace) => const SizedBox.shrink(),
@@ -395,7 +395,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   border: Border.all(
                     color: isSelected
                         ? KolabingColors.primary
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
@@ -405,8 +405,8 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                     color: isSelected
-                        ? KolabingColors.textPrimary
-                        : KolabingColors.textSecondary,
+                        ? KolabingColors.onSurface
+                        : KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -444,7 +444,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.border,
+          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -463,7 +463,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             style: GoogleFonts.openSans(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -541,7 +541,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               border: Border.all(
                 color: error != null
                     ? KolabingColors.error
-                    : KolabingColors.border,
+                    : KolabingColors.darkBorder,
               ),
             ),
             child: Row(
@@ -558,7 +558,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       color: value != null
-                          ? KolabingColors.textPrimary
+                          ? KolabingColors.onSurface
                           : KolabingColors.textTertiary,
                     ),
                   ),
@@ -612,7 +612,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             border: Border.all(
               color: error != null
                   ? KolabingColors.error
-                  : KolabingColors.border,
+                  : KolabingColors.darkBorder,
             ),
           ),
           child: Row(
@@ -628,7 +628,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 style: GoogleFonts.openSans(
                   fontSize: 14,
                   color: value != null
-                      ? KolabingColors.textPrimary
+                      ? KolabingColors.onSurface
                       : KolabingColors.textTertiary,
                 ),
               ),
@@ -656,11 +656,11 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     fillColor: KolabingColors.surface,
     border: OutlineInputBorder(
       borderRadius: KolabingRadius.borderRadiusSm,
-      borderSide: const BorderSide(color: KolabingColors.border),
+      borderSide: const BorderSide(color: KolabingColors.darkBorder),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: KolabingRadius.borderRadiusSm,
-      borderSide: const BorderSide(color: KolabingColors.border),
+      borderSide: const BorderSide(color: KolabingColors.darkBorder),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: KolabingRadius.borderRadiusSm,
@@ -673,7 +673,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     style: GoogleFonts.rubik(
       fontSize: 14,
       fontWeight: FontWeight.w700,
-      color: KolabingColors.textSecondary,
+      color: KolabingColors.onSurfaceVariant,
       letterSpacing: 1.0,
     ),
   );
@@ -683,7 +683,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     style: GoogleFonts.openSans(
       fontSize: 14,
       fontWeight: FontWeight.w600,
-      color: KolabingColors.textPrimary,
+      color: KolabingColors.onSurface,
     ),
   );
 

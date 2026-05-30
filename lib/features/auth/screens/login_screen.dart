@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
@@ -366,7 +364,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void _showUserNotFoundDialog() {
     showDialog<void>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.6),
+      barrierColor: KolabingColors.overlayDark60,
       builder: (context) => _UserNotFoundDialog(
         onCreateAccount: () {
           Navigator.of(context).pop();
@@ -574,8 +572,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 children: [
                   Text(
                     'Sign in to your account',
-                    style: GoogleFonts.openSans(
-                      color: Colors.white,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: KolabingColors.textOnDark,
                       fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
                       fontWeight: FontWeight.w700,
                     ),
@@ -583,7 +581,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   const SizedBox(height: 4),
                   Text(
                     'Pick up where you left off.',
-                    style: GoogleFonts.openSans(
+                    style: KolabingTextStyles.labelMedium.copyWith(
                       color: _kLoginTextMuted,
                       fontSize: ultraCompact ? 11.5 : 12.5,
                       fontWeight: FontWeight.w400,
@@ -602,8 +600,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     validator: _validateEmail,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
-                    style: GoogleFonts.openSans(
-                      color: Colors.white,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: KolabingColors.textOnDark,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -623,8 +621,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     autofillHints: const [AutofillHints.password],
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _handleEmailLogin(),
-                    style: GoogleFonts.openSans(
-                      color: Colors.white,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: KolabingColors.textOnDark,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -686,9 +684,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               )
                             : Text(
                                 'Sign in',
-                                style: GoogleFonts.inter(
+                                style: KolabingTextStyles.button.copyWith(
                                   fontSize: compact ? 15 : 16,
-                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 0.2,
                                   color: KolabingColors.onPrimary,
                                 ),
@@ -715,8 +712,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                         child: Text(
                           'Forgot password?',
-                          style: GoogleFonts.openSans(
-                            fontSize: 12,
+                          style: KolabingTextStyles.labelMedium.copyWith(
                             fontWeight: FontWeight.w700,
                             color: KolabingColors.primary,
                           ),
@@ -770,7 +766,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     Widget? suffixIcon,
   }) => InputDecoration(
     hintText: hint,
-    hintStyle: GoogleFonts.openSans(
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
       color: _kLoginTextSoft,
       fontSize: 15,
       fontWeight: FontWeight.w600,
@@ -802,10 +798,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       borderRadius: BorderRadius.circular(16),
       borderSide: const BorderSide(color: KolabingColors.error, width: 1.6),
     ),
-    errorStyle: GoogleFonts.openSans(
-      color: const Color(0xFFFFA7B8),
+    errorStyle: KolabingTextStyles.labelSmall.copyWith(
       fontSize: 11.5,
       fontWeight: FontWeight.w600,
+      color: const Color(0xFFFFA7B8),
     ),
   );
 }
@@ -908,8 +904,8 @@ class _HeroCopy extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     'Welcome back.',
-    style: GoogleFonts.anton(
-      color: Colors.white,
+    style: KolabingTextStyles.displayLarge.copyWith(
+      color: KolabingColors.textOnDark,
       fontSize: headlineSize,
       height: 1.0,
       letterSpacing: 0.3,
@@ -959,15 +955,15 @@ class _BackButtonState extends State<_BackButton> {
             const Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 14,
-              color: Colors.white,
+              color: KolabingColors.textOnDark,
             ),
             const SizedBox(width: 2),
             Text(
               'Back',
-              style: GoogleFonts.openSans(
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: KolabingColors.textOnDark,
               ),
             ),
           ],
@@ -1015,7 +1011,7 @@ class _SignUpLinkState extends State<_SignUpLink> {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         child: Text(
           'Sign up',
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: KolabingColors.primary,
@@ -1040,7 +1036,7 @@ class _UserNotFoundDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-    backgroundColor: Colors.white,
+    backgroundColor: KolabingColors.darkSurface,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Padding(
       padding: const EdgeInsets.all(24),
@@ -1056,7 +1052,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           Text(
             'Account Not Found',
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1064,7 +1060,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           Text(
             'No account exists with this Google email. Please create an account first.',
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               height: 1.6,
             ),
             textAlign: TextAlign.center,
@@ -1095,9 +1091,7 @@ class _UserNotFoundDialog extends StatelessWidget {
             onPressed: onGotIt,
             child: Text(
               'Cancel',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+              style: KolabingTextStyles.labelLarge.copyWith(
                 color: KolabingColors.textTertiary,
               ),
             ),

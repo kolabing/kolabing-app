@@ -88,7 +88,7 @@ class MyOpportunityCard extends StatelessWidget {
             style: GoogleFonts.openSans(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
               height: 1.3,
             ),
             maxLines: 2,
@@ -291,7 +291,7 @@ class _InfoPill extends StatelessWidget {
           style: GoogleFonts.openSans(
             fontSize: 11,
             fontWeight: FontWeight.w500,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],
@@ -322,7 +322,7 @@ class _ActionButton extends StatelessWidget {
         ? KolabingColors.onPrimary
         : danger
         ? KolabingColors.error
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
 
     if (primary) {
       return SizedBox(
@@ -356,7 +356,7 @@ class _ActionButton extends StatelessWidget {
           side: BorderSide(
             color: danger
                 ? KolabingColors.error.withValues(alpha: 0.5)
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
           shape: RoundedRectangleBorder(

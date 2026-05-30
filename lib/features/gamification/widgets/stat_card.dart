@@ -33,9 +33,9 @@ class StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
 
@@ -95,7 +95,7 @@ class StatCard extends StatelessWidget {
           color: surfaceColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           ),
         ),
         child: content,

@@ -52,7 +52,7 @@ class PublicGallerySection extends StatelessWidget {
               Text(
                 'Gallery',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(width: KolabingSpacing.xs),

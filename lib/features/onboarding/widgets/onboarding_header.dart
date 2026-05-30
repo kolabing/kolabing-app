@@ -109,7 +109,7 @@ class _BackButtonState extends State<_BackButton> {
                 const Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 20,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -117,7 +117,7 @@ class _BackButtonState extends State<_BackButton> {
                   style: GoogleFonts.openSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
               ],

@@ -228,7 +228,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             style: GoogleFonts.rubik(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -237,7 +237,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             'Search for your business venue and we will import the details we can from Google before you review them.',
                             style: GoogleFonts.openSans(
                               fontSize: 14,
-                              color: KolabingColors.textSecondary,
+                              color: KolabingColors.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -255,7 +255,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             },
                             style: GoogleFonts.openSans(
                               fontSize: 16,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             decoration: InputDecoration(
                               hintText: 'Search venue address',
@@ -289,13 +289,13 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -342,7 +342,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                   separatorBuilder: (context, index) =>
                                       const Divider(
                                         height: 1,
-                                        color: KolabingColors.border,
+                                        color: KolabingColors.darkBorder,
                                       ),
                                   itemBuilder: (context, index) {
                                     final place = items[index];
@@ -369,14 +369,14 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                         style: GoogleFonts.openSans(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
-                                          color: KolabingColors.textPrimary,
+                                          color: KolabingColors.onSurface,
                                         ),
                                       ),
                                       subtitle: Text(
                                         place.formattedAddress,
                                         style: GoogleFonts.openSans(
                                           fontSize: 13,
-                                          color: KolabingColors.textSecondary,
+                                          color: KolabingColors.onSurfaceVariant,
                                         ),
                                       ),
                                       onTap: () => _handlePlaceSelected(place),
@@ -464,7 +464,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             style: GoogleFonts.rubik(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -485,7 +485,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
       message,
       style: GoogleFonts.openSans(
         fontSize: 14,
-        color: KolabingColors.textSecondary,
+        color: KolabingColors.onSurfaceVariant,
       ),
       textAlign: TextAlign.center,
     ),
@@ -535,7 +535,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -546,7 +546,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                         'We imported these photos for your venue. Tap the X to remove any you do not want before continuing. You can add your own later.',
                         style: GoogleFonts.openSans(
                           fontSize: 14,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -619,7 +619,7 @@ class _SelectedAddressCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -637,7 +637,7 @@ class _SelectedAddressCard extends StatelessWidget {
               style: GoogleFonts.openSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ],
@@ -648,7 +648,7 @@ class _SelectedAddressCard extends StatelessWidget {
           style: GoogleFonts.openSans(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: 4),
@@ -656,7 +656,7 @@ class _SelectedAddressCard extends StatelessWidget {
           place.formattedAddress,
           style: GoogleFonts.openSans(
             fontSize: 13,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],

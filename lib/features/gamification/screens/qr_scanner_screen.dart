@@ -113,7 +113,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -121,7 +121,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 'You have checked in to',
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 4),
@@ -130,7 +130,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -195,7 +195,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 style: GoogleFonts.rubik(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -203,7 +203,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 error,
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -217,8 +217,8 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                         Navigator.of(context).pop(); // Close scanner
                       },
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.textSecondary,
-                        side: const BorderSide(color: KolabingColors.border),
+                        foregroundColor: KolabingColors.onSurfaceVariant,
+                        side: const BorderSide(color: KolabingColors.darkBorder),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -268,7 +268,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: const BoxDecoration(
-        color: KolabingColors.darkBackground,
+        color: KolabingColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(

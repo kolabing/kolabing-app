@@ -241,7 +241,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
               color: KolabingColors.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 style: widget.photoBase64 == null
                     ? BorderStyle.none
                     : BorderStyle.solid,
@@ -261,7 +261,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                     border: Border.all(
                       color: widget.photoBase64 != null
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: 2,
                       style: widget.photoBase64 != null
                           ? BorderStyle.solid

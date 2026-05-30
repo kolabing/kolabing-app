@@ -64,7 +64,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         centerTitle: true,
@@ -395,13 +395,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       style: GoogleFonts.rubik(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     Text(
                       'Refer 3 businesses on a 4-month plan',
                       style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -442,7 +442,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 ? 'Milestone reached! Request your cash reward.'
                 : '$conversions / $goal businesses referred · $remaining more to go',
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
 
@@ -470,13 +470,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(LucideIcons.copy, size: 18),
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -531,9 +531,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       onPressed: () =>
                           context.push(KolabingRoutes.communityWalletWithdraw),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.textPrimary,
+                        foregroundColor: KolabingColors.onSurface,
                         side: const BorderSide(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: KolabingRadius.borderRadiusMd,
@@ -603,8 +603,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               child: OutlinedButton(
                 onPressed: _loadMoreLedger,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: KolabingColors.textSecondary,
-                  side: const BorderSide(color: KolabingColors.border),
+                  foregroundColor: KolabingColors.onSurfaceVariant,
+                  side: const BorderSide(color: KolabingColors.darkBorder),
                   shape: RoundedRectangleBorder(
                     borderRadius: KolabingRadius.borderRadiusMd,
                   ),
@@ -612,7 +612,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 child: Text(
                   'LOAD MORE',
                   style: KolabingTextStyles.buttonSmall.copyWith(
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -632,7 +632,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       fontSize: 14,
       fontWeight: FontWeight.w700,
       letterSpacing: 1.0,
-      color: KolabingColors.textSecondary,
+      color: KolabingColors.onSurfaceVariant,
     ),
   );
 
@@ -642,7 +642,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Text(
       message,
@@ -697,7 +697,7 @@ class _MissionRow extends StatelessWidget {
           style: GoogleFonts.rubik(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),
@@ -724,7 +724,7 @@ class _BadgeCard extends StatelessWidget {
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
-          color: isUnlocked ? KolabingColors.primary : KolabingColors.border,
+          color: isUnlocked ? KolabingColors.primary : KolabingColors.darkBorder,
           width: isUnlocked ? 2 : 1,
         ),
         boxShadow: isUnlocked
@@ -765,7 +765,7 @@ class _BadgeCard extends StatelessWidget {
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isUnlocked
-                  ? KolabingColors.textPrimary
+                  ? KolabingColors.onSurface
                   : KolabingColors.textTertiary,
             ),
           ),
@@ -835,7 +835,7 @@ class _LedgerRow extends StatelessWidget {
                         ? entry.description
                         : entry.eventType.displayLabel,
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

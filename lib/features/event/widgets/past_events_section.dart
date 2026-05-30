@@ -148,7 +148,7 @@ class PastEventsSection extends ConsumerWidget {
           'Past Events',
           style: KolabingTextStyles.titleMedium.copyWith(
             color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+                isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
         ),
         if (events.isNotEmpty) ...[
@@ -258,7 +258,7 @@ class PastEventsSection extends ConsumerWidget {
           Text(
             'Failed to load events',
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -306,14 +306,14 @@ class PastEventsSection extends ConsumerWidget {
             style: KolabingTextStyles.titleSmall.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Share your past collaborations with the community',
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -329,7 +329,7 @@ class PastEventsSection extends ConsumerWidget {
               ),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.textSecondary,
+              foregroundColor: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],

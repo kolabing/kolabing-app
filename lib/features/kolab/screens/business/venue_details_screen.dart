@@ -114,7 +114,7 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           'One short line communities will see on your card.',
           style: GoogleFonts.openSans(
             fontSize: 12,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -203,7 +203,7 @@ class _SummaryRow extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -211,7 +211,7 @@ class _SummaryRow extends StatelessWidget {
                   subtitle,
                   style: GoogleFonts.openSans(
                     fontSize: 13,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -241,11 +241,11 @@ InputDecoration _inputDecoration({
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
@@ -263,7 +263,7 @@ InputDecoration _inputDecoration({
 
 final _inputTextStyle = GoogleFonts.openSans(
   fontSize: 15,
-  color: KolabingColors.textPrimary,
+  color: KolabingColors.onSurface,
 );
 
 class _SectionHeader extends StatelessWidget {
@@ -278,7 +278,7 @@ class _SectionHeader extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.w700,
           letterSpacing: 1,
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
         ),
       );
 }
@@ -294,7 +294,7 @@ class _FieldLabel extends StatelessWidget {
         style: GoogleFonts.openSans(
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       );
 }

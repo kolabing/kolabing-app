@@ -43,7 +43,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+          isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: AppBar(
         backgroundColor:
             isDark ? KolabingColors.darkSurface : KolabingColors.surface,
@@ -52,7 +52,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
         title: Text(
           'APPLICATIONS',
           style: KolabingTextStyles.pageTitleSmall.copyWith(
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
         ),
         bottom: PreferredSize(
@@ -65,7 +65,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
                 indicatorWeight: 3,
                 labelColor: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
                 unselectedLabelColor: isDark
                     ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                     : KolabingColors.textTertiary,
@@ -85,7 +85,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
               Divider(
                 height: 1,
                 color:
-                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                    isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
               ),
             ],
           ),
@@ -181,7 +181,7 @@ class _SentApplicationsTab extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -189,7 +189,7 @@ class _SentApplicationsTab extends ConsumerWidget {
                 'Start exploring opportunities and apply to collaborate with businesses and communities.',
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -280,7 +280,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -288,7 +288,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
                 "When someone applies to your opportunities, they'll appear here.",
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -340,7 +340,7 @@ Widget _buildErrorState(String error, bool isDark) => Center(
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -348,7 +348,7 @@ Widget _buildErrorState(String error, bool isDark) => Center(
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -420,7 +420,7 @@ class _ApplicationCard extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
+                                : KolabingColors.onSurface,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -438,7 +438,7 @@ class _ApplicationCard extends StatelessWidget {
                         : 'To: ${application.recipientName}',
                     style: GoogleFonts.openSans(
                       fontSize: 13,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
@@ -448,7 +448,7 @@ class _ApplicationCard extends StatelessWidget {
                     application.message,
                     style: GoogleFonts.openSans(
                       fontSize: 14,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

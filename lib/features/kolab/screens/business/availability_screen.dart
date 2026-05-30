@@ -105,7 +105,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -184,7 +184,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -199,7 +199,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             decoration: BoxDecoration(
               color: KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.border),
+              border: Border.all(color: KolabingColors.darkBorder),
             ),
             child: Row(
               children: [
@@ -209,7 +209,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       color: hasRange
-                          ? KolabingColors.textPrimary
+                          ? KolabingColors.onSurface
                           : KolabingColors.textTertiary,
                     ),
                   ),
@@ -217,7 +217,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                 const Icon(
                   LucideIcons.calendar,
                   size: 18,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ],
             ),
@@ -253,7 +253,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -268,7 +268,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             decoration: BoxDecoration(
               color: KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.border),
+              border: Border.all(color: KolabingColors.darkBorder),
             ),
             child: Row(
               children: [
@@ -278,7 +278,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                     style: GoogleFonts.openSans(
                       fontSize: 14,
                       color: hasTime
-                          ? KolabingColors.textPrimary
+                          ? KolabingColors.onSurface
                           : KolabingColors.textTertiary,
                     ),
                   ),
@@ -286,7 +286,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                 const Icon(
                   LucideIcons.clock,
                   size: 18,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ],
             ),
@@ -305,7 +305,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           fontSize: 14,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.0,
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
         ),
       ),
       const SizedBox(height: KolabingSpacing.xs),
@@ -328,7 +328,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                 border: Border.all(
                   color: isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                 ),
               ),
               child: Center(
@@ -339,7 +339,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected
                         ? KolabingColors.onPrimary
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
               ),
@@ -389,7 +389,7 @@ class _ModeCard extends StatelessWidget {
         color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.border,
+          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
         ),
       ),
       child: Row(
@@ -405,7 +405,7 @@ class _ModeCard extends StatelessWidget {
               border: Border.all(
                 color: isSelected
                     ? KolabingColors.primary
-                    : KolabingColors.border,
+                    : KolabingColors.darkBorder,
                 width: 1.5,
               ),
             ),
@@ -424,8 +424,8 @@ class _ModeCard extends StatelessWidget {
             icon,
             size: 20,
             color: isSelected
-                ? KolabingColors.textPrimary
-                : KolabingColors.textSecondary,
+                ? KolabingColors.onSurface
+                : KolabingColors.onSurfaceVariant,
           ),
           const SizedBox(width: KolabingSpacing.sm),
 
@@ -439,7 +439,7 @@ class _ModeCard extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),

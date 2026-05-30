@@ -29,4 +29,10 @@ abstract final class KolabingSpacing {
 
   /// Extra extra extra large - 64px
   static const double xxxl = 64;
+
+  /// Column gutter — 24px (Stitch spec)
+  static const double gutter = 24;
+
+  /// Mobile screen margin — 20px (Stitch spec)
+  static const double marginMobile = 20;
 }

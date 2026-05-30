@@ -85,7 +85,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 1.0,
             ),
           ),
@@ -94,7 +94,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             'Help businesses understand your audience. Select up to 3.',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
 
@@ -135,7 +135,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                     border: Border.all(
                       color: isSelected
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -148,8 +148,8 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                       color: isMaxReached
                           ? KolabingColors.textTertiary
                           : isSelected
-                              ? KolabingColors.textPrimary
-                              : KolabingColors.textSecondary,
+                              ? KolabingColors.onSurface
+                              : KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -174,7 +174,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             },
             style: GoogleFonts.openSans(
               fontSize: 15,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: 'e.g., 500',
@@ -185,11 +185,11 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -223,7 +223,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             },
             style: GoogleFonts.openSans(
               fontSize: 15,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: 'e.g., 50',
@@ -234,11 +234,11 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -262,7 +262,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
         style: GoogleFonts.rubik(
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
           letterSpacing: 1.0,
         ),
       );

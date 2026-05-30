@@ -221,7 +221,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   border: Border.all(
                     color: hasFilters
                         ? KolabingColors.primary
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: Row(
@@ -241,7 +241,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: hasFilters
-                              ? KolabingColors.textPrimary
+                              ? KolabingColors.onSurface
                               : KolabingColors.textTertiary,
                         ),
                         maxLines: 1,
@@ -372,7 +372,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: 120,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: BorderRadius.circular(
                           KolabingRadius.round,
                         ),
@@ -383,7 +383,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: 220,
                       height: 22,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: KolabingRadius.borderRadiusSm,
                       ),
                     ),
@@ -399,7 +399,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                             width: 72,
                             height: 22,
                             decoration: BoxDecoration(
-                              color: KolabingColors.border,
+                              color: KolabingColors.darkBorder,
                               borderRadius: BorderRadius.circular(
                                 KolabingRadius.round,
                               ),
@@ -413,7 +413,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: double.infinity,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: KolabingRadius.borderRadiusSm,
                       ),
                     ),
@@ -422,7 +422,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: 180,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: KolabingRadius.borderRadiusSm,
                       ),
                     ),
@@ -473,7 +473,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               style: GoogleFonts.rubik(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -485,7 +485,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : 'Check back later for new opportunities.',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -536,7 +536,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -544,7 +544,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             error,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -576,7 +576,7 @@ class _FeedToggle extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Row(
         children: [
@@ -629,7 +629,7 @@ class _FeedSegment extends StatelessWidget {
           fontWeight: FontWeight.w700,
           color: isSelected
               ? KolabingColors.onPrimary
-              : KolabingColors.textSecondary,
+              : KolabingColors.onSurfaceVariant,
         ),
       ),
     ),

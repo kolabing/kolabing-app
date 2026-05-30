@@ -173,7 +173,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
       body: SafeArea(
         child: Column(
@@ -219,7 +219,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
             letterSpacing: 1.2,
             color: isDark
                 ? KolabingColors.textOnDark
-                : KolabingColors.textPrimary,
+                : KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
@@ -228,7 +228,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           style: GoogleFonts.openSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],
@@ -269,7 +269,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                         ? KolabingColors.primary
                         : isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: Text(
@@ -281,7 +281,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                         ? KolabingColors.onPrimary
                         : isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
               ),
@@ -420,7 +420,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
               fontWeight: FontWeight.w600,
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -428,7 +428,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
             'Create your first kolab to start connecting with communities',
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -476,7 +476,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
               fontWeight: FontWeight.w600,
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -484,7 +484,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
             error,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

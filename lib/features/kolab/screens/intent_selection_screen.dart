@@ -68,7 +68,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         leading: IconButton(
           icon: const Icon(
             LucideIcons.arrowLeft,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
           onPressed: () => context.pop(),
         ),
@@ -78,7 +78,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         centerTitle: true,
@@ -114,7 +114,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       style: GoogleFonts.rubik(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
@@ -124,7 +124,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                           : 'Choose what you want to promote to communities.',
                       style: GoogleFonts.openSans(
                         fontSize: 14,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.xl),
@@ -181,7 +181,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       const Icon(
                         LucideIcons.alertCircle,
                         size: 40,
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
@@ -190,7 +190,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                         style: GoogleFonts.rubik(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
@@ -199,7 +199,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.openSans(
                           fontSize: 14,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.lg),
@@ -250,7 +250,7 @@ class _LockedBusinessCreateState extends StatelessWidget {
           style: GoogleFonts.rubik(
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -260,7 +260,7 @@ class _LockedBusinessCreateState extends StatelessWidget {
           style: GoogleFonts.openSans(
             fontSize: 14,
             height: 1.5,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xl),
@@ -303,7 +303,7 @@ class _IntentOption extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Row(
         children: [
@@ -314,7 +314,7 @@ class _IntentOption extends StatelessWidget {
               color: KolabingColors.softYellow,
               borderRadius: KolabingRadius.borderRadiusMd,
             ),
-            child: Icon(icon, color: KolabingColors.textPrimary, size: 24),
+            child: Icon(icon, color: KolabingColors.onSurface, size: 24),
           ),
           const SizedBox(width: KolabingSpacing.md),
           Expanded(
@@ -326,7 +326,7 @@ class _IntentOption extends StatelessWidget {
                   style: GoogleFonts.rubik(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -334,7 +334,7 @@ class _IntentOption extends StatelessWidget {
                   subtitle,
                   style: GoogleFonts.openSans(
                     fontSize: 13,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
                 if (badge != null) ...[
@@ -355,7 +355,7 @@ class _IntentOption extends StatelessWidget {
                       style: GoogleFonts.darkerGrotesque(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                         letterSpacing: 0.5,
                       ),
                     ),

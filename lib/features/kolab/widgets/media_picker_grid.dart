@@ -168,7 +168,7 @@ class _AddSlot extends StatelessWidget {
           decoration: BoxDecoration(
             color: KolabingColors.background,
             borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: KolabingColors.border),
+            border: Border.all(color: KolabingColors.darkBorder),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

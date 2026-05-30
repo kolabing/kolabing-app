@@ -107,11 +107,11 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
-        ? KolabingColors.darkBackground
+        ? KolabingColors.surface
         : KolabingColors.background;
     final textColor = isDark
         ? KolabingColors.textOnDark
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
     final surfaceColor = isDark
         ? KolabingColors.darkSurface
         : KolabingColors.surface;
@@ -313,13 +313,13 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
         ),
       ),
       focusedBorder: OutlineInputBorder(
@@ -345,7 +345,7 @@ class _FieldLabel extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
         ? KolabingColors.textOnDark
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
 
     return Row(
       children: [
@@ -429,28 +429,28 @@ class _DifficultyOption extends StatelessWidget {
         bgColor = isSelected ? const Color(0xFFD4EDDA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF155724)
-            : KolabingColors.border;
+            : KolabingColors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF155724)
-            : KolabingColors.textSecondary;
+            : KolabingColors.onSurfaceVariant;
         icon = LucideIcons.leaf;
       case ChallengeDifficulty.medium:
         bgColor = isSelected ? const Color(0xFFFFF3CD) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF856404)
-            : KolabingColors.border;
+            : KolabingColors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF856404)
-            : KolabingColors.textSecondary;
+            : KolabingColors.onSurfaceVariant;
         icon = LucideIcons.flame;
       case ChallengeDifficulty.hard:
         bgColor = isSelected ? const Color(0xFFF8D7DA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF721C24)
-            : KolabingColors.border;
+            : KolabingColors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF721C24)
-            : KolabingColors.textSecondary;
+            : KolabingColors.onSurfaceVariant;
         icon = LucideIcons.zap;
     }
 

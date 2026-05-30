@@ -82,7 +82,7 @@ class _SignalRow extends StatelessWidget {
             style: GoogleFonts.openSans(
               fontSize: compact ? 11 : 12,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               letterSpacing: 0.2,
             ),
           ),
@@ -128,7 +128,7 @@ class _CellRow extends StatelessWidget {
             decoration: BoxDecoration(
               color: i < filled
                   ? accent
-                  : KolabingColors.border.withValues(alpha: 0.6),
+                  : KolabingColors.darkBorder.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(1.5),
             ),
           ),

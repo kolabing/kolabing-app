@@ -91,7 +91,7 @@ class RewardWalletScreen extends ConsumerWidget {
               style: GoogleFonts.rubik(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -99,7 +99,7 @@ class RewardWalletScreen extends ConsumerWidget {
               'Complete challenges and spin the wheel\nto win exciting rewards!',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -127,7 +127,7 @@ class RewardWalletScreen extends ConsumerWidget {
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -135,7 +135,7 @@ class RewardWalletScreen extends ConsumerWidget {
               error,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),

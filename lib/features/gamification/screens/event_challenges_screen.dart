@@ -55,15 +55,15 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+          isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: AppBar(
         backgroundColor:
-            isDark ? KolabingColors.darkBackground : KolabingColors.background,
+            isDark ? KolabingColors.surface : KolabingColors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             LucideIcons.arrowLeft,
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
           onPressed: () => context.pop(),
         ),
@@ -72,7 +72,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
         ),
         bottom: TabBar(
@@ -134,7 +134,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
                 error.toString(),
                 style: GoogleFonts.openSans(
                   fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -234,7 +234,7 @@ class _ChallengesListView extends StatelessWidget {
               error!,
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -309,7 +309,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
 
     return Container(
       decoration: BoxDecoration(
@@ -326,7 +326,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -432,7 +432,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                     challenge.description!,
                     style: GoogleFonts.openSans(
                       fontSize: 14,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                       height: 1.5,
                     ),
                   ),

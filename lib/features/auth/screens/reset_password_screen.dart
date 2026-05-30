@@ -68,7 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: KolabingColors.darkBackground,
+        systemNavigationBarColor: KolabingColors.surface,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -261,7 +261,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.darkBackground,
+      backgroundColor: KolabingColors.surface,
       resizeToAvoidBottomInset: false,
       body: KeyboardAvoidingContent(
         child: SafeArea(

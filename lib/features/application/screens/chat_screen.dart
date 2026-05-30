@@ -194,7 +194,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   style: GoogleFonts.openSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
               ),
@@ -255,7 +255,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -268,7 +268,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           onPressed: () => context.pop(),
           color: isDark
               ? KolabingColors.textOnDark
-              : KolabingColors.textPrimary,
+              : KolabingColors.onSurface,
         ),
         title: application != null
             ? Row(
@@ -287,7 +287,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             fontWeight: FontWeight.w600,
                             color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
+                                : KolabingColors.onSurface,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -314,7 +314,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 style: TextStyle(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               )
             : null,
@@ -326,7 +326,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       _showOptionsMenu(context, application: application),
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.7)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                 ),
               ]
             : null,
@@ -363,7 +363,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         color: KolabingColors.primary.withValues(alpha: 0.1),
         border: Border(
           bottom: BorderSide(
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           ),
         ),
       ),
@@ -383,7 +383,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -475,7 +475,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     final dividerColor = isDark
         ? KolabingColors.darkBorder
-        : KolabingColors.border;
+        : KolabingColors.darkBorder;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
@@ -525,13 +525,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDark
-                      ? KolabingColors.darkBackground
+                      ? KolabingColors.surface
                       : KolabingColors.background,
                   borderRadius: KolabingRadius.borderRadiusRound,
                   border: Border.all(
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: TextField(
@@ -557,7 +557,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     fontSize: 14,
                     color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                   onSubmitted: (_) => _handleSend(),
                 ),
@@ -646,7 +646,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             error,
             style: GoogleFonts.openSans(
               fontSize: 14,
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -692,7 +692,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -700,7 +700,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               'Please sign in again to continue.',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -752,7 +752,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -760,7 +760,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               'Send a message to begin discussing this collaboration',
               style: GoogleFonts.openSans(
                 fontSize: 14,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -936,7 +936,7 @@ class _MessageBubble extends StatelessWidget {
                           ? KolabingColors.onPrimary
                           : isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
