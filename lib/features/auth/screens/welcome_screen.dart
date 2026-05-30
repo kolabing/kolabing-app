@@ -264,7 +264,7 @@ class _HeroBackdropState extends State<_HeroBackdrop> {
 
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
-      child: IgnorePointer(
+    child: IgnorePointer(
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
@@ -351,16 +351,12 @@ class _TopBar extends StatelessWidget {
   const _TopBar();
 
   @override
-  Widget build(BuildContext context) => Row(
-    children: <Widget>[
-      Semantics(
-        label: 'Kolabing',
-        child: const KolabingLogo(
-          width: 128,
-          variant: KolabingLogoVariant.yellowTransparent,
-        ),
-      ),
-    ],
+  Widget build(BuildContext context) => Semantics(
+    label: 'Kolabing',
+    child: const KolabingLogo(
+      width: 128,
+      variant: KolabingLogoVariant.yellowTransparent,
+    ),
   );
 }
 
@@ -403,7 +399,7 @@ class _Subtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    'Community-led partnerships for events, UGC,\nreviews and real-world growth.',
+    'Community-led partnerships for events, UGC, reviews and real-world growth.',
     style: GoogleFonts.inter(
       color: _kMutedText,
       fontSize: 13,
@@ -449,7 +445,6 @@ class _PrimaryCta extends StatelessWidget {
                 maxLines: 1,
                 softWrap: false,
                 style: GoogleFonts.inter(
-                  color: KolabingColors.onPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   height: 1.0,
