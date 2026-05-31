@@ -4,6 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## MUST READ — Backend schema (before any data/model/API/DB change)
+
+Read [`docs/BACKEND-SCHEMA.md`](docs/BACKEND-SCHEMA.md) before changing anything that
+touches data, models, API payloads, JSON keys, or the database. It documents the
+**real production Postgres schema** (Laravel backend, db `main`). Hard rules:
+- **Never invent columns, tables, or enum values** — if it's not in that doc (or the
+  live schema), it does not exist. Verify before relying on a field.
+- **Never hardcode** IDs, emails, city/category names, or sample records in app code;
+  fetch from the API. Identity lives in `profiles` (+ `business_profiles` /
+  `community_profiles`), NOT the `users` table.
+- Lifecycle: `collab_opportunities → applications → collaborations` (+ reviews /
+  feedback). `GET /collaborations` is viewer-scoped. The business paywall is
+  backend-enforced; never bypass it client-side.
+
+---
+
 ## MUST READ — Backlog (every session, before anything else)
 
 At the START of every session, read [`BACKLOG.md`](BACKLOG.md) and list its current
