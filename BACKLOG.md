@@ -4,7 +4,7 @@
 > be read at the start of every session and kept in sync. See "Maintenance rules"
 > at the bottom — they are mandatory, not optional.
 >
-> Last updated: 2026-05-31 (seeding done)
+> Last updated: 2026-05-31 (seeding blocked by paywall)
 
 ---
 
