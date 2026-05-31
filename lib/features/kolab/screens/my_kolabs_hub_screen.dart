@@ -20,7 +20,7 @@ import '../../collaboration/widgets/collaborations_list_tab.dart';
 ///
 /// The role-specific "Offers" content is injected via [offersTab] so the same
 /// hub serves both business (kolabs) and community (opportunities) users.
-class MyKolabsHubScreen extends StatefulWidget {
+class MyKolabsHubScreen extends ConsumerStatefulWidget {
   const MyKolabsHubScreen({
     required this.offersTab,
     this.initialSubTab = 0,
@@ -34,10 +34,10 @@ class MyKolabsHubScreen extends StatefulWidget {
   final int initialSubTab;
 
   @override
-  State<MyKolabsHubScreen> createState() => _MyKolabsHubScreenState();
+  ConsumerState<MyKolabsHubScreen> createState() => _MyKolabsHubScreenState();
 }
 
-class _MyKolabsHubScreenState extends State<MyKolabsHubScreen>
+class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
@@ -50,6 +50,11 @@ class _MyKolabsHubScreenState extends State<MyKolabsHubScreen>
       initialIndex: widget.initialSubTab.clamp(0, 3),
     );
     _tabController.addListener(_handleTabChange);
+    // Refresh collaborations each time the hub opens so Active/Finished never
+    // show a stale session-cached snapshot (e.g. after a new kolab is formed).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.invalidate(collaborationsListProvider);
+    });
   }
 
   void _handleTabChange() {

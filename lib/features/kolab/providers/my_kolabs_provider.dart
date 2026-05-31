@@ -57,8 +57,10 @@ class MyKolabsState {
 }
 
 class MyKolabsStatusNotifier extends Notifier<String?> {
+  // Offers shows only Published (default) and Draft now — 'All'/'Closed' were
+  // removed — so the default filter is 'published'.
   @override
-  String? build() => null;
+  String? build() => 'published';
 
   void setStatus(String? status) {
     state = status;
