@@ -14,12 +14,9 @@ import '../models/collaboration.dart';
 /// Provider for collaboration detail.
 final collaborationDetailProvider =
     FutureProvider.family<Collaboration?, String>((ref, id) async {
-      try {
-        return await fetchCollaborationDetail(id);
-      } on Exception catch (e) {
-        debugPrint('CollaborationDetailProvider: remote fetch failed: $e');
-        return _mockCollaboration(id);
-      }
+      // No mock fallback: a failed fetch surfaces as an error/empty state so we
+      // never render fabricated data (see docs/BACKEND-SCHEMA.md — never hardcode).
+      return fetchCollaborationDetail(id);
     });
 
 Future<Collaboration?> fetchCollaborationDetail(String id) {
@@ -205,15 +202,66 @@ Future<Collaboration> _patchSchedule(
   );
 }
 
-/// Provider for available challenges (system + custom)
-final availableChallengesProvider =
-    FutureProvider.family<List<Challenge>, String>((
-      ref,
-      collaborationId,
-    ) async {
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-      return _mockChallenges;
-    });
+/// Provider for the system challenge catalogue (the pool a collaboration can
+/// pick from). Fetches the real backend list — `GET /api/v1/challenges/system`.
+final availableChallengesProvider = FutureProvider<List<Challenge>>((ref) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/challenges/system';
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+  );
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final list = json['data'] as List<dynamic>? ?? const [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map(Challenge.fromJson)
+        .toList();
+  }
+  throw const ApiException(
+    error: ApiError(message: 'Failed to load challenges'),
+  );
+});
+
+/// Persist the selected challenge ids for a collaboration —
+/// `PUT /api/v1/collaborations/{id}/challenges` with `selected_challenge_ids`.
+Future<void> saveCollaborationChallenges(
+  String collaborationId,
+  List<String> selectedChallengeIds,
+) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/collaborations/$collaborationId/challenges';
+  final response = await http.put(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode({'selected_challenge_ids': selectedChallengeIds}),
+  );
+
+  if (response.statusCode != 200 && response.statusCode != 201) {
+    final body = response.body.isEmpty
+        ? <String, dynamic>{'message': 'Failed to save challenges'}
+        : jsonDecode(response.body) as Map<String, dynamic>;
+    throw ApiException(
+      error: ApiError.fromJson(body, statusCode: response.statusCode),
+    );
+  }
+}
 
 /// Notifier for selected challenge IDs within a collaboration.
 class ChallengeSelectionNotifier extends Notifier<List<String>> {
@@ -318,116 +366,3 @@ Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
   };
 }
 
-// =============================================================================
-// Mock Data
-// =============================================================================
-
-Collaboration? _mockCollaboration(String id) {
-  final now = DateTime.now();
-  return Collaboration(
-    id: id,
-    status: CollaborationStatus.scheduled,
-    scheduledDate: now.add(const Duration(days: 12)),
-    scheduledTime: '14:00 - 18:00',
-    businessPartner: const CollaborationPartner(
-      id: 'biz-001',
-      name: 'Nomad Coffee Roasters',
-      profilePhoto: null,
-      category: 'Food & Drink',
-      city: 'Barcelona',
-      userType: 'business',
-    ),
-    communityPartner: const CollaborationPartner(
-      id: 'com-001',
-      name: 'Barcelona Runners Club',
-      profilePhoto: null,
-      category: 'Sports & Fitness',
-      city: 'Barcelona',
-      userType: 'community',
-    ),
-    opportunity: null,
-    contactMethods: const ContactMethods(
-      whatsapp: '+34612345678',
-      email: 'contact@nomadcoffee.com',
-      instagram: '@nomadcoffee',
-    ),
-    businessOffer: const BusinessOffer(
-      venue: true,
-      foodDrink: true,
-      socialMediaExposure: true,
-      contentCreation: false,
-      discount: DiscountOffer(enabled: true, percentage: 15),
-      products: ['Specialty Coffee Tasting Kit'],
-      other: 'Exclusive use of our rooftop terrace',
-    ),
-    communityDeliverables: const CommunityDeliverables(
-      socialMediaContent: true,
-      eventActivation: true,
-      productPlacement: false,
-      communityReach: true,
-      reviewFeedback: false,
-      other: 'Post-run group photo with branding',
-    ),
-    eventId: 'evt-001',
-    qrCodeUrl: null,
-    challenges: _mockChallenges,
-    selectedChallengeIds: ['ch-001', 'ch-003'],
-    createdAt: now.subtract(const Duration(days: 3)),
-  );
-}
-
-final List<Challenge> _mockChallenges = [
-  Challenge(
-    id: 'ch-001',
-    name: 'Check-in at Venue',
-    description: 'Scan the QR code when you arrive at the event',
-    difficulty: ChallengeDifficulty.easy,
-    points: 5,
-    isSystem: true,
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ),
-  Challenge(
-    id: 'ch-002',
-    name: 'Share on Instagram',
-    description: 'Post a story or photo from the event and tag us',
-    difficulty: ChallengeDifficulty.medium,
-    points: 15,
-    isSystem: true,
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ),
-  Challenge(
-    id: 'ch-003',
-    name: 'Try 3 Different Brews',
-    description: 'Taste at least 3 different coffee brews during the event',
-    difficulty: ChallengeDifficulty.medium,
-    points: 20,
-    isSystem: false,
-    eventId: 'evt-001',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ),
-  Challenge(
-    id: 'ch-004',
-    name: 'Group Photo Challenge',
-    description: 'Take a group photo with at least 5 attendees',
-    difficulty: ChallengeDifficulty.easy,
-    points: 10,
-    isSystem: false,
-    eventId: 'evt-001',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ),
-  Challenge(
-    id: 'ch-005',
-    name: 'Complete 5K Run',
-    description: 'Finish the full 5K running route before the coffee tasting',
-    difficulty: ChallengeDifficulty.hard,
-    points: 30,
-    isSystem: false,
-    eventId: 'evt-001',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ),
-];

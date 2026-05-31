@@ -248,10 +248,7 @@ class _CollaborationBody extends ConsumerWidget {
           ),
 
         // Gamification: Challenges Setup
-        _ChallengesSection(
-          collaborationId: collaborationId,
-          challenges: collaboration.challenges ?? [],
-        ),
+        _ChallengesSection(collaborationId: collaborationId),
         const SizedBox(height: KolabingSpacing.lg),
 
         // QR Code Section
@@ -1065,17 +1062,19 @@ class _TimelineStepWidget extends StatelessWidget {
 // =============================================================================
 
 class _ChallengesSection extends ConsumerWidget {
-  const _ChallengesSection({
-    required this.collaborationId,
-    required this.challenges,
-  });
+  const _ChallengesSection({required this.collaborationId});
 
   final String collaborationId;
-  final List<Challenge> challenges;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIds = ref.watch(challengeSelectionProvider);
+    // Real system-challenge catalogue from the backend (GET /challenges/system).
+    // The `challenges` field (collaboration.challenges) is currently always []
+    // from the API, so we source the selectable pool from this provider.
+    final availableAsync = ref.watch(availableChallengesProvider);
+    final challenges = availableAsync.asData?.value ?? const <Challenge>[];
+    final isLoadingChallenges = availableAsync.isLoading;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1145,7 +1144,17 @@ class _ChallengesSection extends ConsumerWidget {
         const SizedBox(height: KolabingSpacing.sm),
 
         // Challenge list
-        if (challenges.isEmpty)
+        if (isLoadingChallenges)
+          const Padding(
+            padding: EdgeInsets.all(KolabingSpacing.lg),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: KolabingColors.primary,
+                strokeWidth: 2,
+              ),
+            ),
+          )
+        else if (challenges.isEmpty)
           _EmptyChallenges()
         else
           ...challenges.map((challenge) {

@@ -4,7 +4,7 @@
 > be read at the start of every session and kept in sync. See "Maintenance rules"
 > at the bottom — they are mandatory, not optional.
 >
-> Last updated: 2026-05-31 (3-dots removed; feedback + gamification audited)
+> Last updated: 2026-05-31 (gamification real challenges wired; feedback blocked on backend)
 
 ---
 
