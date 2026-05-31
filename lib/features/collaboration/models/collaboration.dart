@@ -344,7 +344,7 @@ class Collaboration {
     return [
       TimelineStep(
         title: 'Application Accepted',
-        description: 'Both parties agreed to collaborate',
+        description: 'Both parties agreed to kolab',
         status: TimelineStepStatus.completed,
         date: createdAt,
       ),
@@ -359,7 +359,7 @@ class Collaboration {
       ),
       TimelineStep(
         title: 'Event Day',
-        description: 'Collaboration event takes place',
+        description: 'Kolab event takes place',
         status: status == CollaborationStatus.inProgress
             ? TimelineStepStatus.current
             : status == CollaborationStatus.completed

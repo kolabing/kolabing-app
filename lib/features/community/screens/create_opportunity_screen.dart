@@ -406,7 +406,7 @@ class _CreateOpportunityScreenState
       children: [
         _buildStepHeader(
           title: 'BASIC INFORMATION',
-          subtitle: 'Describe your collaboration idea',
+          subtitle: 'Describe your kolab idea',
         ),
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -426,7 +426,7 @@ class _CreateOpportunityScreenState
         _buildTextField(
           label: 'Description',
           hint:
-              'Describe your collaboration opportunity in detail. What are you looking for?',
+              'Describe your kolab opportunity in detail. What are you looking for?',
           controller: _descriptionController,
           error: formState.fieldErrors['description'],
           maxLines: 5,

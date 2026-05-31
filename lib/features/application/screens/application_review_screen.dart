@@ -877,7 +877,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
-                "Pick a collaboration date — you'll continue the conversation in chat after accepting.",
+                "Pick a kolab date — you'll continue the conversation in chat after accepting.",
                 style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
@@ -1077,7 +1077,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Application accepted! Collaboration created.',
+            'Application accepted! Kolab created.',
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.success,

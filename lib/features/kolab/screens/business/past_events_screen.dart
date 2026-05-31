@@ -58,7 +58,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
       children: [
         // -- Section header
         Text(
-          'PAST COLLABORATIONS (OPTIONAL)',
+          'PAST KOLABS (OPTIONAL)',
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,

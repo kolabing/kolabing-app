@@ -193,7 +193,7 @@ class _CommunityDashboardScreenState
           children: [
             Expanded(
               child: DashboardStatCard(
-                title: 'Active Collabs',
+                title: 'Active Kolabs',
                 count: data.collaborations.active,
                 icon: LucideIcons.users,
                 iconSlug: UiIconSlug.target,
@@ -245,7 +245,7 @@ class _CommunityDashboardScreenState
                 ),
               ),
               child: Text(
-                'FIND A COLLAB',
+                'FIND A KOLAB',
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
             ),
@@ -299,7 +299,7 @@ class _CommunityDashboardScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'UPCOMING COLLABORATIONS',
+          'UPCOMING KOLABS',
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -337,7 +337,7 @@ class _CommunityDashboardScreenState
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'No upcoming collaborations yet',
+            'No upcoming kolabs yet',
             style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                   ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                   : KolabingColors.textTertiary),

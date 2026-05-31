@@ -187,7 +187,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               iconColor: const Color(0xFF4CAF50),
               title: 'Location',
               description:
-                  'Find nearby collaboration opportunities and connect with local businesses and communities.',
+                  'Find nearby kolab opportunities and connect with local businesses and communities.',
               isGranted: _locationGranted,
               isLoading: _isRequestingLocation,
               onRequest: _requestLocation,
@@ -200,7 +200,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               iconColor: const Color(0xFFFF9800),
               title: 'Notifications',
               description:
-                  'Get notified about new applications, messages, and collaboration updates.',
+                  'Get notified about new applications, messages, and kolab updates.',
               isGranted: _notificationGranted,
               isLoading: _isRequestingNotification,
               onRequest: _requestNotification,

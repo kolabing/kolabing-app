@@ -330,7 +330,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       minLines: 4,
                       decoration: _buildInputDecoration(
                         hintText:
-                            "Tell them why you're perfect for this collaboration and what value you can bring...",
+                            "Tell them why you're perfect for this kolab and what value you can bring...",
                       ),
                       style: KolabingTextStyles.bodySmall.copyWith(
                         color: KolabingColors.onSurface,
@@ -343,7 +343,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     _buildSectionTitle('Select Date(s)', required: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'Pick from the available dates for this collaboration',
+                      'Pick from the available dates for this kolab',
                       style: KolabingTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.w400,
                         color: KolabingColors.textTertiary,
@@ -455,7 +455,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           ),
         ),
         child: Text(
-          'No available dates for this collaboration',
+          'No available dates for this kolab',
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 13,
             color: KolabingColors.error,

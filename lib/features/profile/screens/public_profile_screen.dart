@@ -284,7 +284,7 @@ class PublicProfileScreen extends ConsumerWidget {
 
   Widget _buildCollaborationsSection(PublicProfile profile) => _SectionCard(
     icon: LucideIcons.trophy,
-    title: 'Past Collaborations',
+    title: 'Past Kolabs',
     count: profile.kolabsCount,
     child: profile.hasCollaborations
         ? SizedBox(
@@ -311,7 +311,7 @@ class PublicProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
                   Text(
-                    'No past collaborations yet',
+                    'No past kolabs yet',
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textTertiary,
                     ),

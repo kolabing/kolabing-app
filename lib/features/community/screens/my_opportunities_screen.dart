@@ -35,11 +35,16 @@ class MyOpportunitiesScreen extends ConsumerStatefulWidget {
     this.share = Share.share,
     this.copyText = _copyText,
     this.showSubscriptionPaywall = _showSubscriptionPaywall,
+    this.embedded = false,
   });
 
   final OpportunityShareInvoker share;
   final OpportunityShareCopyText copyText;
   final ShowSubscriptionPaywall showSubscriptionPaywall;
+
+  /// When true, renders only the status tabs + list (no Scaffold, page header
+  /// or FAB) so it can be the "Offers" tab inside [MyKolabsHubScreen].
+  final bool embedded;
 
   static Future<void> _copyText(String text) =>
       Clipboard.setData(ClipboardData(text: text));
@@ -266,26 +271,30 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       }
     });
 
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!widget.embedded) _buildHeader(),
+        _buildStatusTabs(currentStatus),
+        Expanded(
+          child: listState.isLoading
+              ? _buildLoadingState()
+              : listState.error != null
+              ? _buildErrorState(listState.error!)
+              : listState.isEmpty
+              ? _buildEmptyState()
+              : _buildList(listState),
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      return body;
+    }
+
     return Scaffold(
       backgroundColor: KolabingColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            _buildStatusTabs(currentStatus),
-            Expanded(
-              child: listState.isLoading
-                  ? _buildLoadingState()
-                  : listState.error != null
-                  ? _buildErrorState(listState.error!)
-                  : listState.isEmpty
-                  ? _buildEmptyState()
-                  : _buildList(listState),
-            ),
-          ],
-        ),
-      ),
+      body: SafeArea(child: body),
       floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
         tooltip: 'Create New Opportunity',

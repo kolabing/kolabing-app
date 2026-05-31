@@ -118,7 +118,7 @@ class _SelectionCardState extends State<SelectionCard>
       case SelectionUserType.business:
         return 'Looking for communities to partner with';
       case SelectionUserType.community:
-        return 'Seeking sponsors and collaboration partners';
+        return 'Seeking sponsors and kolab partners';
       case SelectionUserType.attendee:
         return 'Joining events and completing challenges';
     }

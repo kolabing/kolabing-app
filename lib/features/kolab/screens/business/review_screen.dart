@@ -169,7 +169,7 @@ class ReviewScreen extends ConsumerWidget {
     // Step 4 — Past events (optional)
     sections.add(_Section(
       icon: LucideIcons.history,
-      title: 'Past Collaborations',
+      title: 'Past Kolabs',
       status: kolab.pastEvents.isNotEmpty ? _Status.complete : _Status.optional,
       summary: kolab.pastEvents.isNotEmpty
           ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'} added'

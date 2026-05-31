@@ -40,7 +40,7 @@ class CollaborationDetailScreen extends ConsumerWidget {
         ),
         data: (collaboration) {
           if (collaboration == null) {
-            return const Center(child: Text('Collaboration not found'));
+            return const Center(child: Text('Kolab not found'));
           }
           return _CollaborationContent(
             collaboration: collaboration,
@@ -93,7 +93,7 @@ class _CollaborationContent extends ConsumerWidget {
             onPressed: () => context.pop(),
           ),
           title: Text(
-            'COLLABORATION',
+            'KOLAB',
             style: KolabingTextStyles.bodyMedium.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -399,7 +399,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
       initialDate: collaboration.scheduledDate,
       firstDate: DateTime.now().subtract(const Duration(days: 1)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Reschedule collaboration',
+      helpText: 'Reschedule kolab',
     );
     if (pickedDate == null || !mounted) return;
 
@@ -1718,7 +1718,7 @@ class _ResubscribePrompt extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Your subscription has lapsed, so this ongoing collaboration and its '
+            'Your subscription has lapsed, so this ongoing kolab and its '
             'chat are paused on your side. The community keeps full access. '
             'Resubscribe to pick up where you left off.',
             style: KolabingTextStyles.captionSecondary.copyWith(
@@ -1794,7 +1794,7 @@ class _ErrorState extends StatelessWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load collaboration',
+              'Failed to load kolab',
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,

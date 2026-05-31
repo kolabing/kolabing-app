@@ -111,7 +111,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       isCommunity
-                          ? 'Choose how you want to collaborate with businesses.'
+                          ? 'Choose how you want to kolab with businesses.'
                           : 'Choose what you want to promote to communities.',
                       style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                     ),

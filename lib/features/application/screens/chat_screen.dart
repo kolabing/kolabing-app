@@ -747,7 +747,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
-              'Send a message to begin discussing this collaboration',
+              'Send a message to begin discussing this kolab',
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),

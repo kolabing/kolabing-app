@@ -259,7 +259,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                     // Partner Name
                     _buildTextField(
                       controller: _partnerController,
-                      label: 'Collaborated With',
+                      label: 'Kolab With',
                       hint: 'e.g., Rock Community Istanbul',
                       icon: LucideIcons.users,
                       validator: (value) {

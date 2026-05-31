@@ -183,7 +183,7 @@ class _BusinessDashboardScreenState
         children: [
           Expanded(
             child: DashboardStatCard(
-              title: 'Active Collabs',
+              title: 'Active Kolabs',
               count: data.collaborations.active,
               icon: LucideIcons.users,
               accentColor: const Color(0xFF4CAF50),
@@ -245,7 +245,7 @@ class _BusinessDashboardScreenState
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'CREATE COLLAB REQUEST',
+                'CREATE KOLAB REQUEST',
                 maxLines: 1,
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
@@ -278,7 +278,7 @@ class _BusinessDashboardScreenState
               ),
             ),
             child: Text(
-              'FIND A COLLAB',
+              'FIND A KOLAB',
               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
             ),
           ),
@@ -295,7 +295,7 @@ class _BusinessDashboardScreenState
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        'UPCOMING COLLABORATIONS',
+        'UPCOMING KOLABS',
         style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
       ),
       const SizedBox(height: KolabingSpacing.sm),
@@ -331,7 +331,7 @@ class _BusinessDashboardScreenState
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
-          'No upcoming collaborations yet',
+          'No upcoming kolabs yet',
           style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                 : KolabingColors.textTertiary),

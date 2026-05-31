@@ -171,7 +171,7 @@ class DiscoveryQuickFilters extends StatelessWidget {
               label: _multiValue(
                 filters.intentTypes,
                 DiscoveryFilterPresets.intentTypeOptions,
-                fallback: 'Collab Type',
+                fallback: 'Kolab Type',
               ),
               isActive: filters.intentTypes.isNotEmpty,
             ),

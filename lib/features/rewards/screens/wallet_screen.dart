@@ -271,7 +271,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       children: [
         _MissionRow(
           icon: LucideIcons.heartHandshake,
-          label: 'Complete a collaboration',
+          label: 'Complete a kolab',
           xp: '+10 XP',
         ),
         const Divider(height: KolabingSpacing.md),
@@ -578,7 +578,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     }
 
     if (ledger.isEmpty) {
-      return _buildEmptyPlaceholder('No XP activity yet — complete a collab!');
+      return _buildEmptyPlaceholder('No XP activity yet — complete a kolab!');
     }
 
     return Column(

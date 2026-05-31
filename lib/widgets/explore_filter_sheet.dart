@@ -249,7 +249,7 @@ class _CommunitySections extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Collab Type'),
+        const _SectionLabel(label: 'Kolab Type'),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.intentTypeOptions,

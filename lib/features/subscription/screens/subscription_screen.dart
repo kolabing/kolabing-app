@@ -513,7 +513,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         const _BenefitItem(
           icon: LucideIcons.megaphone,
           title: 'Publish Opportunities',
-          description: 'Create and publish collaboration offers',
+          description: 'Create and publish kolab offers',
         ),
         const _BenefitItem(
           icon: LucideIcons.users,
@@ -528,7 +528,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         const _BenefitItem(
           icon: LucideIcons.barChart2,
           title: 'Track Performance',
-          description: 'Monitor your collaboration metrics',
+          description: 'Monitor your kolab metrics',
         ),
         const SizedBox(height: KolabingSpacing.md),
         const Divider(height: 1, color: KolabingColors.darkBorder),

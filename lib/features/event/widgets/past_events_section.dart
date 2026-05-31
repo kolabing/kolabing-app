@@ -310,7 +310,7 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Share your past collaborations with the community',
+            'Share your past kolabs with the community',
             style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),

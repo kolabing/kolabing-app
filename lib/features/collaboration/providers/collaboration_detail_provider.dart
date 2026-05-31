@@ -52,7 +52,7 @@ Future<Collaboration?> _fetchCollaborationDetail(
     final raw = data is Map<String, dynamic>
         ? (data['collaboration'] as Map<String, dynamic>? ?? data)
         : json;
-    return Collaboration.fromJson(_normalizeCollaborationResponse(raw));
+    return Collaboration.fromJson(normalizeCollaborationResponse(raw));
   }
 
   if (response.statusCode == 401 && allowRetry) {
@@ -114,7 +114,7 @@ Future<Collaboration> _markCompleted(
     final raw = data is Map<String, dynamic>
         ? (data['collaboration'] as Map<String, dynamic>? ?? data)
         : json;
-    return Collaboration.fromJson(_normalizeCollaborationResponse(raw));
+    return Collaboration.fromJson(normalizeCollaborationResponse(raw));
   }
 
   if (response.statusCode == 401 && allowRetry) {
@@ -189,7 +189,7 @@ Future<Collaboration> _patchSchedule(
     final raw = data is Map<String, dynamic>
         ? (data['collaboration'] as Map<String, dynamic>? ?? data)
         : json;
-    return Collaboration.fromJson(_normalizeCollaborationResponse(raw));
+    return Collaboration.fromJson(normalizeCollaborationResponse(raw));
   }
 
   if (response.statusCode == 401 && allowRetry) {
@@ -238,7 +238,7 @@ final challengeSelectionProvider =
       ChallengeSelectionNotifier.new,
     );
 
-Map<String, dynamic> _normalizeCollaborationResponse(Map<String, dynamic> raw) {
+Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
   final creator = raw['creator_profile'] as Map<String, dynamic>?;
   final applicant = raw['applicant_profile'] as Map<String, dynamic>?;
   final opportunity = raw['collab_opportunity'] as Map<String, dynamic>?;

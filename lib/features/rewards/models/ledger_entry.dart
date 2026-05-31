@@ -17,7 +17,7 @@ enum PointEventType {
   String get displayLabel {
     switch (this) {
       case PointEventType.collaborationComplete:
-        return 'Collaboration Completed';
+        return 'Kolab Completed';
       case PointEventType.firstKolabBonus:
         return 'First Kolab Bonus! 🎉';
       case PointEventType.reviewPosted:

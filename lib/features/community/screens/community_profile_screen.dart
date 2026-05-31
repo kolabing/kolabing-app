@@ -764,7 +764,7 @@ class _CommunityProfileScreenState
                   .updateNotificationPreference('applications_enabled', value),
             ),
             _NotificationToggle(
-              label: 'Collaboration Updates',
+              label: 'Kolab Updates',
               value: preferences?.collaborationsEnabled ?? true,
               isUpdating: isUpdating,
               onChanged: (value) => ref

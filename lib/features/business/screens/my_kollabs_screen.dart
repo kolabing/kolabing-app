@@ -22,7 +22,11 @@ import '../providers/profile_provider.dart';
 /// Reuses the same providers as Community's MyOpportunitiesScreen since
 /// the API returns results based on user type.
 class MyKollabsScreen extends ConsumerStatefulWidget {
-  const MyKollabsScreen({super.key});
+  const MyKollabsScreen({super.key, this.embedded = false});
+
+  /// When true, renders only the status tabs + list (no Scaffold or page
+  /// header) so it can be the "Offers" tab inside [MyKolabsHubScreen].
+  final bool embedded;
 
   @override
   ConsumerState<MyKollabsScreen> createState() => _MyKollabsScreenState();
@@ -171,33 +175,37 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       }
     });
 
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header (standalone only; the hub provides its own title)
+        if (!widget.embedded) _buildHeader(isDark),
+
+        // Status tabs
+        _buildStatusTabs(currentStatus, isDark),
+
+        // List
+        Expanded(
+          child: listState.isLoading
+              ? _buildLoadingState(isDark)
+              : listState.error != null
+              ? _buildErrorState(listState.error!, isDark)
+              : listState.isEmpty
+              ? _buildEmptyState(isDark)
+              : _buildList(listState, isDark),
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      return body;
+    }
+
     return Scaffold(
       backgroundColor: isDark
           ? KolabingColors.surface
           : KolabingColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            _buildHeader(isDark),
-
-            // Status tabs
-            _buildStatusTabs(currentStatus, isDark),
-
-            // List
-            Expanded(
-              child: listState.isLoading
-                  ? _buildLoadingState(isDark)
-                  : listState.error != null
-                  ? _buildErrorState(listState.error!, isDark)
-                  : listState.isEmpty
-                  ? _buildEmptyState(isDark)
-                  : _buildList(listState, isDark),
-            ),
-          ],
-        ),
-      ),
+      body: SafeArea(child: body),
     );
   }
 

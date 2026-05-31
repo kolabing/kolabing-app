@@ -1020,7 +1020,7 @@ class _PreviewModeBanner extends StatelessWidget {
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Text(
-              'You are previewing this collaboration as businesses see it',
+              'You are previewing this kolab as businesses see it',
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.onSurface,

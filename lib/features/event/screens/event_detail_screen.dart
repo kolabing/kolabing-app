@@ -371,7 +371,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           // Partner
           _buildInfoRow(
             icon: LucideIcons.users,
-            label: 'Collaborated with',
+            label: 'Kolab with',
             child: Row(
               children: [
                 // Partner avatar

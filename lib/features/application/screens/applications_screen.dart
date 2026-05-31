@@ -14,7 +14,12 @@ import '../providers/application_provider.dart';
 /// Applications list screen showing both sent and received applications
 /// via a tabbed interface.
 class ApplicationsScreen extends ConsumerStatefulWidget {
-  const ApplicationsScreen({super.key});
+  const ApplicationsScreen({super.key, this.embedded = false});
+
+  /// When true, renders only the filter chips + list (no Scaffold, AppBar or
+  /// page header) so it can be embedded as the "Requests" tab inside
+  /// [MyKolabsHubScreen].
+  final bool embedded;
 
   @override
   ConsumerState<ApplicationsScreen> createState() => _ApplicationsScreenState();
@@ -40,6 +45,49 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final tabHeader = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TabBar(
+          controller: _tabController,
+          indicatorColor: KolabingColors.primary,
+          indicatorWeight: 3,
+          labelColor: isDark
+              ? KolabingColors.textOnDark
+              : KolabingColors.onSurface,
+          unselectedLabelColor: isDark
+              ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+              : KolabingColors.textTertiary,
+          labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+          unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
+          tabs: const [
+            Tab(text: 'SENT'),
+            Tab(text: 'RECEIVED'),
+          ],
+        ),
+        Divider(
+          height: 1,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+        ),
+      ],
+    );
+
+    final tabView = TabBarView(
+      controller: _tabController,
+      children: [
+        // Tab 1: Sent applications
+        _SentApplicationsTab(),
+        // Tab 2: Received applications
+        _ReceivedApplicationsTab(),
+      ],
+    );
+
+    // Embedded as the "Requests" tab of MyKolabsHubScreen: drop the Scaffold and
+    // the 'APPLICATIONS' AppBar, but keep the SENT/RECEIVED sub-tabs as-is.
+    if (widget.embedded) {
+      return Column(children: [tabHeader, Expanded(child: tabView)]);
+    }
+
     return Scaffold(
       backgroundColor:
           isDark ? KolabingColors.surface : KolabingColors.background,
@@ -56,43 +104,10 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
-          child: Column(
-            children: [
-              TabBar(
-                controller: _tabController,
-                indicatorColor: KolabingColors.primary,
-                indicatorWeight: 3,
-                labelColor: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
-                unselectedLabelColor: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                    : KolabingColors.textTertiary,
-                labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
-                unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
-                tabs: const [
-                  Tab(text: 'SENT'),
-                  Tab(text: 'RECEIVED'),
-                ],
-              ),
-              Divider(
-                height: 1,
-                color:
-                    isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
-              ),
-            ],
-          ),
+          child: tabHeader,
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Tab 1: Sent applications
-          _SentApplicationsTab(),
-          // Tab 2: Received applications
-          _ReceivedApplicationsTab(),
-        ],
-      ),
+      body: tabView,
     );
   }
 }
@@ -127,16 +142,23 @@ class _SentApplicationsTab extends ConsumerWidget {
       return _buildErrorState(state.error!, isDark);
     }
 
-    if (state.isEmpty) {
+    // Requests shows only items still awaiting a decision. Accepted
+    // applications graduate to a collaboration and surface in the Active tab,
+    // so they are excluded here (see MyKolabsHubScreen).
+    final requests = state.applications
+        .where((a) => a.status != ApplicationStatus.accepted)
+        .toList();
+
+    if (requests.isEmpty) {
       return _buildSentEmptyState(isDark);
     }
 
     return ListView.separated(
       padding: const EdgeInsets.all(KolabingSpacing.md),
-      itemCount: state.applications.length,
+      itemCount: requests.length,
       separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
       itemBuilder: (context, index) {
-        final application = state.applications[index];
+        final application = requests[index];
         return _ApplicationCard(
           application: application,
           isReceived: false,
@@ -175,7 +197,7 @@ class _SentApplicationsTab extends ConsumerWidget {
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'Start exploring opportunities and apply to collaborate with businesses and communities.',
+                'Start exploring opportunities and apply to kolab with businesses and communities.',
                 style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
@@ -212,16 +234,22 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
       return _buildErrorState(state.error!, isDark);
     }
 
-    if (state.isEmpty) {
+    // Requests shows only items still awaiting a decision. Accepted
+    // applications graduate to a collaboration and surface in the Active tab.
+    final requests = state.applications
+        .where((a) => a.status != ApplicationStatus.accepted)
+        .toList();
+
+    if (requests.isEmpty) {
       return _buildReceivedEmptyState(isDark);
     }
 
     return ListView.separated(
       padding: const EdgeInsets.all(KolabingSpacing.md),
-      itemCount: state.applications.length,
+      itemCount: requests.length,
       separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
       itemBuilder: (context, index) {
-        final application = state.applications[index];
+        final application = requests[index];
         return _ApplicationCard(
           application: application,
           isReceived: true,

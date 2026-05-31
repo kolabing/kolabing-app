@@ -61,12 +61,12 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
         children: [
           // Section header
           Text(
-            'COLLABORATION DETAILS',
+            'KOLAB DETAILS',
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Describe your collaboration and what you offer',
+            'Describe your kolab and what you offer',
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -123,7 +123,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
               hintText:
-                  'Describe what you are looking for and how this collaboration would work...',
+                  'Describe what you are looking for and how this kolab would work...',
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,

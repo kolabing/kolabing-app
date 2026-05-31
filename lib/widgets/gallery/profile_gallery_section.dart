@@ -351,8 +351,8 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 isBusinessProfile
-                    ? 'Add venue photos so collaborators can see your space before they apply.'
-                    : 'Add photos from your events so new collaborators understand your community.',
+                    ? 'Add venue photos so kolab partners can see your space before they apply.'
+                    : 'Add photos from your events so new kolab partners understand your community.',
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: isDark

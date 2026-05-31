@@ -27,7 +27,7 @@ class OfferingScreen extends ConsumerStatefulWidget {
     _OfferingOption(
       value: 'venue',
       title: 'Venue',
-      subtitle: 'Provide your space for the collaboration',
+      subtitle: 'Provide your space for the kolab',
       icon: LucideIcons.building2,
     ),
     _OfferingOption(
@@ -63,7 +63,7 @@ class OfferingScreen extends ConsumerStatefulWidget {
     _OfferingOption(
       value: 'sponsorship',
       title: 'Sponsorship budget',
-      subtitle: 'Financial support for the collaboration',
+      subtitle: 'Financial support for the kolab',
       icon: LucideIcons.banknote,
     ),
     _OfferingOption(
@@ -188,7 +188,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         _SectionLabel(label: 'EXTRA TERMS (OPTIONAL)'),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Better terms you only unlock once a community proposes a collab. '
+          'Better terms you only unlock once a community proposes a kolab. '
           'They see these after sending you a Kolab.',
           style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
         ),
