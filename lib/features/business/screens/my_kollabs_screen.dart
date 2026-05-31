@@ -36,10 +36,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
   final _scrollController = ScrollController();
 
   static const _statusTabs = [
-    (label: 'All', value: null),
-    (label: 'Draft', value: 'draft'),
     (label: 'Published', value: 'published'),
-    (label: 'Closed', value: 'closed'),
+    (label: 'Draft', value: 'draft'),
   ];
 
   @override

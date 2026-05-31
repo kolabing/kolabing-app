@@ -90,8 +90,10 @@ class CollaborationPartner {
 
   factory CollaborationPartner.fromJson(Map<String, dynamic> json) {
     return CollaborationPartner(
-      id: json['id'] as String,
-      name: json['name'] as String,
+      // Tolerate null/missing strings from the API — a missing partner name
+      // must not crash parsing and silently drop the whole collaboration.
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
       profilePhoto: json['profile_photo'] as String?,
       category: json['category'] as String?,
       city: json['city'] is Map

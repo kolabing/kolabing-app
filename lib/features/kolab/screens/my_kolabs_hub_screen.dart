@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/constants/spacing.dart';
@@ -7,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../application/screens/applications_screen.dart';
+import '../../collaboration/providers/collaborations_list_provider.dart';
 import '../../collaboration/widgets/collaborations_list_tab.dart';
 
 /// Hub for the merged "My Kolabs" bottom-nav destination.

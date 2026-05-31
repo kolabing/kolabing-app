@@ -82,6 +82,10 @@ Future<List<Collaboration>> _fetchCollaborations({
 }
 
 /// All of the viewer's collaborations (both roles), unfiltered.
+///
+/// The My Kolabs hub invalidates this on mount (see [MyKolabsHubScreen]) so a
+/// stale session-cached snapshot is never shown — e.g. an empty Active tab
+/// after new collaborations were formed. Pull-to-refresh also forces a refetch.
 final collaborationsListProvider = FutureProvider<List<Collaboration>>(
   (ref) => _fetchCollaborations(allowRetry: true),
 );
