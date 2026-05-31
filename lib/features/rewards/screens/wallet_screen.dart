@@ -13,8 +13,8 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
+import '../models/xp_level.dart';
 import '../providers/wallet_provider.dart';
-import '../utils/xp_tier.dart';
 
 /// XP & Badges hub screen for community users.
 ///
@@ -198,7 +198,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   }
 
   Widget _buildTierBadge(int points) {
-    final tier = XpTier.fromPoints(points);
+    final level = XpLevel.fromXp(points);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.sm,
@@ -209,7 +209,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         borderRadius: KolabingRadius.borderRadiusRound,
       ),
       child: Text(
-        tier.displayName.toUpperCase(),
+        level.title.toUpperCase(),
         style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
@@ -220,16 +220,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   }
 
   Widget _buildTierProgress(int points) {
-    final tier = XpTier.fromPoints(points);
-    final progress = tier.progressFor(points);
-    final nextThreshold = tier.nextThreshold;
+    final level = XpLevel.fromXp(points);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ClipRRect(
           borderRadius: KolabingRadius.borderRadiusRound,
           child: LinearProgressIndicator(
-            value: progress,
+            value: level.progress(points),
             minHeight: 6,
             backgroundColor: KolabingColors.onPrimary.withValues(alpha: 0.15),
             valueColor: const AlwaysStoppedAnimation<Color>(
@@ -237,10 +235,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
           ),
         ),
-        if (nextThreshold != null) ...[
+        if (!level.isMaxLevel) ...[
           const SizedBox(height: 4),
           Text(
-            '$points / $nextThreshold XP to next tier',
+            '${level.xpToNext(points)} XP to ${level.next?.title ?? ''}',
             style: KolabingTextStyles.labelSmall.copyWith(
               color: KolabingColors.onPrimary.withValues(alpha: 0.65),
             ),

@@ -274,6 +274,10 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
           onRatingChanged: (v) => setState(() => _rating = v),
           onWouldAgainChanged: (v) => setState(() => _wouldAgain = v),
           onSubmit: _rating == null ? null : _onSubmitFeedback,
+          // Escape hatch: completion already succeeded server-side, so if
+          // feedback keeps failing don't trap the user — let them finish later.
+          // (They're re-prompted for feedback on next open per IF-5.)
+          onFinishLater: _feedbackError != null ? _close : null,
         );
       case 2:
         return _StepCelebration(
@@ -384,6 +388,7 @@ class _StepFeedback extends StatelessWidget {
     required this.onRatingChanged,
     required this.onWouldAgainChanged,
     required this.onSubmit,
+    this.onFinishLater,
   });
 
   final String partnerName;
@@ -395,6 +400,10 @@ class _StepFeedback extends StatelessWidget {
   final ValueChanged<int> onRatingChanged;
   final ValueChanged<bool> onWouldAgainChanged;
   final VoidCallback? onSubmit;
+
+  /// Shown only after a feedback submission error: completion already
+  /// happened, so this lets the user exit instead of being trapped.
+  final VoidCallback? onFinishLater;
 
   @override
   Widget build(BuildContext context) {
@@ -506,6 +515,13 @@ class _StepFeedback extends StatelessWidget {
                 color: KolabingColors.textTertiary,
               ),
             ),
+          ),
+        ],
+        if (onFinishLater != null && !isSubmitting) ...[
+          const SizedBox(height: 4),
+          _SecondaryButton(
+            label: 'Finish later',
+            onTap: onFinishLater!,
           ),
         ],
       ],
@@ -744,7 +760,10 @@ class _PrimaryButton extends StatelessWidget {
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: KolabingColors.onSurface,
+                ),
               )
             : Text(
                 label,

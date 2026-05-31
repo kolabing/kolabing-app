@@ -4,7 +4,7 @@
 > be read at the start of every session and kept in sync. See "Maintenance rules"
 > at the bottom — they are mandatory, not optional.
 >
-> Last updated: 2026-06-01 (feedback reorder shipped; feedback + admin-challenges tickets added)
+> Last updated: 2026-06-01 (gamification economy audit; XP-economy admin prompt added (NF-5); completion-sheet dead-end + spinner fixed (FX-6); XP-ladder consolidated onto 5-level XpLevel + xp_tier.dart deleted (FX-7 fixed); mission-label drift logged (FX-8))
 
 ---
 
@@ -17,6 +17,7 @@ _Planned work that does not exist yet._
 | NF-2 | **Map update** | Refresh/expand the map experience (discovery on a map, pins for businesses/communities/events). Scope TBD. | Not started |
 | NF-3 | **Geolock check-in** | Location-gated check-in at a kolab/event — attendee must be physically at the venue (geofence) to check in / scan the QR. Ties into the existing `qr_code_url` + challenges flow. | Not started |
 | NF-4 | **Profile photo scale/zoom on pick** | When choosing a profile picture, let the user pinch-to-zoom / pan to crop and frame the image before saving (interactive scale in/out). Applies to the image_picker flow used for avatars. | Not started |
+| NF-5 | **Admin-managed gamification economy (backend)** | The whole reward economy is hardcoded in the app and can silently disagree with what the server awards. Two backend prompts written for `kolabing-v2`: (a) `docs/tickets/2026-06-01-admin-challenges-prompt.md` — challenge catalogue CRUD + audience + role-based defaults + per-collab business bonuses; (b) `docs/tickets/2026-06-01-admin-xp-economy-prompt.md` — XP levels, per-action XP awards (`xp_earn_rules` drives BOTH `point_ledger` and display), badge requirements, referral/withdrawal economics, all exposed via new `GET /gamification/config`. **App-side follow-up (after endpoint ships):** delete `xp_level.dart` + `xp_tier.dart` ladders, replace hardcoded `+10/+50` mission labels + badge requirements + `3`/`€75`/per-point literals with config values. | Prompts ready — backend not started |
 
 ---
 
@@ -44,6 +45,9 @@ _Bugs to fix. Add when detected; move to a struck-through "confirmed fixed" line
 | FX-3 | ~~Bottom nav RenderFlex overflow~~ (pre-existing, commit 846dcac). | ✅ Fixed |
 | FX-4 | ~~Kolab detail 3-dots (⋮) menu did nothing~~ — it had an empty `onPressed`. Removed; its actions (Reschedule, Complete) already exist inline and are correctly hidden on terminal kolabs, so it was fully redundant. | ✅ Fixed 2026-05-31 |
 | FX-5 | Active sub-tab empty / Finished showed only 1 → fixed earlier (CollaborationPartner null-safety + hub refresh-on-open). | ✅ Fixed 2026-05-31 |
+| FX-6 | ~~Completion sheet dead-end + invisible spinner~~ — `kolab_completion_sheet.dart` was non-dismissible with no escape, so a feedback POST that kept failing trapped the user even though `/complete` had already succeeded; added a "Finish later" exit shown after a feedback error. Also the loading spinner had no colour (yellow-on-yellow, invisible) → set to `onSurface`. | ✅ Fixed 2026-06-01 (pending device re-verify) |
+| FX-7 | ~~XP ladders disagree: `xp_level.dart` (Trusted @ 250) vs `xp_tier.dart` (Trusted @ 100) — two ladders rendered on the same wallet screen (header badge/progress used the 3-tier; progress card + wallet model used the 5-level).~~ Consolidated onto the canonical 5-level `XpLevel`: `wallet_screen` `_buildTierBadge`/`_buildTierProgress` now use `XpLevel.fromXp`; deleted `utils/xp_tier.dart`. Header + progress card now agree. (Backend-independent; NF-5 will later replace the surviving ladder with server values.) | ✅ Fixed 2026-06-01 (pending device re-verify) |
+| FX-8 | Hardcoded "+10/+50 XP" mission labels (`wallet_screen.dart`, completion/review sheets) are independent of what the server actually awards → can mislead users. Resolved by NF-5 (`xp_earn_rules` drives both). | Open — blocked on NF-5 config endpoint |
 
 ---
 
