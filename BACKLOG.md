@@ -4,7 +4,7 @@
 > be read at the start of every session and kept in sync. See "Maintenance rules"
 > at the bottom — they are mandatory, not optional.
 >
-> Last updated: 2026-05-31 (NF-4 added)
+> Last updated: 2026-05-31 (seeding done)
 
 ---
 
@@ -28,7 +28,7 @@ _Started or partially shipped; not yet fully working end-to-end._
 | IF-1 | **My Kolabs — Active & Finished tabs** | DONE: wired to `GET /collaborations` (Active = scheduled/active/pending_confirmation; Finished = completed/cancelled), real cards, pull-to-refresh. MISSING: visual QA on device; no "cancel collaboration" action yet (cancel→Finished path exists server-side but no UI trigger surfaced here). | In progress |
 | IF-2 | **Kolab completion / feedback flow** | Backend supports `POST /collaborations/{id}/complete` + `/review`; detail screen has completion/review sheets. MISSING: end-to-end test with seeded data; confirm both-parties-confirm → completed transition and review prompts. | In progress |
 | IF-3 | **Reschedule collaboration** | Client calls `PATCH /collaborations/{id}` but the exact verb/path/fields are unconfirmed (see `TODO(backend)` in `collaboration_detail_provider.dart`). | Blocked on backend contract |
-| IF-4 | **Test data seeding (6 kolabs)** | RECOMMEND server-side artisan seeder. Live-API path investigated: both logins work; `GET /collaborations` confirmed (Active/Finished read from it). Creating an opportunity via `POST /opportunities` requires a full payload — `title, description, business_offer, community_deliverables, categories, preferred_city, availability_mode` (objects, not just strings). Reconstructing that contract against PRODUCTION to drive create→apply→accept ×6 is risky/error-prone. The business-apply paywall was NOT cleanly tested (an earlier "403" was a Cloudflare 1010 false positive against urllib, not the API). The robust path is the existing artisan `kolabing:seed-test-collaboration` on the Laravel host (`kolabing-v2`) — it made the existing `[TEST] Finish-flow collaboration` and bypasses billing/validation legitimately for test data. Need: dates 2026-05-31 / 2026-05-30 / 2026-06-01 (×2 each), business=Eixample46, community=Real Run Club, status accepted→scheduled (no feedback). `scheduled_date` is date-only. | Recommend artisan seeder |
+| IF-4 | ~~**Test data seeding (6 kolabs)**~~ | ✅ DONE 2026-05-31. Seeded 6 accepted collaborations via live API (Real Run Club community creates opp → Eixample46 business applies → community accepts). Dates: 2026-05-31 ×2, 2026-05-30 ×2, 2026-06-01 ×2. All `status=scheduled`, no feedback by either side — exactly the state to test the completion/feedback flow. All show in My Kolabs → **Active** (scheduled→Active); the 2026-05-30 pair are past-event-date, awaiting completion. Business apply is NOT paywalled (earlier "403" was a Cloudflare false positive). Contract notes for future seeding: opp needs `business_offer`+`community_deliverables` (objects), `categories` (names like "Sports"), `availability_mode`/`venue_mode`, `selected_time` (`HH:mm`), and `availability_start`/`end` must be AFTER today with end>start; the real target date is set via the collaboration's `scheduled_date` at accept (date-only, accepts past/today). Cleaned up probe leftovers. | Done |
 
 ---
 
