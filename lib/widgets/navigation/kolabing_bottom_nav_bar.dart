@@ -112,7 +112,10 @@ class _NavBarItem extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: isSelected ? 10 : 14,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 color: isSelected
                     ? KolabingColors.charcoal
@@ -151,13 +154,22 @@ class _NavBarItem extends StatelessWidget {
                         ),
                     ],
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    item.label.toUpperCase(),
-                    style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: labelColor, letterSpacing: 0.5),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  if (isSelected) ...[
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        item.label.toUpperCase(),
+                        style: KolabingTextStyles.labelSmall.copyWith(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: labelColor,
+                          letterSpacing: 0.5,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
