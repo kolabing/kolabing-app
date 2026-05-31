@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
+import '../../../config/constants/api.dart';
+import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../auth/services/auth_service.dart';
 import '../models/collaboration.dart';
 import '../services/collaboration_completion_service.dart';
 
@@ -19,11 +25,19 @@ class KolabCompletionResult {
 
 /// The gamified, multi-step Kolab completion bottom sheet.
 ///
-/// Flow:
-///   Step 0 — "Did the Kolab happen?" confirmation
-///   Step 1 — Celebration + XP preview
-///   Step 2 — Optional bonus actions (rating, review, photos, social)
+/// Flow (feedback is forced — the sheet is non-dismissible and you cannot reach
+/// the celebration / close without submitting feedback):
+///   Step 0 — "Did the Kolab happen?" confirmation → marks complete
+///   Step 1 — **Required feedback** (star rating required + optional comment +
+///            would-Kolab-again) → submits before celebrating
+///   Step 2 — Celebration + XP preview
 ///   Step 3 — Done with confetti summary
+///
+/// NOTE: until the backend adds `POST /collaborations/{id}/feedback` and makes
+/// `/complete` require it (BACKLOG IF-5 / docs/tickets/2026-06-01-feedback-flow),
+/// completion is marked first and the feedback (the lean `/review` endpoint) is
+/// forced immediately after as an un-skippable closing step. Once the backend
+/// gate ships this becomes atomic server-side with richer fields.
 ///
 /// Shows [KolabCompletionResult] on close, or null if user dismissed early.
 class KolabCompletionSheet extends StatefulWidget {
@@ -64,6 +78,13 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
   bool _isLoading = false;
   String? _error;
 
+  // Required-feedback step state (forced before celebration).
+  int? _rating;
+  bool? _wouldAgain;
+  final _commentController = TextEditingController();
+  bool _isSubmittingFeedback = false;
+  String? _feedbackError;
+
   // Result tracking
   Collaboration? _updatedCollaboration;
   static const int _baseXp = 10;
@@ -96,11 +117,14 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
 
   @override
   void dispose() {
+    _commentController.dispose();
     _celebrationController.dispose();
     _xpCountController.dispose();
     super.dispose();
   }
 
+  /// Step 0 → marks the collaboration complete, then advances to the REQUIRED
+  /// feedback step (no celebration yet — feedback must be given first).
   Future<void> _onConfirmComplete() async {
     setState(() {
       _isLoading = true;
@@ -111,11 +135,9 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       final collab = await completeCollaboration(widget.collaborationId);
       _updatedCollaboration = collab;
       setState(() {
-        _step = 1;
+        _step = 1; // required feedback
         _isLoading = false;
       });
-      _celebrationController.forward();
-      HapticFeedback.mediumImpact();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -124,7 +146,62 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
     }
   }
 
-  void _goToDone() => setState(() => _step = 2);
+  /// Step 1 → submits the required feedback, then unlocks the celebration.
+  /// Rating is mandatory; the sheet cannot be closed without it.
+  Future<void> _onSubmitFeedback() async {
+    final rating = _rating;
+    if (rating == null) return;
+
+    setState(() {
+      _isSubmittingFeedback = true;
+      _feedbackError = null;
+    });
+
+    try {
+      final token = await AuthService().getToken();
+      if (token == null || token.isEmpty) {
+        throw Exception('Session expired');
+      }
+      final comment = _commentController.text.trim();
+      final payload = <String, dynamic>{
+        'rating': rating,
+        if (comment.isNotEmpty) 'body': comment,
+        if (_wouldAgain != null) 'would_collaborate_again': _wouldAgain,
+      };
+      final response = await http.post(
+        Uri.parse(
+          '${ApiConfig.baseUrl}/collaborations/${widget.collaborationId}/review',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          _isSubmittingFeedback = false;
+          _step = 2; // celebration
+        });
+        _celebrationController.forward();
+        HapticFeedback.mediumImpact();
+      } else {
+        setState(() {
+          _isSubmittingFeedback = false;
+          _feedbackError = 'Could not submit feedback. Please try again.';
+        });
+      }
+    } catch (_) {
+      setState(() {
+        _isSubmittingFeedback = false;
+        _feedbackError = 'Could not submit feedback. Please try again.';
+      });
+    }
+  }
+
+  void _goToDone() => setState(() => _step = 3);
 
   void _close() {
     if (_updatedCollaboration != null) {
@@ -186,16 +263,29 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
           onDismiss: _close,
         );
       case 1:
-        return _StepCelebration(
+        return _StepFeedback(
           key: const ValueKey(1),
+          partnerName: widget.partnerName,
+          rating: _rating,
+          wouldAgain: _wouldAgain,
+          commentController: _commentController,
+          isSubmitting: _isSubmittingFeedback,
+          error: _feedbackError,
+          onRatingChanged: (v) => setState(() => _rating = v),
+          onWouldAgainChanged: (v) => setState(() => _wouldAgain = v),
+          onSubmit: _rating == null ? null : _onSubmitFeedback,
+        );
+      case 2:
+        return _StepCelebration(
+          key: const ValueKey(2),
           scaleAnimation: _scaleAnimation,
           fadeAnimation: _fadeAnimation,
           baseXp: _baseXp,
           onContinue: _goToDone,
         );
-      case 2:
+      case 3:
         return _StepDone(
-          key: const ValueKey(2),
+          key: const ValueKey(3),
           totalXp: _baseXp,
           onClose: _close,
         );
@@ -279,7 +369,191 @@ class _StepConfirm extends StatelessWidget {
 }
 
 // =============================================================================
-// Step 1 — Celebration
+// Step 1 — Required feedback (the forced closing step)
+// =============================================================================
+
+class _StepFeedback extends StatelessWidget {
+  const _StepFeedback({
+    super.key,
+    required this.partnerName,
+    required this.rating,
+    required this.wouldAgain,
+    required this.commentController,
+    required this.isSubmitting,
+    required this.error,
+    required this.onRatingChanged,
+    required this.onWouldAgainChanged,
+    required this.onSubmit,
+  });
+
+  final String partnerName;
+  final int? rating;
+  final bool? wouldAgain;
+  final TextEditingController commentController;
+  final bool isSubmitting;
+  final String? error;
+  final ValueChanged<int> onRatingChanged;
+  final ValueChanged<bool> onWouldAgainChanged;
+  final VoidCallback? onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'How was the Kolab? ⭐',
+          style: KolabingTextStyles.headlineMedium.copyWith(
+            fontSize: 22,
+            color: KolabingColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Feedback is required to finish. Your review helps $partnerName '
+          'build trust on Kolabing.',
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 15,
+            color: KolabingColors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 24),
+        // Star rating (required)
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(5, (i) {
+              final filled = rating != null && i < rating!;
+              return IconButton(
+                onPressed: () => onRatingChanged(i + 1),
+                icon: Icon(
+                  filled ? Icons.star_rounded : Icons.star_outline_rounded,
+                  size: 40,
+                  color: filled
+                      ? KolabingColors.primary
+                      : KolabingColors.onSurfaceVariant,
+                ),
+              );
+            }),
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Optional comment
+        TextField(
+          controller: commentController,
+          maxLines: 3,
+          maxLength: 300,
+          decoration: InputDecoration(
+            hintText: 'Anything to add? (optional)',
+            filled: true,
+            fillColor: KolabingColors.background,
+            border: OutlineInputBorder(
+              borderRadius: KolabingRadius.borderRadiusMd,
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Would Kolab again
+        Text(
+          'Would you Kolab again?',
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _ChoiceChip(
+                label: 'Yes',
+                selected: wouldAgain == true,
+                onTap: () => onWouldAgainChanged(true),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ChoiceChip(
+                label: 'No',
+                selected: wouldAgain == false,
+                onTap: () => onWouldAgainChanged(false),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        if (error != null) ...[
+          Text(
+            error!,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.error,
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+        _PrimaryButton(
+          label: isSubmitting ? 'Submitting…' : 'Submit & finish',
+          isLoading: isSubmitting,
+          onTap: isSubmitting ? null : onSubmit,
+        ),
+        if (onSubmit == null && !isSubmitting) ...[
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              'Tap a star to rate',
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.textTertiary,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ChoiceChip extends StatelessWidget {
+  const _ChoiceChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? KolabingColors.primary : KolabingColors.background,
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(
+            color: selected ? KolabingColors.primary : KolabingColors.darkBorder,
+          ),
+        ),
+        child: Text(
+          label,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: selected
+                ? KolabingColors.onPrimary
+                : KolabingColors.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Step 2 — Celebration
 // =============================================================================
 
 class _StepCelebration extends StatelessWidget {

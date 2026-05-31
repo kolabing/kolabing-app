@@ -24,6 +24,16 @@ are **default** for a collaboration based on the **business type** and/or
 **community type** of its participants — so new collaborations start pre-populated
 with sensible challenges instead of an empty/manual list.
 
+Additionally:
+- **Audience targeting per challenge.** Each challenge must declare who can add it
+  to a collaboration: **community-only**, **business-only**, or **both**. The
+  Gamification Setup card should only offer a challenge to the side(s) allowed.
+- **Business bonus rewards on a challenge.** A business must be able to attach a
+  real-world bonus that an attendee unlocks by completing the challenge — e.g.
+  "10% off any product", "free coffee", "free class". This is business-defined,
+  per-collaboration (the same system challenge can carry different bonuses in
+  different collaborations).
+
 ## Build (matches the existing admin architecture)
 Server-rendered **Blade + AdminLTE** inside Laravel 12, under `/admin/*`, behind
 the `auth:admin + maintainer` guard; logic in a service under `app/Services/Admin/`;
@@ -34,8 +44,12 @@ strict, `script-src 'self' 'unsafe-inline'` + Tailwind CDN only).
    + views under `resources/views/admin/challenges/`:
    - `GET /admin/challenges` — list with filters (category, difficulty, is_system).
    - `create / edit / destroy` — fields `name, description, difficulty, points,
-     category, is_system`. Only `is_system=true` rows are global; custom
-     (collaboration-scoped) ones stay out of the global pool.
+     category, is_system`, **plus `audience` enum (`community` | `business` |
+     `both`)** — controls which side may add the challenge to a collaboration.
+     Add `audience` to `challenges` (migration; default `both`) and include it in
+     the `GET /challenges/system` payload so the app can filter by viewer role.
+     Only `is_system=true` rows are global; custom (collaboration-scoped) ones
+     stay out of the global pool.
    - Sidebar entry under a new **"GAMIFICATION"** header in `config/adminlte.php`.
 
 2. **Role-based default mapping** — new table + admin UI:
@@ -54,17 +68,40 @@ strict, `script-src 'self' 'unsafe-inline'` + Tailwind CDN only).
    `business_type` and the community's `community_type`. Idempotent; participants
    can still add/remove later via `PUT /collaborations/{id}/challenges`.
 
-4. **(Optional) expose defaults to the app** — add
+4. **Business bonus rewards on a challenge (per-collaboration).** A business can
+   attach a real-world reward to a selected challenge that the attendee unlocks on
+   completion (e.g. "10% off any product", "free coffee").
+   - Store on the `collaboration_challenges` pivot (per-collaboration, NOT on the
+     global catalogue — the same challenge can carry different bonuses elsewhere):
+     add `bonus_type` enum (`discount_percent` | `free_item` | `free_service` |
+     `custom`), `bonus_value` varchar (e.g. `10` for percent, or `Flat white`),
+     `bonus_description` varchar (display text). Nullable — most challenges have no
+     bonus.
+   - API: extend `PUT /collaborations/{id}/challenges` so each selected id can
+     carry an optional bonus object, OR add
+     `PUT /collaborations/{id}/challenges/{challengeId}/bonus`. Only the **business**
+     party may set a bonus (403 otherwise).
+   - App (later): in Gamification Setup, business-side gets an "Add bonus" affordance
+     per selected challenge; attendees see the bonus on the challenge in the
+     attendee app + on check-in/completion.
+
+5. **(Optional) expose defaults to the app** — add
    `?applies_to=business_type:coworking` filtering to `GET /challenges/system` so
    the app can highlight defaults. Not required for v1.
 
 ## Acceptance
 - Maintainers can add/edit/remove system challenges from `/admin/challenges`
   (403 for non-maintainers; 302 to login when unauthenticated).
+- Each challenge has an `audience` (`community` | `business` | `both`); the app
+  only offers a challenge to the allowed side(s), and `GET /challenges/system`
+  returns `audience`.
 - Maintainers can set default challenges per business type and per community type.
 - A new collaboration between e.g. a `coworking` business and a `run_club`
   community is pre-seeded with those types' defaults in `collaboration_challenges`.
-- No CSP carve-outs; no JS lib added; tests cover route gating + defaults-seeding.
+- A business can attach a bonus (e.g. 10% off, free coffee) to a selected
+  challenge; it's stored per-collaboration and only the business may set it.
+- No CSP carve-outs; no JS lib added; tests cover route gating + defaults-seeding
+  + audience filtering + bonus set/permission.
 
 ## Guardrails
 - Don't break `GET /challenges/system` (the app depends on its exact shape above).
