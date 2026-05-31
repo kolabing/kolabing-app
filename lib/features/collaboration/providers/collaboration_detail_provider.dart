@@ -8,7 +8,6 @@ import '../../../config/constants/api.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../../gamification/models/challenge.dart';
-import '../../opportunity/models/opportunity.dart';
 import '../models/collaboration.dart';
 
 /// Provider for collaboration detail.
