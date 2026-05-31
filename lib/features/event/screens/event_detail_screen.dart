@@ -113,7 +113,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(LucideIcons.arrowLeft),
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
       body: const Center(
@@ -134,7 +134,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           leading: IconButton(
             onPressed: () => context.pop(),
             icon: const Icon(LucideIcons.arrowLeft),
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         body: Center(
@@ -150,7 +150,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               Text(
                 title,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               if (message != null) ...[
@@ -193,7 +193,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   Text(
                     event.name,
                     style: KolabingTextStyles.headlineMedium.copyWith(
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
 
@@ -209,7 +209,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     Text(
                       'Photos',
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -221,7 +221,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     Text(
                       'Videos',
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -371,7 +371,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           // Partner
           _buildInfoRow(
             icon: LucideIcons.users,
-            label: 'Collaborated with',
+            label: 'Kolab with',
             child: Row(
               children: [
                 // Partner avatar
@@ -380,7 +380,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: KolabingColors.border, width: 1),
+                    border: Border.all(color: KolabingColors.darkBorder, width: 1),
                   ),
                   child: ClipOval(
                     child: event.partner.profilePhoto != null
@@ -401,7 +401,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       Text(
                         event.partner.name,
                         style: KolabingTextStyles.titleSmall.copyWith(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       Container(
@@ -434,7 +434,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
           const Divider(
             height: KolabingSpacing.lg,
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
 
           // Date
@@ -446,7 +446,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
           const Divider(
             height: KolabingSpacing.lg,
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
 
           // Attendees
@@ -476,7 +476,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               decoration: BoxDecoration(
                 color: KolabingColors.surface,
                 borderRadius: KolabingRadius.borderRadiusMd,
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: Row(
                 children: [
@@ -508,14 +508,14 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                         Text(
                           'Recap video ${index + 1}',
                           style: KolabingTextStyles.titleSmall.copyWith(
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Tap to open the uploaded video',
                           style: KolabingTextStyles.bodySmall.copyWith(
-                            color: KolabingColors.textSecondary,
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -588,7 +588,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 Text(
                   value,
                   style: KolabingTextStyles.titleSmall.copyWith(
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
             ],

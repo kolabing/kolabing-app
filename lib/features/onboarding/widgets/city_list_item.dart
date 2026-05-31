@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// City list item for city selection
 class CityListItem extends StatefulWidget {
@@ -63,7 +63,7 @@ class _CityListItemState extends State<CityListItem> {
                 width: 4,
               ),
               bottom: const BorderSide(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 width: 1,
               ),
             ),
@@ -87,21 +87,13 @@ class _CityListItemState extends State<CityListItem> {
                   children: [
                     Text(
                       widget.name,
-                      style: GoogleFonts.openSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
+                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                     if (widget.country != null) ...[
                       const SizedBox(height: 2),
                       Text(
                         widget.country!,
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
                       ),
                     ],
                   ],

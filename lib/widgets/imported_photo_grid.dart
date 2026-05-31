@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../config/constants/api.dart';
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 
 /// A single photo entry rendered by [ImportedPhotoGrid].
 class ImportedPhotoItem {
@@ -156,10 +156,6 @@ class GoogleAttributionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     'Powered by Google',
-    style: GoogleFonts.openSans(
-      fontSize: 12,
-      fontWeight: FontWeight.w600,
-      color: KolabingColors.textTertiary,
-    ),
+    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
   );
 }

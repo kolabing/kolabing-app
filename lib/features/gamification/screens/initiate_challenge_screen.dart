@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
@@ -89,18 +89,17 @@ class _InitiateChallengeScreenState
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 'Challenge Started!',
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 'The verifier will be notified to confirm your challenge completion.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -122,9 +121,9 @@ class _InitiateChallengeScreenState
                   ),
                   child: Text(
                     'Done',
-                    style: GoogleFonts.dmSans(
+                    style: KolabingTextStyles.button.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -152,11 +151,11 @@ class _InitiateChallengeScreenState
     final initiateState = ref.watch(initiateChallengeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
-        ? KolabingColors.darkBackground
+        ? KolabingColors.surface
         : KolabingColors.background;
     final textColor = isDark
         ? KolabingColors.textOnDark
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
     final surfaceColor = isDark
         ? KolabingColors.darkSurface
         : KolabingColors.surface;
@@ -173,8 +172,7 @@ class _InitiateChallengeScreenState
         ),
         title: Text(
           'Start Challenge',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
+          style: KolabingTextStyles.bodyLarge.copyWith(
             fontWeight: FontWeight.w600,
             color: textColor,
           ),
@@ -199,7 +197,7 @@ class _InitiateChallengeScreenState
                       border: Border.all(
                         color: isDark
                             ? KolabingColors.darkBorder
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                       ),
                     ),
                     child: Row(
@@ -226,8 +224,7 @@ class _InitiateChallengeScreenState
                             children: [
                               Text(
                                 widget.challenge!.name,
-                                style: GoogleFonts.rubik(
-                                  fontSize: 16,
+                                style: KolabingTextStyles.bodyMedium.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: textColor,
                                 ),
@@ -245,7 +242,7 @@ class _InitiateChallengeScreenState
                                     ),
                                     child: Text(
                                       '+${widget.challenge!.points} pts',
-                                      style: GoogleFonts.rubik(
+                                      style: KolabingTextStyles.bodySmall.copyWith(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w700,
                                         color: KolabingColors.onPrimary,
@@ -255,9 +252,9 @@ class _InitiateChallengeScreenState
                                   const SizedBox(width: 6),
                                   Text(
                                     widget.challenge!.difficulty.label,
-                                    style: GoogleFonts.openSans(
+                                    style: KolabingTextStyles.bodySmall.copyWith(
                                       fontSize: 12,
-                                      color: KolabingColors.textSecondary,
+                                      color: KolabingColors.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
@@ -274,8 +271,7 @@ class _InitiateChallengeScreenState
                 // Instructions
                 Text(
                   'How it works',
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
@@ -300,8 +296,7 @@ class _InitiateChallengeScreenState
                 // Verifier ID input
                 Text(
                   'Verifier Profile ID',
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
@@ -312,7 +307,7 @@ class _InitiateChallengeScreenState
                   enabled: !initiateState.isLoading,
                   decoration: InputDecoration(
                     hintText: 'Enter the verifier\'s profile ID',
-                    hintStyle: GoogleFonts.openSans(
+                    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
                     prefixIcon: const Icon(
@@ -326,7 +321,7 @@ class _InitiateChallengeScreenState
                       borderSide: BorderSide(
                         color: isDark
                             ? KolabingColors.darkBorder
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -334,7 +329,7 @@ class _InitiateChallengeScreenState
                       borderSide: BorderSide(
                         color: isDark
                             ? KolabingColors.darkBorder
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -360,7 +355,7 @@ class _InitiateChallengeScreenState
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Ask another attendee for their profile ID to verify your challenge',
-                  style: GoogleFonts.openSans(
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     color: KolabingColors.textTertiary,
                   ),
@@ -396,9 +391,9 @@ class _InitiateChallengeScreenState
                           )
                         : Text(
                             'START CHALLENGE',
-                            style: GoogleFonts.dmSans(
+                            style: KolabingTextStyles.button.copyWith(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -435,7 +430,7 @@ class _InstructionStep extends StatelessWidget {
             child: Center(
               child: Text(
                 number,
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.primary,
@@ -447,9 +442,8 @@ class _InstructionStep extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ),

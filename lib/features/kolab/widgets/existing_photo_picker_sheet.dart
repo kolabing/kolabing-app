@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../features/profile/providers/gallery_provider.dart';
 import '../../../utils/remote_media_url.dart';
 
@@ -96,7 +96,7 @@ class _ExistingPhotoPickerSheetState
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     ),
@@ -104,19 +104,12 @@ class _ExistingPhotoPickerSheetState
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     widget.title,
-                    style: GoogleFonts.rubik(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     'Select up to ${widget.maxSelection} previously uploaded photo${widget.maxSelection == 1 ? '' : 's'}.',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Expanded(
@@ -172,10 +165,7 @@ class _ExistingPhotoPickerSheetState
       return Center(
         child: Text(
           'No reusable photos yet.',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       );
     }

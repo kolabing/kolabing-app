@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
@@ -107,11 +107,11 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
-        ? KolabingColors.darkBackground
+        ? KolabingColors.surface
         : KolabingColors.background;
     final textColor = isDark
         ? KolabingColors.textOnDark
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
     final surfaceColor = isDark
         ? KolabingColors.darkSurface
         : KolabingColors.surface;
@@ -128,11 +128,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
         ),
         title: Text(
           'Create Challenge',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
         ),
       ),
       body: KeyboardAvoidingContent(
@@ -244,10 +240,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Default: Easy=5, Medium=15, Hard=30 points',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
 
                 const SizedBox(height: KolabingSpacing.xxl),
@@ -280,11 +273,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                           )
                         : Text(
                             'CREATE CHALLENGE',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.0,
-                            ),
+                            style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                           ),
                   ),
                 ),
@@ -304,7 +293,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
+      hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: KolabingColors.textTertiary)
           : null,
@@ -313,13 +302,13 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
         ),
       ),
       focusedBorder: OutlineInputBorder(
@@ -345,26 +334,18 @@ class _FieldLabel extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
         ? KolabingColors.textOnDark
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
 
     return Row(
       children: [
         Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
         ),
         if (required)
           Text(
             ' *',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.error,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
           ),
       ],
     );
@@ -429,28 +410,28 @@ class _DifficultyOption extends StatelessWidget {
         bgColor = isSelected ? const Color(0xFFD4EDDA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF155724)
-            : KolabingColors.border;
+            : KolabingColors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF155724)
-            : KolabingColors.textSecondary;
+            : KolabingColors.onSurfaceVariant;
         icon = LucideIcons.leaf;
       case ChallengeDifficulty.medium:
         bgColor = isSelected ? const Color(0xFFFFF3CD) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF856404)
-            : KolabingColors.border;
+            : KolabingColors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF856404)
-            : KolabingColors.textSecondary;
+            : KolabingColors.onSurfaceVariant;
         icon = LucideIcons.flame;
       case ChallengeDifficulty.hard:
         bgColor = isSelected ? const Color(0xFFF8D7DA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF721C24)
-            : KolabingColors.border;
+            : KolabingColors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF721C24)
-            : KolabingColors.textSecondary;
+            : KolabingColors.onSurfaceVariant;
         icon = LucideIcons.zap;
     }
 
@@ -472,17 +453,11 @@ class _DifficultyOption extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 difficulty.label,
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: textColor,
-                ),
+                style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: textColor),
               ),
               Text(
                 '${difficulty.defaultPoints} pts',
-                style: GoogleFonts.openSans(
-                  fontSize: 11,
-                  color: textColor.withValues(alpha: 0.7),
+                style: KolabingTextStyles.labelSmall.copyWith(color: textColor.withValues(alpha: 0.7),
                 ),
               ),
             ],

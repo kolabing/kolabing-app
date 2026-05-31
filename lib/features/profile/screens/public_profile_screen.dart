@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -95,7 +94,7 @@ class PublicProfileScreen extends ConsumerWidget {
                     child: Text(
                       profile.about!,
                       style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                         height: 1.5,
                       ),
                     ),
@@ -203,21 +202,13 @@ class PublicProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 cp.displayName,
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 cp.userType.toUpperCase(),
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: KolabingColors.textSecondary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
               ),
             ],
           ),
@@ -266,7 +257,7 @@ class PublicProfileScreen extends ConsumerWidget {
             Text(
               'Failed to load profile',
               style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -293,7 +284,7 @@ class PublicProfileScreen extends ConsumerWidget {
 
   Widget _buildCollaborationsSection(PublicProfile profile) => _SectionCard(
     icon: LucideIcons.trophy,
-    title: 'Past Collaborations',
+    title: 'Past Kolabs',
     count: profile.kolabsCount,
     child: profile.hasCollaborations
         ? SizedBox(
@@ -320,7 +311,7 @@ class PublicProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
                   Text(
-                    'No past collaborations yet',
+                    'No past kolabs yet',
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
@@ -426,11 +417,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                     children: [
                       Text(
                         profile.displayName,
-                        style: GoogleFonts.rubik(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: KolabingColors.textPrimary,
-                        ),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -438,11 +425,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                       if (profile.typeLabel != null)
                         Text(
                           profile.typeLabel!,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: KolabingColors.textSecondary,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
                         ),
                       if (profile.cityName != null &&
                           profile.cityName!.isNotEmpty) ...[
@@ -452,15 +435,12 @@ class _ProfileSliverHeader extends StatelessWidget {
                             const Icon(
                               LucideIcons.mapPin,
                               size: 12,
-                              color: KolabingColors.textSecondary,
+                              color: KolabingColors.onSurfaceVariant,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               profile.cityName!,
-                              style: GoogleFonts.openSans(
-                                fontSize: 13,
-                                color: KolabingColors.textSecondary,
-                              ),
+                              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -500,7 +480,7 @@ class _BackButton extends StatelessWidget {
           child: const Icon(
             LucideIcons.arrowLeft,
             size: 20,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),
@@ -552,11 +532,7 @@ class _AvatarWidget extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: GoogleFonts.rubik(
-          fontSize: size * 0.4,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       ),
     ),
   );
@@ -606,7 +582,7 @@ class _SectionCard extends StatelessWidget {
             Text(
               title,
               style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             if (count != null && count! > 0) ...[
@@ -619,11 +595,7 @@ class _SectionCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$count',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
               ),
             ],
@@ -663,7 +635,7 @@ class _SocialLinkChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surfaceVariant,
         borderRadius: KolabingRadius.borderRadiusRound,
-        border: Border.all(color: KolabingColors.border, width: 1),
+        border: Border.all(color: KolabingColors.darkBorder, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -672,11 +644,7 @@ class _SocialLinkChip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
           ),
         ],
       ),
@@ -706,7 +674,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         border: Border(
-          top: BorderSide(color: KolabingColors.border.withValues(alpha: 0.5)),
+          top: BorderSide(color: KolabingColors.darkBorder.withValues(alpha: 0.5)),
         ),
       ),
       child: Row(
@@ -715,15 +683,12 @@ class _SendKolabBottomBar extends ConsumerWidget {
             child: TextButton(
               onPressed: () => Navigator.of(context).maybePop(),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.textSecondary,
+                foregroundColor: KolabingColors.onSurfaceVariant,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: Text(
                 'Save for later',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -761,11 +726,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
                 icon: const Icon(LucideIcons.send, size: 18),
                 label: Text(
                   'SEND A KOLAB PROPOSAL',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
+                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
                 ),
               ),
             ),
@@ -822,7 +783,7 @@ class _PublicProfileReviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.background,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -841,11 +802,7 @@ class _PublicProfileReviewCard extends StatelessWidget {
                   children: [
                     Text(
                       review.reviewer.displayName,
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                     Text(
                       _formatReviewDate(review.createdAt),
@@ -875,7 +832,7 @@ class _PublicProfileReviewCard extends StatelessWidget {
             Text(
               review.body!,
               style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
                 height: 1.45,
               ),
             ),

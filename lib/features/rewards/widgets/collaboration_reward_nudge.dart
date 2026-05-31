@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// A small yellow nudge card displayed on a completed collaboration to remind
 /// the user they earned a point and can earn another by posting a review.
@@ -32,7 +32,7 @@ class CollaborationRewardNudge extends StatelessWidget {
           const Icon(
             LucideIcons.star,
             size: 20,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
           const SizedBox(width: KolabingSpacing.xs),
 
@@ -42,22 +42,14 @@ class CollaborationRewardNudge extends StatelessWidget {
               children: [
                 Text(
                   '+10 XP earned',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(width: KolabingSpacing.xxs),
                 Flexible(
                   child: Text(
                     'Post a review to earn +10 XP more',
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                 ),
               ],
@@ -72,7 +64,7 @@ class CollaborationRewardNudge extends StatelessWidget {
               // replace this callback as needed.
             },
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
+              foregroundColor: KolabingColors.onSurface,
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.xs,
               ),
@@ -81,10 +73,7 @@ class CollaborationRewardNudge extends StatelessWidget {
             ),
             child: Text(
               'Post review \u2192',
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
+              style: KolabingTextStyles.button.copyWith(fontSize: 13),
             ),
           ),
         ],

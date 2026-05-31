@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../config/theme/typography.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../models/challenge.dart';
@@ -51,11 +51,7 @@ class DifficultyBadge extends StatelessWidget {
           ],
           Text(
             difficulty.label,
-            style: GoogleFonts.openSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
+            style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
           ),
         ],
       ),

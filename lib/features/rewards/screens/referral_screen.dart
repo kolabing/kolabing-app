@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -39,12 +38,7 @@ class ReferralScreen extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
         title: Text(
           'REFERRAL PROGRAM',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -106,23 +100,13 @@ class ReferralScreen extends ConsumerWidget {
       children: [
         Text(
           'YOUR REFERRAL CODE',
-          style: GoogleFonts.rubik(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.2,
-            color: KolabingColors.onPrimary.withValues(alpha: 0.7),
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onPrimary.withValues(alpha: 0.7), letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           code,
           textAlign: TextAlign.center,
-          style: GoogleFonts.rubik(
-            fontSize: 32,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 3.0,
-            color: KolabingColors.onPrimary,
-          ),
+          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 32, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary, letterSpacing: 3.0),
         ),
       ],
     ),
@@ -156,8 +140,8 @@ class ReferralScreen extends ConsumerWidget {
             icon: const Icon(LucideIcons.copy, size: 18),
             label: Text('COPY CODE', style: KolabingTextStyles.buttonSmall),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
-              side: const BorderSide(color: KolabingColors.border),
+              foregroundColor: KolabingColors.onSurface,
+              side: const BorderSide(color: KolabingColors.darkBorder),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
@@ -214,12 +198,7 @@ class ReferralScreen extends ConsumerWidget {
       children: [
         Text(
           'HOW IT WORKS',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -268,11 +247,7 @@ class ReferralScreen extends ConsumerWidget {
         child: Center(
           child: Text(
             '$number',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onPrimary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
           ),
         ),
       ),
@@ -284,14 +259,14 @@ class ReferralScreen extends ConsumerWidget {
             Text(
               title,
               style: KolabingTextStyles.titleSmall.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               description,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -323,12 +298,7 @@ class ReferralScreen extends ConsumerWidget {
       children: [
         Text(
           'REWARD TIERS',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -375,7 +345,7 @@ class ReferralScreen extends ConsumerWidget {
         child: Text(
           condition,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../kolab/enums/deliverable_type.dart';
 import '../../kolab/enums/intent_type.dart';
 import '../../kolab/enums/need_type.dart';
@@ -171,7 +171,7 @@ class DiscoveryQuickFilters extends StatelessWidget {
               label: _multiValue(
                 filters.intentTypes,
                 DiscoveryFilterPresets.intentTypeOptions,
-                fallback: 'Collab Type',
+                fallback: 'Kolab Type',
               ),
               isActive: filters.intentTypes.isNotEmpty,
             ),
@@ -283,7 +283,7 @@ class _QuickChip extends StatelessWidget {
             : KolabingColors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: data.isActive ? KolabingColors.primary : KolabingColors.border,
+          color: data.isActive ? KolabingColors.primary : KolabingColors.darkBorder,
         ),
       ),
       child: Row(
@@ -291,18 +291,14 @@ class _QuickChip extends StatelessWidget {
         children: [
           Text(
             data.label,
-            style: GoogleFonts.dmSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
           ),
           const SizedBox(width: 6),
           Icon(
             LucideIcons.slidersHorizontal,
             size: 14,
             color: data.isActive
-                ? KolabingColors.textPrimary
+                ? KolabingColors.onSurface
                 : KolabingColors.textTertiary,
           ),
         ],

@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
 import '../../../../utils/remote_media_url.dart';
@@ -158,20 +158,12 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           // Section header
           Text(
             'ADD A PHOTO',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
-              letterSpacing: 1.0,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'This will appear on your kolab card in Explore.',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
           const SizedBox(height: KolabingSpacing.lg),
@@ -193,7 +185,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 border: Border.all(
                   color: useProfilePhoto
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: useProfilePhoto ? 2 : 1,
                 ),
               ),
@@ -211,7 +203,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                       border: Border.all(
                         color: useProfilePhoto
                             ? KolabingColors.primary
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                         width: 2,
                       ),
                     ),
@@ -227,11 +219,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                   Expanded(
                     child: Text(
                       'Use your community profile photo',
-                      style: GoogleFonts.openSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                   ),
                 ],
@@ -244,21 +232,17 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           // Divider with "OR"
           Row(
             children: [
-              const Expanded(child: Divider(color: KolabingColors.border)),
+              const Expanded(child: Divider(color: KolabingColors.darkBorder)),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: KolabingSpacing.sm,
                 ),
                 child: Text(
                   'OR',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
                 ),
               ),
-              const Expanded(child: Divider(color: KolabingColors.border)),
+              const Expanded(child: Divider(color: KolabingColors.darkBorder)),
             ],
           ),
 
@@ -288,7 +272,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 decoration: BoxDecoration(
                   color: KolabingColors.surface,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.border, width: 1),
+                  border: Border.all(color: KolabingColors.darkBorder, width: 1),
                 ),
                 child: CustomPaint(
                   painter: _DashedBorderPainter(
@@ -313,19 +297,12 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         'Upload a photo',
-                        style: GoogleFonts.openSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xxs),
                       Text(
                         'Max 5MB',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                       ),
                     ],
                   ),
@@ -399,19 +376,12 @@ class _UploadedPhotoCard extends StatelessWidget {
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           'Uploaded photo selected',
-          style: GoogleFonts.openSans(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'This image will appear on your kolab card in Explore.',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Row(

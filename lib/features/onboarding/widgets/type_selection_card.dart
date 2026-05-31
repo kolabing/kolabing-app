@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/category_icon.dart';
 
 /// Type selection card for business/community type selection.
@@ -104,12 +104,7 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
                   // Name — full text, up to 2 lines, centred
                   Text(
                     widget.name,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
-                      height: 1.25,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.25),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

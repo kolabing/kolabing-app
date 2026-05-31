@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -112,10 +112,7 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'One short line communities will see on your card.',
-          style: GoogleFonts.openSans(
-            fontSize: 12,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
@@ -152,12 +149,7 @@ class _VenueSummaryCard extends StatelessWidget {
           children: [
             Text(
               'PRIMARY VENUE',
-              style: GoogleFonts.rubik(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-                color: KolabingColors.primaryDark,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.primaryDark, letterSpacing: 0.8),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             _SummaryRow(
@@ -200,19 +192,12 @@ class _SummaryRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.textSecondary,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -227,12 +212,9 @@ InputDecoration _inputDecoration({
 }) =>
     InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textTertiary,
-      ),
+      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
       errorText: error,
-      errorStyle: GoogleFonts.openSans(fontSize: 12),
+      errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
       filled: true,
       fillColor: KolabingColors.surface,
       contentPadding: const EdgeInsets.symmetric(
@@ -241,11 +223,11 @@ InputDecoration _inputDecoration({
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
@@ -261,10 +243,7 @@ InputDecoration _inputDecoration({
       ),
     );
 
-final _inputTextStyle = GoogleFonts.openSans(
-  fontSize: 15,
-  color: KolabingColors.textPrimary,
-);
+final _inputTextStyle = KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});
@@ -274,12 +253,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1,
-          color: KolabingColors.textSecondary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1),
       );
 }
 
@@ -291,10 +265,6 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       );
 }

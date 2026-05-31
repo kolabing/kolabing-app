@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/gamification_stats.dart';
 import '../providers/stats_provider.dart';
@@ -23,9 +23,7 @@ class StatsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'My Stats',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         actions: [
@@ -114,19 +112,13 @@ class StatsScreen extends ConsumerWidget {
               const SizedBox(width: KolabingSpacing.sm),
               Text(
                 '${stats.totalPoints}',
-                style: GoogleFonts.rubik(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 48, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
             ],
           ),
           Text(
             'Total Points',
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              color: KolabingColors.onPrimary.withValues(alpha: 0.9),
+            style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -189,12 +181,7 @@ class StatsScreen extends ConsumerWidget {
         children: [
           Text(
             'DETAILED STATS',
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
@@ -261,19 +248,12 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: Text(
             label,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
         ),
         Text(
           value,
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
       ],
     );
@@ -285,12 +265,7 @@ class StatsScreen extends ConsumerWidget {
       children: [
         Text(
           'QUICK ACTIONS',
-          style: GoogleFonts.rubik(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Row(
@@ -336,7 +311,7 @@ class StatsScreen extends ConsumerWidget {
           color: KolabingColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
         ),
         child: Column(
@@ -348,11 +323,7 @@ class StatsScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               label,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
           ],
         ),
@@ -387,19 +358,12 @@ class StatsScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to load stats',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),

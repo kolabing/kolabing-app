@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -148,7 +147,7 @@ class PastEventsSection extends ConsumerWidget {
           'Past Events',
           style: KolabingTextStyles.titleMedium.copyWith(
             color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+                isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
         ),
         if (events.isNotEmpty) ...[
@@ -258,7 +257,7 @@ class PastEventsSection extends ConsumerWidget {
           Text(
             'Failed to load events',
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -306,14 +305,14 @@ class PastEventsSection extends ConsumerWidget {
             style: KolabingTextStyles.titleSmall.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Share your past collaborations with the community',
+            'Share your past kolabs with the community',
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -323,13 +322,10 @@ class PastEventsSection extends ConsumerWidget {
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
               '+ Add a past event',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.textSecondary,
+              foregroundColor: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],

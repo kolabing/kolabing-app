@@ -125,7 +125,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -133,7 +133,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               Text(
                 'Change Profile Photo',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -272,7 +272,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
       body: SafeArea(child: _buildBody(state, isDark)),
     );
@@ -412,14 +412,14 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             style: KolabingTextStyles.headlineSmall.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -615,7 +615,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             style: KolabingTextStyles.headlineMedium.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -663,7 +663,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     child: Text(
       about,
       style: KolabingTextStyles.bodyMedium.copyWith(
-        color: KolabingColors.textSecondary,
+        color: KolabingColors.onSurfaceVariant,
       ),
     ),
   );
@@ -710,7 +710,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     Text(
                       isActive ? 'Premium Plan' : 'No Active Plan',
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -724,7 +724,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           // Subscription details
           if (hasSubscription && isActive) ...[
             const SizedBox(height: KolabingSpacing.md),
-            const Divider(height: 1, color: KolabingColors.border),
+            const Divider(height: 1, color: KolabingColors.darkBorder),
             const SizedBox(height: KolabingSpacing.md),
 
             // Renewal date
@@ -788,8 +788,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               icon: const Icon(LucideIcons.settings, size: 18),
               label: const Text('MANAGE SUBSCRIPTION'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
+                foregroundColor: KolabingColors.onSurface,
+                side: const BorderSide(color: KolabingColors.darkBorder),
                 padding: const EdgeInsets.symmetric(
                   vertical: KolabingSpacing.sm,
                 ),
@@ -867,13 +867,13 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
       Text(
         '$label: ',
         style: KolabingTextStyles.bodySmall.copyWith(
-          color: KolabingColors.textSecondary,
+          color: KolabingColors.onSurfaceVariant,
         ),
       ),
       Text(
         value,
         style: KolabingTextStyles.bodySmall.copyWith(
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -941,7 +941,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               .updateNotificationPreference('applications_enabled', value),
         ),
         _NotificationToggle(
-          label: 'Collaboration Updates',
+          label: 'Kolab Updates',
           value: preferences?.collaborationsEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
@@ -990,7 +990,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               child: Text(
                 email,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1088,7 +1088,7 @@ class _SectionCard extends StatelessWidget {
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
             ],
@@ -1139,7 +1139,7 @@ class _ContactInfoTile extends StatelessWidget {
                       ? KolabingColors.info
                       : isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
             ),
@@ -1199,7 +1199,7 @@ class _NotificationToggle extends StatelessWidget {
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
               ),

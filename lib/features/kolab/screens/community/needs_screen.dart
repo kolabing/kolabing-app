@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../enums/need_type.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -27,20 +27,12 @@ class NeedsScreen extends ConsumerWidget {
           // Section header
           Text(
             'WHAT DO YOU NEED?',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
-              letterSpacing: 1.0,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Select all that apply',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
           // Error
@@ -75,7 +67,7 @@ class NeedsScreen extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -92,14 +84,9 @@ class NeedsScreen extends ConsumerWidget {
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         need.displayName,
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: isSelected
-                              ? KolabingColors.textPrimary
-                              : KolabingColors.textSecondary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
+                              ? KolabingColors.onSurface
+                              : KolabingColors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -133,10 +120,7 @@ class NeedsScreen extends ConsumerWidget {
             Expanded(
               child: Text(
                 error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
               ),
             ),
           ],

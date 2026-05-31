@@ -90,7 +90,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: KolabingColors.darkBackground,
+        systemNavigationBarColor: KolabingColors.surface,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -171,7 +171,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   void _showUserTypeMismatchDialog(UserType? existingType) {
     showDialog<void>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.6),
+      barrierColor: KolabingColors.overlayDark60,
       builder: (context) => _UserTypeMismatchDialog(
         existingType: existingType,
         onGotIt: () => Navigator.of(context).pop(),
@@ -249,7 +249,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.darkBackground,
+      backgroundColor: KolabingColors.surface,
       body: AnimatedBuilder(
         animation: _exitController,
         builder: (context, child) =>

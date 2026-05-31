@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 
@@ -33,7 +33,7 @@ class KolabReviewCard extends ConsumerWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(children: _buildSections()),
   );
@@ -440,16 +440,12 @@ class _ReviewSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: KolabingColors.textSecondary),
+              Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
               ),
               const Icon(
@@ -473,7 +469,7 @@ class _SectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      const Divider(height: 1, thickness: 1, color: KolabingColors.border);
+      const Divider(height: 1, thickness: 1, color: KolabingColors.darkBorder);
 }
 
 /// A labelled field in a review section.
@@ -489,19 +485,12 @@ class _ReviewField extends StatelessWidget {
     children: [
       Text(
         label,
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textTertiary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
       ),
       const SizedBox(height: KolabingSpacing.xxxs),
       Text(
         value,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface),
       ),
     ],
   );
@@ -530,11 +519,7 @@ class _ChipList extends StatelessWidget {
             ),
             child: Text(
               item,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.textPrimary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
             ),
           ),
         )
@@ -551,10 +536,6 @@ class _EmptyHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: GoogleFonts.openSans(
-      fontSize: 13,
-      fontStyle: FontStyle.italic,
-      color: KolabingColors.textTertiary,
-    ),
+    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary, fontStyle: FontStyle.italic),
   );
 }

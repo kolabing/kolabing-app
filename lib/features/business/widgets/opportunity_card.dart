@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/category_icon.dart';
 import '../../opportunity/models/opportunity.dart';
 
@@ -55,14 +55,9 @@ class OpportunityCard extends StatelessWidget {
               // Title
               Text(
                 opportunity.title,
-                style: GoogleFonts.openSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
-                  height: 1.3,
-                ),
+                      : KolabingColors.onSurface, height: 1.3),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -71,12 +66,7 @@ class OpportunityCard extends StatelessWidget {
               // Description
               Text(
                 opportunity.description,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: KolabingColors.textSecondary,
-                  height: 1.4,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -123,25 +113,17 @@ class OpportunityCard extends StatelessWidget {
               children: [
                 Text(
                   opportunity.creatorProfile?.displayName ?? 'Unknown',
-                  style: GoogleFonts.openSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: isDark
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
-                  ),
+                        : KolabingColors.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   opportunity.creatorProfile?.userType ?? '',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: isDark
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: isDark
                         ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                        : KolabingColors.textTertiary,
-                  ),
+                        : KolabingColors.textTertiary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -175,13 +157,9 @@ class OpportunityCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         cat,
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: isDark
+                        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
-                        ),
+                              : KolabingColors.onSurface),
                       ),
                     ],
                   ),
@@ -247,11 +225,7 @@ class OpportunityCard extends StatelessWidget {
             Flexible(
               child: Text(
                 opportunity.offerSummary,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: KolabingColors.activeText,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.activeText),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -269,11 +243,11 @@ class OpportunityCard extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
                 side: BorderSide(
                   color: isDark
                       ? KolabingColors.darkBorder
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: 1.5,
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -285,11 +259,7 @@ class OpportunityCard extends StatelessWidget {
               ),
               child: Text(
                 'VIEW',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
             ),
           ),
@@ -312,11 +282,7 @@ class OpportunityCard extends StatelessWidget {
               ),
               child: Text(
                 'APPLY',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
             ),
           ),
@@ -364,13 +330,9 @@ class _CreatorAvatar extends StatelessWidget {
   Widget _buildInitial() => Center(
         child: Text(
           initial,
-          style: GoogleFonts.rubik(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: isDark
+          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                 ? KolabingColors.textOnDark
-                : KolabingColors.textPrimary,
-          ),
+                : KolabingColors.onSurface),
         ),
       );
 }
@@ -405,12 +367,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.displayName,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-          letterSpacing: 0.3,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: textColor, letterSpacing: 0.3),
       ),
     );
   }
@@ -452,11 +409,7 @@ class _TagPill extends StatelessWidget {
             const SizedBox(width: KolabingSpacing.xxs),
             Text(
               label,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
             ),
           ],
         ),

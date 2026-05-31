@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
@@ -95,15 +94,11 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
         backgroundColor: KolabingColors.surface,
-        foregroundColor: KolabingColors.textPrimary,
+        foregroundColor: KolabingColors.onSurface,
         elevation: 0,
         title: Text(
           title,
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
       ),
       body: _buildBody(),
@@ -123,7 +118,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
             Text(
               _error!,
               style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -138,7 +133,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         child: Text(
           'No reviews yet.',
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       );
@@ -187,7 +182,7 @@ class _ProfileReviewListCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,11 +197,7 @@ class _ProfileReviewListCard extends StatelessWidget {
                 children: [
                   Text(
                     review.reviewer.displayName,
-                    style: GoogleFonts.rubik(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                   Text(
                     _formatReviewDate(review.createdAt),
@@ -237,7 +228,7 @@ class _ProfileReviewListCard extends StatelessWidget {
           Text(
             review.body!,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
               height: 1.5,
             ),
           ),
@@ -264,10 +255,7 @@ class _ReviewAvatar extends StatelessWidget {
       backgroundColor: KolabingColors.primary.withValues(alpha: 0.12),
       child: Text(
         reviewer.initial,
-        style: GoogleFonts.rubik(
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       ),
     );
   }

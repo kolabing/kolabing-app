@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/place_details_import.dart';
 
 /// Bottom sheet that previews the photos returned from Google Places import
@@ -83,7 +83,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
               width: 42,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
@@ -95,20 +95,12 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                 children: [
                   Text(
                     'Review photos from Google',
-                    style: GoogleFonts.rubik(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
+                    style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Tap any photo to remove it before we add it to your venue. You can always edit photos later.',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
-                      height: 1.4,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
                   ),
                 ],
               ),
@@ -145,7 +137,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
               decoration: const BoxDecoration(
                 color: KolabingColors.surface,
                 border: Border(
-                  top: BorderSide(color: KolabingColors.border),
+                  top: BorderSide(color: KolabingColors.darkBorder),
                 ),
               ),
               child: Column(
@@ -162,10 +154,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                       Expanded(
                         child: Text(
                           'Photos from Google. Credits are kept with each photo.',
-                          style: GoogleFonts.openSans(
-                            fontSize: 11,
-                            color: KolabingColors.textTertiary,
-                          ),
+                          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
                         ),
                       ),
                     ],
@@ -186,11 +175,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                       ),
                       child: Text(
                         buttonLabel,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                        ),
+                        style: KolabingTextStyles.button.copyWith(fontSize: 15, letterSpacing: 1),
                       ),
                     ),
                   ),

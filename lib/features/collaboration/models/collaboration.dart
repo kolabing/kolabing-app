@@ -90,8 +90,10 @@ class CollaborationPartner {
 
   factory CollaborationPartner.fromJson(Map<String, dynamic> json) {
     return CollaborationPartner(
-      id: json['id'] as String,
-      name: json['name'] as String,
+      // Tolerate null/missing strings from the API — a missing partner name
+      // must not crash parsing and silently drop the whole collaboration.
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
       profilePhoto: json['profile_photo'] as String?,
       category: json['category'] as String?,
       city: json['city'] is Map
@@ -344,7 +346,7 @@ class Collaboration {
     return [
       TimelineStep(
         title: 'Application Accepted',
-        description: 'Both parties agreed to collaborate',
+        description: 'Both parties agreed to kolab',
         status: TimelineStepStatus.completed,
         date: createdAt,
       ),
@@ -359,7 +361,7 @@ class Collaboration {
       ),
       TimelineStep(
         title: 'Event Day',
-        description: 'Collaboration event takes place',
+        description: 'Kolab event takes place',
         status: status == CollaborationStatus.inProgress
             ? TimelineStepStatus.current
             : status == CollaborationStatus.completed

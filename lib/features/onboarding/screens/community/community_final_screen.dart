@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/permission_service.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/summary_card.dart';
@@ -204,10 +204,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
             Expanded(
               child: Text(
                 'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
-                  color: KolabingColors.textOnDark,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
               ),
             ),
           ],
@@ -231,10 +228,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
-            color: KolabingColors.textOnDark,
-            fontWeight: FontWeight.w600,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
         ),
         backgroundColor: KolabingColors.error,
         behavior: SnackBarBehavior.floating,
@@ -286,16 +280,12 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               const Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 'Back',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textPrimary,
-                                ),
+                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
                               ),
                             ],
                           ),
@@ -320,11 +310,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           // Title
                           Text(
                             'CREATE YOUR ACCOUNT',
-                            style: GoogleFonts.rubik(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
-                            ),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -332,11 +318,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           // Subtitle
                           Text(
                             'Enter your email and password to complete registration',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.textSecondary,
-                            ),
+                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -359,11 +341,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   'Edit',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.primary,
-                                  ),
+                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
                                 ),
                               ],
                             ),
@@ -397,13 +375,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -461,13 +439,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -519,13 +497,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -590,11 +568,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 )
                               : Text(
                                   'CREATE ACCOUNT',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                  ),
+                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                                 ),
                         ),
                       ),
@@ -603,11 +577,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                       // Terms text
                       Text(
                         'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                         textAlign: TextAlign.center,
                       ),
                     ],

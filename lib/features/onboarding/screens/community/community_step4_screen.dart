@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 
@@ -111,10 +111,10 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       Center(
                         child: Text(
                           'COMPLETE YOUR PROFILE',
-                          style: GoogleFonts.rubik(
+                          style: KolabingTextStyles.bodyLarge.copyWith(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -125,10 +125,8 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       Center(
                         child: Text(
                           'Add your social links (all optional)',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -138,10 +136,9 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       // About field
                       Text(
                         'About / Bio',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -150,16 +147,12 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         maxLength: 1000,
                         maxLines: 5,
                         minLines: 3,
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textPrimary,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          color: KolabingColors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Tell us about yourself...',
-                          hintStyle: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                             color: KolabingColors.textTertiary,
                           ),
                           filled: true,
@@ -169,7 +162,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.all(16),
-                          counterStyle: GoogleFonts.openSans(
+                          counterStyle: KolabingTextStyles.bodySmall.copyWith(
                             fontSize: 12,
                             color: KolabingColors.textTertiary,
                           ),
@@ -180,25 +173,20 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       // Instagram field
                       Text(
                         'Instagram',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _instagramController,
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textPrimary,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          color: KolabingColors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: 'username',
-                          hintStyle: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                             color: KolabingColors.textTertiary,
                           ),
                           prefixIcon: const Icon(
@@ -207,9 +195,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             color: KolabingColors.textTertiary,
                           ),
                           prefixText: '@ ',
-                          prefixStyle: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          prefixStyle: KolabingTextStyles.bodyMedium.copyWith(
                             color: KolabingColors.textTertiary,
                           ),
                           filled: true,
@@ -229,25 +215,20 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       // TikTok field
                       Text(
                         'TikTok',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _tiktokController,
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textPrimary,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          color: KolabingColors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: 'username',
-                          hintStyle: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                             color: KolabingColors.textTertiary,
                           ),
                           prefixIcon: const Icon(
@@ -256,9 +237,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             color: KolabingColors.textTertiary,
                           ),
                           prefixText: '@ ',
-                          prefixStyle: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          prefixStyle: KolabingTextStyles.bodyMedium.copyWith(
                             color: KolabingColors.textTertiary,
                           ),
                           filled: true,
@@ -278,26 +257,21 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       // Website field
                       Text(
                         'Website',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _websiteController,
                         keyboardType: TextInputType.url,
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textPrimary,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          color: KolabingColors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: 'www.example.com',
-                          hintStyle: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
+                          hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                             color: KolabingColors.textTertiary,
                           ),
                           prefixIcon: const Icon(
@@ -341,9 +315,9 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                     ),
                     child: Text(
                       'CONTINUE',
-                      style: GoogleFonts.dmSans(
+                      style: KolabingTextStyles.button.copyWith(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
                       ),
                     ),

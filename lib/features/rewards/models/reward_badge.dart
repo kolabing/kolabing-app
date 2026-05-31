@@ -49,9 +49,9 @@ enum RewardBadgeSlug {
   String get description {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
-        return 'Complete your first collaboration';
+        return 'Complete your first kolab';
       case RewardBadgeSlug.contentCreator:
-        return 'Share your story - post 3 collaboration reviews';
+        return 'Share your story - post 3 kolab reviews';
       case RewardBadgeSlug.communityEarner:
         return 'Keep the momentum - reach 100 XP';
       case RewardBadgeSlug.referralPioneer:
@@ -64,7 +64,7 @@ enum RewardBadgeSlug {
   String get requirement {
     switch (this) {
       case RewardBadgeSlug.firstKolab:
-        return '1 collab needed';
+        return '1 kolab needed';
       case RewardBadgeSlug.contentCreator:
         return '3 reviews needed';
       case RewardBadgeSlug.communityEarner:
@@ -72,7 +72,7 @@ enum RewardBadgeSlug {
       case RewardBadgeSlug.referralPioneer:
         return '1 referral needed';
       case RewardBadgeSlug.powerPartner:
-        return '5 collabs needed';
+        return '5 kolabs needed';
     }
   }
 

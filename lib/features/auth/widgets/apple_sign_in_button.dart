@@ -48,7 +48,7 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
         ),
         child: _buildContent(),
       ),
@@ -85,10 +85,10 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
               const Icon(Icons.apple, size: 24, color: Colors.white),
               const SizedBox(width: 10),
               Text(
-                widget.buttonText.toUpperCase(),
+                widget.buttonText,
                 style: KolabingTextStyles.button.copyWith(
                   color: Colors.white,
-                  letterSpacing: 1.0,
+                  letterSpacing: 0.2,
                 ),
               ),
             ],

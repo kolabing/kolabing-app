@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 import '../features/auth/providers/auth_provider.dart';
 import '../features/discovery/models/discovery_filters.dart';
 import '../features/discovery/providers/discovery_provider.dart';
@@ -249,7 +249,7 @@ class _CommunitySections extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Collab Type'),
+        const _SectionLabel(label: 'Kolab Type'),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.intentTypeOptions,
@@ -368,7 +368,7 @@ class _DragHandle extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: KolabingColors.border,
+          color: KolabingColors.darkBorder,
           borderRadius: BorderRadius.circular(KolabingRadius.round),
         ),
       ),
@@ -392,10 +392,9 @@ class _HeaderRow extends StatelessWidget {
     children: [
       Text(
         'Search & Filter',
-        style: GoogleFonts.rubik(
-          fontSize: 18,
+        style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
       const Spacer(),
@@ -410,8 +409,7 @@ class _HeaderRow extends StatelessWidget {
             ),
             child: Text(
               'Clear all',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
+              style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w500,
                 color: KolabingColors.primary,
               ),
@@ -463,14 +461,12 @@ class _FilterTextField extends StatelessWidget {
             controller: controller,
             focusNode: focusNode,
             onChanged: onChanged,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textPrimary,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: GoogleFonts.openSans(
-                fontSize: 14,
+              hintStyle: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.textTertiary,
               ),
               prefixIcon: Icon(
@@ -496,11 +492,11 @@ class _FilterTextField extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -549,13 +545,13 @@ class _CityAutocompleteResults extends ConsumerWidget {
           decoration: BoxDecoration(
             color: KolabingColors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(color: KolabingColors.border),
+            border: Border.all(color: KolabingColors.darkBorder),
           ),
           child: ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: visibleCities.length,
             separatorBuilder: (BuildContext context, int index) =>
-                const Divider(height: 1, color: KolabingColors.border),
+                const Divider(height: 1, color: KolabingColors.darkBorder),
             itemBuilder: (BuildContext context, int index) {
               final city = visibleCities[index];
               final isSelected = selectedCity == city.name;
@@ -571,19 +567,18 @@ class _CityAutocompleteResults extends ConsumerWidget {
                 ),
                 title: Text(
                   city.name,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 subtitle: city.country == null
                     ? null
                     : Text(
                         city.country!,
-                        style: GoogleFonts.openSans(
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontSize: 12,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                 onTap: () => onSelected(city.name),
@@ -630,16 +625,15 @@ class _CityAutocompleteMessage extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Center(
       child:
           child ??
           Text(
             message!,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
     ),
@@ -654,10 +648,9 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     label,
-    style: GoogleFonts.openSans(
-      fontSize: 13,
+    style: KolabingTextStyles.captionSecondary.copyWith(
       fontWeight: FontWeight.w600,
-      color: KolabingColors.textSecondary,
+      color: KolabingColors.onSurfaceVariant,
     ),
   );
 }
@@ -739,16 +732,16 @@ class _SheetChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? KolabingColors.primary : KolabingColors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected ? null : Border.all(color: KolabingColors.border),
+        border: isSelected ? null : Border.all(color: KolabingColors.darkBorder),
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
+        style: KolabingTextStyles.button.copyWith(
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isSelected
               ? KolabingColors.onPrimary
-              : KolabingColors.textPrimary,
+              : KolabingColors.onSurface,
         ),
       ),
     ),
@@ -766,8 +759,7 @@ class _ResultsCount extends StatelessWidget {
       total > 0
           ? '$total result${total == 1 ? '' : 's'} found'
           : 'Showing all opportunities',
-      style: GoogleFonts.openSans(
-        fontSize: 13,
+      style: KolabingTextStyles.captionSecondary.copyWith(
         fontWeight: FontWeight.w500,
         color: KolabingColors.textTertiary,
       ),

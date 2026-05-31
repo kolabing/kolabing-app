@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// User type for selection cards
 enum SelectionUserType {
@@ -119,7 +118,7 @@ class _SelectionCardState extends State<SelectionCard>
       case SelectionUserType.business:
         return 'Looking for communities to partner with';
       case SelectionUserType.community:
-        return 'Seeking sponsors and collaboration partners';
+        return 'Seeking sponsors and kolab partners';
       case SelectionUserType.attendee:
         return 'Joining events and completing challenges';
     }
@@ -154,7 +153,7 @@ class _SelectionCardState extends State<SelectionCard>
                 border: Border.all(
                   color: _isPressed || widget.isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: 2,
                 ),
                 boxShadow: [
@@ -180,10 +179,10 @@ class _SelectionCardState extends State<SelectionCard>
                   // Title
                   Text(
                     _title,
-                    style: GoogleFonts.dmSans(
+                    style: KolabingTextStyles.button.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                       letterSpacing: 0.5,
                     ),
                     textAlign: TextAlign.center,
@@ -193,10 +192,8 @@ class _SelectionCardState extends State<SelectionCard>
                   // Description
                   Text(
                     _description,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: KolabingColors.textSecondary,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.onSurfaceVariant,
                       height: 1.4,
                     ),
                     textAlign: TextAlign.center,

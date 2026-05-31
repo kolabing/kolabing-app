@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
@@ -94,12 +93,7 @@ class _WithdrawalRequestScreenState
         surfaceTintColor: Colors.transparent,
         title: Text(
           'WITHDRAW',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -157,7 +151,7 @@ class _WithdrawalRequestScreenState
         Text(
           'Request Submitted',
           style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -165,7 +159,7 @@ class _WithdrawalRequestScreenState
           'Your withdrawal request has been submitted successfully. Processing within 5-7 business days.',
           textAlign: TextAlign.center,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
@@ -175,8 +169,8 @@ class _WithdrawalRequestScreenState
           child: OutlinedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.textPrimary,
-              side: const BorderSide(color: KolabingColors.border),
+              foregroundColor: KolabingColors.onSurface,
+              side: const BorderSide(color: KolabingColors.darkBorder),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
@@ -235,17 +229,13 @@ class _WithdrawalRequestScreenState
                     Text(
                       'Available to withdraw',
                       style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'EUR ${eurValue.toStringAsFixed(2)}',
-                      style: GoogleFonts.rubik(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.textPrimary,
-                      ),
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                     ),
                   ],
                 ),
@@ -260,7 +250,7 @@ class _WithdrawalRequestScreenState
         Text(
           'IBAN',
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -280,11 +270,11 @@ class _WithdrawalRequestScreenState
             counterText: '',
             border: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -307,7 +297,7 @@ class _WithdrawalRequestScreenState
         Text(
           'ACCOUNT HOLDER NAME',
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -325,11 +315,11 @@ class _WithdrawalRequestScreenState
             fillColor: KolabingColors.surface,
             border: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,

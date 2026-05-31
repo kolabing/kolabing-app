@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../widgets/stat_card.dart';
 
@@ -21,9 +21,9 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
 
@@ -50,11 +50,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
               child: Center(
                 child: Text(
                   _getInitials(user?.displayName ?? 'A'),
-                  style: GoogleFonts.rubik(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.primary,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
                 ),
               ),
             ),
@@ -64,20 +60,13 @@ class AttendeeProfileScreen extends ConsumerWidget {
             // Name
             Text(
               user?.displayName ?? 'Attendee',
-              style: GoogleFonts.rubik(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: textColor,
-              ),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: textColor),
             ),
 
             // Email
             Text(
               user?.email ?? '',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: secondaryTextColor,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: secondaryTextColor),
             ),
 
             const SizedBox(height: KolabingSpacing.lg),
@@ -87,12 +76,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
             // Stats section
             Text(
               'YOUR STATS',
-              style: GoogleFonts.rubik(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: secondaryTextColor,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryTextColor, letterSpacing: 1.2),
             ),
 
             const SizedBox(height: KolabingSpacing.md),
@@ -146,7 +130,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                  color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
                 ),
               ),
               child: Column(
@@ -162,7 +146,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     height: 1,
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.bell,
@@ -175,7 +159,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     height: 1,
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.helpCircle,
@@ -268,7 +252,7 @@ class _SettingsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
 
     return Material(
       color: Colors.transparent,
@@ -285,17 +269,13 @@ class _SettingsItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.openSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: textColor,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w500, color: textColor),
                 ),
               ),
               Icon(

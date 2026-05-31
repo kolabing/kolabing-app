@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -9,6 +8,7 @@ import '../../../config/constants/api.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../config/theme/typography.dart';
 import '../../auth/services/auth_service.dart';
 
@@ -162,7 +162,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
               height: 4,
               margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: KolabingRadius.borderRadiusRound,
               ),
             ),
@@ -171,17 +171,16 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
           // Title
           Text(
             'How was the Kolab? ⭐',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
+            style: KolabingTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'Your review helps ${widget.partnerName} build trust on Kolabing.',
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
 
@@ -209,11 +208,11 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
               fillColor: KolabingColors.background,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -323,7 +322,7 @@ class _StarRating extends StatelessWidget {
               size: 36,
               color: filled
                   ? KolabingColors.primary
-                  : KolabingColors.border,
+                  : KolabingColors.darkBorder,
             ),
           ),
         );
@@ -349,7 +348,7 @@ class _WouldCollabRow extends StatelessWidget {
         Text(
           'Would you Kolab again?',
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const Spacer(),
@@ -396,7 +395,7 @@ class _ToggleChip extends StatelessWidget {
               : KolabingColors.background,
           borderRadius: KolabingRadius.borderRadiusRound,
           border: Border.all(
-            color: selected ? KolabingColors.primary : KolabingColors.border,
+            color: selected ? KolabingColors.primary : KolabingColors.darkBorder,
           ),
         ),
         child: Text(
@@ -404,7 +403,7 @@ class _ToggleChip extends StatelessWidget {
           style: KolabingTextStyles.labelSmall.copyWith(
             color: selected
                 ? KolabingColors.onPrimary
-                : KolabingColors.textSecondary,
+                : KolabingColors.onSurfaceVariant,
             fontWeight: FontWeight.w600,
           ),
         ),

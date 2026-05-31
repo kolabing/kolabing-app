@@ -4,6 +4,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## MUST READ — Backend schema (before any data/model/API/DB change)
+
+Read [`docs/BACKEND-SCHEMA.md`](docs/BACKEND-SCHEMA.md) before changing anything that
+touches data, models, API payloads, JSON keys, or the database. It documents the
+**real production Postgres schema** (Laravel backend, db `main`). Hard rules:
+- **Never invent columns, tables, or enum values** — if it's not in that doc (or the
+  live schema), it does not exist. Verify before relying on a field.
+- **Never hardcode** IDs, emails, city/category names, or sample records in app code;
+  fetch from the API. Identity lives in `profiles` (+ `business_profiles` /
+  `community_profiles`), NOT the `users` table.
+- Lifecycle: `collab_opportunities → applications → collaborations` (+ reviews /
+  feedback). `GET /collaborations` is viewer-scoped. The business paywall is
+  backend-enforced; never bypass it client-side.
+
+---
+
+## MUST READ — Backlog (every session, before anything else)
+
+At the START of every session, read [`BACKLOG.md`](BACKLOG.md) and list its current
+contents back to the user (the three sections: New Features, Incomplete Features,
+Fixes). It is the single source of truth for outstanding work. You MUST keep it in
+sync as you work, following its "Maintenance rules":
+- A New Feature you begin → move to **Incomplete Features**.
+- An Incomplete Feature verified working end-to-end → remove it.
+- A bug you detect → add to **Fixes** immediately; once the fix is **confirmed**
+  (tested, not just written), strike it through with the date, then remove later.
+- Update the `Last updated:` date whenever you edit it.
+
+---
+
 ## MUST READ — Roles & Permissions (before planning OR executing changes)
 
 Before planning or writing any code that touches **user roles, permissions, the paywall, the Explore feed, profiles, onboarding, or the create/apply flows**, read BOTH (kept in sync with the backend repo `kolabing-v2`):
@@ -11,6 +41,58 @@ Before planning or writing any code that touches **user roles, permissions, the 
 2. [`docs/ROLES-BACKEND-DB-MAP.md`](docs/ROLES-BACKEND-DB-MAP.md) — the authoritative *where*: how each rule maps to backend code + DB tables/columns, and every known role-handling mistake.
 
 Non-negotiable: **Communities are 100% free and are NEVER paywalled or blocked.** The paywall is Business-only, on exactly two actions (create a collaboration, apply to a Kolab). A free business gets a **blur** of the community's name+logo on Explore, never a hard block. "Opportunity" (community-created) and "collaboration" (business-created) are distinct — never merge them. Most regressions come from applying one role's rules to the other; if a fix seems to contradict these docs, STOP and ask before changing role behaviour.
+
+---
+
+## MUST READ — Architecture grounding (before planning OR executing ANY change)
+
+Ground every change in the REAL architecture and intended UX. Do NOT rely on
+memory or on this file's prose summaries — verify against the listed source. When
+prose and code disagree, the **code wins** — and fix the prose.
+
+### Authoritative sources (read the one(s) relevant to your change)
+1. Roles / permissions / paywall / Explore / onboarding / create-apply →
+   `docs/ROLES-AND-PERMISSIONS.md` + `docs/ROLES-BACKEND-DB-MAP.md` (mandatory above).
+2. Backend / API contract → `lib/config/constants/api.dart` (the ONE base URL) and
+   `api_integration_documentations/docs/MOBILE_APP_INTEGRATION_GUIDE.md` +
+   `MOBILE_API_DOCUMENTATION.md`. Per-feature contracts: `.agent/documentations/api-*.md`, `docs/api/`.
+3. User journey / feature behaviour → there is NO single journey doc. Reconstruct
+   from the feature's own folder under `lib/features/<feature>/` (models = the state
+   machine, services = the endpoints), then the matching plan/spec in `docs/plans/`,
+   `docs/superpowers/{plans,specs}/`, `.agent/documentations/`. For the kolab
+   lifecycle: `lib/features/application/models/application.dart`,
+   `lib/features/collaboration/models/collaboration.dart`,
+   `.agent/documentations/api-collaboration-detail-spec.md`, `CHANGELOG.md`.
+
+### The backend is Laravel, NOT Supabase
+- Laravel REST API secured by **Sanctum Bearer tokens**. Build every URL from
+  `ApiConfig.baseUrl`; every service uses `package:http` with
+  `'Authorization': 'Bearer $token'` (token from `AuthService.getToken()`).
+- `supabase_flutter` is in pubspec but UNUSED — never add Supabase client/RLS/realtime
+  code. If a task seems to need Supabase, STOP; it belongs as a Laravel endpoint.
+
+### Do NOT hardcode — checklist (verify before committing)
+- [ ] No hardcoded base URLs/hosts — derive from `ApiConfig.baseUrl`. (Only external
+      deep links like instagram/tiktok/apple may be literal.)
+- [ ] No hardcoded IDs/emails/names/sample records in production paths. (Known
+      offender: mock data in
+      `lib/features/collaboration/providers/collaboration_detail_provider.dart` —
+      never extend the mock pattern; fetch from the API.)
+- [ ] No hardcoded city/category/business-type/community-type lists — fetch from
+      `/cities`, `/business-types`, etc. `_mock*` fallbacks stay behind an
+      off-by-default flag and must never shadow a successful API call.
+- [ ] No invented role logic — role rules come ONLY from the two ROLES docs.
+- [ ] No magic status/type strings — reuse the enums (`ApplicationStatus`,
+      `CollaborationStatus`, `UserType`) and their `fromString`/`toApiValue` mappers;
+      match the backend's snake_case wire values exactly.
+- [ ] Design tokens come from `lib/config/theme/` + `lib/config/constants/` — never
+      raw hex or magic numbers.
+
+### Verify paths/symbols exist before relying on them
+Parts of the docs are stale. Before citing a file, route, endpoint or symbol, confirm
+it exists in the current tree. Known stale refs: the `.agent/{todo,inprogress,sop}/`
+folders below do NOT exist (only `documentations/`, `done/`, `task/`); dependency
+versions in prose may lag `pubspec.yaml`.
 
 ---
 
@@ -187,9 +269,13 @@ dart fix --apply               # Apply automatic fixes
 ## Tech Stack
 
 - **Framework:** Flutter (Dart)
-- **State Management:** Riverpod 2.4.0
-- **Backend:** Supabase
-- **Navigation:** GoRouter 13.0.0
+- **State Management:** Riverpod 3.x (`flutter_riverpod ^3.2.0` — verify in `pubspec.yaml`)
+- **Backend:** Laravel REST API + Sanctum Bearer tokens. Base URL is the single
+  source of truth in `lib/config/constants/api.dart` (`ApiConfig.baseUrl`,
+  currently `https://kolabing.com/api/v1`). NOT Supabase — `supabase_flutter` is
+  listed in pubspec but is UNUSED; do not write Supabase client/query/auth code.
+- **Navigation:** GoRouter `^17.0.1` (flat `GoRoute`s, not `StatefulShellRoute`;
+  the bottom nav is an `IndexedStack` inside each role's main screen)
 - **Forms:** flutter_form_builder with form_builder_validators
 - **Icons:** Lucide Icons
 
@@ -253,7 +339,7 @@ All design tokens are defined in README.md. Key values:
 
 1. **Auth state flow:** Check onboarding completion → Check auth state → Route to appropriate dashboard based on `user_type`
 
-2. **Bottom nav differs by user type:** Both have 5 tabs but with different middle tabs (Business: "My Offers", Community: "My Opportunities")
+2. **Bottom nav:** Both roles have the SAME 4 tabs — Home, Explore, My Kolabs, Profile (only the My Kolabs icon differs: briefcase for business, star for community). The former standalone "Applications" tab was merged into My Kolabs, which is a 4-sub-tab hub (`MyKolabsHubScreen`): **Offers** (role-specific list) · **Requests** (the absorbed Applications screen, embedded) · **Active** (scheduled/in-progress collaborations) · **Finished** (completed/cancelled). Nav is an `IndexedStack` in `business_main_screen.dart` / `community_main_screen.dart`; the legacy `/business/applications` & `/community/applications` routes still resolve (they open My Kolabs with the Requests sub-tab preselected).
 
 3. **Profile completion:** Optional post-registration flow with photo, city, category, social links
 

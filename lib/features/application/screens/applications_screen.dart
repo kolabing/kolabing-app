@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -15,7 +14,12 @@ import '../providers/application_provider.dart';
 /// Applications list screen showing both sent and received applications
 /// via a tabbed interface.
 class ApplicationsScreen extends ConsumerStatefulWidget {
-  const ApplicationsScreen({super.key});
+  const ApplicationsScreen({super.key, this.embedded = false});
+
+  /// When true, renders only the filter chips + list (no Scaffold, AppBar or
+  /// page header) so it can be embedded as the "Requests" tab inside
+  /// [MyKolabsHubScreen].
+  final bool embedded;
 
   @override
   ConsumerState<ApplicationsScreen> createState() => _ApplicationsScreenState();
@@ -41,9 +45,52 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final tabHeader = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TabBar(
+          controller: _tabController,
+          indicatorColor: KolabingColors.primary,
+          indicatorWeight: 3,
+          labelColor: isDark
+              ? KolabingColors.textOnDark
+              : KolabingColors.onSurface,
+          unselectedLabelColor: isDark
+              ? KolabingColors.textOnDark.withValues(alpha: 0.5)
+              : KolabingColors.textTertiary,
+          labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+          unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
+          tabs: const [
+            Tab(text: 'SENT'),
+            Tab(text: 'RECEIVED'),
+          ],
+        ),
+        Divider(
+          height: 1,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+        ),
+      ],
+    );
+
+    final tabView = TabBarView(
+      controller: _tabController,
+      children: [
+        // Tab 1: Sent applications
+        _SentApplicationsTab(),
+        // Tab 2: Received applications
+        _ReceivedApplicationsTab(),
+      ],
+    );
+
+    // Embedded as the "Requests" tab of MyKolabsHubScreen: drop the Scaffold and
+    // the 'APPLICATIONS' AppBar, but keep the SENT/RECEIVED sub-tabs as-is.
+    if (widget.embedded) {
+      return Column(children: [tabHeader, Expanded(child: tabView)]);
+    }
+
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+          isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: AppBar(
         backgroundColor:
             isDark ? KolabingColors.darkSurface : KolabingColors.surface,
@@ -52,54 +99,15 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
         title: Text(
           'APPLICATIONS',
           style: KolabingTextStyles.pageTitleSmall.copyWith(
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
-          child: Column(
-            children: [
-              TabBar(
-                controller: _tabController,
-                indicatorColor: KolabingColors.primary,
-                indicatorWeight: 3,
-                labelColor: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
-                unselectedLabelColor: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                    : KolabingColors.textTertiary,
-                labelStyle: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-                unselectedLabelStyle: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-                tabs: const [
-                  Tab(text: 'SENT'),
-                  Tab(text: 'RECEIVED'),
-                ],
-              ),
-              Divider(
-                height: 1,
-                color:
-                    isDark ? KolabingColors.darkBorder : KolabingColors.border,
-              ),
-            ],
-          ),
+          child: tabHeader,
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Tab 1: Sent applications
-          _SentApplicationsTab(),
-          // Tab 2: Received applications
-          _ReceivedApplicationsTab(),
-        ],
-      ),
+      body: tabView,
     );
   }
 }
@@ -134,16 +142,23 @@ class _SentApplicationsTab extends ConsumerWidget {
       return _buildErrorState(state.error!, isDark);
     }
 
-    if (state.isEmpty) {
+    // Requests shows only items still awaiting a decision. Accepted
+    // applications graduate to a collaboration and surface in the Active tab,
+    // so they are excluded here (see MyKolabsHubScreen).
+    final requests = state.applications
+        .where((a) => a.status != ApplicationStatus.accepted)
+        .toList();
+
+    if (requests.isEmpty) {
       return _buildSentEmptyState(isDark);
     }
 
     return ListView.separated(
       padding: const EdgeInsets.all(KolabingSpacing.md),
-      itemCount: state.applications.length,
+      itemCount: requests.length,
       separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
       itemBuilder: (context, index) {
-        final application = state.applications[index];
+        final application = requests[index];
         return _ApplicationCard(
           application: application,
           isReceived: false,
@@ -176,21 +191,14 @@ class _SentApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 'No Applications Yet',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
-                ),
+                      : KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'Start exploring opportunities and apply to collaborate with businesses and communities.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
+                'Start exploring opportunities and apply to kolab with businesses and communities.',
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -226,16 +234,22 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
       return _buildErrorState(state.error!, isDark);
     }
 
-    if (state.isEmpty) {
+    // Requests shows only items still awaiting a decision. Accepted
+    // applications graduate to a collaboration and surface in the Active tab.
+    final requests = state.applications
+        .where((a) => a.status != ApplicationStatus.accepted)
+        .toList();
+
+    if (requests.isEmpty) {
       return _buildReceivedEmptyState(isDark);
     }
 
     return ListView.separated(
       padding: const EdgeInsets.all(KolabingSpacing.md),
-      itemCount: state.applications.length,
+      itemCount: requests.length,
       separatorBuilder: (_, _) => const SizedBox(height: KolabingSpacing.sm),
       itemBuilder: (context, index) {
-        final application = state.applications[index];
+        final application = requests[index];
         return _ApplicationCard(
           application: application,
           isReceived: true,
@@ -275,21 +289,14 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 'No Received Applications',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
-                ),
+                      : KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 "When someone applies to your opportunities, they'll appear here.",
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -335,21 +342,14 @@ Widget _buildErrorState(String error, bool isDark) => Center(
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Something went wrong',
-              style: GoogleFonts.rubik(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: isDark
+              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
-              ),
+                    : KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -415,13 +415,9 @@ class _ApplicationCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           application.opportunityTitle,
-                          style: GoogleFonts.rubik(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
+                          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
-                          ),
+                                : KolabingColors.onSurface),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -436,20 +432,14 @@ class _ApplicationCard extends StatelessWidget {
                     isReceived
                         ? 'From: ${application.applicantName}'
                         : 'To: ${application.recipientName}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
 
                   // Message preview
                   Text(
                     application.message,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -467,10 +457,7 @@ class _ApplicationCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         application.createdAtDisplay,
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                       ),
 
                       const Spacer(),
@@ -488,11 +475,7 @@ class _ApplicationCard extends StatelessWidget {
                           ),
                           child: Text(
                             '${application.unreadCount}',
-                            style: GoogleFonts.openSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: Colors.white),
                           ),
                         ),
                       ] else ...[
@@ -546,11 +529,7 @@ class _ApplicationCard extends StatelessWidget {
   Widget _avatarPlaceholder(String name) => Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.primary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.primary),
         ),
       );
 
@@ -589,11 +568,7 @@ class _ApplicationCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }

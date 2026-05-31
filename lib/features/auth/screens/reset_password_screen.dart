@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
@@ -68,7 +67,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: KolabingColors.darkBackground,
+        systemNavigationBarColor: KolabingColors.surface,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -207,7 +206,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
@@ -235,7 +234,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             Expanded(
               child: Text(
                 'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
@@ -261,7 +260,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.darkBackground,
+      backgroundColor: KolabingColors.surface,
       resizeToAvoidBottomInset: false,
       body: KeyboardAvoidingContent(
         child: SafeArea(
@@ -287,8 +286,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                             const SizedBox(width: 4),
                             Text(
                               'Back',
-                              style: GoogleFonts.openSans(
-                                fontSize: 16,
+                              style: KolabingTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
                                 color: KolabingColors.textOnDark,
                               ),
@@ -353,7 +351,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             children: [
               Text(
                 'RESET PASSWORD',
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   color: KolabingColors.textOnDark,
@@ -366,9 +364,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Enter your new password below.',
-                  style: GoogleFonts.openSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
                     color: KolabingColors.textTertiary,
                     height: 1.5,
                   ),
@@ -398,9 +394,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 onFieldSubmitted: (_) {
                   _confirmPasswordFocusNode.requestFocus();
                 },
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
-                  fontSize: 16,
                 ),
                 decoration: _inputDecoration(
                   label: 'New Password',
@@ -433,9 +428,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 validator: _validateConfirmPassword,
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _handleResetPassword(),
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
-                  fontSize: 16,
                 ),
                 decoration: _inputDecoration(
                   label: 'Confirm Password',
@@ -495,9 +489,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                     )
                   : Text(
                       'RESET PASSWORD',
-                      style: GoogleFonts.dmSans(
+                      style: KolabingTextStyles.button.copyWith(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
                       ),
                     ),
@@ -534,7 +528,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       // Success headline
       Text(
         'PASSWORD RESET',
-        style: GoogleFonts.rubik(
+        style: KolabingTextStyles.bodyLarge.copyWith(
           fontSize: 28,
           fontWeight: FontWeight.w800,
           color: KolabingColors.textOnDark,
@@ -550,9 +544,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
           'Your password has been successfully reset. Redirecting you to sign in...',
-          style: GoogleFonts.openSans(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textTertiary,
             height: 1.5,
           ),
@@ -578,9 +570,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
           ),
           child: Text(
             'GO TO SIGN IN',
-            style: GoogleFonts.dmSans(
+            style: KolabingTextStyles.button.copyWith(
               fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
             ),
           ),
@@ -599,8 +591,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   }) => InputDecoration(
     labelText: label,
     hintText: hint,
-    labelStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
-    hintStyle: GoogleFonts.openSans(
+    labelStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
       color: KolabingColors.textTertiary.withValues(alpha: 0.6),
     ),
     prefixIcon: Icon(prefixIcon, color: KolabingColors.textTertiary),
@@ -627,7 +619,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: KolabingColors.error, width: 2),
     ),
-    errorStyle: GoogleFonts.openSans(color: KolabingColors.error, fontSize: 12),
+    errorStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.error, fontSize: 12),
   );
 }
 

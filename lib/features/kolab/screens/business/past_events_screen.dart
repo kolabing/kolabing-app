@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -10,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
 import '../../../../utils/remote_media_url.dart';
@@ -58,21 +58,19 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
       children: [
         // -- Section header
         Text(
-          'PAST COLLABORATIONS (OPTIONAL)',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
+          'PAST KOLABS (OPTIONAL)',
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
           'Show communities what events have been hosted at your venue before.',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.textSecondary,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
@@ -134,7 +132,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                 color: KolabingColors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   style: BorderStyle.solid,
                 ),
               ),
@@ -144,15 +142,14 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                   const Icon(
                     LucideIcons.plus,
                     size: 20,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                   const SizedBox(width: KolabingSpacing.xs),
                   Text(
                     'Add a past event',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -316,7 +313,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,10 +323,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             children: [
               Text(
                 'Event ${widget.index + 1}',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const Spacer(),
@@ -348,10 +344,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Event Name
           Text(
             'Event Name',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -368,10 +363,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Date
           Text(
             'Date',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -386,7 +380,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               decoration: BoxDecoration(
                 color: KolabingColors.surface,
                 borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: Row(
                 children: [
@@ -394,7 +388,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                   const Icon(
                     LucideIcons.calendar,
                     size: 18,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ],
               ),
@@ -405,10 +399,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Partner Name
           Text(
             'Partner Name',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -430,10 +423,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Photos (max 3 per event)
           Text(
             'Photos (max 3)',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -478,10 +470,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Videos (max 1 per event)
           Text(
             'Recap Video (max 1)',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -577,7 +568,7 @@ class _EventPhotoRow extends StatelessWidget {
                           child: Icon(
                             LucideIcons.image,
                             size: 20,
-                            color: KolabingColors.textSecondary,
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                         ),
                 ),
@@ -613,13 +604,13 @@ class _EventPhotoRow extends StatelessWidget {
               decoration: BoxDecoration(
                 color: KolabingColors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: const Center(
                 child: Icon(
                   LucideIcons.plus,
                   size: 20,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
             ),
@@ -655,22 +646,21 @@ class _EventVideoRow extends StatelessWidget {
             decoration: BoxDecoration(
               color: KolabingColors.surfaceVariant,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.border),
+              border: Border.all(color: KolabingColors.darkBorder),
             ),
             child: Row(
               children: [
                 const Icon(
                   LucideIcons.video,
                   size: 18,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
                   child: Text(
                     'Recap video',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textPrimary,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: KolabingColors.onSurface,
                     ),
                   ),
                 ),
@@ -694,13 +684,13 @@ class _EventVideoRow extends StatelessWidget {
               decoration: BoxDecoration(
                 color: KolabingColors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: const Center(
                 child: Icon(
                   LucideIcons.video,
                   size: 20,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
             ),
@@ -719,12 +709,11 @@ InputDecoration _inputDecoration({
   String? error,
 }) => InputDecoration(
   hintText: hint,
-  hintStyle: GoogleFonts.openSans(
-    fontSize: 14,
+  hintStyle: KolabingTextStyles.bodySmall.copyWith(
     color: KolabingColors.textTertiary,
   ),
   errorText: error,
-  errorStyle: GoogleFonts.openSans(fontSize: 12),
+  errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
   filled: true,
   fillColor: KolabingColors.surface,
   contentPadding: const EdgeInsets.symmetric(
@@ -733,11 +722,11 @@ InputDecoration _inputDecoration({
   ),
   border: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
@@ -754,4 +743,4 @@ InputDecoration _inputDecoration({
 );
 
 TextStyle get _inputTextStyle =>
-    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.textPrimary);
+    KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);

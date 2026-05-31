@@ -59,7 +59,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         title: Text(
           'Notifications',
           style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         leading: IconButton(
@@ -108,7 +108,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         separatorBuilder: (_, __) => const Divider(
           height: 1,
           indent: 72,
-          color: KolabingColors.border,
+          color: KolabingColors.darkBorder,
         ),
         itemBuilder: (context, index) {
           if (index == state.notifications.length) {
@@ -167,7 +167,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               Text(
                 error,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -197,7 +197,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               Text(
                 'No notifications yet',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -259,7 +259,7 @@ class _NotificationTile extends StatelessWidget {
                           child: Text(
                             notification.actorName ?? notification.title,
                             style: KolabingTextStyles.titleSmall.copyWith(
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                               fontWeight: notification.isRead
                                   ? FontWeight.w500
                                   : FontWeight.w700,
@@ -285,7 +285,7 @@ class _NotificationTile extends StatelessWidget {
                       style: KolabingTextStyles.bodySmall.copyWith(
                         color: notification.isRead
                             ? KolabingColors.textTertiary
-                            : KolabingColors.textSecondary,
+                            : KolabingColors.onSurfaceVariant,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -383,7 +383,7 @@ class _NotificationTile extends StatelessWidget {
       NotificationType.unknown => (
           LucideIcons.bell,
           KolabingColors.surfaceVariant,
-          KolabingColors.textSecondary,
+          KolabingColors.onSurfaceVariant,
         ),
     };
 

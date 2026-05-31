@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// Bottom action bar for the Kolab creation flow.
 ///
@@ -60,7 +60,7 @@ class KolabActionBar extends StatelessWidget {
         decoration: const BoxDecoration(
           color: KolabingColors.surface,
           border: Border(
-            top: BorderSide(color: KolabingColors.border),
+            top: BorderSide(color: KolabingColors.darkBorder),
           ),
         ),
         child: isLastStep ? _buildLastStepRow() : _buildNavigationRow(),
@@ -148,11 +148,7 @@ class _PrimaryActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
         ),
       );
@@ -179,8 +175,8 @@ class _OutlinedActionButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.textPrimary,
-            side: const BorderSide(color: KolabingColors.border),
+            foregroundColor: KolabingColors.onSurface,
+            side: const BorderSide(color: KolabingColors.darkBorder),
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -192,16 +188,12 @@ class _OutlinedActionButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 )
               : Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
         ),
       );

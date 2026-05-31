@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../config/theme/typography.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../features/profile/providers/gallery_provider.dart';
@@ -152,11 +152,7 @@ class _PhotoViewerDialogState extends State<PhotoViewerDialog> {
                           ),
                           child: Text(
                             '${_currentIndex + 1} / ${widget.photos.length}',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            style: KolabingTextStyles.button.copyWith(color: Colors.white),
                           ),
                         ),
                     ],

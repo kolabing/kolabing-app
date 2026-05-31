@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -84,7 +83,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               if (visiblePhotos.isNotEmpty)
@@ -118,18 +117,14 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                           size: 14,
                           color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
+                              : KolabingColors.onSurface,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'Add',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
+                          style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
-                          ),
+                                : KolabingColors.onSurface),
                         ),
                       ],
                     ),
@@ -193,7 +188,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -201,7 +196,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               Text(
                 'Add Gallery Photo',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -293,7 +288,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
             style: TextStyle(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
         ],
@@ -312,7 +307,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
       decoration: BoxDecoration(
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           width: 1.5,
           strokeAlign: BorderSide.strokeAlignInside,
         ),
@@ -338,7 +333,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   size: 24,
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.72)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
@@ -350,19 +345,19 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 style: KolabingTextStyles.titleSmall.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 isBusinessProfile
-                    ? 'Add venue photos so collaborators can see your space before they apply.'
-                    : 'Add photos from your events so new collaborators understand your community.',
+                    ? 'Add venue photos so kolab partners can see your space before they apply.'
+                    : 'Add photos from your events so new kolab partners understand your community.',
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.68)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                   height: 1.45,
                 ),
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 import '../features/discovery/models/discovery_item.dart';
 
 /// H1: a compact "mini-model" rendering of how a discovery match score was
@@ -79,12 +79,7 @@ class _SignalRow extends StatelessWidget {
             signal.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.openSans(
-              fontSize: compact ? 11 : 12,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textSecondary,
-              letterSpacing: 0.2,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant, letterSpacing: 0.2),
           ),
         ),
         const SizedBox(width: 8),
@@ -128,7 +123,7 @@ class _CellRow extends StatelessWidget {
             decoration: BoxDecoration(
               color: i < filled
                   ? accent
-                  : KolabingColors.border.withValues(alpha: 0.6),
+                  : KolabingColors.darkBorder.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(1.5),
             ),
           ),

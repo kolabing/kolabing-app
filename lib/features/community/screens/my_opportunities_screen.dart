@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,11 +35,16 @@ class MyOpportunitiesScreen extends ConsumerStatefulWidget {
     this.share = Share.share,
     this.copyText = _copyText,
     this.showSubscriptionPaywall = _showSubscriptionPaywall,
+    this.embedded = false,
   });
 
   final OpportunityShareInvoker share;
   final OpportunityShareCopyText copyText;
   final ShowSubscriptionPaywall showSubscriptionPaywall;
+
+  /// When true, renders only the status tabs + list (no Scaffold, page header
+  /// or FAB) so it can be the "Offers" tab inside [MyKolabsHubScreen].
+  final bool embedded;
 
   static Future<void> _copyText(String text) =>
       Clipboard.setData(ClipboardData(text: text));
@@ -62,10 +66,8 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
   final _scrollController = ScrollController();
 
   static const _statusTabs = [
-    (label: 'All', value: null),
-    (label: 'Draft', value: 'draft'),
     (label: 'Published', value: 'published'),
-    (label: 'Closed', value: 'closed'),
+    (label: 'Draft', value: 'draft'),
   ];
 
   @override
@@ -267,26 +269,30 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       }
     });
 
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!widget.embedded) _buildHeader(),
+        _buildStatusTabs(currentStatus),
+        Expanded(
+          child: listState.isLoading
+              ? _buildLoadingState()
+              : listState.error != null
+              ? _buildErrorState(listState.error!)
+              : listState.isEmpty
+              ? _buildEmptyState()
+              : _buildList(listState),
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      return body;
+    }
+
     return Scaffold(
       backgroundColor: KolabingColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            _buildStatusTabs(currentStatus),
-            Expanded(
-              child: listState.isLoading
-                  ? _buildLoadingState()
-                  : listState.error != null
-                  ? _buildErrorState(listState.error!)
-                  : listState.isEmpty
-                  ? _buildEmptyState()
-                  : _buildList(listState),
-            ),
-          ],
-        ),
-      ),
+      body: SafeArea(child: body),
       floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
         tooltip: 'Create New Opportunity',
@@ -308,17 +314,13 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         Text(
           'MY OPPORTUNITIES',
           style: KolabingTextStyles.pageTitle.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'Create and manage your opportunities',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
     ),
@@ -355,18 +357,14 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
                   border: Border.all(
                     color: isSelected
                         ? KolabingColors.primary
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: Text(
                   tab.label,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: isSelected
+                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
                         ? KolabingColors.onPrimary
-                        : KolabingColors.textPrimary,
-                  ),
+                        : KolabingColors.onSurface),
                 ),
               ),
             ),
@@ -386,11 +384,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         ),
         child: Text(
           '${listState.total} ${listState.total == 1 ? 'opportunity' : 'opportunities'}',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: KolabingColors.textTertiary,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
         ),
       ),
       Expanded(
@@ -499,19 +493,12 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'No opportunities yet',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Create your first opportunity and start connecting.',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -553,19 +540,12 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Something went wrong',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),

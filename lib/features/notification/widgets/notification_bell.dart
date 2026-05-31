@@ -34,7 +34,7 @@ class NotificationBell extends ConsumerWidget {
         children: [
           Icon(
             LucideIcons.bell,
-            color: color ?? KolabingColors.textPrimary,
+            color: color ?? KolabingColors.onSurface,
             size: size,
           ),
           if (unreadCount > 0)

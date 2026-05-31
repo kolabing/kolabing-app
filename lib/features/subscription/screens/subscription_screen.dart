@@ -296,7 +296,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         title: Text(
           'Subscription',
           style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         backgroundColor: KolabingColors.background,
@@ -468,14 +468,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           Text(
             title,
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             subtitle,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -506,14 +506,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Text(
           'Premium Benefits',
           style: KolabingTextStyles.titleMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
         const _BenefitItem(
           icon: LucideIcons.megaphone,
           title: 'Publish Opportunities',
-          description: 'Create and publish collaboration offers',
+          description: 'Create and publish kolab offers',
         ),
         const _BenefitItem(
           icon: LucideIcons.users,
@@ -528,10 +528,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         const _BenefitItem(
           icon: LucideIcons.barChart2,
           title: 'Track Performance',
-          description: 'Monitor your collaboration metrics',
+          description: 'Monitor your kolab metrics',
         ),
         const SizedBox(height: KolabingSpacing.md),
-        const Divider(height: 1, color: KolabingColors.border),
+        const Divider(height: 1, color: KolabingColors.darkBorder),
         const SizedBox(height: KolabingSpacing.md),
         Center(
           child: Platform.isIOS
@@ -542,13 +542,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       TextSpan(
                         text: '29 ',
                         style: KolabingTextStyles.displaySmall.copyWith(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       TextSpan(
                         text: 'EUR/month',
                         style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -582,7 +582,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Text(
           'Plan Details',
           style: KolabingTextStyles.titleMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -836,12 +836,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               label: Text(
                 'UPDATE PAYMENT METHOD',
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
+                foregroundColor: KolabingColors.onSurface,
+                side: const BorderSide(color: KolabingColors.darkBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -860,12 +860,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               label: Text(
                 'MANAGE BILLING',
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.textPrimary,
-                side: const BorderSide(color: KolabingColors.border),
+                foregroundColor: KolabingColors.onSurface,
+                side: const BorderSide(color: KolabingColors.darkBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -909,7 +909,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ? 'Loading App Store price...'
             : 'Subscription unavailable',
         style: KolabingTextStyles.titleMedium.copyWith(
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
         textAlign: TextAlign.center,
       );
@@ -918,7 +918,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Text(
       '${state.priceString}/month',
       style: KolabingTextStyles.displaySmall.copyWith(
-        color: KolabingColors.textPrimary,
+        color: KolabingColors.onSurface,
       ),
     );
   }
@@ -979,13 +979,13 @@ class _BenefitItem extends StatelessWidget {
               Text(
                 title,
                 style: KolabingTextStyles.titleSmall.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               Text(
                 description,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -1022,14 +1022,14 @@ class _DetailRow extends StatelessWidget {
           child: Text(
             label,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ),
         Text(
           value,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),

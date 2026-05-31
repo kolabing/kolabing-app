@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../widgets/time_picker.dart';
 import '../../../opportunity/models/opportunity.dart';
 import '../../models/kolab.dart';
@@ -101,12 +101,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
         // -- Section header
         Text(
           'AVAILABILITY',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -116,10 +111,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['availability_mode']!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                color: KolabingColors.error,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
             ),
           ),
 
@@ -180,12 +172,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       children: [
         Text(
           'DATE RANGE',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         GestureDetector(
@@ -199,25 +186,22 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             decoration: BoxDecoration(
               color: KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.border),
+              border: Border.all(color: KolabingColors.darkBorder),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
                     rangeText,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: hasRange
-                          ? KolabingColors.textPrimary
-                          : KolabingColors.textTertiary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: hasRange
+                          ? KolabingColors.onSurface
+                          : KolabingColors.textTertiary),
                   ),
                 ),
                 const Icon(
                   LucideIcons.calendar,
                   size: 18,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ],
             ),
@@ -228,10 +212,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             padding: const EdgeInsets.only(top: KolabingSpacing.xs),
             child: Text(
               errors['availability_start']!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                color: KolabingColors.error,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
             ),
           ),
       ],
@@ -249,12 +230,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       children: [
         Text(
           'PREFERRED TIME',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         GestureDetector(
@@ -268,25 +244,22 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             decoration: BoxDecoration(
               color: KolabingColors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.border),
+              border: Border.all(color: KolabingColors.darkBorder),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
                     timeText,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: hasTime
-                          ? KolabingColors.textPrimary
-                          : KolabingColors.textTertiary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: hasTime
+                          ? KolabingColors.onSurface
+                          : KolabingColors.textTertiary),
                   ),
                 ),
                 const Icon(
                   LucideIcons.clock,
                   size: 18,
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ],
             ),
@@ -301,12 +274,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
     children: [
       Text(
         'RECURRING DAYS',
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-          color: KolabingColors.textSecondary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
       ),
       const SizedBox(height: KolabingSpacing.xs),
       Row(
@@ -328,19 +296,15 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                 border: Border.all(
                   color: isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                 ),
               ),
               child: Center(
                 child: Text(
                   _dayLabels[index],
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
                         ? KolabingColors.onPrimary
-                        : KolabingColors.textPrimary,
-                  ),
+                        : KolabingColors.onSurface),
                 ),
               ),
             ),
@@ -389,7 +353,7 @@ class _ModeCard extends StatelessWidget {
         color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.border,
+          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
         ),
       ),
       child: Row(
@@ -405,7 +369,7 @@ class _ModeCard extends StatelessWidget {
               border: Border.all(
                 color: isSelected
                     ? KolabingColors.primary
-                    : KolabingColors.border,
+                    : KolabingColors.darkBorder,
                 width: 1.5,
               ),
             ),
@@ -424,8 +388,8 @@ class _ModeCard extends StatelessWidget {
             icon,
             size: 20,
             color: isSelected
-                ? KolabingColors.textPrimary
-                : KolabingColors.textSecondary,
+                ? KolabingColors.onSurface
+                : KolabingColors.onSurfaceVariant,
           ),
           const SizedBox(width: KolabingSpacing.sm),
 
@@ -436,19 +400,12 @@ class _ModeCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
               ],
             ),

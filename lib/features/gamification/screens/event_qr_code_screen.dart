@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../providers/checkin_provider.dart';
 
 /// Screen displaying QR code for event check-in (organizer view)
@@ -26,9 +26,9 @@ class EventQRCodeScreen extends ConsumerWidget {
     final qrTokenAsync = ref.watch(qrTokenProvider(eventId));
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor =
-        isDark ? KolabingColors.darkBackground : KolabingColors.background;
+        isDark ? KolabingColors.surface : KolabingColors.background;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
 
@@ -46,11 +46,7 @@ class EventQRCodeScreen extends ConsumerWidget {
         ),
         title: Text(
           'Event Check-in',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
         ),
         actions: [
           IconButton(
@@ -74,11 +70,7 @@ class EventQRCodeScreen extends ConsumerWidget {
               if (eventName != null) ...[
                 Text(
                   eventName!,
-                  style: GoogleFonts.rubik(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: textColor,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: textColor),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: KolabingSpacing.md),
@@ -92,7 +84,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color:
-                        isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                        isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
                   ),
                   boxShadow: isDark
                       ? null
@@ -135,12 +127,9 @@ class EventQRCodeScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         'Attendees can scan this QR code to check in to your event',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          color: isDark
+                        style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
-                        ),
+                              : KolabingColors.onSurface),
                       ),
                     ),
                   ],
@@ -187,10 +176,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Generating QR Code...',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
         ),
@@ -214,19 +200,12 @@ class EventQRCodeScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to generate QR code',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -278,7 +257,7 @@ class EventQRCodeScreen extends ConsumerWidget {
           icon: const Icon(LucideIcons.copy, size: 16),
           label: const Text('Copy Token'),
           style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.textSecondary,
+            foregroundColor: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],

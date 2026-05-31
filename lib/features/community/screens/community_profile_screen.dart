@@ -120,7 +120,7 @@ class _CommunityProfileScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -128,7 +128,7 @@ class _CommunityProfileScreenState
               Text(
                 'Change Profile Photo',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -267,7 +267,7 @@ class _CommunityProfileScreenState
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
       body: SafeArea(
         child: _buildBody(state, isDark),
@@ -409,14 +409,14 @@ class _CommunityProfileScreenState
                 style: KolabingTextStyles.headlineSmall.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 error,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -606,7 +606,7 @@ class _CommunityProfileScreenState
             style: KolabingTextStyles.headlineMedium.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -662,7 +662,7 @@ class _CommunityProfileScreenState
                       'LVL ${level.number} · ${level.title} · ${wallet.totalXp} XP',
                       style: KolabingTextStyles.labelSmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                   ],
@@ -692,7 +692,7 @@ class _CommunityProfileScreenState
         child: Text(
           about,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       );
@@ -764,7 +764,7 @@ class _CommunityProfileScreenState
                   .updateNotificationPreference('applications_enabled', value),
             ),
             _NotificationToggle(
-              label: 'Collaboration Updates',
+              label: 'Kolab Updates',
               value: preferences?.collaborationsEnabled ?? true,
               isUpdating: isUpdating,
               onChanged: (value) => ref
@@ -814,7 +814,7 @@ class _CommunityProfileScreenState
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -907,7 +907,7 @@ class _SectionCard extends StatelessWidget {
             style: KolabingTextStyles.titleMedium.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -960,7 +960,7 @@ class _ContactInfoTile extends StatelessWidget {
                       ? KolabingColors.info
                       : isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                 ),
               ),
             ),
@@ -1020,7 +1020,7 @@ class _NotificationToggle extends StatelessWidget {
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
               ),

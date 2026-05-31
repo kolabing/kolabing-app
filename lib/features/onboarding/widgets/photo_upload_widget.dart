@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../utils/image_picker_normalize.dart';
 
 Future<File> materializePickedImageFile(XFile image) async {
@@ -241,7 +241,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
               color: KolabingColors.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 style: widget.photoBase64 == null
                     ? BorderStyle.none
                     : BorderStyle.solid,
@@ -261,7 +261,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                     border: Border.all(
                       color: widget.photoBase64 != null
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: 2,
                       style: widget.photoBase64 != null
                           ? BorderStyle.solid
@@ -289,11 +289,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                   widget.photoBase64 == null
                       ? widget.addLabel
                       : 'Tap to change',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
               ],
             ),

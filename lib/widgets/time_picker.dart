@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 
 /// A UX-friendly time picker displayed as a modal bottom sheet.
 ///
@@ -102,7 +102,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: KolabingColors.border,
+                    color: KolabingColors.darkBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -112,11 +112,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
               // Title
               Text(
                 'Select Time',
-                style: GoogleFonts.rubik(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 17, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.md),
 
@@ -161,11 +157,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Text(
                             ':',
-                            style: GoogleFonts.rubik(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w700,
-                              color: KolabingColors.textPrimary,
-                            ),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 30, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                           ),
                         ),
 
@@ -240,8 +232,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.textSecondary,
-                        side: const BorderSide(color: KolabingColors.border),
+                        foregroundColor: KolabingColors.onSurfaceVariant,
+                        side: const BorderSide(color: KolabingColors.darkBorder),
                         padding:
                             const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -250,11 +242,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                       ),
                       child: Text(
                         'CANCEL',
-                        style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                        ),
+                        style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -276,11 +264,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                       ),
                       child: Text(
                         'CONFIRM',
-                        style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                        ),
+                        style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -312,14 +296,9 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
           return Center(
             child: Text(
               _pad(i),
-              style: GoogleFonts.rubik(
-                fontSize: isSelected ? 26 : 18,
-                fontWeight:
-                    isSelected ? FontWeight.w700 : FontWeight.w400,
-                color: isSelected
-                    ? KolabingColors.textPrimary
-                    : KolabingColors.textSecondary.withValues(alpha: 0.45),
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: isSelected ? 26 : 18, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400, color: isSelected
+                    ? KolabingColors.onSurface
+                    : KolabingColors.onSurfaceVariant.withValues(alpha: 0.45)),
             ),
           );
         }),

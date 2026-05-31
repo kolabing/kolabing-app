@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/leaderboard.dart';
 
 /// Tile displaying a leaderboard entry
@@ -48,13 +48,9 @@ class LeaderboardEntryTile extends StatelessWidget {
             width: 40,
             child: Text(
               '#${entry.rank}',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: isCurrentUser
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: isCurrentUser
                     ? KolabingColors.primary
-                    : KolabingColors.textSecondary,
-              ),
+                    : KolabingColors.onSurfaceVariant),
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -71,11 +67,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                     entry.displayName.isNotEmpty
                         ? entry.displayName[0].toUpperCase()
                         : '?',
-                    style: GoogleFonts.rubik(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.primary,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
                   )
                 : null,
           ),
@@ -91,11 +83,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         entry.displayName,
-                        style: GoogleFonts.rubik(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -113,11 +101,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                         ),
                         child: Text(
                           'You',
-                          style: GoogleFonts.rubik(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.onPrimary,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
                         ),
                       ),
                     ],
@@ -139,11 +123,7 @@ class LeaderboardEntryTile extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '${entry.totalPoints}',
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
               ),
             ],
           ),
