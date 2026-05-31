@@ -101,15 +101,12 @@ class _CollaborationContent extends ConsumerWidget {
             ),
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(
-                LucideIcons.moreVertical,
-                color: KolabingColors.onSurfaceVariant,
-              ),
-              onPressed: () {},
-            ),
-          ],
+          // 3-dots overflow menu removed: it had an empty handler (dead button).
+          // Its only plausible actions already exist inline — Reschedule via the
+          // Event Info Card's edit, and Complete via the Complete Kolab CTA —
+          // and both are correctly hidden on terminal (completed/cancelled)
+          // kolabs, so the menu was fully redundant. Re-add here only if a
+          // distinct action (e.g. Cancel) is built.
         ),
 
         SliverPadding(
