@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
 import '../../../business/providers/profile_provider.dart';
@@ -131,7 +131,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
           SnackBar(
             content: Text(
               'Those photos are already in this Kolab.',
-              style: GoogleFonts.openSans(color: Colors.white),
+              style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
             ),
             backgroundColor: KolabingColors.onSurfaceVariant,
             behavior: SnackBarBehavior.floating,
@@ -156,7 +156,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         SnackBar(
           content: Text(
             'Added ${toAdd.length} existing photo${toAdd.length == 1 ? '' : 's'}.',
-            style: GoogleFonts.openSans(color: Colors.white),
+            style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
           ),
           backgroundColor: KolabingColors.success,
           behavior: SnackBarBehavior.floating,
@@ -194,24 +194,19 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           "Add photos so communities can see what you're offering. (Min 1, Max 5)",
-          style: GoogleFonts.openSans(fontSize: 14, color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
         if (errors.containsKey('media'))
           Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-            child: Text(errors['media']!, style: GoogleFonts.openSans(fontSize: 12, color: KolabingColors.error)),
+            child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error)),
           ),
 
         // Reuse previously uploaded profile gallery photos, plus venue fallback.
@@ -221,11 +216,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             icon: const Icon(LucideIcons.imagePlus, size: 18),
             label: Text(
               'SELECT FROM LIBRARY',
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
+              style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: KolabingColors.primary,
@@ -324,10 +315,7 @@ class _PhotoGrid extends StatelessWidget {
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     'Add Photo',
-                    style: GoogleFonts.openSans(
-                      fontSize: 11,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -414,7 +402,7 @@ class _PhotoSlot extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               'Photo ${index + 1}',
-              style: GoogleFonts.openSans(fontSize: 11, color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
         ),

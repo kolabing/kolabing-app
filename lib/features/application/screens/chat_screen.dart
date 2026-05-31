@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -9,6 +8,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -191,7 +191,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               Expanded(
                 child: Text(
                   'Your subscription lapsed. Resubscribe to continue this chat.',
-                  style: GoogleFonts.openSans(
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: KolabingColors.onSurface,
@@ -201,8 +201,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'RESUBSCRIBE',
-                style: GoogleFonts.dmSans(
-                  fontSize: 11,
+                style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                   color: KolabingColors.onPrimary,
@@ -282,8 +281,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       children: [
                         Text(
                           displayName,
-                          style: GoogleFonts.rubik(
-                            fontSize: 16,
+                          style: KolabingTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark
                                 ? KolabingColors.textOnDark
@@ -294,7 +292,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ),
                         Text(
                           application.status.displayName,
-                          style: GoogleFonts.openSans(
+                          style: KolabingTextStyles.bodySmall.copyWith(
                             fontSize: 12,
                             color: isDark
                                 ? KolabingColors.textOnDark.withValues(
@@ -345,8 +343,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     child: Center(
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: GoogleFonts.rubik(
-          fontSize: 14,
+        style: KolabingTextStyles.bodySmall.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.primary,
         ),
@@ -378,8 +375,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Expanded(
             child: Text(
               application.opportunityTitle,
-              style: GoogleFonts.openSans(
-                fontSize: 13,
+              style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
@@ -486,7 +482,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
             child: Text(
               label,
-              style: GoogleFonts.openSans(
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 color: isDark
                     ? KolabingColors.textOnDark.withValues(alpha: 0.5)
@@ -541,8 +537,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     hintText: 'Type a message...',
-                    hintStyle: GoogleFonts.openSans(
-                      fontSize: 14,
+                    hintStyle: KolabingTextStyles.bodySmall.copyWith(
                       color: isDark
                           ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                           : KolabingColors.textTertiary,
@@ -553,8 +548,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       vertical: KolabingSpacing.sm,
                     ),
                   ),
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     color: isDark
                         ? KolabingColors.textOnDark
                         : KolabingColors.onSurface,
@@ -644,8 +638,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
@@ -687,8 +680,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Session expired',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
@@ -698,8 +690,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               'Please sign in again to continue.',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
@@ -747,8 +738,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Start the conversation',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? KolabingColors.textOnDark
@@ -758,8 +748,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               'Send a message to begin discussing this collaboration',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
@@ -919,7 +908,7 @@ class _MessageBubble extends StatelessWidget {
                   if (!isOwn) ...[
                     Text(
                       senderProfile.name,
-                      style: GoogleFonts.openSans(
+                      style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: KolabingColors.primary,
@@ -930,8 +919,7 @@ class _MessageBubble extends StatelessWidget {
                   // Message content
                   Text(
                     message.content,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       color: isOwn
                           ? KolabingColors.onPrimary
                           : isDark
@@ -946,8 +934,7 @@ class _MessageBubble extends StatelessWidget {
                     children: [
                       Text(
                         message.timeDisplay,
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
+                        style: KolabingTextStyles.labelSmall.copyWith(
                           color: isOwn
                               ? KolabingColors.onPrimary.withValues(alpha: 0.7)
                               : isDark
@@ -999,7 +986,7 @@ class _MessageBubble extends StatelessWidget {
       child: Center(
         child: Text(
           profile.initial,
-          style: GoogleFonts.rubik(
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: KolabingColors.primary,

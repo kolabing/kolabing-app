@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
@@ -128,11 +128,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
         ),
         title: Text(
           'Create Challenge',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
         ),
       ),
       body: KeyboardAvoidingContent(
@@ -244,10 +240,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Default: Easy=5, Medium=15, Hard=30 points',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
 
                 const SizedBox(height: KolabingSpacing.xxl),
@@ -280,11 +273,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                           )
                         : Text(
                             'CREATE CHALLENGE',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.0,
-                            ),
+                            style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                           ),
                   ),
                 ),
@@ -304,7 +293,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
+      hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: KolabingColors.textTertiary)
           : null,
@@ -351,20 +340,12 @@ class _FieldLabel extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
         ),
         if (required)
           Text(
             ' *',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.error,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
           ),
       ],
     );
@@ -472,17 +453,11 @@ class _DifficultyOption extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 difficulty.label,
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: textColor,
-                ),
+                style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: textColor),
               ),
               Text(
                 '${difficulty.defaultPoints} pts',
-                style: GoogleFonts.openSans(
-                  fontSize: 11,
-                  color: textColor.withValues(alpha: 0.7),
+                style: KolabingTextStyles.labelSmall.copyWith(color: textColor.withValues(alpha: 0.7),
                 ),
               ),
             ],

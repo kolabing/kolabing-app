@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -203,21 +202,13 @@ class PublicProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 cp.displayName,
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 cp.userType.toUpperCase(),
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
               ),
             ],
           ),
@@ -426,11 +417,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                     children: [
                       Text(
                         profile.displayName,
-                        style: GoogleFonts.rubik(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -438,11 +425,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                       if (profile.typeLabel != null)
                         Text(
                           profile.typeLabel!,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: KolabingColors.onSurfaceVariant,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
                         ),
                       if (profile.cityName != null &&
                           profile.cityName!.isNotEmpty) ...[
@@ -457,10 +440,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               profile.cityName!,
-                              style: GoogleFonts.openSans(
-                                fontSize: 13,
-                                color: KolabingColors.onSurfaceVariant,
-                              ),
+                              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -552,11 +532,7 @@ class _AvatarWidget extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: GoogleFonts.rubik(
-          fontSize: size * 0.4,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.onSurface,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       ),
     ),
   );
@@ -619,11 +595,7 @@ class _SectionCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$count',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
               ),
             ],
@@ -672,11 +644,7 @@ class _SocialLinkChip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
           ),
         ],
       ),
@@ -720,10 +688,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
               ),
               child: Text(
                 'Save for later',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -761,11 +726,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
                 icon: const Icon(LucideIcons.send, size: 18),
                 label: Text(
                   'SEND A KOLAB PROPOSAL',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
+                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
                 ),
               ),
             ),
@@ -841,11 +802,7 @@ class _PublicProfileReviewCard extends StatelessWidget {
                   children: [
                     Text(
                       review.reviewer.displayName,
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.onSurface,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                     Text(
                       _formatReviewDate(review.createdAt),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../opportunity/models/opportunity.dart';
 
 /// Celebratory bottom sheet shown after a successful application submission.
@@ -130,22 +130,13 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                 Text(
                   'Application sent!',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.rubik(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
-                    height: 1.2,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.2),
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Your application is on its way to $creatorName.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.openSans(
-                    fontSize: 15,
-                    height: 1.5,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurfaceVariant, height: 1.5),
                 ),
               ],
             ),
@@ -203,11 +194,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               icon: const Icon(LucideIcons.fileText, size: 18),
               label: Text(
                 'VIEW MY APPLICATIONS',
-                style: GoogleFonts.rubik(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
@@ -235,10 +222,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               ),
               child: Text(
                 'Keep exploring',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -343,21 +327,12 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
-                    height: 1.3,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.3),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   body,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    height: 1.5,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
                 ),
               ],
             ),

@@ -75,7 +75,7 @@ class _ApplicationReviewScreenState
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
                   'Failed to load application',
-                  style: GoogleFonts.rubik(
+                  style: KolabingTextStyles.bodyMedium.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: KolabingColors.onSurface,
@@ -442,8 +442,7 @@ class _ApplicationReviewScreenState
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: color,
                   ),
@@ -452,8 +451,7 @@ class _ApplicationReviewScreenState
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
                       color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
@@ -487,7 +485,7 @@ class _ApplicationReviewScreenState
             icon: const Icon(LucideIcons.messageCircle, size: 18),
             label: Text(
               'OPEN CHAT',
-              style: GoogleFonts.darkerGrotesque(
+              style: KolabingTextStyles.button.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
@@ -636,7 +634,7 @@ class _ApplicationReviewScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Decline Application',
-          style: GoogleFonts.rubik(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -647,8 +645,7 @@ class _ApplicationReviewScreenState
           children: [
             Text(
               'Are you sure you want to decline this application from ${application.applicantName}?',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
             ),
@@ -658,7 +655,7 @@ class _ApplicationReviewScreenState
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Reason (optional)',
-                hintStyle: GoogleFonts.openSans(
+                hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textTertiary,
                 ),
                 border: OutlineInputBorder(
@@ -683,7 +680,7 @@ class _ApplicationReviewScreenState
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               'Cancel',
-              style: GoogleFonts.dmSans(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ),
           ElevatedButton(
@@ -697,7 +694,7 @@ class _ApplicationReviewScreenState
             ),
             child: Text(
               'Decline',
-              style: GoogleFonts.dmSans(fontWeight: FontWeight.w600),
+              style: KolabingTextStyles.button,
             ),
           ),
         ],
@@ -872,7 +869,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               // Title
               Text(
                 'Accept Application',
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: KolabingColors.onSurface,
@@ -881,8 +878,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 "Pick a collaboration date — you'll continue the conversation in chat after accepting.",
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
               ),
@@ -891,8 +887,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               // Date picker section
               Text(
                 'SCHEDULED DATE',
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
+                style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
@@ -909,8 +904,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                   ),
                   child: Text(
                     'No available future dates in the opportunity range.',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
                   ),
@@ -946,8 +940,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                   ),
                   child: Text(
                     _error!,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
                       color: KolabingColors.error,
                     ),
                   ),
@@ -980,7 +973,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                       : const Icon(LucideIcons.check, size: 18),
                   label: Text(
                     'CONFIRM ACCEPT',
-                    style: GoogleFonts.darkerGrotesque(
+                    style: KolabingTextStyles.button.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -1020,8 +1013,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
           children: [
             Text(
               dayNames[date.weekday - 1],
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
+              style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isSelected
                     ? KolabingColors.onPrimary
@@ -1031,7 +1023,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
             const SizedBox(height: 2),
             Text(
               '${date.day}',
-              style: GoogleFonts.rubik(
+              style: KolabingTextStyles.bodyLarge.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: isSelected
@@ -1041,8 +1033,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
             ),
             Text(
               monthNames[date.month - 1],
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
+              style: KolabingTextStyles.labelSmall.copyWith(
                 color: isSelected
                     ? KolabingColors.onPrimary
                     : KolabingColors.textTertiary,

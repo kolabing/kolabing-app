@@ -54,13 +54,10 @@ class DashboardStatCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.sm,
-      ),
+      padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
         color: isDark ? KolabingColors.darkSurface : _cardColor,
-        borderRadius: KolabingRadius.borderRadiusLg,
+        borderRadius: KolabingRadius.borderRadiusXl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../enums/deliverable_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -90,21 +90,13 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- Section header
           Text(
             'IDEAL COMMUNITY',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
           Text(
             'What kind of communities would be a great fit?',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
@@ -121,12 +113,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- Minimum Community Size
           Text(
             'MINIMUM COMMUNITY SIZE (OPTIONAL)',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
@@ -152,12 +139,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- What you expect from the community
           Text(
             'WHAT DO YOU EXPECT FROM THE COMMUNITY?',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
@@ -190,12 +172,9 @@ InputDecoration _inputDecoration({
   String? error,
 }) => InputDecoration(
   hintText: hint,
-  hintStyle: GoogleFonts.openSans(
-    fontSize: 14,
-    color: KolabingColors.textTertiary,
-  ),
+  hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
   errorText: error,
-  errorStyle: GoogleFonts.openSans(fontSize: 12),
+  errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
   filled: true,
   fillColor: KolabingColors.surface,
   contentPadding: const EdgeInsets.symmetric(
@@ -225,7 +204,7 @@ InputDecoration _inputDecoration({
 );
 
 TextStyle get _inputTextStyle =>
-    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.onSurface);
+    KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);
 
 // =============================================================================
 // Toggle Card
@@ -291,19 +270,12 @@ class _ToggleCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
               ],
             ),

@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -77,10 +76,7 @@ class PastCollaborationCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 DateFormat('MMM yyyy').format(collaboration.completedAt),
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
               const Spacer(),
               Container(
@@ -100,11 +96,7 @@ class PastCollaborationCard extends StatelessWidget {
                     const SizedBox(width: 3),
                     Text(
                       'Completed',
-                      style: GoogleFonts.openSans(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.success,
-                      ),
+                      style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: KolabingColors.success),
                     ),
                   ],
                 ),
@@ -165,11 +157,7 @@ class _InitialCircle extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: GoogleFonts.rubik(
-          fontSize: size * 0.45,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.onSurface,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
       ),
     ),
   );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -69,14 +68,8 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
                 unselectedLabelColor: isDark
                     ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                     : KolabingColors.textTertiary,
-                labelStyle: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-                unselectedLabelStyle: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
+                labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+                unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
                 tabs: const [
                   Tab(text: 'SENT'),
                   Tab(text: 'RECEIVED'),
@@ -176,21 +169,14 @@ class _SentApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 'No Applications Yet',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
-                ),
+                      : KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 'Start exploring opportunities and apply to collaborate with businesses and communities.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -275,21 +261,14 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 'No Received Applications',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
-                ),
+                      : KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 "When someone applies to your opportunities, they'll appear here.",
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -335,21 +314,14 @@ Widget _buildErrorState(String error, bool isDark) => Center(
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Something went wrong',
-              style: GoogleFonts.rubik(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: isDark
+              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
-              ),
+                    : KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -415,13 +387,9 @@ class _ApplicationCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           application.opportunityTitle,
-                          style: GoogleFonts.rubik(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
+                          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.onSurface,
-                          ),
+                                : KolabingColors.onSurface),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -436,20 +404,14 @@ class _ApplicationCard extends StatelessWidget {
                     isReceived
                         ? 'From: ${application.applicantName}'
                         : 'To: ${application.recipientName}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
 
                   // Message preview
                   Text(
                     application.message,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -467,10 +429,7 @@ class _ApplicationCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         application.createdAtDisplay,
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                       ),
 
                       const Spacer(),
@@ -488,11 +447,7 @@ class _ApplicationCard extends StatelessWidget {
                           ),
                           child: Text(
                             '${application.unreadCount}',
-                            style: GoogleFonts.openSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                            style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: Colors.white),
                           ),
                         ),
                       ] else ...[
@@ -546,11 +501,7 @@ class _ApplicationCard extends StatelessWidget {
   Widget _avatarPlaceholder(String name) => Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.primary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.primary),
         ),
       );
 
@@ -589,11 +540,7 @@ class _ApplicationCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }

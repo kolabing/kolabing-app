@@ -1,10 +1,10 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/reward_badge.dart';
 
 /// A full-screen overlay that celebrates a newly-unlocked badge with confetti,
@@ -143,11 +143,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   // "New Badge Unlocked!"
                   Text(
                     'New Badge Unlocked!',
-                    style: GoogleFonts.rubik(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white),
                   ),
 
                   const SizedBox(height: KolabingSpacing.xs),
@@ -155,11 +151,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   // Badge display name
                   Text(
                     widget.badge.slug.displayName,
-                    style: GoogleFonts.rubik(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.primary,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.primary),
                   ),
 
                   const SizedBox(height: KolabingSpacing.xs),
@@ -168,10 +160,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   Text(
                     widget.badge.slug.description,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white.withValues(alpha: 0.70),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.70),
                     ),
                   ),
 
@@ -193,11 +182,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                       ),
                       child: Text(
                         'SEE MY BADGES',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.0,
-                        ),
+                        style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
                       ),
                     ),
                   ),

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
@@ -132,20 +132,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                           children: [
                             Text(
                               'Welcome back',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: secondaryTextColor,
-                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(color: secondaryTextColor),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               user?.displayName ?? 'Attendee',
-                              style: GoogleFonts.rubik(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: textColor,
-                              ),
+                              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: textColor),
                             ),
                           ],
                         ),
@@ -172,12 +164,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   children: [
                     Text(
                       'NEARBY EVENTS',
-                      style: GoogleFonts.rubik(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.2,
-                        color: secondaryTextColor,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryTextColor, letterSpacing: 1.2),
                     ),
                     if (discoveryState.hasLocation)
                       GestureDetector(
@@ -193,11 +180,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                             const SizedBox(width: 4),
                             Text(
                               '${discoveryState.radiusKm.toStringAsFixed(0)} km',
-                              style: GoogleFonts.openSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: KolabingColors.primary,
-                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.primary),
                             ),
                           ],
                         ),
@@ -307,19 +290,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               Expanded(
                 child: Text(
                   'Showing events within ${state.radiusKm.toStringAsFixed(0)} km',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.info,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.info),
                 ),
               ),
               Text(
                 '${state.events.length} found',
-                style: GoogleFonts.rubik(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.info,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: KolabingColors.info),
               ),
             ],
           ),
@@ -422,19 +398,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Location Required',
-            style: GoogleFonts.rubik(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             _locationError!,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -473,19 +442,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'No Events Nearby',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Try increasing the search radius\nor check back later for new events.',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textTertiary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -519,19 +481,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'Failed to load events',
-            style: GoogleFonts.rubik(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -610,21 +565,13 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Search Radius',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             '${_radius.toStringAsFixed(0)} km',
-            style: GoogleFonts.rubik(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.primary,
-            ),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -645,17 +592,11 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             children: [
               Text(
                 '1 km',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
               Text(
                 '50 km',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
             ],
           ),

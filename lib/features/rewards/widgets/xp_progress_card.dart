@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/xp_level.dart';
 import '../providers/wallet_provider.dart';
 
@@ -45,11 +45,7 @@ class XpProgressCard extends ConsumerWidget {
                 _LevelChip(level: level),
                 Text(
                   '${wallet.totalXp} XP',
-                  style: GoogleFonts.rubik(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w800, color: KolabingColors.onSurface),
                 ),
               ],
             ),
@@ -85,21 +81,14 @@ class XpProgressCard extends ConsumerWidget {
                   level.isMaxLevel
                       ? 'Max level reached!'
                       : '$xpToNext XP to ${level.next?.title ?? ''}',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                 ),
                 if (onTap != null)
                   Row(
                     children: [
                       Text(
                         'View progress',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(width: 2),
                       const Icon(
@@ -148,12 +137,7 @@ class _LevelChip extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               'LVL ${level.number} · ${level.title}',
-              style: GoogleFonts.rubik(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.secondary,
-                letterSpacing: 0.3,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 0.3),
             ),
           ],
         ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/leaderboard.dart';
 
 /// Widget displaying the top 3 in a podium layout
@@ -127,11 +127,7 @@ class LeaderboardPodium extends StatelessWidget {
                         entry.displayName.isNotEmpty
                             ? entry.displayName[0].toUpperCase()
                             : '?',
-                        style: GoogleFonts.rubik(
-                          fontSize: rank == 1 ? 24 : 18,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.primary,
-                        ),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
                       )
                     : null,
               ),
@@ -155,11 +151,7 @@ class LeaderboardPodium extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$rank',
-                    style: GoogleFonts.rubik(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: rank == 1 ? Colors.black : Colors.white,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: rank == 1 ? Colors.black : Colors.white),
                   ),
                 ),
               ),
@@ -173,11 +165,7 @@ class LeaderboardPodium extends StatelessWidget {
           width: 80,
           child: Text(
             entry.displayName,
-            style: GoogleFonts.rubik(
-              fontSize: rank == 1 ? 14 : 12,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -196,11 +184,7 @@ class LeaderboardPodium extends StatelessWidget {
             const SizedBox(width: 2),
             Text(
               '${entry.totalPoints}',
-              style: GoogleFonts.rubik(
-                fontSize: rank == 1 ? 14 : 12,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.primary,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.primary),
             ),
           ],
         ),
@@ -222,11 +206,7 @@ class LeaderboardPodium extends StatelessWidget {
           child: Center(
             child: Text(
               _ordinal(rank),
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: crownColor,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: crownColor),
             ),
           ),
         ),

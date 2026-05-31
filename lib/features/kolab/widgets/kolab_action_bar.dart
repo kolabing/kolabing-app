@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// Bottom action bar for the Kolab creation flow.
 ///
@@ -148,11 +148,7 @@ class _PrimaryActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
         ),
       );
@@ -197,11 +193,7 @@ class _OutlinedActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
         ),
       );

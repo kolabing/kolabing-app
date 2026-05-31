@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/type_selection_card.dart';
@@ -90,11 +90,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     Center(
                       child: Text(
                         'What type of community are you?',
-                        style: GoogleFonts.rubik(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -104,11 +100,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     Center(
                       child: Text(
                         'Help businesses understand your community',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -155,10 +147,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                             const SizedBox(height: 16),
                             Text(
                               'Failed to load community types',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                color: KolabingColors.onSurfaceVariant,
-                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
@@ -198,11 +187,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                   ),
                   child: Text(
                     'CONTINUE',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0,
-                    ),
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                   ),
                 ),
               ),

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/onboarding_state.dart';
 
 /// Summary card showing all collected onboarding data
@@ -74,20 +74,12 @@ class SummaryCard extends StatelessWidget {
                     children: [
                       Text(
                         data.name ?? 'No name',
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${data.isBusiness ? data.businessTypesSummary : (data.typeName ?? 'Unknown type')} \u2022 ${data.location?.city ?? data.cityName ?? 'Unknown city'}',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -135,12 +127,7 @@ class SummaryCard extends StatelessWidget {
               if (data.about != null && data.about!.isNotEmpty) ...[
                 Text(
                   data.about!,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: KolabingColors.onSurfaceVariant,
-                    height: 1.4,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -204,12 +191,7 @@ class _SummaryDetailItem extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: KolabingColors.onSurfaceVariant,
-              height: 1.35,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant, height: 1.35),
             softWrap: true,
           ),
         ),
@@ -241,11 +223,7 @@ class _SummaryInlineItem extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
           ),
         ),
       ],

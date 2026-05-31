@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../widgets/imported_photo_grid.dart';
 import '../../../auth/models/user_model.dart';
 import '../../models/business_type.dart';
@@ -225,20 +225,13 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 32),
                           Text(
                             'CHOOSE YOUR VENUE',
-                            style: GoogleFonts.rubik(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.onSurface,
-                            ),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Search for your business venue and we will import the details we can from Google before you review them.',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
-                              color: KolabingColors.onSurfaceVariant,
-                            ),
+                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -253,16 +246,10 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                 }
                               });
                             },
-                            style: GoogleFonts.openSans(
-                              fontSize: 16,
-                              color: KolabingColors.onSurface,
-                            ),
+                            style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
                             decoration: InputDecoration(
                               hintText: 'Search venue address',
-                              hintStyle: GoogleFonts.openSans(
-                                fontSize: 16,
-                                color: KolabingColors.textTertiary,
-                              ),
+                              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
                               prefixIcon: const Icon(
                                 LucideIcons.search,
                                 size: 20,
@@ -316,11 +303,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Powered by Google',
-                              style: GoogleFonts.openSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: KolabingColors.textTertiary,
-                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -366,18 +349,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                       ),
                                       title: Text(
                                         place.title,
-                                        style: GoogleFonts.openSans(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: KolabingColors.onSurface,
-                                        ),
+                                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                                       ),
                                       subtitle: Text(
                                         place.formattedAddress,
-                                        style: GoogleFonts.openSans(
-                                          fontSize: 13,
-                                          color: KolabingColors.onSurfaceVariant,
-                                        ),
+                                        style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                                       ),
                                       onTap: () => _handlePlaceSelected(place),
                                     );
@@ -421,11 +397,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                         ),
                         child: Text(
                           'CONTINUE',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1,
-                          ),
+                          style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
                         ),
                       ),
                     ),
@@ -461,11 +433,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 18),
                           Text(
                             'Importing your business info from Google',
-                            style: GoogleFonts.rubik(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.onSurface,
-                            ),
+                            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -483,10 +451,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
   Widget _buildHint(String message) => Center(
     child: Text(
       message,
-      style: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.onSurfaceVariant,
-      ),
+      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
       textAlign: TextAlign.center,
     ),
   );
@@ -532,11 +497,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                     Center(
                       child: Text(
                         'PHOTOS FROM GOOGLE',
-                        style: GoogleFonts.rubik(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -544,10 +505,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                     Center(
                       child: Text(
                         'We imported these photos for your venue. Tap the X to remove any you do not want before continuing. You can add your own later.',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -591,11 +549,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                   ),
                   child: Text(
                     'CONTINUE',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1,
-                    ),
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
                   ),
                 ),
               ),
@@ -634,30 +588,19 @@ class _SelectedAddressCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               'Selected address',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           place.title,
-          style: GoogleFonts.openSans(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
         ),
         const SizedBox(height: 4),
         Text(
           place.formattedAddress,
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
     ),

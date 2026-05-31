@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/reward_badge.dart';
 
 /// Displays a single [RewardBadge] as either a full grid card (160x180) or a
@@ -80,13 +80,9 @@ class RewardBadgeCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isUnlocked
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: isUnlocked
                     ? KolabingColors.onSurface
-                    : KolabingColors.textTertiary,
-              ),
+                    : KolabingColors.textTertiary),
             ),
             const SizedBox(height: KolabingSpacing.xxxs),
             Text(
@@ -98,13 +94,9 @@ class RewardBadgeCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-                color: isUnlocked
+              style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w400, color: isUnlocked
                     ? KolabingColors.onSurfaceVariant
-                    : KolabingColors.textTertiary,
-              ),
+                    : KolabingColors.textTertiary),
             ),
           ],
         ),
@@ -139,13 +131,9 @@ class RewardBadgeCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: isUnlocked
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isUnlocked
                     ? KolabingColors.onSurface
-                    : KolabingColors.textTertiary,
-              ),
+                    : KolabingColors.textTertiary),
             ),
           ],
         ),

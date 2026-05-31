@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
@@ -94,12 +93,7 @@ class _WithdrawalRequestScreenState
         surfaceTintColor: Colors.transparent,
         title: Text(
           'WITHDRAW',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -241,11 +235,7 @@ class _WithdrawalRequestScreenState
                     const SizedBox(height: 2),
                     Text(
                       'EUR ${eurValue.toStringAsFixed(2)}',
-                      style: GoogleFonts.rubik(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.onSurface,
-                      ),
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                     ),
                   ],
                 ),

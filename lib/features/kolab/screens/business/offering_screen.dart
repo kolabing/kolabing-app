@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -113,21 +113,13 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         // -- Section header
         Text(
           "WHAT YOU'RE OFFERING",
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
           'Select all that apply',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -137,10 +129,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['offering']!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                color: KolabingColors.error,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
             ),
           ),
 
@@ -171,11 +160,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'What every community will see on your card. Be specific so leaders can evaluate at a glance.',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.onSurfaceVariant,
-            height: 1.4,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
@@ -184,10 +169,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           maxLines: 3,
           onChanged: notifier.updateBaseOffer,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: GoogleFonts.openSans(
-            fontSize: 15,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
           decoration: InputDecoration(
             hintText:
                 'e.g. 20% off Tuesdays, free meeting room for groups of 10+',
@@ -208,11 +190,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         Text(
           'Better terms you only unlock once a community proposes a collab. '
           'They see these after sending you a Kolab.',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.onSurfaceVariant,
-            height: 1.4,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -225,11 +203,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
               'ADD EXTRA TERM',
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
+              style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: KolabingColors.primary,
@@ -290,12 +264,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: GoogleFonts.rubik(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-          color: KolabingColors.onSurfaceVariant,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
       );
 }
 
@@ -329,21 +298,12 @@ class _TriggerCard extends StatelessWidget {
                 children: [
                   Text(
                     'IF $condition',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                      color: KolabingColors.textTertiary,
-                    ),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     additionalOffer,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.onSurface,
-                      height: 1.4,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface, height: 1.4),
                   ),
                 ],
               ),
@@ -412,19 +372,12 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'Add an extra term',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Surfaces only after a community sends a Kolab proposal.',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
           TextField(
@@ -474,11 +427,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
               ),
               child: Text(
                 'ADD TERM',
-                style: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+                style: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
               ),
             ),
           ),
@@ -590,19 +539,12 @@ class _ToggleCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                   ),
                 ],
               ),

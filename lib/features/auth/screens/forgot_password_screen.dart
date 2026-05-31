@@ -3,9 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
@@ -162,7 +161,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
@@ -190,7 +189,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             Expanded(
               child: Text(
                 'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
@@ -370,7 +369,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         children: [
           Text(
             'Reset your password',
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.textOnDark,
               fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
               fontWeight: FontWeight.w700,
@@ -379,10 +378,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           const SizedBox(height: 4),
           Text(
             "Enter your account email and we'll send a secure reset link.",
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.captionSecondary.copyWith(
               color: _kForgotTextMuted,
               fontSize: ultraCompact ? 11.5 : 12.5,
-              fontWeight: FontWeight.w400,
               height: 1.35,
             ),
           ),
@@ -398,9 +396,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             validator: _validateEmail,
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => _handleSendResetLink(),
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.textOnDark,
-              fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
             cursorColor: _kForgotAccent,
@@ -412,7 +409,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           const SizedBox(height: 10),
           Text(
             'If the email matches an account, the reset link will arrive shortly.',
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.labelSmall.copyWith(
               color: _kForgotTextSoft,
               fontSize: ultraCompact ? 11.0 : 11.5,
               fontWeight: FontWeight.w600,
@@ -452,7 +449,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       )
                     : Text(
                         'SEND RESET LINK',
-                        style: GoogleFonts.rubik(
+                        style: KolabingTextStyles.bodyMedium.copyWith(
                           fontSize: compact ? 15 : 16,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
@@ -494,7 +491,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         const SizedBox(height: 10),
         Text(
           'Check your inbox',
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textOnDark,
             fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
             fontWeight: FontWeight.w700,
@@ -503,10 +500,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         const SizedBox(height: 4),
         Text(
           'If an account exists for this email, the reset link is on its way.',
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.captionSecondary.copyWith(
             color: _kForgotTextMuted,
             fontSize: ultraCompact ? 11.5 : 12.5,
-            fontWeight: FontWeight.w400,
             height: 1.35,
           ),
         ),
@@ -529,7 +525,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               Expanded(
                 child: Text(
                   _emailController.text.trim(),
-                  style: GoogleFonts.openSans(
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     color: KolabingColors.textOnDark,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
@@ -558,7 +554,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               ),
               child: Text(
                 'BACK TO SIGN IN',
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: compact ? 15 : 16,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.0,
@@ -585,7 +581,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             ),
             child: Text(
               'Use another email',
-              style: GoogleFonts.openSans(
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: _kForgotAccent,
@@ -602,9 +598,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     required IconData prefixIcon,
   }) => InputDecoration(
     hintText: hint,
-    hintStyle: GoogleFonts.openSans(
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
       color: _kForgotTextSoft,
-      fontSize: 15,
       fontWeight: FontWeight.w600,
     ),
     prefixIcon: Icon(prefixIcon, color: _kForgotTextMuted, size: 20),
@@ -633,7 +628,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       borderRadius: BorderRadius.circular(16),
       borderSide: const BorderSide(color: KolabingColors.error, width: 1.6),
     ),
-    errorStyle: GoogleFonts.openSans(
+    errorStyle: KolabingTextStyles.labelSmall.copyWith(
       color: const Color(0xFFFFA7B8),
       fontSize: 11.5,
       fontWeight: FontWeight.w600,
@@ -779,7 +774,7 @@ class _HeroLine extends StatelessWidget {
       child: Text(
         text,
         maxLines: 1,
-        style: GoogleFonts.anton(
+        style: KolabingTextStyles.displayLarge.copyWith(
           color: color,
           fontSize: size,
           height: 0.94,
@@ -836,8 +831,7 @@ class _BackButtonState extends State<_BackButton> {
             const SizedBox(width: 2),
             Text(
               'Back',
-              style: GoogleFonts.openSans(
-                fontSize: 15,
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.textOnDark,
               ),

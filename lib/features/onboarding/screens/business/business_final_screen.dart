@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/permission_service.dart';
 import '../../../../widgets/referral_code_field.dart';
 import '../../../auth/models/auth_response.dart';
@@ -296,10 +296,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
             Expanded(
               child: Text(
                 'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
-                  color: KolabingColors.textOnDark,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
               ),
             ),
           ],
@@ -349,11 +346,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.error,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
                 ),
               ),
               IconButton(
@@ -383,11 +376,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               ),
               child: SelectableText(
                 details,
-                style: GoogleFonts.robotoMono(
-                  fontSize: 12,
-                  color: KolabingColors.onSurfaceVariant,
-                  height: 1.5,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant, height: 1.5),
               ),
             ),
             const SizedBox(height: 8),
@@ -409,10 +398,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                     SnackBar(
                       content: Text(
                         'Error details copied to clipboard',
-                        style: GoogleFonts.openSans(
-                          color: KolabingColors.textOnDark,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
                       ),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -426,11 +412,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                 ),
                 label: Text(
                   'Copy details',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.error,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
                 ),
               ),
             ),
@@ -489,11 +471,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               const SizedBox(width: 4),
                               Text(
                                 'Back',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: KolabingColors.onSurface,
-                                ),
+                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
                               ),
                             ],
                           ),
@@ -525,11 +503,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             authenticatedFlow
                                 ? 'FINISH BUSINESS ONBOARDING'
                                 : 'CREATE YOUR ACCOUNT',
-                            style: GoogleFonts.rubik(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.onSurface,
-                            ),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -539,11 +513,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             authenticatedFlow
                                 ? 'Review your imported details one last time and save your business profile.'
                                 : 'Enter your email and password to complete registration',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.onSurfaceVariant,
-                            ),
+                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -566,11 +536,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   'Edit',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.primary,
-                                  ),
+                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
                                 ),
                               ],
                             ),
@@ -793,11 +759,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   Expanded(
                                     child: Text(
                                       'Your account is already created. Tapping the button below will save this onboarding data to the business onboarding endpoint.',
-                                      style: GoogleFonts.openSans(
-                                        fontSize: 13,
-                                        color: KolabingColors.onSurfaceVariant,
-                                        height: 1.4,
-                                      ),
+                                      style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
                                     ),
                                   ),
                                 ],
@@ -857,11 +819,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   authenticatedFlow
                                       ? 'COMPLETE ONBOARDING'
                                       : 'CREATE ACCOUNT',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                  ),
+                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                                 ),
                         ),
                       ),
@@ -872,11 +830,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                         authenticatedFlow
                             ? 'We only save the selected Google photos when the onboarding request succeeds.'
                             : 'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                         textAlign: TextAlign.center,
                       ),
                     ],

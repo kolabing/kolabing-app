@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
@@ -99,11 +98,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         elevation: 0,
         title: Text(
           title,
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
       ),
       body: _buildBody(),
@@ -202,11 +197,7 @@ class _ProfileReviewListCard extends StatelessWidget {
                 children: [
                   Text(
                     review.reviewer.displayName,
-                    style: GoogleFonts.rubik(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                   Text(
                     _formatReviewDate(review.createdAt),
@@ -264,10 +255,7 @@ class _ReviewAvatar extends StatelessWidget {
       backgroundColor: KolabingColors.primary.withValues(alpha: 0.12),
       child: Text(
         reviewer.initial,
-        style: GoogleFonts.rubik(
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.onSurface,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       ),
     );
   }

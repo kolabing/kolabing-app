@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/onboarding_photo.dart';
 
 class VenuePhotoManager extends StatelessWidget {
@@ -73,11 +73,7 @@ class VenuePhotoManager extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'Powered by Google',
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textTertiary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
           ),
         ],
       ],
@@ -109,20 +105,12 @@ class _EmptyPhotoState extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           'Add venue photos',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
         ),
         const SizedBox(height: 6),
         Text(
           'Keep imported Google photos, upload your own, remove what you do not want, and set the final order here.',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.onSurfaceVariant,
-            height: 1.4,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 14),
@@ -188,11 +176,7 @@ class _VenuePhotoCard extends StatelessWidget {
                   children: [
                     Text(
                       'Photo ${index + 1} of $total',
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.onSurface,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -208,11 +192,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       ),
                       child: Text(
                         _sourceLabel,
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                       ),
                     ),
                   ],
@@ -255,11 +235,7 @@ class _VenuePhotoCard extends StatelessWidget {
                     ),
                     label: Text(
                       'Photo credits',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.primary,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.primary),
                     ),
                   ),
               ],
@@ -299,31 +275,20 @@ class _VenuePhotoCard extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Google photo credits',
-                style: GoogleFonts.rubik(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: 8),
               for (final item in photo.authorAttributions) ...[
                 Text(
                   item.displayName,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 ),
                 if (item.uri != null && item.uri!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: SelectableText(
                       item.uri!,
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        color: KolabingColors.onSurfaceVariant,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                     ),
                   ),
                 if (item.photoUri != null && item.photoUri!.isNotEmpty)
@@ -331,21 +296,14 @@ class _VenuePhotoCard extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 2),
                     child: SelectableText(
                       item.photoUri!,
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        color: KolabingColors.onSurfaceVariant,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                     ),
                   ),
                 const SizedBox(height: 12),
               ],
               Text(
                 'Powered by Google',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
               ),
             ],
           ),

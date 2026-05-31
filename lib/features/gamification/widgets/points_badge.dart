@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// Badge displaying points with optional earned state
 class PointsBadge extends StatelessWidget {
@@ -62,11 +62,7 @@ class PointsBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             '+$points',
-            style: GoogleFonts.rubik(
-              fontSize: fontSize,
-              fontWeight: FontWeight.w700,
-              color: textColor,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: textColor),
           ),
         ],
       ),

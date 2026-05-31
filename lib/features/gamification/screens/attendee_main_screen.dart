@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import 'attendee_home_screen.dart';
@@ -83,6 +84,7 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
     return Scaffold(
       backgroundColor:
           isDark ? KolabingColors.surface : KolabingColors.background,
+      appBar: const KolabingAppBar(),
       body: IndexedStack(
         index: _currentIndex > 1 ? _currentIndex - 1 : _currentIndex,
         children: const [

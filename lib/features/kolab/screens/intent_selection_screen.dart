@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
@@ -74,12 +74,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         ),
         title: Text(
           'NEW KOLAB',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
       ),
@@ -111,21 +106,14 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       isCommunity
                           ? 'What would you like to do?'
                           : 'What would you like to promote?',
-                      style: GoogleFonts.rubik(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.onSurface,
-                      ),
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       isCommunity
                           ? 'Choose how you want to collaborate with businesses.'
                           : 'Choose what you want to promote to communities.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.onSurfaceVariant,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                     ),
                     const SizedBox(height: KolabingSpacing.xl),
                     if (isCommunity) ...[
@@ -187,20 +175,13 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       Text(
                         profileState.error ?? 'Unable to load your profile',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.rubik(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         'Please try again to continue creating a kolab.',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                       ),
                       const SizedBox(height: KolabingSpacing.lg),
                       ElevatedButton(
@@ -247,21 +228,13 @@ class _LockedBusinessCreateState extends StatelessWidget {
         Text(
           'An active subscription is required to create Kolabs.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.rubik(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
-          ),
+          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           'Upgrade your business plan to publish venue or product opportunities for communities.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            height: 1.5,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
         ),
         const SizedBox(height: KolabingSpacing.xl),
         SizedBox(
@@ -323,19 +296,12 @@ class _IntentOption extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                 ),
                 if (badge != null) ...[
                   const SizedBox(height: KolabingSpacing.xs),
@@ -352,12 +318,7 @@ class _IntentOption extends StatelessWidget {
                     ),
                     child: Text(
                       badge!,
-                      style: GoogleFonts.darkerGrotesque(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.onSurface,
-                        letterSpacing: 0.5,
-                      ),
+                      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 0.5),
                     ),
                   ),
                 ],

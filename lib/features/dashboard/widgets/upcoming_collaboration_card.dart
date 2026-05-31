@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/dashboard_model.dart';
 
 /// A card widget displaying an upcoming collaboration item.
@@ -48,13 +48,9 @@ class UpcomingCollaborationCard extends StatelessWidget {
                   // Partner name
                   Text(
                     collaboration.partner.name ?? 'Unknown Partner',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isDark
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.onSurface,
-                    ),
+                          : KolabingColors.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -63,11 +59,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
                   // Opportunity title
                   Text(
                     collaboration.opportunity.title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -110,11 +102,7 @@ class _PartnerAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         partner.initial,
-        style: GoogleFonts.rubik(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.onPrimary,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
       ),
     );
   }
@@ -142,11 +130,7 @@ class _DateChip extends StatelessWidget {
       ),
       child: Text(
         dateText,
-        style: GoogleFonts.openSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          color: KolabingColors.onSurfaceVariant,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
       ),
     );
   }
@@ -175,12 +159,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.displayName,
-        style: GoogleFonts.dmSans(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-          color: isActive ? KolabingColors.info : const Color(0xFF155724),
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isActive ? KolabingColors.info : const Color(0xFF155724), letterSpacing: 0.5),
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -9,6 +8,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/explore_detail_sheet.dart';
 import '../../../widgets/explore_filter_sheet.dart';
 import '../../../widgets/explore_swipe_card.dart';
@@ -237,13 +237,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                     Expanded(
                       child: Text(
                         filterLabel,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: hasFilters
+                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: hasFilters
                               ? KolabingColors.onSurface
-                              : KolabingColors.textTertiary,
-                        ),
+                              : KolabingColors.textTertiary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -470,11 +466,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? 'No recommended matches yet'
                   : 'No opportunities yet',
-              style: GoogleFonts.rubik(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -483,10 +475,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? 'Switch to All or check back for fresh collabs.'
                   : 'Check back later for new opportunities.',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             if (filters.hasActiveFilters) ...[
@@ -533,19 +522,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Something went wrong',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -624,13 +606,9 @@ class _FeedSegment extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: isSelected
+        style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: isSelected
               ? KolabingColors.onPrimary
-              : KolabingColors.onSurfaceVariant,
-        ),
+              : KolabingColors.onSurfaceVariant),
       ),
     ),
   );

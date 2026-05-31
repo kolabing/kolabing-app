@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/constants/radius.dart';
 import '../../config/theme/colors.dart';
+import '../../config/theme/typography.dart';
 import '../ui_icon.dart';
 
 /// Navigation item data model
@@ -53,7 +53,7 @@ class KolabingBottomNavBar extends StatelessWidget {
         color: KolabingColors.navBarBackground,
         border: Border(
           top: BorderSide(
-            color: KolabingColors.charcoal.withValues(alpha: 0.1),
+            color: KolabingColors.charcoal.withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -97,10 +97,10 @@ class _NavBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconColor = isSelected
         ? KolabingColors.navBarBackground
-        : KolabingColors.charcoal.withValues(alpha: 0.45);
+        : KolabingColors.navInactive;
     final labelColor = isSelected
         ? KolabingColors.navBarBackground
-        : KolabingColors.charcoal.withValues(alpha: 0.45);
+        : KolabingColors.navInactive;
 
     return Expanded(
       child: GestureDetector(
@@ -154,12 +154,7 @@ class _NavBarItem extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     item.label.toUpperCase(),
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                      color: labelColor,
-                    ),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: labelColor, letterSpacing: 0.5),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/challenge_completion.dart';
 import 'difficulty_badge.dart';
 import 'points_badge.dart';
@@ -64,21 +64,14 @@ class ChallengeCompletionCard extends StatelessWidget {
                       children: [
                         Text(
                           completion.challengeName ?? 'Challenge',
-                          style: GoogleFonts.rubik(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (completion.eventName != null)
                           Text(
                             completion.eventName!,
-                            style: GoogleFonts.openSans(
-                              fontSize: 13,
-                              color: secondaryTextColor,
-                            ),
+                            style: KolabingTextStyles.captionSecondary.copyWith(color: secondaryTextColor),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -131,10 +124,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 completion.challengerName ?? 'Challenger',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 12,
-                                  color: secondaryTextColor,
-                                ),
+                                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: secondaryTextColor),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -233,11 +223,7 @@ class ChallengeCompletionCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }
@@ -276,11 +262,7 @@ class _ActionButton extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 label,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color),
               ),
             ],
           ),

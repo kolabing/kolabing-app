@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../models/onboarding_photo.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
@@ -120,20 +120,13 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                     const SizedBox(height: 32),
                     Text(
                       'ADD VENUE PHOTOS',
-                      style: GoogleFonts.rubik(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.onSurface,
-                      ),
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'These become your reusable venue gallery, so you won’t need to upload them again every time you create a venue Kolab.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.onSurfaceVariant,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -182,11 +175,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                   ),
                   child: Text(
                     'CONTINUE',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1,
-                    ),
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
                   ),
                 ),
               ),
@@ -221,10 +210,7 @@ class _AddPhotoTile extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Add Photo',
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
           ),
         ],
       ),

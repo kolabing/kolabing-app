@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
@@ -10,6 +9,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
@@ -308,7 +308,7 @@ class _CommunityOfferDetailScreenState
                             child: Text(
                               opportunity.creatorProfile?.displayName ??
                                   'Unknown',
-                              style: GoogleFonts.rubik(
+                              style: KolabingTextStyles.bodyLarge.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: KolabingColors.onSurface,
@@ -321,8 +321,7 @@ class _CommunityOfferDetailScreenState
                             hideCreatorIdentity
                                 ? 'Subscribe to reveal'
                                 : (opportunity.creatorProfile?.userType ?? ''),
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
+                            style: KolabingTextStyles.bodySmall.copyWith(
                               fontWeight: FontWeight.w500,
                               color: KolabingColors.onSurfaceVariant,
                             ),
@@ -362,7 +361,7 @@ class _CommunityOfferDetailScreenState
         // Title
         Text(
           opportunity.title,
-          style: GoogleFonts.rubik(
+          style: KolabingTextStyles.bodyLarge.copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w700,
             color: KolabingColors.onSurface,
@@ -383,8 +382,7 @@ class _CommunityOfferDetailScreenState
           ),
           child: Text(
             opportunity.availabilityMode.displayName.toUpperCase(),
-            style: GoogleFonts.dmSans(
-              fontSize: 11,
+            style: KolabingTextStyles.labelSmall.copyWith(
               fontWeight: FontWeight.w700,
               color: KolabingColors.onSurface,
               letterSpacing: 0.5,
@@ -421,8 +419,7 @@ class _CommunityOfferDetailScreenState
                 Expanded(
                   child: Text(
                     opportunity.offerHeadline!,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: KolabingColors.onSurface,
                     ),
@@ -436,9 +433,8 @@ class _CommunityOfferDetailScreenState
         // Description
         Text(
           opportunity.description,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            fontWeight: FontWeight.w400,
             color: KolabingColors.onSurfaceVariant,
             height: 1.6,
           ),
@@ -476,8 +472,7 @@ class _CommunityOfferDetailScreenState
               const SizedBox(width: KolabingSpacing.xxs),
               Text(
                 '${opportunity.applicationsCount} application${opportunity.applicationsCount == 1 ? '' : 's'}',
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
+                style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w500,
                   color: KolabingColors.textTertiary,
                 ),
@@ -496,8 +491,7 @@ class _CommunityOfferDetailScreenState
       children: [
         Text(
           'CATEGORIES',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             color: KolabingColors.onSurface,
             letterSpacing: 1,
@@ -520,8 +514,7 @@ class _CommunityOfferDetailScreenState
                   ),
                   child: Text(
                     cat,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
                       fontWeight: FontWeight.w600,
                       color: KolabingColors.onSurface,
                     ),
@@ -556,8 +549,7 @@ class _CommunityOfferDetailScreenState
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               'BUSINESS OFFER',
-              style: GoogleFonts.rubik(
-                fontSize: 14,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: KolabingColors.activeText,
                 letterSpacing: 1,
@@ -597,8 +589,7 @@ class _CommunityOfferDetailScreenState
         Expanded(
           child: Text(
             text,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -631,8 +622,7 @@ class _CommunityOfferDetailScreenState
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'EXPECTED DELIVERABLES',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.onSurface,
                   letterSpacing: 1,
@@ -670,8 +660,7 @@ class _CommunityOfferDetailScreenState
         Expanded(
           child: Text(
             text,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -705,8 +694,7 @@ class _CommunityOfferDetailScreenState
         children: [
           Text(
             'LOCATION & AVAILABILITY',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: KolabingColors.onSurface,
               letterSpacing: 1,
@@ -762,8 +750,7 @@ class _CommunityOfferDetailScreenState
       const SizedBox(width: KolabingSpacing.xs),
       Text(
         '$label: ',
-        style: GoogleFonts.openSans(
-          fontSize: 14,
+        style: KolabingTextStyles.bodySmall.copyWith(
           fontWeight: FontWeight.w500,
           color: KolabingColors.textTertiary,
         ),
@@ -771,8 +758,7 @@ class _CommunityOfferDetailScreenState
       Expanded(
         child: Text(
           value,
-          style: GoogleFonts.openSans(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w600,
             color: KolabingColors.onSurface,
           ),
@@ -808,7 +794,7 @@ class _CommunityOfferDetailScreenState
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'PREVIEW MODE',
-                style: GoogleFonts.dmSans(
+                style: KolabingTextStyles.button.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1,
@@ -835,7 +821,7 @@ class _CommunityOfferDetailScreenState
           ),
           child: Text(
             'ALREADY APPLIED',
-            style: GoogleFonts.dmSans(
+            style: KolabingTextStyles.button.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
@@ -864,7 +850,7 @@ class _CommunityOfferDetailScreenState
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               'APPLY NOW',
-              style: GoogleFonts.dmSans(
+              style: KolabingTextStyles.button.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1,
@@ -945,7 +931,7 @@ class _CommunityOfferDetailScreenState
       ),
       title: Text(
         'Opportunity Details',
-        style: GoogleFonts.rubik(
+        style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.onSurface,
         ),
@@ -975,7 +961,7 @@ class _CommunityOfferDetailScreenState
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               'Opportunity Not Found',
-              style: GoogleFonts.rubik(
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.onSurface,
@@ -984,8 +970,7 @@ class _CommunityOfferDetailScreenState
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
@@ -1036,8 +1021,7 @@ class _PreviewModeBanner extends StatelessWidget {
           Expanded(
             child: Text(
               'You are previewing this collaboration as businesses see it',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
+              style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.onSurface,
               ),
@@ -1091,7 +1075,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
             children: [
               Text(
                 'Past events from this community',
-                style: GoogleFonts.rubik(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: KolabingColors.onSurface,
@@ -1100,8 +1084,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 'See this community\'s recent track record before applying.',
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
+                style: KolabingTextStyles.captionSecondary.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
               ),
@@ -1181,7 +1164,7 @@ class _CreatorAvatar extends StatelessWidget {
   Widget _buildInitial() => Center(
     child: Text(
       initial,
-      style: GoogleFonts.rubik(
+      style: KolabingTextStyles.bodyMedium.copyWith(
         fontSize: size * 0.4,
         fontWeight: FontWeight.w600,
         color: KolabingColors.onSurface,
@@ -1228,8 +1211,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.displayName.toUpperCase(),
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
+        style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w700,
           color: textColor,
           letterSpacing: 0.5,
@@ -1269,8 +1251,7 @@ class _BaseOfferCard extends StatelessWidget {
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               'THE OFFER',
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
+              style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
                 color: KolabingColors.textTertiary,
@@ -1281,8 +1262,7 @@ class _BaseOfferCard extends StatelessWidget {
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           text,
-          style: GoogleFonts.openSans(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.onSurface,
             height: 1.5,
           ),
@@ -1320,8 +1300,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               'EXTRA TERMS UNLOCKED',
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
+              style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
                 color: KolabingColors.primary,
@@ -1332,7 +1311,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'These only show because you have already applied.',
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             color: KolabingColors.onSurfaceVariant,
           ),
@@ -1350,8 +1329,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
       children: [
         Text(
           '• ',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.primary,
             fontWeight: FontWeight.w700,
           ),
@@ -1362,7 +1340,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
             children: [
               Text(
                 'IF ${trigger.condition}',
-                style: GoogleFonts.dmSans(
+                style: KolabingTextStyles.labelSmall.copyWith(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
@@ -1371,8 +1349,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
               ),
               Text(
                 trigger.additionalOffer,
-                style: GoogleFonts.openSans(
-                  fontSize: 13,
+                style: KolabingTextStyles.captionSecondary.copyWith(
                   color: KolabingColors.onSurface,
                   height: 1.4,
                 ),

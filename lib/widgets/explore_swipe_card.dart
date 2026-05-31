@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config/constants/layout.dart';
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 import '../features/discovery/models/discovery_item.dart';
 import 'blurred_identity.dart';
 
@@ -202,11 +202,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
                   _item.creatorProfile.displayName.isNotEmpty
               ? _item.creatorProfile.displayName[0].toUpperCase()
               : '?',
-          style: GoogleFonts.rubik(
-            fontSize: 40,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface.withValues(alpha: 0.6),
-          ),
+          style: KolabingTextStyles.cardTitleHero.copyWith(color: KolabingColors.onSurface.withValues(alpha: 0.6)),
         ),
       ),
     ),
@@ -244,11 +240,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       ),
       child: Text(
         '${match.score}% match',
-        style: GoogleFonts.rubik(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          color: KolabingColors.charcoal,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: KolabingColors.charcoal),
       ),
     );
   }
@@ -336,12 +328,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       _item.creatorProfile.displayName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: GoogleFonts.anton(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: KolabingColors.charcoal,
-        height: 1.1,
-      ),
+      style: KolabingTextStyles.cardTitleLarge.copyWith(color: KolabingColors.charcoal),
     );
 
     return Row(
@@ -429,12 +416,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           offerLine,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.primary,
-            height: 1.25,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary, height: 1.25),
         ),
       ),
     ],
@@ -488,11 +470,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       label,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: GoogleFonts.openSans(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: KolabingColors.charcoal,
-      ),
+      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.charcoal),
     ),
   );
 
@@ -500,11 +478,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     children: [
       Text(
         'View Details',
-        style: GoogleFonts.openSans(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.charcoal,
-        ),
+        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.charcoal),
       ),
       const Spacer(),
       const Icon(
@@ -515,9 +489,5 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     ],
   );
 
-  TextStyle get _secondaryStyle => GoogleFonts.openSans(
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-    color: KolabingColors.navInactive,
-  );
+  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.navInactive);
 }

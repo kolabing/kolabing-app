@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/reward_claim.dart';
 import '../providers/reward_provider.dart';
 
@@ -29,7 +29,7 @@ class RewardDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Reward Details',
-          style: GoogleFonts.rubik(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -104,7 +104,7 @@ class RewardDetailScreen extends ConsumerWidget {
           // Reward Name
           Text(
             reward.eventReward?.name ?? 'Mystery Reward',
-            style: GoogleFonts.rubik(
+            style: KolabingTextStyles.bodyLarge.copyWith(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: KolabingColors.onSurface,
@@ -117,8 +117,7 @@ class RewardDetailScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               reward.eventReward!.description!,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
@@ -139,7 +138,7 @@ class RewardDetailScreen extends ConsumerWidget {
               const SizedBox(width: 4),
               Text(
                 'Won on ${_formatDate(reward.wonAt)}',
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
                   color: KolabingColors.textTertiary,
                 ),
@@ -165,7 +164,7 @@ class RewardDetailScreen extends ConsumerWidget {
                   reward.status == RewardClaimStatus.expired
                       ? 'Expired on ${_formatDate(reward.eventReward!.expiresAt!)}'
                       : 'Expires on ${_formatDate(reward.eventReward!.expiresAt!)}',
-                  style: GoogleFonts.openSans(
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     color: reward.status == RewardClaimStatus.expired
                         ? KolabingColors.error
@@ -222,8 +221,7 @@ class RewardDetailScreen extends ConsumerWidget {
           const SizedBox(width: 8),
           Text(
             text,
-            style: GoogleFonts.rubik(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: badgeColor,
             ),
@@ -247,8 +245,7 @@ class RewardDetailScreen extends ConsumerWidget {
       children: [
         Text(
           'Show this QR code to the organizer to redeem your reward',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
@@ -289,7 +286,7 @@ class RewardDetailScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             state.error!,
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
               color: KolabingColors.error,
             ),
@@ -318,8 +315,7 @@ class RewardDetailScreen extends ConsumerWidget {
         children: [
           Text(
             'Show this QR code to the organizer',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
           ),
@@ -341,7 +337,7 @@ class RewardDetailScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             'This QR code expires in 5 minutes',
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
               color: KolabingColors.textTertiary,
             ),
@@ -368,8 +364,7 @@ class RewardDetailScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'This reward has been redeemed',
-            style: GoogleFonts.rubik(
-              fontSize: 16,
+            style: KolabingTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: KolabingColors.info,
             ),
@@ -378,7 +373,7 @@ class RewardDetailScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               'Redeemed on ${_formatDate(reward.redeemedAt!)}',
-              style: GoogleFonts.openSans(
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 color: KolabingColors.onSurfaceVariant,
               ),
@@ -406,8 +401,7 @@ class RewardDetailScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'This reward has expired',
-            style: GoogleFonts.rubik(
-              fontSize: 16,
+            style: KolabingTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: KolabingColors.error,
             ),
@@ -415,7 +409,7 @@ class RewardDetailScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Rewards must be redeemed before their expiration date',
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
               color: KolabingColors.onSurfaceVariant,
             ),

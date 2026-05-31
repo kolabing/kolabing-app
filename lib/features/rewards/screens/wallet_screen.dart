@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
@@ -60,8 +59,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         surfaceTintColor: Colors.transparent,
         title: Text(
           'XP & REPUTATION',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
             color: KolabingColors.onSurface,
@@ -157,7 +155,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           // Points display
           Text(
             '${wallet.totalXp}',
-            style: GoogleFonts.rubik(
+            style: KolabingTextStyles.bodyLarge.copyWith(
               fontSize: 48,
               fontWeight: FontWeight.w800,
               color: KolabingColors.onPrimary,
@@ -167,7 +165,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'XP POINTS',
-            style: GoogleFonts.rubik(
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
@@ -190,8 +188,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           // Total XP label
           Text(
             'Total XP: ${wallet.totalXp}',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
+            style: KolabingTextStyles.captionSecondary.copyWith(
               color: KolabingColors.onPrimary.withValues(alpha: 0.8),
             ),
           ),
@@ -213,8 +210,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       ),
       child: Text(
         tier.displayName.toUpperCase(),
-        style: GoogleFonts.rubik(
-          fontSize: 11,
+        style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
           color: KolabingColors.onPrimary,
@@ -245,8 +241,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           const SizedBox(height: 4),
           Text(
             '$points / $nextThreshold XP to next tier',
-            style: GoogleFonts.openSans(
-              fontSize: 11,
+            style: KolabingTextStyles.labelSmall.copyWith(
               color: KolabingColors.onPrimary.withValues(alpha: 0.65),
             ),
           ),
@@ -392,8 +387,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   children: [
                     Text(
                       'Earn €75 Cash',
-                      style: GoogleFonts.rubik(
-                        fontSize: 15,
+                      style: KolabingTextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.w700,
                         color: KolabingColors.onSurface,
                       ),
@@ -466,7 +460,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   child: Text(
                     referralCode,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
+                    style: KolabingTextStyles.bodyLarge.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
@@ -628,8 +622,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
   Widget _buildSectionHeader(String title) => Text(
     title,
-    style: GoogleFonts.rubik(
-      fontSize: 14,
+    style: KolabingTextStyles.bodySmall.copyWith(
       fontWeight: FontWeight.w700,
       letterSpacing: 1.0,
       color: KolabingColors.onSurfaceVariant,
@@ -694,7 +687,7 @@ class _MissionRow extends StatelessWidget {
         ),
         child: Text(
           xp,
-          style: GoogleFonts.rubik(
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: KolabingColors.onSurface,
@@ -761,8 +754,7 @@ class _BadgeCard extends StatelessWidget {
           Text(
             badge.slug.displayName,
             textAlign: TextAlign.center,
-            style: GoogleFonts.rubik(
-              fontSize: 13,
+            style: KolabingTextStyles.captionSecondary.copyWith(
               fontWeight: FontWeight.w600,
               color: isUnlocked
                   ? KolabingColors.onSurface
@@ -864,8 +856,7 @@ class _LedgerRow extends StatelessWidget {
               ),
               child: Text(
                 isEarned ? '+${entry.points} XP' : '${entry.points} XP',
-                style: GoogleFonts.rubik(
-                  fontSize: 13,
+                style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isEarned
                       ? KolabingColors.activeText

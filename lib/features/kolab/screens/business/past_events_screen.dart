@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -10,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
 import '../../../../utils/remote_media_url.dart';
@@ -59,8 +59,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         // -- Section header
         Text(
           'PAST COLLABORATIONS (OPTIONAL)',
-          style: GoogleFonts.rubik(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
             color: KolabingColors.onSurfaceVariant,
@@ -70,8 +69,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
 
         Text(
           'Show communities what events have been hosted at your venue before.',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
+          style: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.onSurfaceVariant,
           ),
         ),
@@ -149,8 +147,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                   const SizedBox(width: KolabingSpacing.xs),
                   Text(
                     'Add a past event',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w500,
                       color: KolabingColors.onSurfaceVariant,
                     ),
@@ -326,8 +323,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             children: [
               Text(
                 'Event ${widget.index + 1}',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: KolabingColors.onSurface,
                 ),
@@ -348,8 +344,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Event Name
           Text(
             'Event Name',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -368,8 +363,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Date
           Text(
             'Date',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -405,8 +399,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Partner Name
           Text(
             'Partner Name',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -430,8 +423,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Photos (max 3 per event)
           Text(
             'Photos (max 3)',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -478,8 +470,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           // -- Videos (max 1 per event)
           Text(
             'Recap Video (max 1)',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
             ),
@@ -668,8 +659,7 @@ class _EventVideoRow extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Recap video',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
                       color: KolabingColors.onSurface,
                     ),
                   ),
@@ -719,12 +709,11 @@ InputDecoration _inputDecoration({
   String? error,
 }) => InputDecoration(
   hintText: hint,
-  hintStyle: GoogleFonts.openSans(
-    fontSize: 14,
+  hintStyle: KolabingTextStyles.bodySmall.copyWith(
     color: KolabingColors.textTertiary,
   ),
   errorText: error,
-  errorStyle: GoogleFonts.openSans(fontSize: 12),
+  errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
   filled: true,
   fillColor: KolabingColors.surface,
   contentPadding: const EdgeInsets.symmetric(
@@ -754,4 +743,4 @@ InputDecoration _inputDecoration({
 );
 
 TextStyle get _inputTextStyle =>
-    GoogleFonts.openSans(fontSize: 14, color: KolabingColors.onSurface);
+    KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);

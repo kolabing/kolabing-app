@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
 
@@ -100,9 +100,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
       appBar: AppBar(
         title: Text(
           'Discover Events',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         actions: [
@@ -187,19 +185,12 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                   Expanded(
                     child: Text(
                       'Showing events within ${state.radiusKm.toStringAsFixed(0)} km',
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.info,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.info),
                     ),
                   ),
                   Text(
                     '${state.events.length} found',
-                    style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.info,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.info),
                   ),
                 ],
               ),
@@ -274,19 +265,12 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               'Location Required',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               _locationError!,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -328,19 +312,12 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               'No Events Nearby',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               'Try increasing the search radius\nor check back later for new events.',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -377,19 +354,12 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to discover events',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -475,21 +445,13 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Search Radius',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             '${_radius.toStringAsFixed(0)} km',
-            style: GoogleFonts.rubik(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.primary,
-            ),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -510,17 +472,11 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             children: [
               Text(
                 '1 km',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
               Text(
                 '50 km',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
             ],
           ),

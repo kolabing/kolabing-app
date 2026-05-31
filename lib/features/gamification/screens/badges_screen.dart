@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/badge.dart';
 import '../providers/badge_provider.dart';
 import '../widgets/badge_card.dart';
@@ -22,9 +22,7 @@ class BadgesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Badges',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -81,12 +79,7 @@ class BadgesScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   'EARNED BADGES',
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -125,12 +118,7 @@ class BadgesScreen extends ConsumerWidget {
               ),
               child: Text(
                 'ALL BADGES',
-                style: GoogleFonts.rubik(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
               ),
             ),
           ),
@@ -214,17 +202,11 @@ class BadgesScreen extends ConsumerWidget {
             children: [
               Text(
                 '${myBadges.badges.length}',
-                style: GoogleFonts.rubik(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
               Text(
                 'Badges Earned',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.9),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -249,19 +231,12 @@ class BadgesScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to load badges',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),

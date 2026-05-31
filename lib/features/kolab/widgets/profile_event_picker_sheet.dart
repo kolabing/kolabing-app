@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../event/models/event.dart';
 
 class ProfileEventPickerSheet extends StatefulWidget {
@@ -75,19 +75,12 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     'Choose from your profile events',
-                    style: GoogleFonts.rubik(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     'Select up to ${widget.maxSelection} event${widget.maxSelection == 1 ? '' : 's'} to import.',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Expanded(
@@ -126,19 +119,12 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                         event.name,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.openSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                          color: KolabingColors.onSurface,
-                                        ),
+                                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         DateFormat('MMM d, yyyy').format(event.date),
-                                        style: GoogleFonts.openSans(
-                                          fontSize: 12,
-                                          color: KolabingColors.onSurfaceVariant,
-                                        ),
+                                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                                       ),
                                       if (event.partner.name.isNotEmpty) ...[
                                         const SizedBox(height: 2),
@@ -146,10 +132,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                           event.partner.name,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.openSans(
-                                            fontSize: 12,
-                                            color: KolabingColors.onSurfaceVariant,
-                                          ),
+                                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                                         ),
                                       ],
                                     ],

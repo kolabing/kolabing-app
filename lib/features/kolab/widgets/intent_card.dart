@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// A selectable card for choosing a Kolab intent type.
 ///
@@ -87,20 +87,12 @@ class IntentCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.rubik(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.onSurface,
-                      ),
+                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xxxs),
                     Text(
                       subtitle,
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.onSurfaceVariant,
-                      ),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -121,11 +113,7 @@ class IntentCard extends StatelessWidget {
                   ),
                   child: Text(
                     badge!,
-                    style: GoogleFonts.openSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                 ),
               ],

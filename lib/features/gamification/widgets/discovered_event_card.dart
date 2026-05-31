@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/discovered_event.dart';
 
 /// Card displaying a discovered event
@@ -80,13 +80,9 @@ class DiscoveredEventCard extends StatelessWidget {
                     ),
                     child: Text(
                       event.isBusiness ? 'Business' : 'Community',
-                      style: GoogleFonts.rubik(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: event.isBusiness
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: event.isBusiness
                             ? KolabingColors.info
-                            : KolabingColors.success,
-                      ),
+                            : KolabingColors.success),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -94,11 +90,7 @@ class DiscoveredEventCard extends StatelessWidget {
                   // Event name
                   Text(
                     event.name,
-                    style: GoogleFonts.rubik(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -106,10 +98,7 @@ class DiscoveredEventCard extends StatelessWidget {
                   // Partner name
                   Text(
                     'by ${event.partnerName}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -126,10 +115,7 @@ class DiscoveredEventCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         _formatDate(event.eventDate),
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Icon(
@@ -140,10 +126,7 @@ class DiscoveredEventCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         '${event.attendeeCount}',
-                        style: GoogleFonts.openSans(
-                          fontSize: 11,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
                       ),
                     ],
                   ),
@@ -172,11 +155,7 @@ class DiscoveredEventCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     event.distanceDisplay,
-                    style: GoogleFonts.rubik(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.primary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.primary),
                   ),
                 ],
               ),

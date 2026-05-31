@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../providers/checkin_provider.dart';
 
 /// QR Scanner screen for attendees to check in to events
@@ -110,28 +110,17 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 'Check-in Successful!',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 'You have checked in to',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
               Text(
                 eventName,
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -152,10 +141,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                   ),
                   child: Text(
                     'Continue',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16),
                   ),
                 ),
               ),
@@ -192,19 +178,12 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 'Check-in Failed',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 error,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -301,11 +280,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 ),
                 Text(
                   'Scan QR Code',
-                  style: GoogleFonts.rubik(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.textOnDark,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
                 ),
                 const SizedBox(width: 48), // Balance the close button
               ],
@@ -359,10 +334,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                               const SizedBox(height: KolabingSpacing.md),
                               Text(
                                 'Checking in...',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  color: KolabingColors.textOnDark,
-                                ),
+                                style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textOnDark),
                               ),
                             ],
                           ),
@@ -381,20 +353,13 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               children: [
                 Text(
                   'Point your camera at the event QR code',
-                  style: GoogleFonts.openSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.textOnDark,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textOnDark),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'The QR code will be displayed by the event organizer',
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    color: KolabingColors.textTertiary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
                   textAlign: TextAlign.center,
                 ),
               ],

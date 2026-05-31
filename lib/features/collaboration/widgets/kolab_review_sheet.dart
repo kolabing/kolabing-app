@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -9,6 +8,7 @@ import '../../../config/constants/api.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../config/theme/typography.dart';
 import '../../auth/services/auth_service.dart';
 
@@ -171,8 +171,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
           // Title
           Text(
             'How was the Kolab? ⭐',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
+            style: KolabingTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
               color: KolabingColors.onSurface,
             ),

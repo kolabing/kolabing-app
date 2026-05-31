@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
@@ -56,12 +56,7 @@ class MyKolabCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             kolab.title.isNotEmpty ? kolab.title : 'Untitled Kolab',
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-              height: 1.3,
-            ),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -229,12 +224,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: textColor,
-          letterSpacing: 0.5,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: textColor, letterSpacing: 0.5),
       ),
     );
   }
@@ -261,11 +251,7 @@ class _InfoPill extends StatelessWidget {
         const SizedBox(width: KolabingSpacing.xxs),
         Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
     ),
@@ -369,12 +355,7 @@ class _ActionButtonContent extends StatelessWidget {
             maxLines: 1,
             softWrap: false,
             overflow: TextOverflow.fade,
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-              color: color,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color, letterSpacing: 1.0),
           ),
         ),
       ),

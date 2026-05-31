@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/kolab.dart';
 
 /// A grid for managing media attachments in the Kolab creation flow.
@@ -181,10 +181,7 @@ class _AddSlot extends StatelessWidget {
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 '$remaining left',
-                style: GoogleFonts.openSans(
-                  fontSize: 10,
-                  color: KolabingColors.textTertiary,
-                ),
+                style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: KolabingColors.textTertiary),
               ),
             ],
           ),

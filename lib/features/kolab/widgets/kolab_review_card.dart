@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 
@@ -445,11 +445,7 @@ class _ReviewSection extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
               ),
               const Icon(
@@ -489,19 +485,12 @@ class _ReviewField extends StatelessWidget {
     children: [
       Text(
         label,
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textTertiary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
       ),
       const SizedBox(height: KolabingSpacing.xxxs),
       Text(
         value,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          color: KolabingColors.onSurface,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface),
       ),
     ],
   );
@@ -530,11 +519,7 @@ class _ChipList extends StatelessWidget {
             ),
             child: Text(
               item,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
             ),
           ),
         )
@@ -551,10 +536,6 @@ class _EmptyHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: GoogleFonts.openSans(
-      fontSize: 13,
-      fontStyle: FontStyle.italic,
-      color: KolabingColors.textTertiary,
-    ),
+    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary, fontStyle: FontStyle.italic),
   );
 }

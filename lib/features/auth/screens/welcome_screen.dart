@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../widgets/auth_fade_slide.dart';
 import '../widgets/kolabing_logo.dart';
 
@@ -197,9 +197,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           ),
                           child: Text(
                             'Log in',
-                            style: GoogleFonts.inter(
+                            style: KolabingTextStyles.bodySmall.copyWith(
                               color: _kMutedText,
-                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                               height: 1.0,
                             ),
@@ -372,9 +371,8 @@ class _Headline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fontSize = compact ? 38.0 : 42.0;
-    final style = GoogleFonts.anton(
+    final style = KolabingTextStyles.displayLarge.copyWith(
       fontSize: fontSize,
-      fontWeight: FontWeight.w400,
       letterSpacing: -0.5,
       height: 1.02,
       color: KolabingColors.textOnDark,
@@ -400,10 +398,8 @@ class _Subtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     'Community-led partnerships for events, UGC, reviews and real-world growth.',
-    style: GoogleFonts.inter(
+    style: KolabingTextStyles.captionSecondary.copyWith(
       color: _kMutedText,
-      fontSize: 13,
-      fontWeight: FontWeight.w400,
       height: 1.45,
     ),
   );
@@ -444,8 +440,7 @@ class _PrimaryCta extends StatelessWidget {
                 'Get started',
                 maxLines: 1,
                 softWrap: false,
-                style: GoogleFonts.inter(
-                  fontSize: 16,
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   height: 1.0,
                 ),

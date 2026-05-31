@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../opportunity/models/opportunity.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -41,20 +41,12 @@ class ReviewScreen extends ConsumerWidget {
           // Section header
           Text(
             'REVIEW & PUBLISH',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurfaceVariant,
-              letterSpacing: 1.0,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Make sure everything looks correct before publishing',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -81,22 +73,14 @@ class ReviewScreen extends ConsumerWidget {
                     children: [
                       Text(
                         kolab.title.isEmpty ? 'Untitled Kolab' : kolab.title,
-                        style: GoogleFonts.rubik(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: KolabingColors.onSurface,
-                        ),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         kolab.description.isEmpty
                             ? 'No description provided'
                             : kolab.description,
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          color: KolabingColors.onSurfaceVariant,
-                          height: 1.5,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -119,10 +103,7 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.needs.isEmpty)
                         Text(
                           'No needs selected',
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            color: KolabingColors.textTertiary,
-                          ),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
                         )
                       else
                         Wrap(
@@ -151,10 +132,7 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.offersInReturn.isEmpty)
                         Text(
                           'No deliverables selected',
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            color: KolabingColors.textTertiary,
-                          ),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
                         )
                       else
                         Wrap(
@@ -269,10 +247,7 @@ class ReviewScreen extends ConsumerWidget {
                       ] else
                         Text(
                           'Not set',
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            color: KolabingColors.textTertiary,
-                          ),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
                         ),
                     ],
                   ),
@@ -287,11 +262,7 @@ class ReviewScreen extends ConsumerWidget {
           Center(
             child: Text(
               'Tap any section above to edit',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                color: KolabingColors.textTertiary,
-                fontStyle: FontStyle.italic,
-              ),
+              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary, fontStyle: FontStyle.italic),
             ),
           ),
         ],
@@ -332,12 +303,7 @@ class ReviewScreen extends ConsumerWidget {
 
   Widget _buildReviewLabel(String label) => Text(
     label.toUpperCase(),
-    style: GoogleFonts.rubik(
-      fontSize: 12,
-      fontWeight: FontWeight.w700,
-      color: KolabingColors.textTertiary,
-      letterSpacing: 0.8,
-    ),
+    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.8),
   );
 
   Widget _buildReviewInfoRow(IconData icon, String label) => Row(
@@ -347,10 +313,7 @@ class ReviewScreen extends ConsumerWidget {
       Expanded(
         child: Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ),
     ],
@@ -368,11 +331,7 @@ class ReviewScreen extends ConsumerWidget {
     ),
     child: Text(
       label,
-      style: GoogleFonts.openSans(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: KolabingColors.onSurface,
-      ),
+      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
     ),
   );
 

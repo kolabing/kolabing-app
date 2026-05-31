@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -9,6 +8,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../kolab/models/kolab.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
@@ -213,23 +213,14 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       children: [
         Text(
           'MY KOLABS',
-          style: GoogleFonts.rubik(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
-            color: isDark
+          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: isDark
                 ? KolabingColors.textOnDark
-                : KolabingColors.onSurface,
-          ),
+                : KolabingColors.onSurface, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'Manage your kolabs',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: KolabingColors.onSurfaceVariant,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
     ),
@@ -274,15 +265,11 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                 ),
                 child: Text(
                   tab.label,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: isSelected
+                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
                         ? KolabingColors.onPrimary
                         : isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface,
-                  ),
+                        : KolabingColors.onSurface),
                 ),
               ),
             ),
@@ -302,13 +289,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         ),
         child: Text(
           '${listState.total} ${listState.total == 1 ? 'kolab' : 'kolabs'}',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: isDark
+          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                : KolabingColors.textTertiary,
-          ),
+                : KolabingColors.textTertiary),
         ),
       ),
       Expanded(
@@ -415,21 +398,14 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'No kolabs yet',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: isDark
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
-            ),
+                  : KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Create your first kolab to start connecting with communities',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -471,21 +447,14 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Something went wrong',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: isDark
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
-            ),
+                  : KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),

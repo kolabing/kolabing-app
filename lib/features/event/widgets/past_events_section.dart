@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -323,10 +322,7 @@ class PastEventsSection extends ConsumerWidget {
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
               '+ Add a past event',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
             ),
             style: TextButton.styleFrom(
               foregroundColor: KolabingColors.onSurfaceVariant,

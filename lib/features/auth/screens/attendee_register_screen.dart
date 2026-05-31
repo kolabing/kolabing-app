@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
@@ -171,7 +170,7 @@ class _AttendeeRegisterScreenState
             Expanded(
               child: Text(
                 'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
@@ -198,7 +197,7 @@ class _AttendeeRegisterScreenState
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
@@ -272,8 +271,7 @@ class _AttendeeRegisterScreenState
                             const SizedBox(width: 4),
                             Text(
                               'Back',
-                              style: GoogleFonts.openSans(
-                                fontSize: 16,
+                              style: KolabingTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
                                 color: KolabingColors.onSurface,
                               ),
@@ -305,7 +303,7 @@ class _AttendeeRegisterScreenState
                         // Title
                         Text(
                           'JOIN AS ATTENDEE',
-                          style: GoogleFonts.rubik(
+                          style: KolabingTextStyles.bodyLarge.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
                             color: KolabingColors.onSurface,
@@ -317,9 +315,7 @@ class _AttendeeRegisterScreenState
                         // Subtitle
                         Text(
                           'Create your account to join events and complete challenges',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                          style: KolabingTextStyles.bodySmall.copyWith(
                             color: KolabingColors.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
@@ -444,9 +440,9 @@ class _AttendeeRegisterScreenState
                               )
                             : Text(
                                 'CREATE ACCOUNT',
-                                style: GoogleFonts.dmSans(
+                                style: KolabingTextStyles.button.copyWith(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 1.0,
                                 ),
                               ),
@@ -455,9 +451,8 @@ class _AttendeeRegisterScreenState
                     const SizedBox(height: 16),
                     Text(
                       'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                      style: GoogleFonts.openSans(
+                      style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 12,
-                        fontWeight: FontWeight.w400,
                         color: KolabingColors.textTertiary,
                       ),
                       textAlign: TextAlign.center,

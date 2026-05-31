@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../widgets/ui_icon.dart';
 
@@ -129,7 +128,7 @@ class _BusinessDashboardScreenState
           children: [
             Text(
               'BUSINESS DASHBOARD',
-              style: KolabingTextStyles.pageTitle.copyWith(
+              style: KolabingTextStyles.headlineLarge.copyWith(
                 color: isDark
                     ? KolabingColors.textOnDark
                     : KolabingColors.onSurface,
@@ -138,11 +137,7 @@ class _BusinessDashboardScreenState
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               'Welcome back, $userName',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
         ),
@@ -252,11 +247,7 @@ class _BusinessDashboardScreenState
               child: Text(
                 'CREATE COLLAB REQUEST',
                 maxLines: 1,
-                style: GoogleFonts.rubik(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
             ),
           ),
@@ -288,11 +279,7 @@ class _BusinessDashboardScreenState
             ),
             child: Text(
               'FIND A COLLAB',
-              style: GoogleFonts.rubik(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.0,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
             ),
           ),
         ),
@@ -309,12 +296,7 @@ class _BusinessDashboardScreenState
     children: [
       Text(
         'UPCOMING COLLABORATIONS',
-        style: GoogleFonts.rubik(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF0D0D0D),
-          letterSpacing: 0.8,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
       ),
       const SizedBox(height: KolabingSpacing.sm),
 
@@ -350,13 +332,9 @@ class _BusinessDashboardScreenState
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           'No upcoming collaborations yet',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: isDark
+          style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                : KolabingColors.textTertiary,
-          ),
+                : KolabingColors.textTertiary),
         ),
       ],
     ),
@@ -380,11 +358,7 @@ class _BusinessDashboardScreenState
           const SizedBox(height: KolabingSpacing.md),
           Text(
             message,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -397,11 +371,7 @@ class _BusinessDashboardScreenState
               icon: const Icon(LucideIcons.refreshCw, size: 18),
               label: Text(
                 'RETRY',
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,

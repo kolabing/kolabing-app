@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -123,13 +122,9 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                         const SizedBox(width: 4),
                         Text(
                           'Add',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
+                          style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.onSurface,
-                          ),
+                                : KolabingColors.onSurface),
                         ),
                       ],
                     ),

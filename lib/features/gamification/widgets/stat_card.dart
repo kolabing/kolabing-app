@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/ui_icon.dart';
 
 /// A card widget displaying a stat with icon, label, and value
@@ -67,20 +67,12 @@ class StatCard extends StatelessWidget {
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           value,
-          style: GoogleFonts.rubik(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: textColor,
-          ),
+          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: textColor),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: secondaryTextColor,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: secondaryTextColor),
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

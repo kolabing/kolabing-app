@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../config/theme/typography.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/layout.dart';
 import '../constants/radius.dart';
@@ -54,12 +54,7 @@ abstract final class KolabingTheme {
             statusBarIconBrightness: Brightness.dark,
             statusBarBrightness: Brightness.light,
           ),
-          titleTextStyle: GoogleFonts.anton(
-            fontSize: 18,
-            fontWeight: FontWeight.w400,
-            color: KolabingColors.charcoal,
-            letterSpacing: 1.0,
-          ),
+          titleTextStyle: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.charcoal, letterSpacing: 1.5),
           iconTheme: const IconThemeData(
             color: KolabingColors.charcoal,
             size: 24,
@@ -83,38 +78,35 @@ abstract final class KolabingTheme {
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusLg,
+            borderRadius: KolabingRadius.borderRadiusXl,
+            side: BorderSide.none,
           ),
           margin: EdgeInsets.zero,
         ),
 
-        // Elevated Button (Primary) — no glow, no shadow, no uppercase
+        // Elevated Button (Primary) — pill shape, yellow, charcoal text
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
+            backgroundColor: KolabingColors.navBarBackground,
+            foregroundColor: KolabingColors.charcoal,
             elevation: 0,
             shadowColor: Colors.transparent,
-            minimumSize: const Size(double.infinity, 50),
+            minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
+            shape: const StadiumBorder(),
             textStyle: KolabingTextStyles.button,
           ),
         ),
 
-        // Outlined Button (Secondary) — subtle border, no shadow
+        // Outlined Button (Secondary) — pill shape, charcoal border
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.onSurface,
+            foregroundColor: KolabingColors.charcoal,
             elevation: 0,
             minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-            side: const BorderSide(color: KolabingColors.darkBorder, width: 1),
+            shape: const StadiumBorder(),
+            side: const BorderSide(color: KolabingColors.charcoal, width: 1),
             textStyle: KolabingTextStyles.button,
           ),
         ),
@@ -176,15 +168,14 @@ abstract final class KolabingTheme {
           ),
         ),
 
-        // Chip — warm surface, no shadow
+        // Chip — sage fill, pill shape, no border
         chipTheme: ChipThemeData(
-          backgroundColor: KolabingColors.surfaceVariant,
-          labelStyle: KolabingTextStyles.labelSmall,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-            side: const BorderSide(color: KolabingColors.darkBorder),
+          backgroundColor: KolabingColors.tertiaryContainer,
+          labelStyle: KolabingTextStyles.labelMedium.copyWith(
+            color: KolabingColors.onSurface,
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          shape: const StadiumBorder(side: BorderSide.none),
           elevation: 0,
           pressElevation: 0,
         ),

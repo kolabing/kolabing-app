@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// User type for selection cards
 enum SelectionUserType {
@@ -180,7 +179,7 @@ class _SelectionCardState extends State<SelectionCard>
                   // Title
                   Text(
                     _title,
-                    style: GoogleFonts.dmSans(
+                    style: KolabingTextStyles.button.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: KolabingColors.onSurface,
@@ -193,9 +192,7 @@ class _SelectionCardState extends State<SelectionCard>
                   // Description
                   Text(
                     _description,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.onSurfaceVariant,
                       height: 1.4,
                     ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../widgets/time_picker.dart';
 import '../../../onboarding/models/place_suggestion.dart';
 // Only the Places autocomplete provider is needed here. Hide the names that
@@ -113,10 +113,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'When is your community available for this kolab?',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.onSurfaceVariant,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
           if (state.fieldErrors['availability_mode'] != null) ...[
@@ -179,10 +176,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             ),
             error: (e, _) => Text(
               'Error loading cities: $e',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
-                color: KolabingColors.error,
-              ),
+              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.error),
             ),
             data: (cities) => DropdownButtonFormField<String>(
               initialValue: kolab.preferredCity.isNotEmpty
@@ -227,10 +221,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateArea(value.trim().isEmpty ? null : value.trim());
             },
-            style: GoogleFonts.openSans(
-              fontSize: 15,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg')
                 .copyWith(
                   prefixIcon: const Icon(
@@ -282,20 +273,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   ),
                   title: Text(
                     items[i].title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                   subtitle: Text(
                     items[i].formattedAddress,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                   ),
                   onTap: () => _selectAreaSuggestion(items[i]),
                 ),
@@ -401,13 +385,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 ),
                 child: Text(
                   _dayNames[i].substring(0, 3),
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                    color: isSelected
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400, color: isSelected
                         ? KolabingColors.onSurface
-                        : KolabingColors.onSurfaceVariant,
-                  ),
+                        : KolabingColors.onSurfaceVariant),
                 ),
               ),
             ),
@@ -460,20 +440,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             title,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
           Text(
             description,
-            style: GoogleFonts.openSans(
-              fontSize: 10,
-              color: KolabingColors.textTertiary,
-            ),
+            style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: KolabingColors.textTertiary),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -555,12 +528,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 Expanded(
                   child: Text(
                     value != null ? dateFormat.format(value) : 'Select date',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: value != null
+                    style: KolabingTextStyles.bodySmall.copyWith(color: value != null
                           ? KolabingColors.onSurface
-                          : KolabingColors.textTertiary,
-                    ),
+                          : KolabingColors.textTertiary),
                   ),
                 ),
               ],
@@ -571,10 +541,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: 4),
           Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              color: KolabingColors.error,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
           ),
         ],
       ],
@@ -625,12 +592,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 value != null ? value.format(context) : 'Select time',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: value != null
+                style: KolabingTextStyles.bodySmall.copyWith(color: value != null
                       ? KolabingColors.onSurface
-                      : KolabingColors.textTertiary,
-                ),
+                      : KolabingColors.textTertiary),
               ),
             ],
           ),
@@ -640,10 +604,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         const SizedBox(height: 4),
         Text(
           error,
-          style: GoogleFonts.openSans(
-            fontSize: 12,
-            color: KolabingColors.error,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
         ),
       ],
     ],
@@ -651,7 +612,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   InputDecoration _inputDecoration({required String hint}) => InputDecoration(
     hintText: hint,
-    hintStyle: GoogleFonts.openSans(color: KolabingColors.textTertiary),
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
     filled: true,
     fillColor: KolabingColors.surface,
     border: OutlineInputBorder(
@@ -670,21 +631,12 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   Widget _buildSectionHeader(String title) => Text(
     title,
-    style: GoogleFonts.rubik(
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      color: KolabingColors.onSurfaceVariant,
-      letterSpacing: 1.0,
-    ),
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
   );
 
   Widget _buildLabel(String label) => Text(
     label,
-    style: GoogleFonts.openSans(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      color: KolabingColors.onSurface,
-    ),
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
   );
 
   Widget _buildFieldError(String error) => Container(
@@ -703,10 +655,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         Expanded(
           child: Text(
             error,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              color: KolabingColors.error,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
           ),
         ),
       ],

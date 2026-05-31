@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -93,21 +93,18 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '$permissionName Permission',
-          style: GoogleFonts.rubik(fontWeight: FontWeight.w600, fontSize: 18),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         content: Text(
           '$permissionName access was denied. You can enable it from your device settings.',
-          style: GoogleFonts.openSans(fontSize: 14),
+          style: KolabingTextStyles.bodySmall,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Later',
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              style: KolabingTextStyles.button.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ),
           TextButton(
@@ -117,10 +114,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             },
             child: Text(
               'Open Settings',
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.primary,
-              ),
+              style: KolabingTextStyles.button.copyWith(color: KolabingColors.primary),
             ),
           ),
         ],
@@ -166,10 +160,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             // Title
             Text(
               'ENABLE PERMISSIONS',
-              style: GoogleFonts.rubik(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF232323),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: const Color(0xFF232323),
                 letterSpacing: 1.0,
               ),
               textAlign: TextAlign.center,
@@ -183,10 +174,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               ),
               child: Text(
                 'To get the best experience, Kolabing needs a few permissions.',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFF6B7280),
+                style: KolabingTextStyles.bodySmall.copyWith(color: const Color(0xFF6B7280),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -235,11 +223,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 ),
                 child: Text(
                   'CONTINUE',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                 ),
               ),
             ),
@@ -248,10 +232,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             // Help text
             Text(
               'You can change these later in your device settings.',
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: const Color(0xFF9CA3AF),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: const Color(0xFF9CA3AF),
               ),
               textAlign: TextAlign.center,
             ),
@@ -302,19 +283,13 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             children: [
               Text(
                 title,
-                style: GoogleFonts.rubik(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF232323),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF232323),
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFF6B7280),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: const Color(0xFF6B7280),
                   height: 1.3,
                 ),
               ),
@@ -363,10 +338,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               ),
               child: Text(
                 'Allow',
-                style: GoogleFonts.dmSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.button.copyWith(fontSize: 13),
               ),
             ),
           ),

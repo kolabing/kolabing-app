@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -50,21 +49,12 @@ class ReferralBannerCard extends ConsumerWidget {
               children: [
                 Text(
                   'EARN BY SHARING',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                    color: KolabingColors.secondary,
-                  ),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 1.0),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
                   'Refer 3 businesses \u2192 earn \u20AC75 cash',
-                  style: GoogleFonts.rubik(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
                 OutlinedButton(
@@ -85,11 +75,7 @@ class ReferralBannerCard extends ConsumerWidget {
                   ),
                   child: Text(
                     'SHARE REFERRAL CODE',
-                    style: GoogleFonts.rubik(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.0),
                   ),
                 ),
               ],
@@ -161,12 +147,7 @@ class _ReferralCodeSheet extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'YOUR REFERRAL CODE',
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-              color: KolabingColors.textTertiary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Container(
@@ -183,12 +164,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             child: Text(
               code,
               textAlign: TextAlign.center,
-              style: GoogleFonts.rubik(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2.5,
-                color: KolabingColors.onSurface,
-              ),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 2.5),
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),

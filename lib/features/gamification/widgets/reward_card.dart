@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/reward_claim.dart';
 
@@ -60,21 +60,14 @@ class RewardCard extends StatelessWidget {
                 children: [
                   Text(
                     rewardClaim.eventReward?.name ?? 'Mystery Reward',
-                    style: GoogleFonts.rubik(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Won ${_formatDate(rewardClaim.wonAt)}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.onSurfaceVariant,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -118,11 +111,7 @@ class RewardCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.rubik(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color),
       ),
     );
   }

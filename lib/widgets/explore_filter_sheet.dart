@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 import '../features/auth/providers/auth_provider.dart';
 import '../features/discovery/models/discovery_filters.dart';
 import '../features/discovery/providers/discovery_provider.dart';
@@ -392,8 +392,7 @@ class _HeaderRow extends StatelessWidget {
     children: [
       Text(
         'Search & Filter',
-        style: GoogleFonts.rubik(
-          fontSize: 18,
+        style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.onSurface,
         ),
@@ -410,8 +409,7 @@ class _HeaderRow extends StatelessWidget {
             ),
             child: Text(
               'Clear all',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
+              style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w500,
                 color: KolabingColors.primary,
               ),
@@ -463,14 +461,12 @@ class _FilterTextField extends StatelessWidget {
             controller: controller,
             focusNode: focusNode,
             onChanged: onChanged,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
+            style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: GoogleFonts.openSans(
-                fontSize: 14,
+              hintStyle: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.textTertiary,
               ),
               prefixIcon: Icon(
@@ -571,8 +567,7 @@ class _CityAutocompleteResults extends ConsumerWidget {
                 ),
                 title: Text(
                   city.name,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: KolabingColors.onSurface,
                   ),
@@ -581,7 +576,7 @@ class _CityAutocompleteResults extends ConsumerWidget {
                     ? null
                     : Text(
                         city.country!,
-                        style: GoogleFonts.openSans(
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontSize: 12,
                           color: KolabingColors.onSurfaceVariant,
                         ),
@@ -637,8 +632,7 @@ class _CityAutocompleteMessage extends StatelessWidget {
           child ??
           Text(
             message!,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
+            style: KolabingTextStyles.captionSecondary.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
           ),
@@ -654,8 +648,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     label,
-    style: GoogleFonts.openSans(
-      fontSize: 13,
+    style: KolabingTextStyles.captionSecondary.copyWith(
       fontWeight: FontWeight.w600,
       color: KolabingColors.onSurfaceVariant,
     ),
@@ -743,7 +736,7 @@ class _SheetChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
+        style: KolabingTextStyles.button.copyWith(
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isSelected
@@ -766,8 +759,7 @@ class _ResultsCount extends StatelessWidget {
       total > 0
           ? '$total result${total == 1 ? '' : 's'} found'
           : 'Showing all opportunities',
-      style: GoogleFonts.openSans(
-        fontSize: 13,
+      style: KolabingTextStyles.captionSecondary.copyWith(
         fontWeight: FontWeight.w500,
         color: KolabingColors.textTertiary,
       ),

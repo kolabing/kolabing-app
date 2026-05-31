@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../kolab/enums/deliverable_type.dart';
 import '../../kolab/enums/intent_type.dart';
 import '../../kolab/enums/need_type.dart';
@@ -291,11 +291,7 @@ class _QuickChip extends StatelessWidget {
         children: [
           Text(
             data.label,
-            style: GoogleFonts.dmSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
           ),
           const SizedBox(width: 6),
           Icon(
