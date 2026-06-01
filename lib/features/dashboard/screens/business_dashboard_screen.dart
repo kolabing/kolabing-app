@@ -98,19 +98,19 @@ class _BusinessDashboardScreenState
 
         // Stats grid 2x2
         _buildStatsGrid(data),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Referral banner (rewards)
         const ReferralBannerCard(),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Quick actions
         _buildQuickActions(isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Upcoming collaborations
         _buildUpcomingSection(data, isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
       ],
     );
   }
@@ -132,12 +132,13 @@ class _BusinessDashboardScreenState
                 color: isDark
                     ? KolabingColors.textOnDark
                     : KolabingColors.onSurface,
+                letterSpacing: 1.0,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               'Welcome back, $userName',
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
             ),
           ],
         ),
@@ -159,9 +160,8 @@ class _BusinessDashboardScreenState
               title: 'Published',
               count: data.opportunities.published,
               icon: LucideIcons.megaphone,
-              accentColor: KolabingColors.primary,
+              accent: StatCardAccent.active,
               subtitle: '${data.opportunities.total} total requests',
-              index: 0,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -171,9 +171,8 @@ class _BusinessDashboardScreenState
               count: data.applicationsReceived.pending,
               icon: LucideIcons.clock,
               iconSlug: UiIconSlug.clock,
-              accentColor: const Color(0xFFFF9800),
+              accent: StatCardAccent.pending,
               subtitle: '${data.applicationsReceived.total} total',
-              index: 1,
             ),
           ),
         ],
@@ -186,9 +185,8 @@ class _BusinessDashboardScreenState
               title: 'Active Kolabs',
               count: data.collaborations.active,
               icon: LucideIcons.users,
-              accentColor: const Color(0xFF4CAF50),
+              accent: StatCardAccent.accepted,
               subtitle: '${data.collaborations.upcoming} upcoming',
-              index: 2,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -198,9 +196,8 @@ class _BusinessDashboardScreenState
               count: data.collaborations.completed,
               icon: LucideIcons.checkCircle,
               iconSlug: UiIconSlug.checkCircle,
-              accentColor: KolabingColors.info,
+              accent: StatCardAccent.completed,
               subtitle: '${data.collaborations.total} total',
-              index: 3,
             ),
           ),
         ],
@@ -296,7 +293,7 @@ class _BusinessDashboardScreenState
     children: [
       Text(
         'UPCOMING KOLABS',
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
+        style: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.onSurface, letterSpacing: 1.0),
       ),
       const SizedBox(height: KolabingSpacing.sm),
 

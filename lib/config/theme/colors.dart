@@ -230,6 +230,29 @@ abstract final class KolabingColors {
   static const Color onAccent = Color(0xFFFFFFFF);
 
   // ---------------------------------------------------------------------------
+  // XP / Gamification — mint green sub-identity (community rewards layer only)
+  // ---------------------------------------------------------------------------
+
+  /// Mint green — XP progress bar fill, gamification accent
+  static const Color xpGreen = Color(0xFF7AE7A3);
+
+  /// Soft mint fill — XP card background
+  static const Color xpGreenContainer = Color(0xFFE8F9F1);
+
+  /// Text/icon on mint fill
+  static const Color xpGreenOnContainer = Color(0xFF1A6644);
+
+  // ---------------------------------------------------------------------------
+  // Category chip palette — Explore card semantic chip colors
+  // ---------------------------------------------------------------------------
+
+  /// Soft blue-grey fill — Music / Art / Culture / Film / Photo chips
+  static const Color categoryBlueGrey = Color(0xFFDDE3EC);
+
+  /// Text on blue-grey chip fill
+  static const Color categoryBlueGreyText = Color(0xFF3D4A5C);
+
+  // ---------------------------------------------------------------------------
   // Gradient
   // ---------------------------------------------------------------------------
 

@@ -49,7 +49,7 @@ class ReferralBannerCard extends ConsumerWidget {
               children: [
                 Text(
                   'EARN BY SHARING',
-                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 1.0),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(

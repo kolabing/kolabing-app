@@ -32,7 +32,7 @@ class XpProgressCard extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.secondaryContainer,
+          color: KolabingColors.xpGreenContainer,
           borderRadius: KolabingRadius.borderRadiusLg,
         ),
         child: Column(
@@ -63,9 +63,9 @@ class XpProgressCard extends ConsumerWidget {
                   value: value,
                   minHeight: 8,
                   backgroundColor:
-                      KolabingColors.secondary.withValues(alpha: 0.2),
+                      KolabingColors.xpGreen.withValues(alpha: 0.2),
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                    KolabingColors.secondary,
+                    KolabingColors.xpGreen,
                   ),
                 ),
               ),
@@ -123,7 +123,7 @@ class _LevelChip extends StatelessWidget {
           vertical: KolabingSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.secondary.withValues(alpha: 0.15),
+          color: KolabingColors.xpGreen.withValues(alpha: 0.15),
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Row(
@@ -132,12 +132,12 @@ class _LevelChip extends StatelessWidget {
             Icon(
               LucideIcons.shield,
               size: 12,
-              color: KolabingColors.secondary,
+              color: KolabingColors.xpGreenOnContainer,
             ),
             const SizedBox(width: 4),
             Text(
               'LVL ${level.number} · ${level.title}',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 0.3),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: KolabingColors.xpGreenOnContainer, letterSpacing: 0.3),
             ),
           ],
         ),

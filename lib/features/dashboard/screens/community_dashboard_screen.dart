@@ -98,25 +98,25 @@ class _CommunityDashboardScreenState
 
         // Stats grid 2x2
         _buildStatsGrid(data),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Referral banner first — community-growth action
         const ReferralBannerCard(),
-        const SizedBox(height: KolabingSpacing.md),
+        const SizedBox(height: KolabingSpacing.lg),
 
         // XP progress card
         XpProgressCard(
           onTap: () => context.push(KolabingRoutes.communityWallet),
         ),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Quick actions
         _buildQuickActions(isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Upcoming collaborations
         _buildUpcomingSection(data, isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
       ],
     );
   }
@@ -139,12 +139,13 @@ class _CommunityDashboardScreenState
                   color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.onSurface,
+                  letterSpacing: 1.0,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 'Welcome back, $userName',
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
               ),
             ],
           ),
@@ -169,9 +170,7 @@ class _CommunityDashboardScreenState
                 count: data.applicationsSent.pending,
                 icon: LucideIcons.clock,
                 iconSlug: UiIconSlug.clock,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: const Color(0xFFFF9800),
-                index: 0,
+                accent: StatCardAccent.pending,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -181,9 +180,7 @@ class _CommunityDashboardScreenState
                 count: data.applicationsSent.accepted,
                 icon: LucideIcons.checkCircle,
                 iconSlug: UiIconSlug.checkCircle,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: const Color(0xFF4CAF50),
-                index: 1,
+                accent: StatCardAccent.accepted,
               ),
             ),
           ],
@@ -197,9 +194,7 @@ class _CommunityDashboardScreenState
                 count: data.collaborations.active,
                 icon: LucideIcons.users,
                 iconSlug: UiIconSlug.target,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: KolabingColors.info,
-                index: 2,
+                accent: StatCardAccent.active,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -209,9 +204,7 @@ class _CommunityDashboardScreenState
                 count: data.collaborations.completed,
                 icon: LucideIcons.trophy,
                 iconSlug: UiIconSlug.trophy,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: const Color(0xFF9C27B0),
-                index: 3,
+                accent: StatCardAccent.completed,
               ),
             ),
           ],
@@ -300,7 +293,7 @@ class _CommunityDashboardScreenState
       children: [
         Text(
           'UPCOMING KOLABS',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
+          style: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
