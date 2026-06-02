@@ -873,7 +873,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String exploreFilterNeeds(num count) {
-    return 'Necessitats $count';
+    return 'Ofertes $count';
   }
 
   @override
@@ -4174,7 +4174,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Mida mínima de comunitat requerida';
 
   @override
-  String get exploreFilterNeed => 'Necessitat';
+  String get exploreFilterNeed => 'Oferta';
 
   @override
   String get exploreFilterCommunityType => 'Tipus de comunitat';
@@ -4509,4 +4509,63 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get pastEventsStepHeader => 'KOLABS ANTERIORS (OPCIONAL)';
+
+  @override
+  String referralShareMessage(String code) {
+    return 'Registra el teu negoci a Kolabing i fes servir el meu codi d\'invitació $code en registrar-te.';
+  }
+
+  @override
+  String get dashboardBusinessTitle => 'PANELL DE NEGOCI';
+
+  @override
+  String get dashboardCommunityTitle => 'PANELL DE COMUNITAT';
+
+  @override
+  String dashboardWelcomeBack(String name) {
+    return 'Hola de nou, $name';
+  }
+
+  @override
+  String get dashboardErrorLoad =>
+      'No s\'han pogut carregar les dades del tauler';
+
+  @override
+  String get dashboardStatPublished => 'Publicades';
+
+  @override
+  String get dashboardStatPendingApplications => 'Sol·licituds pendents';
+
+  @override
+  String get dashboardStatActiveKolabs => 'Kolabs actius';
+
+  @override
+  String get dashboardStatCompleted => 'Completats';
+
+  @override
+  String get dashboardStatPending => 'Pendents';
+
+  @override
+  String get dashboardStatAccepted => 'Acceptades';
+
+  @override
+  String get dashboardCreateKolabRequest => 'CREAR SOL·LICITUD DE KOLAB';
+
+  @override
+  String get dashboardFindAKolab => 'TROBAR UN KOLAB';
+
+  @override
+  String get dashboardMyApplications => 'LES MEVES SOL·LICITUDS';
+
+  @override
+  String get dashboardUpcomingKolabs => 'PROPERS KOLABS';
+
+  @override
+  String get dashboardNoUpcomingKolabs => 'Encara no hi ha kolabs propers';
+
+  @override
+  String get dashboardDefaultBusinessName => 'Negoci';
+
+  @override
+  String get dashboardDefaultCommunityName => 'Comunitat';
 }

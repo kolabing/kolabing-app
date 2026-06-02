@@ -10,7 +10,6 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/wallet_provider.dart';
-import '../utils/referral_share.dart';
 
 /// A banner card prompting the user to reveal and share their referral code.
 ///
@@ -235,7 +234,7 @@ class _ReferralCodeSheet extends StatelessWidget {
   }
 
   Future<void> _shareCode(BuildContext context) async {
-    final message = buildReferralCodeShareMessage(code);
+    final message = AppLocalizations.of(context).referralShareMessage(code);
 
     final box = context.findRenderObject() as RenderBox?;
     final shareOrigin = box == null

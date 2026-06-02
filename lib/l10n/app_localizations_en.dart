@@ -864,7 +864,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exploreFilterNeeds(num count) {
-    return 'Needs $count';
+    return 'Offers $count';
   }
 
   @override
@@ -4102,7 +4102,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Minimum Community Size Requirement';
 
   @override
-  String get exploreFilterNeed => 'Need';
+  String get exploreFilterNeed => 'Offer';
 
   @override
   String get exploreFilterCommunityType => 'Community Type';
@@ -4430,4 +4430,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pastEventsStepHeader => 'PAST KOLABS (OPTIONAL)';
+
+  @override
+  String referralShareMessage(String code) {
+    return 'Register your business on Kolabing and use my referral code $code during signup.';
+  }
+
+  @override
+  String get dashboardBusinessTitle => 'BUSINESS DASHBOARD';
+
+  @override
+  String get dashboardCommunityTitle => 'COMMUNITY DASHBOARD';
+
+  @override
+  String dashboardWelcomeBack(String name) {
+    return 'Welcome back, $name';
+  }
+
+  @override
+  String get dashboardErrorLoad => 'Unable to load dashboard data';
+
+  @override
+  String get dashboardStatPublished => 'Published';
+
+  @override
+  String get dashboardStatPendingApplications => 'Pending Applications';
+
+  @override
+  String get dashboardStatActiveKolabs => 'Active Kolabs';
+
+  @override
+  String get dashboardStatCompleted => 'Completed';
+
+  @override
+  String get dashboardStatPending => 'Pending';
+
+  @override
+  String get dashboardStatAccepted => 'Accepted';
+
+  @override
+  String get dashboardCreateKolabRequest => 'CREATE KOLAB REQUEST';
+
+  @override
+  String get dashboardFindAKolab => 'FIND A KOLAB';
+
+  @override
+  String get dashboardMyApplications => 'MY APPLICATIONS';
+
+  @override
+  String get dashboardUpcomingKolabs => 'UPCOMING KOLABS';
+
+  @override
+  String get dashboardNoUpcomingKolabs => 'No upcoming kolabs yet';
+
+  @override
+  String get dashboardDefaultBusinessName => 'Business';
+
+  @override
+  String get dashboardDefaultCommunityName => 'Community';
 }

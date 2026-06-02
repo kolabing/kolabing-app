@@ -1675,7 +1675,7 @@ abstract class AppLocalizations {
   /// Active filter chip: needs count
   ///
   /// In en, this message translates to:
-  /// **'Needs {count}'**
+  /// **'Offers {count}'**
   String exploreFilterNeeds(num count);
 
   /// Active filter chip: community types count
@@ -7415,7 +7415,7 @@ abstract class AppLocalizations {
   /// Need section label in the explore filter sheet
   ///
   /// In en, this message translates to:
-  /// **'Need'**
+  /// **'Offer'**
   String get exploreFilterNeed;
 
   /// Community type section label in the explore filter sheet
@@ -7957,6 +7957,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PAST KOLABS (OPTIONAL)'**
   String get pastEventsStepHeader;
+
+  /// Message shared from the referral screen/banner. {code} is the user's referral code.
+  ///
+  /// In en, this message translates to:
+  /// **'Register your business on Kolabing and use my referral code {code} during signup.'**
+  String referralShareMessage(String code);
+
+  /// No description provided for @dashboardBusinessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BUSINESS DASHBOARD'**
+  String get dashboardBusinessTitle;
+
+  /// No description provided for @dashboardCommunityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'COMMUNITY DASHBOARD'**
+  String get dashboardCommunityTitle;
+
+  /// Dashboard greeting. {name} is the user's display name.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name}'**
+  String dashboardWelcomeBack(String name);
+
+  /// No description provided for @dashboardErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load dashboard data'**
+  String get dashboardErrorLoad;
+
+  /// No description provided for @dashboardStatPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get dashboardStatPublished;
+
+  /// No description provided for @dashboardStatPendingApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Applications'**
+  String get dashboardStatPendingApplications;
+
+  /// No description provided for @dashboardStatActiveKolabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Kolabs'**
+  String get dashboardStatActiveKolabs;
+
+  /// No description provided for @dashboardStatCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get dashboardStatCompleted;
+
+  /// No description provided for @dashboardStatPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get dashboardStatPending;
+
+  /// No description provided for @dashboardStatAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get dashboardStatAccepted;
+
+  /// No description provided for @dashboardCreateKolabRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE KOLAB REQUEST'**
+  String get dashboardCreateKolabRequest;
+
+  /// No description provided for @dashboardFindAKolab.
+  ///
+  /// In en, this message translates to:
+  /// **'FIND A KOLAB'**
+  String get dashboardFindAKolab;
+
+  /// No description provided for @dashboardMyApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'MY APPLICATIONS'**
+  String get dashboardMyApplications;
+
+  /// No description provided for @dashboardUpcomingKolabs.
+  ///
+  /// In en, this message translates to:
+  /// **'UPCOMING KOLABS'**
+  String get dashboardUpcomingKolabs;
+
+  /// No description provided for @dashboardNoUpcomingKolabs.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming kolabs yet'**
+  String get dashboardNoUpcomingKolabs;
+
+  /// No description provided for @dashboardDefaultBusinessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get dashboardDefaultBusinessName;
+
+  /// No description provided for @dashboardDefaultCommunityName.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get dashboardDefaultCommunityName;
 }
 
 class _AppLocalizationsDelegate

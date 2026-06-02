@@ -1109,7 +1109,7 @@
   "@exploreBrowseAll": {
     "description": "Filter label when showing all feed"
   },
-  "exploreFilterNeeds": "Needs {count}",
+  "exploreFilterNeeds": "Offers {count}",
   "@exploreFilterNeeds": {
     "description": "Active filter chip: needs count",
     "placeholders": {
@@ -5274,7 +5274,7 @@
   "@exploreFilterMinCommunitySize": {
     "description": "Minimum community size requirement section label in the explore filter sheet"
   },
-  "exploreFilterNeed": "Need",
+  "exploreFilterNeed": "Offer",
   "@exploreFilterNeed": {
     "description": "Need section label in the explore filter sheet"
   },
@@ -5682,5 +5682,39 @@
   "pastEventsStepHeader": "PAST KOLABS (OPTIONAL)",
   "@pastEventsStepHeader": {
     "description": "Past events step section header (kolab creation flow)"
-  }
+  },
+  "referralShareMessage": "Register your business on Kolabing and use my referral code {code} during signup.",
+  "@referralShareMessage": {
+    "description": "Message shared from the referral screen/banner. {code} is the user's referral code.",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardBusinessTitle": "BUSINESS DASHBOARD",
+  "dashboardCommunityTitle": "COMMUNITY DASHBOARD",
+  "dashboardWelcomeBack": "Welcome back, {name}",
+  "@dashboardWelcomeBack": {
+    "description": "Dashboard greeting. {name} is the user's display name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardErrorLoad": "Unable to load dashboard data",
+  "dashboardStatPublished": "Published",
+  "dashboardStatPendingApplications": "Pending Applications",
+  "dashboardStatActiveKolabs": "Active Kolabs",
+  "dashboardStatCompleted": "Completed",
+  "dashboardStatPending": "Pending",
+  "dashboardStatAccepted": "Accepted",
+  "dashboardCreateKolabRequest": "CREATE KOLAB REQUEST",
+  "dashboardFindAKolab": "FIND A KOLAB",
+  "dashboardMyApplications": "MY APPLICATIONS",
+  "dashboardUpcomingKolabs": "UPCOMING KOLABS",
+  "dashboardNoUpcomingKolabs": "No upcoming kolabs yet",
+  "dashboardDefaultBusinessName": "Business",
+  "dashboardDefaultCommunityName": "Community"
 }

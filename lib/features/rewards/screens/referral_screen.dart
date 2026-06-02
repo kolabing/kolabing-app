@@ -12,7 +12,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/wallet_provider.dart';
-import '../utils/referral_share.dart';
 
 /// Referral program screen showing the referral code, instructions, and tiers.
 ///
@@ -164,7 +163,9 @@ class ReferralScreen extends ConsumerWidget {
           height: 48,
           child: ElevatedButton.icon(
             onPressed: () {
-              Share.share(buildReferralCodeShareMessage(code));
+              Share.share(
+                AppLocalizations.of(context).referralShareMessage(code),
+              );
             },
             icon: const Icon(LucideIcons.share2, size: 18),
             label: Text(
