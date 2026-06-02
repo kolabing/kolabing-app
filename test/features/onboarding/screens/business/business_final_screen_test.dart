@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/onboarding/models/onboarding_state.dart';
@@ -19,7 +20,11 @@ void main() {
             () => _FakeOnboardingNotifier(_businessOnboardingData),
           ),
         ],
-        child: const MaterialApp(home: BusinessFinalScreen()),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: BusinessFinalScreen(),
+        ),
       ),
     );
 

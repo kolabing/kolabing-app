@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/auth/screens/login_screen.dart';
@@ -25,6 +26,8 @@ Future<void> _pumpLogin(
   await tester.pumpWidget(
     ProviderScope(
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => MediaQuery(
             data: MediaQuery.of(
@@ -94,7 +97,11 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [authProvider.overrideWith(_ThrowingAuthNotifier.new)],
-          child: const MaterialApp(home: LoginScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: LoginScreen(),
+          ),
         ),
       );
       await tester.pump();

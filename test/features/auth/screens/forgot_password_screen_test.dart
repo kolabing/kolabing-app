@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
@@ -22,6 +23,8 @@ Future<void> _pumpForgotPassword(
 
   await tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Builder(
         builder: (context) => MediaQuery(
           data: MediaQuery.of(

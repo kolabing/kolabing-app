@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
@@ -60,6 +61,8 @@ void main() {
             profileEventsProvider.overrideWith((ref, profileId) => const []),
           ],
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: CommunityOfferDetailScreen(offerId: 'opp-1'),
           ),
         ),
@@ -138,6 +141,8 @@ void main() {
             profileEventsProvider.overrideWith((ref, profileId) => events),
           ],
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: CommunityOfferDetailScreen(offerId: 'opp-1'),
           ),
         ),
@@ -180,6 +185,8 @@ void main() {
             profileEventsProvider.overrideWith((ref, profileId) => const []),
           ],
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: CommunityOfferDetailScreen(offerId: 'opp-1'),
           ),
         ),
@@ -231,9 +238,7 @@ Opportunity _testOpportunity() => Opportunity(
   title: 'Barcelona brunch collab',
   description: 'Host our community for a brunch meetup.',
   businessOffer: const BusinessOffer(venue: true, foodDrink: true),
-  communityDeliverables: const CommunityDeliverables(
-    socialMediaContent: true,
-  ),
+  communityDeliverables: const CommunityDeliverables(socialMediaContent: true),
   categories: const ['Food'],
   availabilityMode: AvailabilityMode.oneTime,
   availabilityStart: DateTime(2026, 6, 12),
@@ -263,10 +268,7 @@ Event _testEvent({
   date: date,
   attendeeCount: 120,
   photos: [
-    const EventPhoto(
-      id: 'photo-1',
-      url: 'https://example.com/photo.jpg',
-    ),
+    const EventPhoto(id: 'photo-1', url: 'https://example.com/photo.jpg'),
   ],
   createdAt: date,
 );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:kolabing_app/features/onboarding/models/city.dart';
 import 'package:kolabing_app/features/community/screens/create_opportunity_screen.dart';
@@ -28,6 +29,8 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: CreateOpportunityScreen(
               opportunityShareLauncher: shareLauncher,
             ),
@@ -62,9 +65,7 @@ void main() {
           opportunityFormProvider.overrideWith(
             _EditOpportunityFormNotifier.new,
           ),
-          citiesProvider.overrideWith(
-            (ref) async => <OnboardingCity>[],
-          ),
+          citiesProvider.overrideWith((ref) async => <OnboardingCity>[]),
         ],
       );
       addTearDown(container.dispose);
@@ -93,7 +94,11 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(home: CreateOpportunityScreen(editOpportunity: editOpportunity)),
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: CreateOpportunityScreen(editOpportunity: editOpportunity),
+          ),
         ),
       );
 
