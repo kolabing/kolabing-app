@@ -157,16 +157,19 @@ class _NavBarItem extends StatelessWidget {
                   if (isSelected) ...[
                     const SizedBox(width: 6),
                     Flexible(
-                      child: Text(
-                        item.label.toUpperCase(),
-                        style: KolabingTextStyles.labelSmall.copyWith(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: labelColor,
-                          letterSpacing: 0.5,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          item.label.toUpperCase(),
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: labelColor,
+                            letterSpacing: 0.5,
+                          ),
+                          maxLines: 1,
+                          softWrap: false,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

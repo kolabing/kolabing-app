@@ -96,8 +96,10 @@ void main() {
       expect(opportunityFilters.creatorType, isNull);
       expect(opportunityFilters.hasActiveFilters, isFalse);
 
-      expect(container.read(myKolabsStatusProvider), isNull);
-      expect(container.read(myOpportunitiesStatusProvider), isNull);
+      // After a session reset these user-scoped filters are invalidated and
+      // rebuild to their intended default ('published'), not null.
+      expect(container.read(myKolabsStatusProvider), 'published');
+      expect(container.read(myOpportunitiesStatusProvider), 'published');
     },
   );
 
@@ -166,8 +168,9 @@ void main() {
     expect(container.read(authProvider).status, AuthStatus.unauthenticated);
     expect(container.read(discoveryFiltersProvider).searchQuery, isEmpty);
     expect(container.read(opportunityFiltersProvider).searchQuery, isEmpty);
-    expect(container.read(myKolabsStatusProvider), isNull);
-    expect(container.read(myOpportunitiesStatusProvider), isNull);
+    // Invalidated user-scoped filters rebuild to their default ('published').
+    expect(container.read(myKolabsStatusProvider), 'published');
+    expect(container.read(myOpportunitiesStatusProvider), 'published');
   });
 }
 
