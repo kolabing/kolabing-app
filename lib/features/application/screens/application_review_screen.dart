@@ -7,6 +7,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
@@ -52,7 +53,7 @@ class _ApplicationReviewScreenState
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'APPLICATION',
+          AppLocalizations.of(context).applicationReviewTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -74,7 +75,7 @@ class _ApplicationReviewScreenState
                     size: 48, color: KolabingColors.error),
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
-                  'Failed to load application',
+                  AppLocalizations.of(context).applicationReviewLoadError,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -85,7 +86,7 @@ class _ApplicationReviewScreenState
                 TextButton(
                   onPressed: () => ref.invalidate(
                       applicationDetailProvider(widget.applicationId)),
-                  child: Text('Retry',
+                  child: Text(AppLocalizations.of(context).commonRetry,
                       style: KolabingTextStyles.labelLarge.copyWith(
                           color: KolabingColors.primary)),
                 ),
@@ -95,7 +96,8 @@ class _ApplicationReviewScreenState
         ),
         data: (application) {
           if (application == null) {
-            return const Center(child: Text('Application not found'));
+            return Center(
+                child: Text(AppLocalizations.of(context).applicationReviewNotFound));
           }
           return _buildContent(application);
         },
@@ -126,11 +128,11 @@ class _ApplicationReviewScreenState
                 // Application message
                 _buildSection(
                   icon: LucideIcons.messageSquare,
-                  title: 'Message',
+                  title: AppLocalizations.of(context).applicationReviewMessageLabel,
                   child: Text(
                     application.message.isNotEmpty
                         ? application.message
-                        : 'No message provided',
+                        : AppLocalizations.of(context).applicationReviewNoMessage,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.message.isNotEmpty
                           ? KolabingColors.onSurface
@@ -144,11 +146,11 @@ class _ApplicationReviewScreenState
                 // Availability
                 _buildSection(
                   icon: LucideIcons.calendar,
-                  title: 'Availability',
+                  title: AppLocalizations.of(context).applicationReviewAvailabilityLabel,
                   child: Text(
                     application.availability.isNotEmpty
                         ? application.availability
-                        : 'Not specified',
+                        : AppLocalizations.of(context).applicationReviewNotSpecified,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.availability.isNotEmpty
                           ? KolabingColors.onSurface
@@ -162,7 +164,7 @@ class _ApplicationReviewScreenState
                 // Applied date
                 _buildSection(
                   icon: LucideIcons.clock,
-                  title: 'Applied',
+                  title: AppLocalizations.of(context).applicationReviewAppliedLabel,
                   child: Text(
                     application.createdAtDisplay,
                     style: KolabingTextStyles.bodySmall.copyWith(
@@ -203,7 +205,8 @@ class _ApplicationReviewScreenState
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
-              opportunity?.title ?? 'Unknown Opportunity',
+              opportunity?.title ??
+                  AppLocalizations.of(context).applicationReviewUnknownOpportunity,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.onSurface,
@@ -325,7 +328,7 @@ class _ApplicationReviewScreenState
               }
             },
             child: Text(
-              'View Full Profile',
+              AppLocalizations.of(context).applicationReviewViewFullProfile,
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.primary,
@@ -396,31 +399,32 @@ class _ApplicationReviewScreenState
   }
 
   Widget _buildStatusInfo(Application application) {
+    final l10n = AppLocalizations.of(context);
     final (icon, color, label, description) = switch (application.status) {
       ApplicationStatus.accepted => (
           LucideIcons.checkCircle,
           KolabingColors.success,
-          'Accepted',
-          'This application has been accepted. You can chat with the applicant.',
+          l10n.applicationReviewStatusAccepted,
+          l10n.applicationReviewStatusAcceptedDesc,
         ),
       ApplicationStatus.declined => (
           LucideIcons.xCircle,
           KolabingColors.error,
-          'Declined',
+          l10n.applicationReviewStatusDeclined,
           application.declineReason != null
-              ? 'Declined: ${application.declineReason}'
-              : 'This application has been declined.',
+              ? l10n.applicationReviewStatusDeclinedReason(application.declineReason!)
+              : l10n.applicationReviewStatusDeclinedDesc,
         ),
       ApplicationStatus.withdrawn => (
           LucideIcons.minusCircle,
           KolabingColors.textTertiary,
-          'Withdrawn',
-          'The applicant has withdrawn their application.',
+          l10n.applicationReviewStatusWithdrawn,
+          l10n.applicationReviewStatusWithdrawnDesc,
         ),
       _ => (
           LucideIcons.clock,
           KolabingColors.pendingText,
-          'Pending',
+          l10n.applicationReviewStatusPending,
           '',
         ),
     };
@@ -484,7 +488,7 @@ class _ApplicationReviewScreenState
             ),
             icon: const Icon(LucideIcons.messageCircle, size: 18),
             label: Text(
-              'OPEN CHAT',
+              AppLocalizations.of(context).applicationReviewOpenChat,
               style: KolabingTextStyles.button.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -531,7 +535,7 @@ class _ApplicationReviewScreenState
                       )
                     : const Icon(LucideIcons.x, size: 18),
                 label: Text(
-                  'DECLINE',
+                  AppLocalizations.of(context).applicationReviewDecline,
                   style: KolabingTextStyles.button.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -570,7 +574,7 @@ class _ApplicationReviewScreenState
                       )
                     : const Icon(LucideIcons.check, size: 18),
                 label: Text(
-                  'ACCEPT',
+                  AppLocalizations.of(context).applicationReviewAccept,
                   style: KolabingTextStyles.button.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -626,6 +630,7 @@ class _ApplicationReviewScreenState
   }
 
   Future<void> _showDeclineDialog(Application application) async {
+    final l10n = AppLocalizations.of(context);
     final reasonController = TextEditingController();
 
     final confirmed = await showDialog<bool>(
@@ -633,7 +638,7 @@ class _ApplicationReviewScreenState
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Decline Application',
+          l10n.applicationReviewDeclineDialogTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -644,7 +649,7 @@ class _ApplicationReviewScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Are you sure you want to decline this application from ${application.applicantName}?',
+              l10n.applicationReviewDeclineDialogBody(application.applicantName),
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
@@ -654,7 +659,7 @@ class _ApplicationReviewScreenState
               controller: reasonController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Reason (optional)',
+                hintText: l10n.applicationReviewDeclineReasonHint,
                 hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textTertiary,
                 ),
@@ -679,7 +684,7 @@ class _ApplicationReviewScreenState
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
-              'Cancel',
+              l10n.commonCancel,
               style: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ),
@@ -693,7 +698,7 @@ class _ApplicationReviewScreenState
               elevation: 0,
             ),
             child: Text(
-              'Decline',
+              l10n.applicationReviewDeclineDialogConfirm,
               style: KolabingTextStyles.button,
             ),
           ),
@@ -723,7 +728,7 @@ class _ApplicationReviewScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Application declined',
+            l10n.applicationReviewDeclinedSnack,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.onSurfaceVariant,
@@ -868,7 +873,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
               // Title
               Text(
-                'Accept Application',
+                AppLocalizations.of(context).acceptFormTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -877,7 +882,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
-                "Pick a kolab date — you'll continue the conversation in chat after accepting.",
+                AppLocalizations.of(context).acceptFormSubtitle,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
@@ -886,7 +891,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
               // Date picker section
               Text(
-                'SCHEDULED DATE',
+                AppLocalizations.of(context).acceptFormScheduledDate,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
@@ -903,7 +908,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                     borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Text(
-                    'No available future dates in the opportunity range.',
+                    AppLocalizations.of(context).acceptFormNoDates,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
@@ -972,7 +977,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                         )
                       : const Icon(LucideIcons.check, size: 18),
                   label: Text(
-                    'CONFIRM ACCEPT',
+                    AppLocalizations.of(context).acceptFormConfirm,
                     style: KolabingTextStyles.button.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -1048,6 +1053,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
   Future<void> _submit() async {
     if (!_isValid) return;
 
+    final l10n = AppLocalizations.of(context);
+
     setState(() {
       _isSubmitting = true;
       _error = null;
@@ -1077,7 +1084,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Application accepted! Kolab created.',
+            l10n.acceptFormAcceptedSnack,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.success,
@@ -1094,7 +1101,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
         if (e is ApiException) {
           _error = e.error.allErrorMessages;
         } else {
-          _error = 'Failed to accept application. Please try again.';
+          _error = l10n.acceptFormError;
         }
       });
     }

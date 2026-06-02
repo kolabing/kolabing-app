@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/leaderboard.dart';
 import '../providers/leaderboard_provider.dart';
 import '../widgets/leaderboard_entry_tile.dart';
@@ -38,7 +39,9 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isGlobal ? 'Global Leaderboard' : (widget.eventName ?? 'Leaderboard'),
+          isGlobal
+              ? AppLocalizations.of(context).leaderboardScreenGlobalTitle
+              : (widget.eventName ?? AppLocalizations.of(context).leaderboardScreenTitle),
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -95,7 +98,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   KolabingSpacing.sm,
                 ),
                 child: Text(
-                  'RANKINGS',
+                  AppLocalizations.of(context).leaderboardScreenRankings,
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
@@ -171,7 +174,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Your Ranking',
+                  AppLocalizations.of(context).leaderboardScreenYourRanking,
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
@@ -193,7 +196,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
               Text(
-                'points',
+                AppLocalizations.of(context).leaderboardScreenPoints,
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                 ),
               ),
@@ -218,12 +221,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'No Rankings Yet',
+              AppLocalizations.of(context).leaderboardScreenNoRankings,
               style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Be the first to earn points\nand claim the top spot!',
+              AppLocalizations.of(context).leaderboardScreenNoRankingsHint,
               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
@@ -247,7 +250,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load leaderboard',
+              AppLocalizations.of(context).leaderboardScreenFailedToLoad,
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -266,7 +269,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 }
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

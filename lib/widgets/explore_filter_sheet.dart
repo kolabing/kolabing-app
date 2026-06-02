@@ -16,6 +16,7 @@ import '../features/onboarding/models/city.dart';
 import '../features/onboarding/providers/onboarding_provider.dart'
     as onboarding;
 import '../features/opportunity/models/opportunity.dart';
+import '../l10n/app_localizations.dart';
 import 'keyboard_avoiding_content.dart';
 
 class ExploreFilterSheet extends ConsumerStatefulWidget {
@@ -119,6 +120,7 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final filters = ref.watch(discoveryFiltersProvider);
 
     return KeyboardAvoidingContent(
@@ -154,13 +156,13 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                     const SizedBox(height: KolabingSpacing.md),
                     _FilterTextField(
                       controller: _searchController,
-                      hintText: 'Search by title, description, or creator...',
+                      hintText: l10n.exploreFilterSearchHint,
                       icon: LucideIcons.search,
                       onChanged: _onSearchChanged,
                       onClear: _clearSearch,
                     ),
                     const SizedBox(height: KolabingSpacing.md),
-                    const _SectionLabel(label: 'City'),
+                    _SectionLabel(label: l10n.exploreFilterCity),
                     const SizedBox(height: KolabingSpacing.xs),
                     ValueListenableBuilder<TextEditingValue>(
                       valueListenable: _cityController,
@@ -173,7 +175,7 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                                 _FilterTextField(
                                   controller: _cityController,
                                   focusNode: _cityFocusNode,
-                                  hintText: 'Type a city',
+                                  hintText: l10n.exploreFilterCityHint,
                                   icon: LucideIcons.mapPin,
                                   onChanged: _onCityChanged,
                                   onClear: _clearCity,
@@ -195,7 +197,7 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                           },
                     ),
                     const SizedBox(height: KolabingSpacing.lg),
-                    const _SectionLabel(label: 'Availability'),
+                    _SectionLabel(label: l10n.exploreFilterAvailability),
                     const SizedBox(height: KolabingSpacing.xs),
                     _SingleSelectChipGroup(
                       options: AvailabilityMode.values
@@ -244,12 +246,13 @@ class _CommunitySections extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final notifier = ref.read(discoveryFiltersProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Kolab Type'),
+        _SectionLabel(label: l10n.exploreFilterKolabType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.intentTypeOptions,
@@ -257,7 +260,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleIntentType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'What They Offer'),
+        _SectionLabel(label: l10n.exploreFilterWhatTheyOffer),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.offerTypeOptions,
@@ -265,7 +268,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleOfferType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Venue Type'),
+        _SectionLabel(label: l10n.exploreFilterVenueType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.venueTypeOptions,
@@ -273,7 +276,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleVenueType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Product Type'),
+        _SectionLabel(label: l10n.exploreFilterProductType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.productTypeOptions,
@@ -281,7 +284,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleProductType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Expected Deliverables'),
+        _SectionLabel(label: l10n.exploreFilterExpectedDeliverables),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.deliverableOptions,
@@ -289,7 +292,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleExpectedDeliverable,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Minimum Community Size Requirement'),
+        _SectionLabel(label: l10n.exploreFilterMinCommunitySize),
         const SizedBox(height: KolabingSpacing.xs),
         _SingleSelectChipGroup(
           options: DiscoveryFilterPresets.communityRequirementBandOptions,
@@ -308,12 +311,13 @@ class _BusinessSections extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final notifier = ref.read(discoveryFiltersProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Need'),
+        _SectionLabel(label: l10n.exploreFilterNeed),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.needTypeOptions,
@@ -321,7 +325,7 @@ class _BusinessSections extends ConsumerWidget {
           onToggle: notifier.toggleNeedType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Community Type'),
+        _SectionLabel(label: l10n.exploreFilterCommunityType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.communityTypeOptions,
@@ -329,7 +333,7 @@ class _BusinessSections extends ConsumerWidget {
           onToggle: notifier.toggleCommunityType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Audience Size'),
+        _SectionLabel(label: l10n.exploreFilterAudienceSize),
         const SizedBox(height: KolabingSpacing.xs),
         _SingleSelectChipGroup(
           options: DiscoveryFilterPresets.audienceSizeBandOptions,
@@ -337,7 +341,7 @@ class _BusinessSections extends ConsumerWidget {
           onSelected: notifier.setAudienceSizeBand,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Offers In Return'),
+        _SectionLabel(label: l10n.exploreFilterOffersInReturn),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.deliverableOptions,
@@ -345,7 +349,7 @@ class _BusinessSections extends ConsumerWidget {
           onToggle: notifier.toggleOfferInReturn,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Venue Preference'),
+        _SectionLabel(label: l10n.exploreFilterVenuePreference),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.venuePreferenceOptions,
@@ -391,7 +395,7 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       Text(
-        'Search & Filter',
+        AppLocalizations.of(context).exploreFilterTitle,
         style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.onSurface,
@@ -408,7 +412,7 @@ class _HeaderRow extends StatelessWidget {
               vertical: KolabingSpacing.xxs,
             ),
             child: Text(
-              'Clear all',
+              AppLocalizations.of(context).exploreFilterClearAll,
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w500,
                 color: KolabingColors.primary,
@@ -531,8 +535,8 @@ class _CityAutocompleteResults extends ConsumerWidget {
         final visibleCities = cities.take(6).toList(growable: false);
 
         if (visibleCities.isEmpty) {
-          return const _CityAutocompleteMessage(
-            message: 'No matching cities found',
+          return _CityAutocompleteMessage(
+            message: AppLocalizations.of(context).exploreFilterNoMatchingCities,
           );
         }
 
@@ -598,8 +602,8 @@ class _CityAutocompleteResults extends ConsumerWidget {
         ),
       ),
       error: (Object error, StackTrace stackTrace) =>
-          const _CityAutocompleteMessage(
-            message: 'Could not load city suggestions',
+          _CityAutocompleteMessage(
+            message: AppLocalizations.of(context).exploreFilterCitySuggestionsError,
           ),
     );
   }
@@ -756,9 +760,7 @@ class _ResultsCount extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Text(
-      total > 0
-          ? '$total result${total == 1 ? '' : 's'} found'
-          : 'Showing all opportunities',
+      AppLocalizations.of(context).exploreFilterResultsCount(total),
       style: KolabingTextStyles.captionSecondary.copyWith(
         fontWeight: FontWeight.w500,
         color: KolabingColors.textTertiary,

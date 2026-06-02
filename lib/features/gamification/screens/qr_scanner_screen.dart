@@ -7,6 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/checkin_provider.dart';
 
 /// QR Scanner screen for attendees to check in to events
@@ -76,10 +77,15 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
 
     if (success) {
       final checkinState = ref.read(checkinProvider);
-      _showSuccessDialog(checkinState.checkin?.eventName ?? 'Event');
+      _showSuccessDialog(
+        checkinState.checkin?.eventName ??
+            AppLocalizations.of(context).qrScannerEventFallback,
+      );
     } else {
       final error = ref.read(checkinProvider).error;
-      _showErrorDialog(error ?? 'Failed to check in');
+      _showErrorDialog(
+        error ?? AppLocalizations.of(context).qrScannerCheckinFailed,
+      );
     }
   }
 
@@ -109,12 +115,12 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
-                'Check-in Successful!',
+                AppLocalizations.of(context).qrScannerSuccessTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'You have checked in to',
+                AppLocalizations.of(context).qrScannerSuccessSubtitle,
                 style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
@@ -140,7 +146,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                     ),
                   ),
                   child: Text(
-                    'Continue',
+                    AppLocalizations.of(context).commonContinue,
                     style: KolabingTextStyles.button.copyWith(fontSize: 16),
                   ),
                 ),
@@ -177,7 +183,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
-                'Check-in Failed',
+                AppLocalizations.of(context).qrScannerErrorTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -203,7 +209,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Close'),
+                      child: Text(AppLocalizations.of(context).qrScannerClose),
                     ),
                   ),
                   const SizedBox(width: KolabingSpacing.sm),
@@ -218,7 +224,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Try Again'),
+                      child: Text(AppLocalizations.of(context).commonTryAgain),
                     ),
                   ),
                 ],
@@ -279,7 +285,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                   ),
                 ),
                 Text(
-                  'Scan QR Code',
+                  AppLocalizations.of(context).qrScannerTitle,
                   style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
                 ),
                 const SizedBox(width: 48), // Balance the close button
@@ -333,7 +339,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                               ),
                               const SizedBox(height: KolabingSpacing.md),
                               Text(
-                                'Checking in...',
+                                AppLocalizations.of(context).qrScannerCheckingIn,
                                 style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textOnDark),
                               ),
                             ],
@@ -352,13 +358,13 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
             child: Column(
               children: [
                 Text(
-                  'Point your camera at the event QR code',
+                  AppLocalizations.of(context).qrScannerInstructionTitle,
                   style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textOnDark),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
-                  'The QR code will be displayed by the event organizer',
+                  AppLocalizations.of(context).qrScannerInstructionSubtitle,
                   style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
                   textAlign: TextAlign.center,
                 ),

@@ -8,6 +8,7 @@ import '../../../config/constants/api.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/collaboration.dart';
 import '../services/collaboration_completion_service.dart';
@@ -141,7 +142,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _error = 'Something went wrong. Please try again.';
+        _error = AppLocalizations.of(context).commonErrorGeneric;
       });
     }
   }
@@ -190,13 +191,15 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       } else {
         setState(() {
           _isSubmittingFeedback = false;
-          _feedbackError = 'Could not submit feedback. Please try again.';
+          _feedbackError =
+              AppLocalizations.of(context).kolabCompletionSheetFeedbackError;
         });
       }
     } catch (_) {
       setState(() {
         _isSubmittingFeedback = false;
-        _feedbackError = 'Could not submit feedback. Please try again.';
+        _feedbackError =
+            AppLocalizations.of(context).kolabCompletionSheetFeedbackError;
       });
     }
   }
@@ -321,11 +324,12 @@ class _StepConfirm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Did the Kolab happen? 🎯',
+          l10n.kolabCompletionConfirmTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             fontSize: 22,
             color: KolabingColors.onSurface,
@@ -333,7 +337,7 @@ class _StepConfirm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Mark your Kolab with $partnerName as complete.',
+          l10n.kolabCompletionConfirmSubtitle(partnerName),
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
             color: KolabingColors.onSurfaceVariant,
@@ -358,13 +362,15 @@ class _StepConfirm extends StatelessWidget {
           const SizedBox(height: 16),
         ],
         _PrimaryButton(
-          label: isLoading ? 'Completing…' : 'Yes, complete Kolab ✨',
+          label: isLoading
+              ? l10n.kolabCompletionConfirmLoading
+              : l10n.kolabCompletionConfirmCta,
           isLoading: isLoading,
           onTap: isLoading ? null : onConfirm,
         ),
         const SizedBox(height: 12),
         _SecondaryButton(
-          label: 'Not yet',
+          label: l10n.kolabCompletionConfirmDismiss,
           onTap: onDismiss,
         ),
       ],
@@ -407,11 +413,12 @@ class _StepFeedback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'How was the Kolab? ⭐',
+          l10n.kolabCompletionFeedbackTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             fontSize: 22,
             color: KolabingColors.onSurface,
@@ -419,8 +426,7 @@ class _StepFeedback extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Feedback is required to finish. Your review helps $partnerName '
-          'build trust on Kolabing.',
+          l10n.kolabCompletionFeedbackSubtitle(partnerName),
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
             color: KolabingColors.onSurfaceVariant,
@@ -453,7 +459,7 @@ class _StepFeedback extends StatelessWidget {
           maxLines: 3,
           maxLength: 300,
           decoration: InputDecoration(
-            hintText: 'Anything to add? (optional)',
+            hintText: l10n.kolabCompletionFeedbackCommentHint,
             filled: true,
             fillColor: KolabingColors.background,
             border: OutlineInputBorder(
@@ -465,7 +471,7 @@ class _StepFeedback extends StatelessWidget {
         const SizedBox(height: 8),
         // Would Kolab again
         Text(
-          'Would you Kolab again?',
+          l10n.kolabCompletionFeedbackWouldAgain,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: KolabingColors.onSurface,
@@ -476,7 +482,7 @@ class _StepFeedback extends StatelessWidget {
           children: [
             Expanded(
               child: _ChoiceChip(
-                label: 'Yes',
+                label: l10n.kolabCompletionFeedbackYes,
                 selected: wouldAgain == true,
                 onTap: () => onWouldAgainChanged(true),
               ),
@@ -484,7 +490,7 @@ class _StepFeedback extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _ChoiceChip(
-                label: 'No',
+                label: l10n.kolabCompletionFeedbackNo,
                 selected: wouldAgain == false,
                 onTap: () => onWouldAgainChanged(false),
               ),
@@ -502,7 +508,9 @@ class _StepFeedback extends StatelessWidget {
           const SizedBox(height: 12),
         ],
         _PrimaryButton(
-          label: isSubmitting ? 'Submitting…' : 'Submit & finish',
+          label: isSubmitting
+              ? l10n.kolabCompletionFeedbackSubmitting
+              : l10n.kolabCompletionFeedbackSubmit,
           isLoading: isSubmitting,
           onTap: isSubmitting ? null : onSubmit,
         ),
@@ -510,7 +518,7 @@ class _StepFeedback extends StatelessWidget {
           const SizedBox(height: 8),
           Center(
             child: Text(
-              'Tap a star to rate',
+              l10n.kolabCompletionFeedbackTapStar,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.textTertiary,
               ),
@@ -520,7 +528,7 @@ class _StepFeedback extends StatelessWidget {
         if (onFinishLater != null && !isSubmitting) ...[
           const SizedBox(height: 4),
           _SecondaryButton(
-            label: 'Finish later',
+            label: l10n.kolabCompletionFeedbackFinishLater,
             onTap: onFinishLater!,
           ),
         ],
@@ -588,6 +596,7 @@ class _StepCelebration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -602,7 +611,7 @@ class _StepCelebration extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                'Kolab completed! 🎉',
+                l10n.kolabCompletionCelebrationTitle,
                 style: KolabingTextStyles.headlineMedium.copyWith(
                   color: KolabingColors.onSurface,
                 ),
@@ -610,7 +619,7 @@ class _StepCelebration extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'You earned XP and your profile now reflects this completed Kolab.',
+                l10n.kolabCompletionCelebrationBody,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                   height: 1.4,
@@ -624,7 +633,7 @@ class _StepCelebration extends StatelessWidget {
         ),
         const SizedBox(height: 32),
         _PrimaryButton(
-          label: 'See my XP →',
+          label: l10n.kolabCompletionCelebrationCta,
           onTap: onContinue,
         ),
       ],
@@ -645,7 +654,7 @@ class _XpPreviewBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(50),
       ),
       child: Text(
-        '+$baseXp XP earned ⚡',
+        AppLocalizations.of(context).kolabCompletionXpEarned(baseXp),
         style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w700,
           color: KolabingColors.onSurface,
@@ -667,6 +676,7 @@ class _StepDone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -674,7 +684,7 @@ class _StepDone extends StatelessWidget {
         const Text('🏆', style: TextStyle(fontSize: 72)),
         const SizedBox(height: 24),
         Text(
-          'All done! 🏆',
+          l10n.kolabCompletionDoneTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
@@ -682,7 +692,7 @@ class _StepDone extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'This Kolab is complete. Check your profile to see your growing history of collaborations.',
+          l10n.kolabCompletionDoneBody,
           style: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.onSurfaceVariant,
             height: 1.4,
@@ -706,14 +716,14 @@ class _StepDone extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                '+$totalXp XP',
+                l10n.kolabCompletionDoneXp(totalXp),
                 style: KolabingTextStyles.headlineLarge.copyWith(
                   fontSize: 36,
                   color: KolabingColors.onSurface,
                 ),
               ),
               Text(
-                'XP earned',
+                l10n.kolabCompletionDoneXpLabel,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 13,
                   color: KolabingColors.onSurface.withOpacity(0.6),
@@ -723,7 +733,7 @@ class _StepDone extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 32),
-        _PrimaryButton(label: 'Close', onTap: onClose),
+        _PrimaryButton(label: l10n.kolabCompletionDoneClose, onTap: onClose),
       ],
     );
   }

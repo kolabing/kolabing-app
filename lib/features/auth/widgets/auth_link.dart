@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Footer navigation link for auth screens
 ///
@@ -65,7 +66,10 @@ class _AuthLinkState extends State<AuthLink> {
   Widget build(BuildContext context) => Semantics(
         button: true,
         enabled: widget.isEnabled,
-        label: '${widget.leadingText} Tap ${widget.actionText} to navigate',
+        label: AppLocalizations.of(context).authLinkSemanticLabel(
+          widget.leadingText,
+          widget.actionText,
+        ),
         child: GestureDetector(
           onTapDown: _handleTapDown,
           onTapUp: _handleTapUp,

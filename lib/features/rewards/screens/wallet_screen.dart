@@ -11,6 +11,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/ledger_entry.dart';
 import '../models/reward_badge.dart';
 import '../models/xp_level.dart';
@@ -58,7 +59,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         backgroundColor: KolabingColors.background,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'XP & REPUTATION',
+          AppLocalizations.of(context).walletScreenTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
@@ -82,28 +83,28 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: KolabingSpacing.lg),
 
             // 2 — Ways to earn
-            _buildSectionHeader('WAYS TO EARN XP'),
+            _buildSectionHeader(AppLocalizations.of(context).walletScreenWaysToEarn),
             const SizedBox(height: KolabingSpacing.sm),
             _buildMissionsCard(),
 
             const SizedBox(height: KolabingSpacing.lg),
 
             // 3 — Badges
-            _buildSectionHeader('BADGES'),
+            _buildSectionHeader(AppLocalizations.of(context).walletScreenBadges),
             const SizedBox(height: KolabingSpacing.sm),
             _buildBadgesGrid(state),
 
             const SizedBox(height: KolabingSpacing.lg),
 
             // 4 — Cash referral milestone (separate from XP)
-            _buildSectionHeader('CASH REFERRAL'),
+            _buildSectionHeader(AppLocalizations.of(context).walletScreenCashReferral),
             const SizedBox(height: KolabingSpacing.sm),
             _buildReferralMilestoneCard(state),
 
             const SizedBox(height: KolabingSpacing.lg),
 
             // 5 — XP History
-            _buildSectionHeader('XP HISTORY'),
+            _buildSectionHeader(AppLocalizations.of(context).walletScreenXpHistory),
             const SizedBox(height: KolabingSpacing.sm),
             _buildXpHistory(state),
 
@@ -164,7 +165,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'XP POINTS',
+            AppLocalizations.of(context).walletScreenXpPoints,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -187,7 +188,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
           // Total XP label
           Text(
-            'Total XP: ${wallet.totalXp}',
+            AppLocalizations.of(context).walletScreenTotalXp(wallet.totalXp),
             style: KolabingTextStyles.captionSecondary.copyWith(
               color: KolabingColors.onPrimary.withValues(alpha: 0.8),
             ),
@@ -238,7 +239,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         if (!level.isMaxLevel) ...[
           const SizedBox(height: 4),
           Text(
-            '${level.xpToNext(points)} XP to ${level.next?.title ?? ''}',
+            AppLocalizations.of(context).walletScreenXpToNext(
+              level.xpToNext(points),
+              level.next?.title ?? '',
+            ),
             style: KolabingTextStyles.labelSmall.copyWith(
               color: KolabingColors.onPrimary.withValues(alpha: 0.65),
             ),
@@ -269,26 +273,26 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       children: [
         _MissionRow(
           icon: LucideIcons.heartHandshake,
-          label: 'Complete a kolab',
-          xp: '+10 XP',
+          label: AppLocalizations.of(context).walletScreenMissionCompleteKolab,
+          xp: AppLocalizations.of(context).walletScreenXpGain(10),
         ),
         const Divider(height: KolabingSpacing.md),
         _MissionRow(
           icon: LucideIcons.star,
-          label: 'Post a review',
-          xp: '+10 XP',
+          label: AppLocalizations.of(context).walletScreenMissionPostReview,
+          xp: AppLocalizations.of(context).walletScreenXpGain(10),
         ),
         const Divider(height: KolabingSpacing.md),
         _MissionRow(
           icon: LucideIcons.camera,
-          label: 'Share content (UGC)',
-          xp: '+10 XP',
+          label: AppLocalizations.of(context).walletScreenMissionShareContent,
+          xp: AppLocalizations.of(context).walletScreenXpGain(10),
         ),
         const Divider(height: KolabingSpacing.md),
         _MissionRow(
           icon: LucideIcons.userPlus,
-          label: 'Refer a business',
-          xp: '+50 XP',
+          label: AppLocalizations.of(context).walletScreenMissionReferBusiness,
+          xp: AppLocalizations.of(context).walletScreenXpGain(50),
         ),
       ],
     ),
@@ -325,7 +329,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
     final badges = state.badges;
     if (badges.isEmpty) {
-      return _buildEmptyPlaceholder('No badges available');
+      return _buildEmptyPlaceholder(
+        AppLocalizations.of(context).walletScreenNoBadges,
+      );
     }
 
     return GridView.count(
@@ -384,14 +390,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Earn €75 Cash',
+                      AppLocalizations.of(context).walletScreenEarnCashTitle,
                       style: KolabingTextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.w700,
                         color: KolabingColors.onSurface,
                       ),
                     ),
                     Text(
-                      'Refer 3 businesses on a 4-month plan',
+                      AppLocalizations.of(context).walletScreenEarnCashSubtitle,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         color: KolabingColors.onSurfaceVariant,
                       ),
@@ -431,8 +437,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
           Text(
             conversions >= goal
-                ? 'Milestone reached! Request your cash reward.'
-                : '$conversions / $goal businesses referred · $remaining more to go',
+                ? AppLocalizations.of(context).walletScreenMilestoneReached
+                : AppLocalizations.of(context).walletScreenMilestoneProgress(
+                    conversions,
+                    goal,
+                    remaining,
+                  ),
             style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
@@ -474,9 +484,11 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: referralCode));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Referral code copied'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).referralCodeCopied,
+                        ),
+                        duration: const Duration(seconds: 2),
                         backgroundColor: KolabingColors.success,
                       ),
                     );
@@ -499,11 +511,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         referralLink != null || state.referralCode != null
                         ? () => Share.share(
                             referralLink ??
-                                'Join Kolabing with my code: $referralCode',
+                                AppLocalizations.of(
+                                  context,
+                                ).walletScreenShareMessage(referralCode),
                           )
                         : null,
                     icon: const Icon(LucideIcons.share2, size: 16),
-                    label: Text('SHARE LINK', style: KolabingTextStyles.button),
+                    label: Text(
+                      AppLocalizations.of(context).walletScreenShareLink,
+                      style: KolabingTextStyles.button,
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: KolabingColors.primary,
                       foregroundColor: KolabingColors.onPrimary,
@@ -532,7 +549,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         ),
                       ),
                       child: Text(
-                        'REQUEST €75',
+                        AppLocalizations.of(context).walletScreenRequestCash,
                         style: KolabingTextStyles.button,
                       ),
                     ),
@@ -576,7 +593,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     }
 
     if (ledger.isEmpty) {
-      return _buildEmptyPlaceholder('No XP activity yet — complete a kolab!');
+      return _buildEmptyPlaceholder(
+        AppLocalizations.of(context).walletScreenNoXpActivity,
+      );
     }
 
     return Column(
@@ -602,7 +621,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   ),
                 ),
                 child: Text(
-                  'LOAD MORE',
+                  AppLocalizations.of(context).walletScreenLoadMore,
                   style: KolabingTextStyles.buttonSmall.copyWith(
                     color: KolabingColors.onSurfaceVariant,
                   ),
@@ -853,7 +872,13 @@ class _LedgerRow extends StatelessWidget {
                 borderRadius: KolabingRadius.borderRadiusRound,
               ),
               child: Text(
-                isEarned ? '+${entry.points} XP' : '${entry.points} XP',
+                isEarned
+                    ? AppLocalizations.of(context).walletScreenXpGain(
+                        entry.points,
+                      )
+                    : AppLocalizations.of(context).walletScreenXpAmount(
+                        entry.points,
+                      ),
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isEarned

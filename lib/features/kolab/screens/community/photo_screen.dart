@@ -9,6 +9,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
 import '../../../../utils/remote_media_url.dart';
@@ -93,7 +94,9 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Upload failed: $e'),
+            content: Text(
+              AppLocalizations.of(context).photoUploadFailed(e.toString()),
+            ),
             backgroundColor: KolabingColors.error,
           ),
         );
@@ -106,10 +109,11 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
   }
 
   Future<void> _selectExistingPhoto() async {
+    final l10n = AppLocalizations.of(context);
     final selectedPhotos = await ExistingPhotoPickerSheet.show(
       context,
-      title: 'Use a gallery or past-event photo',
-      confirmLabel: 'Use photo',
+      title: l10n.photoPickerSheetTitle,
+      confirmLabel: l10n.photoPickerConfirmLabel,
       maxSelection: 1,
       initiallySelectedUrls: ref
           .read(kolabFormProvider)
@@ -132,6 +136,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final galleryState = ref.watch(galleryProvider);
     final eventsState = ref.watch(eventsProvider);
@@ -157,12 +162,12 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
         children: [
           // Section header
           Text(
-            'ADD A PHOTO',
+            l10n.photoAddHeader,
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'This will appear on your kolab card in Explore.',
+            l10n.photoAddSubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
@@ -218,7 +223,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: Text(
-                      'Use your community profile photo',
+                      l10n.photoUseProfilePhoto,
                       style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                   ),
@@ -238,7 +243,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                   horizontal: KolabingSpacing.sm,
                 ),
                 child: Text(
-                  'OR',
+                  l10n.photoDividerOr,
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
                 ),
               ),
@@ -252,7 +257,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
             OutlinedButton.icon(
               onPressed: _isUploading ? null : _selectExistingPhoto,
               icon: const Icon(LucideIcons.imagePlus, size: 18),
-              label: const Text('Choose from gallery or past events'),
+              label: Text(l10n.photoChooseFromGallery),
             ),
             const SizedBox(height: KolabingSpacing.md),
           ],
@@ -296,12 +301,12 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                       ),
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
-                        'Upload a photo',
+                        l10n.photoUploadTitle,
                         style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xxs),
                       Text(
-                        'Max 5MB',
+                        l10n.photoUploadMaxSize,
                         style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                       ),
                     ],
@@ -341,7 +346,9 @@ class _UploadedPhotoCard extends StatelessWidget {
       photo.url.isNotEmpty && !photo.url.startsWith('http');
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
     width: double.infinity,
     padding: const EdgeInsets.all(KolabingSpacing.sm),
     decoration: BoxDecoration(
@@ -375,12 +382,12 @@ class _UploadedPhotoCard extends StatelessWidget {
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
-          'Uploaded photo selected',
+          l10n.photoUploadedSelectedTitle,
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'This image will appear on your kolab card in Explore.',
+          l10n.photoUploadedSelectedSubtitle,
           style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -389,7 +396,7 @@ class _UploadedPhotoCard extends StatelessWidget {
             Expanded(
               child: OutlinedButton(
                 onPressed: isUploading ? null : onRemove,
-                child: const Text('Use profile photo'),
+                child: Text(l10n.photoUseProfilePhotoButton),
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -400,7 +407,7 @@ class _UploadedPhotoCard extends StatelessWidget {
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,
                 ),
-                child: const Text('Replace photo'),
+                child: Text(l10n.photoReplacePhotoButton),
               ),
             ),
           ],
@@ -408,6 +415,7 @@ class _UploadedPhotoCard extends StatelessWidget {
       ],
     ),
   );
+  }
 }
 
 /// Paints a dashed rounded rectangle border.

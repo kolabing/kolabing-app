@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/explore_detail_sheet.dart';
 import '../../../widgets/explore_filter_sheet.dart';
 import '../../../widgets/explore_swipe_card.dart';
@@ -195,7 +196,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   }
 
   Widget _buildTopBar(DiscoveryFilters filters, DiscoveryListState listState) {
-    final filterLabel = _buildFilterLabel(filters, listState.total);
+    final filterLabel = _buildFilterLabel(context, filters, listState.total);
     final hasFilters = filters.hasActiveFilters;
 
     return Padding(
@@ -256,11 +257,16 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
-  String _buildFilterLabel(DiscoveryFilters filters, int total) {
+  String _buildFilterLabel(
+    BuildContext context,
+    DiscoveryFilters filters,
+    int total,
+  ) {
+    final l10n = AppLocalizations.of(context);
     if (!filters.hasActiveFilters) {
       return filters.feed == DiscoveryFeed.recommended
-          ? 'Recommended matches for you'
-          : 'Browse all open kolabs';
+          ? l10n.exploreRecommendedMatches
+          : l10n.exploreBrowseAll;
     }
 
     final parts = <String>[];
@@ -276,20 +282,20 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       );
     }
     if (!_isCommunityViewer && filters.needTypes.isNotEmpty) {
-      parts.add('Needs ${filters.needTypes.length}');
+      parts.add(l10n.exploreFilterNeeds(filters.needTypes.length));
     }
     if (!_isCommunityViewer && filters.communityTypes.isNotEmpty) {
-      parts.add('Types ${filters.communityTypes.length}');
+      parts.add(l10n.exploreFilterTypes(filters.communityTypes.length));
     }
     if (_isCommunityViewer && filters.offerTypes.isNotEmpty) {
-      parts.add('Offers ${filters.offerTypes.length}');
+      parts.add(l10n.exploreFilterOffers(filters.offerTypes.length));
     }
     if (_isCommunityViewer && filters.intentTypes.isNotEmpty) {
-      parts.add('Kolab ${filters.intentTypes.length}');
+      parts.add(l10n.exploreFilterKolab(filters.intentTypes.length));
     }
 
     if (parts.isEmpty) {
-      return '$total result${total == 1 ? '' : 's'}';
+      return l10n.exploreResultCount(total);
     }
 
     return parts.join(' · ');
@@ -462,19 +468,21 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               filters.hasActiveFilters
-                  ? 'No results found'
+                  ? AppLocalizations.of(context).exploreEmptyNoResults
                   : isRecommended
-                  ? 'No recommended matches yet'
-                  : 'No opportunities yet',
+                  ? AppLocalizations.of(context).exploreEmptyNoRecommended
+                  : AppLocalizations.of(context).exploreEmptyNoOpportunities,
               style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               filters.hasActiveFilters
-                  ? 'Try broadening your filters or switching feeds.'
+                  ? AppLocalizations.of(context).exploreEmptyNoResultsHint
                   : isRecommended
-                  ? 'Switch to All or check back for fresh kolabs.'
-                  : 'Check back later for new opportunities.',
+                  ? AppLocalizations.of(context).exploreEmptyNoRecommendedHint
+                  : AppLocalizations.of(
+                      context,
+                    ).exploreEmptyNoOpportunitiesHint,
               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
@@ -485,7 +493,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   ref.read(discoveryFiltersProvider.notifier).clearAll();
                 },
                 icon: const Icon(LucideIcons.rotateCcw, size: 16),
-                label: const Text('Clear all filters'),
+                label: Text(AppLocalizations.of(context).exploreClearFilters),
                 style: TextButton.styleFrom(
                   foregroundColor: KolabingColors.primary,
                 ),
@@ -521,7 +529,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'Something went wrong',
+            AppLocalizations.of(context).exploreSomethingWrong,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -536,7 +544,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               ref.read(discoveryListProvider.notifier).refresh();
             },
             icon: const Icon(LucideIcons.refreshCcw, size: 16),
-            label: const Text('Try again'),
+            label: Text(AppLocalizations.of(context).exploreTryAgain),
           ),
         ],
       ),
@@ -564,14 +572,14 @@ class _FeedToggle extends StatelessWidget {
         children: [
           Expanded(
             child: _FeedSegment(
-              label: 'Recommended',
+              label: AppLocalizations.of(context).exploreFeedRecommended,
               isSelected: feed == DiscoveryFeed.recommended,
               onTap: () => onChanged(DiscoveryFeed.recommended),
             ),
           ),
           Expanded(
             child: _FeedSegment(
-              label: 'All',
+              label: AppLocalizations.of(context).exploreFeedAll,
               isSelected: feed == DiscoveryFeed.all,
               onTap: () => onChanged(DiscoveryFeed.all),
             ),

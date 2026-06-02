@@ -7,6 +7,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
@@ -43,6 +44,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final profileState = ref.watch(profileProvider);
     final userType = profileState.profile?.userType;
     final isProfileTypeResolved = userType != null;
@@ -73,7 +75,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'NEW KOLAB',
+          l10n.intentSelectionAppBarTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
@@ -104,24 +106,24 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                     const SizedBox(height: KolabingSpacing.lg),
                     Text(
                       isCommunity
-                          ? 'What would you like to do?'
-                          : 'What would you like to promote?',
+                          ? l10n.intentSelectionCommunityTitle
+                          : l10n.intentSelectionBusinessTitle,
                       style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       isCommunity
-                          ? 'Choose how you want to kolab with businesses.'
-                          : 'Choose what you want to promote to communities.',
+                          ? l10n.intentSelectionCommunitySubtitle
+                          : l10n.intentSelectionBusinessSubtitle,
                       style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                     ),
                     const SizedBox(height: KolabingSpacing.xl),
                     if (isCommunity) ...[
                       _IntentOption(
                         icon: LucideIcons.search,
-                        title: 'Find a Venue or Sponsor',
-                        subtitle: 'for my community event',
-                        badge: 'FREE',
+                        title: l10n.intentSelectionFindVenueTitle,
+                        subtitle: l10n.intentSelectionFindVenueSubtitle,
+                        badge: l10n.intentSelectionBadgeFree,
                         badgeColor: KolabingColors.success,
                         onTap: () {
                           ref
@@ -133,9 +135,8 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                     ] else ...[
                       _IntentOption(
                         icon: LucideIcons.building2,
-                        title: 'Promote my Venue',
-                        subtitle:
-                            'Get communities to host events at your location',
+                        title: l10n.intentSelectionPromoteVenueTitle,
+                        subtitle: l10n.intentSelectionPromoteVenueSubtitle,
                         onTap: () {
                           ref
                               .read(kolabFormProvider.notifier)
@@ -146,9 +147,8 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       const SizedBox(height: KolabingSpacing.md),
                       _IntentOption(
                         icon: LucideIcons.package,
-                        title: 'Promote a Product or Service',
-                        subtitle:
-                            'Get communities to feature your products at their events',
+                        title: l10n.intentSelectionPromoteProductTitle,
+                        subtitle: l10n.intentSelectionPromoteProductSubtitle,
                         onTap: () {
                           ref
                               .read(kolabFormProvider.notifier)
@@ -173,13 +173,13 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
-                        profileState.error ?? 'Unable to load your profile',
+                        profileState.error ?? l10n.intentSelectionProfileLoadError,
                         textAlign: TextAlign.center,
                         style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
-                        'Please try again to continue creating a kolab.',
+                        l10n.intentSelectionProfileLoadErrorHint,
                         textAlign: TextAlign.center,
                         style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                       ),
@@ -188,7 +188,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                         onPressed: () {
                           ref.read(profileProvider.notifier).loadProfile();
                         },
-                        child: const Text('Retry'),
+                        child: Text(l10n.commonRetry),
                       ),
                     ],
                   ),
@@ -206,48 +206,51 @@ class _LockedBusinessCreateState extends StatelessWidget {
   final Future<void> Function() onUpgrade;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(KolabingSpacing.lg),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 72,
-          height: 72,
-          decoration: const BoxDecoration(
-            color: KolabingColors.softYellow,
-            shape: BoxShape.circle,
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.lg),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: const BoxDecoration(
+              color: KolabingColors.softYellow,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              LucideIcons.crown,
+              size: 34,
+              color: KolabingColors.primary,
+            ),
           ),
-          child: const Icon(
-            LucideIcons.crown,
-            size: 34,
-            color: KolabingColors.primary,
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            l10n.intentSelectionLockedTitle,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
           ),
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-        Text(
-          'An active subscription is required to create Kolabs.',
-          textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-        Text(
-          'Upgrade your business plan to publish venue or product opportunities for communities.',
-          textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
-        ),
-        const SizedBox(height: KolabingSpacing.xl),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: onUpgrade,
-            icon: const Icon(LucideIcons.crown, size: 18),
-            label: const Text('Upgrade to create'),
+          const SizedBox(height: KolabingSpacing.sm),
+          Text(
+            l10n.intentSelectionLockedSubtitle,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: KolabingSpacing.xl),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: onUpgrade,
+              icon: const Icon(LucideIcons.crown, size: 18),
+              label: Text(l10n.intentSelectionUpgradeButton),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// A single intent option card

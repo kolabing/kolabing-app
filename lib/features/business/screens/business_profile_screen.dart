@@ -12,6 +12,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../auth/models/user_model.dart';
 import '../models/notification_preferences.dart';
@@ -46,17 +47,19 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: Text(AppLocalizations.of(context).businessProfileSignOutTitle),
+        content: Text(
+          AppLocalizations.of(context).businessProfileSignOutMessage,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Sign Out'),
+            child: Text(AppLocalizations.of(context).businessProfileSignOut),
           ),
         ],
       ),
@@ -74,19 +77,21 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Account'),
-        content: const Text(
-          'Are you sure you want to delete your account? This action cannot be undone.',
+        title: Text(
+          AppLocalizations.of(context).businessProfileDeleteAccountTitle,
+        ),
+        content: Text(
+          AppLocalizations.of(context).businessProfileDeleteAccountMessage,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context).businessProfileDelete),
           ),
         ],
       ),
@@ -131,7 +136,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'Change Profile Photo',
+                AppLocalizations.of(context).businessProfileChangePhotoTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: KolabingColors.onSurface,
                 ),
@@ -150,8 +155,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     color: KolabingColors.primary,
                   ),
                 ),
-                title: const Text('Take Photo'),
-                subtitle: const Text('Use your camera'),
+                title: Text(
+                  AppLocalizations.of(context).businessProfileTakePhoto,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(context).businessProfileTakePhotoSubtitle,
+                ),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               ListTile(
@@ -167,8 +176,14 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     color: KolabingColors.info,
                   ),
                 ),
-                title: const Text('Choose from Gallery'),
-                subtitle: const Text('Select an existing photo'),
+                title: Text(
+                  AppLocalizations.of(context).businessProfileChooseFromGallery,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(
+                    context,
+                  ).businessProfileChooseFromGallerySubtitle,
+                ),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -193,10 +208,10 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
       // Show loading indicator
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -204,11 +219,13 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 12),
-                Text('Uploading photo...'),
+                const SizedBox(width: 12),
+                Text(
+                  AppLocalizations.of(context).businessProfileUploadingPhoto,
+                ),
               ],
             ),
-            duration: Duration(seconds: 30),
+            duration: const Duration(seconds: 30),
           ),
         );
       }
@@ -225,19 +242,23 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile photo updated'),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context).businessProfilePhotoUpdated,
+              ),
               backgroundColor: KolabingColors.success,
             ),
           );
         }
       }
-    } on Exception catch (e) {
+    } on Exception {
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update photo: $e'),
+            content: Text(
+              AppLocalizations.of(context).businessProfilePhotoUpdateFailed,
+            ),
             backgroundColor: KolabingColors.error,
           ),
         );
@@ -257,7 +278,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             content: Text(next.error!),
             backgroundColor: KolabingColors.error,
             action: SnackBarAction(
-              label: 'Dismiss',
+              label: AppLocalizations.of(context).businessProfileDismiss,
               textColor: Colors.white,
               onPressed: () {
                 ref.read(profileProvider.notifier).clearError();
@@ -296,7 +317,10 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
     // Initialized but no data and no error — something went wrong, show retry
     if (state.isInitialized) {
-      return _buildErrorState('Failed to load profile', isDark);
+      return _buildErrorState(
+        AppLocalizations.of(context).businessProfileLoadFailed,
+        isDark,
+      );
     }
 
     // Initial state (before first load attempt)
@@ -408,7 +432,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'Something went wrong',
+            AppLocalizations.of(context).businessProfileSomethingWrong,
             style: KolabingTextStyles.headlineSmall.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
@@ -427,7 +451,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           ElevatedButton.icon(
             onPressed: () => ref.read(profileProvider.notifier).loadProfile(),
             icon: const Icon(LucideIcons.rotateCcw, size: 18),
-            label: const Text('TRY AGAIN'),
+            label: Text(AppLocalizations.of(context).businessProfileTryAgain),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
@@ -515,7 +539,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final name = profile.businessProfile?.name ?? profile.displayName;
     final businessType =
-        profile.businessProfile?.businessTypesSummary ?? 'Business';
+        profile.businessProfile?.businessTypesSummary ??
+        AppLocalizations.of(context).businessProfileBusinessFallback;
     final photoUrl = profile.businessProfile?.profilePhoto ?? profile.avatarUrl;
 
     return Container(
@@ -659,7 +684,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   );
 
   Widget _buildAboutSection(String about, bool isDark) => _SectionCard(
-    title: 'About',
+    title: AppLocalizations.of(context).businessProfileAbout,
     child: Text(
       about,
       style: KolabingTextStyles.bodyMedium.copyWith(
@@ -677,7 +702,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     final isActive = isSubscribed;
 
     return _SectionCard(
-      title: 'Subscription',
+      title: AppLocalizations.of(context).businessProfileSubscription,
       titleIcon: LucideIcons.sparkles,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -708,7 +733,13 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isActive ? 'Premium Plan' : 'No Active Plan',
+                      isActive
+                          ? AppLocalizations.of(
+                              context,
+                            ).businessProfilePremiumPlan
+                          : AppLocalizations.of(
+                              context,
+                            ).businessProfileNoActivePlan,
                       style: KolabingTextStyles.titleMedium.copyWith(
                         color: KolabingColors.onSurface,
                       ),
@@ -731,7 +762,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             if (subscription.currentPeriodEnd != null)
               _buildDetailRow(
                 icon: LucideIcons.calendar,
-                label: 'Renews',
+                label: AppLocalizations.of(context).businessProfileRenews,
                 value: _formatDate(subscription.currentPeriodEnd!),
               ),
 
@@ -740,8 +771,10 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               const SizedBox(height: KolabingSpacing.sm),
               _buildDetailRow(
                 icon: LucideIcons.clock,
-                label: 'Remaining',
-                value: '${subscription.daysRemaining} days',
+                label: AppLocalizations.of(context).businessProfileRemaining,
+                value: AppLocalizations.of(
+                  context,
+                ).businessProfileDaysRemaining(subscription.daysRemaining!),
               ),
             ],
 
@@ -767,7 +800,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     const SizedBox(width: KolabingSpacing.xs),
                     Expanded(
                       child: Text(
-                        'Subscription ends at current billing period',
+                        AppLocalizations.of(
+                          context,
+                        ).businessProfileSubscriptionEnding,
                         style: KolabingTextStyles.bodySmall.copyWith(
                           color: KolabingColors.warning,
                         ),
@@ -786,7 +821,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             OutlinedButton.icon(
               onPressed: _handleManageSubscription,
               icon: const Icon(LucideIcons.settings, size: 18),
-              label: const Text('MANAGE SUBSCRIPTION'),
+              label: Text(
+                AppLocalizations.of(context).businessProfileManageSubscription,
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KolabingColors.onSurface,
                 side: const BorderSide(color: KolabingColors.darkBorder),
@@ -799,7 +836,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             ElevatedButton.icon(
               onPressed: _handleViewPlans,
               icon: const Icon(LucideIcons.sparkles, size: 18),
-              label: const Text('UPGRADE TO PREMIUM'),
+              label: Text(
+                AppLocalizations.of(context).businessProfileUpgradePremium,
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
@@ -814,6 +853,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   }
 
   Widget _buildStatusBadge(SubscriptionStatus? status) {
+    final l10n = AppLocalizations.of(context);
     Color bgColor;
     Color textColor;
     String label;
@@ -822,19 +862,19 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
       case SubscriptionStatus.active:
         bgColor = KolabingColors.activeBg;
         textColor = KolabingColors.success;
-        label = 'Active';
+        label = l10n.businessProfileStatusActive;
       case SubscriptionStatus.cancelled:
         bgColor = KolabingColors.pendingBg;
         textColor = KolabingColors.warning;
-        label = 'Cancelled';
+        label = l10n.businessProfileStatusCancelled;
       case SubscriptionStatus.pastDue:
         bgColor = KolabingColors.errorBg;
         textColor = KolabingColors.error;
-        label = 'Past Due';
+        label = l10n.businessProfileStatusPastDue;
       default:
         bgColor = KolabingColors.surfaceVariant;
         textColor = KolabingColors.textTertiary;
-        label = 'Inactive';
+        label = l10n.businessProfileStatusInactive;
     }
 
     return Container(
@@ -890,7 +930,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     final city = profile.businessProfile?.city?.name;
 
     return _SectionCard(
-      title: 'Contact Info',
+      title: AppLocalizations.of(context).businessProfileContactInfo,
       child: Column(
         children: [
           _ContactInfoTile(icon: LucideIcons.mail, label: email),
@@ -921,11 +961,11 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     bool isUpdating,
     bool isDark,
   ) => _SectionCard(
-    title: 'Notifications',
+    title: AppLocalizations.of(context).businessProfileNotifications,
     child: Column(
       children: [
         _NotificationToggle(
-          label: 'Messages',
+          label: AppLocalizations.of(context).businessProfileNotifMessages,
           value: preferences?.messagesEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
@@ -933,7 +973,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               .updateNotificationPreference('messages_enabled', value),
         ),
         _NotificationToggle(
-          label: 'Application Alerts',
+          label: AppLocalizations.of(context).businessProfileNotifApplications,
           value: preferences?.applicationsEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
@@ -941,7 +981,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               .updateNotificationPreference('applications_enabled', value),
         ),
         _NotificationToggle(
-          label: 'Kolab Updates',
+          label: AppLocalizations.of(context).businessProfileNotifKolabUpdates,
           value: preferences?.collaborationsEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
@@ -949,7 +989,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               .updateNotificationPreference('collaborations_enabled', value),
         ),
         _NotificationToggle(
-          label: 'Rewards & Wallet',
+          label: AppLocalizations.of(context).businessProfileNotifRewards,
           value: preferences?.rewardsEnabled ?? true,
           isUpdating: isUpdating,
           onChanged: (value) => ref
@@ -957,7 +997,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               .updateNotificationPreference('rewards_enabled', value),
         ),
         _NotificationToggle(
-          label: 'Marketing & Tips',
+          label: AppLocalizations.of(context).businessProfileNotifMarketing,
           value: preferences?.marketingEnabled ?? false,
           isUpdating: isUpdating,
           onChanged: (value) => ref
@@ -973,7 +1013,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     bool isUpdating,
     bool isDark,
   ) => _SectionCard(
-    title: 'Account',
+    title: AppLocalizations.of(context).businessProfileAccount,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -998,13 +1038,22 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           ],
         ),
 
+        const SizedBox(height: KolabingSpacing.sm),
+
+        // Language
+        _ContactInfoTile(
+          icon: LucideIcons.globe,
+          label: AppLocalizations.of(context).settingsLanguage,
+          onTap: () => context.push(KolabingRoutes.language),
+        ),
+
         const SizedBox(height: KolabingSpacing.lg),
 
         // Sign Out Button
         OutlinedButton.icon(
           onPressed: isUpdating ? null : _handleSignOut,
           icon: const Icon(LucideIcons.logOut, size: 18),
-          label: const Text('SIGN OUT'),
+          label: Text(AppLocalizations.of(context).businessProfileSignOut),
           style: OutlinedButton.styleFrom(
             foregroundColor: KolabingColors.error,
             side: const BorderSide(color: KolabingColors.error),
@@ -1020,7 +1069,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
             child: Text(
-              'Delete Account',
+              AppLocalizations.of(context).businessProfileDeleteAccount,
               textAlign: TextAlign.center,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: isUpdating

@@ -7,6 +7,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/time_picker.dart';
 import '../../../onboarding/models/place_suggestion.dart';
 // Only the Places autocomplete provider is needed here. Hide the names that
@@ -97,6 +98,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
     final citiesAsync = ref.watch(citiesProvider);
@@ -109,10 +111,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           // ---------------------------------------------------------------
           // AVAILABILITY SECTION
           // ---------------------------------------------------------------
-          _buildSectionHeader('AVAILABILITY'),
+          _buildSectionHeader(l10n.logisticsAvailabilityHeader),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'When is your community available for this kolab?',
+            l10n.logisticsAvailabilitySubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
@@ -159,11 +161,11 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           // ---------------------------------------------------------------
           // LOCATION SECTION
           // ---------------------------------------------------------------
-          _buildSectionHeader('LOCATION'),
+          _buildSectionHeader(l10n.logisticsLocationHeader),
           const SizedBox(height: KolabingSpacing.md),
 
           // City dropdown
-          _buildLabel('Preferred City'),
+          _buildLabel(l10n.logisticsPreferredCityLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           if (state.fieldErrors['preferred_city'] != null) ...[
             _buildFieldError(state.fieldErrors['preferred_city']!),
@@ -175,14 +177,14 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               backgroundColor: KolabingColors.darkBorder,
             ),
             error: (e, _) => Text(
-              'Error loading cities: $e',
+              l10n.logisticsCitiesLoadError(e.toString()),
               style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.error),
             ),
             data: (cities) => DropdownButtonFormField<String>(
               initialValue: kolab.preferredCity.isNotEmpty
                   ? kolab.preferredCity
                   : null,
-              decoration: _inputDecoration(hint: 'Select city'),
+              decoration: _inputDecoration(hint: l10n.logisticsSelectCityHint),
               items: cities
                   .map(
                     (city) => DropdownMenuItem(
@@ -208,7 +210,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           // Backed by the same Google Places autocomplete used in business
           // venue onboarding (placeSuggestionsProvider) so the area is a real
           // place lookup rather than free text. The city field above is kept.
-          _buildLabel('Preferred Neighbourhood / Area (optional)'),
+          _buildLabel(l10n.logisticsPreferredAreaLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _areaController,
@@ -222,7 +224,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   .updateArea(value.trim().isEmpty ? null : value.trim());
             },
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
-            decoration: _inputDecoration(hint: 'e.g., Shoreditch, Kreuzberg')
+            decoration: _inputDecoration(hint: l10n.logisticsPreferredAreaHint)
                 .copyWith(
                   prefixIcon: const Icon(
                     LucideIcons.mapPin,
@@ -317,7 +319,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
       children: [
         Expanded(
           child: _buildDatePicker(
-            label: 'Available From',
+            label: AppLocalizations.of(context).logisticsAvailableFromLabel,
             value: kolab.availabilityStart,
             error: formState.fieldErrors['availability_start'],
             onChanged: (date) => ref
@@ -328,7 +330,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: _buildDatePicker(
-            label: 'Available Until',
+            label: AppLocalizations.of(context).logisticsAvailableUntilLabel,
             value: kolab.availabilityEnd,
             error: formState.fieldErrors['availability_end'],
             minDate: kolab.availabilityStart,
@@ -341,7 +343,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     ),
     const SizedBox(height: KolabingSpacing.sm),
     _buildTimePicker(
-      label: 'Time',
+      label: AppLocalizations.of(context).logisticsTimeLabel,
       value: kolab.selectedTime,
       error: formState.fieldErrors['selected_time'],
       onChanged: (time) =>
@@ -350,7 +352,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
   ];
 
   List<Widget> _buildRecurringFields(Kolab kolab, KolabFormState formState) => [
-    _buildLabel('Day of Week'),
+    _buildLabel(AppLocalizations.of(context).logisticsDayOfWeekLabel),
     const SizedBox(height: KolabingSpacing.xxs),
     if (formState.fieldErrors['recurring_day'] != null) ...[
       _buildFieldError(formState.fieldErrors['recurring_day']!),
@@ -397,7 +399,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
     ),
     const SizedBox(height: KolabingSpacing.sm),
     _buildTimePicker(
-      label: 'Time',
+      label: AppLocalizations.of(context).logisticsTimeLabel,
       value: kolab.selectedTime,
       error: formState.fieldErrors['selected_time'],
       onChanged: (time) =>
@@ -527,7 +529,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
                   child: Text(
-                    value != null ? dateFormat.format(value) : 'Select date',
+                    value != null
+                        ? dateFormat.format(value)
+                        : AppLocalizations.of(context).logisticsSelectDate,
                     style: KolabingTextStyles.bodySmall.copyWith(color: value != null
                           ? KolabingColors.onSurface
                           : KolabingColors.textTertiary),
@@ -591,7 +595,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                value != null ? value.format(context) : 'Select time',
+                value != null
+                    ? value.format(context)
+                    : AppLocalizations.of(context).logisticsSelectTime,
                 style: KolabingTextStyles.bodySmall.copyWith(color: value != null
                       ? KolabingColors.onSurface
                       : KolabingColors.textTertiary),

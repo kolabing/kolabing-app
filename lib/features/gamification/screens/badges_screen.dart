@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/badge.dart';
 import '../providers/badge_provider.dart';
 import '../widgets/badge_card.dart';
@@ -21,7 +22,7 @@ class BadgesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Badges',
+          AppLocalizations.of(context).badgesScreenTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -64,7 +65,7 @@ class BadgesScreen extends ConsumerWidget {
         slivers: [
           // Stats header
           SliverToBoxAdapter(
-            child: _buildStatsHeader(myBadges),
+            child: _buildStatsHeader(context, myBadges),
           ),
 
           // Earned badges section
@@ -78,7 +79,7 @@ class BadgesScreen extends ConsumerWidget {
                   KolabingSpacing.sm,
                 ),
                 child: Text(
-                  'EARNED BADGES',
+                  AppLocalizations.of(context).badgesScreenEarnedBadges,
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
@@ -117,7 +118,7 @@ class BadgesScreen extends ConsumerWidget {
                 KolabingSpacing.sm,
               ),
               child: Text(
-                'ALL BADGES',
+                AppLocalizations.of(context).badgesScreenAllBadges,
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
               ),
             ),
@@ -158,7 +159,7 @@ class BadgesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsHeader(MyBadgesResponse myBadges) {
+  Widget _buildStatsHeader(BuildContext context, MyBadgesResponse myBadges) {
     return Container(
       margin: const EdgeInsets.all(KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.lg),
@@ -205,7 +206,7 @@ class BadgesScreen extends ConsumerWidget {
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
               Text(
-                'Badges Earned',
+                AppLocalizations.of(context).badgesScreenBadgesEarned,
                 style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
                 ),
               ),
@@ -230,7 +231,7 @@ class BadgesScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load badges',
+              AppLocalizations.of(context).badgesScreenFailedToLoad,
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -246,7 +247,7 @@ class BadgesScreen extends ConsumerWidget {
                 ref.invalidate(myBadgesProvider);
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

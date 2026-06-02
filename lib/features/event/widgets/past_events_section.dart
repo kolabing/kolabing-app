@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 import 'add_event_modal.dart';
@@ -144,7 +145,7 @@ class PastEventsSection extends ConsumerWidget {
         ),
         const SizedBox(width: KolabingSpacing.xs),
         Text(
-          'Past Events',
+          AppLocalizations.of(context).pastEventsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
             color:
                 isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
@@ -176,7 +177,7 @@ class PastEventsSection extends ConsumerWidget {
           TextButton.icon(
             onPressed: () => _showAddEventModal(context, ref),
             icon: const Icon(LucideIcons.plus, size: 16),
-            label: const Text('ADD'),
+            label: Text(AppLocalizations.of(context).pastEventsAddButton),
             style: TextButton.styleFrom(
               foregroundColor: KolabingColors.primary,
               padding: const EdgeInsets.symmetric(
@@ -255,7 +256,7 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'Failed to load events',
+            AppLocalizations.of(context).pastEventsLoadError,
             style: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
@@ -269,7 +270,7 @@ class PastEventsSection extends ConsumerWidget {
                 ref.read(eventsProvider.notifier).refresh();
               }
             },
-            child: const Text('Retry'),
+            child: Text(AppLocalizations.of(context).commonRetry),
           ),
         ],
       ),
@@ -301,7 +302,7 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            'No events yet',
+            AppLocalizations.of(context).pastEventsEmptyTitle,
             style: KolabingTextStyles.titleSmall.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
@@ -310,7 +311,7 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Share your past kolabs with the community',
+            AppLocalizations.of(context).pastEventsEmptySubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
@@ -321,7 +322,7 @@ class PastEventsSection extends ConsumerWidget {
             onPressed: () => _showAddEventModal(context, ref),
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
-              '+ Add a past event',
+              AppLocalizations.of(context).pastEventsEmptyAddButton,
               style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
             ),
             style: TextButton.styleFrom(

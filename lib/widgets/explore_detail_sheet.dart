@@ -11,6 +11,7 @@ import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
+import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
 import 'category_icon.dart';
 
@@ -117,11 +118,11 @@ class ExploreDetailSheet extends ConsumerWidget {
                 _buildTitleSection(),
                 const SizedBox(height: KolabingSpacing.lg),
                 if (discoveryItem?.isCommunityRequest ?? false) ...[
-                  _buildBusinessExploreSummary(),
+                  _buildBusinessExploreSummary(context),
                   const SizedBox(height: KolabingSpacing.lg),
                 ],
                 if (opportunity.businessOffer.hasAnyOffer) ...[
-                  _buildOfferSummarySection(),
+                  _buildOfferSummarySection(context),
                   const SizedBox(height: KolabingSpacing.lg),
                 ],
                 _buildLocationAndDetails(),
@@ -129,7 +130,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                         AvailabilityMode.recurring &&
                     opportunity.recurringDays.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.lg),
-                  _buildAvailabilityDays(),
+                  _buildAvailabilityDays(context),
                 ],
                 if (opportunity.categories.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.lg),
@@ -166,7 +167,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     // real name + logo BLURRED (not replaced by a placeholder). We therefore
     // render the true values and let [BlurredIdentity] obscure them. Everything
     // else in this sheet stays fully visible.
-    final displayName = creator?.displayName ?? 'Unknown';
+    final displayName =
+        creator?.displayName ?? AppLocalizations.of(context).exploreDetailUnknownCreator;
     final initial = creator?.initial ?? '?';
     final avatarUrl = creator?.avatarUrl;
     final userType = creator?.userType ?? '';
@@ -205,7 +207,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               if (hideCreatorIdentity) ...[
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
-                  'Subscribe to reveal this community',
+                  AppLocalizations.of(context).exploreDetailSubscribeToReveal,
                   style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: KolabingColors.textTertiary,
@@ -213,7 +215,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: KolabingSpacing.xxs),
-              _buildTypeBadge(userType),
+              _buildTypeBadge(context, userType),
             ],
           ),
         ),
@@ -259,10 +261,10 @@ class ExploreDetailSheet extends ConsumerWidget {
     ),
   );
 
-  Widget _buildTypeBadge(String userType) {
+  Widget _buildTypeBadge(BuildContext context, String userType) {
     final label = userType.isNotEmpty
         ? '${userType[0].toUpperCase()}${userType.substring(1)}'
-        : 'Creator';
+        : AppLocalizations.of(context).exploreDetailCreatorBadge;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -309,30 +311,31 @@ class ExploreDetailSheet extends ConsumerWidget {
     ],
   );
 
-  Widget _buildBusinessExploreSummary() {
+  Widget _buildBusinessExploreSummary(BuildContext context) {
     final request = discoveryItem?.communityRequest;
     if (request == null) {
       return const SizedBox.shrink();
     }
 
+    final l10n = AppLocalizations.of(context);
     final sections = <Widget>[
       if (request.needTypeLabels.isNotEmpty)
         _buildSummaryCard(
           icon: LucideIcons.search,
-          title: 'What they are looking for',
+          title: l10n.exploreDetailLookingFor,
           value: request.needTypeLabels.join(', '),
         ),
       if (request.offerInReturnLabels.isNotEmpty)
         _buildSummaryCard(
           icon: LucideIcons.gift,
-          title: 'What they offer',
+          title: l10n.exploreDetailWhatTheyOffer,
           value: request.offerInReturnLabels.join(', '),
         ),
       if (request.communitySize != null || request.typicalAttendance != null)
         _buildSummaryCard(
           icon: LucideIcons.users,
-          title: 'Community size',
-          value: _buildScaleLabel(request),
+          title: l10n.exploreDetailCommunitySize,
+          value: _buildScaleLabel(context, request),
         ),
     ];
 
@@ -392,13 +395,14 @@ class ExploreDetailSheet extends ConsumerWidget {
     ),
   );
 
-  String _buildScaleLabel(CommunityRequestSummary request) {
+  String _buildScaleLabel(BuildContext context, CommunityRequestSummary request) {
+    final l10n = AppLocalizations.of(context);
     final parts = <String>[];
     if (request.communitySize != null) {
-      parts.add('${request.communitySize} community');
+      parts.add(l10n.exploreDetailScaleCommunity(request.communitySize!));
     }
     if (request.typicalAttendance != null) {
-      parts.add('${request.typicalAttendance} expected');
+      parts.add(l10n.exploreDetailScaleExpected(request.typicalAttendance!));
     }
     return parts.join(' · ');
   }
@@ -407,11 +411,11 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Offer Summary Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildOfferSummarySection() => Column(
+  Widget _buildOfferSummarySection(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        "What's Offered",
+        AppLocalizations.of(context).exploreDetailWhatsOffered,
         style: KolabingTextStyles.labelLarge.copyWith(
           color: KolabingColors.onSurface,
         ),
@@ -524,14 +528,14 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Availability Days (Recurring Mode)
   // ---------------------------------------------------------------------------
 
-  Widget _buildAvailabilityDays() {
+  Widget _buildAvailabilityDays(BuildContext context) {
     final activeDays = opportunity.recurringDays.toSet();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Available Days',
+          AppLocalizations.of(context).exploreDetailAvailableDays,
           style: KolabingTextStyles.labelLarge.copyWith(
             color: KolabingColors.onSurface,
           ),
@@ -644,7 +648,9 @@ class ExploreDetailSheet extends ConsumerWidget {
                 size: 18,
               ),
               label: Text(
-                showsSubscribeAction ? 'UNLOCK TO APPLY' : 'APPLY NOW',
+                showsSubscribeAction
+                    ? AppLocalizations.of(context).exploreDetailUnlockToApply
+                    : AppLocalizations.of(context).exploreDetailApplyNow,
                 style: KolabingTextStyles.button.copyWith(
                   fontSize: 15,
                   letterSpacing: 1.0,
@@ -669,7 +675,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               onPressed: onViewCreatorProfile,
               icon: const Icon(LucideIcons.user, size: 16),
               label: Text(
-                'View creator profile',
+                AppLocalizations.of(context).exploreDetailViewCreatorProfile,
                 style: KolabingTextStyles.labelLarge.copyWith(
                   fontSize: 13,
                 ),
@@ -731,14 +737,14 @@ class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Past event photos',
+                AppLocalizations.of(context).exploreDetailPastEventPhotos,
                 style: KolabingTextStyles.labelLarge.copyWith(
                   color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'Recent moments from this community',
+                AppLocalizations.of(context).exploreDetailRecentMoments,
                 style: KolabingTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w400,
                   color: KolabingColors.onSurfaceVariant,

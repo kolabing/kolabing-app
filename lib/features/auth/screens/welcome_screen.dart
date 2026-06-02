@@ -8,6 +8,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../widgets/auth_fade_slide.dart';
 import '../widgets/kolabing_logo.dart';
 
@@ -196,7 +197,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                           ),
                           child: Text(
-                            'Log in',
+                            AppLocalizations.of(context).welcomeLogIn,
                             style: KolabingTextStyles.bodySmall.copyWith(
                               color: _kMutedText,
                               fontWeight: FontWeight.w500,
@@ -377,12 +378,13 @@ class _Headline extends StatelessWidget {
       height: 1.02,
       color: KolabingColors.textOnDark,
     );
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text('Where local brands', style: style),
-        Text('meet real communities.', style: style),
+        Text(l10n.welcomeHeadlineLine1, style: style),
+        Text(l10n.welcomeHeadlineLine2, style: style),
       ],
     );
   }
@@ -397,7 +399,7 @@ class _Subtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    'Community-led partnerships for events, UGC, reviews and real-world growth.',
+    AppLocalizations.of(context).welcomeSubtitle,
     style: KolabingTextStyles.captionSecondary.copyWith(
       color: _kMutedText,
       height: 1.45,
@@ -416,7 +418,7 @@ class _PrimaryCta extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: 'Get started',
+    label: AppLocalizations.of(context).welcomeGetStarted,
     child: FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
@@ -437,7 +439,7 @@ class _PrimaryCta extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'Get started',
+                AppLocalizations.of(context).welcomeGetStarted,
                 maxLines: 1,
                 softWrap: false,
                 style: KolabingTextStyles.bodyMedium.copyWith(

@@ -7,6 +7,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
 
 /// Theme selector section for profile screens
@@ -17,6 +18,7 @@ class ThemeSelectorSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeState = ref.watch(themeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -46,7 +48,7 @@ class ThemeSelectorSection extends ConsumerWidget {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'Appearance',
+                l10n.themeSelectorTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
@@ -60,8 +62,8 @@ class ThemeSelectorSection extends ConsumerWidget {
           // Theme options
           _ThemeOption(
             icon: LucideIcons.smartphone,
-            label: 'System',
-            description: 'Follow device settings',
+            label: l10n.themeSelectorSystemLabel,
+            description: l10n.themeSelectorSystemDescription,
             isSelected: themeState.themeMode == ThemeMode.system,
             onTap: () {
               HapticFeedback.selectionClick();
@@ -72,8 +74,8 @@ class ThemeSelectorSection extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.sm),
           _ThemeOption(
             icon: LucideIcons.sun,
-            label: 'Light',
-            description: 'Always use light theme',
+            label: l10n.themeSelectorLightLabel,
+            description: l10n.themeSelectorLightDescription,
             isSelected: themeState.themeMode == ThemeMode.light,
             onTap: () {
               HapticFeedback.selectionClick();
@@ -84,8 +86,8 @@ class ThemeSelectorSection extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.sm),
           _ThemeOption(
             icon: LucideIcons.moon,
-            label: 'Dark',
-            description: 'Always use dark theme',
+            label: l10n.themeSelectorDarkLabel,
+            description: l10n.themeSelectorDarkDescription,
             isSelected: themeState.themeMode == ThemeMode.dark,
             onTap: () {
               HapticFeedback.selectionClick();

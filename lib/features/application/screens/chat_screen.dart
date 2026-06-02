@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -129,7 +130,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       data: (application) {
         if (application == null) {
           return _buildScaffold(
-            body: _buildErrorState('Application not found'),
+            body: _buildErrorState(
+                AppLocalizations.of(context).chatApplicationNotFound),
           );
         }
 
@@ -190,7 +192,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
                 child: Text(
-                  'Your subscription lapsed. Resubscribe to continue this chat.',
+                  AppLocalizations.of(context).chatResubscribeBanner,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -200,7 +202,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'RESUBSCRIBE',
+                AppLocalizations.of(context).chatResubscribeAction,
                 style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
@@ -308,7 +310,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               )
             : isLoading
             ? Text(
-                'Loading...',
+                AppLocalizations.of(context).chatLoading,
                 style: TextStyle(
                   color: isDark
                       ? KolabingColors.textOnDark
@@ -462,9 +464,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     String label;
     if (isToday) {
-      label = 'Today';
+      label = AppLocalizations.of(context).chatDateToday;
     } else if (isYesterday) {
-      label = 'Yesterday';
+      label = AppLocalizations.of(context).chatDateYesterday;
     } else {
       label = '${date.day}/${date.month}/${date.year}';
     }
@@ -536,7 +538,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   minLines: 1,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
-                    hintText: 'Type a message...',
+                    hintText: AppLocalizations.of(context).chatMessageHint,
                     hintStyle: KolabingTextStyles.bodySmall.copyWith(
                       color: isDark
                           ? KolabingColors.textOnDark.withValues(alpha: 0.5)
@@ -652,7 +654,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   .load(widget.applicationId);
             },
             icon: const Icon(LucideIcons.rotateCcw, size: 16),
-            label: const Text('Retry'),
+            label: Text(AppLocalizations.of(context).commonRetry),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
@@ -679,7 +681,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Session expired',
+              AppLocalizations.of(context).chatSessionExpiredTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
@@ -689,7 +691,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
-              'Please sign in again to continue.',
+              AppLocalizations.of(context).chatSessionExpiredBody,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
@@ -701,7 +703,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 context.go(KolabingRoutes.login);
               },
               icon: const Icon(LucideIcons.logIn, size: 16),
-              label: const Text('Sign In'),
+              label: Text(AppLocalizations.of(context).chatSignIn),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
@@ -737,7 +739,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Start the conversation',
+              AppLocalizations.of(context).chatEmptyTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
@@ -747,7 +749,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
-              'Send a message to begin discussing this kolab',
+              AppLocalizations.of(context).chatEmptyBody,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
@@ -768,7 +770,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             ListTile(
               leading: const Icon(LucideIcons.eye),
-              title: const Text('View Opportunity'),
+              title: Text(AppLocalizations.of(context).chatViewOpportunity),
               onTap: () {
                 Navigator.pop(ctx);
                 if (application != null) {
@@ -789,9 +791,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 LucideIcons.xCircle,
                 color: KolabingColors.error,
               ),
-              title: const Text(
-                'Cancel Application',
-                style: TextStyle(color: KolabingColors.error),
+              title: Text(
+                AppLocalizations.of(context).chatCancelApplication,
+                style: const TextStyle(color: KolabingColors.error),
               ),
               onTap: () {
                 Navigator.pop(ctx);
@@ -805,17 +807,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _showCancelDialog() {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Cancel Application?'),
-        content: const Text(
-          'Are you sure you want to cancel this application? This action cannot be undone.',
+        title: Text(l10n.chatCancelDialogTitle),
+        content: Text(
+          l10n.chatCancelDialogBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('No, Keep It'),
+            child: Text(l10n.chatCancelDialogKeep),
           ),
           TextButton(
             onPressed: () async {
@@ -826,15 +829,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               if (success && mounted) {
                 context.pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Application withdrawn'),
+                  SnackBar(
+                    content: Text(l10n.chatApplicationWithdrawn),
                     backgroundColor: KolabingColors.success,
                   ),
                 );
               }
             },
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Yes, Withdraw'),
+            child: Text(l10n.chatCancelDialogWithdraw),
           ),
         ],
       ),

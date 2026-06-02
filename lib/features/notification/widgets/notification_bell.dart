@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/notification_provider.dart';
 
 /// Notification bell icon with unread count badge.
@@ -66,7 +67,7 @@ class NotificationBell extends ConsumerWidget {
         ],
       ),
       onPressed: () => context.push(KolabingRoutes.notifications),
-      tooltip: 'Notifications',
+      tooltip: AppLocalizations.of(context).notificationBellTooltip,
     );
   }
 }

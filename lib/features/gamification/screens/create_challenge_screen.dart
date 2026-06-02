@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
@@ -75,7 +76,9 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Challenge created successfully!'),
+          content: Text(
+            AppLocalizations.of(context).createChallengeSuccess,
+          ),
           backgroundColor: KolabingColors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -105,6 +108,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
         ? KolabingColors.surface
@@ -127,7 +131,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Create Challenge',
+          l10n.createChallengeTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
         ),
       ),
@@ -141,23 +145,23 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Name field
-                _FieldLabel(label: 'Challenge Name', required: true),
+                _FieldLabel(label: l10n.createChallengeNameLabel, required: true),
                 const SizedBox(height: KolabingSpacing.xs),
                 TextFormField(
                   controller: _nameController,
                   enabled: !_isLoading,
                   textCapitalization: TextCapitalization.words,
                   decoration: _inputDecoration(
-                    hint: 'Enter challenge name',
+                    hint: l10n.createChallengeNameHint,
                     isDark: isDark,
                     surfaceColor: surfaceColor,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter a challenge name';
+                      return l10n.createChallengeNameRequired;
                     }
                     if (value.trim().length < 3) {
-                      return 'Name must be at least 3 characters';
+                      return l10n.createChallengeNameTooShort;
                     }
                     return null;
                   },
@@ -166,7 +170,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
 
                 // Description field
-                _FieldLabel(label: 'Description', required: false),
+                _FieldLabel(label: l10n.createChallengeDescriptionLabel, required: false),
                 const SizedBox(height: KolabingSpacing.xs),
                 TextFormField(
                   controller: _descriptionController,
@@ -174,7 +178,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                   maxLines: 3,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: _inputDecoration(
-                    hint: 'Describe what attendees need to do',
+                    hint: l10n.createChallengeDescriptionHint,
                     isDark: isDark,
                     surfaceColor: surfaceColor,
                   ),
@@ -183,7 +187,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
 
                 // Difficulty selection
-                _FieldLabel(label: 'Difficulty', required: true),
+                _FieldLabel(label: l10n.createChallengeDifficultyLabel, required: true),
                 const SizedBox(height: KolabingSpacing.xs),
                 _DifficultySelector(
                   selectedDifficulty: _selectedDifficulty,
@@ -194,7 +198,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
 
                 // Points field
-                _FieldLabel(label: 'Points', required: false),
+                _FieldLabel(label: l10n.createChallengePointsLabel, required: false),
                 const SizedBox(height: KolabingSpacing.xs),
                 Row(
                   children: [
@@ -204,7 +208,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                         enabled: !_isLoading,
                         keyboardType: TextInputType.number,
                         decoration: _inputDecoration(
-                          hint: 'Points awarded',
+                          hint: l10n.createChallengePointsHint,
                           isDark: isDark,
                           surfaceColor: surfaceColor,
                           prefixIcon: LucideIcons.star,
@@ -213,10 +217,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                           if (value != null && value.isNotEmpty) {
                             final points = int.tryParse(value);
                             if (points == null || points < 1) {
-                              return 'Enter a valid number';
+                              return l10n.createChallengePointsInvalid;
                             }
                             if (points > 100) {
-                              return 'Maximum 100 points';
+                              return l10n.createChallengePointsMax;
                             }
                           }
                           return null;
@@ -232,14 +236,14 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                                   .defaultPoints
                                   .toString();
                             },
-                      child: const Text('Reset to default'),
+                      child: Text(l10n.createChallengeResetDefault),
                     ),
                   ],
                 ),
 
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
-                  'Default: Easy=5, Medium=15, Hard=30 points',
+                  l10n.createChallengePointsDefaultHint,
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
 
@@ -272,7 +276,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                             ),
                           )
                         : Text(
-                            'CREATE CHALLENGE',
+                            l10n.createChallengeSubmit,
                             style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                           ),
                   ),
@@ -456,7 +460,7 @@ class _DifficultyOption extends StatelessWidget {
                 style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: textColor),
               ),
               Text(
-                '${difficulty.defaultPoints} pts',
+                AppLocalizations.of(context).createChallengePointsValue(difficulty.defaultPoints),
                 style: KolabingTextStyles.labelSmall.copyWith(color: textColor.withValues(alpha: 0.7),
                 ),
               ),

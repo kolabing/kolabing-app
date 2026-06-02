@@ -5,6 +5,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../enums/deliverable_type.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -51,6 +52,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
 
@@ -61,18 +63,18 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
         children: [
           // Section header
           Text(
-            'KOLAB DETAILS',
+            l10n.eventDetailsHeader,
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Describe your kolab and what you offer',
+            l10n.eventDetailsSubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
           // Title
-          _buildLabel('Title'),
+          _buildLabel(l10n.eventDetailsTitleLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _titleController,
@@ -83,7 +85,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText: 'e.g., Fitness Community x Local Cafe',
+              hintText: l10n.eventDetailsTitleHint,
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
@@ -111,7 +113,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Description
-          _buildLabel('Description'),
+          _buildLabel(l10n.eventDetailsDescriptionLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _descriptionController,
@@ -122,8 +124,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText:
-                  'Describe what you are looking for and how this kolab would work...',
+              hintText: l10n.eventDetailsDescriptionHint,
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
@@ -152,7 +153,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
 
           // "What you offer in return" section header
           Text(
-            'WHAT YOU OFFER IN RETURN',
+            l10n.eventDetailsOffersHeader,
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           if (state.fieldErrors['offers_in_return'] != null) ...[
