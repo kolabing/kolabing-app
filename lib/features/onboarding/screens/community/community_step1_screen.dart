@@ -103,7 +103,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     Center(
                       child: Text(
                         'TELL US ABOUT YOU',
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),

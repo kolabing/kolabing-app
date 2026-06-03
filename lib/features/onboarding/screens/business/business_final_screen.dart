@@ -503,7 +503,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             authenticatedFlow
                                 ? 'FINISH BUSINESS ONBOARDING'
                                 : 'CREATE YOUR ACCOUNT',
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),

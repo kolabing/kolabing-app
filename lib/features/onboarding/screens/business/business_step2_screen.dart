@@ -253,9 +253,8 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     Center(
                       child: Text(
                         'REVIEW YOUR BUSINESS DETAILS',
-                        style: KolabingTextStyles.bodyLarge.copyWith(
+                        style: KolabingTextStyles.headlineMedium.copyWith(
                           fontSize: 20,
-                          fontWeight: FontWeight.w600,
                           color: KolabingColors.onSurface,
                         ),
                         textAlign: TextAlign.center,

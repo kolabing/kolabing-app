@@ -120,7 +120,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                     const SizedBox(height: 32),
                     Text(
                       'ADD VENUE PHOTOS',
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),

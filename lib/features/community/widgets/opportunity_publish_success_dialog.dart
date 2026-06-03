@@ -49,7 +49,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             isDraft ? 'Draft Saved!' : 'Opportunity Published!',
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(

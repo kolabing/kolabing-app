@@ -100,7 +100,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Title
                         Text(
                           'WHERE ARE YOU LOCATED?',
-                          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),

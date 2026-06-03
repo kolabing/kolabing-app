@@ -1066,9 +1066,8 @@ class _CreateOpportunityScreenState
               // Title
               Text(
                 opp.title.isEmpty ? 'Untitled Opportunity' : opp.title,
-                style: KolabingTextStyles.bodyMedium.copyWith(
+                style: KolabingTextStyles.headlineMedium.copyWith(
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
                   color: KolabingColors.onSurface,
                 ),
               ),

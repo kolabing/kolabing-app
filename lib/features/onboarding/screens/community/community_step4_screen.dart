@@ -111,9 +111,8 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                       Center(
                         child: Text(
                           'COMPLETE YOUR PROFILE',
-                          style: KolabingTextStyles.bodyLarge.copyWith(
+                          style: KolabingTextStyles.headlineMedium.copyWith(
                             fontSize: 20,
-                            fontWeight: FontWeight.w600,
                             color: KolabingColors.onSurface,
                           ),
                           textAlign: TextAlign.center,

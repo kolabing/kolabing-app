@@ -225,7 +225,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 32),
                           Text(
                             'CHOOSE YOUR VENUE',
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -433,7 +433,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 18),
                           Text(
                             'Importing your business info from Google',
-                            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                         ],
