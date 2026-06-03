@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../services/permission_service.dart';
 import '../../../../widgets/referral_code_field.dart';
 import '../../../auth/models/auth_response.dart';
@@ -94,11 +95,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       return _emailApiError;
     }
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppLocalizations.of(context).businessFinalEmailRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return AppLocalizations.of(context).businessFinalEmailInvalid;
     }
     return null;
   }
@@ -109,10 +110,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       return _passwordApiError;
     }
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context).businessFinalPasswordRequired;
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return AppLocalizations.of(context).businessFinalPasswordTooShort;
     }
     return null;
   }
@@ -137,10 +138,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return AppLocalizations.of(context).businessFinalConfirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return AppLocalizations.of(context).businessFinalPasswordsMismatch;
     }
     return null;
   }
@@ -245,8 +246,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               .expand((e) => e.value.map((msg) => '• ${e.key}: $msg'))
               .join('\n');
           setState(() {
-            _bannerErrorTitle =
-                apiError.message.isEmpty ? 'Sign-up failed' : apiError.message;
+            _bannerErrorTitle = apiError.message.isEmpty
+                ? AppLocalizations.of(context).businessFinalSignupFailed
+                : apiError.message;
             _bannerErrorDetails = details;
           });
         }
@@ -255,7 +257,8 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
         // can read and copy it (snackbars disappear after 4 seconds).
         final title = apiError?.message.isNotEmpty == true
             ? apiError!.message
-            : (result.errorMessage ?? 'Sign-up failed');
+            : (result.errorMessage ??
+                  AppLocalizations.of(context).businessFinalSignupFailed);
         final details = _buildBannerDetails(apiError);
         setState(() {
           _isLoading = false;
@@ -295,11 +298,8 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
-                  color: KolabingColors.textOnDark,
-                  fontWeight: FontWeight.w600,
-                ),
+                AppLocalizations.of(context).businessFinalNoInternet,
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
               ),
             ),
           ],
@@ -310,7 +310,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: () {
             final authState = ref.read(authProvider);
@@ -324,7 +324,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   }
 
   Widget _buildErrorBanner() {
-    final title = _bannerErrorTitle ?? 'Sign-up failed';
+    final title =
+        _bannerErrorTitle ??
+        AppLocalizations.of(context).businessFinalSignupFailed;
     final details = _bannerErrorDetails;
     return Container(
       width: double.infinity,
@@ -349,11 +351,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.error,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
                 ),
               ),
               IconButton(
@@ -379,15 +377,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: SelectableText(
                 details,
-                style: GoogleFonts.robotoMono(
-                  fontSize: 12,
-                  color: KolabingColors.textSecondary,
-                  height: 1.5,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant, height: 1.5),
               ),
             ),
             const SizedBox(height: 8),
@@ -408,11 +402,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'Error details copied to clipboard',
-                        style: GoogleFonts.openSans(
-                          color: KolabingColors.textOnDark,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        AppLocalizations.of(
+                          context,
+                        ).businessFinalErrorCopied,
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
                       ),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -425,12 +418,8 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                   color: KolabingColors.error,
                 ),
                 label: Text(
-                  'Copy details',
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.error,
-                  ),
+                  AppLocalizations.of(context).businessFinalCopyDetails,
+                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
                 ),
               ),
             ),
@@ -484,16 +473,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               const Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Back',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textPrimary,
-                                ),
+                                AppLocalizations.of(context).commonBack,
+                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
                               ),
                             ],
                           ),
@@ -523,13 +508,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                           // Title
                           Text(
                             authenticatedFlow
-                                ? 'FINISH BUSINESS ONBOARDING'
-                                : 'CREATE YOUR ACCOUNT',
-                            style: GoogleFonts.rubik(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
-                            ),
+                                ? AppLocalizations.of(
+                                    context,
+                                  ).businessFinalTitleAuthenticated
+                                : AppLocalizations.of(
+                                    context,
+                                  ).businessFinalTitleNewAccount,
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -537,13 +522,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                           // Subtitle
                           Text(
                             authenticatedFlow
-                                ? 'Review your imported details one last time and save your business profile.'
-                                : 'Enter your email and password to complete registration',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.textSecondary,
-                            ),
+                                ? AppLocalizations.of(
+                                    context,
+                                  ).businessFinalSubtitleAuthenticated
+                                : AppLocalizations.of(
+                                    context,
+                                  ).businessFinalSubtitleNewAccount,
+                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -565,12 +550,8 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Edit',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.primary,
-                                  ),
+                                  AppLocalizations.of(context).businessFinalEdit,
+                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
                                 ),
                               ],
                             ),
@@ -597,21 +578,25 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               },
                               scrollPadding: const EdgeInsets.only(bottom: 160),
                               decoration: InputDecoration(
-                                labelText: 'Email',
-                                hintText: 'your@email.com',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                ).businessFinalEmailLabel,
+                                hintText: AppLocalizations.of(
+                                  context,
+                                ).businessFinalEmailHint,
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 filled: true,
                                 fillColor: KolabingColors.surface,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -649,8 +634,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               },
                               scrollPadding: const EdgeInsets.only(bottom: 160),
                               decoration: InputDecoration(
-                                labelText: 'Password',
-                                hintText: 'Min. 8 characters',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                ).businessFinalPasswordLabel,
+                                hintText: AppLocalizations.of(
+                                  context,
+                                ).businessFinalPasswordHint,
                                 prefixIcon: const Icon(Icons.lock_outline),
                                 suffixIcon: IconButton(
                                   icon: Icon(
@@ -669,13 +658,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -725,8 +714,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   _handleSubmit(authenticatedFlow: false),
                               scrollPadding: const EdgeInsets.only(bottom: 160),
                               decoration: InputDecoration(
-                                labelText: 'Confirm Password',
-                                hintText: 'Re-enter your password',
+                                labelText: AppLocalizations.of(
+                                  context,
+                                ).businessFinalConfirmPasswordLabel,
+                                hintText: AppLocalizations.of(
+                                  context,
+                                ).businessFinalConfirmPasswordHint,
                                 prefixIcon: const Icon(Icons.lock_outline),
                                 suffixIcon: IconButton(
                                   icon: Icon(
@@ -746,13 +739,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: const BorderSide(
-                                    color: KolabingColors.border,
+                                    color: KolabingColors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -779,7 +772,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 color: KolabingColors.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               child: Row(
@@ -792,12 +785,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      'Your account is already created. Tapping the button below will save this onboarding data to the business onboarding endpoint.',
-                                      style: GoogleFonts.openSans(
-                                        fontSize: 13,
-                                        color: KolabingColors.textSecondary,
-                                        height: 1.4,
-                                      ),
+                                      AppLocalizations.of(
+                                        context,
+                                      ).businessFinalAuthenticatedInfo,
+                                      style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
                                     ),
                                   ),
                                 ],
@@ -855,13 +846,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 )
                               : Text(
                                   authenticatedFlow
-                                      ? 'COMPLETE ONBOARDING'
-                                      : 'CREATE ACCOUNT',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                  ),
+                                      ? AppLocalizations.of(
+                                          context,
+                                        ).businessFinalCompleteButton
+                                      : AppLocalizations.of(
+                                          context,
+                                        ).businessFinalCreateAccountButton,
+                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                                 ),
                         ),
                       ),
@@ -870,13 +861,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                       // Terms text
                       Text(
                         authenticatedFlow
-                            ? 'We only save the selected Google photos when the onboarding request succeeds.'
-                            : 'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                            ? AppLocalizations.of(
+                                context,
+                              ).businessFinalTermsAuthenticated
+                            : AppLocalizations.of(
+                                context,
+                              ).businessFinalTermsNewAccount,
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                         textAlign: TextAlign.center,
                       ),
                     ],

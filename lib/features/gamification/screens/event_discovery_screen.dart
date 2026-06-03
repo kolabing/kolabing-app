@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
 
@@ -30,6 +31,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
   }
 
   Future<void> _initLocation() async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _isLoadingLocation = true;
       _locationError = null;
@@ -43,7 +45,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
         if (permission == LocationPermission.denied) {
           setState(() {
             _isLoadingLocation = false;
-            _locationError = 'Location permission denied';
+            _locationError = l10n.eventDiscoveryPermissionDenied;
           });
           return;
         }
@@ -52,8 +54,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
       if (permission == LocationPermission.deniedForever) {
         setState(() {
           _isLoadingLocation = false;
-          _locationError =
-              'Location permissions are permanently denied. Please enable them in settings.';
+          _locationError = l10n.eventDiscoveryPermissionDeniedForever;
         });
         return;
       }
@@ -63,7 +64,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
       if (!serviceEnabled) {
         setState(() {
           _isLoadingLocation = false;
-          _locationError = 'Location services are disabled';
+          _locationError = l10n.eventDiscoveryServicesDisabled;
         });
         return;
       }
@@ -87,7 +88,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
     } catch (e) {
       setState(() {
         _isLoadingLocation = false;
-        _locationError = 'Failed to get location: $e';
+        _locationError = l10n.eventDiscoveryLocationFailed(e.toString());
       });
     }
   }
@@ -99,10 +100,8 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Discover Events',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          AppLocalizations.of(context).eventDiscoveryTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         actions: [
@@ -119,13 +118,13 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
 
   Widget _buildBody(DiscoveryState state) {
     if (_isLoadingLocation) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: KolabingColors.primary),
-            SizedBox(height: KolabingSpacing.md),
-            Text('Getting your location...'),
+            const CircularProgressIndicator(color: KolabingColors.primary),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(AppLocalizations.of(context).eventDiscoveryGettingLocation),
           ],
         ),
       );
@@ -136,13 +135,13 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
     }
 
     if (state.isLoading && state.events.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: KolabingColors.primary),
-            SizedBox(height: KolabingSpacing.md),
-            Text('Searching for events...'),
+            const CircularProgressIndicator(color: KolabingColors.primary),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(AppLocalizations.of(context).eventDiscoverySearching),
           ],
         ),
       );
@@ -186,20 +185,13 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: Text(
-                      'Showing events within ${state.radiusKm.toStringAsFixed(0)} km',
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.info,
-                      ),
+                      AppLocalizations.of(context).eventDiscoveryRadiusInfo(state.radiusKm.toStringAsFixed(0)),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.info),
                     ),
                   ),
                   Text(
-                    '${state.events.length} found',
-                    style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.info,
-                    ),
+                    AppLocalizations.of(context).eventDiscoveryFoundCount(state.events.length),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.info),
                   ),
                 ],
               ),
@@ -241,7 +233,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                             ref.read(discoveryProvider.notifier).loadMore();
                           },
                           icon: const Icon(LucideIcons.chevronDown),
-                          label: const Text('Load More'),
+                          label: Text(AppLocalizations.of(context).eventDiscoveryLoadMore),
                           style: TextButton.styleFrom(
                             foregroundColor: KolabingColors.primary,
                           ),
@@ -273,27 +265,20 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'Location Required',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).eventDiscoveryLocationRequired,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               _locationError!,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
             ElevatedButton.icon(
               onPressed: _initLocation,
               icon: const Icon(LucideIcons.refreshCw),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
@@ -305,7 +290,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             const SizedBox(height: KolabingSpacing.sm),
             TextButton(
               onPressed: () => Geolocator.openAppSettings(),
-              child: const Text('Open Settings'),
+              child: Text(AppLocalizations.of(context).eventDiscoveryOpenSettings),
             ),
           ],
         ),
@@ -327,27 +312,20 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'No Events Nearby',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).eventDiscoveryEmptyTitle,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Try increasing the search radius\nor check back later for new events.',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              AppLocalizations.of(context).eventDiscoveryEmptyBody,
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
             OutlinedButton.icon(
               onPressed: () => _showRadiusFilter(context),
               icon: const Icon(LucideIcons.sliders),
-              label: const Text('Adjust Radius'),
+              label: Text(AppLocalizations.of(context).eventDiscoveryAdjustRadius),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
                 side: const BorderSide(color: KolabingColors.primary),
@@ -376,20 +354,13 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to discover events',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).eventDiscoveryErrorTitle,
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -398,7 +369,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                 ref.read(discoveryProvider.notifier).refresh();
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),
@@ -467,29 +438,21 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'Search Radius',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-            ),
+            AppLocalizations.of(context).eventDiscoverySearchRadius,
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            '${_radius.toStringAsFixed(0)} km',
-            style: GoogleFonts.rubik(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.primary,
-            ),
+            AppLocalizations.of(context).eventDiscoveryRadiusKm(_radius.toStringAsFixed(0)),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -509,18 +472,12 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '1 km',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                AppLocalizations.of(context).eventDiscoveryRadiusKm('1'),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
               Text(
-                '50 km',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textTertiary,
-                ),
+                AppLocalizations.of(context).eventDiscoveryRadiusKm('50'),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
             ],
           ),
@@ -536,7 +493,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Apply'),
+              child: Text(AppLocalizations.of(context).eventDiscoveryApply),
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),

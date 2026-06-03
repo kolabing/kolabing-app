@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../auth/models/user_model.dart';
 import '../../../kolab/enums/venue_type.dart';
 import '../../providers/onboarding_provider.dart';
@@ -120,10 +121,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       }
     } on PlatformException catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
       final message = switch (e.code) {
         'photo_access_denied' || 'photo_access_restricted' =>
-          'Please allow Photos access in Settings to add venue images.',
-        _ => 'We could not open your photo library. Please try again.',
+          l10n.businessStep2PhotoAccessDenied,
+        _ => l10n.businessStep2PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message), backgroundColor: KolabingColors.error),
@@ -143,9 +145,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
         data.venuePhotos.isEmpty ||
         _phoneError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Complete the required business details, add at least one venue photo, and enter venue capacity before continuing.',
+            AppLocalizations.of(context).businessStep2IncompleteError,
           ),
           backgroundColor: KolabingColors.error,
         ),
@@ -161,20 +163,35 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       return;
     }
     if (!value.startsWith('+')) {
-      setState(() => _phoneError = 'Must start with + (e.g. +34612345678)');
+      setState(
+        () => _phoneError = AppLocalizations.of(
+          context,
+        ).businessStep2PhoneMustStartPlus,
+      );
       return;
     }
     final afterPlus = value.substring(1);
     if (!RegExp(r'^\d*$').hasMatch(afterPlus)) {
-      setState(() => _phoneError = 'Use E.164 format with digits only');
+      setState(
+        () => _phoneError = AppLocalizations.of(
+          context,
+        ).businessStep2PhoneDigitsOnly,
+      );
       return;
     }
     if (afterPlus.length < 9) {
-      setState(() => _phoneError = 'Enter at least 9 digits after +');
+      setState(
+        () => _phoneError = AppLocalizations.of(
+          context,
+        ).businessStep2PhoneTooShort,
+      );
       return;
     }
     if (afterPlus.length > 14) {
-      setState(() => _phoneError = 'Phone number too long');
+      setState(
+        () =>
+            _phoneError = AppLocalizations.of(context).businessStep2PhoneTooLong,
+      );
       return;
     }
     setState(() => _phoneError = null);
@@ -252,11 +269,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     const SizedBox(height: 32),
                     Center(
                       child: Text(
-                        'REVIEW YOUR BUSINESS DETAILS',
-                        style: GoogleFonts.rubik(
+                        AppLocalizations.of(context).businessStep2Title,
+                        style: KolabingTextStyles.bodyLarge.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -264,10 +281,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     const SizedBox(height: 8),
                     Center(
                       child: Text(
-                        'We imported what we could from Google. Review it, fill in capacity, and curate the final venue gallery before you finish.',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          color: KolabingColors.textSecondary,
+                        AppLocalizations.of(context).businessStep2Subtitle,
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -294,9 +310,10 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                'Imported from Google. You can edit every field before saving.',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 13,
+                                AppLocalizations.of(
+                                  context,
+                                ).businessStep2ImportedBanner,
+                                style: KolabingTextStyles.captionSecondary.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: KolabingColors.primaryDark,
                                 ),
@@ -313,10 +330,16 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onPhotoRemoved: notifier.clearPhoto,
                       // E5: this slot is the business brand logo, not a venue
                       // photo. Venue photos use VenuePhotoManager below.
-                      addLabel: 'Add logo (optional)',
+                      addLabel: AppLocalizations.of(
+                        context,
+                      ).businessStep2AddLogo,
                     ),
                     const SizedBox(height: 24),
-                    _FieldLabel(label: 'Venue Address'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2VenueAddressLabel,
+                    ),
                     const SizedBox(height: 8),
                     _VenueAddressCard(
                       address: data.location!.formattedAddress,
@@ -324,24 +347,33 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onChangeVenue: _handleChangeVenue,
                     ),
                     const SizedBox(height: 20),
-                    _FieldLabel(label: 'Business Name'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2BusinessNameLabel,
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _nameController,
                       maxLength: 255,
                       onChanged: notifier.updateName,
                       decoration: _inputDecoration(
-                        hint: 'Enter your business name',
+                        hint: AppLocalizations.of(
+                          context,
+                        ).businessStep2BusinessNameHint,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _FieldLabel(label: 'Business Type'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2BusinessTypeLabel,
+                    ),
                     const SizedBox(height: 8),
                     Text(
-                      'Select up to 3 categories that describe your business.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 13,
-                        color: KolabingColors.textSecondary,
+                      AppLocalizations.of(context).businessStep2BusinessTypeHint,
+                      style: KolabingTextStyles.captionSecondary.copyWith(
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -374,15 +406,20 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         ),
                       ),
                       error: (_, __) => Text(
-                        'Failed to load business types',
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
+                        AppLocalizations.of(
+                          context,
+                        ).businessStep2BusinessTypesLoadError,
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           color: KolabingColors.error,
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _FieldLabel(label: 'Venue Type'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2VenueTypeLabel,
+                    ),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
@@ -407,7 +444,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                               border: Border.all(
                                 color: isSelected
                                     ? KolabingColors.primary
-                                    : KolabingColors.border,
+                                    : KolabingColors.darkBorder,
                               ),
                             ),
                             child: Row(
@@ -418,19 +455,18 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                   size: 16,
                                   color: isSelected
                                       ? KolabingColors.onPrimary
-                                      : KolabingColors.textPrimary,
+                                      : KolabingColors.onSurface,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   type.displayName,
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
+                                  style: KolabingTextStyles.bodySmall.copyWith(
                                     fontWeight: isSelected
                                         ? FontWeight.w700
                                         : FontWeight.w500,
                                     color: isSelected
                                         ? KolabingColors.onPrimary
-                                        : KolabingColors.textPrimary,
+                                        : KolabingColors.onSurface,
                                   ),
                                 ),
                               ],
@@ -440,13 +476,16 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 20),
-                    _FieldLabel(label: 'Capacity'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2CapacityLabel,
+                    ),
                     const SizedBox(height: 8),
                     Text(
-                      'Google does not provide venue capacity, so you still need to enter it manually.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 13,
-                        color: KolabingColors.textSecondary,
+                      AppLocalizations.of(context).businessStep2CapacityHelper,
+                      style: KolabingTextStyles.captionSecondary.copyWith(
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -456,11 +495,17 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onChanged: (value) =>
                           notifier.updateVenueCapacity(int.tryParse(value)),
                       decoration: _inputDecoration(
-                        hint: 'How many people can you host?',
+                        hint: AppLocalizations.of(
+                          context,
+                        ).businessStep2CapacityHint,
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _FieldLabel(label: 'Venue Photos'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2VenuePhotosLabel,
+                    ),
                     const SizedBox(height: 8),
                     VenuePhotoManager(
                       photos: data.venuePhotos,
@@ -470,7 +515,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onMovePhoto: notifier.moveVenuePhoto,
                     ),
                     const SizedBox(height: 24),
-                    _FieldLabel(label: 'About Your Business'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2AboutLabel,
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _aboutController,
@@ -479,11 +528,15 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       maxLength: 1000,
                       onChanged: notifier.updateAbout,
                       decoration: _inputDecoration(
-                        hint: 'Share what makes your business special',
+                        hint: AppLocalizations.of(context).businessStep2AboutHint,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _FieldLabel(label: 'Phone Number'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2PhoneLabel,
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _phoneController,
@@ -500,7 +553,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _FieldLabel(label: 'Instagram'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2InstagramLabel,
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _instagramController,
@@ -511,7 +568,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _FieldLabel(label: 'Website'),
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2WebsiteLabel,
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _websiteController,
@@ -548,10 +609,10 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'CONTINUE',
-                    style: GoogleFonts.dmSans(
+                    AppLocalizations.of(context).commonContinue,
+                    style: KolabingTextStyles.button.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 1,
                     ),
                   ),
@@ -613,7 +674,7 @@ class _VenueAddressCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surfaceVariant,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -629,10 +690,9 @@ class _VenueAddressCard extends StatelessWidget {
             Expanded(
               child: Text(
                 address,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
             ),
@@ -642,9 +702,8 @@ class _VenueAddressCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             city,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -657,9 +716,8 @@ class _VenueAddressCard extends StatelessWidget {
             color: KolabingColors.primary,
           ),
           label: Text(
-            'Change venue',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
+            AppLocalizations.of(context).businessStep2ChangeVenue,
+            style: KolabingTextStyles.captionSecondary.copyWith(
               fontWeight: FontWeight.w600,
               color: KolabingColors.primary,
             ),
@@ -678,10 +736,9 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     label,
-    style: GoogleFonts.openSans(
-      fontSize: 14,
+    style: KolabingTextStyles.bodySmall.copyWith(
       fontWeight: FontWeight.w700,
-      color: KolabingColors.textPrimary,
+      color: KolabingColors.onSurface,
     ),
   );
 }
@@ -692,16 +749,14 @@ InputDecoration _inputDecoration({
   String? errorText,
 }) => InputDecoration(
   hintText: hint,
-  hintStyle: GoogleFonts.openSans(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
+  hintStyle: KolabingTextStyles.bodyMedium.copyWith(
     color: KolabingColors.textTertiary,
   ),
   prefixIcon: prefixIcon == null
       ? null
       : Icon(prefixIcon, size: 20, color: KolabingColors.textTertiary),
   errorText: errorText,
-  errorStyle: GoogleFonts.openSans(
+  errorStyle: KolabingTextStyles.bodySmall.copyWith(
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: KolabingColors.error,
@@ -710,11 +765,11 @@ InputDecoration _inputDecoration({
   fillColor: KolabingColors.surfaceVariant,
   border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.border),
+    borderSide: const BorderSide(color: KolabingColors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),

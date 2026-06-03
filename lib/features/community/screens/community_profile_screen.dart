@@ -12,6 +12,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
@@ -48,21 +49,25 @@ class _CommunityProfileScreenState
   Future<void> _handleSignOut() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Sign Out'),
-          ),
-        ],
-      ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return AlertDialog(
+          title: Text(l10n.communityProfileSignOutTitle),
+          content: Text(l10n.communityProfileSignOutBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style:
+                  TextButton.styleFrom(foregroundColor: KolabingColors.error),
+              child: Text(l10n.communityProfileSignOutConfirm),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirmed == true && mounted) {
@@ -76,23 +81,25 @@ class _CommunityProfileScreenState
   Future<void> _handleDeleteAccount() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Account'),
-        content: const Text(
-          'Are you sure you want to delete your account? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return AlertDialog(
+          title: Text(l10n.communityProfileDeleteAccountTitle),
+          content: Text(l10n.communityProfileDeleteAccountBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style:
+                  TextButton.styleFrom(foregroundColor: KolabingColors.error),
+              child: Text(l10n.communityProfileDeleteAccountConfirm),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirmed == true && mounted) {
@@ -110,7 +117,9 @@ class _CommunityProfileScreenState
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => SafeArea(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
           child: Column(
@@ -120,15 +129,15 @@ class _CommunityProfileScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'Change Profile Photo',
+                l10n.communityProfileChangePhotoTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -145,8 +154,8 @@ class _CommunityProfileScreenState
                     color: KolabingColors.primary,
                   ),
                 ),
-                title: const Text('Take Photo'),
-                subtitle: const Text('Use your camera'),
+                title: Text(l10n.communityProfileTakePhoto),
+                subtitle: Text(l10n.communityProfileTakePhotoSubtitle),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               ListTile(
@@ -162,15 +171,16 @@ class _CommunityProfileScreenState
                     color: KolabingColors.info,
                   ),
                 ),
-                title: const Text('Choose from Gallery'),
-                subtitle: const Text('Select an existing photo'),
+                title: Text(l10n.communityProfileChooseFromGallery),
+                subtitle: Text(l10n.communityProfileChooseFromGallerySubtitle),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
               const SizedBox(height: KolabingSpacing.md),
             ],
           ),
         ),
-      ),
+      );
+      },
     );
 
     if (source == null) return;
@@ -188,10 +198,10 @@ class _CommunityProfileScreenState
       // Show loading indicator
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -199,11 +209,11 @@ class _CommunityProfileScreenState
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 12),
-                Text('Uploading photo...'),
+                const SizedBox(width: 12),
+                Text(AppLocalizations.of(context).communityProfileUploadingPhoto),
               ],
             ),
-            duration: Duration(seconds: 30),
+            duration: const Duration(seconds: 30),
           ),
         );
       }
@@ -220,8 +230,10 @@ class _CommunityProfileScreenState
 
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile photo updated'),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context).communityProfilePhotoUpdated,
+              ),
               backgroundColor: KolabingColors.success,
             ),
           );
@@ -232,7 +244,11 @@ class _CommunityProfileScreenState
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update photo: $e'),
+            content: Text(
+              AppLocalizations.of(context).communityProfilePhotoUpdateFailed(
+                e.toString(),
+              ),
+            ),
             backgroundColor: KolabingColors.error,
           ),
         );
@@ -252,7 +268,7 @@ class _CommunityProfileScreenState
             content: Text(next.error!),
             backgroundColor: KolabingColors.error,
             action: SnackBarAction(
-              label: 'Dismiss',
+              label: AppLocalizations.of(context).communityProfileDismiss,
               textColor: Colors.white,
               onPressed: () {
                 ref.read(profileProvider.notifier).clearError();
@@ -267,7 +283,7 @@ class _CommunityProfileScreenState
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
       body: SafeArea(
         child: _buildBody(state, isDark),
@@ -293,7 +309,10 @@ class _CommunityProfileScreenState
 
     // Initialized but no data and no error — something went wrong, show retry
     if (state.isInitialized) {
-      return _buildErrorState('Failed to load profile', isDark);
+      return _buildErrorState(
+        AppLocalizations.of(context).communityProfileLoadFailed,
+        isDark,
+      );
     }
 
     // Initial state (before first load attempt)
@@ -384,7 +403,9 @@ class _CommunityProfileScreenState
         ),
       );
 
-  Widget _buildErrorState(String error, bool isDark) => Center(
+  Widget _buildErrorState(String error, bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -405,18 +426,18 @@ class _CommunityProfileScreenState
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'Something went wrong',
+                l10n.communityProfileErrorTitle,
                 style: KolabingTextStyles.headlineSmall.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 error,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -425,7 +446,7 @@ class _CommunityProfileScreenState
                 onPressed: () =>
                     ref.read(profileProvider.notifier).loadProfile(),
                 icon: const Icon(LucideIcons.rotateCcw, size: 18),
-                label: const Text('TRY AGAIN'),
+                label: Text(l10n.communityProfileTryAgain),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,
                   foregroundColor: KolabingColors.onPrimary,
@@ -439,6 +460,7 @@ class _CommunityProfileScreenState
           ),
         ),
       );
+  }
 
   Widget _buildProfileContent(ProfileState state, bool isDark) {
     final profile = state.profile!;
@@ -500,9 +522,10 @@ class _CommunityProfileScreenState
   }
 
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final name = profile.communityProfile?.name ?? profile.displayName;
-    final communityType =
-        profile.communityProfile?.communityTypeLabel ?? 'Community';
+    final communityType = profile.communityProfile?.communityTypeLabel ??
+        l10n.communityProfileCommunityFallback;
     final photoUrl =
         profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
 
@@ -606,7 +629,7 @@ class _CommunityProfileScreenState
             style: KolabingTextStyles.headlineMedium.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -659,10 +682,14 @@ class _CommunityProfileScreenState
                     const Icon(LucideIcons.shield, size: 12),
                     const SizedBox(width: 4),
                     Text(
-                      'LVL ${level.number} · ${level.title} · ${wallet.totalXp} XP',
+                      l10n.communityProfileLevelChip(
+                        level.number,
+                        level.title,
+                        wallet.totalXp,
+                      ),
                       style: KolabingTextStyles.labelSmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                   ],
@@ -688,11 +715,11 @@ class _CommunityProfileScreenState
       );
 
   Widget _buildAboutSection(String about, bool isDark) => _SectionCard(
-        title: 'About',
+        title: AppLocalizations.of(context).communityProfileAboutSection,
         child: Text(
           about,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textSecondary,
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       );
@@ -706,7 +733,7 @@ class _CommunityProfileScreenState
     final city = profile.communityProfile?.city?.name;
 
     return _SectionCard(
-      title: 'Contact Info',
+      title: AppLocalizations.of(context).communityProfileContactInfoSection,
       child: Column(
         children: [
           _ContactInfoTile(icon: LucideIcons.mail, label: email),
@@ -742,13 +769,14 @@ class _CommunityProfileScreenState
     NotificationPreferences? preferences,
     bool isUpdating,
     bool isDark,
-  ) =>
-      _SectionCard(
-        title: 'Notifications',
+  ) {
+    final l10n = AppLocalizations.of(context);
+    return _SectionCard(
+        title: l10n.communityProfileNotificationsSection,
         child: Column(
           children: [
             _NotificationToggle(
-              label: 'Messages',
+              label: l10n.communityProfileNotifMessages,
               value: preferences?.messagesEnabled ?? true,
               isUpdating: isUpdating,
               onChanged: (value) => ref
@@ -756,7 +784,7 @@ class _CommunityProfileScreenState
                   .updateNotificationPreference('messages_enabled', value),
             ),
             _NotificationToggle(
-              label: 'Application Alerts',
+              label: l10n.communityProfileNotifApplications,
               value: preferences?.applicationsEnabled ?? true,
               isUpdating: isUpdating,
               onChanged: (value) => ref
@@ -764,7 +792,7 @@ class _CommunityProfileScreenState
                   .updateNotificationPreference('applications_enabled', value),
             ),
             _NotificationToggle(
-              label: 'Collaboration Updates',
+              label: l10n.communityProfileNotifKolabUpdates,
               value: preferences?.collaborationsEnabled ?? true,
               isUpdating: isUpdating,
               onChanged: (value) => ref
@@ -772,7 +800,7 @@ class _CommunityProfileScreenState
                   .updateNotificationPreference('collaborations_enabled', value),
             ),
             _NotificationToggle(
-              label: 'Rewards & Wallet',
+              label: l10n.communityProfileNotifRewards,
               value: preferences?.rewardsEnabled ?? true,
               isUpdating: isUpdating,
               onChanged: (value) => ref
@@ -780,7 +808,7 @@ class _CommunityProfileScreenState
                   .updateNotificationPreference('rewards_enabled', value),
             ),
             _NotificationToggle(
-              label: 'Marketing & Tips',
+              label: l10n.communityProfileNotifMarketing,
               value: preferences?.marketingEnabled ?? false,
               isUpdating: isUpdating,
               onChanged: (value) => ref
@@ -790,10 +818,12 @@ class _CommunityProfileScreenState
           ],
         ),
       );
+  }
 
-  Widget _buildAccountSection(String email, bool isUpdating, bool isDark) =>
-      _SectionCard(
-        title: 'Account',
+  Widget _buildAccountSection(String email, bool isUpdating, bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return _SectionCard(
+        title: l10n.communityProfileAccountSection,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -814,12 +844,21 @@ class _CommunityProfileScreenState
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
+            ),
+
+            const SizedBox(height: KolabingSpacing.sm),
+
+            // Language
+            _ContactInfoTile(
+              icon: LucideIcons.globe,
+              label: AppLocalizations.of(context).settingsLanguage,
+              onTap: () => context.push(KolabingRoutes.language),
             ),
 
             const SizedBox(height: KolabingSpacing.lg),
@@ -828,7 +867,7 @@ class _CommunityProfileScreenState
             OutlinedButton.icon(
               onPressed: isUpdating ? null : _handleSignOut,
               icon: const Icon(LucideIcons.logOut, size: 18),
-              label: const Text('SIGN OUT'),
+              label: Text(l10n.communityProfileSignOutButton),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KolabingColors.error,
                 side: const BorderSide(color: KolabingColors.error),
@@ -847,7 +886,7 @@ class _CommunityProfileScreenState
                 padding:
                     const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
                 child: Text(
-                  'Delete Account',
+                  l10n.communityProfileDeleteAccountLink,
                   textAlign: TextAlign.center,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     color: isUpdating
@@ -864,6 +903,7 @@ class _CommunityProfileScreenState
           ],
         ),
       );
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -907,7 +947,7 @@ class _SectionCard extends StatelessWidget {
             style: KolabingTextStyles.titleMedium.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -960,7 +1000,7 @@ class _ContactInfoTile extends StatelessWidget {
                       ? KolabingColors.info
                       : isDark
                           ? KolabingColors.textOnDark
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                 ),
               ),
             ),
@@ -1020,7 +1060,7 @@ class _NotificationToggle extends StatelessWidget {
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: isDark
                         ? KolabingColors.textOnDark
-                        : KolabingColors.textPrimary,
+                        : KolabingColors.onSurface,
                   ),
                 ),
               ),

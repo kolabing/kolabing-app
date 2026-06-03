@@ -2,15 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../business/providers/profile_provider.dart';
 import '../../../profile/providers/gallery_provider.dart';
 import '../../enums/intent_type.dart';
@@ -88,7 +89,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e'), backgroundColor: KolabingColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context).mediaUploadFailed(e.toString())), backgroundColor: KolabingColors.error),
         );
       }
     } finally {
@@ -107,8 +108,10 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
     final selectedPhotos = await ExistingPhotoPickerSheet.show(
       context,
-      title: 'Select existing photos',
-      confirmLabel: maxToAdd == 1 ? 'Use photo' : 'Use photos',
+      title: AppLocalizations.of(context).mediaSelectExistingTitle,
+      confirmLabel: maxToAdd == 1
+          ? AppLocalizations.of(context).mediaUsePhoto
+          : AppLocalizations.of(context).mediaUsePhotos,
       maxSelection: maxToAdd,
       fallbackUrls: venuePhotoUrls,
     );
@@ -130,10 +133,10 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Those photos are already in this Kolab.',
-              style: GoogleFonts.openSans(color: Colors.white),
+              AppLocalizations.of(context).mediaPhotosAlreadyAdded,
+              style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
             ),
-            backgroundColor: KolabingColors.textSecondary,
+            backgroundColor: KolabingColors.onSurfaceVariant,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -155,8 +158,8 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Added ${toAdd.length} existing photo${toAdd.length == 1 ? '' : 's'}.',
-            style: GoogleFonts.openSans(color: Colors.white),
+            AppLocalizations.of(context).mediaPhotosAdded(toAdd.length),
+            style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
           ),
           backgroundColor: KolabingColors.success,
           behavior: SnackBarBehavior.floating,
@@ -172,8 +175,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     final errors = formState.fieldErrors;
     final notifier = ref.read(kolabFormProvider.notifier);
 
+    final l10n = AppLocalizations.of(context);
     final isVenue = formState.intentType == IntentType.venuePromotion;
-    final title = isVenue ? 'SHOW OFF YOUR VENUE' : 'SHOW YOUR PRODUCT';
+    final title = isVenue ? l10n.mediaTitleVenue : l10n.mediaTitleProduct;
 
     // C7: surface a "Use venue photos" CTA only on venue promotion when the
     // business profile actually has photos to reuse.
@@ -194,24 +198,19 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
-          "Add photos so communities can see what you're offering. (Min 1, Max 5)",
-          style: GoogleFonts.openSans(fontSize: 14, color: KolabingColors.textSecondary),
+          l10n.mediaSubtitle,
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
         if (errors.containsKey('media'))
           Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-            child: Text(errors['media']!, style: GoogleFonts.openSans(fontSize: 12, color: KolabingColors.error)),
+            child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error)),
           ),
 
         // Reuse previously uploaded profile gallery photos, plus venue fallback.
@@ -220,12 +219,8 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             onPressed: _isUploading ? null : _selectExistingPhotos,
             icon: const Icon(LucideIcons.imagePlus, size: 18),
             label: Text(
-              'SELECT FROM LIBRARY',
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
+              l10n.mediaSelectFromLibrary,
+              style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: KolabingColors.primary,
@@ -309,7 +304,7 @@ class _PhotoGrid extends StatelessWidget {
                 color: KolabingColors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   style: BorderStyle.solid,
                 ),
               ),
@@ -319,15 +314,12 @@ class _PhotoGrid extends StatelessWidget {
                   const Icon(
                     LucideIcons.plus,
                     size: 24,
-                    color: KolabingColors.textSecondary,
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
-                    'Add Photo',
-                    style: GoogleFonts.openSans(
-                      fontSize: 11,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    AppLocalizations.of(context).mediaAddPhoto,
+                    style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -371,7 +363,7 @@ class _PhotoSlot extends StatelessWidget {
                     height: 100,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholder(),
+                        _buildPlaceholder(context),
                   )
                 : Image.network(
                     url,
@@ -379,7 +371,7 @@ class _PhotoSlot extends StatelessWidget {
                     height: 100,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholder(),
+                        _buildPlaceholder(context),
                   ),
           ),
         ),
@@ -406,15 +398,15 @@ class _PhotoSlot extends StatelessWidget {
       ],
     );
 
-  Widget _buildPlaceholder() => Center(
+  Widget _buildPlaceholder(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.image, size: 24, color: KolabingColors.textSecondary),
+            const Icon(LucideIcons.image, size: 24, color: KolabingColors.onSurfaceVariant),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
-              'Photo ${index + 1}',
-              style: GoogleFonts.openSans(fontSize: 11, color: KolabingColors.textSecondary),
+              AppLocalizations.of(context).mediaPhotoSlot(index + 1),
+              style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
         ),

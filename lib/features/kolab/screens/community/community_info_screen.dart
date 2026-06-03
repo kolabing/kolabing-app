@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/kolab_form_provider.dart';
 
 /// Community step 1: "YOUR COMMUNITY TYPE"
@@ -71,6 +72,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
 
@@ -81,21 +83,13 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
         children: [
           // Section header
           Text(
-            'YOUR COMMUNITY TYPE',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
-              letterSpacing: 1.0,
-            ),
+            l10n.communityInfoTypeHeader,
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Help businesses understand your audience. Select up to 3.',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            l10n.communityInfoTypeSubtitle,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
           // Community types error
@@ -135,22 +129,17 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                     border: Border.all(
                       color: isSelected
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
                   child: Text(
                     type,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isMaxReached
+                    style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isMaxReached
                           ? KolabingColors.textTertiary
                           : isSelected
-                              ? KolabingColors.textPrimary
-                              : KolabingColors.textSecondary,
-                    ),
+                              ? KolabingColors.onSurface
+                              : KolabingColors.onSurfaceVariant),
                   ),
                 ),
               );
@@ -160,7 +149,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           const SizedBox(height: KolabingSpacing.lg),
 
           // Community Size
-          _buildLabel('COMMUNITY SIZE'),
+          _buildLabel(l10n.communityInfoCommunitySizeLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _communitySizeController,
@@ -172,24 +161,19 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
               final parsed = int.tryParse(value);
               ref.read(kolabFormProvider.notifier).updateCommunitySize(parsed);
             },
-            style: GoogleFonts.openSans(
-              fontSize: 15,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText: 'e.g., 500',
-              hintStyle: GoogleFonts.openSans(
-                color: KolabingColors.textTertiary,
-              ),
+              hintText: l10n.communityInfoCommunitySizeHint,
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -207,7 +191,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Expected Attendees
-          _buildLabel('EXPECTED ATTENDEES'),
+          _buildLabel(l10n.communityInfoExpectedAttendeesLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _attendanceController,
@@ -221,24 +205,19 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateTypicalAttendance(parsed);
             },
-            style: GoogleFonts.openSans(
-              fontSize: 15,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText: 'e.g., 50',
-              hintStyle: GoogleFonts.openSans(
-                color: KolabingColors.textTertiary,
-              ),
+              hintText: l10n.communityInfoExpectedAttendeesHint,
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -259,12 +238,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   Widget _buildLabel(String label) => Text(
         label,
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textSecondary,
-          letterSpacing: 1.0,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
       );
 
   Widget _buildFieldError(String error) => Container(
@@ -287,10 +261,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             Expanded(
               child: Text(
                 error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
               ),
             ),
           ],

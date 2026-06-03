@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Localization (en, es, ca) — official gen-l10n + Material/Cupertino delegates
+  flutter_localizations:
+    sdk: flutter
+
   # UI
   cupertino_icons: ^1.0.8
 
@@ -97,6 +101,9 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+
+  # Generate AppLocalizations from lib/l10n/*.arb (see l10n.yaml)
+  generate: true
 
   assets:
     - assets/images/

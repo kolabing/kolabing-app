@@ -3,9 +3,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
@@ -117,12 +117,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   String? _validateEmail(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return l10n.authEmailRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return l10n.authEmailInvalid;
     }
     return null;
   }
@@ -146,7 +147,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     } on Exception {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showErrorSnackBar('An unexpected error occurred');
+      _showErrorSnackBar(AppLocalizations.of(context).authUnexpectedError);
       return;
     }
 
@@ -162,7 +163,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
@@ -189,8 +190,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
+                AppLocalizations.of(context).authNoInternet,
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
@@ -204,7 +205,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: _handleSendResetLink,
         ),
@@ -328,7 +329,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   border: Border.all(color: _kForgotPanelBorder),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.30),
+                      color: KolabingColors.overlayDark30,
                       blurRadius: 32,
                       offset: const Offset(0, 18),
                     ),
@@ -369,20 +370,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Reset your password',
-            style: GoogleFonts.openSans(
-              color: Colors.white,
+            AppLocalizations.of(context).forgotPasswordFormTitle,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: KolabingColors.textOnDark,
               fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            "Enter your account email and we'll send a secure reset link.",
-            style: GoogleFonts.openSans(
+            AppLocalizations.of(context).forgotPasswordFormSubtitle,
+            style: KolabingTextStyles.captionSecondary.copyWith(
               color: _kForgotTextMuted,
               fontSize: ultraCompact ? 11.5 : 12.5,
-              fontWeight: FontWeight.w400,
               height: 1.35,
             ),
           ),
@@ -398,21 +398,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             validator: _validateEmail,
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => _handleSendResetLink(),
-            style: GoogleFonts.openSans(
-              color: Colors.white,
-              fontSize: 15,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: KolabingColors.textOnDark,
               fontWeight: FontWeight.w600,
             ),
             cursorColor: _kForgotAccent,
             decoration: _inputDecoration(
-              hint: 'Email',
+              hint: AppLocalizations.of(context).authEmailLabel,
               prefixIcon: Icons.alternate_email_rounded,
             ),
           ),
           const SizedBox(height: 10),
           Text(
-            'If the email matches an account, the reset link will arrive shortly.',
-            style: GoogleFonts.openSans(
+            AppLocalizations.of(context).forgotPasswordHelperText,
+            style: KolabingTextStyles.labelSmall.copyWith(
               color: _kForgotTextSoft,
               fontSize: ultraCompact ? 11.0 : 11.5,
               fontWeight: FontWeight.w600,
@@ -451,8 +450,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         ),
                       )
                     : Text(
-                        'SEND RESET LINK',
-                        style: GoogleFonts.rubik(
+                        AppLocalizations.of(context).forgotPasswordSendButton,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
                           fontSize: compact ? 15 : 16,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
@@ -493,20 +492,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         ),
         const SizedBox(height: 10),
         Text(
-          'Check your inbox',
-          style: GoogleFonts.openSans(
-            color: Colors.white,
+          AppLocalizations.of(context).forgotPasswordSuccessTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            color: KolabingColors.textOnDark,
             fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
             fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          'If an account exists for this email, the reset link is on its way.',
-          style: GoogleFonts.openSans(
+          AppLocalizations.of(context).forgotPasswordSuccessSubtitle,
+          style: KolabingTextStyles.captionSecondary.copyWith(
             color: _kForgotTextMuted,
             fontSize: ultraCompact ? 11.5 : 12.5,
-            fontWeight: FontWeight.w400,
             height: 1.35,
           ),
         ),
@@ -529,8 +527,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               Expanded(
                 child: Text(
                   _emailController.text.trim(),
-                  style: GoogleFonts.openSans(
-                    color: Colors.white,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: KolabingColors.textOnDark,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                   ),
@@ -557,8 +555,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 ),
               ),
               child: Text(
-                'BACK TO SIGN IN',
-                style: GoogleFonts.rubik(
+                AppLocalizations.of(context).forgotPasswordBackToSignIn,
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: compact ? 15 : 16,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.0,
@@ -584,8 +582,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               padding: EdgeInsets.zero,
             ),
             child: Text(
-              'Use another email',
-              style: GoogleFonts.openSans(
+              AppLocalizations.of(context).forgotPasswordUseAnotherEmail,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: _kForgotAccent,
@@ -602,9 +600,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     required IconData prefixIcon,
   }) => InputDecoration(
     hintText: hint,
-    hintStyle: GoogleFonts.openSans(
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
       color: _kForgotTextSoft,
-      fontSize: 15,
       fontWeight: FontWeight.w600,
     ),
     prefixIcon: Icon(prefixIcon, color: _kForgotTextMuted, size: 20),
@@ -633,7 +630,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       borderRadius: BorderRadius.circular(16),
       borderSide: const BorderSide(color: KolabingColors.error, width: 1.6),
     ),
-    errorStyle: GoogleFonts.openSans(
+    errorStyle: KolabingTextStyles.labelSmall.copyWith(
       color: const Color(0xFFFFA7B8),
       fontSize: 11.5,
       fontWeight: FontWeight.w600,
@@ -737,26 +734,35 @@ class _HeroCopy extends StatelessWidget {
   final bool emailSent;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _HeroLine(
-        text: emailSent ? 'CHECK YOUR EMAIL.' : 'RESET ACCESS.',
-        color: Colors.white,
-        size: headlineSize,
-      ),
-      _HeroLine(
-        text: emailSent ? 'OPEN THE LINK.' : 'GET BACK IN.',
-        color: Colors.white,
-        size: headlineSize,
-      ),
-      _HeroLine(
-        text: emailSent ? "YOU'RE ALMOST IN." : 'FORGOT PASSWORD?',
-        color: _kForgotAccent,
-        size: headlineSize,
-      ),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _HeroLine(
+          text: emailSent
+              ? l10n.forgotPasswordHeroSentLine1
+              : l10n.forgotPasswordHeroLine1,
+          color: KolabingColors.textOnDark,
+          size: headlineSize,
+        ),
+        _HeroLine(
+          text: emailSent
+              ? l10n.forgotPasswordHeroSentLine2
+              : l10n.forgotPasswordHeroLine2,
+          color: KolabingColors.textOnDark,
+          size: headlineSize,
+        ),
+        _HeroLine(
+          text: emailSent
+              ? l10n.forgotPasswordHeroSentLine3
+              : l10n.forgotPasswordHeroLine3,
+          color: _kForgotAccent,
+          size: headlineSize,
+        ),
+      ],
+    );
+  }
 }
 
 class _HeroLine extends StatelessWidget {
@@ -779,7 +785,7 @@ class _HeroLine extends StatelessWidget {
       child: Text(
         text,
         maxLines: 1,
-        style: GoogleFonts.anton(
+        style: KolabingTextStyles.displayLarge.copyWith(
           color: color,
           fontSize: size,
           height: 0.94,
@@ -831,15 +837,14 @@ class _BackButtonState extends State<_BackButton> {
             const Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 14,
-              color: Colors.white,
+              color: KolabingColors.textOnDark,
             ),
             const SizedBox(width: 2),
             Text(
-              'Back',
-              style: GoogleFonts.openSans(
-                fontSize: 15,
+              AppLocalizations.of(context).commonBack,
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: KolabingColors.textOnDark,
               ),
             ),
           ],

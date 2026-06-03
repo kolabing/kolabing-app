@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/permission_service.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
@@ -63,23 +63,26 @@ class _AttendeeRegisterScreenState
   }
 
   String? _validateEmail(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (_emailApiError != null) return _emailApiError;
-    if (value == null || value.isEmpty) return 'Email is required';
+    if (value == null || value.isEmpty) return l10n.authEmailRequired;
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) return 'Please enter a valid email';
+    if (!emailRegex.hasMatch(value)) return l10n.authEmailInvalid;
     return null;
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (_passwordApiError != null) return _passwordApiError;
-    if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 8) return 'Password must be at least 8 characters';
+    if (value == null || value.isEmpty) return l10n.authPasswordRequired;
+    if (value.length < 8) return l10n.authPasswordTooShort;
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Please confirm your password';
-    if (value != _passwordController.text) return 'Passwords do not match';
+    final l10n = AppLocalizations.of(context);
+    if (value == null || value.isEmpty) return l10n.authConfirmPasswordRequired;
+    if (value != _passwordController.text) return l10n.authPasswordsDoNotMatch;
     return null;
   }
 
@@ -153,7 +156,7 @@ class _AttendeeRegisterScreenState
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showErrorSnackBar('An unexpected error occurred');
+      _showErrorSnackBar(AppLocalizations.of(context).authUnexpectedError);
     }
   }
 
@@ -170,8 +173,8 @@ class _AttendeeRegisterScreenState
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
+                AppLocalizations.of(context).authNoInternet,
+                style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
@@ -185,7 +188,7 @@ class _AttendeeRegisterScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: _handleRegister,
         ),
@@ -198,7 +201,7 @@ class _AttendeeRegisterScreenState
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
+          style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
@@ -226,11 +229,11 @@ class _AttendeeRegisterScreenState
     fillColor: KolabingColors.surface,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.border),
+      borderSide: const BorderSide(color: KolabingColors.darkBorder),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.border),
+      borderSide: const BorderSide(color: KolabingColors.darkBorder),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -267,15 +270,14 @@ class _AttendeeRegisterScreenState
                             const Icon(
                               Icons.arrow_back_ios_rounded,
                               size: 20,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Back',
-                              style: GoogleFonts.openSans(
-                                fontSize: 16,
+                              AppLocalizations.of(context).commonBack,
+                              style: KolabingTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                             ),
                           ],
@@ -304,11 +306,11 @@ class _AttendeeRegisterScreenState
 
                         // Title
                         Text(
-                          'JOIN AS ATTENDEE',
-                          style: GoogleFonts.rubik(
+                          AppLocalizations.of(context).attendeeRegisterTitle,
+                          style: KolabingTextStyles.bodyLarge.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -316,11 +318,9 @@ class _AttendeeRegisterScreenState
 
                         // Subtitle
                         Text(
-                          'Create your account to join events and complete challenges',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
+                          AppLocalizations.of(context).attendeeRegisterSubtitle,
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -339,8 +339,8 @@ class _AttendeeRegisterScreenState
                             }
                           },
                           decoration: _inputDecoration(
-                            label: 'Email',
-                            hint: 'your@email.com',
+                            label: AppLocalizations.of(context).authEmailLabel,
+                            hint: AppLocalizations.of(context).authEmailHint,
                             prefixIcon: Icons.email_outlined,
                           ),
                         ),
@@ -358,8 +358,8 @@ class _AttendeeRegisterScreenState
                             }
                           },
                           decoration: _inputDecoration(
-                            label: 'Password',
-                            hint: 'Min. 8 characters',
+                            label: AppLocalizations.of(context).authPasswordLabel,
+                            hint: AppLocalizations.of(context).attendeeRegisterPasswordHint,
                             prefixIcon: Icons.lock_outline,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -382,8 +382,8 @@ class _AttendeeRegisterScreenState
                           enabled: !_isLoading,
                           validator: _validateConfirmPassword,
                           decoration: _inputDecoration(
-                            label: 'Confirm Password',
-                            hint: 'Re-enter your password',
+                            label: AppLocalizations.of(context).authConfirmPasswordLabel,
+                            hint: AppLocalizations.of(context).attendeeRegisterConfirmPasswordHint,
                             prefixIcon: Icons.lock_outline,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -443,10 +443,10 @@ class _AttendeeRegisterScreenState
                                 color: KolabingColors.onPrimary,
                               )
                             : Text(
-                                'CREATE ACCOUNT',
-                                style: GoogleFonts.dmSans(
+                                AppLocalizations.of(context).attendeeRegisterCreateAccount,
+                                style: KolabingTextStyles.button.copyWith(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   letterSpacing: 1.0,
                                 ),
                               ),
@@ -454,10 +454,9 @@ class _AttendeeRegisterScreenState
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                      style: GoogleFonts.openSans(
+                      AppLocalizations.of(context).attendeeRegisterTerms,
+                      style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 12,
-                        fontWeight: FontWeight.w400,
                         color: KolabingColors.textTertiary,
                       ),
                       textAlign: TextAlign.center,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Bottom action bar for the Kolab creation flow.
 ///
@@ -60,51 +61,59 @@ class KolabActionBar extends StatelessWidget {
         decoration: const BoxDecoration(
           color: KolabingColors.surface,
           border: Border(
-            top: BorderSide(color: KolabingColors.border),
+            top: BorderSide(color: KolabingColors.darkBorder),
           ),
         ),
-        child: isLastStep ? _buildLastStepRow() : _buildNavigationRow(),
+        child: isLastStep
+            ? _buildLastStepRow(context)
+            : _buildNavigationRow(context),
       );
 
-  Widget _buildNavigationRow() => Row(
-        children: [
-          if (!isFirstStep) ...[
-            Expanded(
-              child: _OutlinedActionButton(
-                label: 'BACK',
-                onPressed: onBack,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-          ],
-          Expanded(
-            child: _PrimaryActionButton(
-              label: 'NEXT',
-              onPressed: onNext,
-            ),
-          ),
-        ],
-      );
-
-  Widget _buildLastStepRow() => Row(
-        children: [
+  Widget _buildNavigationRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        if (!isFirstStep) ...[
           Expanded(
             child: _OutlinedActionButton(
-              label: 'SAVE DRAFT',
-              onPressed: isSubmitting || isPublishing ? null : onSaveDraft,
-              isLoading: isSubmitting,
+              label: l10n.commonBack,
+              onPressed: onBack,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: _PrimaryActionButton(
-              label: 'PUBLISH',
-              onPressed: isSubmitting || isPublishing ? null : onPublish,
-              isLoading: isPublishing,
-            ),
-          ),
         ],
-      );
+        Expanded(
+          child: _PrimaryActionButton(
+            label: l10n.commonNext,
+            onPressed: onNext,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLastStepRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: _OutlinedActionButton(
+            label: l10n.kolabActionBarSaveDraft,
+            onPressed: isSubmitting || isPublishing ? null : onSaveDraft,
+            isLoading: isSubmitting,
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: _PrimaryActionButton(
+            label: l10n.kolabActionBarPublish,
+            onPressed: isSubmitting || isPublishing ? null : onPublish,
+            isLoading: isPublishing,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -148,11 +157,7 @@ class _PrimaryActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
         ),
       );
@@ -179,8 +184,8 @@ class _OutlinedActionButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.textPrimary,
-            side: const BorderSide(color: KolabingColors.border),
+            foregroundColor: KolabingColors.onSurface,
+            side: const BorderSide(color: KolabingColors.darkBorder),
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -192,16 +197,12 @@ class _OutlinedActionButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 )
               : Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
         ),
       );

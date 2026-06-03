@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../services/permission_service.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/summary_card.dart';
@@ -79,11 +80,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       return _emailApiError;
     }
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppLocalizations.of(context).communityFinalEmailRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return AppLocalizations.of(context).communityFinalEmailInvalid;
     }
     return null;
   }
@@ -94,10 +95,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       return _passwordApiError;
     }
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context).communityFinalPasswordRequired;
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return AppLocalizations.of(context).communityFinalPasswordMinLength;
     }
     return null;
   }
@@ -113,10 +114,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return AppLocalizations.of(context).communityFinalConfirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return AppLocalizations.of(context).communityFinalPasswordsMismatch;
     }
     return null;
   }
@@ -203,11 +204,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
-                style: GoogleFonts.openSans(
-                  color: KolabingColors.textOnDark,
-                  fontWeight: FontWeight.w600,
-                ),
+                AppLocalizations.of(context).communityFinalNoInternet,
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
               ),
             ),
           ],
@@ -218,7 +216,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: _handleRegister,
         ),
@@ -231,10 +229,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.openSans(
-            color: KolabingColors.textOnDark,
-            fontWeight: FontWeight.w600,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
         ),
         backgroundColor: KolabingColors.error,
         behavior: SnackBarBehavior.floating,
@@ -247,6 +242,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
 
     if (data == null) {
@@ -286,16 +282,12 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               const Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.textPrimary,
+                                color: KolabingColors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Back',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: KolabingColors.textPrimary,
-                                ),
+                                l10n.commonBack,
+                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
                               ),
                             ],
                           ),
@@ -319,24 +311,16 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
                           // Title
                           Text(
-                            'CREATE YOUR ACCOUNT',
-                            style: GoogleFonts.rubik(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600,
-                              color: KolabingColors.textPrimary,
-                            ),
+                            l10n.communityFinalTitle,
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
 
                           // Subtitle
                           Text(
-                            'Enter your email and password to complete registration',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.textSecondary,
-                            ),
+                            l10n.communityFinalSubtitle,
+                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -358,12 +342,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Edit',
-                                  style: GoogleFonts.openSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.primary,
-                                  ),
+                                  l10n.communityFinalEdit,
+                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
                                 ),
                               ],
                             ),
@@ -389,21 +369,21 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             },
                             scrollPadding: const EdgeInsets.only(bottom: 160),
                             decoration: InputDecoration(
-                              labelText: 'Email',
-                              hintText: 'your@email.com',
+                              labelText: l10n.communityFinalEmailLabel,
+                              hintText: l10n.communityFinalEmailHint,
                               prefixIcon: const Icon(Icons.email_outlined),
                               filled: true,
                               fillColor: KolabingColors.surface,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -441,8 +421,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             },
                             scrollPadding: const EdgeInsets.only(bottom: 160),
                             decoration: InputDecoration(
-                              labelText: 'Password',
-                              hintText: 'Min. 8 characters',
+                              labelText: l10n.communityFinalPasswordLabel,
+                              hintText: l10n.communityFinalPasswordHint,
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -461,13 +441,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -498,8 +478,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             onFieldSubmitted: (_) => _handleRegister(),
                             scrollPadding: const EdgeInsets.only(bottom: 160),
                             decoration: InputDecoration(
-                              labelText: 'Confirm Password',
-                              hintText: 'Re-enter your password',
+                              labelText: l10n.communityFinalConfirmPasswordLabel,
+                              hintText: l10n.communityFinalConfirmPasswordHint,
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -519,13 +499,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
-                                  color: KolabingColors.border,
+                                  color: KolabingColors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -589,12 +569,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                   color: KolabingColors.onPrimary,
                                 )
                               : Text(
-                                  'CREATE ACCOUNT',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                  ),
+                                  l10n.communityFinalCreateAccountButton,
+                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                                 ),
                         ),
                       ),
@@ -602,12 +578,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
                       // Terms text
                       Text(
-                        'By creating an account, you agree to our Terms of Service and Privacy Policy',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        l10n.communityFinalTermsNotice,
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                         textAlign: TextAlign.center,
                       ),
                     ],

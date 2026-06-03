@@ -66,7 +66,7 @@ class PublicProfileService {
     var gallery = const <GalleryPhoto>[];
     try {
       gallery = await _galleryService.getProfileGallery(profileId);
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('PublicProfileService: gallery fetch failed: $e');
     }
 
@@ -81,13 +81,23 @@ class PublicProfileService {
     );
   }
 
+  Future<PaginatedPublicProfileReviews> getProfileReviews(
+    String profileId, {
+    int page = 1,
+    int perPage = 10,
+  }) => _fetchProfileReviewsInner(
+    profileId,
+    page: page,
+    perPage: perPage,
+    allowRetry: true,
+  );
+
   // ---------------------------------------------------------------------------
   // GET /profiles/{id}
   // ---------------------------------------------------------------------------
 
-  Future<PublicProfile?> _fetchPublicProfile(String id) {
-    return _fetchPublicProfileInner(id, allowRetry: true);
-  }
+  Future<PublicProfile?> _fetchPublicProfile(String id) =>
+      _fetchPublicProfileInner(id, allowRetry: true);
 
   Future<PublicProfile?> _fetchPublicProfileInner(
     String id, {
@@ -137,9 +147,8 @@ class PublicProfileService {
   // GET /profiles/{id}/collaborations
   // ---------------------------------------------------------------------------
 
-  Future<List<PastCollaboration>> _fetchPastCollaborations(String id) {
-    return _fetchPastCollaborationsInner(id, allowRetry: true);
-  }
+  Future<List<PastCollaboration>> _fetchPastCollaborations(String id) =>
+      _fetchPastCollaborationsInner(id, allowRetry: true);
 
   Future<List<PastCollaboration>> _fetchPastCollaborationsInner(
     String id, {
@@ -193,46 +202,112 @@ class PublicProfileService {
     );
   }
 
+  Future<PaginatedPublicProfileReviews> _fetchProfileReviewsInner(
+    String id, {
+    required int page,
+    required int perPage,
+    required bool allowRetry,
+  }) async {
+    final url =
+        '${ApiConfig.baseUrl}/profiles/$id/reviews?page=$page&per_page=$perPage';
+    final token = await _authService.getToken();
+    debugPrint('PublicProfileService: GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+    );
+
+    debugPrint('PublicProfileService: reviews status=${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data =
+          (json['data'] as List<dynamic>?)
+              ?.whereType<Map<String, dynamic>>()
+              .map(PublicProfileReview.fromJson)
+              .toList() ??
+          const <PublicProfileReview>[];
+      final meta =
+          (json['meta'] as Map?)?.cast<String, dynamic>() ??
+          const <String, dynamic>{};
+
+      return PaginatedPublicProfileReviews(
+        reviews: data,
+        currentPage: (meta['current_page'] as num?)?.toInt() ?? 1,
+        lastPage: (meta['last_page'] as num?)?.toInt() ?? 1,
+        perPage: (meta['per_page'] as num?)?.toInt() ?? perPage,
+        total: (meta['total'] as num?)?.toInt() ?? data.length,
+      );
+    }
+
+    if (response.statusCode == 401 && allowRetry) {
+      await _authService.refreshSession();
+      return _fetchProfileReviewsInner(
+        id,
+        page: page,
+        perPage: perPage,
+        allowRetry: false,
+      );
+    }
+
+    if (response.statusCode == 404) {
+      return const PaginatedPublicProfileReviews(
+        reviews: <PublicProfileReview>[],
+        currentPage: 1,
+        lastPage: 1,
+        perPage: 10,
+        total: 0,
+      );
+    }
+
+    final body = response.body.isEmpty
+        ? <String, dynamic>{'message': 'Failed to load reviews'}
+        : jsonDecode(response.body) as Map<String, dynamic>;
+    throw ApiException(
+      error: ApiError.fromJson(body, statusCode: response.statusCode),
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Mock Data (fallback only when the profile endpoint is unreachable)
   // ---------------------------------------------------------------------------
 
-  PublicProfile _getMockProfile(String profileId) {
-    return PublicProfile(
-      id: profileId,
-      userType: 'community',
-      displayName: 'Kolabing Community',
-      about:
-          'We organize tech events, meetups, and workshops to bring people together. Our community focuses on creating meaningful connections between businesses and local groups.',
-      type: 'Technology',
-      cityName: 'Istanbul',
-      instagram: 'kolabing',
-      tiktok: 'kolabing',
-      website: 'https://kolabing.com',
-      pastCollaborations: _getMockCollaborations(),
-    );
-  }
+  PublicProfile _getMockProfile(String profileId) => PublicProfile(
+    id: profileId,
+    userType: 'community',
+    displayName: 'Kolabing Community',
+    about:
+        'We organize tech events, meetups, and workshops to bring people together. Our community focuses on creating meaningful connections between businesses and local groups.',
+    type: 'Technology',
+    cityName: 'Istanbul',
+    instagram: 'kolabing',
+    tiktok: 'kolabing',
+    website: 'https://kolabing.com',
+    pastCollaborations: _getMockCollaborations(),
+  );
 
-  List<PastCollaboration> _getMockCollaborations() {
-    return [
-      PastCollaboration(
-        id: 'collab_1',
-        title: 'Tech Meetup v4',
-        partnerName: 'CafeX',
-        completedAt: DateTime(2025, 1, 15),
-      ),
-      PastCollaboration(
-        id: 'collab_2',
-        title: 'Summer Networking Event',
-        partnerName: 'CoWork Hub',
-        completedAt: DateTime(2024, 8, 22),
-      ),
-      PastCollaboration(
-        id: 'collab_3',
-        title: 'Startup Weekend',
-        partnerName: 'Innovation Lab',
-        completedAt: DateTime(2024, 6, 10),
-      ),
-    ];
-  }
+  List<PastCollaboration> _getMockCollaborations() => [
+    PastCollaboration(
+      id: 'collab_1',
+      title: 'Tech Meetup v4',
+      partnerName: 'CafeX',
+      completedAt: DateTime(2025, 1, 15),
+    ),
+    PastCollaboration(
+      id: 'collab_2',
+      title: 'Summer Networking Event',
+      partnerName: 'CoWork Hub',
+      completedAt: DateTime(2024, 8, 22),
+    ),
+    PastCollaboration(
+      id: 'collab_3',
+      title: 'Startup Weekend',
+      partnerName: 'Innovation Lab',
+      completedAt: DateTime(2024, 6, 10),
+    ),
+  ];
 }

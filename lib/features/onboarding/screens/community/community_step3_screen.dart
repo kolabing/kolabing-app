@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
@@ -54,8 +55,10 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     final data = ref.read(onboardingProvider);
     if (data?.cityId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a city'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).communityStep3CityRequired,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -71,6 +74,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
     final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
     final canContinue = data?.cityId != null;
@@ -99,24 +103,16 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
                         // Title
                         Text(
-                          'WHERE ARE YOU LOCATED?',
-                          style: GoogleFonts.rubik(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
-                          ),
+                          l10n.communityStep3Title,
+                          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
 
                         // Subtitle
                         Text(
-                          'Find opportunities in your area',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textSecondary,
-                          ),
+                          l10n.communityStep3Subtitle,
+                          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
@@ -129,18 +125,10 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                               _searchQuery = value;
                             });
                           },
-                          style: GoogleFonts.openSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: KolabingColors.textPrimary,
-                          ),
+                          style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
                           decoration: InputDecoration(
-                            hintText: 'Search cities...',
-                            hintStyle: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: KolabingColors.textTertiary,
-                            ),
+                            hintText: l10n.communityStep3SearchHint,
+                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
                             prefixIcon: const Icon(
                               LucideIcons.search,
                               size: 20,
@@ -180,12 +168,8 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Popular Cities:',
-                              style: GoogleFonts.openSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: KolabingColors.textTertiary,
-                              ),
+                              l10n.communityStep3PopularCities,
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
                             ),
                           ),
                       ],
@@ -201,11 +185,8 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         if (cities.isEmpty) {
                           return Center(
                             child: Text(
-                              'No cities found',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                color: KolabingColors.textSecondary,
-                              ),
+                              l10n.communityStep3NoCitiesFound,
+                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                           );
                         }
@@ -241,16 +222,13 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Failed to load cities',
-                              style: GoogleFonts.openSans(
-                                fontSize: 14,
-                                color: KolabingColors.textSecondary,
-                              ),
+                              l10n.communityStep3LoadError,
+                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
                               onPressed: () => ref.invalidate(citiesProvider),
-                              child: const Text('Retry'),
+                              child: Text(l10n.commonRetry),
                             ),
                           ],
                         ),
@@ -282,12 +260,8 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'CONTINUE',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0,
-                    ),
+                    l10n.commonContinue,
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                   ),
                 ),
               ),

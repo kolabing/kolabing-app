@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -27,7 +28,7 @@ class OfferingScreen extends ConsumerStatefulWidget {
     _OfferingOption(
       value: 'venue',
       title: 'Venue',
-      subtitle: 'Provide your space for the collaboration',
+      subtitle: 'Provide your space for the kolab',
       icon: LucideIcons.building2,
     ),
     _OfferingOption(
@@ -63,7 +64,7 @@ class OfferingScreen extends ConsumerStatefulWidget {
     _OfferingOption(
       value: 'sponsorship',
       title: 'Sponsorship budget',
-      subtitle: 'Financial support for the collaboration',
+      subtitle: 'Financial support for the kolab',
       icon: LucideIcons.banknote,
     ),
     _OfferingOption(
@@ -101,6 +102,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
 
     _syncControllers(kolab);
 
+    final l10n = AppLocalizations.of(context);
     final isVenueFlow = formState.intentType == IntentType.venuePromotion;
     final offerings = kolab.offering;
 
@@ -112,22 +114,14 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
       children: [
         // -- Section header
         Text(
-          "WHAT YOU'RE OFFERING",
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-            color: KolabingColors.textSecondary,
-          ),
+          l10n.offeringTitle,
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
-          'Select all that apply',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.textSecondary,
-          ),
+          l10n.offeringSelectAllThatApply,
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -137,10 +131,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['offering']!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                color: KolabingColors.error,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
             ),
           ),
 
@@ -152,8 +143,8 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           return Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
             child: _ToggleCard(
-              title: option.title,
-              subtitle: option.subtitle,
+              title: _offeringTitle(l10n, option.value, option.title),
+              subtitle: _offeringSubtitle(l10n, option.value, option.subtitle),
               icon: option.icon,
               isSelected: isVenueLocked || isSelected,
               isLocked: isVenueLocked,
@@ -167,15 +158,11 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.lg),
 
         // H3: Base offer (public to all viewers).
-        _SectionLabel(label: 'BASE OFFER'),
+        _SectionLabel(label: l10n.offeringBaseOfferLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'What every community will see on your card. Be specific so leaders can evaluate at a glance.',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.textSecondary,
-            height: 1.4,
-          ),
+          l10n.offeringBaseOfferHelper,
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
@@ -184,18 +171,14 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           maxLines: 3,
           onChanged: notifier.updateBaseOffer,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: GoogleFonts.openSans(
-            fontSize: 15,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
           decoration: InputDecoration(
-            hintText:
-                'e.g. 20% off Tuesdays, free meeting room for groups of 10+',
+            hintText: l10n.offeringBaseOfferHint,
             filled: true,
             fillColor: KolabingColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: KolabingColors.border),
+              borderSide: const BorderSide(color: KolabingColors.darkBorder),
             ),
           ),
         ),
@@ -203,16 +186,11 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.lg),
 
         // H3: Negotiation triggers — surfaces only after a community applies.
-        _SectionLabel(label: 'EXTRA TERMS (OPTIONAL)'),
+        _SectionLabel(label: l10n.offeringExtraTermsLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Better terms you only unlock once a community proposes a collab. '
-          'They see these after sending you a Kolab.',
-          style: GoogleFonts.openSans(
-            fontSize: 13,
-            color: KolabingColors.textSecondary,
-            height: 1.4,
-          ),
+          l10n.offeringExtraTermsHelper,
+          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -224,12 +202,8 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             onPressed: () => _addTrigger(kolab, notifier),
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
-              'ADD EXTRA TERM',
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
+              l10n.offeringAddExtraTerm,
+              style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: KolabingColors.primary,
@@ -284,18 +258,59 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
   }
 }
 
+String _offeringTitle(AppLocalizations l10n, String value, String fallback) {
+  switch (value) {
+    case 'venue':
+      return l10n.offeringVenueTitle;
+    case 'food_drink':
+      return l10n.offeringFoodDrinkTitle;
+    case 'discount':
+      return l10n.offeringDiscountTitle;
+    case 'products':
+      return l10n.offeringProductsTitle;
+    case 'social_media':
+      return l10n.offeringSocialMediaTitle;
+    case 'content_creation':
+      return l10n.offeringContentCreationTitle;
+    case 'sponsorship':
+      return l10n.offeringSponsorshipTitle;
+    case 'other':
+      return l10n.offeringOtherTitle;
+    default:
+      return fallback;
+  }
+}
+
+String _offeringSubtitle(AppLocalizations l10n, String value, String fallback) {
+  switch (value) {
+    case 'venue':
+      return l10n.offeringVenueSubtitle;
+    case 'food_drink':
+      return l10n.offeringFoodDrinkSubtitle;
+    case 'discount':
+      return l10n.offeringDiscountSubtitle;
+    case 'products':
+      return l10n.offeringProductsSubtitle;
+    case 'social_media':
+      return l10n.offeringSocialMediaSubtitle;
+    case 'content_creation':
+      return l10n.offeringContentCreationSubtitle;
+    case 'sponsorship':
+      return l10n.offeringSponsorshipSubtitle;
+    case 'other':
+      return l10n.offeringOtherSubtitle;
+    default:
+      return fallback;
+  }
+}
+
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel({required this.label});
   final String label;
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: GoogleFonts.rubik(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-          color: KolabingColors.textSecondary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
       );
 }
 
@@ -318,7 +333,7 @@ class _TriggerCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: KolabingColors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: KolabingColors.border),
+          border: Border.all(color: KolabingColors.darkBorder),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,22 +343,13 @@ class _TriggerCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'IF $condition',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                      color: KolabingColors.textTertiary,
-                    ),
+                    AppLocalizations.of(context).offeringTriggerIfPrefix(condition),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     additionalOffer,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textPrimary,
-                      height: 1.4,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface, height: 1.4),
                   ),
                 ],
               ),
@@ -383,6 +389,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
     return Container(
       decoration: const BoxDecoration(
@@ -404,35 +411,28 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            'Add an extra term',
-            style: GoogleFonts.rubik(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
-            ),
+            l10n.offeringTriggerSheetTitle,
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Surfaces only after a community sends a Kolab proposal.',
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
-            ),
+            l10n.offeringTriggerSheetSubtitle,
+            style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
           TextField(
             controller: _conditionController,
             maxLength: 100,
-            decoration: const InputDecoration(
-              labelText: 'When',
-              hintText: 'e.g. recurring monthly events',
+            decoration: InputDecoration(
+              labelText: l10n.offeringTriggerWhenLabel,
+              hintText: l10n.offeringTriggerWhenHint,
             ),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
@@ -441,9 +441,9 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             controller: _offerController,
             maxLength: 200,
             maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Then offer',
-              hintText: 'e.g. free venue rental from the 3rd event onward',
+            decoration: InputDecoration(
+              labelText: l10n.offeringTriggerThenLabel,
+              hintText: l10n.offeringTriggerThenHint,
             ),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
@@ -473,12 +473,8 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
                 elevation: 0,
               ),
               child: Text(
-                'ADD TERM',
-                style: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+                l10n.offeringAddTerm,
+                style: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
               ),
             ),
           ),
@@ -541,7 +537,7 @@ class _ToggleCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? KolabingColors.primary
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
         ),
         child: Row(
@@ -559,7 +555,7 @@ class _ToggleCard extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? KolabingColors.primary
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: 1.5,
                 ),
               ),
@@ -578,8 +574,8 @@ class _ToggleCard extends StatelessWidget {
               icon,
               size: 20,
               color: isSelected
-                  ? KolabingColors.textPrimary
-                  : KolabingColors.textSecondary,
+                  ? KolabingColors.onSurface
+                  : KolabingColors.onSurfaceVariant,
             ),
             const SizedBox(width: KolabingSpacing.sm),
 
@@ -590,19 +586,12 @@ class _ToggleCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.textPrimary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                   ),
                 ],
               ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/challenge.dart';
 import 'difficulty_badge.dart';
 import 'points_badge.dart';
@@ -27,9 +27,9 @@ class ChallengeCard extends StatelessWidget {
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -42,7 +42,7 @@ class ChallengeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+              color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
             ),
           ),
           child: Row(
@@ -74,11 +74,7 @@ class ChallengeCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             challenge.name,
-                            style: GoogleFonts.rubik(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: textColor,
-                            ),
+                            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -96,12 +92,7 @@ class ChallengeCard extends StatelessWidget {
                             ),
                             child: Text(
                               'SYSTEM',
-                              style: GoogleFonts.openSans(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                                color: KolabingColors.info,
-                              ),
+                              style: KolabingTextStyles.labelSmall.copyWith(fontSize: 9, fontWeight: FontWeight.w700, color: KolabingColors.info, letterSpacing: 0.5),
                             ),
                           ),
                       ],
@@ -111,10 +102,7 @@ class ChallengeCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         challenge.description!,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          color: secondaryTextColor,
-                        ),
+                        style: KolabingTextStyles.captionSecondary.copyWith(color: secondaryTextColor),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

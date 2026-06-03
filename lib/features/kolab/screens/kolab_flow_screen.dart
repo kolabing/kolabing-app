@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
@@ -57,6 +58,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final formState = ref.watch(kolabFormProvider);
     final notifier = ref.read(kolabFormProvider.notifier);
     final intentType = formState.intentType;
@@ -84,7 +86,9 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
     });
 
     if (intentType == null) {
-      return const Scaffold(body: Center(child: Text('No intent selected')));
+      return Scaffold(
+        body: Center(child: Text(l10n.kolabFlowNoIntentSelected)),
+      );
     }
 
     final isReviewStep = formState.currentStep == formState.totalSteps - 1;
@@ -108,7 +112,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
           leading: IconButton(
             icon: const Icon(
               LucideIcons.arrowLeft,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             onPressed: () {
               if (formState.isSubmitting || formState.isPublishing) return;
@@ -120,13 +124,8 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
             },
           ),
           title: Text(
-            _getTitle(intentType),
-            style: GoogleFonts.rubik(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-              color: KolabingColors.textPrimary,
-            ),
+            _getTitle(l10n, intentType),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
           ),
           centerTitle: true,
         ),
@@ -174,10 +173,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                       Expanded(
                         child: Text(
                           formState.error!,
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            color: KolabingColors.error,
-                          ),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.error),
                         ),
                       ),
                     ],
@@ -236,14 +232,14 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
     _isShowingSubscriptionPaywall = false;
   }
 
-  String _getTitle(IntentType type) {
+  String _getTitle(AppLocalizations l10n, IntentType type) {
     switch (type) {
       case IntentType.communitySeeking:
-        return 'FIND A PARTNER';
+        return l10n.kolabFlowTitleFindPartner;
       case IntentType.venuePromotion:
-        return 'PROMOTE VENUE';
+        return l10n.kolabFlowTitlePromoteVenue;
       case IntentType.productPromotion:
-        return 'PROMOTE PRODUCT';
+        return l10n.kolabFlowTitlePromoteProduct;
     }
   }
 
@@ -289,6 +285,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
     WidgetRef ref,
     bool wasPublished,
   ) {
+    final l10n = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -312,22 +309,17 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              wasPublished ? 'Kolab Published!' : 'Draft Saved!',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-              ),
+              wasPublished
+                  ? l10n.kolabFlowPublishedTitle
+                  : l10n.kolabFlowDraftSavedTitle,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               wasPublished
-                  ? 'Your kolab is now visible in Explore.'
-                  : 'You can continue editing later.',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+                  ? l10n.kolabFlowPublishedMessage
+                  : l10n.kolabFlowDraftSavedMessage,
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -355,11 +347,8 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                 ),
               ),
               child: Text(
-                'DONE',
-                style: GoogleFonts.darkerGrotesque(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+                l10n.commonDone,
+                style: KolabingTextStyles.button.copyWith(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
           ),

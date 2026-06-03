@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../opportunity/models/opportunity.dart';
 
 class OpportunityPublishSuccessDialog extends StatelessWidget {
@@ -23,6 +24,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final canShare =
         !isDraft && onShare != null && (opportunity?.id?.isNotEmpty ?? false);
 
@@ -48,22 +50,17 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            isDraft ? 'Draft Saved!' : 'Opportunity Published!',
-            style: GoogleFonts.rubik(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
-            ),
+            isDraft
+                ? l10n.opportunityPublishSuccessDraftTitle
+                : l10n.opportunityPublishSuccessPublishedTitle,
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             isDraft
-                ? 'Your opportunity has been saved as a draft. You can edit and publish it later.'
-                : 'Your opportunity is now live. Businesses can start applying!',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+                ? l10n.opportunityPublishSuccessDraftBody
+                : l10n.opportunityPublishSuccessPublishedBody,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -74,7 +71,7 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
             width: double.infinity,
             child: OutlinedButton(
               onPressed: onShare,
-              child: const Text('SHARE'),
+              child: Text(l10n.opportunityPublishSuccessShare),
             ),
           ),
         SizedBox(
@@ -90,11 +87,8 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
               ),
             ),
             child: Text(
-              'VIEW MY OPPORTUNITIES',
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
+              l10n.opportunityPublishSuccessViewOpportunities,
+              style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
             ),
           ),
         ),

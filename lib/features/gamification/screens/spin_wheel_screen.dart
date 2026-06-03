@@ -2,11 +2,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/event_reward.dart';
 import '../models/reward_claim.dart';
 import '../providers/reward_provider.dart';
@@ -100,17 +100,14 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: KolabingColors.textPrimary,
+      backgroundColor: KolabingColors.onSurface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           'Spin to Win',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: Colors.white),
         ),
         centerTitle: true,
       ),
@@ -254,10 +251,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
                 const SizedBox(width: KolabingSpacing.sm),
                 Text(
                   spinState.error!,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    color: KolabingColors.error,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.error),
                 ),
               ],
             ),
@@ -288,11 +282,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
                   )
                 : Text(
                     'SPIN THE WHEEL',
-                    style: GoogleFonts.rubik(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: 1.2),
                   ),
           ),
         ),
@@ -315,25 +305,18 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
           Icon(
             won ? LucideIcons.partyPopper : LucideIcons.rotateCcw,
             size: 48,
-            color: won ? KolabingColors.success : KolabingColors.textSecondary,
+            color: won ? KolabingColors.success : KolabingColors.onSurfaceVariant,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             won ? 'Congratulations!' : 'Better luck next time!',
-            style: GoogleFonts.rubik(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
           ),
           if (won && reward != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               'You won: ${reward.name}',
-              style: GoogleFonts.openSans(
-                fontSize: 16,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
           const SizedBox(height: KolabingSpacing.lg),
@@ -351,9 +334,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
               ),
               child: Text(
                 won ? 'View Reward' : 'Close',
-                style: GoogleFonts.rubik(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ),

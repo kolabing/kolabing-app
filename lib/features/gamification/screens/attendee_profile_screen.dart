@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../widgets/stat_card.dart';
 
@@ -21,11 +22,12 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
+    final l10n = AppLocalizations.of(context);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -50,11 +52,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
               child: Center(
                 child: Text(
                   _getInitials(user?.displayName ?? 'A'),
-                  style: GoogleFonts.rubik(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.primary,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
                 ),
               ),
             ),
@@ -63,75 +61,24 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
             // Name
             Text(
-              user?.displayName ?? 'Attendee',
-              style: GoogleFonts.rubik(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: textColor,
-              ),
+              user?.displayName ?? l10n.attendeeRoleLabel,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: textColor),
             ),
 
             // Email
             Text(
               user?.email ?? '',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: secondaryTextColor,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: secondaryTextColor),
             ),
 
             const SizedBox(height: KolabingSpacing.lg),
-
-            // Rank badge (if available)
-            if (attendeeProfile?.globalRank != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  gradient: KolabingColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: KolabingColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      LucideIcons.trophy,
-                      size: 20,
-                      color: KolabingColors.onPrimary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Global Rank #${attendeeProfile!.globalRank}',
-                      style: GoogleFonts.rubik(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.onPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
             const SizedBox(height: KolabingSpacing.xl),
 
             // Stats section
             Text(
-              'YOUR STATS',
-              style: GoogleFonts.rubik(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: secondaryTextColor,
-              ),
+              l10n.attendeeProfileYourStats,
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryTextColor, letterSpacing: 1.2),
             ),
 
             const SizedBox(height: KolabingSpacing.md),
@@ -143,7 +90,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   child: StatCard(
                     icon: LucideIcons.star,
                     iconColor: KolabingColors.primary,
-                    label: 'Total Points',
+                    label: l10n.attendeeProfileTotalPoints,
                     value: '${attendeeProfile?.totalPoints ?? 0}',
                     showBackground: true,
                   ),
@@ -153,7 +100,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   child: StatCard(
                     icon: LucideIcons.target,
                     iconColor: KolabingColors.success,
-                    label: 'Challenges',
+                    label: l10n.attendeeProfileChallenges,
                     value: '${attendeeProfile?.totalChallengesCompleted ?? 0}',
                     showBackground: true,
                   ),
@@ -169,20 +116,8 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   child: StatCard(
                     icon: LucideIcons.calendar,
                     iconColor: KolabingColors.info,
-                    label: 'Events Attended',
+                    label: l10n.attendeeProfileEventsAttended,
                     value: '${attendeeProfile?.totalEventsAttended ?? 0}',
-                    showBackground: true,
-                  ),
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: StatCard(
-                    icon: LucideIcons.trophy,
-                    iconColor: KolabingColors.warning,
-                    label: 'Global Rank',
-                    value: attendeeProfile?.globalRank != null
-                        ? '#${attendeeProfile!.globalRank}'
-                        : '-',
                     showBackground: true,
                   ),
                 ),
@@ -197,14 +132,14 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+                  color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
                 ),
               ),
               child: Column(
                 children: [
                   _SettingsItem(
                     icon: LucideIcons.user,
-                    label: 'Edit Profile',
+                    label: l10n.attendeeProfileEditProfile,
                     onTap: () {
                       // TODO: Navigate to edit profile
                     },
@@ -213,11 +148,11 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     height: 1,
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.bell,
-                    label: 'Notifications',
+                    label: l10n.attendeeProfileNotifications,
                     onTap: () {
                       // TODO: Navigate to notifications settings
                     },
@@ -226,11 +161,11 @@ class AttendeeProfileScreen extends ConsumerWidget {
                     height: 1,
                     color: isDark
                         ? KolabingColors.darkBorder
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.helpCircle,
-                    label: 'Help & Support',
+                    label: l10n.attendeeProfileHelpSupport,
                     onTap: () {
                       // TODO: Navigate to help
                     },
@@ -241,13 +176,24 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: KolabingSpacing.lg),
 
+            // Language
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(LucideIcons.globe, size: 20),
+              title: Text(AppLocalizations.of(context).settingsLanguage),
+              trailing: const Icon(LucideIcons.chevronRight, size: 18),
+              onTap: () => context.push(KolabingRoutes.language),
+            ),
+
+            const SizedBox(height: KolabingSpacing.sm),
+
             // Logout button
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () => _handleLogout(context, ref),
                 icon: const Icon(LucideIcons.logOut, size: 18),
-                label: const Text('Sign Out'),
+                label: Text(l10n.attendeeProfileSignOut),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: KolabingColors.error,
                   side: const BorderSide(color: KolabingColors.error),
@@ -277,19 +223,19 @@ class AttendeeProfileScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: Text(AppLocalizations.of(context).attendeeProfileSignOut),
+        content: Text(AppLocalizations.of(context).attendeeProfileSignOutConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: KolabingColors.error,
             ),
-            child: const Text('Sign Out'),
+            child: Text(AppLocalizations.of(context).attendeeProfileSignOut),
           ),
         ],
       ),
@@ -319,7 +265,7 @@ class _SettingsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
 
     return Material(
       color: Colors.transparent,
@@ -336,17 +282,13 @@ class _SettingsItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.openSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: textColor,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w500, color: textColor),
                 ),
               ),
               Icon(

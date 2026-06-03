@@ -5,12 +5,14 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
-import '../../application/screens/applications_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/business_dashboard_screen.dart';
+import '../../kolab/screens/my_kolabs_hub_screen.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import 'business_profile_screen.dart';
 import 'explore_screen.dart';
@@ -19,11 +21,21 @@ import 'my_kollabs_screen.dart';
 /// Business user main screen with bottom navigation
 ///
 /// This is the main container for business users after login.
-/// Contains 5 tabs: Home, Explore, My Kollabs, Applications, Profile
+/// Contains 4 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished),
+/// Profile. The former Applications tab is now the "Requests" tab inside
+/// My Kolabs.
 class BusinessMainScreen extends ConsumerStatefulWidget {
-  const BusinessMainScreen({super.key, this.initialTab = 0});
+  const BusinessMainScreen({
+    super.key,
+    this.initialTab = 0,
+    this.initialKolabsSubTab = 0,
+  });
 
   final int initialTab;
+
+  /// Sub-tab to open inside My Kolabs (0 Offers, 1 Requests, 2 Active,
+  /// 3 Finished). Used by deep links to the legacy /applications route.
+  final int initialKolabsSubTab;
 
   @override
   ConsumerState<BusinessMainScreen> createState() => _BusinessMainScreenState();
@@ -70,36 +82,31 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     final totalUnread = ref.watch(totalUnreadCountProvider);
     final badgeCount = pendingApplicationsCount + totalUnread;
 
+    final l10n = AppLocalizations.of(context);
     final navItems = [
-      const NavItem(
+      NavItem(
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
-        label: 'Home',
+        label: l10n.businessNavHome,
         iconSlug: UiIconSlug.home,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
-        label: 'Explore',
+        label: l10n.businessNavExplore,
         iconSlug: UiIconSlug.compass,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.briefcase,
         activeIcon: LucideIcons.briefcase,
-        label: 'My Kolabs',
+        label: l10n.businessNavMyKolabs,
+        badgeCount: badgeCount > 0 ? badgeCount : null,
         iconSlug: UiIconSlug.briefcase,
       ),
       NavItem(
-        icon: LucideIcons.inbox,
-        activeIcon: LucideIcons.inbox,
-        label: 'Applications',
-        badgeCount: badgeCount > 0 ? badgeCount : null,
-        iconSlug: UiIconSlug.inbox,
-      ),
-      const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
-        label: 'Profile',
+        label: l10n.businessNavProfile,
         iconSlug: UiIconSlug.user,
       ),
     ];
@@ -108,24 +115,24 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
+      appBar: const KolabingAppBar(),
       body: IndexedStack(
         index: _currentIndex,
         children: [
           _BusinessHomeTab(onSwitchTab: _onTabChanged),
           const _BusinessExploreTab(),
-          const _BusinessKollabsTab(),
-          const _BusinessApplicationsTab(),
+          _BusinessKollabsTab(initialSubTab: widget.initialKolabsSubTab),
           const _BusinessProfileTab(),
         ],
       ),
       floatingActionButton:
-          _currentIndex !=
-              4 // Hide on profile tab
+          _currentIndex != 2 && // My Kolabs hub provides its own create FAB
+              _currentIndex != 3 // Hide on profile tab
           ? KolabingFAB(
               onPressed: _onFabPressed,
-              tooltip: 'Create Collab Request',
+              tooltip: l10n.businessMainCreateKolabTooltip,
             )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(
@@ -159,17 +166,15 @@ class _BusinessExploreTab extends StatelessWidget {
 }
 
 class _BusinessKollabsTab extends StatelessWidget {
-  const _BusinessKollabsTab();
+  const _BusinessKollabsTab({this.initialSubTab = 0});
+
+  final int initialSubTab;
 
   @override
-  Widget build(BuildContext context) => const MyKollabsScreen();
-}
-
-class _BusinessApplicationsTab extends StatelessWidget {
-  const _BusinessApplicationsTab();
-
-  @override
-  Widget build(BuildContext context) => const ApplicationsScreen();
+  Widget build(BuildContext context) => MyKolabsHubScreen(
+    offersTab: const MyKollabsScreen(embedded: true),
+    initialSubTab: initialSubTab,
+  );
 }
 
 class _BusinessProfileTab extends StatelessWidget {

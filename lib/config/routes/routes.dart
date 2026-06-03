@@ -36,10 +36,12 @@ import '../../features/onboarding/screens/community/community_step4_screen.dart'
 import '../../features/opportunity/models/opportunity.dart';
 import '../../features/opportunity/providers/opportunity_provider.dart';
 import '../../features/permission/screens/permission_screen.dart';
+import '../../features/profile/screens/profile_reviews_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/rewards/screens/referral_screen.dart';
 import '../../features/rewards/screens/wallet_screen.dart';
 import '../../features/rewards/screens/withdrawal_request_screen.dart';
+import '../../features/settings/screens/language_selector_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
 import '../../services/notification_service.dart';
 import '../../services/one_signal_service.dart';
@@ -210,8 +212,14 @@ abstract final class KolabingRoutes {
   /// Notifications screen
   static const String notifications = '/notifications';
 
+  /// Language selection (app localization: en, es, ca)
+  static const String language = '/settings/language';
+
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
+
+  /// Public profile reviews list
+  static const String publicProfileReviews = '/profile/:id/reviews';
 
   /// Event detail screen
   static const String eventDetail = '/event/:id';
@@ -689,6 +697,21 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'notifications',
       builder: (BuildContext context, GoRouterState state) =>
           const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.language,
+      name: 'language',
+      builder: (BuildContext context, GoRouterState state) =>
+          const LanguageSelectorScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.publicProfileReviews,
+      name: 'publicProfileReviews',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        final profileName = state.extra as String?;
+        return ProfileReviewsScreen(profileId: id, profileName: profileName);
+      },
     ),
     GoRoute(
       path: '/profile/:id',

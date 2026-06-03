@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
+import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
 import 'category_icon.dart';
 
@@ -94,7 +95,7 @@ class ExploreDetailSheet extends ConsumerWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.border,
+              color: KolabingColors.darkBorder,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -117,11 +118,11 @@ class ExploreDetailSheet extends ConsumerWidget {
                 _buildTitleSection(),
                 const SizedBox(height: KolabingSpacing.lg),
                 if (discoveryItem?.isCommunityRequest ?? false) ...[
-                  _buildBusinessExploreSummary(),
+                  _buildBusinessExploreSummary(context),
                   const SizedBox(height: KolabingSpacing.lg),
                 ],
                 if (opportunity.businessOffer.hasAnyOffer) ...[
-                  _buildOfferSummarySection(),
+                  _buildOfferSummarySection(context),
                   const SizedBox(height: KolabingSpacing.lg),
                 ],
                 _buildLocationAndDetails(),
@@ -129,7 +130,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                         AvailabilityMode.recurring &&
                     opportunity.recurringDays.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.lg),
-                  _buildAvailabilityDays(),
+                  _buildAvailabilityDays(context),
                 ],
                 if (opportunity.categories.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.lg),
@@ -166,7 +167,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     // real name + logo BLURRED (not replaced by a placeholder). We therefore
     // render the true values and let [BlurredIdentity] obscure them. Everything
     // else in this sheet stays fully visible.
-    final displayName = creator?.displayName ?? 'Unknown';
+    final displayName =
+        creator?.displayName ?? AppLocalizations.of(context).exploreDetailUnknownCreator;
     final initial = creator?.initial ?? '?';
     final avatarUrl = creator?.avatarUrl;
     final userType = creator?.userType ?? '';
@@ -193,10 +195,10 @@ class ExploreDetailSheet extends ConsumerWidget {
                 sigma: 8,
                 child: Text(
                   displayName,
-                  style: GoogleFonts.rubik(
+                  style: KolabingTextStyles.bodyLarge.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -205,16 +207,15 @@ class ExploreDetailSheet extends ConsumerWidget {
               if (hideCreatorIdentity) ...[
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
-                  'Subscribe to reveal this community',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
+                  AppLocalizations.of(context).exploreDetailSubscribeToReveal,
+                  style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: KolabingColors.textTertiary,
                   ),
                 ),
               ],
               const SizedBox(height: KolabingSpacing.xxs),
-              _buildTypeBadge(userType),
+              _buildTypeBadge(context, userType),
             ],
           ),
         ),
@@ -254,18 +255,16 @@ class ExploreDetailSheet extends ConsumerWidget {
   Widget _buildAvatarFallback(String initial) => Center(
     child: Text(
       initial,
-      style: GoogleFonts.rubik(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
+      style: KolabingTextStyles.headlineMedium.copyWith(
         color: KolabingColors.primary,
       ),
     ),
   );
 
-  Widget _buildTypeBadge(String userType) {
+  Widget _buildTypeBadge(BuildContext context, String userType) {
     final label = userType.isNotEmpty
         ? '${userType[0].toUpperCase()}${userType.substring(1)}'
-        : 'Creator';
+        : AppLocalizations.of(context).exploreDetailCreatorBadge;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -278,8 +277,7 @@ class ExploreDetailSheet extends ConsumerWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
+        style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.activeText,
         ),
@@ -296,50 +294,48 @@ class ExploreDetailSheet extends ConsumerWidget {
     children: [
       Text(
         opportunity.title,
-        style: GoogleFonts.rubik(
-          fontSize: 18,
+        style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
       if (opportunity.description.isNotEmpty) ...[
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           opportunity.description,
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: KolabingColors.textSecondary,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: KolabingColors.onSurfaceVariant,
           ),
         ),
       ],
     ],
   );
 
-  Widget _buildBusinessExploreSummary() {
+  Widget _buildBusinessExploreSummary(BuildContext context) {
     final request = discoveryItem?.communityRequest;
     if (request == null) {
       return const SizedBox.shrink();
     }
 
+    final l10n = AppLocalizations.of(context);
     final sections = <Widget>[
       if (request.needTypeLabels.isNotEmpty)
         _buildSummaryCard(
           icon: LucideIcons.search,
-          title: 'What they are looking for',
+          title: l10n.exploreDetailLookingFor,
           value: request.needTypeLabels.join(', '),
         ),
       if (request.offerInReturnLabels.isNotEmpty)
         _buildSummaryCard(
           icon: LucideIcons.gift,
-          title: 'What they offer',
+          title: l10n.exploreDetailWhatTheyOffer,
           value: request.offerInReturnLabels.join(', '),
         ),
       if (request.communitySize != null || request.typicalAttendance != null)
         _buildSummaryCard(
           icon: LucideIcons.users,
-          title: 'Community size',
-          value: _buildScaleLabel(request),
+          title: l10n.exploreDetailCommunitySize,
+          value: _buildScaleLabel(context, request),
         ),
     ];
 
@@ -369,7 +365,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: KolabingColors.textSecondary),
+        Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Column(
@@ -377,8 +373,7 @@ class ExploreDetailSheet extends ConsumerWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.dmSans(
-                  fontSize: 11,
+                style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
                   color: KolabingColors.textTertiary,
@@ -387,11 +382,10 @@ class ExploreDetailSheet extends ConsumerWidget {
               const SizedBox(height: 2),
               Text(
                 value,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
                   height: 1.45,
+                  color: KolabingColors.onSurface,
                 ),
               ),
             ],
@@ -401,13 +395,14 @@ class ExploreDetailSheet extends ConsumerWidget {
     ),
   );
 
-  String _buildScaleLabel(CommunityRequestSummary request) {
+  String _buildScaleLabel(BuildContext context, CommunityRequestSummary request) {
+    final l10n = AppLocalizations.of(context);
     final parts = <String>[];
     if (request.communitySize != null) {
-      parts.add('${request.communitySize} community');
+      parts.add(l10n.exploreDetailScaleCommunity(request.communitySize!));
     }
     if (request.typicalAttendance != null) {
-      parts.add('${request.typicalAttendance} expected');
+      parts.add(l10n.exploreDetailScaleExpected(request.typicalAttendance!));
     }
     return parts.join(' · ');
   }
@@ -416,15 +411,13 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Offer Summary Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildOfferSummarySection() => Column(
+  Widget _buildOfferSummarySection(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        "What's Offered",
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+        AppLocalizations.of(context).exploreDetailWhatsOffered,
+        style: KolabingTextStyles.labelLarge.copyWith(
+          color: KolabingColors.onSurface,
         ),
       ),
       const SizedBox(height: KolabingSpacing.xs),
@@ -449,10 +442,9 @@ class ExploreDetailSheet extends ConsumerWidget {
             Expanded(
               child: Text(
                 opportunity.offerSummary,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
             ),
@@ -516,15 +508,13 @@ class ExploreDetailSheet extends ConsumerWidget {
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(item.icon, size: 14, color: KolabingColors.textSecondary),
+        Icon(item.icon, size: 14, color: KolabingColors.onSurfaceVariant),
         const SizedBox(width: KolabingSpacing.xxs),
         Flexible(
           child: Text(
             item.label,
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.textSecondary,
+            style: KolabingTextStyles.labelMedium.copyWith(
+              color: KolabingColors.onSurfaceVariant,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -538,18 +528,16 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Availability Days (Recurring Mode)
   // ---------------------------------------------------------------------------
 
-  Widget _buildAvailabilityDays() {
+  Widget _buildAvailabilityDays(BuildContext context) {
     final activeDays = opportunity.recurringDays.toSet();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Available Days',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+          AppLocalizations.of(context).exploreDetailAvailableDays,
+          style: KolabingTextStyles.labelLarge.copyWith(
+            color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -571,8 +559,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               alignment: Alignment.center,
               child: Text(
                 _dayLabels[index],
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
+                style: KolabingTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isAvailable
                       ? KolabingColors.textOnDark
@@ -611,10 +598,9 @@ class ExploreDetailSheet extends ConsumerWidget {
                 const SizedBox(width: 4),
                 Text(
                   category,
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
+                  style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
               ],
@@ -662,10 +648,11 @@ class ExploreDetailSheet extends ConsumerWidget {
                 size: 18,
               ),
               label: Text(
-                showsSubscribeAction ? 'UNLOCK TO APPLY' : 'APPLY NOW',
-                style: GoogleFonts.rubik(
+                showsSubscribeAction
+                    ? AppLocalizations.of(context).exploreDetailUnlockToApply
+                    : AppLocalizations.of(context).exploreDetailApplyNow,
+                style: KolabingTextStyles.button.copyWith(
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -688,14 +675,13 @@ class ExploreDetailSheet extends ConsumerWidget {
               onPressed: onViewCreatorProfile,
               icon: const Icon(LucideIcons.user, size: 16),
               label: Text(
-                'View creator profile',
-                style: GoogleFonts.openSans(
+                AppLocalizations.of(context).exploreDetailViewCreatorProfile,
+                style: KolabingTextStyles.labelLarge.copyWith(
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.textSecondary,
+                foregroundColor: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -751,19 +737,17 @@ class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Past event photos',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                AppLocalizations.of(context).exploreDetailPastEventPhotos,
+                style: KolabingTextStyles.labelLarge.copyWith(
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'Recent moments from this community',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.textSecondary,
+                AppLocalizations.of(context).exploreDetailRecentMoments,
+                style: KolabingTextStyles.labelMedium.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
@@ -793,7 +777,7 @@ class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
                       decoration: BoxDecoration(
                         color: isActive
                             ? KolabingColors.primary
-                            : KolabingColors.border,
+                            : KolabingColors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     );
@@ -873,19 +857,17 @@ class _PastEventPhotoCard extends StatelessWidget {
                   slide.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: KolabingColors.textOnDark,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   slide.subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
+                  style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: KolabingColors.textOnDark.withValues(alpha: 0.85),
                   ),
                 ),
               ],

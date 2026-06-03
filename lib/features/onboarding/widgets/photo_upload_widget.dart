@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/image_picker_normalize.dart';
 
 Future<File> materializePickedImageFile(XFile image) async {
@@ -86,8 +87,10 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
         if (fileSize > 5 * 1024 * 1024) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Image must be less than 5MB'),
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context).photoUploadFileTooLarge,
+                ),
                 backgroundColor: KolabingColors.error,
               ),
             );
@@ -111,8 +114,10 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
       debugPrint('Error picking image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to select image'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).photoUploadSelectFailed,
+            ),
             backgroundColor: KolabingColors.error,
           ),
         );
@@ -121,15 +126,16 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
   }
 
   String _friendlyPickerError(PlatformException error) {
+    final l10n = AppLocalizations.of(context);
     switch (error.code) {
       case 'photo_access_denied':
       case 'photo_access_restricted':
-        return 'Please allow Photos access in Settings to upload an image.';
+        return l10n.photoUploadPhotosAccessDenied;
       case 'camera_access_denied':
       case 'camera_access_restricted':
-        return 'Please allow Camera access in Settings to take a photo.';
+        return l10n.photoUploadCameraAccessDenied;
       default:
-        return 'Failed to select image. Please try again.';
+        return l10n.photoUploadSelectFailedRetry;
     }
   }
 
@@ -142,7 +148,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
           children: [
             ListTile(
               leading: const Icon(LucideIcons.image),
-              title: const Text('Choose from Library'),
+              title: Text(AppLocalizations.of(context).photoUploadChooseLibrary),
               onTap: () {
                 Navigator.pop(context);
                 _pickImageFromSource(ImageSource.gallery);
@@ -150,7 +156,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
             ),
             ListTile(
               leading: const Icon(LucideIcons.camera),
-              title: const Text('Take Photo'),
+              title: Text(AppLocalizations.of(context).photoUploadTakePhoto),
               onTap: () {
                 Navigator.pop(context);
                 _pickImageFromSource(ImageSource.camera);
@@ -189,7 +195,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
           children: [
             ListTile(
               leading: const Icon(LucideIcons.image),
-              title: const Text('Change Photo'),
+              title: Text(AppLocalizations.of(context).photoUploadChangePhoto),
               onTap: () {
                 Navigator.pop(context);
                 _showSourcePicker();
@@ -200,9 +206,9 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                 LucideIcons.trash2,
                 color: KolabingColors.error,
               ),
-              title: const Text(
-                'Remove Photo',
-                style: TextStyle(color: KolabingColors.error),
+              title: Text(
+                AppLocalizations.of(context).photoUploadRemovePhoto,
+                style: const TextStyle(color: KolabingColors.error),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -241,7 +247,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
               color: KolabingColors.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 style: widget.photoBase64 == null
                     ? BorderStyle.none
                     : BorderStyle.solid,
@@ -261,7 +267,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                     border: Border.all(
                       color: widget.photoBase64 != null
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: 2,
                       style: widget.photoBase64 != null
                           ? BorderStyle.solid
@@ -288,12 +294,8 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                 Text(
                   widget.photoBase64 == null
                       ? widget.addLabel
-                      : 'Tap to change',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: KolabingColors.textTertiary,
-                  ),
+                      : AppLocalizations.of(context).photoUploadTapToChange,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                 ),
               ],
             ),

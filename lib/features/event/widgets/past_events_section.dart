@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -10,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 import 'add_event_modal.dart';
@@ -145,10 +145,10 @@ class PastEventsSection extends ConsumerWidget {
         ),
         const SizedBox(width: KolabingSpacing.xs),
         Text(
-          'Past Events',
+          AppLocalizations.of(context).pastEventsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
             color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+                isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
         ),
         if (events.isNotEmpty) ...[
@@ -177,7 +177,7 @@ class PastEventsSection extends ConsumerWidget {
           TextButton.icon(
             onPressed: () => _showAddEventModal(context, ref),
             icon: const Icon(LucideIcons.plus, size: 16),
-            label: const Text('ADD'),
+            label: Text(AppLocalizations.of(context).pastEventsAddButton),
             style: TextButton.styleFrom(
               foregroundColor: KolabingColors.primary,
               padding: const EdgeInsets.symmetric(
@@ -256,9 +256,9 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'Failed to load events',
+            AppLocalizations.of(context).pastEventsLoadError,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -270,7 +270,7 @@ class PastEventsSection extends ConsumerWidget {
                 ref.read(eventsProvider.notifier).refresh();
               }
             },
-            child: const Text('Retry'),
+            child: Text(AppLocalizations.of(context).commonRetry),
           ),
         ],
       ),
@@ -302,18 +302,18 @@ class PastEventsSection extends ConsumerWidget {
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            'No events yet',
+            AppLocalizations.of(context).pastEventsEmptyTitle,
             style: KolabingTextStyles.titleSmall.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Share your past collaborations with the community',
+            AppLocalizations.of(context).pastEventsEmptySubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.textSecondary,
+              color: KolabingColors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -322,14 +322,11 @@ class PastEventsSection extends ConsumerWidget {
             onPressed: () => _showAddEventModal(context, ref),
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
-              '+ Add a past event',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              AppLocalizations.of(context).pastEventsEmptyAddButton,
+              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.textSecondary,
+              foregroundColor: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],

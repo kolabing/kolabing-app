@@ -3,11 +3,15 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/settings/providers/locale_provider.dart';
+import 'features/settings/services/locale_service.dart';
+import 'l10n/app_localizations.dart';
 import 'services/global_network_banner_service.dart';
 import 'services/notification_service.dart';
 import 'services/one_signal_service.dart';
@@ -49,20 +53,34 @@ void main() async {
 }
 
 /// Main application widget
-class KolabingApp extends StatelessWidget {
+class KolabingApp extends ConsumerWidget {
   const KolabingApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-    title: 'Kolabing',
-    debugShowCheckedModeBanner: false,
-    scaffoldMessengerKey: globalScaffoldMessengerKey,
-    theme: KolabingTheme.lightTheme,
-    themeMode: ThemeMode.light,
-    routerConfig: kolabingRouter,
-    builder: (context, child) =>
-        _AuthSessionRedirector(child: child ?? const SizedBox.shrink()),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Null locale = follow the device language (resolved against
+    // supportedLocales). A pinned locale comes from the in-app picker.
+    final locale = ref.watch(localeProvider.select((s) => s.locale));
+
+    return MaterialApp.router(
+      title: 'Kolabing',
+      debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: globalScaffoldMessengerKey,
+      theme: KolabingTheme.lightTheme,
+      themeMode: ThemeMode.light,
+      locale: locale,
+      supportedLocales: LocaleService.supportedLocales,
+      localizationsDelegates: const <LocalizationsDelegate<Object>>[
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      routerConfig: kolabingRouter,
+      builder: (context, child) =>
+          _AuthSessionRedirector(child: child ?? const SizedBox.shrink()),
+    );
+  }
 }
 
 class _AuthSessionRedirector extends ConsumerStatefulWidget {

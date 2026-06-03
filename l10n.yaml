@@ -1,0 +1,12 @@
+# Flutter gen-l10n configuration.
+# Source ARB files live in lib/l10n/; generated Dart goes to the synthetic
+# package so it is importable as: package:flutter_gen/gen_l10n/app_localizations.dart
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+preferred-supported-locales:
+  - en
+  - es
+  - ca
+nullable-getter: false

@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../models/onboarding_photo.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
@@ -61,10 +62,11 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
       }
     } on PlatformException catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
       final message = switch (e.code) {
         'photo_access_denied' || 'photo_access_restricted' =>
-          'Please allow Photos access in Settings to add venue images.',
-        _ => 'We could not open your photo library. Please try again.',
+          l10n.businessStep3PhotoAccessDenied,
+        _ => l10n.businessStep3PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message), backgroundColor: KolabingColors.error),
@@ -84,8 +86,10 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
     final data = ref.read(onboardingProvider);
     if (data == null || data.venuePhotos.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Add at least one venue photo to continue'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).businessStep3NoPhotosError,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -119,21 +123,14 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                   children: [
                     const SizedBox(height: 32),
                     Text(
-                      'ADD VENUE PHOTOS',
-                      style: GoogleFonts.rubik(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: KolabingColors.textPrimary,
-                      ),
+                      AppLocalizations.of(context).businessStep3Title,
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'These become your reusable venue gallery, so you won’t need to upload them again every time you create a venue Kolab.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.textSecondary,
-                      ),
+                      AppLocalizations.of(context).businessStep3Subtitle,
+                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -181,12 +178,8 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'CONTINUE',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1,
-                    ),
+                    AppLocalizations.of(context).commonContinue,
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
                   ),
                 ),
               ),
@@ -212,19 +205,16 @@ class _AddPhotoTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(LucideIcons.plus, color: KolabingColors.textSecondary),
+          const Icon(LucideIcons.plus, color: KolabingColors.onSurfaceVariant),
           const SizedBox(height: 8),
           Text(
-            'Add Photo',
-            style: GoogleFonts.openSans(
-              fontSize: 12,
-              color: KolabingColors.textSecondary,
-            ),
+            AppLocalizations.of(context).businessStep3AddPhoto,
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
           ),
         ],
       ),

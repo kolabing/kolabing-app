@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/leaderboard.dart';
 import '../providers/leaderboard_provider.dart';
 import '../widgets/leaderboard_entry_tile.dart';
@@ -38,10 +39,10 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isGlobal ? 'Global Leaderboard' : (widget.eventName ?? 'Leaderboard'),
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          isGlobal
+              ? AppLocalizations.of(context).leaderboardScreenGlobalTitle
+              : (widget.eventName ?? AppLocalizations.of(context).leaderboardScreenTitle),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -97,13 +98,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   KolabingSpacing.sm,
                 ),
                 child: Text(
-                  'RANKINGS',
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                    color: KolabingColors.textSecondary,
-                  ),
+                  AppLocalizations.of(context).leaderboardScreenRankings,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -166,11 +162,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             child: Center(
               child: Text(
                 '#${myRank.rank}',
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
-                ),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
             ),
           ),
@@ -182,20 +174,14 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Your Ranking',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                  AppLocalizations.of(context).leaderboardScreenYourRanking,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   myRank.displayName,
-                  style: GoogleFonts.rubik(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onPrimary,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
                 ),
               ],
             ),
@@ -207,17 +193,11 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             children: [
               Text(
                 '${myRank.totalPoints}',
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
               Text(
-                'points',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                AppLocalizations.of(context).leaderboardScreenPoints,
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -241,20 +221,13 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'No Rankings Yet',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).leaderboardScreenNoRankings,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Be the first to earn points\nand claim the top spot!',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              AppLocalizations.of(context).leaderboardScreenNoRankingsHint,
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -277,20 +250,13 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load leaderboard',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).leaderboardScreenFailedToLoad,
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -303,7 +269,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 }
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

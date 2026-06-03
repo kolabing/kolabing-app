@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/gamification_stats.dart';
 import '../providers/stats_provider.dart';
@@ -22,10 +23,8 @@ class StatsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Stats',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          AppLocalizations.of(context).statsScreenTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         actions: [
@@ -61,15 +60,15 @@ class StatsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Points & Rank Card
-            _buildPointsCard(stats),
+            _buildPointsCard(context, stats),
             const SizedBox(height: KolabingSpacing.lg),
 
             // Stats Grid
-            _buildStatsGrid(stats),
+            _buildStatsGrid(context, stats),
             const SizedBox(height: KolabingSpacing.lg),
 
             // Detailed Stats
-            _buildDetailedStats(stats),
+            _buildDetailedStats(context, stats),
             const SizedBox(height: KolabingSpacing.lg),
 
             // Quick Actions
@@ -80,7 +79,7 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPointsCard(GamificationStats stats) {
+  Widget _buildPointsCard(BuildContext context, GamificationStats stats) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -114,51 +113,13 @@ class StatsScreen extends ConsumerWidget {
               const SizedBox(width: KolabingSpacing.sm),
               Text(
                 '${stats.totalPoints}',
-                style: GoogleFonts.rubik(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 48, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
               ),
             ],
           ),
           Text(
-            'Total Points',
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              color: KolabingColors.onPrimary.withValues(alpha: 0.9),
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.md),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const UiIcon(
-                  icon: UiIconSlug.trophy,
-                  size: 16,
-                  color: KolabingColors.onPrimary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  stats.globalRank != null
-                      ? 'Global Rank #${stats.globalRank}'
-                      : 'Unranked',
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onPrimary,
-                  ),
-                ),
-              ],
+            AppLocalizations.of(context).statsScreenTotalPoints,
+            style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -166,7 +127,8 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsGrid(GamificationStats stats) {
+  Widget _buildStatsGrid(BuildContext context, GamificationStats stats) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
@@ -174,7 +136,7 @@ class StatsScreen extends ConsumerWidget {
             icon: LucideIcons.calendar,
             iconSlug: UiIconSlug.calendar,
             iconColor: KolabingColors.info,
-            label: 'Events',
+            label: l10n.statsScreenEvents,
             value: '${stats.totalEventsAttended}',
           ),
         ),
@@ -184,7 +146,7 @@ class StatsScreen extends ConsumerWidget {
             icon: LucideIcons.target,
             iconSlug: UiIconSlug.target,
             iconColor: KolabingColors.success,
-            label: 'Challenges',
+            label: l10n.statsScreenChallenges,
             value: '${stats.totalChallengesCompleted}',
           ),
         ),
@@ -194,7 +156,7 @@ class StatsScreen extends ConsumerWidget {
             icon: LucideIcons.award,
             iconSlug: UiIconSlug.award,
             iconColor: KolabingColors.warning,
-            label: 'Badges',
+            label: l10n.statsScreenBadges,
             value: '${stats.totalBadgesEarned}',
           ),
         ),
@@ -202,7 +164,8 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailedStats(GamificationStats stats) {
+  Widget _buildDetailedStats(BuildContext context, GamificationStats stats) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -220,19 +183,14 @@ class StatsScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'DETAILED STATS',
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-              color: KolabingColors.textSecondary,
-            ),
+            l10n.statsScreenDetailedStats,
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStatRow(
             LucideIcons.gift,
-            'Rewards Won',
+            l10n.statsScreenRewardsWon,
             '${stats.totalRewardsWon}',
             KolabingColors.primary,
             iconSlug: UiIconSlug.gift,
@@ -241,7 +199,7 @@ class StatsScreen extends ConsumerWidget {
 
           _buildStatRow(
             LucideIcons.checkCircle,
-            'Rewards Redeemed',
+            l10n.statsScreenRewardsRedeemed,
             '${stats.totalRewardsRedeemed}',
             KolabingColors.success,
           ),
@@ -249,7 +207,7 @@ class StatsScreen extends ConsumerWidget {
 
           _buildStatRow(
             LucideIcons.mapPin,
-            'Events Discovered',
+            l10n.statsScreenEventsDiscovered,
             '${stats.totalEventsDiscovered}',
             KolabingColors.info,
           ),
@@ -257,7 +215,7 @@ class StatsScreen extends ConsumerWidget {
 
           _buildStatRow(
             LucideIcons.clock,
-            'Spins Used',
+            l10n.statsScreenSpinsUsed,
             '${stats.totalSpins}',
             KolabingColors.warning,
             iconSlug: UiIconSlug.clock,
@@ -293,19 +251,12 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: Text(
             label,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
         ),
         Text(
           value,
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.textPrimary,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
       ],
     );
@@ -316,13 +267,8 @@ class StatsScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'QUICK ACTIONS',
-          style: GoogleFonts.rubik(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-            color: KolabingColors.textSecondary,
-          ),
+          AppLocalizations.of(context).statsScreenQuickActions,
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Row(
@@ -330,18 +276,8 @@ class StatsScreen extends ConsumerWidget {
             Expanded(
               child: _buildActionButton(
                 context,
-                LucideIcons.trophy,
-                'Leaderboard',
-                () => context.push('/attendee/leaderboard'),
-                iconSlug: UiIconSlug.trophy,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: _buildActionButton(
-                context,
                 LucideIcons.award,
-                'Badges',
+                AppLocalizations.of(context).statsScreenBadges,
                 () => context.push('/attendee/badges'),
                 iconSlug: UiIconSlug.award,
               ),
@@ -351,7 +287,7 @@ class StatsScreen extends ConsumerWidget {
               child: _buildActionButton(
                 context,
                 LucideIcons.gift,
-                'Rewards',
+                AppLocalizations.of(context).statsScreenRewards,
                 () => context.push('/attendee/rewards'),
                 iconSlug: UiIconSlug.gift,
               ),
@@ -378,7 +314,7 @@ class StatsScreen extends ConsumerWidget {
           color: KolabingColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
         ),
         child: Column(
@@ -390,11 +326,7 @@ class StatsScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               label,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
           ],
         ),
@@ -406,7 +338,7 @@ class StatsScreen extends ConsumerWidget {
     // TODO: Implement game card sharing
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Game card sharing coming soon!'),
+        content: Text(AppLocalizations.of(context).statsScreenShareComingSoon),
         backgroundColor: KolabingColors.info,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -428,27 +360,20 @@ class StatsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load stats',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).statsScreenFailedToLoad,
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
             TextButton.icon(
               onPressed: () => ref.invalidate(myStatsProvider),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../enums/product_type.dart';
 import '../../models/kolab.dart';
@@ -61,6 +62,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
     _syncControllersFromState(kolab);
 
+    final l10n = AppLocalizations.of(context);
     final citiesAsync = ref.watch(citiesProvider);
 
     return ListView(
@@ -70,17 +72,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       ),
       children: [
         // -- Section header
-        const _SectionHeader(label: 'YOUR PRODUCT OR SERVICE'),
+        _SectionHeader(label: l10n.productDetailsSectionHeader),
         const SizedBox(height: KolabingSpacing.lg),
 
         // -- Listing Title
-        const _FieldLabel(label: 'Listing Title'),
+        _FieldLabel(label: l10n.productDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
-            hint: 'e.g. Organic Cold Brew - Perfect for Community Events',
+            hint: l10n.productDetailsListingTitleHint,
             error: errors['title'],
           ),
           style: _inputTextStyle,
@@ -90,13 +92,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Product Name
-        const _FieldLabel(label: 'Product Name'),
+        _FieldLabel(label: l10n.productDetailsProductNameLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _nameController,
           maxLength: 255,
           decoration: _inputDecoration(
-            hint: 'e.g. Organic Cold Brew Coffee',
+            hint: l10n.productDetailsProductNameHint,
             error: errors['product_name'],
           ),
           style: _inputTextStyle,
@@ -106,17 +108,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Product Type
-        const _FieldLabel(label: 'Product Type'),
+        _FieldLabel(label: l10n.productDetailsProductTypeLabel),
         const SizedBox(height: KolabingSpacing.xs),
         if (errors.containsKey('product_type'))
           Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xxs),
             child: Text(
               errors['product_type']!,
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                color: KolabingColors.error,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
             ),
           ),
         Wrap(
@@ -142,7 +141,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   border: Border.all(
                     color: isSelected
                         ? KolabingColors.primary
-                        : KolabingColors.border,
+                        : KolabingColors.darkBorder,
                   ),
                 ),
                 child: Row(
@@ -153,19 +152,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       size: 16,
                       color: isSelected
                           ? KolabingColors.onPrimary
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                     Text(
                       type.displayName,
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
                             ? KolabingColors.onPrimary
-                            : KolabingColors.textPrimary,
-                      ),
+                            : KolabingColors.onSurface),
                     ),
                   ],
                 ),
@@ -176,14 +170,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Description
-        const _FieldLabel(label: 'Description'),
+        _FieldLabel(label: l10n.productDetailsDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
-            hint: 'Describe your product or service...',
+            hint: l10n.productDetailsDescriptionHint,
             error: errors['description'],
           ),
           style: _inputTextStyle,
@@ -192,21 +186,18 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         ),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
-        const _FieldLabel(label: 'Offer Headline'),
+        _FieldLabel(label: l10n.productDetailsOfferHeadlineLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'One short line communities will see on your card.',
-          style: GoogleFonts.openSans(
-            fontSize: 12,
-            color: KolabingColors.textSecondary,
-          ),
+          l10n.productDetailsOfferHeadlineHelper,
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
-            hint: 'e.g. Free with any 5+ order',
+            hint: l10n.productDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
           style: _inputTextStyle,
@@ -216,7 +207,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- City dropdown
-        const _FieldLabel(label: 'City'),
+        _FieldLabel(label: l10n.productDetailsCityLabel),
         const SizedBox(height: KolabingSpacing.xs),
         citiesAsync.when(
           data: (cities) => DropdownButtonFormField<String>(
@@ -224,14 +215,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ? kolab.preferredCity
                   : null,
               decoration: _inputDecoration(
-                hint: 'Select city',
+                hint: l10n.productDetailsSelectCityHint,
                 error: errors['preferred_city'],
               ),
               style: _inputTextStyle,
               icon: const Icon(
                 LucideIcons.chevronDown,
                 size: 20,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
               items: cities
                   .map(
@@ -247,14 +238,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             ),
           loading: () => const LinearProgressIndicator(
             color: KolabingColors.primary,
-            backgroundColor: KolabingColors.border,
+            backgroundColor: KolabingColors.darkBorder,
           ),
           error: (_, _) => Text(
-            'Failed to load cities',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.error,
-            ),
+            l10n.productDetailsFailedToLoadCities,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.error),
           ),
         ),
 
@@ -274,12 +262,9 @@ InputDecoration _inputDecoration({
 }) =>
     InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textTertiary,
-      ),
+      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
       errorText: error,
-      errorStyle: GoogleFonts.openSans(fontSize: 12),
+      errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
       filled: true,
       fillColor: KolabingColors.surface,
       contentPadding: const EdgeInsets.symmetric(
@@ -288,11 +273,11 @@ InputDecoration _inputDecoration({
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
@@ -308,10 +293,7 @@ InputDecoration _inputDecoration({
       ),
     );
 
-TextStyle get _inputTextStyle => GoogleFonts.openSans(
-      fontSize: 14,
-      color: KolabingColors.textPrimary,
-    );
+TextStyle get _inputTextStyle => KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);
 
 // ---------------------------------------------------------------------------
 // Reusable small widgets
@@ -324,12 +306,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
       label,
-      style: GoogleFonts.rubik(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 1.0,
-        color: KolabingColors.textSecondary,
-      ),
+      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
     );
 }
 
@@ -340,10 +317,6 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
       label,
-      style: GoogleFonts.openSans(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: KolabingColors.textPrimary,
-      ),
+      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
     );
 }

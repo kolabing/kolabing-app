@@ -309,8 +309,10 @@ final opportunityListProvider =
 
 /// Status filter for My Opportunities
 class MyOpportunitiesStatusNotifier extends Notifier<String?> {
+  // Offers shows only Published (default) and Draft now — 'All'/'Closed' were
+  // removed — so the default filter is 'published'.
   @override
-  String? build() => null; // null = all statuses
+  String? build() => 'published';
 
   String? get status => state;
 

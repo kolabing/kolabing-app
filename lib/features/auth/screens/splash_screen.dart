@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/auth_state_provider.dart';
 import '../widgets/kolabing_logo.dart';
 
@@ -160,7 +161,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           ),
         ),
         child: Semantics(
-          label: 'Kolabing - Loading application',
+          label: AppLocalizations.of(context).splashSemanticLabel,
           child: const Center(
             child: KolabingLogo(
               width: 280,

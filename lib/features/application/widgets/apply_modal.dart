@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -140,7 +141,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     // Validate date selection
     setState(() => _availabilityError = null);
     if (_selectedDates.isEmpty) {
-      setState(() => _availabilityError = 'Please select at least one date');
+      setState(() => _availabilityError =
+          AppLocalizations.of(context).applyModalSelectDateError);
       return;
     }
 
@@ -171,22 +173,23 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         Navigator.of(context).pop(true);
       }
     } on Object catch (error) {
+      final l10n = AppLocalizations.of(context);
       setState(() {
         _isSubmitting = false;
-        _errorMessage = _parseError(error);
+        _errorMessage = _parseError(l10n, error);
       });
     }
   }
 
-  String _parseError(Object error) {
+  String _parseError(AppLocalizations l10n, Object error) {
     if (error is ApiException) {
       return error.error.allErrorMessages;
     }
     final errorString = error.toString();
     if (errorString.contains('already applied')) {
-      return 'You have already applied to this opportunity';
+      return l10n.applyModalAlreadyApplied;
     }
-    return 'Failed to submit application. Please try again.';
+    return l10n.applyModalSubmitError;
   }
 
   @override
@@ -211,7 +214,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -225,9 +228,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 Padding(
                   padding: const EdgeInsets.only(left: KolabingSpacing.lg),
                   child: Text(
-                    'NEW APPLICATION',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11,
+                    AppLocalizations.of(context).applyModalHeader,
+                    style: KolabingTextStyles.labelSmall.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
                       color: KolabingColors.textTertiary,
@@ -283,8 +285,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                             Expanded(
                               child: Text(
                                 _errorMessage!,
-                                style: GoogleFonts.openSans(
-                                  fontSize: 14,
+                                style: KolabingTextStyles.bodySmall.copyWith(
                                   color: KolabingColors.error,
                                 ),
                               ),
@@ -314,12 +315,14 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     const SizedBox(height: KolabingSpacing.lg),
 
                     // Message field — optional, but encouraged
-                    _buildSectionTitle('Your message', optional: true),
+                    _buildSectionTitle(
+                        AppLocalizations.of(context).applyModalMessageTitle,
+                        optional: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'A short pitch helps you stand out — mention what you bring and why this fit makes sense.',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
+                      AppLocalizations.of(context).applyModalMessageHelp,
+                      style: KolabingTextStyles.labelMedium.copyWith(
+                        fontWeight: FontWeight.w400,
                         height: 1.5,
                         color: KolabingColors.textTertiary,
                       ),
@@ -332,23 +335,24 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       minLines: 4,
                       decoration: _buildInputDecoration(
                         hintText:
-                            "Tell them why you're perfect for this collaboration and what value you can bring...",
+                            AppLocalizations.of(context).applyModalMessageHint,
                       ),
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: KolabingColors.textPrimary,
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: KolabingColors.onSurface,
                       ),
                     ),
 
                     const SizedBox(height: KolabingSpacing.lg),
 
                     // Availability field — date picker constrained to opportunity range
-                    _buildSectionTitle('Select Date(s)', required: true),
+                    _buildSectionTitle(
+                        AppLocalizations.of(context).applyModalSelectDatesTitle,
+                        required: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'Pick from the available dates for this collaboration',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
+                      AppLocalizations.of(context).applyModalSelectDatesHelp,
+                      style: KolabingTextStyles.labelMedium.copyWith(
+                        fontWeight: FontWeight.w400,
                         color: KolabingColors.textTertiary,
                       ),
                     ),
@@ -360,8 +364,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       const SizedBox(height: KolabingSpacing.xxs),
                       Text(
                         _availabilityError!,
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
+                        style: KolabingTextStyles.labelMedium.copyWith(
+                          fontWeight: FontWeight.w400,
                           color: KolabingColors.error,
                         ),
                       ),
@@ -372,9 +376,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       _buildTimeRangePicker(),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
-                        'Additional notes (optional)',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
+                        AppLocalizations.of(context).applyModalNotesLabel,
+                        style: KolabingTextStyles.labelMedium.copyWith(
+                          fontWeight: FontWeight.w400,
                           color: KolabingColors.textTertiary,
                         ),
                       ),
@@ -386,11 +390,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         minLines: 1,
                         decoration: _buildInputDecoration(
                           hintText:
-                              'e.g., Flexible on timing, prefer mornings...',
+                              AppLocalizations.of(context).applyModalNotesHint,
                         ),
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          color: KolabingColors.textPrimary,
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                     ],
@@ -414,10 +417,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                               )
                             : const Icon(LucideIcons.send, size: 18),
                         label: Text(
-                          _isSubmitting ? 'SENDING…' : 'SEND APPLICATION',
-                          style: GoogleFonts.rubik(
+                          _isSubmitting
+                              ? AppLocalizations.of(context).applyModalSending
+                              : AppLocalizations.of(context).applyModalSend,
+                          style: KolabingTextStyles.button.copyWith(
                             fontSize: 15,
-                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.0,
                           ),
                         ),
@@ -460,8 +464,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           ),
         ),
         child: Text(
-          'No available dates for this collaboration',
-          style: GoogleFonts.openSans(
+          AppLocalizations.of(context).applyModalNoDates,
+          style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 13,
             color: KolabingColors.error,
           ),
@@ -508,7 +512,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       ? KolabingColors.primary
                       : _availabilityError != null
                       ? KolabingColors.error
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -517,9 +521,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 children: [
                   Text(
                     dayLabel,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+                    style: KolabingTextStyles.labelSmall.copyWith(
                       color: isSelected
                           ? KolabingColors.onPrimary
                           : KolabingColors.textTertiary,
@@ -528,19 +530,18 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                   const SizedBox(height: 2),
                   Text(
                     dayNum,
-                    style: GoogleFonts.rubik(
+                    style: KolabingTextStyles.bodyLarge.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: isSelected
                           ? KolabingColors.onPrimary
-                          : KolabingColors.textPrimary,
+                          : KolabingColors.onSurface,
                     ),
                   ),
                   Text(
                     monthLabel,
-                    style: GoogleFonts.dmSans(
+                    style: KolabingTextStyles.labelSmall.copyWith(
                       fontSize: 10,
-                      fontWeight: FontWeight.w500,
                       color: isSelected
                           ? KolabingColors.onPrimary.withValues(alpha: 0.8)
                           : KolabingColors.textTertiary,
@@ -560,7 +561,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     decoration: BoxDecoration(
       color: KolabingColors.background,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Row(
       children: [
@@ -573,7 +574,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         // Start time
         Expanded(
           child: _buildTimePicker(
-            label: 'From',
+            label: AppLocalizations.of(context).applyModalTimeFrom,
             time: _startTime,
             onTap: () => _pickTime(isStart: true),
           ),
@@ -589,7 +590,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         // End time
         Expanded(
           child: _buildTimePicker(
-            label: 'To',
+            label: AppLocalizations.of(context).applyModalTimeTo,
             time: _endTime,
             onTap: () => _pickTime(isStart: false),
           ),
@@ -612,13 +613,13 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusSm,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
       ),
       child: Column(
         children: [
           Text(
             label,
-            style: GoogleFonts.openSans(
+            style: KolabingTextStyles.labelSmall.copyWith(
               fontSize: 10,
               color: KolabingColors.textTertiary,
             ),
@@ -626,10 +627,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           const SizedBox(height: 2),
           Text(
             _formatTime(time),
-            style: GoogleFonts.dmSans(
+            style: KolabingTextStyles.labelLarge.copyWith(
               fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
         ],
@@ -667,19 +667,16 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     children: [
       Text(
         title,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
+        style: KolabingTextStyles.labelLarge.copyWith(
           fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
       if (required) ...[
         const SizedBox(width: 4),
         Text(
           '*',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+          style: KolabingTextStyles.labelLarge.copyWith(
             color: KolabingColors.error,
           ),
         ),
@@ -693,12 +690,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            'Optional',
-            style: GoogleFonts.dmSans(
+            AppLocalizations.of(context).applyModalOptionalBadge,
+            style: KolabingTextStyles.labelSmall.copyWith(
               fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textTertiary,
               letterSpacing: 0.4,
+              color: KolabingColors.textTertiary,
             ),
           ),
         ),
@@ -709,19 +705,18 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   InputDecoration _buildInputDecoration({required String hintText}) =>
       InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.openSans(
-          fontSize: 14,
+        hintStyle: KolabingTextStyles.bodySmall.copyWith(
           color: KolabingColors.textTertiary,
         ),
         filled: true,
         fillColor: KolabingColors.background,
         border: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(color: KolabingColors.border),
+          borderSide: const BorderSide(color: KolabingColors.darkBorder),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(color: KolabingColors.border),
+          borderSide: const BorderSide(color: KolabingColors.darkBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: KolabingRadius.borderRadiusMd,
@@ -735,18 +730,19 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           borderSide: const BorderSide(color: KolabingColors.error),
         ),
         contentPadding: const EdgeInsets.all(KolabingSpacing.md),
-        counterStyle: GoogleFonts.openSans(
-          fontSize: 12,
+        counterStyle: KolabingTextStyles.labelMedium.copyWith(
+          fontWeight: FontWeight.w400,
           color: KolabingColors.textTertiary,
         ),
       );
 
   Widget _buildHeroCard() {
     final creator = widget.opportunity.creatorProfile;
-    final creatorName = creator?.displayName ?? 'Unknown host';
+    final creatorName =
+        creator?.displayName ?? AppLocalizations.of(context).applyModalUnknownHost;
     final creatorTypeLabel = (creator?.userType.isNotEmpty ?? false)
         ? '${creator!.userType[0].toUpperCase()}${creator.userType.substring(1)}'
-        : 'Host';
+        : AppLocalizations.of(context).applyModalHostFallback;
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -796,10 +792,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         Flexible(
                           child: Text(
                             creatorName,
-                            style: GoogleFonts.rubik(
+                            style: KolabingTextStyles.bodyLarge.copyWith(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              color: KolabingColors.textPrimary,
+                              color: KolabingColors.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -817,11 +813,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                           ),
                           child: Text(
                             creatorTypeLabel,
-                            style: GoogleFonts.dmSans(
+                            style: KolabingTextStyles.labelSmall.copyWith(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: KolabingColors.onPrimary,
                               letterSpacing: 0.4,
+                              color: KolabingColors.onPrimary,
                             ),
                           ),
                         ),
@@ -829,9 +825,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'You are applying to',
-                      style: GoogleFonts.openSans(
-                        fontSize: 11,
+                      AppLocalizations.of(context).applyModalApplyingTo,
+                      style: KolabingTextStyles.labelSmall.copyWith(
                         color: KolabingColors.textTertiary,
                       ),
                     ),
@@ -843,11 +838,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             widget.opportunity.title,
-            style: GoogleFonts.rubik(
-              fontSize: 18,
+            style: KolabingTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
               height: 1.3,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
           ),
           if (widget.opportunity.description.isNotEmpty) ...[
@@ -856,10 +850,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               widget.opportunity.description,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.openSans(
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 13,
                 height: 1.5,
-                color: KolabingColors.textSecondary,
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
           ],
@@ -897,14 +891,13 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(f.icon, size: 13, color: KolabingColors.textSecondary),
+                  Icon(f.icon, size: 13, color: KolabingColors.onSurfaceVariant),
                   const SizedBox(width: 4),
                   Text(
                     f.label,
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
+                    style: KolabingTextStyles.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.textSecondary,
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -932,9 +925,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "What's offered",
-                style: GoogleFonts.openSans(
-                  fontSize: 11,
+                AppLocalizations.of(context).applyModalWhatsOffered,
+                style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
                   color: KolabingColors.success,
@@ -943,11 +935,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               const SizedBox(height: 2),
               Text(
                 widget.opportunity.offerSummary,
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   height: 1.4,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
             ],
@@ -974,9 +965,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
           child: Text(
-            'Pick the dates that work for you and add a short message — applications with specifics get accepted faster.',
-            style: GoogleFonts.openSans(
-              fontSize: 12,
+            AppLocalizations.of(context).applyModalTip,
+            style: KolabingTextStyles.labelMedium.copyWith(
+              fontWeight: FontWeight.w400,
               height: 1.5,
               color: KolabingColors.textTertiary,
             ),
@@ -1017,8 +1008,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   Widget _buildAvatarPlaceholder() => Center(
     child: Text(
       widget.opportunity.creatorProfile?.initial ?? '?',
-      style: GoogleFonts.rubik(
-        fontSize: 16,
+      style: KolabingTextStyles.bodyMedium.copyWith(
         fontWeight: FontWeight.w700,
         color: KolabingColors.primary,
       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// User type for selection cards
 enum SelectionUserType { business, community, attendee }
@@ -103,30 +103,32 @@ class _SelectionCardState extends State<SelectionCard>
     }
   }
 
-  String get _title {
+  String _title(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
       case SelectionUserType.business:
-        return "I'M A BUSINESS";
+        return l10n.selectionCardBusinessTitle;
       case SelectionUserType.community:
-        return "I'M A COMMUNITY";
+        return l10n.selectionCardCommunityTitle;
       case SelectionUserType.attendee:
-        return "I'M AN ATTENDEE";
+        return l10n.selectionCardAttendeeTitle;
     }
   }
 
-  String get _description {
+  String _description(BuildContext context) {
     final override = widget.descriptionOverride;
     if (override != null && override.trim().isNotEmpty) {
       return override;
     }
 
+    final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
       case SelectionUserType.business:
-        return 'Looking for communities to partner with';
+        return l10n.selectionCardBusinessDescription;
       case SelectionUserType.community:
-        return 'Seeking sponsors and collaboration partners';
+        return l10n.selectionCardCommunityDescription;
       case SelectionUserType.attendee:
-        return 'Joining events and completing challenges';
+        return l10n.selectionCardAttendeeDescription;
     }
   }
 
@@ -137,7 +139,7 @@ class _SelectionCardState extends State<SelectionCard>
     final isHighlighted = _isPressed || widget.isSelected || hasBadge;
     final borderColor = isHighlighted
         ? KolabingColors.primary
-        : KolabingColors.border;
+        : KolabingColors.darkBorder;
     final shadowColor = isHighlighted
         ? KolabingColors.primary.withValues(alpha: 0.20)
         : const Color(0xFF374957).withValues(alpha: 0.10);
@@ -146,7 +148,10 @@ class _SelectionCardState extends State<SelectionCard>
       button: true,
       enabled: widget.isEnabled,
       selected: widget.isSelected,
-      label: '$_title. $_description',
+      label: AppLocalizations.of(context).selectionCardSemanticLabel(
+        _title(context),
+        _description(context),
+      ),
       child: GestureDetector(
         onTapDown: _handleTapDown,
         onTapUp: _handleTapUp,
@@ -197,11 +202,11 @@ class _SelectionCardState extends State<SelectionCard>
                     ),
                     child: Text(
                       widget.badgeLabel!,
-                      style: GoogleFonts.dmSans(
+                      style: KolabingTextStyles.button.copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.8,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                   ),
@@ -210,11 +215,11 @@ class _SelectionCardState extends State<SelectionCard>
 
                 // Title
                 Text(
-                  _title,
-                  style: GoogleFonts.dmSans(
+                  _title(context),
+                  style: KolabingTextStyles.button.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                     letterSpacing: 0.5,
                   ),
                   textAlign: TextAlign.center,
@@ -223,11 +228,9 @@ class _SelectionCardState extends State<SelectionCard>
 
                 // Description
                 Text(
-                  _description,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: KolabingColors.textSecondary,
+                  _description(context),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: KolabingColors.onSurfaceVariant,
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,

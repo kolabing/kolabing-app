@@ -5,13 +5,15 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
-import '../../application/screens/applications_screen.dart';
 import '../../business/screens/explore_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
+import '../../kolab/screens/my_kolabs_hub_screen.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
@@ -22,11 +24,21 @@ import 'my_opportunities_screen.dart';
 /// Community user main screen with bottom navigation
 ///
 /// This is the main container for community users after login.
-/// Contains 5 tabs: Home, Explore, My Kolabs, Applications, Profile
+/// Contains 4 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished),
+/// Profile. The former Applications tab is now the "Requests" tab inside
+/// My Kolabs.
 class CommunityMainScreen extends ConsumerStatefulWidget {
-  const CommunityMainScreen({super.key, this.initialTab = 0});
+  const CommunityMainScreen({
+    super.key,
+    this.initialTab = 0,
+    this.initialKolabsSubTab = 0,
+  });
 
   final int initialTab;
+
+  /// Sub-tab to open inside My Kolabs (0 Offers, 1 Requests, 2 Active,
+  /// 3 Finished). Used by deep links to the legacy /applications route.
+  final int initialKolabsSubTab;
 
   @override
   ConsumerState<CommunityMainScreen> createState() =>
@@ -92,36 +104,31 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
     final totalUnread = ref.watch(totalUnreadCountProvider);
     final badgeCount = pendingSentCount + pendingReceivedCount + totalUnread;
 
+    final l10n = AppLocalizations.of(context);
     final navItems = [
-      const NavItem(
+      NavItem(
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
-        label: 'Home',
+        label: l10n.communityMainNavHome,
         iconSlug: UiIconSlug.home,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
-        label: 'Explore',
+        label: l10n.communityMainNavExplore,
         iconSlug: UiIconSlug.compass,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.star,
         activeIcon: LucideIcons.star,
-        label: 'My Kolabs',
+        label: l10n.communityMainNavMyKolabs,
+        badgeCount: badgeCount > 0 ? badgeCount : null,
         iconSlug: UiIconSlug.star,
       ),
       NavItem(
-        icon: LucideIcons.send,
-        activeIcon: LucideIcons.send,
-        label: 'Applications',
-        badgeCount: badgeCount > 0 ? badgeCount : null,
-        iconSlug: UiIconSlug.send,
-      ),
-      const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
-        label: 'Profile',
+        label: l10n.communityMainNavProfile,
         iconSlug: UiIconSlug.user,
       ),
     ];
@@ -130,25 +137,24 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.darkBackground
+          ? KolabingColors.surface
           : KolabingColors.background,
+      appBar: const KolabingAppBar(),
       body: IndexedStack(
         index: _currentIndex,
         children: [
           _CommunityHomeTab(onSwitchTab: _onTabChanged),
           const _CommunityExploreTab(),
-          const _CommunityMyOppsTab(),
-          const _CommunityApplicationsTab(),
+          _CommunityMyOppsTab(initialSubTab: widget.initialKolabsSubTab),
           const _CommunityProfileTab(),
         ],
       ),
       floatingActionButton:
-          _currentIndex != 4 &&
-              _currentIndex !=
-                  2 // Hide on profile and My Kolabs tabs
+          _currentIndex != 2 && // My Kolabs hub provides its own create FAB
+              _currentIndex != 3 // Hide on profile tab
           ? KolabingFAB(
               onPressed: _onFabPressed,
-              tooltip: 'Create Opportunity',
+              tooltip: l10n.communityMainCreateOpportunityTooltip,
               heroTag: 'community_main_fab',
             )
           : null,
@@ -189,17 +195,15 @@ class _CommunityExploreTab extends StatelessWidget {
 }
 
 class _CommunityMyOppsTab extends StatelessWidget {
-  const _CommunityMyOppsTab();
+  const _CommunityMyOppsTab({this.initialSubTab = 0});
+
+  final int initialSubTab;
 
   @override
-  Widget build(BuildContext context) => const MyOpportunitiesScreen();
-}
-
-class _CommunityApplicationsTab extends StatelessWidget {
-  const _CommunityApplicationsTab();
-
-  @override
-  Widget build(BuildContext context) => const ApplicationsScreen();
+  Widget build(BuildContext context) => MyKolabsHubScreen(
+    offersTab: const MyOpportunitiesScreen(embedded: true),
+    initialSubTab: initialSubTab,
+  );
 }
 
 class _CommunityProfileTab extends StatelessWidget {

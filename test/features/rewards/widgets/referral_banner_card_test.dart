@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/rewards/providers/wallet_provider.dart';
 import 'package:kolabing_app/features/rewards/widgets/referral_banner_card.dart';
@@ -12,7 +13,11 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [walletProvider.overrideWith(_FakeWalletNotifier.new)],
-        child: const MaterialApp(home: Scaffold(body: ReferralBannerCard())),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: ReferralBannerCard()),
+        ),
       ),
     );
 

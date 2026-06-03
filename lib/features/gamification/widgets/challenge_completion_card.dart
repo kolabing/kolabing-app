@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/challenge_completion.dart';
 import 'difficulty_badge.dart';
 import 'points_badge.dart';
@@ -25,13 +26,14 @@ class ChallengeCompletionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.textSecondary;
+        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -44,7 +46,7 @@ class ChallengeCompletionCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+              color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
             ),
           ),
           child: Column(
@@ -63,22 +65,15 @@ class ChallengeCompletionCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          completion.challengeName ?? 'Challenge',
-                          style: GoogleFonts.rubik(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
+                          completion.challengeName ?? l10n.challengeCompletionDefaultName,
+                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (completion.eventName != null)
                           Text(
                             completion.eventName!,
-                            style: GoogleFonts.openSans(
-                              fontSize: 13,
-                              color: secondaryTextColor,
-                            ),
+                            style: KolabingTextStyles.captionSecondary.copyWith(color: secondaryTextColor),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -108,7 +103,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                   const Spacer(),
 
                   // Status badge
-                  _buildStatusBadge(),
+                  _buildStatusBadge(l10n),
                 ],
               ),
 
@@ -130,11 +125,8 @@ class ChallengeCompletionCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                completion.challengerName ?? 'Challenger',
-                                style: GoogleFonts.openSans(
-                                  fontSize: 12,
-                                  color: secondaryTextColor,
-                                ),
+                                completion.challengerName ?? l10n.challengeCompletionDefaultChallenger,
+                                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: secondaryTextColor),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -147,7 +139,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                       if (onReject != null)
                         _ActionButton(
                           icon: LucideIcons.x,
-                          label: 'Reject',
+                          label: l10n.challengeCompletionReject,
                           color: KolabingColors.error,
                           onPressed: onReject!,
                         ),
@@ -155,7 +147,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                         const SizedBox(width: KolabingSpacing.xs),
                         _ActionButton(
                           icon: LucideIcons.check,
-                          label: 'Verify',
+                          label: l10n.challengeCompletionVerify,
                           color: KolabingColors.success,
                           onPressed: onVerify!,
                         ),
@@ -205,22 +197,22 @@ class ChallengeCompletionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(AppLocalizations l10n) {
     String text;
     Color bgColor;
     Color textColor;
 
     switch (completion.status) {
       case ChallengeCompletionStatus.verified:
-        text = 'Verified';
+        text = l10n.challengeCompletionStatusVerified;
         bgColor = KolabingColors.activeBg;
         textColor = KolabingColors.activeText;
       case ChallengeCompletionStatus.rejected:
-        text = 'Rejected';
+        text = l10n.challengeCompletionStatusRejected;
         bgColor = KolabingColors.errorBg;
         textColor = KolabingColors.errorText;
       case ChallengeCompletionStatus.pending:
-        text = 'Pending';
+        text = l10n.challengeCompletionStatusPending;
         bgColor = KolabingColors.pendingBg;
         textColor = KolabingColors.pendingText;
     }
@@ -233,11 +225,7 @@ class ChallengeCompletionCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.openSans(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }
@@ -276,11 +264,7 @@ class _ActionButton extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 label,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color),
               ),
             ],
           ),

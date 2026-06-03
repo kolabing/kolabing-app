@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -55,6 +56,7 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
 
     _syncControllers();
 
+    final l10n = AppLocalizations.of(context);
     final hasVenueProfile = kolab.venueName != null &&
         kolab.venueName!.isNotEmpty &&
         kolab.venueType != null &&
@@ -70,19 +72,19 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         vertical: KolabingSpacing.lg,
       ),
       children: [
-        const _SectionHeader(label: 'PROMOTION DETAILS'),
+        _SectionHeader(label: l10n.venueDetailsSectionHeader),
         const SizedBox(height: KolabingSpacing.lg),
         if (hasVenueProfile) ...[
           _VenueSummaryCard(kolab: kolab),
           const SizedBox(height: KolabingSpacing.md),
         ],
-        const _FieldLabel(label: 'Listing Title'),
+        _FieldLabel(label: l10n.venueDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
-            hint: 'e.g. Sunset rooftop social for local creators',
+            hint: l10n.venueDetailsListingTitleHint,
             error: errors['title'],
           ),
           style: _inputTextStyle,
@@ -91,15 +93,14 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.md),
-        const _FieldLabel(label: 'Campaign Description'),
+        _FieldLabel(label: l10n.venueDetailsCampaignDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
-            hint:
-                'Tell communities what kind of experience you want to host and why your venue is a great fit.',
+            hint: l10n.venueDetailsCampaignDescriptionHint,
             error: errors['description'],
           ),
           style: _inputTextStyle,
@@ -108,21 +109,18 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         ),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
-        const _FieldLabel(label: 'Offer Headline'),
+        _FieldLabel(label: l10n.venueDetailsOfferHeadlineLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'One short line communities will see on your card.',
-          style: GoogleFonts.openSans(
-            fontSize: 12,
-            color: KolabingColors.textSecondary,
-          ),
+          l10n.venueDetailsOfferHeadlineHelper,
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
-            hint: 'e.g. 20% off Tuesdays for groups of 10+',
+            hint: l10n.venueDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
           style: _inputTextStyle,
@@ -140,7 +138,9 @@ class _VenueSummaryCard extends StatelessWidget {
   final Kolab kolab;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
           color: KolabingColors.softYellow,
@@ -151,20 +151,17 @@ class _VenueSummaryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'PRIMARY VENUE',
-              style: GoogleFonts.rubik(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-                color: KolabingColors.primaryDark,
-              ),
+              l10n.venueDetailsPrimaryVenue,
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.primaryDark, letterSpacing: 0.8),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             _SummaryRow(
               icon: LucideIcons.building2,
               title: kolab.venueName ?? '--',
-              subtitle:
-                  '${kolab.venueType?.displayName ?? 'Venue'} • Capacity ${kolab.capacity ?? '--'}',
+              subtitle: l10n.venueDetailsTypeCapacity(
+                kolab.venueType?.displayName ?? l10n.venueDetailsVenueFallback,
+                (kolab.capacity ?? '--').toString(),
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             _SummaryRow(
@@ -175,6 +172,7 @@ class _VenueSummaryCard extends StatelessWidget {
           ],
         ),
       );
+  }
 }
 
 class _SummaryRow extends StatelessWidget {
@@ -200,19 +198,12 @@ class _SummaryRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.textSecondary,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -227,12 +218,9 @@ InputDecoration _inputDecoration({
 }) =>
     InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.openSans(
-        fontSize: 14,
-        color: KolabingColors.textTertiary,
-      ),
+      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
       errorText: error,
-      errorStyle: GoogleFonts.openSans(fontSize: 12),
+      errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
       filled: true,
       fillColor: KolabingColors.surface,
       contentPadding: const EdgeInsets.symmetric(
@@ -241,11 +229,11 @@ InputDecoration _inputDecoration({
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
@@ -261,10 +249,7 @@ InputDecoration _inputDecoration({
       ),
     );
 
-final _inputTextStyle = GoogleFonts.openSans(
-  fontSize: 15,
-  color: KolabingColors.textPrimary,
-);
+final _inputTextStyle = KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});
@@ -274,12 +259,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1,
-          color: KolabingColors.textSecondary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1),
       );
 }
 
@@ -291,10 +271,6 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       );
 }

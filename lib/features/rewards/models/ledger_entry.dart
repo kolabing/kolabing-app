@@ -8,6 +8,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 /// Types of XP events that can appear in the ledger.
 enum PointEventType {
   collaborationComplete,
+  firstKolabBonus,
   reviewPosted,
   ugcPosted,
   referralConversion,
@@ -16,7 +17,9 @@ enum PointEventType {
   String get displayLabel {
     switch (this) {
       case PointEventType.collaborationComplete:
-        return 'Collaboration Completed';
+        return 'Kolab Completed';
+      case PointEventType.firstKolabBonus:
+        return 'First Kolab Bonus! 🎉';
       case PointEventType.reviewPosted:
         return 'Review Posted';
       case PointEventType.ugcPosted:
@@ -32,6 +35,8 @@ enum PointEventType {
     switch (this) {
       case PointEventType.collaborationComplete:
         return 'collaboration_complete';
+      case PointEventType.firstKolabBonus:
+        return 'first_kolab_bonus';
       case PointEventType.reviewPosted:
         return 'review_posted';
       case PointEventType.ugcPosted:
@@ -47,6 +52,8 @@ enum PointEventType {
     switch (value) {
       case 'collaboration_complete':
         return PointEventType.collaborationComplete;
+      case 'first_kolab_bonus':
+        return PointEventType.firstKolabBonus;
       case 'review_posted':
         return PointEventType.reviewPosted;
       case 'ugc_posted':
@@ -67,6 +74,8 @@ enum PointEventType {
     switch (this) {
       case PointEventType.collaborationComplete:
         return LucideIcons.heartHandshake;
+      case PointEventType.firstKolabBonus:
+        return LucideIcons.trophy;
       case PointEventType.reviewPosted:
         return LucideIcons.star;
       case PointEventType.ugcPosted:

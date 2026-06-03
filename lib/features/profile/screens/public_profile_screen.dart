@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,6 +11,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
@@ -91,11 +91,11 @@ class PublicProfileScreen extends ConsumerWidget {
                 if (profile.hasAbout) ...[
                   _SectionCard(
                     icon: LucideIcons.fileText,
-                    title: 'About',
+                    title: AppLocalizations.of(context).publicProfileAbout,
                     child: Text(
                       profile.about!,
                       style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: KolabingColors.textSecondary,
+                        color: KolabingColors.onSurfaceVariant,
                         height: 1.5,
                       ),
                     ),
@@ -114,8 +114,14 @@ class PublicProfileScreen extends ConsumerWidget {
                 const SizedBox(height: KolabingSpacing.md),
 
                 // Past collaborations
-                _buildCollaborationsSection(profile),
+                _buildCollaborationsSection(context, profile),
                 const SizedBox(height: KolabingSpacing.md),
+
+                // Recent reviews
+                if (profile.recentReviews.isNotEmpty) ...[
+                  _RecentReviewsSection(profile: profile),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
 
                 // Social links
                 if (profile.hasSocialLinks) ...[
@@ -197,21 +203,13 @@ class PublicProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 cp.displayName,
-                style: GoogleFonts.rubik(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.textPrimary,
-                ),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 cp.userType.toUpperCase(),
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: KolabingColors.textSecondary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
               ),
             ],
           ),
@@ -258,9 +256,9 @@ class PublicProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Failed to load profile',
+              AppLocalizations.of(context).publicProfileLoadError,
               style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -275,7 +273,7 @@ class PublicProfileScreen extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () => ref.invalidate(publicProfileProvider(profileId)),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Retry'),
+              label: Text(AppLocalizations.of(context).commonRetry),
             ),
           ],
         ),
@@ -285,10 +283,13 @@ class PublicProfileScreen extends ConsumerWidget {
   // Collaborations Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildCollaborationsSection(PublicProfile profile) => _SectionCard(
+  Widget _buildCollaborationsSection(
+    BuildContext context,
+    PublicProfile profile,
+  ) => _SectionCard(
     icon: LucideIcons.trophy,
-    title: 'Past Collaborations',
-    count: profile.pastCollaborations.length,
+    title: AppLocalizations.of(context).publicProfilePastKolabs,
+    count: profile.kolabsCount,
     child: profile.hasCollaborations
         ? SizedBox(
             height: 110,
@@ -314,7 +315,7 @@ class PublicProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
                   Text(
-                    'No past collaborations yet',
+                    AppLocalizations.of(context).publicProfileNoPastKolabs,
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
@@ -334,7 +335,7 @@ class PublicProfileScreen extends ConsumerWidget {
     PublicProfile profile,
   ) => _SectionCard(
     icon: LucideIcons.link,
-    title: 'Social Links',
+    title: AppLocalizations.of(context).publicProfileSocialLinks,
     child: Wrap(
       spacing: KolabingSpacing.sm,
       runSpacing: KolabingSpacing.sm,
@@ -420,11 +421,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                     children: [
                       Text(
                         profile.displayName,
-                        style: GoogleFonts.rubik(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: KolabingColors.textPrimary,
-                        ),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -432,11 +429,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                       if (profile.typeLabel != null)
                         Text(
                           profile.typeLabel!,
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: KolabingColors.textSecondary,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
                         ),
                       if (profile.cityName != null &&
                           profile.cityName!.isNotEmpty) ...[
@@ -446,15 +439,12 @@ class _ProfileSliverHeader extends StatelessWidget {
                             const Icon(
                               LucideIcons.mapPin,
                               size: 12,
-                              color: KolabingColors.textSecondary,
+                              color: KolabingColors.onSurfaceVariant,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               profile.cityName!,
-                              style: GoogleFonts.openSans(
-                                fontSize: 13,
-                                color: KolabingColors.textSecondary,
-                              ),
+                              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -494,7 +484,7 @@ class _BackButton extends StatelessWidget {
           child: const Icon(
             LucideIcons.arrowLeft,
             size: 20,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),
@@ -546,11 +536,7 @@ class _AvatarWidget extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: GoogleFonts.rubik(
-          fontSize: size * 0.4,
-          fontWeight: FontWeight.w700,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
       ),
     ),
   );
@@ -566,12 +552,14 @@ class _SectionCard extends StatelessWidget {
     required this.title,
     required this.child,
     this.count,
+    this.trailing,
   });
 
   final IconData icon;
   final String title;
   final Widget child;
   final int? count;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -598,7 +586,7 @@ class _SectionCard extends StatelessWidget {
             Text(
               title,
               style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
             if (count != null && count! > 0) ...[
@@ -611,14 +599,11 @@ class _SectionCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$count',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
               ),
             ],
+            if (trailing != null) ...[const Spacer(), trailing!],
           ],
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -654,7 +639,7 @@ class _SocialLinkChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surfaceVariant,
         borderRadius: KolabingRadius.borderRadiusRound,
-        border: Border.all(color: KolabingColors.border, width: 1),
+        border: Border.all(color: KolabingColors.darkBorder, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -663,11 +648,7 @@ class _SocialLinkChip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
           ),
         ],
       ),
@@ -697,7 +678,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         border: Border(
-          top: BorderSide(color: KolabingColors.border.withValues(alpha: 0.5)),
+          top: BorderSide(color: KolabingColors.darkBorder.withValues(alpha: 0.5)),
         ),
       ),
       child: Row(
@@ -706,15 +687,12 @@ class _SendKolabBottomBar extends ConsumerWidget {
             child: TextButton(
               onPressed: () => Navigator.of(context).maybePop(),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.textSecondary,
+                foregroundColor: KolabingColors.onSurfaceVariant,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: Text(
-                'Save for later',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                AppLocalizations.of(context).publicProfileSaveForLater,
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -751,12 +729,8 @@ class _SendKolabBottomBar extends ConsumerWidget {
                 ),
                 icon: const Icon(LucideIcons.send, size: 18),
                 label: Text(
-                  'SEND A KOLAB PROPOSAL',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
+                  AppLocalizations.of(context).publicProfileSendKolabProposal,
+                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
                 ),
               ),
             ),
@@ -765,4 +739,133 @@ class _SendKolabBottomBar extends ConsumerWidget {
       ),
     ),
   );
+}
+
+// =============================================================================
+// Review Reputation Card
+// =============================================================================
+
+class _RecentReviewsSection extends StatelessWidget {
+  const _RecentReviewsSection({required this.profile});
+
+  final PublicProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return _SectionCard(
+      icon: Icons.star_rounded,
+      title: AppLocalizations.of(context).publicProfileRecentReviews,
+      trailing: TextButton(
+        onPressed: () => context.push(
+          '/profile/${profile.id}/reviews',
+          extra: profile.displayName,
+        ),
+        child: Text(AppLocalizations.of(context).publicProfileViewMore),
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < profile.recentReviews.length; i++) ...[
+            _PublicProfileReviewCard(review: profile.recentReviews[i]),
+            if (i != profile.recentReviews.length - 1)
+              const SizedBox(height: KolabingSpacing.sm),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PublicProfileReviewCard extends StatelessWidget {
+  const _PublicProfileReviewCard({required this.review});
+
+  final PublicProfileReview review;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: KolabingColors.background,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: KolabingColors.darkBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _AvatarWidget(
+                avatarUrl: review.reviewer.avatarUrl,
+                initial: review.reviewer.initial,
+                size: 36,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      review.reviewer.displayName,
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    ),
+                    Text(
+                      _formatReviewDate(review.createdAt),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: KolabingColors.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: List.generate(
+                  5,
+                  (index) => Icon(
+                    index < review.rating
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    size: 16,
+                    color: KolabingColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (review.hasBody) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              review.body!,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: KolabingColors.onSurfaceVariant,
+                height: 1.45,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+String _formatReviewDate(DateTime? date) {
+  if (date == null) {
+    return '';
+  }
+
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  return '${date.day} ${monthNames[date.month - 1]} ${date.year}';
 }

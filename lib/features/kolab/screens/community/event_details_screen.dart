@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../enums/deliverable_type.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -51,6 +52,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
 
@@ -61,26 +63,18 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
         children: [
           // Section header
           Text(
-            'COLLABORATION DETAILS',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
-              letterSpacing: 1.0,
-            ),
+            l10n.eventDetailsHeader,
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Describe your collaboration and what you offer',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textSecondary,
-            ),
+            l10n.eventDetailsSubtitle,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
           // Title
-          _buildLabel('Title'),
+          _buildLabel(l10n.eventDetailsTitleLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _titleController,
@@ -89,24 +83,19 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                 ref.read(kolabFormProvider.notifier).updateTitle(value),
             // C1: dismiss keyboard on tap-outside so the bottom action bar is reachable.
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            style: GoogleFonts.openSans(
-              fontSize: 15,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText: 'e.g., Fitness Community x Local Cafe',
-              hintStyle: GoogleFonts.openSans(
-                color: KolabingColors.textTertiary,
-              ),
+              hintText: l10n.eventDetailsTitleHint,
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -124,7 +113,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Description
-          _buildLabel('Description'),
+          _buildLabel(l10n.eventDetailsDescriptionLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _descriptionController,
@@ -133,25 +122,19 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             onChanged: (value) =>
                 ref.read(kolabFormProvider.notifier).updateDescription(value),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            style: GoogleFonts.openSans(
-              fontSize: 15,
-              color: KolabingColors.textPrimary,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText:
-                  'Describe what you are looking for and how this collaboration would work...',
-              hintStyle: GoogleFonts.openSans(
-                color: KolabingColors.textTertiary,
-              ),
+              hintText: l10n.eventDetailsDescriptionHint,
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
@@ -170,13 +153,8 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
 
           // "What you offer in return" section header
           Text(
-            'WHAT YOU OFFER IN RETURN',
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.textSecondary,
-              letterSpacing: 1.0,
-            ),
+            l10n.eventDetailsOffersHeader,
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           if (state.fieldErrors['offers_in_return'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
@@ -204,7 +182,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                     border: Border.all(
                       color: isSelected
                           ? KolabingColors.primary
-                          : KolabingColors.border,
+                          : KolabingColors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -223,7 +201,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                           border: Border.all(
                             color: isSelected
                                 ? KolabingColors.primary
-                                : KolabingColors.border,
+                                : KolabingColors.darkBorder,
                             width: 2,
                           ),
                         ),
@@ -242,19 +220,12 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                           children: [
                             Text(
                               deliverable.displayName,
-                              style: GoogleFonts.openSans(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: KolabingColors.textPrimary,
-                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               deliverable.subtitle,
-                              style: GoogleFonts.openSans(
-                                fontSize: 12,
-                                color: KolabingColors.textSecondary,
-                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -272,11 +243,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
 
   Widget _buildLabel(String label) => Text(
         label,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
-        ),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
       );
 
   Widget _buildFieldError(String error) => Container(
@@ -299,10 +266,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             Expanded(
               child: Text(
                 error,
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.error,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
               ),
             ),
           ],

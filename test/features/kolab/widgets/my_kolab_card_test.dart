@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/models/kolab.dart';
 import 'package:kolabing_app/features/kolab/widgets/my_kolab_card.dart';
@@ -19,6 +20,8 @@ void main() {
       MediaQuery(
         data: const MediaQueryData(size: Size(320, 800)),
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: SizedBox(
               width: 320,

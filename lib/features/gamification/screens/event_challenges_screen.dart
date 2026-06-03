@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 import '../widgets/challenge_card.dart';
@@ -52,41 +53,35 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
   Widget build(BuildContext context) {
     final challengesAsync = ref.watch(eventChallengesProvider(widget.eventId));
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.darkBackground : KolabingColors.background,
+          isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: AppBar(
         backgroundColor:
-            isDark ? KolabingColors.darkBackground : KolabingColors.background,
+            isDark ? KolabingColors.surface : KolabingColors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             LucideIcons.arrowLeft,
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
+            color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
           onPressed: () => context.pop(),
         ),
         title: Text(
-          widget.eventName ?? 'Challenges',
-          style: GoogleFonts.rubik(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary,
-          ),
+          widget.eventName ?? l10n.eventChallengesTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface),
         ),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: KolabingColors.primary,
           labelColor: KolabingColors.primary,
           unselectedLabelColor: KolabingColors.textTertiary,
-          labelStyle: GoogleFonts.openSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-          tabs: const [
-            Tab(text: 'All Challenges'),
-            Tab(text: 'Custom'),
+          labelStyle: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+          tabs: [
+            Tab(text: l10n.eventChallengesTabAll),
+            Tab(text: l10n.eventChallengesTabCustom),
           ],
         ),
       ),
@@ -101,7 +96,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               error: null,
               onRefresh: _onRefresh,
               onChallengeTap: _handleChallengeTap,
-              emptyMessage: 'No challenges available for this event',
+              emptyMessage: l10n.eventChallengesEmptyAll,
             ),
 
             // Custom challenges tab
@@ -112,8 +107,8 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               onRefresh: _onRefresh,
               onChallengeTap: _handleChallengeTap,
               emptyMessage: widget.isOrganizer
-                  ? 'Create custom challenges for your event'
-                  : 'No custom challenges yet',
+                  ? l10n.eventChallengesEmptyCustomOrganizer
+                  : l10n.eventChallengesEmptyCustom,
             ),
           ],
         ),
@@ -132,17 +127,14 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 error.toString(),
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.md),
               TextButton.icon(
                 onPressed: _onRefresh,
                 icon: const Icon(LucideIcons.refreshCw, size: 16),
-                label: const Text('Try Again'),
+                label: Text(l10n.commonTryAgain),
               ),
             ],
           ),
@@ -155,10 +147,8 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               foregroundColor: KolabingColors.onPrimary,
               icon: const Icon(LucideIcons.plus),
               label: Text(
-                'New Challenge',
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w600,
-                ),
+                l10n.eventChallengesNewChallenge,
+                style: KolabingTextStyles.button,
               ),
             )
           : null,
@@ -232,17 +222,14 @@ class _ChallengesListView extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               error!,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
             TextButton.icon(
               onPressed: onRefresh,
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
             ),
           ],
         ),
@@ -262,10 +249,7 @@ class _ChallengesListView extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               emptyMessage,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textTertiary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
               textAlign: TextAlign.center,
             ),
           ],
@@ -305,11 +289,12 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.textPrimary;
+        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
 
     return Container(
       decoration: BoxDecoration(
@@ -326,7 +311,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.border,
+                color: KolabingColors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -340,11 +325,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                 // Challenge name
                 Text(
                   challenge.name,
-                  style: GoogleFonts.rubik(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: textColor,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: textColor),
                 ),
 
                 const SizedBox(height: KolabingSpacing.sm),
@@ -371,12 +352,8 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '+${challenge.points} pts',
-                            style: GoogleFonts.rubik(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: KolabingColors.onPrimary,
-                            ),
+                            l10n.eventChallengesPointsAwarded(challenge.points),
+                            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
                           ),
                         ],
                       ),
@@ -394,10 +371,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                       ),
                       child: Text(
                         challenge.difficulty.label,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: _getDifficultyColor(challenge.difficulty),
+                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: _getDifficultyColor(challenge.difficulty),
                         ),
                       ),
                     ),
@@ -413,12 +387,8 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'System',
-                          style: GoogleFonts.openSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.info,
-                          ),
+                          l10n.eventChallengesSystemBadge,
+                          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.info),
                         ),
                       ),
                     ],
@@ -430,11 +400,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     challenge.description!,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textSecondary,
-                      height: 1.5,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
                   ),
                 ],
 
@@ -453,12 +419,8 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                     },
                     icon: const Icon(LucideIcons.userPlus),
                     label: Text(
-                      'START CHALLENGE',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0,
-                      ),
+                      l10n.eventChallengesStartChallenge,
+                      style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: KolabingColors.primary,

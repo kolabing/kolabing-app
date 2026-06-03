@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../opportunity/models/opportunity.dart';
 
 /// Card widget for My Opportunities list
@@ -33,7 +34,9 @@ class MyOpportunityCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return DecoratedBox(
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
@@ -67,12 +70,10 @@ class MyOpportunityCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${opportunity.applicationsCount} app${opportunity.applicationsCount == 1 ? '' : 's'}',
-                      style: GoogleFonts.openSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: KolabingColors.textTertiary,
+                      l10n.myOpportunityCardApplicationsCount(
+                        opportunity.applicationsCount!,
                       ),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
                     ),
                   ],
                 ),
@@ -84,13 +85,8 @@ class MyOpportunityCard extends StatelessWidget {
           Text(
             opportunity.title.isNotEmpty
                 ? opportunity.title
-                : 'Untitled Opportunity',
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-              height: 1.3,
-            ),
+                : l10n.myOpportunityCardUntitled,
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -101,11 +97,12 @@ class MyOpportunityCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.sm),
 
           // Action buttons
-          _buildActions(),
+          _buildActions(l10n),
         ],
       ),
     ),
   );
+  }
 
   Widget _buildInfoRow() {
     final dateFormat = DateFormat('MMM d');
@@ -126,14 +123,14 @@ class MyOpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActions() {
+  Widget _buildActions(AppLocalizations l10n) {
     final status = opportunity.status;
     final actions = <Widget>[];
 
     if (status == OpportunityStatus.published && onView != null) {
       actions.add(
         _ActionButton(
-          label: 'View',
+          label: l10n.myOpportunityCardActionView,
           icon: LucideIcons.eye,
           onTap: onView!,
           primary: true,
@@ -145,7 +142,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status.canEdit && onEdit != null) {
       actions.add(
         _ActionButton(
-          label: 'Edit',
+          label: l10n.myOpportunityCardActionEdit,
           icon: LucideIcons.edit,
           onTap: onEdit!,
           outlined: true,
@@ -157,7 +154,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status.canPublish && onPublish != null) {
       actions.add(
         _ActionButton(
-          label: 'Publish',
+          label: l10n.myOpportunityCardActionPublish,
           icon: LucideIcons.upload,
           onTap: onPublish!,
           primary: true,
@@ -168,7 +165,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status == OpportunityStatus.published && onShare != null) {
       actions.add(
         _ActionButton(
-          label: 'Share',
+          label: l10n.myOpportunityCardActionShare,
           icon: LucideIcons.share2,
           onTap: onShare!,
           outlined: true,
@@ -180,7 +177,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status.canClose && onClose != null) {
       actions.add(
         _ActionButton(
-          label: 'Close',
+          label: l10n.myOpportunityCardActionClose,
           icon: LucideIcons.xCircle,
           onTap: onClose!,
           outlined: true,
@@ -194,7 +191,7 @@ class MyOpportunityCard extends StatelessWidget {
         onDelete != null) {
       actions.add(
         _ActionButton(
-          label: 'Delete',
+          label: l10n.myOpportunityCardActionDelete,
           icon: LucideIcons.trash2,
           onTap: onDelete!,
           danger: true,
@@ -256,12 +253,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.displayName.toUpperCase(),
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: textColor,
-          letterSpacing: 0.5,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: textColor, letterSpacing: 0.5),
       ),
     );
   }
@@ -288,11 +280,7 @@ class _InfoPill extends StatelessWidget {
         const SizedBox(width: KolabingSpacing.xxs),
         Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
     ),
@@ -322,7 +310,7 @@ class _ActionButton extends StatelessWidget {
         ? KolabingColors.onPrimary
         : danger
         ? KolabingColors.error
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
 
     if (primary) {
       return SizedBox(
@@ -356,7 +344,7 @@ class _ActionButton extends StatelessWidget {
           side: BorderSide(
             color: danger
                 ? KolabingColors.error.withValues(alpha: 0.5)
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
           shape: RoundedRectangleBorder(
@@ -398,12 +386,7 @@ class _ActionButtonContent extends StatelessWidget {
             maxLines: 1,
             softWrap: false,
             overflow: TextOverflow.fade,
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-              color: color,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color, letterSpacing: 1.0),
           ),
         ),
       ),

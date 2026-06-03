@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../features/profile/providers/gallery_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/remote_media_url.dart';
 
 class ExistingPhotoPickerSheet extends ConsumerStatefulWidget {
@@ -68,6 +69,7 @@ class _ExistingPhotoPickerSheetState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final galleryState = ref.watch(galleryProvider);
     final mergedPhotos = _buildMergedPhotos(galleryState.photos);
     final selectedPhotos = mergedPhotos
@@ -96,7 +98,7 @@ class _ExistingPhotoPickerSheetState
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: KolabingColors.border,
+                        color: KolabingColors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     ),
@@ -104,23 +106,17 @@ class _ExistingPhotoPickerSheetState
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     widget.title,
-                    style: GoogleFonts.rubik(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.textPrimary,
-                    ),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
-                    'Select up to ${widget.maxSelection} previously uploaded photo${widget.maxSelection == 1 ? '' : 's'}.',
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    l10n.existingPhotoPickerSubtitle(widget.maxSelection),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Expanded(
                     child: _buildBody(
+                      context: context,
                       galleryState: galleryState,
                       mergedPhotos: mergedPhotos,
                     ),
@@ -131,7 +127,7 @@ class _ExistingPhotoPickerSheetState
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
+                          child: Text(l10n.commonCancel),
                         ),
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
@@ -159,6 +155,7 @@ class _ExistingPhotoPickerSheetState
   }
 
   Widget _buildBody({
+    required BuildContext context,
     required GalleryState galleryState,
     required List<GalleryPhoto> mergedPhotos,
   }) {
@@ -171,11 +168,8 @@ class _ExistingPhotoPickerSheetState
     if (mergedPhotos.isEmpty) {
       return Center(
         child: Text(
-          'No reusable photos yet.',
-          style: GoogleFonts.openSans(
-            fontSize: 14,
-            color: KolabingColors.textSecondary,
-          ),
+          AppLocalizations.of(context).existingPhotoPickerEmpty,
+          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       );
     }

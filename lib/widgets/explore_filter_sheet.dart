@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 import '../features/auth/providers/auth_provider.dart';
 import '../features/discovery/models/discovery_filters.dart';
 import '../features/discovery/providers/discovery_provider.dart';
@@ -16,6 +16,7 @@ import '../features/onboarding/models/city.dart';
 import '../features/onboarding/providers/onboarding_provider.dart'
     as onboarding;
 import '../features/opportunity/models/opportunity.dart';
+import '../l10n/app_localizations.dart';
 import 'keyboard_avoiding_content.dart';
 
 class ExploreFilterSheet extends ConsumerStatefulWidget {
@@ -119,6 +120,7 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final filters = ref.watch(discoveryFiltersProvider);
 
     return KeyboardAvoidingContent(
@@ -154,13 +156,13 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                     const SizedBox(height: KolabingSpacing.md),
                     _FilterTextField(
                       controller: _searchController,
-                      hintText: 'Search by title, description, or creator...',
+                      hintText: l10n.exploreFilterSearchHint,
                       icon: LucideIcons.search,
                       onChanged: _onSearchChanged,
                       onClear: _clearSearch,
                     ),
                     const SizedBox(height: KolabingSpacing.md),
-                    const _SectionLabel(label: 'City'),
+                    _SectionLabel(label: l10n.exploreFilterCity),
                     const SizedBox(height: KolabingSpacing.xs),
                     ValueListenableBuilder<TextEditingValue>(
                       valueListenable: _cityController,
@@ -173,7 +175,7 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                                 _FilterTextField(
                                   controller: _cityController,
                                   focusNode: _cityFocusNode,
-                                  hintText: 'Type a city',
+                                  hintText: l10n.exploreFilterCityHint,
                                   icon: LucideIcons.mapPin,
                                   onChanged: _onCityChanged,
                                   onClear: _clearCity,
@@ -195,7 +197,7 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                           },
                     ),
                     const SizedBox(height: KolabingSpacing.lg),
-                    const _SectionLabel(label: 'Availability'),
+                    _SectionLabel(label: l10n.exploreFilterAvailability),
                     const SizedBox(height: KolabingSpacing.xs),
                     _SingleSelectChipGroup(
                       options: AvailabilityMode.values
@@ -244,12 +246,13 @@ class _CommunitySections extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final notifier = ref.read(discoveryFiltersProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Collab Type'),
+        _SectionLabel(label: l10n.exploreFilterKolabType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.intentTypeOptions,
@@ -257,7 +260,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleIntentType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'What They Offer'),
+        _SectionLabel(label: l10n.exploreFilterWhatTheyOffer),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.offerTypeOptions,
@@ -265,7 +268,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleOfferType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Venue Type'),
+        _SectionLabel(label: l10n.exploreFilterVenueType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.venueTypeOptions,
@@ -273,7 +276,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleVenueType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Product Type'),
+        _SectionLabel(label: l10n.exploreFilterProductType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.productTypeOptions,
@@ -281,7 +284,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleProductType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Expected Deliverables'),
+        _SectionLabel(label: l10n.exploreFilterExpectedDeliverables),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.deliverableOptions,
@@ -289,7 +292,7 @@ class _CommunitySections extends ConsumerWidget {
           onToggle: notifier.toggleExpectedDeliverable,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Minimum Community Size Requirement'),
+        _SectionLabel(label: l10n.exploreFilterMinCommunitySize),
         const SizedBox(height: KolabingSpacing.xs),
         _SingleSelectChipGroup(
           options: DiscoveryFilterPresets.communityRequirementBandOptions,
@@ -308,12 +311,13 @@ class _BusinessSections extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final notifier = ref.read(discoveryFiltersProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionLabel(label: 'Need'),
+        _SectionLabel(label: l10n.exploreFilterNeed),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.needTypeOptions,
@@ -321,7 +325,7 @@ class _BusinessSections extends ConsumerWidget {
           onToggle: notifier.toggleNeedType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Community Type'),
+        _SectionLabel(label: l10n.exploreFilterCommunityType),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.communityTypeOptions,
@@ -329,7 +333,7 @@ class _BusinessSections extends ConsumerWidget {
           onToggle: notifier.toggleCommunityType,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Audience Size'),
+        _SectionLabel(label: l10n.exploreFilterAudienceSize),
         const SizedBox(height: KolabingSpacing.xs),
         _SingleSelectChipGroup(
           options: DiscoveryFilterPresets.audienceSizeBandOptions,
@@ -337,7 +341,7 @@ class _BusinessSections extends ConsumerWidget {
           onSelected: notifier.setAudienceSizeBand,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Offers In Return'),
+        _SectionLabel(label: l10n.exploreFilterOffersInReturn),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.deliverableOptions,
@@ -345,7 +349,7 @@ class _BusinessSections extends ConsumerWidget {
           onToggle: notifier.toggleOfferInReturn,
         ),
         const SizedBox(height: KolabingSpacing.lg),
-        const _SectionLabel(label: 'Venue Preference'),
+        _SectionLabel(label: l10n.exploreFilterVenuePreference),
         const SizedBox(height: KolabingSpacing.xs),
         _MultiSelectChipGroup(
           options: DiscoveryFilterPresets.venuePreferenceOptions,
@@ -368,7 +372,7 @@ class _DragHandle extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: KolabingColors.border,
+          color: KolabingColors.darkBorder,
           borderRadius: BorderRadius.circular(KolabingRadius.round),
         ),
       ),
@@ -391,11 +395,10 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       Text(
-        'Search & Filter',
-        style: GoogleFonts.rubik(
-          fontSize: 18,
+        AppLocalizations.of(context).exploreFilterTitle,
+        style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
       const Spacer(),
@@ -409,9 +412,8 @@ class _HeaderRow extends StatelessWidget {
               vertical: KolabingSpacing.xxs,
             ),
             child: Text(
-              'Clear all',
-              style: GoogleFonts.openSans(
-                fontSize: 13,
+              AppLocalizations.of(context).exploreFilterClearAll,
+              style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w500,
                 color: KolabingColors.primary,
               ),
@@ -463,14 +465,12 @@ class _FilterTextField extends StatelessWidget {
             controller: controller,
             focusNode: focusNode,
             onChanged: onChanged,
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              color: KolabingColors.textPrimary,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: GoogleFonts.openSans(
-                fontSize: 14,
+              hintStyle: KolabingTextStyles.bodySmall.copyWith(
                 color: KolabingColors.textTertiary,
               ),
               prefixIcon: Icon(
@@ -496,11 +496,11 @@ class _FilterTextField extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.border),
+                borderSide: const BorderSide(color: KolabingColors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -535,8 +535,8 @@ class _CityAutocompleteResults extends ConsumerWidget {
         final visibleCities = cities.take(6).toList(growable: false);
 
         if (visibleCities.isEmpty) {
-          return const _CityAutocompleteMessage(
-            message: 'No matching cities found',
+          return _CityAutocompleteMessage(
+            message: AppLocalizations.of(context).exploreFilterNoMatchingCities,
           );
         }
 
@@ -549,13 +549,13 @@ class _CityAutocompleteResults extends ConsumerWidget {
           decoration: BoxDecoration(
             color: KolabingColors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(color: KolabingColors.border),
+            border: Border.all(color: KolabingColors.darkBorder),
           ),
           child: ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: visibleCities.length,
             separatorBuilder: (BuildContext context, int index) =>
-                const Divider(height: 1, color: KolabingColors.border),
+                const Divider(height: 1, color: KolabingColors.darkBorder),
             itemBuilder: (BuildContext context, int index) {
               final city = visibleCities[index];
               final isSelected = selectedCity == city.name;
@@ -571,19 +571,18 @@ class _CityAutocompleteResults extends ConsumerWidget {
                 ),
                 title: Text(
                   city.name,
-                  style: GoogleFonts.openSans(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 subtitle: city.country == null
                     ? null
                     : Text(
                         city.country!,
-                        style: GoogleFonts.openSans(
+                        style: KolabingTextStyles.bodySmall.copyWith(
                           fontSize: 12,
-                          color: KolabingColors.textSecondary,
+                          color: KolabingColors.onSurfaceVariant,
                         ),
                       ),
                 onTap: () => onSelected(city.name),
@@ -603,8 +602,8 @@ class _CityAutocompleteResults extends ConsumerWidget {
         ),
       ),
       error: (Object error, StackTrace stackTrace) =>
-          const _CityAutocompleteMessage(
-            message: 'Could not load city suggestions',
+          _CityAutocompleteMessage(
+            message: AppLocalizations.of(context).exploreFilterCitySuggestionsError,
           ),
     );
   }
@@ -630,16 +629,15 @@ class _CityAutocompleteMessage extends StatelessWidget {
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.border),
+      border: Border.all(color: KolabingColors.darkBorder),
     ),
     child: Center(
       child:
           child ??
           Text(
             message!,
-            style: GoogleFonts.openSans(
-              fontSize: 13,
-              color: KolabingColors.textSecondary,
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: KolabingColors.onSurfaceVariant,
             ),
           ),
     ),
@@ -654,10 +652,9 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     label,
-    style: GoogleFonts.openSans(
-      fontSize: 13,
+    style: KolabingTextStyles.captionSecondary.copyWith(
       fontWeight: FontWeight.w600,
-      color: KolabingColors.textSecondary,
+      color: KolabingColors.onSurfaceVariant,
     ),
   );
 }
@@ -739,16 +736,16 @@ class _SheetChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? KolabingColors.primary : KolabingColors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected ? null : Border.all(color: KolabingColors.border),
+        border: isSelected ? null : Border.all(color: KolabingColors.darkBorder),
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
+        style: KolabingTextStyles.button.copyWith(
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isSelected
               ? KolabingColors.onPrimary
-              : KolabingColors.textPrimary,
+              : KolabingColors.onSurface,
         ),
       ),
     ),
@@ -763,11 +760,8 @@ class _ResultsCount extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Text(
-      total > 0
-          ? '$total result${total == 1 ? '' : 's'} found'
-          : 'Showing all opportunities',
-      style: GoogleFonts.openSans(
-        fontSize: 13,
+      AppLocalizations.of(context).exploreFilterResultsCount(total),
+      style: KolabingTextStyles.captionSecondary.copyWith(
         fontWeight: FontWeight.w500,
         color: KolabingColors.textTertiary,
       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import 'progress_indicator.dart';
 
 /// Onboarding header with back, skip buttons and progress indicator
@@ -57,11 +57,7 @@ class OnboardingHeader extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               'Step $currentStep of $totalSteps',
-              style: GoogleFonts.openSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.textTertiary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
             ),
           ),
 
@@ -109,16 +105,12 @@ class _BackButtonState extends State<_BackButton> {
                 const Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 20,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'Back',
-                  style: GoogleFonts.openSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
                 ),
               ],
             ),
@@ -156,11 +148,7 @@ class _SkipButtonState extends State<_SkipButton> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Text(
               'Skip',
-              style: GoogleFonts.openSans(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: KolabingColors.textTertiary,
-              ),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
             ),
           ),
         ),

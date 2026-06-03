@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/photo_upload_widget.dart';
@@ -61,8 +62,10 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
   void _handleContinue() {
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your display name'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).communityStep1NameRequired,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -75,6 +78,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
     final canContinue = _nameController.text.trim().isNotEmpty;
 
@@ -102,12 +106,8 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     // Title
                     Center(
                       child: Text(
-                        'TELL US ABOUT YOU',
-                        style: GoogleFonts.rubik(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.textPrimary,
-                        ),
+                        l10n.communityStep1Title,
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -116,12 +116,8 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     // Subtitle
                     Center(
                       child: Text(
-                        "Let's create your profile",
-                        style: GoogleFonts.openSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textSecondary,
-                        ),
+                        l10n.communityStep1Subtitle,
+                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -143,21 +139,13 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     Row(
                       children: [
                         Text(
-                          'Display Name',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
-                          ),
+                          l10n.communityStep1DisplayNameLabel,
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '*',
-                          style: GoogleFonts.openSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.error,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
                         ),
                       ],
                     ),
@@ -172,18 +160,10 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                         setState(() {});
                         ref.read(onboardingProvider.notifier).updateName(value);
                       },
-                      style: GoogleFonts.openSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.textPrimary,
-                      ),
+                      style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
                       decoration: InputDecoration(
-                        hintText: 'Your name or handle',
-                        hintStyle: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        hintText: l10n.communityStep1NameHint,
+                        hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
                         filled: true,
                         fillColor: KolabingColors.surfaceVariant,
                         border: OutlineInputBorder(
@@ -205,11 +185,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                           horizontal: 16,
                           vertical: 16,
                         ),
-                        counterStyle: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        counterStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                       ),
                     ),
                   ],
@@ -238,12 +214,8 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'CONTINUE',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0,
-                    ),
+                    l10n.commonContinue,
+                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                   ),
                 ),
               ),

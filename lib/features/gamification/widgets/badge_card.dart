@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/badge.dart';
 
@@ -36,7 +36,7 @@ class BadgeCard extends StatelessWidget {
           border: Border.all(
             color: isEarned
                 ? KolabingColors.primary.withValues(alpha: 0.3)
-                : KolabingColors.border,
+                : KolabingColors.darkBorder,
           ),
         ),
         child: Column(
@@ -95,13 +95,9 @@ class BadgeCard extends StatelessWidget {
             // Badge name
             Text(
               badge.name,
-              style: GoogleFonts.rubik(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isEarned
-                    ? KolabingColors.textPrimary
-                    : KolabingColors.textTertiary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: isEarned
+                    ? KolabingColors.onSurface
+                    : KolabingColors.textTertiary),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -163,7 +159,7 @@ class BadgeCard extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -201,11 +197,7 @@ class BadgeCard extends StatelessWidget {
             // Badge name
             Text(
               badge.name,
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.textPrimary,
-              ),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -213,10 +205,7 @@ class BadgeCard extends StatelessWidget {
             // Description
             Text(
               badge.description,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -233,11 +222,7 @@ class BadgeCard extends StatelessWidget {
               ),
               child: Text(
                 'Requirement: ${badge.thresholdValue} ${badge.thresholdType}',
-                style: GoogleFonts.openSans(
-                  fontSize: 12,
-                  color: KolabingColors.info,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.info),
               ),
             ),
 
@@ -255,11 +240,7 @@ class BadgeCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     'Earned on ${earnedAt!.day}/${earnedAt!.month}/${earnedAt!.year}',
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.success,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.success),
                   ),
                 ],
               ),
@@ -278,10 +259,7 @@ class BadgeCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     'Not yet earned',
-                    style: GoogleFonts.openSans(
-                      fontSize: 12,
-                      color: KolabingColors.textTertiary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                   ),
                 ],
               ),

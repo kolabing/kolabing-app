@@ -8,6 +8,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -45,22 +46,23 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   }
 
   Future<void> _handleDelete(Event event) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Event'),
+        title: Text(l10n.eventDetailDeleteTitle),
         content: Text(
-          'Are you sure you want to delete "${event.name}"? This action cannot be undone.',
+          l10n.eventDetailDeleteConfirm(event.name),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Delete'),
+            child: Text(l10n.eventDetailDeleteAction),
           ),
         ],
       ),
@@ -73,8 +75,8 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       if (success && mounted) {
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Event deleted'),
+          SnackBar(
+            content: Text(l10n.eventDetailDeletedSnack),
             backgroundColor: KolabingColors.success,
           ),
         );
@@ -97,7 +99,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     return asyncEvent.when(
       loading: _buildLoadingState,
       error: (error, _) => _buildMissingState(
-        title: 'Event not found',
+        title: AppLocalizations.of(context).eventDetailNotFound,
         message: error.toString(),
       ),
       data: (event) => _buildContent(event, canDelete: canDelete),
@@ -113,7 +115,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(LucideIcons.arrowLeft),
-          color: KolabingColors.textPrimary,
+          color: KolabingColors.onSurface,
         ),
       ),
       body: const Center(
@@ -134,7 +136,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           leading: IconButton(
             onPressed: () => context.pop(),
             icon: const Icon(LucideIcons.arrowLeft),
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
         body: Center(
@@ -150,7 +152,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               Text(
                 title,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textSecondary,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               if (message != null) ...[
@@ -193,7 +195,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   Text(
                     event.name,
                     style: KolabingTextStyles.headlineMedium.copyWith(
-                      color: KolabingColors.textPrimary,
+                      color: KolabingColors.onSurface,
                     ),
                   ),
 
@@ -207,9 +209,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   // Photo Gallery
                   if (event.photos.length > 1) ...[
                     Text(
-                      'Photos',
+                      AppLocalizations.of(context).eventDetailPhotosTitle,
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -219,9 +221,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
                   if (event.videos.isNotEmpty) ...[
                     Text(
-                      'Videos',
+                      AppLocalizations.of(context).eventDetailVideosTitle,
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -234,7 +236,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     OutlinedButton.icon(
                       onPressed: () => _handleDelete(event),
                       icon: const Icon(LucideIcons.trash2, size: 18),
-                      label: const Text('DELETE EVENT'),
+                      label: Text(AppLocalizations.of(context).eventDetailDeleteButton),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: KolabingColors.error,
                         side: const BorderSide(color: KolabingColors.error),
@@ -371,7 +373,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           // Partner
           _buildInfoRow(
             icon: LucideIcons.users,
-            label: 'Collaborated with',
+            label: AppLocalizations.of(context).eventDetailKolabWithLabel,
             child: Row(
               children: [
                 // Partner avatar
@@ -380,7 +382,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: KolabingColors.border, width: 1),
+                    border: Border.all(color: KolabingColors.darkBorder, width: 1),
                   ),
                   child: ClipOval(
                     child: event.partner.profilePhoto != null
@@ -401,7 +403,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       Text(
                         event.partner.name,
                         style: KolabingTextStyles.titleSmall.copyWith(
-                          color: KolabingColors.textPrimary,
+                          color: KolabingColors.onSurface,
                         ),
                       ),
                       Container(
@@ -434,26 +436,26 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
           const Divider(
             height: KolabingSpacing.lg,
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
 
           // Date
           _buildInfoRow(
             icon: LucideIcons.calendar,
-            label: 'Event Date',
+            label: AppLocalizations.of(context).eventDetailDateLabel,
             value: event.formattedDate,
           ),
 
           const Divider(
             height: KolabingSpacing.lg,
-            color: KolabingColors.border,
+            color: KolabingColors.darkBorder,
           ),
 
           // Attendees
           _buildInfoRow(
             icon: LucideIcons.userCheck,
-            label: 'Attendees',
-            value: '${event.attendeeCount} people',
+            label: AppLocalizations.of(context).eventDetailAttendeesLabel,
+            value: AppLocalizations.of(context).eventDetailAttendeesCount(event.attendeeCount),
           ),
         ],
       ),
@@ -476,7 +478,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               decoration: BoxDecoration(
                 color: KolabingColors.surface,
                 borderRadius: KolabingRadius.borderRadiusMd,
-                border: Border.all(color: KolabingColors.border),
+                border: Border.all(color: KolabingColors.darkBorder),
               ),
               child: Row(
                 children: [
@@ -506,16 +508,16 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Recap video ${index + 1}',
+                          AppLocalizations.of(context).eventDetailRecapVideoTitle(index + 1),
                           style: KolabingTextStyles.titleSmall.copyWith(
-                            color: KolabingColors.textPrimary,
+                            color: KolabingColors.onSurface,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Tap to open the uploaded video',
+                          AppLocalizations.of(context).eventDetailRecapVideoSubtitle,
                           style: KolabingTextStyles.bodySmall.copyWith(
-                            color: KolabingColors.textSecondary,
+                            color: KolabingColors.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -544,8 +546,8 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not open the video link'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).eventDetailVideoOpenError),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -588,7 +590,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 Text(
                   value,
                   style: KolabingTextStyles.titleSmall.copyWith(
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
             ],

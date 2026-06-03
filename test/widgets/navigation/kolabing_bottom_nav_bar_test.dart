@@ -48,9 +48,11 @@ void main() {
       ),
     );
 
+    // The nav renders labels upper-cased; the selected item's label scales to
+    // fit via a FittedBox.
     expect(
       find.ancestor(
-        of: find.text('My Opportunities'),
+        of: find.text('MY OPPORTUNITIES'),
         matching: find.byType(FittedBox),
       ),
       findsOneWidget,

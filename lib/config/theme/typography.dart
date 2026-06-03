@@ -1,93 +1,177 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Kolabing font configuration
+/// Kolabing font configuration — Atmospheric Editorial
 ///
-/// Inter is used for all UI text. Anton is reserved exclusively
-/// for top-level page titles (editorial, branded, controlled).
+/// Display: Anton (editorial, always uppercase)
+/// Body: Inter (readable, neutral)
+/// Labels: Hanken Grotesk (refined, spaced)
 abstract final class KolabingTypography {
-  /// Primary font — Inter, used everywhere
-  static String get fontDisplay => GoogleFonts.inter().fontFamily!;
+  /// Display font — Anton
+  static String get fontDisplay => GoogleFonts.anton().fontFamily!;
 
   /// Body font — Inter
   static String get fontBody => GoogleFonts.inter().fontFamily!;
 
-  /// Accent/label font — Inter
+  /// Label/button font — Hanken Grotesk
+  static String get fontLabel => GoogleFonts.hankenGrotesk().fontFamily!;
+
+  // Legacy aliases kept for API compatibility
   static String get fontAccent => GoogleFonts.inter().fontFamily!;
-
-  /// Fallback — Inter (same)
   static String get fontFallback => GoogleFonts.inter().fontFamily!;
-
-  /// Page title font — Anton, used ONLY for major section headers
   static String get fontPageTitle => GoogleFonts.anton().fontFamily!;
 }
 
-/// Kolabing text styles — calm, Inter-only scale
+/// Kolabing text styles — Atmospheric Editorial scale
 ///
-/// All styles use Inter. Weights and sizes are restrained:
-/// nothing feels like a poster or a billboard.
+/// Display/headlines: Anton. Body: Inter. Labels/buttons: Hanken Grotesk.
 abstract final class KolabingTextStyles {
   // ---------------------------------------------------------------------------
-  // Display Styles — largest text, entry/hero screens only
+  // Display — Anton, editorial. Always .toUpperCase() on the string.
   // ---------------------------------------------------------------------------
 
-  /// Display Large — 28px, SemiBold. Calm version of a big headline.
-  static TextStyle get displayLarge => GoogleFonts.inter(
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.02,
-        height: 1.2,
+  static TextStyle get displayLarge => GoogleFonts.anton(
+        fontSize: 80,
+        fontWeight: FontWeight.w400,
+        height: 90 / 80,
+        letterSpacing: 0.02 * 80,
       );
 
-  /// Display Medium — 24px, SemiBold
-  static TextStyle get displayMedium => GoogleFonts.inter(
+  static TextStyle get displayMedium => GoogleFonts.anton(
+        fontSize: 48,
+        fontWeight: FontWeight.w400,
+        height: 56 / 48,
+        letterSpacing: 0.01 * 48,
+      );
+
+  static TextStyle get displaySmall => GoogleFonts.anton(
+        fontSize: 32,
+        fontWeight: FontWeight.w400,
+        height: 40 / 32,
+      );
+
+  // ---------------------------------------------------------------------------
+  // Headlines — Anton, mobile display roles
+  // ---------------------------------------------------------------------------
+
+  static TextStyle get headlineLarge => GoogleFonts.anton(
+        fontSize: 32,
+        fontWeight: FontWeight.w400,
+        height: 38 / 32,
+      );
+
+  static TextStyle get headlineMedium => GoogleFonts.anton(
         fontSize: 24,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.018,
-        height: 1.2,
-      );
-
-  /// Display Small — 20px, SemiBold
-  static TextStyle get displaySmall => GoogleFonts.inter(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.015,
-        height: 1.2,
+        fontWeight: FontWeight.w400,
       );
 
   // ---------------------------------------------------------------------------
-  // Headline Styles — section headings
+  // Body — Inter
   // ---------------------------------------------------------------------------
 
-  /// Headline Large — 22px, SemiBold
-  static TextStyle get headlineLarge => GoogleFonts.inter(
+  static TextStyle get bodyLarge => GoogleFonts.inter(
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+        height: 28 / 18,
+      );
+
+  static TextStyle get bodyMedium => GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        height: 24 / 16,
+      );
+
+  static TextStyle get bodySmall => GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 20 / 14,
+      );
+
+  // ---------------------------------------------------------------------------
+  // Labels — Hanken Grotesk
+  // ---------------------------------------------------------------------------
+
+  static TextStyle get labelLarge => GoogleFonts.hankenGrotesk(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        height: 20 / 14,
+        letterSpacing: 0.05 * 14,
+      );
+
+  static TextStyle get labelMedium => GoogleFonts.hankenGrotesk(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        height: 16 / 12,
+        letterSpacing: 0.05 * 12,
+      );
+
+  static TextStyle get labelSmall => GoogleFonts.hankenGrotesk(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.05 * 11,
+      );
+
+  // ---------------------------------------------------------------------------
+  // Eyebrow — Hanken Grotesk uppercase
+  // Usage: always .toUpperCase() on the string
+  // ---------------------------------------------------------------------------
+
+  static TextStyle get eyebrow => GoogleFonts.hankenGrotesk(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.05 * 12,
+      );
+
+  // ---------------------------------------------------------------------------
+  // Component-specific styles (kept for explicit widget usage)
+  // ---------------------------------------------------------------------------
+
+  /// Hero card title — Anton 48px. Large explore swipe cards.
+  static TextStyle get cardTitleHero => GoogleFonts.anton(
+        fontSize: 48,
+        fontWeight: FontWeight.w400,
+      );
+
+  /// Standard card title — Anton 32px.
+  static TextStyle get cardTitleLarge => GoogleFonts.anton(
+        fontSize: 32,
+        fontWeight: FontWeight.w400,
+      );
+
+  /// Button label — Hanken Grotesk 14px SemiBold, spaced.
+  static TextStyle get button => GoogleFonts.hankenGrotesk(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.05 * 14,
+      );
+
+  /// Secondary caption — Inter 13px Regular. Subtitles on cards.
+  static TextStyle get captionSecondary => GoogleFonts.inter(
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+      );
+
+  // ---------------------------------------------------------------------------
+  // Legacy styles — kept until widget files are migrated
+  // ---------------------------------------------------------------------------
+
+  /// @deprecated Use [headlineLarge]
+  static TextStyle get pageTitle => GoogleFonts.anton(
         fontSize: 22,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.015,
-        height: 1.3,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.5,
+        height: 1.1,
       );
 
-  /// Headline Medium — 19px, SemiBold
-  static TextStyle get headlineMedium => GoogleFonts.inter(
-        fontSize: 19,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.012,
-        height: 1.3,
+  /// @deprecated Use [headlineMedium]
+  static TextStyle get pageTitleSmall => GoogleFonts.anton(
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.5,
+        height: 1.1,
       );
 
-  /// Headline Small — 17px, SemiBold
-  static TextStyle get headlineSmall => GoogleFonts.inter(
-        fontSize: 17,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.01,
-        height: 1.3,
-      );
-
-  // ---------------------------------------------------------------------------
-  // Title Styles — card headers, screen titles, nav bar
-  // ---------------------------------------------------------------------------
-
-  /// Title Large — 18px, SemiBold
+  /// @deprecated Use [labelLarge]
   static TextStyle get titleLarge => GoogleFonts.inter(
         fontSize: 18,
         fontWeight: FontWeight.w600,
@@ -95,7 +179,7 @@ abstract final class KolabingTextStyles {
         height: 1.4,
       );
 
-  /// Title Medium — 16px, SemiBold
+  /// @deprecated Use [bodyMedium] with w600
   static TextStyle get titleMedium => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -103,7 +187,7 @@ abstract final class KolabingTextStyles {
         height: 1.4,
       );
 
-  /// Title Small — 14px, SemiBold
+  /// @deprecated Use [labelLarge]
   static TextStyle get titleSmall => GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w600,
@@ -111,96 +195,31 @@ abstract final class KolabingTextStyles {
         height: 1.4,
       );
 
-  // ---------------------------------------------------------------------------
-  // Body Styles — paragraph and descriptive text
-  // ---------------------------------------------------------------------------
-
-  /// Body Large — 16px, Regular
-  static TextStyle get bodyLarge => GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        height: 1.5,
+  /// @deprecated Use [headlineMedium]
+  static TextStyle get headlineSmall => GoogleFonts.inter(
+        fontSize: 17,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.01,
+        height: 1.3,
       );
 
-  /// Body Medium — 14px, Regular
-  static TextStyle get bodyMedium => GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        height: 1.5,
-      );
-
-  /// Body Small — 12px, Regular
-  static TextStyle get bodySmall => GoogleFonts.inter(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        height: 1.5,
-      );
-
-  // ---------------------------------------------------------------------------
-  // Label Styles — form labels, chips, nav items, metadata
-  // ---------------------------------------------------------------------------
-
-  /// Label Large — 15px, Medium
-  static TextStyle get labelLarge => GoogleFonts.inter(
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-        letterSpacing: -0.005,
-        height: 1.2,
-      );
-
-  /// Label Medium — 13px, Medium
-  static TextStyle get labelMedium => GoogleFonts.inter(
+  /// @deprecated Use [button]
+  static TextStyle get buttonSmall => GoogleFonts.hankenGrotesk(
         fontSize: 13,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.05 * 13,
         height: 1.2,
       );
 
-  /// Label Small — 11px, Medium — badges, nav labels
-  static TextStyle get labelSmall => GoogleFonts.inter(
+  /// @deprecated Use [labelSmall]
+  static TextStyle get chipLabelSmall => GoogleFonts.hankenGrotesk(
         fontSize: 11,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.01,
-        height: 1.2,
-      );
-
-  // ---------------------------------------------------------------------------
-  // Button Styles — CTA labels, Rubik to match section heading typography
-  // ---------------------------------------------------------------------------
-
-  /// Button — 15px, Rubik SemiBold. Matches heading label style (e.g. section titles).
-  static TextStyle get button => GoogleFonts.rubik(
-        fontSize: 15,
         fontWeight: FontWeight.w600,
-        letterSpacing: 1.0,
-        height: 1.2,
       );
 
-  /// Button small — 13px, Rubik SemiBold
-  static TextStyle get buttonSmall => GoogleFonts.rubik(
+  /// @deprecated Use [labelMedium]
+  static TextStyle get chipLabelMedium => GoogleFonts.hankenGrotesk(
         fontSize: 13,
         fontWeight: FontWeight.w600,
-        letterSpacing: 1.0,
-        height: 1.2,
-      );
-
-  // ---------------------------------------------------------------------------
-  // Page Title — Anton, major section headers ONLY
-  // ---------------------------------------------------------------------------
-
-  /// Page Title — 22px, Anton. Editorial, controlled. Not for cards or body.
-  static TextStyle get pageTitle => GoogleFonts.anton(
-        fontSize: 22,
-        fontWeight: FontWeight.w400, // Anton is inherently bold
-        letterSpacing: 0.5,
-        height: 1.1,
-      );
-
-  /// Page Title Small — 18px, Anton. For AppBar-style page titles.
-  static TextStyle get pageTitleSmall => GoogleFonts.anton(
-        fontSize: 18,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-        height: 1.1,
       );
 }

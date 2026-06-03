@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../widgets/ui_icon.dart';
 
@@ -9,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/xp_progress_card.dart';
@@ -56,7 +56,7 @@ class _CommunityDashboardScreenState
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ?? 'Community';
+    final userName = authState.user?.displayName ?? AppLocalizations.of(context).dashboardDefaultCommunityName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
@@ -87,7 +87,7 @@ class _CommunityDashboardScreenState
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState('Unable to load dashboard data', isDark);
+      return _buildErrorState(AppLocalizations.of(context).dashboardErrorLoad, isDark);
     }
 
     return ListView(
@@ -135,21 +135,17 @@ class _CommunityDashboardScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'COMMUNITY DASHBOARD',
-                style: KolabingTextStyles.pageTitle.copyWith(
+                AppLocalizations.of(context).dashboardCommunityTitle,
+                style: KolabingTextStyles.headlineLarge.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
-                'Welcome back, $userName',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: KolabingColors.textSecondary,
-                ),
+                AppLocalizations.of(context).dashboardWelcomeBack(userName),
+                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               ),
             ],
           ),
@@ -170,23 +166,25 @@ class _CommunityDashboardScreenState
           children: [
             Expanded(
               child: DashboardStatCard(
-                title: 'Pending',
+                title: AppLocalizations.of(context).dashboardStatPending,
                 count: data.applicationsSent.pending,
                 icon: LucideIcons.clock,
                 iconSlug: UiIconSlug.clock,
                 iconVariant: UiIconVariant.expressive,
                 accentColor: const Color(0xFFFF9800),
+                index: 0,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: DashboardStatCard(
-                title: 'Accepted',
+                title: AppLocalizations.of(context).dashboardStatAccepted,
                 count: data.applicationsSent.accepted,
                 icon: LucideIcons.checkCircle,
                 iconSlug: UiIconSlug.checkCircle,
                 iconVariant: UiIconVariant.expressive,
                 accentColor: const Color(0xFF4CAF50),
+                index: 1,
               ),
             ),
           ],
@@ -196,23 +194,25 @@ class _CommunityDashboardScreenState
           children: [
             Expanded(
               child: DashboardStatCard(
-                title: 'Active Collabs',
+                title: AppLocalizations.of(context).dashboardStatActiveKolabs,
                 count: data.collaborations.active,
                 icon: LucideIcons.users,
                 iconSlug: UiIconSlug.target,
                 iconVariant: UiIconVariant.expressive,
                 accentColor: KolabingColors.info,
+                index: 2,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: DashboardStatCard(
-                title: 'Completed',
+                title: AppLocalizations.of(context).dashboardStatCompleted,
                 count: data.collaborations.completed,
                 icon: LucideIcons.trophy,
                 iconSlug: UiIconSlug.trophy,
                 iconVariant: UiIconVariant.expressive,
                 accentColor: const Color(0xFF9C27B0),
+                index: 3,
               ),
             ),
           ],
@@ -246,12 +246,8 @@ class _CommunityDashboardScreenState
                 ),
               ),
               child: Text(
-                'FIND A COLLAB',
-                style: GoogleFonts.rubik(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
+                AppLocalizations.of(context).dashboardFindAKolab,
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
             ),
           ),
@@ -270,11 +266,11 @@ class _CommunityDashboardScreenState
               style: OutlinedButton.styleFrom(
                 foregroundColor: isDark
                     ? KolabingColors.textOnDark
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
                 side: BorderSide(
                   color: isDark
                       ? KolabingColors.darkBorder
-                      : KolabingColors.border,
+                      : KolabingColors.darkBorder,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -283,13 +279,9 @@ class _CommunityDashboardScreenState
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
-                  'MY APPLICATIONS',
+                  AppLocalizations.of(context).dashboardMyApplications,
                   maxLines: 1,
-                  style: GoogleFonts.rubik(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
               ),
             ),
@@ -308,13 +300,8 @@ class _CommunityDashboardScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'UPCOMING COLLABORATIONS',
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF0D0D0D),
-            letterSpacing: 0.8,
-          ),
+          AppLocalizations.of(context).dashboardUpcomingKolabs,
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -351,14 +338,10 @@ class _CommunityDashboardScreenState
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'No upcoming collaborations yet',
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: isDark
+            AppLocalizations.of(context).dashboardNoUpcomingKolabs,
+            style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                   ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                  : KolabingColors.textTertiary,
-            ),
+                  : KolabingColors.textTertiary),
           ),
         ],
       ),
@@ -384,11 +367,7 @@ class _CommunityDashboardScreenState
             const SizedBox(height: KolabingSpacing.md),
             Text(
               message,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -400,12 +379,8 @@ class _CommunityDashboardScreenState
                 },
                 icon: const Icon(LucideIcons.refreshCw, size: 18),
                 label: Text(
-                  'RETRY',
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.0,
-                  ),
+                  AppLocalizations.of(context).commonRetry,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KolabingColors.primary,

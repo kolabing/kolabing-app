@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 
 /// Button states for visual feedback
@@ -158,11 +157,11 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
           child: Container(
             height: widget.height,
             decoration: BoxDecoration(
-              color: KolabingColors.primary,
+              color: const Color(0xFFF0EDE6),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF374957).withValues(alpha: 0.11),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 4,
                   offset: const Offset(0, 1.5),
                 ),
@@ -197,10 +196,10 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
             _GoogleIcon(),
             const SizedBox(width: 10),
             Text(
-              widget.buttonText.toUpperCase(),
+              widget.buttonText,
               style: KolabingTextStyles.button.copyWith(
-                color: KolabingColors.onPrimary,
-                letterSpacing: 1.0,
+                color: const Color(0xFF1C1C16),
+                letterSpacing: 0.2,
               ),
             ),
           ],
@@ -216,14 +215,14 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
       height: 24,
       child: CircularProgressIndicator(
         strokeWidth: 2.5,
-        valueColor: AlwaysStoppedAnimation<Color>(KolabingColors.onPrimary),
+        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1C1C16)),
       ),
     ),
   );
 
   Widget _buildSuccessContent() => const Center(
     key: ValueKey('success'),
-    child: Icon(Icons.check_rounded, size: 24, color: KolabingColors.onPrimary),
+    child: Icon(Icons.check_rounded, size: 24, color: Color(0xFF1C1C16)),
   );
 }
 

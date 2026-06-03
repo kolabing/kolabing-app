@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
@@ -48,15 +49,15 @@ class _ApplicationReviewScreenState
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft,
-              color: KolabingColors.textPrimary),
+              color: KolabingColors.onSurface),
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'APPLICATION',
-          style: GoogleFonts.rubik(
+          AppLocalizations.of(context).applicationReviewTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.textPrimary,
+            color: KolabingColors.onSurface,
           ),
         ),
       ),
@@ -74,21 +75,20 @@ class _ApplicationReviewScreenState
                     size: 48, color: KolabingColors.error),
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
-                  'Failed to load application',
-                  style: GoogleFonts.rubik(
+                  AppLocalizations.of(context).applicationReviewLoadError,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textPrimary,
+                    color: KolabingColors.onSurface,
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
                 TextButton(
                   onPressed: () => ref.invalidate(
                       applicationDetailProvider(widget.applicationId)),
-                  child: Text('Retry',
-                      style: GoogleFonts.dmSans(
-                          color: KolabingColors.primary,
-                          fontWeight: FontWeight.w600)),
+                  child: Text(AppLocalizations.of(context).commonRetry,
+                      style: KolabingTextStyles.labelLarge.copyWith(
+                          color: KolabingColors.primary)),
                 ),
               ],
             ),
@@ -96,7 +96,8 @@ class _ApplicationReviewScreenState
         ),
         data: (application) {
           if (application == null) {
-            return const Center(child: Text('Application not found'));
+            return Center(
+                child: Text(AppLocalizations.of(context).applicationReviewNotFound));
           }
           return _buildContent(application);
         },
@@ -127,15 +128,14 @@ class _ApplicationReviewScreenState
                 // Application message
                 _buildSection(
                   icon: LucideIcons.messageSquare,
-                  title: 'Message',
+                  title: AppLocalizations.of(context).applicationReviewMessageLabel,
                   child: Text(
                     application.message.isNotEmpty
                         ? application.message
-                        : 'No message provided',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                        : AppLocalizations.of(context).applicationReviewNoMessage,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.message.isNotEmpty
-                          ? KolabingColors.textPrimary
+                          ? KolabingColors.onSurface
                           : KolabingColors.textTertiary,
                       height: 1.5,
                     ),
@@ -146,15 +146,14 @@ class _ApplicationReviewScreenState
                 // Availability
                 _buildSection(
                   icon: LucideIcons.calendar,
-                  title: 'Availability',
+                  title: AppLocalizations.of(context).applicationReviewAvailabilityLabel,
                   child: Text(
                     application.availability.isNotEmpty
                         ? application.availability
-                        : 'Not specified',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                        : AppLocalizations.of(context).applicationReviewNotSpecified,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.availability.isNotEmpty
-                          ? KolabingColors.textPrimary
+                          ? KolabingColors.onSurface
                           : KolabingColors.textTertiary,
                       height: 1.5,
                     ),
@@ -165,12 +164,11 @@ class _ApplicationReviewScreenState
                 // Applied date
                 _buildSection(
                   icon: LucideIcons.clock,
-                  title: 'Applied',
+                  title: AppLocalizations.of(context).applicationReviewAppliedLabel,
                   child: Text(
                     application.createdAtDisplay,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      color: KolabingColors.textSecondary,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -207,11 +205,11 @@ class _ApplicationReviewScreenState
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
-              opportunity?.title ?? 'Unknown Opportunity',
-              style: GoogleFonts.rubik(
-                fontSize: 14,
+              opportunity?.title ??
+                  AppLocalizations.of(context).applicationReviewUnknownOpportunity,
+              style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -264,10 +262,10 @@ class _ApplicationReviewScreenState
           // Name
           Text(
             profile?.displayName ?? application.applicantName,
-            style: GoogleFonts.rubik(
+            style: KolabingTextStyles.bodyLarge.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -291,8 +289,7 @@ class _ApplicationReviewScreenState
                   const SizedBox(width: 4),
                   Text(
                     profile.category!,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 12,
+                    style: KolabingTextStyles.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: KolabingColors.accentOrangeText,
                     ),
@@ -313,9 +310,8 @@ class _ApplicationReviewScreenState
                 const SizedBox(width: 4),
                 Text(
                   profile.city!,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.textSecondary,
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: KolabingColors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -332,9 +328,8 @@ class _ApplicationReviewScreenState
               }
             },
             child: Text(
-              'View Full Profile',
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
+              AppLocalizations.of(context).applicationReviewViewFullProfile,
+              style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.primary,
                 decoration: TextDecoration.underline,
@@ -352,7 +347,7 @@ class _ApplicationReviewScreenState
     return Center(
       child: Text(
         initial,
-        style: GoogleFonts.rubik(
+        style: KolabingTextStyles.bodyLarge.copyWith(
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: KolabingColors.primary,
@@ -388,8 +383,7 @@ class _ApplicationReviewScreenState
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 title,
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
+                style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
@@ -405,31 +399,32 @@ class _ApplicationReviewScreenState
   }
 
   Widget _buildStatusInfo(Application application) {
+    final l10n = AppLocalizations.of(context);
     final (icon, color, label, description) = switch (application.status) {
       ApplicationStatus.accepted => (
           LucideIcons.checkCircle,
           KolabingColors.success,
-          'Accepted',
-          'This application has been accepted. You can chat with the applicant.',
+          l10n.applicationReviewStatusAccepted,
+          l10n.applicationReviewStatusAcceptedDesc,
         ),
       ApplicationStatus.declined => (
           LucideIcons.xCircle,
           KolabingColors.error,
-          'Declined',
+          l10n.applicationReviewStatusDeclined,
           application.declineReason != null
-              ? 'Declined: ${application.declineReason}'
-              : 'This application has been declined.',
+              ? l10n.applicationReviewStatusDeclinedReason(application.declineReason!)
+              : l10n.applicationReviewStatusDeclinedDesc,
         ),
       ApplicationStatus.withdrawn => (
           LucideIcons.minusCircle,
           KolabingColors.textTertiary,
-          'Withdrawn',
-          'The applicant has withdrawn their application.',
+          l10n.applicationReviewStatusWithdrawn,
+          l10n.applicationReviewStatusWithdrawnDesc,
         ),
       _ => (
           LucideIcons.clock,
           KolabingColors.pendingText,
-          'Pending',
+          l10n.applicationReviewStatusPending,
           '',
         ),
     };
@@ -451,8 +446,7 @@ class _ApplicationReviewScreenState
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: color,
                   ),
@@ -461,9 +455,8 @@ class _ApplicationReviewScreenState
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: KolabingColors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -495,8 +488,8 @@ class _ApplicationReviewScreenState
             ),
             icon: const Icon(LucideIcons.messageCircle, size: 18),
             label: Text(
-              'OPEN CHAT',
-              style: GoogleFonts.darkerGrotesque(
+              AppLocalizations.of(context).applicationReviewOpenChat,
+              style: KolabingTextStyles.button.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
@@ -542,8 +535,8 @@ class _ApplicationReviewScreenState
                       )
                     : const Icon(LucideIcons.x, size: 18),
                 label: Text(
-                  'DECLINE',
-                  style: GoogleFonts.darkerGrotesque(
+                  AppLocalizations.of(context).applicationReviewDecline,
+                  style: KolabingTextStyles.button.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
@@ -581,8 +574,8 @@ class _ApplicationReviewScreenState
                       )
                     : const Icon(LucideIcons.check, size: 18),
                 label: Text(
-                  'ACCEPT',
-                  style: GoogleFonts.darkerGrotesque(
+                  AppLocalizations.of(context).applicationReviewAccept,
+                  style: KolabingTextStyles.button.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
@@ -637,6 +630,7 @@ class _ApplicationReviewScreenState
   }
 
   Future<void> _showDeclineDialog(Application application) async {
+    final l10n = AppLocalizations.of(context);
     final reasonController = TextEditingController();
 
     final confirmed = await showDialog<bool>(
@@ -644,8 +638,8 @@ class _ApplicationReviewScreenState
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Decline Application',
-          style: GoogleFonts.rubik(
+          l10n.applicationReviewDeclineDialogTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -655,10 +649,9 @@ class _ApplicationReviewScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Are you sure you want to decline this application from ${application.applicantName}?',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
+              l10n.applicationReviewDeclineDialogBody(application.applicantName),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -666,17 +659,17 @@ class _ApplicationReviewScreenState
               controller: reasonController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Reason (optional)',
-                hintStyle: GoogleFonts.openSans(
+                hintText: l10n.applicationReviewDeclineReasonHint,
+                hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textTertiary,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: KolabingColors.border),
+                  borderSide: const BorderSide(color: KolabingColors.darkBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: KolabingColors.border),
+                  borderSide: const BorderSide(color: KolabingColors.darkBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -691,8 +684,8 @@ class _ApplicationReviewScreenState
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
-              'Cancel',
-              style: GoogleFonts.dmSans(color: KolabingColors.textSecondary),
+              l10n.commonCancel,
+              style: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ),
           ElevatedButton(
@@ -705,8 +698,8 @@ class _ApplicationReviewScreenState
               elevation: 0,
             ),
             child: Text(
-              'Decline',
-              style: GoogleFonts.dmSans(fontWeight: FontWeight.w600),
+              l10n.applicationReviewDeclineDialogConfirm,
+              style: KolabingTextStyles.button,
             ),
           ),
         ],
@@ -735,10 +728,10 @@ class _ApplicationReviewScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Application declined',
-            style: GoogleFonts.openSans(color: Colors.white),
+            l10n.applicationReviewDeclinedSnack,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
-          backgroundColor: KolabingColors.textSecondary,
+          backgroundColor: KolabingColors.onSurfaceVariant,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -752,7 +745,7 @@ class _ApplicationReviewScreenState
         SnackBar(
           content: Text(
             _parseError(e),
-            style: GoogleFonts.openSans(color: Colors.white),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.error,
           behavior: SnackBarBehavior.floating,
@@ -871,7 +864,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: KolabingColors.border,
+                    color: KolabingColors.darkBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -880,28 +873,26 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
               // Title
               Text(
-                'Accept Application',
-                style: GoogleFonts.rubik(
+                AppLocalizations.of(context).acceptFormTitle,
+                style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
-                "Pick a collaboration date — you'll continue the conversation in chat after accepting.",
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
-                  color: KolabingColors.textSecondary,
+                AppLocalizations.of(context).acceptFormSubtitle,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
 
               // Date picker section
               Text(
-                'SCHEDULED DATE',
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
+                AppLocalizations.of(context).acceptFormScheduledDate,
+                style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
@@ -917,9 +908,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                     borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Text(
-                    'No available future dates in the opportunity range.',
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
+                    AppLocalizations.of(context).acceptFormNoDates,
+                    style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
                   ),
@@ -955,8 +945,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                   ),
                   child: Text(
                     _error!,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
                       color: KolabingColors.error,
                     ),
                   ),
@@ -988,8 +977,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                         )
                       : const Icon(LucideIcons.check, size: 18),
                   label: Text(
-                    'CONFIRM ACCEPT',
-                    style: GoogleFonts.darkerGrotesque(
+                    AppLocalizations.of(context).acceptFormConfirm,
+                    style: KolabingTextStyles.button.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -1022,15 +1011,14 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null
-              : Border.all(color: KolabingColors.border),
+              : Border.all(color: KolabingColors.darkBorder),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               dayNames[date.weekday - 1],
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
+              style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isSelected
                     ? KolabingColors.onPrimary
@@ -1040,18 +1028,17 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
             const SizedBox(height: 2),
             Text(
               '${date.day}',
-              style: GoogleFonts.rubik(
+              style: KolabingTextStyles.bodyLarge.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: isSelected
                     ? KolabingColors.onPrimary
-                    : KolabingColors.textPrimary,
+                    : KolabingColors.onSurface,
               ),
             ),
             Text(
               monthNames[date.month - 1],
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
+              style: KolabingTextStyles.labelSmall.copyWith(
                 color: isSelected
                     ? KolabingColors.onPrimary
                     : KolabingColors.textTertiary,
@@ -1065,6 +1052,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
   Future<void> _submit() async {
     if (!_isValid) return;
+
+    final l10n = AppLocalizations.of(context);
 
     setState(() {
       _isSubmitting = true;
@@ -1095,8 +1084,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Application accepted! Collaboration created.',
-            style: GoogleFonts.openSans(color: Colors.white),
+            l10n.acceptFormAcceptedSnack,
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.success,
           behavior: SnackBarBehavior.floating,
@@ -1112,7 +1101,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
         if (e is ApiException) {
           _error = e.error.allErrorMessages;
         } else {
-          _error = 'Failed to accept application. Please try again.';
+          _error = l10n.acceptFormError;
         }
       });
     }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/reward_claim.dart';
 import '../providers/reward_provider.dart';
@@ -22,10 +23,8 @@ class RewardWalletScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Rewards',
-          style: GoogleFonts.rubik(
-            fontWeight: FontWeight.w600,
-          ),
+          AppLocalizations.of(context).rewardWalletTitle,
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -87,20 +86,13 @@ class RewardWalletScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'No Rewards Yet',
-              style: GoogleFonts.rubik(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).rewardWalletEmptyTitle,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Complete challenges and spin the wheel\nto win exciting rewards!',
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              AppLocalizations.of(context).rewardWalletEmptyBody,
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -123,27 +115,20 @@ class RewardWalletScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load rewards',
-              style: GoogleFonts.rubik(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textPrimary,
-              ),
+              AppLocalizations.of(context).rewardWalletErrorTitle,
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: GoogleFonts.openSans(
-                fontSize: 14,
-                color: KolabingColors.textSecondary,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
             TextButton.icon(
               onPressed: () => ref.invalidate(myRewardsProvider),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

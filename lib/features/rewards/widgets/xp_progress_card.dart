@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../models/xp_level.dart';
 import '../providers/wallet_provider.dart';
 
@@ -32,15 +32,8 @@ class XpProgressCard extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          gradient: KolabingColors.primaryGradient,
+          color: KolabingColors.secondaryContainer,
           borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: [
-            BoxShadow(
-              color: KolabingColors.primary.withValues(alpha: 0.25),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,11 +45,7 @@ class XpProgressCard extends ConsumerWidget {
                 _LevelChip(level: level),
                 Text(
                   '${wallet.totalXp} XP',
-                  style: GoogleFonts.rubik(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: KolabingColors.onPrimary,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w800, color: KolabingColors.onSurface),
                 ),
               ],
             ),
@@ -74,9 +63,9 @@ class XpProgressCard extends ConsumerWidget {
                   value: value,
                   minHeight: 8,
                   backgroundColor:
-                      KolabingColors.onPrimary.withValues(alpha: 0.2),
+                      KolabingColors.secondary.withValues(alpha: 0.2),
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                    KolabingColors.onPrimary,
+                    KolabingColors.secondary,
                   ),
                 ),
               ),
@@ -92,27 +81,20 @@ class XpProgressCard extends ConsumerWidget {
                   level.isMaxLevel
                       ? 'Max level reached!'
                       : '$xpToNext XP to ${level.next?.title ?? ''}',
-                  style: GoogleFonts.openSans(
-                    fontSize: 12,
-                    color: KolabingColors.onPrimary.withValues(alpha: 0.8),
-                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                 ),
                 if (onTap != null)
                   Row(
                     children: [
                       Text(
                         'View progress',
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.onPrimary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(width: 2),
                       const Icon(
                         LucideIcons.chevronRight,
                         size: 14,
-                        color: KolabingColors.onPrimary,
+                        color: KolabingColors.onSurface,
                       ),
                     ],
                   ),
@@ -141,7 +123,7 @@ class _LevelChip extends StatelessWidget {
           vertical: KolabingSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.onPrimary.withValues(alpha: 0.15),
+          color: KolabingColors.secondary.withValues(alpha: 0.15),
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Row(
@@ -150,17 +132,12 @@ class _LevelChip extends StatelessWidget {
             Icon(
               LucideIcons.shield,
               size: 12,
-              color: KolabingColors.onPrimary,
+              color: KolabingColors.secondary,
             ),
             const SizedBox(width: 4),
             Text(
               'LVL ${level.number} · ${level.title}',
-              style: GoogleFonts.rubik(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onPrimary,
-                letterSpacing: 0.3,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 0.3),
             ),
           ],
         ),

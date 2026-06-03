@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -12,6 +11,7 @@ import '../../config/theme/typography.dart';
 import '../../features/auth/models/user_model.dart';
 import '../../features/business/providers/profile_provider.dart';
 import '../../features/profile/providers/gallery_provider.dart';
+import '../../l10n/app_localizations.dart';
 import 'photo_viewer_dialog.dart';
 
 /// Gallery section widget for profile screens
@@ -38,6 +38,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final galleryState = ref.watch(galleryProvider);
     final profileState = ref.watch(profileProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -80,11 +81,11 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'Gallery',
+                l10n.profileGallerySectionTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               if (visiblePhotos.isNotEmpty)
@@ -118,18 +119,14 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                           size: 14,
                           color: isDark
                               ? KolabingColors.textOnDark
-                              : KolabingColors.textPrimary,
+                              : KolabingColors.onSurface,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Add',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
+                          l10n.profileGallerySectionAdd,
+                          style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: isDark
                                 ? KolabingColors.textOnDark
-                                : KolabingColors.textPrimary,
-                          ),
+                                : KolabingColors.onSurface),
                         ),
                       ],
                     ),
@@ -193,15 +190,15 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.border,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'Add Gallery Photo',
+                AppLocalizations.of(context).profileGallerySheetTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -218,8 +215,8 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                     color: KolabingColors.primary,
                   ),
                 ),
-                title: const Text('Take Photo'),
-                subtitle: const Text('Use your camera'),
+                title: Text(AppLocalizations.of(context).profileGallerySheetTakePhoto),
+                subtitle: Text(AppLocalizations.of(context).profileGallerySheetTakePhotoSubtitle),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               ListTile(
@@ -235,8 +232,8 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                     color: KolabingColors.info,
                   ),
                 ),
-                title: const Text('Choose from Gallery'),
-                subtitle: const Text('Select an existing photo'),
+                title: Text(AppLocalizations.of(context).profileGallerySheetChooseGallery),
+                subtitle: Text(AppLocalizations.of(context).profileGallerySheetChooseGallerySubtitle),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -289,11 +286,11 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Uploading photo...',
+            AppLocalizations.of(context).profileGallerySectionUploading,
             style: TextStyle(
               color: isDark
                   ? KolabingColors.textOnDark
-                  : KolabingColors.textPrimary,
+                  : KolabingColors.onSurface,
             ),
           ),
         ],
@@ -312,7 +309,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
       decoration: BoxDecoration(
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.border,
+          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
           width: 1.5,
           strokeAlign: BorderSide.strokeAlignInside,
         ),
@@ -338,31 +335,31 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   size: 24,
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.72)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
               Text(
                 isBusinessProfile
-                    ? 'Showcase your venue'
-                    : 'Showcase your community',
+                    ? AppLocalizations.of(context).profileGalleryEmptyTitleBusiness
+                    : AppLocalizations.of(context).profileGalleryEmptyTitleCommunity,
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.titleSmall.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark
-                      : KolabingColors.textPrimary,
+                      : KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 isBusinessProfile
-                    ? 'Add venue photos so collaborators can see your space before they apply.'
-                    : 'Add photos from your events so new collaborators understand your community.',
+                    ? AppLocalizations.of(context).profileGalleryEmptyBodyBusiness
+                    : AppLocalizations.of(context).profileGalleryEmptyBodyCommunity,
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: isDark
                       ? KolabingColors.textOnDark.withValues(alpha: 0.68)
-                      : KolabingColors.textSecondary,
+                      : KolabingColors.onSurfaceVariant,
                   height: 1.45,
                 ),
               ),
@@ -426,17 +423,17 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
     showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Photo'),
-        content: const Text('Are you sure you want to remove this photo?'),
+        title: Text(AppLocalizations.of(context).profileGalleryDeleteTitle),
+        content: Text(AppLocalizations.of(context).profileGalleryDeleteBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context).profileGalleryDeleteConfirm),
           ),
         ],
       ),

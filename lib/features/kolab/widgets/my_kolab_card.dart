@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
@@ -29,64 +30,65 @@ class MyKolabCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: KolabingColors.surface,
-      borderRadius: KolabingRadius.borderRadiusLg,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              _StatusBadge(status: kolab.status),
-              const Spacer(),
-              _InfoPill(icon: kolab.intentType.icon, label: kolab.typeLabel),
-            ],
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(height: KolabingSpacing.sm),
-          Text(
-            kolab.title.isNotEmpty ? kolab.title : 'Untitled Kolab',
-            style: GoogleFonts.openSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.textPrimary,
-              height: 1.3,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: KolabingSpacing.xs),
-          Wrap(
-            spacing: KolabingSpacing.xs,
-            runSpacing: KolabingSpacing.xs,
-            children: [
-              if (kolab.preferredCity.isNotEmpty)
-                _InfoPill(icon: LucideIcons.mapPin, label: kolab.preferredCity),
-              if (_availabilityLabel.isNotEmpty)
-                _InfoPill(
-                  icon: LucideIcons.calendar,
-                  label: _availabilityLabel,
-                ),
-              if (_secondaryLabel.isNotEmpty)
-                _InfoPill(icon: LucideIcons.tag, label: _secondaryLabel),
-            ],
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          _buildActions(),
         ],
       ),
-    ),
-  );
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                _StatusBadge(status: kolab.status),
+                const Spacer(),
+                _InfoPill(icon: kolab.intentType.icon, label: kolab.typeLabel),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              kolab.title.isNotEmpty ? kolab.title : l10n.myKolabCardUntitled,
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Wrap(
+              spacing: KolabingSpacing.xs,
+              runSpacing: KolabingSpacing.xs,
+              children: [
+                if (kolab.preferredCity.isNotEmpty)
+                  _InfoPill(
+                    icon: LucideIcons.mapPin,
+                    label: kolab.preferredCity,
+                  ),
+                if (_availabilityLabel.isNotEmpty)
+                  _InfoPill(
+                    icon: LucideIcons.calendar,
+                    label: _availabilityLabel,
+                  ),
+                if (_secondaryLabel.isNotEmpty)
+                  _InfoPill(icon: LucideIcons.tag, label: _secondaryLabel),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            _buildActions(l10n),
+          ],
+        ),
+      ),
+    );
+  }
 
   String get _availabilityLabel {
     final start = kolab.availabilityStart;
@@ -115,13 +117,13 @@ class MyKolabCard extends StatelessWidget {
     return kolab.productName ?? '';
   }
 
-  Widget _buildActions() {
+  Widget _buildActions(AppLocalizations l10n) {
     final actions = <Widget>[];
 
     if (kolab.status == 'published' && onView != null) {
       actions.add(
         _ActionButton(
-          label: 'View',
+          label: l10n.myKolabCardActionView,
           icon: LucideIcons.eye,
           onTap: onView!,
           primary: true,
@@ -132,7 +134,7 @@ class MyKolabCard extends StatelessWidget {
     if (kolab.canEdit && onEdit != null) {
       actions.add(
         _ActionButton(
-          label: 'Edit',
+          label: l10n.myKolabCardActionEdit,
           icon: LucideIcons.edit,
           onTap: onEdit!,
           outlined: true,
@@ -143,7 +145,7 @@ class MyKolabCard extends StatelessWidget {
     if (kolab.canPublish && onPublish != null) {
       actions.add(
         _ActionButton(
-          label: 'Publish',
+          label: l10n.myKolabCardActionPublish,
           icon: LucideIcons.upload,
           onTap: onPublish!,
           primary: true,
@@ -154,7 +156,7 @@ class MyKolabCard extends StatelessWidget {
     if (kolab.canClose && onClose != null) {
       actions.add(
         _ActionButton(
-          label: 'Close',
+          label: l10n.myKolabCardActionClose,
           icon: LucideIcons.xCircle,
           onTap: onClose!,
           outlined: true,
@@ -165,7 +167,7 @@ class MyKolabCard extends StatelessWidget {
     if (kolab.canDelete && onDelete != null) {
       actions.add(
         _ActionButton(
-          label: 'Delete',
+          label: l10n.myKolabCardActionDelete,
           icon: LucideIcons.trash2,
           onTap: onDelete!,
           danger: true,
@@ -199,23 +201,28 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (backgroundColor, textColor, label) = switch (status) {
       'published' => (
         KolabingColors.activeBg,
         KolabingColors.activeText,
-        'PUBLISHED',
+        l10n.myKolabCardStatusPublished,
       ),
       'closed' => (
         KolabingColors.completedBg,
         KolabingColors.completedText,
-        'CLOSED',
+        l10n.myKolabCardStatusClosed,
       ),
       'completed' => (
         KolabingColors.completedBg,
         KolabingColors.completedText,
-        'COMPLETED',
+        l10n.myKolabCardStatusCompleted,
       ),
-      _ => (KolabingColors.pendingBg, KolabingColors.pendingText, 'DRAFT'),
+      _ => (
+        KolabingColors.pendingBg,
+        KolabingColors.pendingText,
+        l10n.myKolabCardStatusDraft,
+      ),
     };
 
     return Container(
@@ -229,12 +236,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.dmSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: textColor,
-          letterSpacing: 0.5,
-        ),
+        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: textColor, letterSpacing: 0.5),
       ),
     );
   }
@@ -261,11 +263,7 @@ class _InfoPill extends StatelessWidget {
         const SizedBox(width: KolabingSpacing.xxs),
         Text(
           label,
-          style: GoogleFonts.openSans(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: KolabingColors.textSecondary,
-          ),
+          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
     ),
@@ -295,7 +293,7 @@ class _ActionButton extends StatelessWidget {
         ? KolabingColors.onPrimary
         : danger
         ? KolabingColors.error
-        : KolabingColors.textPrimary;
+        : KolabingColors.onSurface;
 
     if (primary) {
       return SizedBox(
@@ -326,7 +324,7 @@ class _ActionButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: danger ? KolabingColors.errorBg : KolabingColors.border,
+            color: danger ? KolabingColors.errorBg : KolabingColors.darkBorder,
           ),
           foregroundColor: foregroundColor,
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
@@ -369,12 +367,7 @@ class _ActionButtonContent extends StatelessWidget {
             maxLines: 1,
             softWrap: false,
             overflow: TextOverflow.fade,
-            style: GoogleFonts.rubik(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-              color: color,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color, letterSpacing: 1.0),
           ),
         ),
       ),

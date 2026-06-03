@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
+import '../../../../config/theme/typography.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -55,12 +55,7 @@ class ReviewScreen extends ConsumerWidget {
 
         Text(
           'CHECKLIST',
-          style: GoogleFonts.rubik(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-            color: KolabingColors.textTertiary,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -174,7 +169,7 @@ class ReviewScreen extends ConsumerWidget {
     // Step 4 — Past events (optional)
     sections.add(_Section(
       icon: LucideIcons.history,
-      title: 'Past Collaborations',
+      title: 'Past Kolabs',
       status: kolab.pastEvents.isNotEmpty ? _Status.complete : _Status.optional,
       summary: kolab.pastEvents.isNotEmpty
           ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'} added'
@@ -278,7 +273,7 @@ class _PreviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.border),
+        border: Border.all(color: KolabingColors.darkBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -315,12 +310,7 @@ class _PreviewCard extends StatelessWidget {
                   ),
                   child: Text(
                     isVenue ? 'VENUE PROMOTION' : 'PRODUCT PROMOTION',
-                    style: GoogleFonts.rubik(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.0,
-                      color: KolabingColors.accentOrangeText,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: KolabingColors.accentOrangeText, letterSpacing: 1.0),
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
@@ -330,22 +320,14 @@ class _PreviewCard extends StatelessWidget {
                   headline.isNotEmpty ? headline : 'Untitled kolab',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    height: 1.2,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.2),
                 ),
 
                 if (subhead.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
                     subhead,
-                    style: GoogleFonts.openSans(
-                      fontSize: 13,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                 ],
 
@@ -355,11 +337,7 @@ class _PreviewCard extends StatelessWidget {
                     kolab.description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: KolabingColors.textSecondary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
                   ),
                 ],
 
@@ -375,11 +353,7 @@ class _PreviewCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         kolab.preferredCity,
-                        style: GoogleFonts.openSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: KolabingColors.textSecondary,
-                        ),
+                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -484,20 +458,12 @@ class _StatusBanner extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.rubik(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.textPrimary,
-                  ),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.openSans(
-                    fontSize: 13,
-                    color: KolabingColors.textSecondary,
-                    height: 1.4,
-                  ),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
                 ),
               ],
             ),
@@ -570,7 +536,7 @@ class _SectionCard extends StatelessWidget {
             border: Border.all(
               color: section.status == _Status.missing
                   ? KolabingColors.error.withValues(alpha: 0.3)
-                  : KolabingColors.border,
+                  : KolabingColors.darkBorder,
             ),
           ),
           child: Row(
@@ -602,11 +568,7 @@ class _SectionCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Text(
                           section.title,
-                          style: GoogleFonts.rubik(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: KolabingColors.textPrimary,
-                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         ),
                       ],
                     ),
@@ -615,13 +577,9 @@ class _SectionCard extends StatelessWidget {
                       section.summary,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.openSans(
-                        fontSize: 13,
-                        color: section.status == _Status.missing
+                      style: KolabingTextStyles.captionSecondary.copyWith(color: section.status == _Status.missing
                             ? KolabingColors.error
-                            : KolabingColors.textSecondary,
-                        height: 1.4,
-                      ),
+                            : KolabingColors.onSurfaceVariant, height: 1.4),
                     ),
                     if (section.secondary != null) ...[
                       const SizedBox(height: 2),
@@ -629,10 +587,7 @@ class _SectionCard extends StatelessWidget {
                         section.secondary!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          color: KolabingColors.textTertiary,
-                        ),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
                       ),
                     ],
                   ],

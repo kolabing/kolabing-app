@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 /// A generic multi-select chip group.
 ///
@@ -69,8 +69,8 @@ class MultiSelectChips<T> extends StatelessWidget {
               borderRadius: KolabingRadius.borderRadiusSm,
               border: Border.all(
                 color: isSelected
-                    ? KolabingColors.accent
-                    : KolabingColors.border,
+                    ? KolabingColors.secondary
+                    : KolabingColors.darkBorder,
               ),
             ),
             child: AnimatedOpacity(
@@ -84,21 +84,16 @@ class MultiSelectChips<T> extends StatelessWidget {
                       icon,
                       size: 16,
                       color: isSelected
-                          ? KolabingColors.accent
-                          : KolabingColors.textPrimary,
+                          ? KolabingColors.secondary
+                          : KolabingColors.onSurface,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                   ],
                   Text(
                     labelBuilder(item),
-                    style: GoogleFonts.openSans(
-                      fontSize: 14,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected
-                          ? KolabingColors.accent
-                          : KolabingColors.textPrimary,
-                    ),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
+                          ? KolabingColors.secondary
+                          : KolabingColors.onSurface),
                   ),
                 ],
               ),

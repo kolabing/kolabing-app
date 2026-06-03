@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 /// Which logo asset to render
 enum KolabingLogoVariant {
   /// Black cloud + yellow text — for yellow/light backgrounds
@@ -41,7 +43,7 @@ class KolabingLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Kolabing logo',
+        label: AppLocalizations.of(context).kolabingLogoSemanticLabel,
         image: true,
         child: Image.asset(
           variant.assetPath,

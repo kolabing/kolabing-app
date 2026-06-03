@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/selection_card.dart';
@@ -176,10 +175,10 @@ class _UserTypeSelectionScreenState
                     slideAnimation: _headlineSlideAnimation,
                     child: Text(
                       'CHOOSE YOUR PATH',
-                      style: GoogleFonts.rubik(
+                      style: KolabingTextStyles.bodyLarge.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: KolabingColors.textPrimary,
+                        color: KolabingColors.onSurface,
                         letterSpacing: 1.5,
                       ),
                       textAlign: TextAlign.center,
@@ -194,10 +193,8 @@ class _UserTypeSelectionScreenState
                     slideAnimation: _subtitleSlideAnimation,
                     child: Text(
                       'Select your account type to get started',
-                      style: GoogleFonts.openSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: KolabingColors.textSecondary,
+                      style: KolabingTextStyles.bodyMedium.copyWith(
+                        color: KolabingColors.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -321,15 +318,14 @@ class _BackButtonState extends State<_BackButton> {
             const Icon(
               Icons.arrow_back_ios_rounded,
               size: 20,
-              color: KolabingColors.textPrimary,
+              color: KolabingColors.onSurface,
             ),
             const SizedBox(width: 4),
             Text(
               'Back',
-              style: GoogleFonts.openSans(
-                fontSize: 16,
+              style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.textPrimary,
+                color: KolabingColors.onSurface,
               ),
             ),
           ],
@@ -367,19 +363,16 @@ class _LoginLinkState extends State<_LoginLink> {
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            style: GoogleFonts.openSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: KolabingColors.textSecondary,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
             ),
             children: [
               const TextSpan(text: 'Already have an account? '),
               TextSpan(
                 text: 'Login',
-                style: GoogleFonts.openSans(
-                  fontSize: 14,
+                style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.textPrimary,
+                  color: KolabingColors.onSurface,
                   decoration: _isPressed ? TextDecoration.underline : null,
                 ),
               ),

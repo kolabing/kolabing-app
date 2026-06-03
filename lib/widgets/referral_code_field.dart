@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../config/theme/colors.dart';
+import '../l10n/app_localizations.dart';
 
 class ReferralCodeField extends StatelessWidget {
   const ReferralCodeField({
@@ -30,8 +31,8 @@ class ReferralCodeField extends StatelessWidget {
     textCapitalization: TextCapitalization.characters,
     inputFormatters: const <TextInputFormatter>[_UppercaseTextFormatter()],
     decoration: InputDecoration(
-      labelText: 'Referral Code (optional)',
-      hintText: 'Paste referral code',
+      labelText: AppLocalizations.of(context).referralCodeFieldLabel,
+      hintText: AppLocalizations.of(context).referralCodeFieldHint,
       errorText: errorText,
       helperText: errorText == null ? helperText : null,
       helperStyle: const TextStyle(color: KolabingColors.success),
@@ -40,11 +41,11 @@ class ReferralCodeField extends StatelessWidget {
       fillColor: KolabingColors.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.border),
+        borderSide: const BorderSide(color: KolabingColors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
