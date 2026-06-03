@@ -4,19 +4,29 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../widgets/ui_icon.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
-import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
-import '../../rewards/widgets/xp_progress_card.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
+import '../widgets/community_xp_summary_card.dart';
+import '../widgets/community_stats_strip.dart';
+import '../widgets/dashboard_badges_row.dart';
+import '../widgets/xp_missions_section.dart';
 import '../widgets/dashboard_shimmer.dart';
 import '../widgets/dashboard_stat_card.dart';
 import '../widgets/upcoming_collaboration_card.dart';
+import '../../rewards/providers/wallet_provider.dart';
+
+/// Local-only preview switch — change this constant to compare layouts.
+/// Does not affect production builds.
+enum DashboardPreviewVariant { optionA, optionB, optionC }
+
+const _kDashboardVariant = DashboardPreviewVariant.optionB;
 
 /// Community Dashboard Screen
 ///
@@ -43,6 +53,11 @@ class _CommunityDashboardScreenState
       final state = ref.read(dashboardProvider);
       if (!state.isInitialized && !state.isLoading) {
         ref.read(dashboardProvider.notifier).load();
+      }
+      // Also load wallet data so badges and XP are available on the dashboard.
+      final walletState = ref.read(walletProvider);
+      if (walletState.wallet == null && !walletState.isLoading) {
+        ref.read(walletProvider.notifier).load();
       }
     });
   }
@@ -92,30 +107,9 @@ class _CommunityDashboardScreenState
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
-        // Header
         _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
-
-        // Stats grid 2x2
-        _buildStatsGrid(data),
-        const SizedBox(height: KolabingSpacing.xl),
-
-        // Referral banner first — community-growth action
-        const ReferralBannerCard(),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // XP progress card
-        XpProgressCard(
-          onTap: () => context.push(KolabingRoutes.communityWallet),
-        ),
-        const SizedBox(height: KolabingSpacing.xl),
-
-        // Quick actions
-        _buildQuickActions(isDark),
-        const SizedBox(height: KolabingSpacing.xl),
-
-        // Upcoming collaborations
-        _buildUpcomingSection(data, isDark),
+        ..._buildVariantContent(data, isDark),
         const SizedBox(height: KolabingSpacing.xl),
       ],
     );
@@ -126,6 +120,9 @@ class _CommunityDashboardScreenState
   // ---------------------------------------------------------------------------
 
   Widget _buildHeader(String userName, bool isDark) {
+    final authState = ref.watch(authProvider);
+    final photoUrl = authState.user?.profilePhotoUrl;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,8 +148,121 @@ class _CommunityDashboardScreenState
           ),
         ),
         const NotificationBell(),
+        const SizedBox(width: KolabingSpacing.xs),
+        GestureDetector(
+          onTap: () => widget.onSwitchTab?.call(3),
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFEAE3D4), width: 1.5),
+              color: KolabingColors.surfaceContainerLow,
+            ),
+            child: ClipOval(
+              child: photoUrl != null && photoUrl.isNotEmpty
+                  ? Image.network(photoUrl, fit: BoxFit.cover)
+                  : const Icon(LucideIcons.user, size: 20, color: KolabingColors.onSurfaceVariant),
+            ),
+          ),
+        ),
       ],
     );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Variant dispatcher
+  // ---------------------------------------------------------------------------
+
+  List<Widget> _buildVariantContent(CommunityDashboard data, bool isDark) {
+    switch (_kDashboardVariant) {
+      case DashboardPreviewVariant.optionA:
+        return _buildVariantA(data, isDark);
+      case DashboardPreviewVariant.optionB:
+        return _buildVariantB(data, isDark);
+      case DashboardPreviewVariant.optionC:
+        return _buildVariantC(data, isDark);
+    }
+  }
+
+  List<Widget> _buildVariantB(CommunityDashboard data, bool isDark) {
+    return [
+      // 1. XP summary card (sage green, non-tappable)
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 2. Today's XP missions
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 3. Compact stats strip
+      CommunityStatsStrip(
+        pending: data.applicationsSent.pending,
+        accepted: data.applicationsSent.accepted,
+        active: data.collaborations.active,
+        completed: data.collaborations.completed,
+      ),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 4. Badges row
+      const DashboardBadgesRow(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 5. Referral card — pastel yellow style
+      const ReferralBannerCard(usePastelStyle: true),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 6. Quick actions
+      _buildQuickActions(isDark),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 7. Upcoming kolabs
+      _buildUpcomingSection(data, isDark),
+    ];
+  }
+
+  List<Widget> _buildVariantA(CommunityDashboard data, bool isDark) {
+    return [
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+      CommunityStatsStrip(
+        pending: data.applicationsSent.pending,
+        accepted: data.applicationsSent.accepted,
+        active: data.collaborations.active,
+        completed: data.collaborations.completed,
+      ),
+      const SizedBox(height: KolabingSpacing.lg),
+      const ReferralBannerCard(usePastelStyle: true),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildQuickActions(isDark),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildUpcomingSection(data, isDark),
+    ];
+  }
+
+  List<Widget> _buildVariantC(CommunityDashboard data, bool isDark) {
+    return [
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+      CommunityStatsStrip(
+        pending: data.applicationsSent.pending,
+        accepted: data.applicationsSent.accepted,
+        active: data.collaborations.active,
+        completed: data.collaborations.completed,
+      ),
+      const SizedBox(height: KolabingSpacing.lg),
+      const DashboardBadgesRow(),
+      const SizedBox(height: KolabingSpacing.lg),
+      const ReferralBannerCard(usePastelStyle: true),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildQuickActions(isDark),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildUpcomingSection(data, isDark),
+    ];
   }
 
   // ---------------------------------------------------------------------------
@@ -220,10 +330,10 @@ class _CommunityDashboardScreenState
   Widget _buildQuickActions(bool isDark) {
     return Row(
       children: [
-        // Primary button: FIND A COLLAB
+        // Primary button: FIND A KOLAB
         Expanded(
           child: SizedBox(
-            height: 48,
+            height: 50,
             child: ElevatedButton(
               onPressed: () {
                 // Switch to Explore tab (index 1)
@@ -231,7 +341,7 @@ class _CommunityDashboardScreenState
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                foregroundColor: const Color(0xFF5C4A12),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -239,7 +349,7 @@ class _CommunityDashboardScreenState
               ),
               child: Text(
                 'FIND A KOLAB',
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0, color: const Color(0xFF5C4A12)),
               ),
             ),
           ),
@@ -249,21 +359,15 @@ class _CommunityDashboardScreenState
         // Outlined button: MY APPLICATIONS
         Expanded(
           child: SizedBox(
-            height: 48,
+            height: 50,
             child: OutlinedButton(
               onPressed: () {
                 // Switch to Applications tab (index 3)
                 widget.onSwitchTab?.call(3);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
-                side: BorderSide(
-                  color: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.darkBorder,
-                ),
+                foregroundColor: KolabingColors.onSurface,
+                side: const BorderSide(color: Color(0xFFEAE3D4), width: 1.5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -319,21 +423,26 @@ class _CommunityDashboardScreenState
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
+      decoration: BoxDecoration(
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(
+          color: const Color(0xFFE3DCCB),
+          width: 1.5,
+          // Dashed border via CustomPainter would be ideal, but a solid hairline
+          // border keeps the diff minimal while conveying the empty-state container.
+        ),
+      ),
       child: Column(
         children: [
           UiIcon(
             icon: UiIconSlug.calendar,
-            size: 40,
-            color: isDark
-                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                : KolabingColors.textTertiary,
+            size: 36,
+            color: KolabingColors.textTertiary,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             'No upcoming kolabs yet',
-            style: KolabingTextStyles.bodySmall.copyWith(color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                  : KolabingColors.textTertiary),
+            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
           ),
         ],
       ),
