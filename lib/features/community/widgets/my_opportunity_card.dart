@@ -1,3 +1,4 @@
+// lib/features/community/widgets/my_opportunity_card.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -6,12 +7,10 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolab_chip.dart';
+import '../../../widgets/kolab_status_badge.dart';
 import '../../opportunity/models/opportunity.dart';
 
-/// Card widget for My Opportunities list
-///
-/// Shows status badge, title, dates, applications count,
-/// and contextual action buttons based on status.
 class MyOpportunityCard extends StatelessWidget {
   const MyOpportunityCard({
     required this.opportunity,
@@ -32,90 +31,111 @@ class MyOpportunityCard extends StatelessWidget {
   final VoidCallback? onClose;
   final VoidCallback? onDelete;
 
+  String? get _imageUrl {
+    final p = opportunity.offerPhoto;
+    return (p != null && p.isNotEmpty) ? p : null;
+  }
+
+  String get _initials {
+    final t = opportunity.title.trim();
+    return t.isNotEmpty ? t[0].toUpperCase() : 'O';
+  }
+
+  String get _dateLabel {
+    final fmt = DateFormat('MMM d');
+    return '${fmt.format(opportunity.availabilityStart)} – ${fmt.format(opportunity.availabilityEnd)}';
+  }
+
   @override
   Widget build(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: Colors.white,
       borderRadius: KolabingRadius.borderRadiusLg,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
+      border: Border.all(color: KolabingColors.hairline),
     ),
     child: Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      child: Column(
+      padding: const EdgeInsets.all(14),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Status badge and applications count
-          Row(
-            children: [
-              _StatusBadge(status: opportunity.status),
-              const Spacer(),
-              if (opportunity.applicationsCount != null &&
-                  opportunity.applicationsCount! > 0)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      LucideIcons.users,
-                      size: 14,
-                      color: KolabingColors.textTertiary,
+                    KolabStatusBadge(status: opportunity.status.name),
+                    if (opportunity.applicationsCount != null &&
+                        opportunity.applicationsCount! > 0) ...[
+                      const Spacer(),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            LucideIcons.users,
+                            size: 12,
+                            color: KolabingColors.textTertiary,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            '${opportunity.applicationsCount} app${opportunity.applicationsCount == 1 ? '' : 's'}',
+                            style: KolabingTextStyles.labelSmall.copyWith(
+                              color: KolabingColors.textTertiary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  opportunity.title.isNotEmpty
+                      ? opportunity.title
+                      : 'Untitled Opportunity',
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.onSurface,
+                    height: 1.3,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 7),
+                Wrap(
+                  spacing: KolabingSpacing.xs,
+                  runSpacing: KolabingSpacing.xs,
+                  children: [
+                    KolabChip(
+                      label: _dateLabel,
+                      variant: KolabChipVariant.sage,
+                      icon: LucideIcons.calendar,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${opportunity.applicationsCount} app${opportunity.applicationsCount == 1 ? '' : 's'}',
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
+                    if (opportunity.preferredCity.isNotEmpty)
+                      KolabChip(
+                        label: opportunity.preferredCity,
+                        variant: KolabChipVariant.amber,
+                        icon: LucideIcons.mapPin,
+                      ),
+                    ...opportunity.categories.take(2).map(
+                      (c) => KolabChip(
+                        label: c,
+                        variant: kolabChipVariantFor(c),
+                      ),
                     ),
                   ],
                 ),
-            ],
+                const SizedBox(height: 8),
+                _buildActions(),
+              ],
+            ),
           ),
-          const SizedBox(height: KolabingSpacing.sm),
-
-          // Title
-          Text(
-            opportunity.title.isNotEmpty
-                ? opportunity.title
-                : 'Untitled Opportunity',
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: KolabingSpacing.xs),
-
-          // Date range and categories
-          _buildInfoRow(),
-          const SizedBox(height: KolabingSpacing.sm),
-
-          // Action buttons
-          _buildActions(),
+          const SizedBox(width: KolabingSpacing.sm),
+          _KolabSquareImage(imageUrl: _imageUrl, initials: _initials),
         ],
       ),
     ),
   );
-
-  Widget _buildInfoRow() {
-    final dateFormat = DateFormat('MMM d');
-    final dateText =
-        '${dateFormat.format(opportunity.availabilityStart)} - ${dateFormat.format(opportunity.availabilityEnd)}';
-    final categoriesText = opportunity.categories.take(2).join(', ');
-
-    return Wrap(
-      spacing: KolabingSpacing.xs,
-      runSpacing: KolabingSpacing.xs,
-      children: [
-        _InfoPill(icon: LucideIcons.calendar, label: dateText),
-        if (opportunity.preferredCity.isNotEmpty)
-          _InfoPill(icon: LucideIcons.mapPin, label: opportunity.preferredCity),
-        if (categoriesText.isNotEmpty)
-          _InfoPill(icon: LucideIcons.tag, label: categoriesText),
-      ],
-    );
-  }
 
   Widget _buildActions() {
     final status = opportunity.status;
@@ -123,166 +143,108 @@ class MyOpportunityCard extends StatelessWidget {
 
     if (status == OpportunityStatus.published && onView != null) {
       actions.add(
-        _ActionButton(
-          label: 'View',
-          icon: LucideIcons.eye,
-          onTap: onView!,
-          primary: true,
-        ),
+        _ActionBtn(label: 'VIEW', icon: LucideIcons.eye, onTap: onView!, primary: true),
       );
     }
-
-    // Edit button (draft or published)
     if (status.canEdit && onEdit != null) {
       actions.add(
-        _ActionButton(
-          label: 'Edit',
-          icon: LucideIcons.edit,
-          onTap: onEdit!,
-          outlined: true,
-        ),
+        _ActionBtn(label: 'EDIT', icon: LucideIcons.edit, onTap: onEdit!, outlined: true),
       );
     }
-
-    // Publish button (draft only)
     if (status.canPublish && onPublish != null) {
       actions.add(
-        _ActionButton(
-          label: 'Publish',
-          icon: LucideIcons.upload,
-          onTap: onPublish!,
-          primary: true,
-        ),
+        _ActionBtn(label: 'PUBLISH', icon: LucideIcons.upload, onTap: onPublish!, primary: true),
       );
     }
-
     if (status == OpportunityStatus.published && onShare != null) {
       actions.add(
-        _ActionButton(
-          label: 'Share',
-          icon: LucideIcons.share2,
-          onTap: onShare!,
-          outlined: true,
-        ),
+        _ActionBtn(label: 'SHARE', icon: LucideIcons.share2, onTap: onShare!, outlined: true),
       );
     }
-
-    // Close button (published only)
     if (status.canClose && onClose != null) {
       actions.add(
-        _ActionButton(
-          label: 'Close',
-          icon: LucideIcons.xCircle,
-          onTap: onClose!,
-          outlined: true,
-        ),
+        _ActionBtn(label: 'CLOSE', icon: LucideIcons.xCircle, onTap: onClose!, outlined: true),
       );
     }
-
-    // Delete button (draft with no applications)
     if (status.canDelete &&
         (opportunity.applicationsCount ?? 0) == 0 &&
         onDelete != null) {
       actions.add(
-        _ActionButton(
-          label: 'Delete',
-          icon: LucideIcons.trash2,
-          onTap: onDelete!,
-          danger: true,
-        ),
+        _ActionBtn(label: 'DELETE', icon: LucideIcons.trash2, onTap: onDelete!, danger: true),
       );
     }
 
     if (actions.isEmpty) return const SizedBox.shrink();
 
     return Row(
-      children:
-          actions
-              .expand(
-                (w) => [
-                  Expanded(child: w),
-                  const SizedBox(width: KolabingSpacing.xs),
-                ],
-              )
-              .toList()
-            ..removeLast(), // Remove trailing spacer
+      children: actions
+          .expand(
+            (w) => [
+              Expanded(child: w),
+              const SizedBox(width: KolabingSpacing.xs),
+            ],
+          )
+          .toList()
+        ..removeLast(),
     );
   }
 }
 
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.status});
+// ---------------------------------------------------------------------------
+// Private widgets
+// ---------------------------------------------------------------------------
 
-  final OpportunityStatus status;
+class _KolabSquareImage extends StatelessWidget {
+  const _KolabSquareImage({required this.initials, this.imageUrl});
+
+  final String? imageUrl;
+  final String initials;
 
   @override
   Widget build(BuildContext context) {
-    final (backgroundColor, textColor) = switch (status) {
-      OpportunityStatus.draft => (
-        KolabingColors.pendingBg,
-        KolabingColors.pendingText,
-      ),
-      OpportunityStatus.published => (
-        KolabingColors.activeBg,
-        KolabingColors.activeText,
-      ),
-      OpportunityStatus.closed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
-      ),
-      OpportunityStatus.completed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
-      ),
-    };
+    const size = 68.0;
+    const radius = 14.0;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: KolabingRadius.borderRadiusRound,
-      ),
-      child: Text(
-        status.displayName.toUpperCase(),
-        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: textColor, letterSpacing: 0.5),
-      ),
-    );
-  }
-}
-
-class _InfoPill extends StatelessWidget {
-  const _InfoPill({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    height: 26,
-    padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-    decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
-      borderRadius: KolabingRadius.borderRadiusRound,
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 12, color: KolabingColors.textTertiary),
-        const SizedBox(width: KolabingSpacing.xxs),
-        Text(
-          label,
-          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.network(
+          imageUrl!,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _placeholder(size, radius),
         ),
-      ],
+      );
+    }
+    return _placeholder(size, radius);
+  }
+
+  Widget _placeholder(double size, double radius) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(radius),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFF4C2), Color(0xFFFFE28C)],
+      ),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      initials,
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF5C4A12),
+      ),
     ),
   );
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
+class _ActionBtn extends StatelessWidget {
+  const _ActionBtn({
     required this.label,
     required this.icon,
     required this.onTap,
@@ -300,11 +262,33 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foregroundColor = primary
-        ? KolabingColors.onPrimary
+    final fgColor = primary
+        ? KolabingColors.onYellowButton
         : danger
         ? KolabingColors.error
         : KolabingColors.onSurface;
+
+    final child = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 13, color: fgColor),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            softWrap: false,
+            style: KolabingTextStyles.labelSmall.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: fgColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ],
+    );
 
     if (primary) {
       return SizedBox(
@@ -313,18 +297,14 @@ class _ActionButton extends StatelessWidget {
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
             backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
+            foregroundColor: KolabingColors.onYellowButton,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
             shape: RoundedRectangleBorder(
               borderRadius: KolabingRadius.borderRadiusSm,
             ),
           ),
-          child: _ActionButtonContent(
-            icon: icon,
-            label: label,
-            color: foregroundColor,
-          ),
+          child: child,
         ),
       );
     }
@@ -334,56 +314,17 @@ class _ActionButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          foregroundColor: foregroundColor,
           side: BorderSide(
-            color: danger
-                ? KolabingColors.error.withValues(alpha: 0.5)
-                : KolabingColors.darkBorder,
+            color: danger ? KolabingColors.errorBg : KolabingColors.hairline,
           ),
+          foregroundColor: fgColor,
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
           shape: RoundedRectangleBorder(
             borderRadius: KolabingRadius.borderRadiusSm,
           ),
         ),
-        child: _ActionButtonContent(
-          icon: icon,
-          label: label,
-          color: foregroundColor,
-        ),
+        child: child,
       ),
     );
   }
-}
-
-class _ActionButtonContent extends StatelessWidget {
-  const _ActionButtonContent({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Icon(icon, size: 14, color: color),
-      const SizedBox(width: KolabingSpacing.xxs),
-      Flexible(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.fade,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color, letterSpacing: 1.0),
-          ),
-        ),
-      ),
-    ],
-  );
 }
