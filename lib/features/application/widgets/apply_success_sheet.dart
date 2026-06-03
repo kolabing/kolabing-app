@@ -130,7 +130,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                 Text(
                   'Application sent!',
                   textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.2),
+                  style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface, height: 1.2),
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(

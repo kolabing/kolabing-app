@@ -53,9 +53,7 @@ class _ApplicationReviewScreenState
         ),
         title: Text(
           'APPLICATION',
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          style: KolabingTextStyles.pageTitleSmall.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
@@ -75,11 +73,7 @@ class _ApplicationReviewScreenState
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
                   'Failed to load application',
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
-                  ),
+                  style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
                 TextButton(
@@ -259,11 +253,7 @@ class _ApplicationReviewScreenState
           // Name
           Text(
             profile?.displayName ?? application.applicantName,
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
           ),
 
@@ -344,11 +334,7 @@ class _ApplicationReviewScreenState
     return Center(
       child: Text(
         initial,
-        style: KolabingTextStyles.bodyLarge.copyWith(
-          fontSize: 28,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.primary,
-        ),
+        style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.primary),
       ),
     );
   }
@@ -634,10 +620,7 @@ class _ApplicationReviewScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Decline Application',
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -869,11 +852,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               // Title
               Text(
                 'Accept Application',
-                style: KolabingTextStyles.bodyLarge.copyWith(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
-                ),
+                style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
