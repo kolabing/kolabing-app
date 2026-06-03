@@ -120,6 +120,10 @@ class _UserTypeSelectionScreenState
   }
 
   void _handleCardTap(SelectionUserType type) {
+    if (type == SelectionUserType.attendee) {
+      return;
+    }
+
     setState(() => _selectedType = type);
 
     // Brief delay to show selection, then navigate
@@ -135,8 +139,7 @@ class _UserTypeSelectionScreenState
                 .initialize(UserType.community);
             context.push('/onboarding/community/step1');
           case SelectionUserType.attendee:
-            // Attendee has no onboarding steps, go directly to registration
-            context.push('/auth/register/attendee');
+            return;
         }
       }
     });
@@ -234,7 +237,10 @@ class _UserTypeSelectionScreenState
                     slideAnimation: _attendeeCardSlideAnimation,
                     child: SelectionCard(
                       userType: SelectionUserType.attendee,
-                      isSelected: _selectedType == SelectionUserType.attendee,
+                      isEnabled: false,
+                      badgeLabel: 'COMING SOON',
+                      descriptionOverride:
+                          'Event discovery, check-ins, and challenges are coming soon',
                       onTap: () => _handleCardTap(SelectionUserType.attendee),
                     ),
                   ),

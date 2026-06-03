@@ -14,6 +14,7 @@ import 'package:kolabing_app/main.dart';
 void main() {
   testWidgets('Kolabing app boots', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: KolabingApp()));
+    await tester.pump(const Duration(milliseconds: 1));
 
     expect(find.byType(SplashScreen), findsOneWidget);
     expect(tester.takeException(), isNull);

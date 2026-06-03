@@ -54,6 +54,16 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   String? _referralCodeHelperText;
 
   @override
+  void initState() {
+    super.initState();
+    if (Platform.isIOS) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(iapProvider.notifier).refreshProducts();
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _referralCodeController.dispose();
     super.dispose();
@@ -300,29 +310,19 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (!Platform.isIOS || iapState.monthlyProduct != null) ...[
-                      Text(
-                        Platform.isIOS ? iapState.priceString : '29 EUR',
-                        style: KolabingTextStyles.headlineLarge.copyWith(
-                          color: KolabingColors.textPrimary,
-                        ),
+                    Text(
+                      Platform.isIOS ? iapState.priceString : '29 EUR',
+                      style: KolabingTextStyles.headlineLarge.copyWith(
+                        color: KolabingColors.textPrimary,
                       ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      Text(
-                        '/ month',
-                        style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: KolabingColors.textSecondary,
-                        ),
+                    ),
+                    const SizedBox(width: KolabingSpacing.xs),
+                    Text(
+                      '/ month',
+                      style: KolabingTextStyles.bodyLarge.copyWith(
+                        color: KolabingColors.textSecondary,
                       ),
-                    ] else
-                      Text(
-                        iapState.isLoadingProducts
-                            ? 'Loading App Store price...'
-                            : 'Subscription unavailable',
-                        style: KolabingTextStyles.titleMedium.copyWith(
-                          color: KolabingColors.textPrimary,
-                        ),
-                      ),
+                    ),
                   ],
                 ),
               ),

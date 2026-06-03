@@ -47,18 +47,18 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Kolabing needs camera access to scan QR codes for event check-in.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Kolabing needs access to your photo library so you can upload images for your profile, kolabs, and past events.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Kolabing needs permission to save and manage selected media for your profile, kolabs, and past events.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Kolabing needs permission to save and manage selected media for your profile, kolabs, and past events.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Kolabing needs access to your photo library so you can upload images for your profile, kolabs, and past events.</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Kolabing sends you notifications for new messages, collaboration updates, and application status changes.</string>
 	<key>OneSignal_app_groups_key</key>
-	<string>group.com.kolabing.kolabingapp.onesignal</string>
+	<string>group.com.kolabing.kolabingapp.lpfnq76gb6.onesignal</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -32,7 +32,7 @@ class IAPState {
       products.isEmpty ? null : products.first;
 
   /// Formatted price string (from App Store, e.g. "34,99 EUR")
-  String get priceString => monthlyProduct?.price ?? 'Loading...';
+  String get priceString => monthlyProduct?.price ?? '30 EUR';
 
   /// Whether a purchase can be started immediately.
   bool get canPurchase =>
@@ -45,9 +45,6 @@ class IAPState {
     }
     if (!isAvailable) {
       return 'App Store purchases are not available on this device.';
-    }
-    if (monthlyProduct == null) {
-      return 'The subscription product is not available right now. Please try again later.';
     }
     return null;
   }
@@ -119,10 +116,24 @@ class IAPNotifier extends Notifier<IAPState> {
     );
   }
 
+  Future<void> refreshProducts() async {
+    state = state.copyWith(isLoadingProducts: true, clearError: true);
+    await _iapService.initialize();
+    state = state.copyWith(
+      isAvailable: _iapService.isAvailable,
+      products: _iapService.products,
+      isLoadingProducts: false,
+    );
+  }
+
   /// Purchase the monthly subscription
   Future<PurchaseStartResult> purchase({String? referralCode}) async {
     if (state.isPurchasing) {
       return (started: false, validatedReferralCode: null);
+    }
+
+    if (state.isAvailable && state.monthlyProduct == null) {
+      await refreshProducts();
     }
 
     final purchaseAvailabilityMessage = state.purchaseAvailabilityMessage;

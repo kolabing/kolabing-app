@@ -11,10 +11,35 @@ import 'package:kolabing_app/features/kolab/models/kolab.dart';
 import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
 
 void main() {
+  testWidgets('empty state does not show a duplicate Create Kolab button', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          myKolabsProvider.overrideWith(
+            () => _FakeMyKolabsNotifier(const MyKolabsState(total: 0)),
+          ),
+          profileProvider.overrideWith(
+            () => _FakeProfileNotifier(
+              const ProfileState(isLoading: false, isInitialized: true),
+            ),
+          ),
+        ],
+        child: const MaterialApp(home: MyKollabsScreen()),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('No kolabs yet'), findsOneWidget);
+    expect(find.text('Create Kolab'), findsNothing);
+  });
+
   testWidgets(
     'tapping Edit opens the unified kolab flow with the existing draft',
     (tester) async {
-      final kolab = Kolab(
+      const kolab = Kolab(
         id: '42',
         intentType: IntentType.venuePromotion,
         status: 'draft',
@@ -52,7 +77,7 @@ void main() {
           overrides: [
             myKolabsProvider.overrideWith(
               () => _FakeMyKolabsNotifier(
-                MyKolabsState(kolabs: [kolab], total: 1),
+                const MyKolabsState(kolabs: [kolab], total: 1),
               ),
             ),
             profileProvider.overrideWith(

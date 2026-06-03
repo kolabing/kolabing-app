@@ -57,14 +57,6 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     }
   }
 
-  Future<void> _onCreateNew() async {
-    // B1 (2026-05-22): route all NEW creation through the unified /kolab/flow
-    // via /kolab/new (IntentSelectionScreen). The subscription gate for a
-    // non-subscribed business is enforced inside IntentSelectionScreen
-    // (_LockedBusinessCreateState), so we no longer pre-gate here.
-    await context.push(KolabingRoutes.kolabNew);
-  }
-
   void _onEdit(Kolab kolab) {
     final id = kolab.id;
     if (id == null || id.isEmpty) {
@@ -431,16 +423,6 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
               color: KolabingColors.textSecondary,
             ),
             textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
-            onPressed: _onCreateNew,
-            icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('Create Kolab'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-            ),
           ),
         ],
       ),

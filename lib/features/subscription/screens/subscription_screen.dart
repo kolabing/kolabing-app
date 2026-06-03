@@ -44,6 +44,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(profileProvider.notifier).refreshSubscription();
+      if (Platform.isIOS) {
+        ref.read(iapProvider.notifier).refreshProducts();
+      }
     });
   }
 
@@ -902,18 +905,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
   Widget _buildApplePriceLabel(IAPState? iapState) {
     final state = iapState ?? const IAPState();
-
-    if (state.monthlyProduct == null) {
-      return Text(
-        state.isLoadingProducts
-            ? 'Loading App Store price...'
-            : 'Subscription unavailable',
-        style: KolabingTextStyles.titleMedium.copyWith(
-          color: KolabingColors.textPrimary,
-        ),
-        textAlign: TextAlign.center,
-      );
-    }
 
     return Text(
       '${state.priceString}/month',
