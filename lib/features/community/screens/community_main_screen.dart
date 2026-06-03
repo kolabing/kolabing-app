@@ -17,15 +17,16 @@ import '../../opportunity/providers/opportunity_provider.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import 'community_hub_screen.dart';
 import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
 
 /// Community user main screen with bottom navigation
 ///
 /// This is the main container for community users after login.
-/// Contains 4 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished),
-/// Profile. The former Applications tab is now the "Requests" tab inside
-/// My Kolabs.
+/// Contains 5 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished),
+/// Community (roster + tiers — NF-6), Profile. The former Applications tab is
+/// now the "Requests" tab inside My Kolabs.
 class CommunityMainScreen extends ConsumerStatefulWidget {
   const CommunityMainScreen({
     super.key,
@@ -124,6 +125,11 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         iconSlug: UiIconSlug.star,
       ),
       const NavItem(
+        icon: LucideIcons.users,
+        activeIcon: LucideIcons.users,
+        label: 'Community',
+      ),
+      const NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
         label: 'Profile',
@@ -144,12 +150,14 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           _CommunityHomeTab(onSwitchTab: _onTabChanged),
           const _CommunityExploreTab(),
           _CommunityMyOppsTab(initialSubTab: widget.initialKolabsSubTab),
+          const CommunityHubScreen(),
           const _CommunityProfileTab(),
         ],
       ),
       floatingActionButton:
-          _currentIndex != 2 && // My Kolabs hub provides its own create FAB
-              _currentIndex != 3 // Hide on profile tab
+          // Create-Opportunity FAB only on Home (0) / Explore (1). Hidden on
+          // My Kolabs (2), Community (3), and Profile (4).
+          _currentIndex < 2
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: 'Create Opportunity',
