@@ -15,8 +15,12 @@ import '../utils/referral_share.dart';
 ///
 /// Reads the [referralCode] from [walletProvider] and opens a bottom sheet
 /// where the user can copy or share the code.
+///
+/// When [usePastelStyle] is true, uses a pastel yellow background and border.
 class ReferralBannerCard extends ConsumerWidget {
-  const ReferralBannerCard({super.key});
+  const ReferralBannerCard({super.key, this.usePastelStyle = false});
+
+  final bool usePastelStyle;
 
   // ---------------------------------------------------------------------------
   // Build
@@ -37,9 +41,13 @@ class ReferralBannerCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: usePastelStyle ? const Color(0xFFFDF6DC) : Colors.white,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: const Color(0xFFEAE3D4)),
+        border: Border.all(
+          color: usePastelStyle
+              ? const Color(0xFFF0E4A0)
+              : const Color(0xFFEAE3D4),
+        ),
       ),
       child: Row(
         children: [
