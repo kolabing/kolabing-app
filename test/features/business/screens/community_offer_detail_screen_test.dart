@@ -71,7 +71,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('You are previewing this collaboration as businesses see it'),
+        find.text('You are previewing this kolab as businesses see it'),
         findsOneWidget,
       );
       expect(find.text('PREVIEW MODE'), findsOneWidget);

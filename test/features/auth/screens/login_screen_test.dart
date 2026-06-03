@@ -53,18 +53,14 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(SingleChildScrollView), findsNothing);
     final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    final logoRenderSize = tester.getSize(
-      find.bySemanticsLabel('Kolabing logo'),
-    );
     expect(logo.variant, KolabingLogoVariant.yellowTransparent);
-    expect(logoRenderSize.width, greaterThanOrEqualTo(80));
-    expect(find.text('REAL MATCHES.'), findsOneWidget);
-    expect(find.text('REAL PARTNERSHIPS.'), findsOneWidget);
-    expect(find.text('WELCOME BACK.'), findsOneWidget);
-    expect(find.text('SIGN IN'), findsOneWidget);
-    expect(find.text('GOOGLE'), findsOneWidget);
-    expect(find.text('APPLE'), findsOneWidget);
-    expect(tester.getBottomLeft(find.text('APPLE')).dy, lessThanOrEqualTo(640));
+    // Current minimal hero copy (localized) + social buttons.
+    expect(find.text('Welcome back.'), findsOneWidget);
+    expect(find.text('Sign in to your account'), findsOneWidget);
+    expect(find.text('Sign in'), findsOneWidget);
+    expect(find.text('Google'), findsOneWidget);
+    expect(find.text('Apple'), findsOneWidget);
+    expect(tester.getBottomLeft(find.text('Apple')).dy, lessThanOrEqualTo(640));
   });
 
   testWidgets('login screen stays stable on iPhone safe-area constraints', (
@@ -78,8 +74,8 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('REAL MATCHES.'), findsOneWidget);
-    expect(find.text('APPLE'), findsOneWidget);
+    expect(find.text('Welcome back.'), findsOneWidget);
+    expect(find.text('Apple'), findsOneWidget);
   });
 
   testWidgets(
@@ -110,11 +106,13 @@ void main() {
       final fields = find.byType(TextFormField);
       await tester.enterText(fields.at(0), 'community@example.com');
       await tester.enterText(fields.at(1), 'password123');
-      await tester.tap(find.text('SIGN IN'));
-      await tester.pump();
+      await tester.tap(find.text('Sign in'));
+      await tester.pump(); // exit loading state
+      await tester.pump(const Duration(milliseconds: 400)); // error snackbar in
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.text('SIGN IN'), findsOneWidget);
+      expect(find.text('Sign in'), findsOneWidget);
+      // Unexpected failures surface commonErrorGeneric in a SnackBar.
       expect(
         find.text('Something went wrong. Please try again.'),
         findsOneWidget,

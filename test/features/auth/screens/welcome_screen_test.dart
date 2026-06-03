@@ -60,10 +60,10 @@ Future<void> _pumpWelcome(
 }
 
 void main() {
-  // The welcome screen was redesigned (commit c1e1c1a) into a dark landing-page
-  // hero: pure-black background, yellow wordmark, a "REAL PEOPLE / REAL
-  // EXPERIENCES / REAL GROWTH." headline, a GET STARTED primary CTA and a LOGIN
-  // text link. These tests assert that current intended design.
+  // The welcome screen (redesign e00ac82: minimal, community-first layout) is a
+  // dark hero: pure-black background, yellow wordmark, a two-line "Where local
+  // brands / meet real communities." headline, a "Get started" primary CTA and
+  // a "Log in" text link (localized via AppLocalizations).
   testWidgets(
     'welcome screen renders the dark landing hero and routes correctly',
     (WidgetTester tester) async {
@@ -88,8 +88,8 @@ void main() {
         expect(find.text(label), findsNothing);
       }
 
-      // New stacked headline.
-      for (final line in ['REAL PEOPLE', 'REAL EXPERIENCES', 'REAL GROWTH.']) {
+      // Two-line community-first headline.
+      for (final line in ['Where local brands', 'meet real communities.']) {
         expect(find.text(line), findsOneWidget);
       }
 
@@ -100,8 +100,8 @@ void main() {
       expect(logo.variant, KolabingLogoVariant.yellowTransparent);
 
       // Primary CTA + login link.
-      final getStartedFinder = find.text('GET STARTED');
-      final loginFinder = find.text('LOGIN');
+      final getStartedFinder = find.text('Get started');
+      final loginFinder = find.text('Log in');
       expect(getStartedFinder, findsOneWidget);
       expect(loginFinder, findsOneWidget);
       expect(find.byType(FilledButton), findsOneWidget);
@@ -117,9 +117,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('user type selection'), findsOneWidget);
 
-      // LOGIN routes to the login screen.
+      // Login link routes to the login screen.
       await _pumpWelcome(tester);
-      await tester.tap(find.text('LOGIN'));
+      await tester.tap(find.text('Log in'));
       await tester.pumpAndSettle();
       expect(find.text('login screen'), findsOneWidget);
     },
@@ -137,7 +137,7 @@ void main() {
     // No RenderFlex overflow (previously the CTA row overflowed by 27px).
     expect(tester.takeException(), isNull);
     expect(find.byType(KolabingLogo), findsOneWidget);
-    expect(find.text('GET STARTED'), findsOneWidget);
-    expect(find.text('LOGIN'), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
+    expect(find.text('Log in'), findsOneWidget);
   });
 }

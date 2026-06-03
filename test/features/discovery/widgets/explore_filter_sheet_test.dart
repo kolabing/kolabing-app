@@ -38,10 +38,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Search & Filter'), findsOneWidget);
-    expect(find.text('Need'), findsOneWidget);
+    expect(find.text('Offer'), findsOneWidget);
     expect(find.text('Community Type'), findsOneWidget);
     expect(find.text('Audience Size'), findsOneWidget);
-    expect(find.text('Collab Type'), findsNothing);
+    expect(find.text('Kolab Type'), findsNothing);
   });
 
   testWidgets('community viewer sees business offer filters and search', (
@@ -72,7 +72,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Collab Type'), findsOneWidget);
+    expect(find.text('Kolab Type'), findsOneWidget);
     expect(find.text('What They Offer'), findsOneWidget);
     expect(find.text('Venue Type'), findsOneWidget);
     expect(find.text('Product Type'), findsOneWidget);
