@@ -7,6 +7,7 @@ import '../../../config/constants/api.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
+import '../models/community_membership.dart';
 import '../models/community_tier.dart';
 
 const String _baseUrl = ApiConfig.baseUrl;
@@ -101,14 +102,14 @@ class CommunityService {
         return _asList(_unwrap(res)).map(Community.fromJson).toList();
       }, 'getMyCommunities');
 
-  /// `GET /me/memberships` — communities the current member belongs to (the
-  /// membership row carries their tier in each).
-  Future<List<CommunityMember>> getMyMemberships() => _guard(() async {
+  /// `GET /me/memberships` — communities the current member belongs to; each
+  /// item nests the `community` and the member's `tier` in it.
+  Future<List<CommunityMembership>> getMyMemberships() => _guard(() async {
         final res = await _httpClient.get(
           Uri.parse('$_baseUrl/me/memberships'),
           headers: await _headers(),
         );
-        return _asList(_unwrap(res)).map(CommunityMember.fromJson).toList();
+        return _asList(_unwrap(res)).map(CommunityMembership.fromJson).toList();
       }, 'getMyMemberships');
 
   /// `GET /communities/{id}`.

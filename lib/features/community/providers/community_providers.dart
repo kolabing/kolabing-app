@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
+import '../models/community_membership.dart';
 import '../models/community_tier.dart';
 import '../services/community_service.dart';
 
@@ -50,6 +51,7 @@ final communityMembersProvider =
 
 /// Communities the current member belongs to + their tier in each
 /// (`GET /me/memberships`). Drives the Community Member's "my communities" view.
-final myMembershipsProvider = FutureProvider<List<CommunityMember>>((ref) async {
+final myMembershipsProvider =
+    FutureProvider<List<CommunityMembership>>((ref) async {
   return ref.watch(communityServiceProvider).getMyMemberships();
 });

@@ -6,14 +6,15 @@ import '../../../config/theme/colors.dart';
 import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
+import '../../community/screens/my_communities_screen.dart';
 import 'attendee_home_screen.dart';
 import 'attendee_profile_screen.dart';
 import 'qr_scanner_screen.dart';
 
-/// Attendee user main screen with bottom navigation
+/// Attendee (Community Member) main screen with bottom navigation
 ///
 /// This is the main container for attendee users after login.
-/// Contains 3 tabs: Home, Scan QR, Profile
+/// Contains 4 tabs: Home, Communities (NF-6), Scan QR (modal), Profile
 class AttendeeMainScreen extends ConsumerStatefulWidget {
   const AttendeeMainScreen({
     super.key,
@@ -36,8 +37,8 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
   }
 
   void _onTabChanged(int index) {
-    // Index 1 is QR Scanner - open as modal
-    if (index == 1) {
+    // Index 2 is the QR Scanner - open as a modal, don't change the tab.
+    if (index == 2) {
       _openQRScanner();
       return;
     }
@@ -69,6 +70,11 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
         iconSlug: UiIconSlug.home,
       ),
       const NavItem(
+        icon: LucideIcons.users,
+        activeIcon: LucideIcons.users,
+        label: 'Communities',
+      ),
+      const NavItem(
         icon: LucideIcons.qrCode,
         activeIcon: LucideIcons.qrCode,
         label: 'Scan',
@@ -86,9 +92,12 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
           isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: const KolabingAppBar(),
       body: IndexedStack(
-        index: _currentIndex > 1 ? _currentIndex - 1 : _currentIndex,
+        // Nav indices: Home 0, Communities 1, Scan 2 (modal, no child),
+        // Profile 3. Collapse the modal slot so children stay 0,1,2.
+        index: _currentIndex < 2 ? _currentIndex : _currentIndex - 1,
         children: const [
           AttendeeHomeScreen(),
+          MyCommunitiesScreen(),
           AttendeeProfileScreen(),
         ],
       ),
