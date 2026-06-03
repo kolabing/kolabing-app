@@ -4066,7 +4066,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get discoveryQuickFilterAvailability => 'Disponibilidad';
 
   @override
-  String get discoveryQuickFilterNeed => 'Necesidad';
+  String get discoveryQuickFilterNeed => 'Oferta';
 
   @override
   String get discoveryQuickFilterCommunityType => 'Tipo de comunidad';
@@ -4490,7 +4490,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String referralShareMessage(String code) {
-    return 'Registra tu negocio en Kolabing y usa mi código de invitación $code al registrarte.';
+    return 'Comparte Kolabing y Gana: usa mi código de invitación $code al registrar tu negocio.';
   }
 
   @override

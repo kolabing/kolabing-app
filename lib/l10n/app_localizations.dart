@@ -7247,7 +7247,7 @@ abstract class AppLocalizations {
   /// Quick filter chip fallback label for need type
   ///
   /// In en, this message translates to:
-  /// **'Need'**
+  /// **'Offer'**
   String get discoveryQuickFilterNeed;
 
   /// Quick filter chip fallback label for community type
@@ -7961,7 +7961,7 @@ abstract class AppLocalizations {
   /// Message shared from the referral screen/banner. {code} is the user's referral code.
   ///
   /// In en, this message translates to:
-  /// **'Register your business on Kolabing and use my referral code {code} during signup.'**
+  /// **'Share Kolabing and earn — register your business with my referral code {code} during signup.'**
   String referralShareMessage(String code);
 
   /// No description provided for @dashboardBusinessTitle.

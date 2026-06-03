@@ -5162,7 +5162,7 @@
   "@discoveryQuickFilterAvailability": {
     "description": "Quick filter chip fallback label for availability"
   },
-  "discoveryQuickFilterNeed": "Need",
+  "discoveryQuickFilterNeed": "Offer",
   "@discoveryQuickFilterNeed": {
     "description": "Quick filter chip fallback label for need type"
   },
@@ -5683,7 +5683,7 @@
   "@pastEventsStepHeader": {
     "description": "Past events step section header (kolab creation flow)"
   },
-  "referralShareMessage": "Register your business on Kolabing and use my referral code {code} during signup.",
+  "referralShareMessage": "Share Kolabing and earn — register your business with my referral code {code} during signup.",
   "@referralShareMessage": {
     "description": "Message shared from the referral screen/banner. {code} is the user's referral code.",
     "placeholders": {
