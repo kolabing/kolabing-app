@@ -235,7 +235,7 @@ class _WithdrawalRequestScreenState
                     const SizedBox(height: 2),
                     Text(
                       'EUR ${eurValue.toStringAsFixed(2)}',
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface),
                     ),
                   ],
                 ),

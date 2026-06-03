@@ -37,8 +37,9 @@ class ReferralBannerCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceContainerLow,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(color: const Color(0xFFEAE3D4)),
       ),
       child: Row(
         children: [
@@ -62,7 +63,7 @@ class ReferralBannerCard extends ConsumerWidget {
                       _showReferralCodeSheet(context, referralCode),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: KolabingColors.onSurface,
-                    side: const BorderSide(color: KolabingColors.onSurface),
+                    side: const BorderSide(color: Color(0xFFEAE3D4), width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: KolabingRadius.borderRadiusSm,
                     ),
@@ -82,19 +83,11 @@ class ReferralBannerCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: KolabingSpacing.md),
-          // Right icon
-          Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: KolabingColors.softYellow,
-            ),
-            child: const Icon(
-              LucideIcons.gift,
-              size: 28,
-              color: KolabingColors.onSurface,
-            ),
+          // Bare gift icon \u2014 no circle backplate
+          const Icon(
+            LucideIcons.gift,
+            size: 36,
+            color: Color(0xFF5C4A12),
           ),
         ],
       ),
@@ -164,7 +157,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             child: Text(
               code,
               textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 2.5),
+              style: KolabingTextStyles.headlineLarge.copyWith(color: KolabingColors.onSurface, letterSpacing: 2.5),
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
