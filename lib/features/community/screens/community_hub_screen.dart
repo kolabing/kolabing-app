@@ -10,6 +10,7 @@ import '../models/community_member.dart';
 import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
 import 'create_community_screen.dart';
+import 'tier_editor_screen.dart';
 
 /// The Community Leader's "Community" tab.
 ///
@@ -210,6 +211,22 @@ class _TiersSection extends ConsumerWidget {
 
   final String communityId;
 
+  Future<void> _openEditor(
+    BuildContext context,
+    WidgetRef ref, {
+    CommunityTier? tier,
+  }) async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) =>
+            TierEditorScreen(communityId: communityId, tier: tier),
+      ),
+    );
+    if (changed ?? false) {
+      ref.invalidate(communityTiersProvider(communityId));
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(communityTiersProvider(communityId));
@@ -218,21 +235,45 @@ class _TiersSection extends ConsumerWidget {
       error: (e, _) => _InlineError(message: e.toString()),
       data: (tiers) {
         if (tiers.isEmpty) {
-          return _InlineHint(
-            icon: LucideIcons.layers,
-            text: 'No tiers yet. Add tiers to give members a status ladder.',
+          return Column(
+            children: [
+              _InlineHint(
+                icon: LucideIcons.layers,
+                text:
+                    'No tiers yet. Add tiers to give members a status ladder.',
+              ),
+              const SizedBox(height: KolabingSpacing.sm),
+              _AddTile(
+                label: 'Add tier',
+                onTap: () => _openEditor(context, ref),
+              ),
+            ],
           );
         }
-        return Column(children: tiers.map((t) => _TierRow(tier: t)).toList());
+        return Column(
+          children: [
+            for (final t in tiers)
+              _TierRow(
+                tier: t,
+                onTap: () => _openEditor(context, ref, tier: t),
+              ),
+            const SizedBox(height: KolabingSpacing.xs),
+            _AddTile(
+              label: 'Add tier',
+              onTap: () => _openEditor(context, ref),
+            ),
+          ],
+        );
       },
     );
   }
 }
 
 class _TierRow extends StatelessWidget {
-  const _TierRow({required this.tier});
+  const _TierRow({required this.tier, this.onTap});
 
   final CommunityTier tier;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -247,47 +288,105 @@ class _TierRow extends StatelessWidget {
     final detail = tier.assignmentRule.isAutomatic && tier.threshold != null
         ? '${tier.assignmentRule.displayName} · ${tier.threshold} ${tier.assignmentRule.thresholdUnit}'
         : tier.assignmentRule.displayName;
-    return Container(
-      margin: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-      padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+      child: Material(
         color: KolabingColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: KolabingColors.outlineVariant),
-      ),
-      child: Row(
-        children: [
-          Container(width: 10, height: 10, decoration: BoxDecoration(color: dot, shape: BoxShape.circle)),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: KolabingColors.outlineVariant),
+            ),
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Text(tier.name,
-                        style: KolabingTextStyles.bodyMedium
-                            .copyWith(fontWeight: FontWeight.w700)),
-                    if (tier.isDefault) ...[
-                      const SizedBox(width: KolabingSpacing.xs),
-                      _Chip(label: 'DEFAULT'),
+                Container(
+                    width: 10,
+                    height: 10,
+                    decoration:
+                        BoxDecoration(color: dot, shape: BoxShape.circle)),
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(tier.name,
+                              style: KolabingTextStyles.bodyMedium
+                                  .copyWith(fontWeight: FontWeight.w700)),
+                          if (tier.isDefault) ...[
+                            const SizedBox(width: KolabingSpacing.xs),
+                            _Chip(label: 'DEFAULT'),
+                          ],
+                        ],
+                      ),
+                      Text(detail,
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 12,
+                              color: KolabingColors.onSurfaceVariant)),
                     ],
-                  ],
+                  ),
                 ),
-                Text(detail,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                        fontSize: 12, color: KolabingColors.onSurfaceVariant)),
+                Text('#${tier.rank}',
+                    style: KolabingTextStyles.bodySmall
+                        .copyWith(color: KolabingColors.onSurfaceVariant)),
+                if (onTap != null) ...[
+                  const SizedBox(width: KolabingSpacing.xs),
+                  const Icon(LucideIcons.chevronRight,
+                      size: 16, color: KolabingColors.onSurfaceVariant),
+                ],
               ],
             ),
           ),
-          Text('#${tier.rank}',
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant)),
-        ],
+        ),
       ),
     );
   }
+}
+
+/// A dashed "add" affordance used under the Tiers / Members sections.
+class _AddTile extends StatelessWidget {
+  const _AddTile({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: KolabingColors.outline,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(LucideIcons.plus,
+                    size: 16, color: KolabingColors.onSurface),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(label,
+                    style: KolabingTextStyles.bodyMedium
+                        .copyWith(fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+        ),
+      );
 }
 
 class _MembersPreview extends ConsumerWidget {
