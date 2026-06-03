@@ -10,17 +10,26 @@ import '../providers/leaderboard_provider.dart';
 import '../widgets/leaderboard_entry_tile.dart';
 import '../widgets/leaderboard_podium.dart';
 
-/// Screen showing event or global leaderboard
+/// Screen showing an event, chapter (community), or global leaderboard.
+///
+/// Scope precedence: [eventId] → event; else [communityId] → chapter-scoped
+/// (NF-6, via `?community_id=`); else global.
 class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({
     super.key,
     this.eventId,
     this.eventName,
+    this.communityId,
+    this.communityName,
   });
 
-  /// If provided, shows event leaderboard. Otherwise shows global.
+  /// If provided, shows event leaderboard. Otherwise shows global/chapter.
   final String? eventId;
   final String? eventName;
+
+  /// If provided (and [eventId] is null), shows this community's leaderboard.
+  final String? communityId;
+  final String? communityName;
 
   @override
   ConsumerState<LeaderboardScreen> createState() => _LeaderboardScreenState();
@@ -29,17 +38,28 @@ class LeaderboardScreen extends ConsumerStatefulWidget {
 class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
-    final isGlobal = widget.eventId == null;
+    final eventId = widget.eventId;
+    final communityId = widget.communityId;
 
-    final leaderboardAsync = isGlobal
-        ? ref.watch(globalLeaderboardProvider)
-        : ref.watch(eventLeaderboardSimpleProvider(widget.eventId!));
+    final leaderboardAsync = eventId != null
+        ? ref.watch(eventLeaderboardSimpleProvider(eventId))
+        : communityId != null
+        ? ref.watch(chapterLeaderboardProvider(communityId))
+        : ref.watch(globalLeaderboardProvider);
+
+    final title = eventId != null
+        ? (widget.eventName ?? 'Leaderboard')
+        : communityId != null
+        ? (widget.communityName ?? 'Leaderboard')
+        : 'Global Leaderboard';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isGlobal ? 'Global Leaderboard' : (widget.eventName ?? 'Leaderboard'),
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          title,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -64,25 +84,23 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        if (widget.eventId == null) {
-          ref.invalidate(globalLeaderboardProvider);
-        } else {
+        if (widget.eventId != null) {
           ref.invalidate(eventLeaderboardSimpleProvider(widget.eventId!));
+        } else if (widget.communityId != null) {
+          ref.invalidate(chapterLeaderboardProvider(widget.communityId!));
+        } else {
+          ref.invalidate(globalLeaderboardProvider);
         }
       },
       color: KolabingColors.primary,
       child: CustomScrollView(
         slivers: [
           // Podium
-          SliverToBoxAdapter(
-            child: LeaderboardPodium(topThree: topThree),
-          ),
+          SliverToBoxAdapter(child: LeaderboardPodium(topThree: topThree)),
 
           // My rank section
           if (response.myRank != null)
-            SliverToBoxAdapter(
-              child: _buildMyRankCard(response.myRank!),
-            ),
+            SliverToBoxAdapter(child: _buildMyRankCard(response.myRank!)),
 
           // Rest of the list header
           if (rest.isNotEmpty)
@@ -96,29 +114,29 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 ),
                 child: Text(
                   'RANKINGS',
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.onSurfaceVariant,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ),
 
           // Rest of the leaderboard
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final entry = rest[index];
-                return LeaderboardEntryTile(
-                  entry: entry,
-                  isCurrentUser: response.myRank?.profileId == entry.profileId,
-                );
-              },
-              childCount: rest.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final entry = rest[index];
+              return LeaderboardEntryTile(
+                entry: entry,
+                isCurrentUser: response.myRank?.profileId == entry.profileId,
+              );
+            }, childCount: rest.length),
           ),
 
           // Bottom padding
-          const SliverToBoxAdapter(
-            child: SizedBox(height: KolabingSpacing.xl),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: KolabingSpacing.xl)),
         ],
       ),
     );
@@ -159,7 +177,10 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             child: Center(
               child: Text(
                 '#${myRank.rank}',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.onPrimary,
+                ),
               ),
             ),
           ),
@@ -172,13 +193,18 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               children: [
                 Text(
                   'Your Ranking',
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   myRank.displayName,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: KolabingColors.onPrimary,
+                  ),
                 ),
               ],
             ),
@@ -190,11 +216,17 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             children: [
               Text(
                 '${myRank.totalPoints}',
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.onPrimary,
+                ),
               ),
               Text(
                 'points',
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -219,12 +251,18 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               'No Rankings Yet',
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               'Be the first to earn points\nand claim the top spot!',
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -248,12 +286,17 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Failed to load leaderboard',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -262,7 +305,9 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 if (widget.eventId == null) {
                   ref.invalidate(globalLeaderboardProvider);
                 } else {
-                  ref.invalidate(eventLeaderboardSimpleProvider(widget.eventId!));
+                  ref.invalidate(
+                    eventLeaderboardSimpleProvider(widget.eventId!),
+                  );
                 }
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
