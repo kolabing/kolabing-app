@@ -175,8 +175,12 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(border: OutlineInputBorder()),
-              validator: (v) =>
-                  (int.tryParse(v ?? '') == null) ? 'Enter a number' : null,
+              validator: (v) {
+                final n = int.tryParse(v ?? '');
+                // Backend requires rank >= 1 (StoreCommunityTierRequest).
+                if (n == null || n < 1) return 'Enter a number (1 or higher)';
+                return null;
+              },
             ),
             const SizedBox(height: KolabingSpacing.lg),
             _label('Colour'),

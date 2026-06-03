@@ -158,8 +158,8 @@ class CommunityTier {
       assignmentRule:
           TierAssignmentRule.fromString(json['assignment_rule'] as String? ?? 'manual'),
       threshold: json['threshold'] as int?,
-      permissions:
-          TierPermissions.fromJson(json['permissions'] as Map<String, dynamic>?),
+      permissions: TierPermissions.fromJson(
+          (json['permissions'] as Map?)?.cast<String, dynamic>()),
       isDefault: json['is_default'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
