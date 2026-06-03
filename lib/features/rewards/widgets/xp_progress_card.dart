@@ -4,7 +4,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
-import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/xp_level.dart';
 import '../providers/wallet_provider.dart';
@@ -14,9 +13,10 @@ import '../providers/wallet_provider.dart';
 /// Shows current level, total XP, animated progress bar, and XP to next level.
 /// Tapping navigates to the full XP hub (handled by [onTap]).
 class XpProgressCard extends ConsumerWidget {
-  const XpProgressCard({super.key, this.onTap});
+  const XpProgressCard({super.key, this.onTap, this.showNavigationCta = true});
 
   final VoidCallback? onTap;
+  final bool showNavigationCta;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,12 +27,16 @@ class XpProgressCard extends ConsumerWidget {
     final progress = wallet.levelProgress;
     final xpToNext = wallet.xpToNextLevel;
 
+    const xpBg = Color(0xFFECEAF6);
+    const xpInk = Color(0xFF5E5784);
+    const xpFill = Color(0xFFB9AEE8);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.xpGreenContainer,
+          color: xpBg,
           borderRadius: KolabingRadius.borderRadiusLg,
         ),
         child: Column(
@@ -45,7 +49,11 @@ class XpProgressCard extends ConsumerWidget {
                 _LevelChip(level: level),
                 Text(
                   '${wallet.totalXp} XP',
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w800, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.displaySmall.copyWith(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                    color: xpInk,
+                  ),
                 ),
               ],
             ),
@@ -59,14 +67,11 @@ class XpProgressCard extends ConsumerWidget {
                 tween: Tween(begin: 0, end: progress),
                 duration: const Duration(milliseconds: 700),
                 curve: Curves.easeOut,
-                builder: (_, value, __) => LinearProgressIndicator(
+                builder: (_, value, _) => LinearProgressIndicator(
                   value: value,
                   minHeight: 8,
-                  backgroundColor:
-                      KolabingColors.xpGreen.withValues(alpha: 0.2),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    KolabingColors.xpGreen,
-                  ),
+                  backgroundColor: const Color(0xFF5E5784).withValues(alpha: 0.14),
+                  valueColor: const AlwaysStoppedAnimation<Color>(xpFill),
                 ),
               ),
             ),
@@ -81,20 +86,14 @@ class XpProgressCard extends ConsumerWidget {
                   level.isMaxLevel
                       ? 'Max level reached!'
                       : '$xpToNext XP to ${level.next?.title ?? ''}',
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: xpInk),
                 ),
-                if (onTap != null)
+                if (onTap != null && showNavigationCta)
                   Row(
                     children: [
                       Text(
-                        'View progress',
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
-                      ),
-                      const SizedBox(width: 2),
-                      const Icon(
-                        LucideIcons.chevronRight,
-                        size: 14,
-                        color: KolabingColors.onSurface,
+                        'View progress ›',
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: xpInk),
                       ),
                     ],
                   ),
@@ -123,21 +122,21 @@ class _LevelChip extends StatelessWidget {
           vertical: KolabingSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.xpGreen.withValues(alpha: 0.15),
+          color: Colors.white,
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               LucideIcons.shield,
               size: 12,
-              color: KolabingColors.xpGreenOnContainer,
+              color: Color(0xFF5E5784),
             ),
             const SizedBox(width: 4),
             Text(
               'LVL ${level.number} · ${level.title}',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: KolabingColors.xpGreenOnContainer, letterSpacing: 0.3),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF5E5784), letterSpacing: 0.3),
             ),
           ],
         ),
