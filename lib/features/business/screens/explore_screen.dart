@@ -162,20 +162,22 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         bottom: false,
         child: Column(
           children: [
+            _buildHeader(),
+            const SizedBox(height: 6),
             _buildTopBar(filters, listState),
-            const SizedBox(height: KolabingSpacing.xs),
+            const SizedBox(height: 6),
             _FeedToggle(
               feed: filters.feed,
               onChanged: (DiscoveryFeed value) =>
                   ref.read(discoveryFiltersProvider.notifier).setFeed(value),
             ),
-            const SizedBox(height: KolabingSpacing.sm),
+            const SizedBox(height: KolabingSpacing.xs),
             DiscoveryQuickFilters(
               filters: filters,
               isCommunityViewer: _isCommunityViewer,
               onOpenFilters: _openFilterSheet,
             ),
-            const SizedBox(height: KolabingSpacing.sm),
+            const SizedBox(height: KolabingSpacing.xs),
             Expanded(
               child: listState.isLoading
                   ? _buildLoadingState()
@@ -194,64 +196,91 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
-  Widget _buildTopBar(DiscoveryFilters filters, DiscoveryListState listState) {
-    final filterLabel = _buildFilterLabel(filters, listState.total);
-    final hasFilters = filters.hasActiveFilters;
+  Widget _buildHeader() {
+    final photoUrl = ref.watch(authProvider).user?.profilePhotoUrl;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         KolabingSpacing.md,
         KolabingSpacing.xs,
-        KolabingSpacing.xs,
-        KolabingSpacing.xs,
+        KolabingSpacing.md,
+        0,
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: GestureDetector(
-              onTap: _openFilterSheet,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: KolabingColors.surface,
-                  borderRadius: BorderRadius.circular(KolabingRadius.round),
-                  border: Border.all(
-                    color: hasFilters
-                        ? KolabingColors.primary
-                        : KolabingColors.darkBorder,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      hasFilters ? LucideIcons.filterX : LucideIcons.search,
-                      size: 16,
-                      color: hasFilters
-                          ? KolabingColors.primary
-                          : KolabingColors.textTertiary,
-                    ),
-                    const SizedBox(width: KolabingSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        filterLabel,
-                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: hasFilters
-                              ? KolabingColors.onSurface
-                              : KolabingColors.textTertiary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
+            child: Text(
+              'EXPLORE',
+              style: KolabingTextStyles.headlineLarge.copyWith(
+                color: KolabingColors.onSurface,
+                letterSpacing: 1.0,
               ),
             ),
           ),
-          const SizedBox(width: KolabingSpacing.xs),
           const NotificationBell(),
+          const SizedBox(width: KolabingSpacing.xs),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFEAE3D4), width: 1.5),
+              color: KolabingColors.surfaceContainerLow,
+            ),
+            child: ClipOval(
+              child: photoUrl != null && photoUrl.isNotEmpty
+                  ? Image.network(photoUrl, fit: BoxFit.cover)
+                  : const Icon(LucideIcons.user, size: 20, color: KolabingColors.onSurfaceVariant),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTopBar(DiscoveryFilters filters, DiscoveryListState listState) {
+    final filterLabel = _buildFilterLabel(filters, listState.total);
+    final hasFilters = filters.hasActiveFilters;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+      child: GestureDetector(
+        onTap: _openFilterSheet,
+        child: Container(
+          height: 44,
+          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4EFE3),
+            borderRadius: BorderRadius.circular(KolabingRadius.round),
+            border: Border.all(color: const Color(0xFFE3DCCB)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                hasFilters ? LucideIcons.filterX : LucideIcons.search,
+                size: 16,
+                color: hasFilters
+                    ? KolabingColors.primary
+                    : KolabingColors.textTertiary,
+              ),
+              const SizedBox(width: KolabingSpacing.xs),
+              Expanded(
+                child: Text(
+                  filterLabel,
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: hasFilters
+                        ? KolabingColors.onSurface
+                        : KolabingColors.textTertiary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -466,7 +495,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? 'No recommended matches yet'
                   : 'No opportunities yet',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -522,7 +551,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Something went wrong',
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
@@ -558,7 +587,7 @@ class _FeedToggle extends StatelessWidget {
       decoration: BoxDecoration(
         color: KolabingColors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: const Color(0xFFEAE3D4)),
       ),
       child: Row(
         children: [
@@ -598,7 +627,7 @@ class _FeedSegment extends StatelessWidget {
     onTap: onTap,
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: isSelected ? KolabingColors.primary : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
@@ -607,7 +636,7 @@ class _FeedSegment extends StatelessWidget {
       child: Text(
         label,
         style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: isSelected
-              ? KolabingColors.onPrimary
+              ? const Color(0xFF5C4A12)
               : KolabingColors.onSurfaceVariant),
       ),
     ),
