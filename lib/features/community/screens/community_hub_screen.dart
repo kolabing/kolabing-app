@@ -10,6 +10,7 @@ import '../models/community_member.dart';
 import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
 import 'create_community_screen.dart';
+import 'roster_screen.dart';
 import 'tier_editor_screen.dart';
 
 /// The Community Leader's "Community" tab.
@@ -394,6 +395,14 @@ class _MembersPreview extends ConsumerWidget {
 
   final String communityId;
 
+  Future<void> _openRoster(BuildContext context, WidgetRef ref) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+          builder: (_) => RosterScreen(communityId: communityId)),
+    );
+    ref.invalidate(communityMembersProvider(communityId));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(communityMembersProvider(communityId));
@@ -402,22 +411,31 @@ class _MembersPreview extends ConsumerWidget {
       error: (e, _) => _InlineError(message: e.toString()),
       data: (members) {
         if (members.isEmpty) {
-          return _InlineHint(
-            icon: LucideIcons.userPlus,
-            text: 'No members yet. Invite people or share your join link.',
+          return Column(
+            children: [
+              _InlineHint(
+                icon: LucideIcons.userPlus,
+                text: 'No members yet. Invite people or share your join link.',
+              ),
+              const SizedBox(height: KolabingSpacing.sm),
+              _AddTile(
+                label: 'Manage members',
+                onTap: () => _openRoster(context, ref),
+              ),
+            ],
           );
         }
         final preview = members.take(5).toList();
         return Column(
           children: [
             for (final m in preview) _MemberRow(member: m),
-            if (members.length > preview.length)
-              Padding(
-                padding: const EdgeInsets.only(top: KolabingSpacing.xs),
-                child: Text('+ ${members.length - preview.length} more',
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant)),
-              ),
+            const SizedBox(height: KolabingSpacing.xs),
+            _AddTile(
+              label: members.length > preview.length
+                  ? 'Manage all ${members.length} members'
+                  : 'Manage members',
+              onTap: () => _openRoster(context, ref),
+            ),
           ],
         );
       },
