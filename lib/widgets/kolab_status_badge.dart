@@ -17,7 +17,7 @@ class KolabStatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.sm,
-        vertical: 3,
+        vertical: KolabingSpacing.xxxs,
       ),
       decoration: BoxDecoration(
         color: bg,
@@ -28,7 +28,6 @@ class KolabStatusBadge extends StatelessWidget {
         style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w700,
           color: fg,
-          letterSpacing: 0.4,
         ),
       ),
     );
