@@ -74,7 +74,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         ),
         title: Text(
           'NEW KOLAB',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.eyebrow.copyWith(color: KolabingColors.onSurface),
         ),
         centerTitle: true,
       ),
@@ -106,7 +106,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       isCommunity
                           ? 'What would you like to do?'
                           : 'What would you like to promote?',
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
@@ -175,7 +175,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       Text(
                         profileState.error ?? 'Unable to load your profile',
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
@@ -228,7 +228,7 @@ class _LockedBusinessCreateState extends StatelessWidget {
         Text(
           'An active subscription is required to create Kolabs.',
           textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(

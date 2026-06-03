@@ -121,7 +121,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
           ),
           title: Text(
             _getTitle(intentType),
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
+            style: KolabingTextStyles.eyebrow.copyWith(color: KolabingColors.onSurface),
           ),
           centerTitle: true,
         ),
@@ -305,7 +305,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               wasPublished ? 'Kolab Published!' : 'Draft Saved!',
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(

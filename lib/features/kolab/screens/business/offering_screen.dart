@@ -372,7 +372,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'Add an extra term',
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(

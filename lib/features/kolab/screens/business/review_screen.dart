@@ -320,7 +320,7 @@ class _PreviewCard extends StatelessWidget {
                   headline.isNotEmpty ? headline : 'Untitled kolab',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.2),
+                  style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface, height: 1.2),
                 ),
 
                 if (subhead.isNotEmpty) ...[
