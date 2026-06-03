@@ -171,8 +171,8 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
           // Title
           Text(
             'How was the Kolab? ⭐',
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontWeight: FontWeight.w700,
+            style: KolabingTextStyles.headlineMedium.copyWith(
+              fontSize: 20,
               color: KolabingColors.onSurface,
             ),
           ),

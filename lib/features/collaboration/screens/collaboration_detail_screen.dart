@@ -911,7 +911,6 @@ class _TimelineSection extends StatelessWidget {
               Text(
                 'PROCESS',
                 style: KolabingTextStyles.eyebrow.copyWith(
-                  fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
                 ),
@@ -1093,7 +1092,6 @@ class _ChallengesSection extends ConsumerWidget {
               Text(
                 'GAMIFICATION SETUP',
                 style: KolabingTextStyles.eyebrow.copyWith(
-                  fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
                 ),
@@ -1440,7 +1438,6 @@ class _QRCodeSection extends StatelessWidget {
               Text(
                 'QR CODE CHECK-IN',
                 style: KolabingTextStyles.eyebrow.copyWith(
-                  fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
                 ),
@@ -1602,7 +1599,6 @@ class _SectionCard extends StatelessWidget {
               Text(
                 title,
                 style: KolabingTextStyles.eyebrow.copyWith(
-                  fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
                   letterSpacing: 0.5,
                 ),
