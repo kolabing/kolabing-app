@@ -75,7 +75,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     'Choose from your profile events',
-                    style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(

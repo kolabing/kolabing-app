@@ -191,7 +191,7 @@ class _SentApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 'No Applications Yet',
-                style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: isDark
+                style: KolabingTextStyles.titleMedium.copyWith(color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.onSurface),
               ),
@@ -289,7 +289,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 'No Received Applications',
-                style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: isDark
+                style: KolabingTextStyles.titleMedium.copyWith(color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.onSurface),
               ),
@@ -342,7 +342,7 @@ Widget _buildErrorState(String error, bool isDark) => Center(
             const SizedBox(height: KolabingSpacing.md),
             Text(
               'Something went wrong',
-              style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: isDark
+              style: KolabingTextStyles.titleMedium.copyWith(color: isDark
                     ? KolabingColors.textOnDark
                     : KolabingColors.onSurface),
             ),

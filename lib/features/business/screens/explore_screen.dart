@@ -495,7 +495,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? 'No recommended matches yet'
                   : 'No opportunities yet',
-              style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -551,7 +551,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Something went wrong',
-            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(

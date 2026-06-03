@@ -1051,7 +1051,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'Account Not Found',
-            style: KolabingTextStyles.headlineMedium.copyWith(
+            style: KolabingTextStyles.titleLarge.copyWith(
               color: KolabingColors.onSurface,
             ),
             textAlign: TextAlign.center,

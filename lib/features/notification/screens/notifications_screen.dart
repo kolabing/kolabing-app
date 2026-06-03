@@ -58,7 +58,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         surfaceTintColor: Colors.transparent,
         title: Text(
           'Notifications',
-          style: KolabingTextStyles.headlineMedium.copyWith(
+          style: KolabingTextStyles.titleLarge.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),

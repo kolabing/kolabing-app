@@ -612,7 +612,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           // Name
           Text(
             name,
-            style: KolabingTextStyles.headlineMedium.copyWith(
+            style: KolabingTextStyles.titleLarge.copyWith(
               color: isDark
                   ? KolabingColors.textOnDark
                   : KolabingColors.onSurface,

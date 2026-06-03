@@ -326,8 +326,7 @@ class _StepConfirm extends StatelessWidget {
       children: [
         Text(
           'Did the Kolab happen? 🎯',
-          style: KolabingTextStyles.headlineMedium.copyWith(
-            fontSize: 22,
+          style: KolabingTextStyles.titleMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
@@ -412,8 +411,7 @@ class _StepFeedback extends StatelessWidget {
       children: [
         Text(
           'How was the Kolab? ⭐',
-          style: KolabingTextStyles.headlineMedium.copyWith(
-            fontSize: 22,
+          style: KolabingTextStyles.titleMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
@@ -603,7 +601,7 @@ class _StepCelebration extends StatelessWidget {
             children: [
               Text(
                 'Kolab completed! 🎉',
-                style: KolabingTextStyles.headlineMedium.copyWith(
+                style: KolabingTextStyles.titleMedium.copyWith(
                   color: KolabingColors.onSurface,
                 ),
                 textAlign: TextAlign.center,
@@ -675,7 +673,7 @@ class _StepDone extends StatelessWidget {
         const SizedBox(height: 24),
         Text(
           'All done! 🏆',
-          style: KolabingTextStyles.headlineMedium.copyWith(
+          style: KolabingTextStyles.titleMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
           textAlign: TextAlign.center,

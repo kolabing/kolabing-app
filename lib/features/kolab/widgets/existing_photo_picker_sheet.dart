@@ -104,7 +104,7 @@ class _ExistingPhotoPickerSheetState
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     widget.title,
-                    style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(

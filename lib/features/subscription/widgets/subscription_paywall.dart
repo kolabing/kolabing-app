@@ -257,7 +257,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               // Title
               Text(
                 'Upgrade to Premium',
-                style: KolabingTextStyles.headlineMedium.copyWith(
+                style: KolabingTextStyles.titleLarge.copyWith(
                   color: KolabingColors.onSurface,
                 ),
               ),

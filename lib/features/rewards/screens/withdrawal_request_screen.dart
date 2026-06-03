@@ -150,7 +150,7 @@ class _WithdrawalRequestScreenState
         const SizedBox(height: KolabingSpacing.lg),
         Text(
           'Request Submitted',
-          style: KolabingTextStyles.headlineMedium.copyWith(
+          style: KolabingTextStyles.titleLarge.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),

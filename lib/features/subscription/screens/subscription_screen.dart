@@ -295,7 +295,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       appBar: AppBar(
         title: Text(
           'Subscription',
-          style: KolabingTextStyles.headlineMedium.copyWith(
+          style: KolabingTextStyles.titleLarge.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
@@ -467,7 +467,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             title,
-            style: KolabingTextStyles.headlineMedium.copyWith(
+            style: KolabingTextStyles.titleLarge.copyWith(
               color: KolabingColors.onSurface,
             ),
           ),

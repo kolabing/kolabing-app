@@ -98,7 +98,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         elevation: 0,
         title: Text(
           title,
-          style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
         ),
       ),
       body: _buildBody(),

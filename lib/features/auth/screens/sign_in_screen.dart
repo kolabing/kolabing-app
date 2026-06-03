@@ -90,7 +90,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: KolabingColors.surface,
+        systemNavigationBarColor: Colors.black,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -249,7 +249,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: Colors.black,
       body: AnimatedBuilder(
         animation: _exitController,
         builder: (context, child) =>
@@ -382,7 +382,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
         children: [
           Text(
             'Account Type Mismatch',
-            style: KolabingTextStyles.headlineMedium.copyWith(
+            style: KolabingTextStyles.titleLarge.copyWith(
               color: KolabingColors.textOnDark,
             ),
             textAlign: TextAlign.center,

@@ -73,7 +73,7 @@ class ReviewScreen extends ConsumerWidget {
                     children: [
                       Text(
                         kolab.title.isEmpty ? 'Untitled Kolab' : kolab.title,
-                        style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(

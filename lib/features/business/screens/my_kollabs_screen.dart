@@ -404,7 +404,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'No kolabs yet',
-            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: isDark
+            style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: isDark
                   ? KolabingColors.textOnDark
                   : KolabingColors.onSurface),
           ),
@@ -453,7 +453,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             'Something went wrong',
-            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: isDark
+            style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: isDark
                   ? KolabingColors.textOnDark
                   : KolabingColors.onSurface),
           ),

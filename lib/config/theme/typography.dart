@@ -171,20 +171,18 @@ abstract final class KolabingTextStyles {
         height: 1.1,
       );
 
-  /// @deprecated Use [labelLarge]
+  /// Mixed-case heading — Inter 24px Bold. Use when text is NOT uppercase.
   static TextStyle get titleLarge => GoogleFonts.inter(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.01,
-        height: 1.4,
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        height: 32 / 24,
       );
 
-  /// @deprecated Use [bodyMedium] with w600
+  /// Mixed-case heading — Inter 20px Bold. Use when text is NOT uppercase.
   static TextStyle get titleMedium => GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.008,
-        height: 1.4,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        height: 28 / 20,
       );
 
   /// @deprecated Use [labelLarge]

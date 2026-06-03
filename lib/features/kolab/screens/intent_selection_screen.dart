@@ -106,7 +106,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       isCommunity
                           ? 'What would you like to do?'
                           : 'What would you like to promote?',
-                      style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.titleLarge.copyWith(color: KolabingColors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
@@ -175,7 +175,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       Text(
                         profileState.error ?? 'Unable to load your profile',
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 20, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.titleMedium.copyWith(color: KolabingColors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
@@ -228,7 +228,7 @@ class _LockedBusinessCreateState extends StatelessWidget {
         Text(
           'An active subscription is required to create Kolabs.',
           textAlign: TextAlign.center,
-          style: KolabingTextStyles.headlineMedium.copyWith(color: KolabingColors.onSurface),
+          style: KolabingTextStyles.titleMedium.copyWith(color: KolabingColors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(

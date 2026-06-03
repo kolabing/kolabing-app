@@ -192,7 +192,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   // Event Name
                   Text(
                     event.name,
-                    style: KolabingTextStyles.headlineMedium.copyWith(
+                    style: KolabingTextStyles.titleLarge.copyWith(
                       color: KolabingColors.onSurface,
                     ),
                   ),

@@ -361,7 +361,7 @@ class _CommunityOfferDetailScreenState
         // Title
         Text(
           opportunity.title,
-          style: KolabingTextStyles.headlineMedium.copyWith(
+          style: KolabingTextStyles.titleLarge.copyWith(
             color: KolabingColors.onSurface,
             height: 1.3,
           ),
@@ -959,7 +959,7 @@ class _CommunityOfferDetailScreenState
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               'Opportunity Not Found',
-              style: KolabingTextStyles.headlineMedium.copyWith(
+              style: KolabingTextStyles.titleMedium.copyWith(
                 fontSize: 18,
                 color: KolabingColors.onSurface,
               ),
@@ -1072,7 +1072,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
             children: [
               Text(
                 'Past events from this community',
-                style: KolabingTextStyles.headlineMedium.copyWith(
+                style: KolabingTextStyles.titleMedium.copyWith(
                   fontSize: 18,
                   color: KolabingColors.onSurface,
                 ),

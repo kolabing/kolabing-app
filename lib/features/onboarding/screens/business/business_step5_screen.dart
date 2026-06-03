@@ -433,7 +433,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 18),
                           Text(
                             'Importing your business info from Google',
-                            style: KolabingTextStyles.headlineMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.titleMedium.copyWith(fontSize: 18, color: KolabingColors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                         ],
