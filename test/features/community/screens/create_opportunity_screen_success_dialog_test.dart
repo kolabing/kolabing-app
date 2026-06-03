@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:kolabing_app/features/community/widgets/opportunity_publish_success_dialog.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
@@ -9,6 +10,8 @@ void main() {
     Opportunity? opportunity,
     VoidCallback? onShare,
   }) => MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
       body: OpportunityPublishSuccessDialog(
         isDraft: isDraft,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/config/routes/routes.dart';
 import 'package:kolabing_app/features/application/providers/application_provider.dart';
@@ -73,7 +74,11 @@ void main() {
             totalUnreadCountProvider.overrideWith((ref) => 0),
             unreadNotificationCountProvider.overrideWith((ref) => 0),
           ],
-          child: MaterialApp.router(routerConfig: kolabingRouter),
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: kolabingRouter,
+          ),
         ),
       );
 

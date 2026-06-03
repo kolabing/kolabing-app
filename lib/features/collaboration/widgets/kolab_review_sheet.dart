@@ -9,7 +9,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
-import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/services/auth_service.dart';
 
 /// Lightweight post-completion review sheet.
@@ -138,6 +138,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final bottomPadding = MediaQuery.viewInsetsOf(context).bottom;
 
     return Container(
@@ -170,7 +171,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
 
           // Title
           Text(
-            'How was the Kolab? ⭐',
+            l10n.kolabReviewSheetTitle,
             style: KolabingTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
               color: KolabingColors.onSurface,
@@ -178,7 +179,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Your review helps ${widget.partnerName} build trust on Kolabing.',
+            l10n.kolabReviewSheetSubtitle(widget.partnerName),
             style: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
@@ -200,7 +201,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             maxLines: 3,
             maxLength: 300,
             decoration: InputDecoration(
-              hintText: 'Anything to add? (optional)',
+              hintText: l10n.kolabReviewSheetCommentHint,
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                 color: KolabingColors.textTertiary,
               ),
@@ -272,7 +273,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
                       ),
                     )
                   : Text(
-                      'Submit +10 XP ✨',
+                      l10n.kolabReviewSheetSubmitXp,
                       style: KolabingTextStyles.button,
                     ),
             ),
@@ -284,7 +285,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
-              'Skip for now',
+              l10n.kolabReviewSheetSkip,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 color: KolabingColors.textTertiary,
               ),
@@ -343,23 +344,24 @@ class _WouldCollabRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Text(
-          'Would you Kolab again?',
+          l10n.kolabReviewSheetWouldAgain,
           style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
         const Spacer(),
         _ToggleChip(
-          label: 'Yes',
+          label: l10n.kolabReviewSheetYes,
           selected: value == true,
           onTap: () => onChanged(value == true ? null : true),
         ),
         const SizedBox(width: KolabingSpacing.xs),
         _ToggleChip(
-          label: 'No',
+          label: l10n.kolabReviewSheetNo,
           selected: value == false,
           onTap: () => onChanged(value == false ? null : false),
         ),

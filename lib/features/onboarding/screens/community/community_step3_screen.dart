@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
@@ -54,8 +55,10 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     final data = ref.read(onboardingProvider);
     if (data?.cityId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a city'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).communityStep3CityRequired,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -71,6 +74,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
     final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
     final canContinue = data?.cityId != null;
@@ -99,7 +103,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
                         // Title
                         Text(
-                          'WHERE ARE YOU LOCATED?',
+                          l10n.communityStep3Title,
                           style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                           textAlign: TextAlign.center,
                         ),
@@ -107,7 +111,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
                         // Subtitle
                         Text(
-                          'Find opportunities in your area',
+                          l10n.communityStep3Subtitle,
                           style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
@@ -123,7 +127,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           },
                           style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
                           decoration: InputDecoration(
-                            hintText: 'Search cities...',
+                            hintText: l10n.communityStep3SearchHint,
                             hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
                             prefixIcon: const Icon(
                               LucideIcons.search,
@@ -164,7 +168,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Popular Cities:',
+                              l10n.communityStep3PopularCities,
                               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
                             ),
                           ),
@@ -181,7 +185,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         if (cities.isEmpty) {
                           return Center(
                             child: Text(
-                              'No cities found',
+                              l10n.communityStep3NoCitiesFound,
                               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                           );
@@ -218,13 +222,13 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Failed to load cities',
+                              l10n.communityStep3LoadError,
                               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
                               onPressed: () => ref.invalidate(citiesProvider),
-                              child: const Text('Retry'),
+                              child: Text(l10n.commonRetry),
                             ),
                           ],
                         ),
@@ -256,7 +260,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'CONTINUE',
+                    l10n.commonContinue,
                     style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                   ),
                 ),

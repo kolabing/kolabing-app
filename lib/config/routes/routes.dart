@@ -41,6 +41,7 @@ import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/rewards/screens/referral_screen.dart';
 import '../../features/rewards/screens/wallet_screen.dart';
 import '../../features/rewards/screens/withdrawal_request_screen.dart';
+import '../../features/settings/screens/language_selector_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
 import '../../services/notification_service.dart';
 import '../../services/one_signal_service.dart';
@@ -210,6 +211,9 @@ abstract final class KolabingRoutes {
 
   /// Notifications screen
   static const String notifications = '/notifications';
+
+  /// Language selection (app localization: en, es, ca)
+  static const String language = '/settings/language';
 
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
@@ -693,6 +697,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'notifications',
       builder: (BuildContext context, GoRouterState state) =>
           const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.language,
+      name: 'language',
+      builder: (BuildContext context, GoRouterState state) =>
+          const LanguageSelectorScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.publicProfileReviews,

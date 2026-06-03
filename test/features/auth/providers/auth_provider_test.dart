@@ -96,48 +96,49 @@ void main() {
       expect(opportunityFilters.creatorType, isNull);
       expect(opportunityFilters.hasActiveFilters, isFalse);
 
-      expect(container.read(myKolabsStatusProvider), isNull);
-      expect(container.read(myOpportunitiesStatusProvider), isNull);
+      // After a session reset these user-scoped filters are invalidated and
+      // rebuild to their intended default ('published'), not null.
+      expect(container.read(myKolabsStatusProvider), 'published');
+      expect(container.read(myOpportunitiesStatusProvider), 'published');
     },
   );
 
-  test(
-    'signInWithEmail succeeds while dashboardProvider is mounted',
-    () async {
-      final authService = _SuccessfulLoginAuthService();
-      final container = ProviderContainer(
-        overrides: [
-          authServiceProvider.overrideWith((ref) => authService),
-          dashboardServiceProvider.overrideWith(
-            (ref) => _FakeDashboardService(),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
+  test('signInWithEmail succeeds while dashboardProvider is mounted', () async {
+    final authService = _SuccessfulLoginAuthService();
+    final container = ProviderContainer(
+      overrides: [
+        authServiceProvider.overrideWith((ref) => authService),
+        dashboardServiceProvider.overrideWith((ref) => _FakeDashboardService()),
+      ],
+    );
+    addTearDown(container.dispose);
 
-      container.read(dashboardProvider);
-      await Future<void>.delayed(Duration.zero);
+    container.read(dashboardProvider);
+    await Future<void>.delayed(Duration.zero);
 
-      final result = await container.read(authProvider.notifier).signInWithEmail(
-        email: 'business@example.com',
-        password: 'Password123',
-      );
-      await Future<void>.delayed(Duration.zero);
+    final result = await container
+        .read(authProvider.notifier)
+        .signInWithEmail(
+          email: 'business@example.com',
+          password: 'Password123',
+        );
+    await Future<void>.delayed(Duration.zero);
 
-      expect(result.success, isTrue);
-      expect(result.errorMessage, isNull);
+    expect(result.success, isTrue);
+    expect(result.errorMessage, isNull);
 
-      final authState = container.read(authProvider);
-      expect(authState.status, AuthStatus.authenticated);
-      expect(authState.user?.id, 'business-1');
-      expect(authState.token, 'token-123');
-    },
-  );
+    final authState = container.read(authProvider);
+    expect(authState.status, AuthStatus.authenticated);
+    expect(authState.user?.id, 'business-1');
+    expect(authState.token, 'token-123');
+  });
 
   test('explicit logout invalidates user-scoped filter state', () async {
     final container = ProviderContainer(
       overrides: [
-        authServiceProvider.overrideWith((ref) => _SuccessfulLoginAuthService()),
+        authServiceProvider.overrideWith(
+          (ref) => _SuccessfulLoginAuthService(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -166,8 +167,9 @@ void main() {
     expect(container.read(authProvider).status, AuthStatus.unauthenticated);
     expect(container.read(discoveryFiltersProvider).searchQuery, isEmpty);
     expect(container.read(opportunityFiltersProvider).searchQuery, isEmpty);
-    expect(container.read(myKolabsStatusProvider), isNull);
-    expect(container.read(myOpportunitiesStatusProvider), isNull);
+    // Invalidated user-scoped filters rebuild to their default ('published').
+    expect(container.read(myKolabsStatusProvider), 'published');
+    expect(container.read(myOpportunitiesStatusProvider), 'published');
   });
 }
 
@@ -177,19 +179,19 @@ class _SuccessfulLoginAuthService extends AuthService {
     required String email,
     required String password,
   }) async => const AuthResponse(
-      success: true,
-      message: 'Login successful',
-      token: 'token-123',
-      refreshToken: 'refresh-123',
-      tokenType: 'Bearer',
-      isNewUser: false,
-      user: UserModel(
-        id: 'business-1',
-        email: 'business@example.com',
-        userType: UserType.business,
-        businessProfile: BusinessProfile(id: 'bp-1', name: 'Venue Works'),
-      ),
-    );
+    success: true,
+    message: 'Login successful',
+    token: 'token-123',
+    refreshToken: 'refresh-123',
+    tokenType: 'Bearer',
+    isNewUser: false,
+    user: UserModel(
+      id: 'business-1',
+      email: 'business@example.com',
+      userType: UserType.business,
+      businessProfile: BusinessProfile(id: 'bp-1', name: 'Venue Works'),
+    ),
+  );
 
   @override
   Future<void> logout() => Future<void>.value();
@@ -198,8 +200,8 @@ class _SuccessfulLoginAuthService extends AuthService {
 class _FakeDashboardService extends DashboardService {
   @override
   Future<DashboardResponse> getDashboard() async => const DashboardResponse(
-      businessDashboard: BusinessDashboard(
-        opportunities: OpportunityStats(total: 1),
-      ),
-    );
+    businessDashboard: BusinessDashboard(
+      opportunities: OpportunityStats(total: 1),
+    ),
+  );
 }

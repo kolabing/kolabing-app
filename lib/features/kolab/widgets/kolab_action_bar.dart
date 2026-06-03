@@ -5,6 +5,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Bottom action bar for the Kolab creation flow.
 ///
@@ -63,48 +64,56 @@ class KolabActionBar extends StatelessWidget {
             top: BorderSide(color: KolabingColors.darkBorder),
           ),
         ),
-        child: isLastStep ? _buildLastStepRow() : _buildNavigationRow(),
+        child: isLastStep
+            ? _buildLastStepRow(context)
+            : _buildNavigationRow(context),
       );
 
-  Widget _buildNavigationRow() => Row(
-        children: [
-          if (!isFirstStep) ...[
-            Expanded(
-              child: _OutlinedActionButton(
-                label: 'BACK',
-                onPressed: onBack,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-          ],
-          Expanded(
-            child: _PrimaryActionButton(
-              label: 'NEXT',
-              onPressed: onNext,
-            ),
-          ),
-        ],
-      );
-
-  Widget _buildLastStepRow() => Row(
-        children: [
+  Widget _buildNavigationRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        if (!isFirstStep) ...[
           Expanded(
             child: _OutlinedActionButton(
-              label: 'SAVE DRAFT',
-              onPressed: isSubmitting || isPublishing ? null : onSaveDraft,
-              isLoading: isSubmitting,
+              label: l10n.commonBack,
+              onPressed: onBack,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: _PrimaryActionButton(
-              label: 'PUBLISH',
-              onPressed: isSubmitting || isPublishing ? null : onPublish,
-              isLoading: isPublishing,
-            ),
-          ),
         ],
-      );
+        Expanded(
+          child: _PrimaryActionButton(
+            label: l10n.commonNext,
+            onPressed: onNext,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLastStepRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: _OutlinedActionButton(
+            label: l10n.kolabActionBarSaveDraft,
+            onPressed: isSubmitting || isPublishing ? null : onSaveDraft,
+            isLoading: isSubmitting,
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: _PrimaryActionButton(
+            label: l10n.kolabActionBarPublish,
+            onPressed: isSubmitting || isPublishing ? null : onPublish,
+            isLoading: isPublishing,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

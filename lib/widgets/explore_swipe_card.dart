@@ -6,6 +6,7 @@ import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
 import '../features/discovery/models/discovery_item.dart';
+import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
 
 class ExploreSwipeCard extends StatefulWidget {
@@ -239,7 +240,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         borderRadius: BorderRadius.circular(KolabingRadius.sm),
       ),
       child: Text(
-        '${match.score}% match',
+        AppLocalizations.of(context).exploreSwipeCardMatch(match.score),
         style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: KolabingColors.charcoal),
       ),
     );
@@ -346,7 +347,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildMetaRow() {
     final category = _item.primaryBadges.isNotEmpty
         ? _item.primaryBadges.first
-        : (_item.isBusinessOffer ? 'Business Offer' : 'Community Request');
+        : (_item.isBusinessOffer
+              ? AppLocalizations.of(context).exploreSwipeCardBusinessOffer
+              : AppLocalizations.of(context).exploreSwipeCardCommunityRequest);
     final city = _item.locationLabel;
     final pastEvents = _item.pastEventsCount;
 
@@ -393,7 +396,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
         if (pastEvents != null && pastEvents > 0) ...[
           const SizedBox(width: KolabingSpacing.xs),
-          Text('$pastEvents Kolabs', style: _secondaryStyle),
+          Text(
+            AppLocalizations.of(context).exploreSwipeCardKolabsCount(pastEvents),
+            style: _secondaryStyle,
+          ),
         ],
       ],
     );
@@ -432,7 +438,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       const SizedBox(width: 6),
       Expanded(
         child: Text(
-          '$pastEvents previous Kolab${pastEvents == 1 ? '' : 's'}',
+          AppLocalizations.of(context).exploreSwipeCardPreviousKolabs(pastEvents),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: _secondaryStyle,
@@ -477,7 +483,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildViewDetailsRow() => Row(
     children: [
       Text(
-        'View Details',
+        AppLocalizations.of(context).exploreSwipeCardViewDetails,
         style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.charcoal),
       ),
       const Spacer(),

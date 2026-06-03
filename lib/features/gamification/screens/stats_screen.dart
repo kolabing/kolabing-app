@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/gamification_stats.dart';
 import '../providers/stats_provider.dart';
@@ -22,7 +23,7 @@ class StatsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Stats',
+          AppLocalizations.of(context).statsScreenTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -59,15 +60,15 @@ class StatsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Points & Rank Card
-            _buildPointsCard(stats),
+            _buildPointsCard(context, stats),
             const SizedBox(height: KolabingSpacing.lg),
 
             // Stats Grid
-            _buildStatsGrid(stats),
+            _buildStatsGrid(context, stats),
             const SizedBox(height: KolabingSpacing.lg),
 
             // Detailed Stats
-            _buildDetailedStats(stats),
+            _buildDetailedStats(context, stats),
             const SizedBox(height: KolabingSpacing.lg),
 
             // Quick Actions
@@ -78,7 +79,7 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPointsCard(GamificationStats stats) {
+  Widget _buildPointsCard(BuildContext context, GamificationStats stats) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -117,7 +118,7 @@ class StatsScreen extends ConsumerWidget {
             ],
           ),
           Text(
-            'Total Points',
+            AppLocalizations.of(context).statsScreenTotalPoints,
             style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
             ),
           ),
@@ -126,7 +127,8 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsGrid(GamificationStats stats) {
+  Widget _buildStatsGrid(BuildContext context, GamificationStats stats) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
@@ -134,7 +136,7 @@ class StatsScreen extends ConsumerWidget {
             icon: LucideIcons.calendar,
             iconSlug: UiIconSlug.calendar,
             iconColor: KolabingColors.info,
-            label: 'Events',
+            label: l10n.statsScreenEvents,
             value: '${stats.totalEventsAttended}',
           ),
         ),
@@ -144,7 +146,7 @@ class StatsScreen extends ConsumerWidget {
             icon: LucideIcons.target,
             iconSlug: UiIconSlug.target,
             iconColor: KolabingColors.success,
-            label: 'Challenges',
+            label: l10n.statsScreenChallenges,
             value: '${stats.totalChallengesCompleted}',
           ),
         ),
@@ -154,7 +156,7 @@ class StatsScreen extends ConsumerWidget {
             icon: LucideIcons.award,
             iconSlug: UiIconSlug.award,
             iconColor: KolabingColors.warning,
-            label: 'Badges',
+            label: l10n.statsScreenBadges,
             value: '${stats.totalBadgesEarned}',
           ),
         ),
@@ -162,7 +164,8 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailedStats(GamificationStats stats) {
+  Widget _buildDetailedStats(BuildContext context, GamificationStats stats) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -180,14 +183,14 @@ class StatsScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'DETAILED STATS',
+            l10n.statsScreenDetailedStats,
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStatRow(
             LucideIcons.gift,
-            'Rewards Won',
+            l10n.statsScreenRewardsWon,
             '${stats.totalRewardsWon}',
             KolabingColors.primary,
             iconSlug: UiIconSlug.gift,
@@ -196,7 +199,7 @@ class StatsScreen extends ConsumerWidget {
 
           _buildStatRow(
             LucideIcons.checkCircle,
-            'Rewards Redeemed',
+            l10n.statsScreenRewardsRedeemed,
             '${stats.totalRewardsRedeemed}',
             KolabingColors.success,
           ),
@@ -204,7 +207,7 @@ class StatsScreen extends ConsumerWidget {
 
           _buildStatRow(
             LucideIcons.mapPin,
-            'Events Discovered',
+            l10n.statsScreenEventsDiscovered,
             '${stats.totalEventsDiscovered}',
             KolabingColors.info,
           ),
@@ -212,7 +215,7 @@ class StatsScreen extends ConsumerWidget {
 
           _buildStatRow(
             LucideIcons.clock,
-            'Spins Used',
+            l10n.statsScreenSpinsUsed,
             '${stats.totalSpins}',
             KolabingColors.warning,
             iconSlug: UiIconSlug.clock,
@@ -264,7 +267,7 @@ class StatsScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'QUICK ACTIONS',
+          AppLocalizations.of(context).statsScreenQuickActions,
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -274,7 +277,7 @@ class StatsScreen extends ConsumerWidget {
               child: _buildActionButton(
                 context,
                 LucideIcons.award,
-                'Badges',
+                AppLocalizations.of(context).statsScreenBadges,
                 () => context.push('/attendee/badges'),
                 iconSlug: UiIconSlug.award,
               ),
@@ -284,7 +287,7 @@ class StatsScreen extends ConsumerWidget {
               child: _buildActionButton(
                 context,
                 LucideIcons.gift,
-                'Rewards',
+                AppLocalizations.of(context).statsScreenRewards,
                 () => context.push('/attendee/rewards'),
                 iconSlug: UiIconSlug.gift,
               ),
@@ -335,7 +338,7 @@ class StatsScreen extends ConsumerWidget {
     // TODO: Implement game card sharing
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Game card sharing coming soon!'),
+        content: Text(AppLocalizations.of(context).statsScreenShareComingSoon),
         backgroundColor: KolabingColors.info,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -357,7 +360,7 @@ class StatsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load stats',
+              AppLocalizations.of(context).statsScreenFailedToLoad,
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -370,7 +373,7 @@ class StatsScreen extends ConsumerWidget {
             TextButton.icon(
               onPressed: () => ref.invalidate(myStatsProvider),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

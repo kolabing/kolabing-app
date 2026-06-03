@@ -11,6 +11,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../business/providers/profile_provider.dart';
 import '../../../profile/providers/gallery_provider.dart';
 import '../../enums/intent_type.dart';
@@ -88,7 +89,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e'), backgroundColor: KolabingColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context).mediaUploadFailed(e.toString())), backgroundColor: KolabingColors.error),
         );
       }
     } finally {
@@ -107,8 +108,10 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
     final selectedPhotos = await ExistingPhotoPickerSheet.show(
       context,
-      title: 'Select existing photos',
-      confirmLabel: maxToAdd == 1 ? 'Use photo' : 'Use photos',
+      title: AppLocalizations.of(context).mediaSelectExistingTitle,
+      confirmLabel: maxToAdd == 1
+          ? AppLocalizations.of(context).mediaUsePhoto
+          : AppLocalizations.of(context).mediaUsePhotos,
       maxSelection: maxToAdd,
       fallbackUrls: venuePhotoUrls,
     );
@@ -130,7 +133,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Those photos are already in this Kolab.',
+              AppLocalizations.of(context).mediaPhotosAlreadyAdded,
               style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
             ),
             backgroundColor: KolabingColors.onSurfaceVariant,
@@ -155,7 +158,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Added ${toAdd.length} existing photo${toAdd.length == 1 ? '' : 's'}.',
+            AppLocalizations.of(context).mediaPhotosAdded(toAdd.length),
             style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
           ),
           backgroundColor: KolabingColors.success,
@@ -172,8 +175,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     final errors = formState.fieldErrors;
     final notifier = ref.read(kolabFormProvider.notifier);
 
+    final l10n = AppLocalizations.of(context);
     final isVenue = formState.intentType == IntentType.venuePromotion;
-    final title = isVenue ? 'SHOW OFF YOUR VENUE' : 'SHOW YOUR PRODUCT';
+    final title = isVenue ? l10n.mediaTitleVenue : l10n.mediaTitleProduct;
 
     // C7: surface a "Use venue photos" CTA only on venue promotion when the
     // business profile actually has photos to reuse.
@@ -198,7 +202,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
-          "Add photos so communities can see what you're offering. (Min 1, Max 5)",
+          l10n.mediaSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -215,7 +219,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             onPressed: _isUploading ? null : _selectExistingPhotos,
             icon: const Icon(LucideIcons.imagePlus, size: 18),
             label: Text(
-              'SELECT FROM LIBRARY',
+              l10n.mediaSelectFromLibrary,
               style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
@@ -314,7 +318,7 @@ class _PhotoGrid extends StatelessWidget {
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
-                    'Add Photo',
+                    AppLocalizations.of(context).mediaAddPhoto,
                     style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                 ],
@@ -359,7 +363,7 @@ class _PhotoSlot extends StatelessWidget {
                     height: 100,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholder(),
+                        _buildPlaceholder(context),
                   )
                 : Image.network(
                     url,
@@ -367,7 +371,7 @@ class _PhotoSlot extends StatelessWidget {
                     height: 100,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholder(),
+                        _buildPlaceholder(context),
                   ),
           ),
         ),
@@ -394,14 +398,14 @@ class _PhotoSlot extends StatelessWidget {
       ],
     );
 
-  Widget _buildPlaceholder() => Center(
+  Widget _buildPlaceholder(BuildContext context) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(LucideIcons.image, size: 24, color: KolabingColors.onSurfaceVariant),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
-              'Photo ${index + 1}',
+              AppLocalizations.of(context).mediaPhotoSlot(index + 1),
               style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],

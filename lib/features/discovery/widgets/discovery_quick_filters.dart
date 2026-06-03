@@ -5,6 +5,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../kolab/enums/deliverable_type.dart';
 import '../../kolab/enums/intent_type.dart';
 import '../../kolab/enums/need_type.dart';
@@ -161,17 +162,18 @@ class DiscoveryQuickFilters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final chips = isCommunityViewer
         ? <_QuickChipData>[
             _QuickChipData(
-              label: _singleValue(filters.city, fallback: 'City'),
+              label: _singleValue(filters.city, fallback: l10n.discoveryQuickFilterCity),
               isActive: filters.city != null,
             ),
             _QuickChipData(
               label: _multiValue(
                 filters.intentTypes,
                 DiscoveryFilterPresets.intentTypeOptions,
-                fallback: 'Kolab Type',
+                fallback: l10n.discoveryQuickFilterKolabType,
               ),
               isActive: filters.intentTypes.isNotEmpty,
             ),
@@ -179,25 +181,25 @@ class DiscoveryQuickFilters extends StatelessWidget {
               label: _multiValue(
                 filters.offerTypes,
                 DiscoveryFilterPresets.offerTypeOptions,
-                fallback: 'What They Offer',
+                fallback: l10n.discoveryQuickFilterWhatTheyOffer,
               ),
               isActive: filters.offerTypes.isNotEmpty,
             ),
             _QuickChipData(
-              label: _availabilityLabel(filters.availabilityMode),
+              label: _availabilityLabel(filters.availabilityMode, l10n.discoveryQuickFilterAvailability),
               isActive: filters.availabilityMode != null,
             ),
           ]
         : <_QuickChipData>[
             _QuickChipData(
-              label: _singleValue(filters.city, fallback: 'City'),
+              label: _singleValue(filters.city, fallback: l10n.discoveryQuickFilterCity),
               isActive: filters.city != null,
             ),
             _QuickChipData(
               label: _multiValue(
                 filters.needTypes,
                 DiscoveryFilterPresets.needTypeOptions,
-                fallback: 'Need',
+                fallback: l10n.discoveryQuickFilterNeed,
               ),
               isActive: filters.needTypes.isNotEmpty,
             ),
@@ -205,7 +207,7 @@ class DiscoveryQuickFilters extends StatelessWidget {
               label: _multiValue(
                 filters.communityTypes,
                 DiscoveryFilterPresets.communityTypeOptions,
-                fallback: 'Community Type',
+                fallback: l10n.discoveryQuickFilterCommunityType,
               ),
               isActive: filters.communityTypes.isNotEmpty,
             ),
@@ -215,7 +217,7 @@ class DiscoveryQuickFilters extends StatelessWidget {
                     filters.audienceSizeBand,
                     DiscoveryFilterPresets.audienceSizeBandOptions,
                   ) ??
-                  'Audience Size',
+                  l10n.discoveryQuickFilterAudienceSize,
               isActive: filters.audienceSizeBand != null,
             ),
           ];
@@ -249,8 +251,8 @@ class DiscoveryQuickFilters extends StatelessWidget {
     return '$firstLabel +${values.length - 1}';
   }
 
-  String _availabilityLabel(String? availabilityMode) {
-    if (availabilityMode == null) return 'Availability';
+  String _availabilityLabel(String? availabilityMode, String fallback) {
+    if (availabilityMode == null) return fallback;
     return AvailabilityMode.fromString(availabilityMode).displayName;
   }
 }

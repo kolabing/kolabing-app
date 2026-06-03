@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:kolabing_app/features/community/widgets/my_opportunity_card.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
@@ -14,6 +15,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: MyOpportunityCard(
             opportunity: opportunity,
@@ -43,6 +46,8 @@ void main() {
       MediaQuery(
         data: const MediaQueryData(size: Size(320, 800)),
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: SizedBox(
               width: 320,

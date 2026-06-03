@@ -6,6 +6,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../enums/product_type.dart';
 import '../../models/kolab.dart';
@@ -61,6 +62,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
     _syncControllersFromState(kolab);
 
+    final l10n = AppLocalizations.of(context);
     final citiesAsync = ref.watch(citiesProvider);
 
     return ListView(
@@ -70,17 +72,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       ),
       children: [
         // -- Section header
-        const _SectionHeader(label: 'YOUR PRODUCT OR SERVICE'),
+        _SectionHeader(label: l10n.productDetailsSectionHeader),
         const SizedBox(height: KolabingSpacing.lg),
 
         // -- Listing Title
-        const _FieldLabel(label: 'Listing Title'),
+        _FieldLabel(label: l10n.productDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
-            hint: 'e.g. Organic Cold Brew - Perfect for Community Events',
+            hint: l10n.productDetailsListingTitleHint,
             error: errors['title'],
           ),
           style: _inputTextStyle,
@@ -90,13 +92,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Product Name
-        const _FieldLabel(label: 'Product Name'),
+        _FieldLabel(label: l10n.productDetailsProductNameLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _nameController,
           maxLength: 255,
           decoration: _inputDecoration(
-            hint: 'e.g. Organic Cold Brew Coffee',
+            hint: l10n.productDetailsProductNameHint,
             error: errors['product_name'],
           ),
           style: _inputTextStyle,
@@ -106,7 +108,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Product Type
-        const _FieldLabel(label: 'Product Type'),
+        _FieldLabel(label: l10n.productDetailsProductTypeLabel),
         const SizedBox(height: KolabingSpacing.xs),
         if (errors.containsKey('product_type'))
           Padding(
@@ -168,14 +170,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Description
-        const _FieldLabel(label: 'Description'),
+        _FieldLabel(label: l10n.productDetailsDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
-            hint: 'Describe your product or service...',
+            hint: l10n.productDetailsDescriptionHint,
             error: errors['description'],
           ),
           style: _inputTextStyle,
@@ -184,10 +186,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         ),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
-        const _FieldLabel(label: 'Offer Headline'),
+        _FieldLabel(label: l10n.productDetailsOfferHeadlineLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'One short line communities will see on your card.',
+          l10n.productDetailsOfferHeadlineHelper,
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -195,7 +197,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
-            hint: 'e.g. Free with any 5+ order',
+            hint: l10n.productDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
           style: _inputTextStyle,
@@ -205,7 +207,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- City dropdown
-        const _FieldLabel(label: 'City'),
+        _FieldLabel(label: l10n.productDetailsCityLabel),
         const SizedBox(height: KolabingSpacing.xs),
         citiesAsync.when(
           data: (cities) => DropdownButtonFormField<String>(
@@ -213,7 +215,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ? kolab.preferredCity
                   : null,
               decoration: _inputDecoration(
-                hint: 'Select city',
+                hint: l10n.productDetailsSelectCityHint,
                 error: errors['preferred_city'],
               ),
               style: _inputTextStyle,
@@ -239,7 +241,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             backgroundColor: KolabingColors.darkBorder,
           ),
           error: (_, _) => Text(
-            'Failed to load cities',
+            l10n.productDetailsFailedToLoadCities,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.error),
           ),
         ),

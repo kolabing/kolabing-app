@@ -6,6 +6,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../opportunity/models/opportunity.dart';
 
 /// Card widget for My Opportunities list
@@ -33,7 +34,9 @@ class MyOpportunityCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return DecoratedBox(
     decoration: BoxDecoration(
       color: KolabingColors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
@@ -67,7 +70,9 @@ class MyOpportunityCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${opportunity.applicationsCount} app${opportunity.applicationsCount == 1 ? '' : 's'}',
+                      l10n.myOpportunityCardApplicationsCount(
+                        opportunity.applicationsCount!,
+                      ),
                       style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
                     ),
                   ],
@@ -80,7 +85,7 @@ class MyOpportunityCard extends StatelessWidget {
           Text(
             opportunity.title.isNotEmpty
                 ? opportunity.title
-                : 'Untitled Opportunity',
+                : l10n.myOpportunityCardUntitled,
             style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -92,11 +97,12 @@ class MyOpportunityCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.sm),
 
           // Action buttons
-          _buildActions(),
+          _buildActions(l10n),
         ],
       ),
     ),
   );
+  }
 
   Widget _buildInfoRow() {
     final dateFormat = DateFormat('MMM d');
@@ -117,14 +123,14 @@ class MyOpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActions() {
+  Widget _buildActions(AppLocalizations l10n) {
     final status = opportunity.status;
     final actions = <Widget>[];
 
     if (status == OpportunityStatus.published && onView != null) {
       actions.add(
         _ActionButton(
-          label: 'View',
+          label: l10n.myOpportunityCardActionView,
           icon: LucideIcons.eye,
           onTap: onView!,
           primary: true,
@@ -136,7 +142,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status.canEdit && onEdit != null) {
       actions.add(
         _ActionButton(
-          label: 'Edit',
+          label: l10n.myOpportunityCardActionEdit,
           icon: LucideIcons.edit,
           onTap: onEdit!,
           outlined: true,
@@ -148,7 +154,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status.canPublish && onPublish != null) {
       actions.add(
         _ActionButton(
-          label: 'Publish',
+          label: l10n.myOpportunityCardActionPublish,
           icon: LucideIcons.upload,
           onTap: onPublish!,
           primary: true,
@@ -159,7 +165,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status == OpportunityStatus.published && onShare != null) {
       actions.add(
         _ActionButton(
-          label: 'Share',
+          label: l10n.myOpportunityCardActionShare,
           icon: LucideIcons.share2,
           onTap: onShare!,
           outlined: true,
@@ -171,7 +177,7 @@ class MyOpportunityCard extends StatelessWidget {
     if (status.canClose && onClose != null) {
       actions.add(
         _ActionButton(
-          label: 'Close',
+          label: l10n.myOpportunityCardActionClose,
           icon: LucideIcons.xCircle,
           onTap: onClose!,
           outlined: true,
@@ -185,7 +191,7 @@ class MyOpportunityCard extends StatelessWidget {
         onDelete != null) {
       actions.add(
         _ActionButton(
-          label: 'Delete',
+          label: l10n.myOpportunityCardActionDelete,
           icon: LucideIcons.trash2,
           onTap: onDelete!,
           danger: true,

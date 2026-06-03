@@ -12,6 +12,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../utils/remote_media_url.dart';
 import '../../../event/models/event.dart';
 import '../../../event/providers/event_provider.dart';
@@ -40,6 +41,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
     final profileEventsState = ref.watch(eventsProvider);
     final kolab = formState.kolab;
     final notifier = ref.read(kolabFormProvider.notifier);
+    final l10n = AppLocalizations.of(context);
     final events = kolab.pastEvents;
     final canAdd = events.length < 5;
     final importableEvents = profileEventsState.events
@@ -58,7 +60,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
       children: [
         // -- Section header
         Text(
-          'PAST KOLABS (OPTIONAL)',
+          l10n.pastEventsStepHeader,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
@@ -68,7 +70,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
-          'Show communities what events have been hosted at your venue before.',
+          l10n.pastEventsSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(
             color: KolabingColors.onSurfaceVariant,
           ),
@@ -89,8 +91,8 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                 : const Icon(LucideIcons.calendarPlus, size: 18),
             label: Text(
               profileEventsState.isLoading
-                  ? 'Loading profile events...'
-                  : 'Select from profile',
+                  ? l10n.pastEventsLoadingProfileEvents
+                  : l10n.pastEventsSelectFromProfile,
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: KolabingColors.primary,
@@ -146,7 +148,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                   ),
                   const SizedBox(width: KolabingSpacing.xs),
                   Text(
-                    'Add a past event',
+                    l10n.pastEventsAddPastEvent,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w500,
                       color: KolabingColors.onSurfaceVariant,
@@ -168,7 +170,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('All profile events are already added.')),
+        SnackBar(content: Text(AppLocalizations.of(context).pastEventsAllAlreadyAdded)),
       );
       return;
     }
@@ -191,7 +193,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Imported ${selectedEvents.length} profile event${selectedEvents.length == 1 ? '' : 's'}.',
+          AppLocalizations.of(context).pastEventsImported(selectedEvents.length),
         ),
         backgroundColor: KolabingColors.success,
       ),
@@ -306,6 +308,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final dateFormatted = DateFormat('MMM d, yyyy').format(widget.event.date);
 
     return Container(
@@ -322,7 +325,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           Row(
             children: [
               Text(
-                'Event ${widget.index + 1}',
+                l10n.pastEventsEventNumber(widget.index + 1),
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: KolabingColors.onSurface,
@@ -343,7 +346,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
 
           // -- Event Name
           Text(
-            'Event Name',
+            l10n.pastEventsEventNameLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
@@ -352,7 +355,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _nameController,
-            decoration: _inputDecoration(hint: 'e.g. Summer Wellness Meetup'),
+            decoration: _inputDecoration(hint: l10n.pastEventsEventNameHint),
             style: _inputTextStyle,
             onChanged: (v) {
               widget.onUpdate(widget.event.copyWith(name: v));
@@ -362,7 +365,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
 
           // -- Date
           Text(
-            'Date',
+            l10n.pastEventsDateLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
@@ -398,7 +401,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
 
           // -- Partner Name
           Text(
-            'Partner Name',
+            l10n.pastEventsPartnerNameLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
@@ -407,7 +410,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _partnerController,
-            decoration: _inputDecoration(hint: 'e.g. City Runners Club'),
+            decoration: _inputDecoration(hint: l10n.pastEventsPartnerNameHint),
             style: _inputTextStyle,
             onChanged: (v) {
               widget.onUpdate(
@@ -422,7 +425,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
 
           // -- Photos (max 3 per event)
           Text(
-            'Photos (max 3)',
+            l10n.pastEventsPhotosLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
@@ -455,7 +458,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 if (context.mounted) {
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+                  ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pastEventsUploadFailed(e.toString()))));
                 }
               }
             },
@@ -469,7 +472,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
 
           // -- Videos (max 1 per event)
           Text(
-            'Recap Video (max 1)',
+            l10n.pastEventsRecapVideoLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
               color: KolabingColors.onSurface,
@@ -498,7 +501,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 if (context.mounted) {
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+                  ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pastEventsUploadFailed(e.toString()))));
                 }
               }
             },
@@ -658,7 +661,7 @@ class _EventVideoRow extends StatelessWidget {
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
                   child: Text(
-                    'Recap video',
+                    AppLocalizations.of(context).pastEventsRecapVideoChip,
                     style: KolabingTextStyles.captionSecondary.copyWith(
                       color: KolabingColors.onSurface,
                     ),

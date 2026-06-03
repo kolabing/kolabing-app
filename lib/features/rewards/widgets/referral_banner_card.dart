@@ -8,8 +8,8 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/wallet_provider.dart';
-import '../utils/referral_share.dart';
 
 /// A banner card prompting the user to reveal and share their referral code.
 ///
@@ -48,12 +48,12 @@ class ReferralBannerCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'EARN BY SHARING',
+                  AppLocalizations.of(context).referralBannerEarnBySharing,
                   style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 1.0),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
-                  'Refer 3 businesses \u2192 earn \u20AC75 cash',
+                  AppLocalizations.of(context).referralBannerTagline,
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
@@ -74,7 +74,7 @@ class ReferralBannerCard extends ConsumerWidget {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
-                    'SHARE REFERRAL CODE',
+                    AppLocalizations.of(context).referralBannerShareButton,
                     style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.0),
                   ),
                 ),
@@ -146,7 +146,7 @@ class _ReferralCodeSheet extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'YOUR REFERRAL CODE',
+            AppLocalizations.of(context).referralSheetYourCode,
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -169,7 +169,7 @@ class _ReferralCodeSheet extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'Ask businesses to use this code during signup.',
+            AppLocalizations.of(context).referralSheetInstructions,
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.onSurfaceVariant,
@@ -182,7 +182,10 @@ class _ReferralCodeSheet extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () => _copyCode(context),
               icon: const Icon(LucideIcons.copy, size: 18),
-              label: Text('COPY CODE', style: KolabingTextStyles.buttonSmall),
+              label: Text(
+                AppLocalizations.of(context).referralSheetCopyCode,
+                style: KolabingTextStyles.buttonSmall,
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KolabingColors.onSurface,
                 side: const BorderSide(color: KolabingColors.darkBorder),
@@ -200,7 +203,7 @@ class _ReferralCodeSheet extends StatelessWidget {
               onPressed: () => _shareCode(context),
               icon: const Icon(LucideIcons.share2, size: 18),
               label: Text(
-                'SHARE CODE',
+                AppLocalizations.of(context).referralSheetShareCode,
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onPrimary,
                 ),
@@ -223,15 +226,15 @@ class _ReferralCodeSheet extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: code));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Referral code copied'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).referralCodeCopied),
         backgroundColor: KolabingColors.success,
       ),
     );
   }
 
   Future<void> _shareCode(BuildContext context) async {
-    final message = buildReferralCodeShareMessage(code);
+    final message = AppLocalizations.of(context).referralShareMessage(code);
 
     final box = context.findRenderObject() as RenderBox?;
     final shareOrigin = box == null
@@ -248,8 +251,10 @@ class _ReferralCodeSheet extends StatelessWidget {
         await Clipboard.setData(ClipboardData(text: code));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Sharing is unavailable. Referral code copied.'),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context).referralSheetShareUnavailable,
+              ),
               backgroundColor: KolabingColors.onSurface,
             ),
           );
@@ -259,8 +264,10 @@ class _ReferralCodeSheet extends StatelessWidget {
       await Clipboard.setData(ClipboardData(text: code));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open share sheet. Referral code copied.'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).referralSheetShareFailed,
+            ),
             backgroundColor: KolabingColors.onSurface,
           ),
         );

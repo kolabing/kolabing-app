@@ -6,6 +6,8 @@ import 'package:kolabing_app/features/discovery/providers/discovery_provider.dar
 import 'package:kolabing_app/features/discovery/services/discovery_service.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
+import '../../../support/auth_test_helpers.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -17,6 +19,7 @@ void main() {
         overrides: [discoveryServiceProvider.overrideWith((ref) => service)],
       );
       addTearDown(container.dispose);
+      authenticateContainer(container);
 
       expect(container.read(discoveryListProvider).isLoading, isTrue);
 

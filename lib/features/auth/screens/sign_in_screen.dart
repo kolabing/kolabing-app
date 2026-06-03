@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/user_model.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
@@ -192,7 +193,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
+                AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
@@ -207,7 +208,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: _handleGoogleSignIn,
         ),
@@ -231,7 +232,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
-          label: 'Dismiss',
+          label: AppLocalizations.of(context).commonDismiss,
           textColor: KolabingColors.textOnDark,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -277,7 +278,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   animation: _titleAnimation,
                   slideUp: true,
                   child: Text(
-                    'WELCOME BACK',
+                    AppLocalizations.of(context).signInTitle,
                     style: KolabingTextStyles.displayLarge.copyWith(
                       color: KolabingColors.textOnDark,
                     ),
@@ -292,7 +293,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   animation: _subtitleAnimation,
                   slideUp: true,
                   child: Text(
-                    'Sign in to continue',
+                    AppLocalizations.of(context).signInSubtitle,
                     style: KolabingTextStyles.bodyLarge.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
@@ -308,7 +309,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   slideUp: true,
                   child: GoogleSignInButton(
                     onPressed: _handleGoogleSignIn,
-                    buttonText: 'Sign in with Google',
+                    buttonText: AppLocalizations.of(context).signInWithGoogle,
                     isLoading: _isLoading,
                     showSuccess: _showSuccess,
                     isEnabled: !_isLoading && !_showSuccess,
@@ -321,8 +322,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                 _AnimatedElement(
                   animation: _linkAnimation,
                   child: AuthLink(
-                    leadingText: "Don't have an account?",
-                    actionText: 'Sign Up',
+                    leadingText: AppLocalizations.of(context).signInNoAccount,
+                    actionText: AppLocalizations.of(context).signInSignUp,
                     onTap: _navigateToSignUp,
                     isEnabled: !_isLoading && !_showSuccess,
                   ),
@@ -381,7 +382,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Account Type Mismatch',
+            AppLocalizations.of(context).signInTypeMismatchTitle,
             style: KolabingTextStyles.headlineMedium.copyWith(
               color: KolabingColors.textOnDark,
             ),
@@ -389,7 +390,10 @@ class _UserTypeMismatchDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'This Google account is registered as a ${existingType?.label ?? 'different'} user. Please sign in from the correct screen.',
+            AppLocalizations.of(context).signInTypeMismatchMessage(
+              existingType?.label ??
+                  AppLocalizations.of(context).signInTypeMismatchDifferent,
+            ),
             style: KolabingTextStyles.bodyMedium.copyWith(
               color: const Color(0xFFCCCCCC),
               height: 1.6,
@@ -410,7 +414,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Got it',
+                AppLocalizations.of(context).commonGotIt,
                 style: KolabingTextStyles.button.copyWith(
                   color: KolabingColors.onPrimary,
                 ),

@@ -8,6 +8,8 @@ import 'package:kolabing_app/features/kolab/models/kolab.dart';
 import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
 import 'package:kolabing_app/features/kolab/services/kolab_service.dart';
 
+import '../../../support/auth_test_helpers.dart';
+
 void main() {
   group('MyKolabsNotifier pagination', () {
     test('initial load stores pagination metadata and hasMore', () async {
@@ -30,6 +32,8 @@ void main() {
         overrides: [kolabServiceProvider.overrideWith((ref) => service)],
       );
       addTearDown(container.dispose);
+      authenticateContainer(container);
+      container.read(myKolabsStatusProvider.notifier).setStatus(null);
 
       final state = await _waitForLoadedState(container);
 
@@ -72,6 +76,7 @@ void main() {
           overrides: [kolabServiceProvider.overrideWith((ref) => service)],
         );
         addTearDown(container.dispose);
+        authenticateContainer(container);
 
         container.read(myKolabsStatusProvider.notifier).setStatus('draft');
         await _waitForLoadedState(container);
@@ -122,6 +127,7 @@ void main() {
           overrides: [kolabServiceProvider.overrideWith((ref) => service)],
         );
         addTearDown(container.dispose);
+        authenticateContainer(container);
 
         container.read(myKolabsStatusProvider.notifier).setStatus('published');
         await _waitForLoadedState(container);
@@ -190,6 +196,8 @@ void main() {
         overrides: [kolabServiceProvider.overrideWith((ref) => service)],
       );
       addTearDown(container.dispose);
+      authenticateContainer(container);
+      container.read(myKolabsStatusProvider.notifier).setStatus(null);
 
       await _waitForLoadedState(container);
 
@@ -277,6 +285,8 @@ void main() {
           overrides: [kolabServiceProvider.overrideWith((ref) => service)],
         );
         addTearDown(container.dispose);
+        authenticateContainer(container);
+        container.read(myKolabsStatusProvider.notifier).setStatus(null);
 
         await _waitForLoadedState(container);
 

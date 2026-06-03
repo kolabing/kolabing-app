@@ -8,6 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/checkin_provider.dart';
 
 /// Screen displaying QR code for event check-in (organizer view)
@@ -45,7 +46,7 @@ class EventQRCodeScreen extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Event Check-in',
+          AppLocalizations.of(context).eventQrTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
         ),
         actions: [
@@ -98,7 +99,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                 ),
                 child: qrTokenAsync.when(
                   data: (token) => _buildQRCode(context, ref, token),
-                  loading: () => _buildLoadingState(),
+                  loading: () => _buildLoadingState(context),
                   error: (error, _) => _buildErrorState(
                     context,
                     ref,
@@ -126,7 +127,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                     const SizedBox(width: KolabingSpacing.sm),
                     Expanded(
                       child: Text(
-                        'Attendees can scan this QR code to check in to your event',
+                        AppLocalizations.of(context).eventQrInstructions,
                         style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                               ? KolabingColors.textOnDark
                               : KolabingColors.onSurface),
@@ -146,7 +147,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                     context.push('/attendee/events/$eventId/checkins');
                   },
                   icon: const Icon(LucideIcons.users, size: 18),
-                  label: const Text('View Check-ins'),
+                  label: Text(AppLocalizations.of(context).eventQrViewCheckins),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: KolabingColors.primary,
                     side: const BorderSide(color: KolabingColors.primary),
@@ -164,7 +165,7 @@ class EventQRCodeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
     return SizedBox(
       width: 280,
       height: 280,
@@ -175,7 +176,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             const CircularProgressIndicator(color: KolabingColors.primary),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Generating QR Code...',
+              AppLocalizations.of(context).eventQrGenerating,
               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
@@ -199,7 +200,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to generate QR code',
+              AppLocalizations.of(context).eventQrErrorTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -212,7 +213,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             TextButton.icon(
               onPressed: () => ref.invalidate(qrTokenProvider(eventId)),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),
@@ -255,7 +256,7 @@ class EventQRCodeScreen extends ConsumerWidget {
         TextButton.icon(
           onPressed: () => _copyToken(context, token),
           icon: const Icon(LucideIcons.copy, size: 16),
-          label: const Text('Copy Token'),
+          label: Text(AppLocalizations.of(context).eventQrCopyToken),
           style: TextButton.styleFrom(
             foregroundColor: KolabingColors.onSurfaceVariant,
           ),
@@ -268,7 +269,7 @@ class EventQRCodeScreen extends ConsumerWidget {
     Clipboard.setData(ClipboardData(text: token));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Token copied to clipboard'),
+        content: Text(AppLocalizations.of(context).eventQrTokenCopied),
         backgroundColor: KolabingColors.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

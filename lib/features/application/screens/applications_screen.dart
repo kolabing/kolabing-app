@@ -8,6 +8,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
@@ -60,9 +61,9 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
               : KolabingColors.textTertiary,
           labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
           unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
-          tabs: const [
-            Tab(text: 'SENT'),
-            Tab(text: 'RECEIVED'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context).applicationsTabSent),
+            Tab(text: AppLocalizations.of(context).applicationsTabReceived),
           ],
         ),
         Divider(
@@ -97,7 +98,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'APPLICATIONS',
+          AppLocalizations.of(context).applicationsTitle,
           style: KolabingTextStyles.pageTitleSmall.copyWith(
             color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
           ),
@@ -139,7 +140,7 @@ class _SentApplicationsTab extends ConsumerWidget {
     }
 
     if (state.error != null) {
-      return _buildErrorState(state.error!, isDark);
+      return _buildErrorState(context, state.error!, isDark);
     }
 
     // Requests shows only items still awaiting a decision. Accepted
@@ -150,7 +151,7 @@ class _SentApplicationsTab extends ConsumerWidget {
         .toList();
 
     if (requests.isEmpty) {
-      return _buildSentEmptyState(isDark);
+      return _buildSentEmptyState(context, isDark);
     }
 
     return ListView.separated(
@@ -169,7 +170,7 @@ class _SentApplicationsTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildSentEmptyState(bool isDark) => Center(
+  Widget _buildSentEmptyState(BuildContext context, bool isDark) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -190,14 +191,14 @@ class _SentApplicationsTab extends ConsumerWidget {
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'No Applications Yet',
+                AppLocalizations.of(context).applicationsSentEmptyTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'Start exploring opportunities and apply to kolab with businesses and communities.',
+                AppLocalizations.of(context).applicationsSentEmptyBody,
                 style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
@@ -231,7 +232,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
     }
 
     if (state.error != null) {
-      return _buildErrorState(state.error!, isDark);
+      return _buildErrorState(context, state.error!, isDark);
     }
 
     // Requests shows only items still awaiting a decision. Accepted
@@ -241,7 +242,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
         .toList();
 
     if (requests.isEmpty) {
-      return _buildReceivedEmptyState(isDark);
+      return _buildReceivedEmptyState(context, isDark);
     }
 
     return ListView.separated(
@@ -267,7 +268,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildReceivedEmptyState(bool isDark) => Center(
+  Widget _buildReceivedEmptyState(BuildContext context, bool isDark) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -288,14 +289,14 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
-                'No Received Applications',
+                AppLocalizations.of(context).applicationsReceivedEmptyTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
                       ? KolabingColors.textOnDark
                       : KolabingColors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                "When someone applies to your opportunities, they'll appear here.",
+                AppLocalizations.of(context).applicationsReceivedEmptyBody,
                 style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
@@ -328,7 +329,7 @@ Widget _buildLoadingState(bool isDark) => Shimmer.fromColors(
       ),
     );
 
-Widget _buildErrorState(String error, bool isDark) => Center(
+Widget _buildErrorState(BuildContext context, String error, bool isDark) => Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),
         child: Column(
@@ -341,7 +342,7 @@ Widget _buildErrorState(String error, bool isDark) => Center(
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Something went wrong',
+              AppLocalizations.of(context).applicationsErrorTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                     ? KolabingColors.textOnDark
                     : KolabingColors.onSurface),
@@ -422,7 +423,7 @@ class _ApplicationCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      _buildStatusBadge(),
+                      _buildStatusBadge(context),
                     ],
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
@@ -430,8 +431,8 @@ class _ApplicationCard extends StatelessWidget {
                   // Name label: "From:" for received, "To:" for sent
                   Text(
                     isReceived
-                        ? 'From: ${application.applicantName}'
-                        : 'To: ${application.recipientName}',
+                        ? AppLocalizations.of(context).applicationCardFrom(application.applicantName)
+                        : AppLocalizations.of(context).applicationCardTo(application.recipientName),
                     style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
@@ -533,27 +534,28 @@ class _ApplicationCard extends StatelessWidget {
         ),
       );
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (bgColor, textColor, label) = switch (application.status) {
       ApplicationStatus.pending => (
           KolabingColors.pendingBg,
           KolabingColors.pendingText,
-          'Pending',
+          l10n.applicationStatusPending,
         ),
       ApplicationStatus.accepted => (
           KolabingColors.activeBg,
           KolabingColors.activeText,
-          'Accepted',
+          l10n.applicationStatusAccepted,
         ),
       ApplicationStatus.declined => (
           KolabingColors.errorBg,
           KolabingColors.error,
-          'Declined',
+          l10n.applicationStatusDeclined,
         ),
       ApplicationStatus.withdrawn => (
           KolabingColors.surfaceVariant,
           KolabingColors.textTertiary,
-          'Withdrawn',
+          l10n.applicationStatusWithdrawn,
         ),
     };
 

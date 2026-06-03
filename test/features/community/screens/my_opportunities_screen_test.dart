@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
@@ -32,6 +33,8 @@ void main() {
           ),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MyOpportunitiesScreen(
             share: (_, {sharePositionOrigin}) async => ShareResult.unavailable,
             copyText: (text) async {
@@ -76,6 +79,8 @@ void main() {
           ),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MyOpportunitiesScreen(
             share: (_, {sharePositionOrigin}) async {
               throw Exception('share failed');
@@ -113,6 +118,8 @@ void main() {
           profileProvider.overrideWith(() => profileNotifier),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: MyOpportunitiesScreen(
             showSubscriptionPaywall: (_) async {
               paywallShown++;
@@ -183,7 +190,11 @@ void main() {
             ),
           ),
         ],
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
       ),
     );
 
@@ -231,7 +242,11 @@ void main() {
             ),
           ),
         ],
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
       ),
     );
 

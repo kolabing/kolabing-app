@@ -6,6 +6,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/kolab_form_provider.dart';
 
 /// Community step 1: "YOUR COMMUNITY TYPE"
@@ -71,6 +72,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
 
@@ -81,12 +83,12 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
         children: [
           // Section header
           Text(
-            'YOUR COMMUNITY TYPE',
+            l10n.communityInfoTypeHeader,
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Help businesses understand your audience. Select up to 3.',
+            l10n.communityInfoTypeSubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
           ),
 
@@ -147,7 +149,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           const SizedBox(height: KolabingSpacing.lg),
 
           // Community Size
-          _buildLabel('COMMUNITY SIZE'),
+          _buildLabel(l10n.communityInfoCommunitySizeLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _communitySizeController,
@@ -161,7 +163,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             },
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText: 'e.g., 500',
+              hintText: l10n.communityInfoCommunitySizeHint,
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,
@@ -189,7 +191,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Expected Attendees
-          _buildLabel('EXPECTED ATTENDEES'),
+          _buildLabel(l10n.communityInfoExpectedAttendeesLabel),
           const SizedBox(height: KolabingSpacing.xxs),
           TextFormField(
             controller: _attendanceController,
@@ -205,7 +207,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             },
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
             decoration: InputDecoration(
-              hintText: 'e.g., 50',
+              hintText: l10n.communityInfoExpectedAttendeesHint,
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
               filled: true,
               fillColor: KolabingColors.surface,

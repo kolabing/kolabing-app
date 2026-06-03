@@ -6,6 +6,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -140,7 +141,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     // Validate date selection
     setState(() => _availabilityError = null);
     if (_selectedDates.isEmpty) {
-      setState(() => _availabilityError = 'Please select at least one date');
+      setState(() => _availabilityError =
+          AppLocalizations.of(context).applyModalSelectDateError);
       return;
     }
 
@@ -171,22 +173,23 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         Navigator.of(context).pop(true);
       }
     } on Object catch (error) {
+      final l10n = AppLocalizations.of(context);
       setState(() {
         _isSubmitting = false;
-        _errorMessage = _parseError(error);
+        _errorMessage = _parseError(l10n, error);
       });
     }
   }
 
-  String _parseError(Object error) {
+  String _parseError(AppLocalizations l10n, Object error) {
     if (error is ApiException) {
       return error.error.allErrorMessages;
     }
     final errorString = error.toString();
     if (errorString.contains('already applied')) {
-      return 'You have already applied to this opportunity';
+      return l10n.applyModalAlreadyApplied;
     }
-    return 'Failed to submit application. Please try again.';
+    return l10n.applyModalSubmitError;
   }
 
   @override
@@ -225,7 +228,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 Padding(
                   padding: const EdgeInsets.only(left: KolabingSpacing.lg),
                   child: Text(
-                    'NEW APPLICATION',
+                    AppLocalizations.of(context).applyModalHeader,
                     style: KolabingTextStyles.labelSmall.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -312,10 +315,12 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     const SizedBox(height: KolabingSpacing.lg),
 
                     // Message field — optional, but encouraged
-                    _buildSectionTitle('Your message', optional: true),
+                    _buildSectionTitle(
+                        AppLocalizations.of(context).applyModalMessageTitle,
+                        optional: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'A short pitch helps you stand out — mention what you bring and why this fit makes sense.',
+                      AppLocalizations.of(context).applyModalMessageHelp,
                       style: KolabingTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.w400,
                         height: 1.5,
@@ -330,7 +335,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       minLines: 4,
                       decoration: _buildInputDecoration(
                         hintText:
-                            "Tell them why you're perfect for this kolab and what value you can bring...",
+                            AppLocalizations.of(context).applyModalMessageHint,
                       ),
                       style: KolabingTextStyles.bodySmall.copyWith(
                         color: KolabingColors.onSurface,
@@ -340,10 +345,12 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     const SizedBox(height: KolabingSpacing.lg),
 
                     // Availability field — date picker constrained to opportunity range
-                    _buildSectionTitle('Select Date(s)', required: true),
+                    _buildSectionTitle(
+                        AppLocalizations.of(context).applyModalSelectDatesTitle,
+                        required: true),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
-                      'Pick from the available dates for this kolab',
+                      AppLocalizations.of(context).applyModalSelectDatesHelp,
                       style: KolabingTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.w400,
                         color: KolabingColors.textTertiary,
@@ -369,7 +376,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       _buildTimeRangePicker(),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
-                        'Additional notes (optional)',
+                        AppLocalizations.of(context).applyModalNotesLabel,
                         style: KolabingTextStyles.labelMedium.copyWith(
                           fontWeight: FontWeight.w400,
                           color: KolabingColors.textTertiary,
@@ -383,7 +390,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         minLines: 1,
                         decoration: _buildInputDecoration(
                           hintText:
-                              'e.g., Flexible on timing, prefer mornings...',
+                              AppLocalizations.of(context).applyModalNotesHint,
                         ),
                         style: KolabingTextStyles.bodySmall.copyWith(
                           color: KolabingColors.onSurface,
@@ -410,7 +417,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                               )
                             : const Icon(LucideIcons.send, size: 18),
                         label: Text(
-                          _isSubmitting ? 'SENDING…' : 'SEND APPLICATION',
+                          _isSubmitting
+                              ? AppLocalizations.of(context).applyModalSending
+                              : AppLocalizations.of(context).applyModalSend,
                           style: KolabingTextStyles.button.copyWith(
                             fontSize: 15,
                             letterSpacing: 1.0,
@@ -455,7 +464,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
           ),
         ),
         child: Text(
-          'No available dates for this kolab',
+          AppLocalizations.of(context).applyModalNoDates,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 13,
             color: KolabingColors.error,
@@ -565,7 +574,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         // Start time
         Expanded(
           child: _buildTimePicker(
-            label: 'From',
+            label: AppLocalizations.of(context).applyModalTimeFrom,
             time: _startTime,
             onTap: () => _pickTime(isStart: true),
           ),
@@ -581,7 +590,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         // End time
         Expanded(
           child: _buildTimePicker(
-            label: 'To',
+            label: AppLocalizations.of(context).applyModalTimeTo,
             time: _endTime,
             onTap: () => _pickTime(isStart: false),
           ),
@@ -681,7 +690,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            'Optional',
+            AppLocalizations.of(context).applyModalOptionalBadge,
             style: KolabingTextStyles.labelSmall.copyWith(
               fontSize: 10,
               letterSpacing: 0.4,
@@ -729,10 +738,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
   Widget _buildHeroCard() {
     final creator = widget.opportunity.creatorProfile;
-    final creatorName = creator?.displayName ?? 'Unknown host';
+    final creatorName =
+        creator?.displayName ?? AppLocalizations.of(context).applyModalUnknownHost;
     final creatorTypeLabel = (creator?.userType.isNotEmpty ?? false)
         ? '${creator!.userType[0].toUpperCase()}${creator.userType.substring(1)}'
-        : 'Host';
+        : AppLocalizations.of(context).applyModalHostFallback;
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -815,7 +825,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'You are applying to',
+                      AppLocalizations.of(context).applyModalApplyingTo,
                       style: KolabingTextStyles.labelSmall.copyWith(
                         color: KolabingColors.textTertiary,
                       ),
@@ -915,7 +925,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "What's offered",
+                AppLocalizations.of(context).applyModalWhatsOffered,
                 style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
@@ -955,7 +965,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
           child: Text(
-            'Pick the dates that work for you and add a short message — applications with specifics get accepted faster.',
+            AppLocalizations.of(context).applyModalTip,
             style: KolabingTextStyles.labelMedium.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,

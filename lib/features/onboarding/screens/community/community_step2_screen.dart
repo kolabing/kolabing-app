@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/type_selection_card.dart';
@@ -44,8 +45,10 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
     final data = ref.read(onboardingProvider);
     if (data?.type == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a community type'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).communityStep2TypeRequired,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -61,6 +64,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
     final communityTypes = ref.watch(communityTypesProvider);
     final canContinue = data?.type != null;
@@ -89,7 +93,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     // Title
                     Center(
                       child: Text(
-                        'What type of community are you?',
+                        l10n.communityStep2Title,
                         style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                         textAlign: TextAlign.center,
                       ),
@@ -99,7 +103,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     // Subtitle
                     Center(
                       child: Text(
-                        'Help businesses understand your community',
+                        l10n.communityStep2Subtitle,
                         style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
@@ -146,14 +150,14 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Failed to load community types',
+                              l10n.communityStep2LoadError,
                               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
                               onPressed: () =>
                                   ref.invalidate(communityTypesProvider),
-                              child: const Text('Retry'),
+                              child: Text(l10n.commonRetry),
                             ),
                           ],
                         ),
@@ -186,7 +190,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'CONTINUE',
+                    l10n.commonContinue,
                     style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                   ),
                 ),

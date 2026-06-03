@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
@@ -81,30 +82,31 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     final totalUnread = ref.watch(totalUnreadCountProvider);
     final badgeCount = pendingApplicationsCount + totalUnread;
 
+    final l10n = AppLocalizations.of(context);
     final navItems = [
-      const NavItem(
+      NavItem(
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
-        label: 'Home',
+        label: l10n.businessNavHome,
         iconSlug: UiIconSlug.home,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
-        label: 'Explore',
+        label: l10n.businessNavExplore,
         iconSlug: UiIconSlug.compass,
       ),
       NavItem(
         icon: LucideIcons.briefcase,
         activeIcon: LucideIcons.briefcase,
-        label: 'My Kolabs',
+        label: l10n.businessNavMyKolabs,
         badgeCount: badgeCount > 0 ? badgeCount : null,
         iconSlug: UiIconSlug.briefcase,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
-        label: 'Profile',
+        label: l10n.businessNavProfile,
         iconSlug: UiIconSlug.user,
       ),
     ];
@@ -130,7 +132,7 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
               _currentIndex != 3 // Hide on profile tab
           ? KolabingFAB(
               onPressed: _onFabPressed,
-              tooltip: 'Create Kolab Request',
+              tooltip: l10n.businessMainCreateKolabTooltip,
             )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(

@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -40,7 +41,9 @@ class CollaborationDetailScreen extends ConsumerWidget {
         ),
         data: (collaboration) {
           if (collaboration == null) {
-            return const Center(child: Text('Kolab not found'));
+            return Center(
+              child: Text(AppLocalizations.of(context).collaborationDetailNotFound),
+            );
           }
           return _CollaborationContent(
             collaboration: collaboration,
@@ -386,6 +389,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
   /// Both parties may reschedule a non-terminal collaboration.
   Future<void> _editSchedule() async {
     final collaboration = widget.collaboration;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
 
     final pickedDate = await showDatePicker(
@@ -393,7 +397,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
       initialDate: collaboration.scheduledDate,
       firstDate: DateTime.now().subtract(const Duration(days: 1)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      helpText: 'Reschedule kolab',
+      helpText: l10n.collaborationDetailRescheduleHelp,
     );
     if (pickedDate == null || !mounted) return;
 
@@ -404,7 +408,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
     final pickedTime = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 10, minute: 0),
-      helpText: 'Start time (optional)',
+      helpText: l10n.collaborationDetailStartTimeHelp,
     );
     if (!mounted) return;
 
@@ -424,7 +428,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-            'Schedule updated.',
+            l10n.collaborationDetailScheduleUpdated,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.success,
@@ -437,7 +441,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-            'Could not update schedule: $e',
+            l10n.collaborationDetailScheduleUpdateError(e.toString()),
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
           ),
           backgroundColor: KolabingColors.error,
@@ -449,13 +453,14 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final collaboration = widget.collaboration;
     final canEditNow =
         widget.canEdit && collaboration.status.isActive && !_isSaving;
 
     return _SectionCard(
       icon: LucideIcons.calendar,
-      title: 'EVENT DETAILS',
+      title: l10n.collaborationDetailEventDetails,
       trailing: canEditNow
           ? _isSaving
                 ? const SizedBox(
@@ -473,7 +478,7 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
                     ),
                     icon: const Icon(LucideIcons.pencil, size: 14),
                     label: Text(
-                      'EDIT',
+                      l10n.collaborationDetailEdit,
                       style: KolabingTextStyles.labelSmall.copyWith(
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
@@ -485,14 +490,14 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
         children: [
           _InfoRow(
             icon: LucideIcons.calendarDays,
-            label: 'Date',
+            label: l10n.collaborationDetailDateLabel,
             value: collaboration.formattedDate,
           ),
           if (collaboration.scheduledTime != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             _InfoRow(
               icon: LucideIcons.clock,
-              label: 'Time',
+              label: l10n.collaborationDetailTimeLabel,
               value: collaboration.scheduledTime!,
             ),
           ],
@@ -500,17 +505,19 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
             const SizedBox(height: KolabingSpacing.sm),
             _InfoRow(
               icon: LucideIcons.mapPin,
-              label: 'Venue',
-              value: '${collaboration.businessPartner.name} (Business venue)',
+              label: l10n.collaborationDetailVenueLabel,
+              value: l10n.collaborationDetailVenueValue(
+                collaboration.businessPartner.name,
+              ),
             ),
           ],
           const SizedBox(height: KolabingSpacing.sm),
           _InfoRow(
             icon: LucideIcons.users,
-            label: 'Community Reach',
+            label: l10n.collaborationDetailCommunityReachLabel,
             value: collaboration.communityDeliverables.communityReach
-                ? 'Included'
-                : 'Not specified',
+                ? l10n.collaborationDetailReachIncluded
+                : l10n.collaborationDetailReachNotSpecified,
           ),
         ],
       ),
@@ -528,9 +535,12 @@ class _PartnerInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return _SectionCard(
       icon: LucideIcons.users2,
-      title: partner.isBusiness ? 'BUSINESS PARTNER' : 'COMMUNITY PARTNER',
+      title: partner.isBusiness
+          ? l10n.collaborationDetailBusinessPartner
+          : l10n.collaborationDetailCommunityPartner,
       child: InkWell(
         // "View business/creator profile" opens the public profile route
         // `/profile/:id`, whose `:id` MUST be a `profiles.id` (the route binds
@@ -661,24 +671,27 @@ class _OffersSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final items = <_CheckItem>[];
 
     if (businessOffer.venue) {
-      items.add(const _CheckItem('Venue provided', true));
+      items.add(_CheckItem(l10n.collaborationDetailOfferVenue, true));
     }
     if (businessOffer.foodDrink) {
-      items.add(const _CheckItem('Food & Drink included', true));
+      items.add(_CheckItem(l10n.collaborationDetailOfferFoodDrink, true));
     }
     if (businessOffer.socialMediaExposure) {
-      items.add(const _CheckItem('Social media exposure', true));
+      items.add(_CheckItem(l10n.collaborationDetailOfferSocialMedia, true));
     }
     if (businessOffer.contentCreation) {
-      items.add(const _CheckItem('Content creation support', true));
+      items.add(_CheckItem(l10n.collaborationDetailOfferContentCreation, true));
     }
     if (businessOffer.discount.enabled) {
       items.add(
         _CheckItem(
-          'Discount: ${businessOffer.discount.percentage ?? 0}%',
+          l10n.collaborationDetailOfferDiscount(
+            businessOffer.discount.percentage ?? 0,
+          ),
           true,
         ),
       );
@@ -694,7 +707,9 @@ class _OffersSection extends StatelessWidget {
 
     return _SectionCard(
       icon: LucideIcons.gift,
-      title: isBusiness ? "WHAT YOU'RE OFFERING" : "WHAT'S OFFERED",
+      title: isBusiness
+          ? l10n.collaborationDetailOffersTitleBusiness
+          : l10n.collaborationDetailOffersTitleCommunity,
       child: Column(
         children: items
             .map(
@@ -743,22 +758,23 @@ class _DeliverablesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final items = <_CheckItem>[];
 
     if (deliverables.socialMediaContent) {
-      items.add(const _CheckItem('Social Media Content', true));
+      items.add(_CheckItem(l10n.collaborationDetailDeliverableSocialContent, true));
     }
     if (deliverables.eventActivation) {
-      items.add(const _CheckItem('Event Activation', true));
+      items.add(_CheckItem(l10n.collaborationDetailDeliverableEventActivation, true));
     }
     if (deliverables.productPlacement) {
-      items.add(const _CheckItem('Product Placement', true));
+      items.add(_CheckItem(l10n.collaborationDetailDeliverableProductPlacement, true));
     }
     if (deliverables.communityReach) {
-      items.add(const _CheckItem('Community Reach', true));
+      items.add(_CheckItem(l10n.collaborationDetailDeliverableCommunityReach, true));
     }
     if (deliverables.reviewFeedback) {
-      items.add(const _CheckItem('Review & Feedback', true));
+      items.add(_CheckItem(l10n.collaborationDetailDeliverableReviewFeedback, true));
     }
     if (deliverables.other != null && deliverables.other!.isNotEmpty) {
       items.add(_CheckItem(deliverables.other!, true));
@@ -768,7 +784,9 @@ class _DeliverablesSection extends StatelessWidget {
 
     return _SectionCard(
       icon: LucideIcons.megaphone,
-      title: isBusiness ? 'EXPECTED DELIVERABLES' : "WHAT YOU'LL DELIVER",
+      title: isBusiness
+          ? l10n.collaborationDetailDeliverablesTitleBusiness
+          : l10n.collaborationDetailDeliverablesTitleCommunity,
       child: Column(
         children: items
             .map(
@@ -814,9 +832,10 @@ class _ContactSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!contact.hasAny) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context);
     return _SectionCard(
       icon: LucideIcons.contact,
-      title: 'CONTACT',
+      title: l10n.collaborationDetailContactTitle,
       child: Column(
         children: [
           if (contact.whatsapp != null && contact.whatsapp!.isNotEmpty)
@@ -830,7 +849,7 @@ class _ContactSection extends StatelessWidget {
               const SizedBox(height: KolabingSpacing.xs),
             _ContactRow(
               icon: LucideIcons.mail,
-              label: 'Email',
+              label: l10n.collaborationDetailContactEmail,
               value: contact.email!,
             ),
           ],
@@ -895,6 +914,7 @@ class _TimelineSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -909,7 +929,7 @@ class _TimelineSection extends StatelessWidget {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'PROCESS',
+                l10n.collaborationDetailProcessTitle,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
@@ -1075,6 +1095,7 @@ class _ChallengesSection extends ConsumerWidget {
     final availableAsync = ref.watch(availableChallengesProvider);
     final challenges = availableAsync.asData?.value ?? const <Challenge>[];
     final isLoadingChallenges = availableAsync.isLoading;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1091,7 +1112,7 @@ class _ChallengesSection extends ConsumerWidget {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'GAMIFICATION SETUP',
+                l10n.collaborationDetailGamificationTitle,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
@@ -1100,7 +1121,7 @@ class _ChallengesSection extends ConsumerWidget {
               ),
               const Spacer(),
               Text(
-                '${selectedIds.length} selected',
+                l10n.collaborationDetailSelectedCount(selectedIds.length),
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
                   color: KolabingColors.textTertiary,
@@ -1129,8 +1150,7 @@ class _ChallengesSection extends ConsumerWidget {
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
-                  'Select challenges for attendees to complete during the event. '
-                  'These will be available in the attendee app.',
+                  l10n.collaborationDetailGamificationDescription,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     color: KolabingColors.onSurface,
@@ -1183,7 +1203,7 @@ class _ChallengesSection extends ConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    'Custom challenge creation coming soon',
+                    l10n.collaborationDetailCustomChallengeSoon,
                     style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
                   ),
                   backgroundColor: KolabingColors.onSurfaceVariant,
@@ -1202,7 +1222,7 @@ class _ChallengesSection extends ConsumerWidget {
             ),
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
-              'ADD CUSTOM CHALLENGE',
+              l10n.collaborationDetailAddCustomChallenge,
               style: KolabingTextStyles.button.copyWith(
                 fontSize: 13,
                 letterSpacing: 0.5,
@@ -1234,7 +1254,7 @@ class _EmptyChallenges extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
-            'No challenges yet',
+            AppLocalizations.of(context).collaborationDetailNoChallengesTitle,
             style: KolabingTextStyles.bodyMedium.copyWith(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -1243,7 +1263,7 @@ class _EmptyChallenges extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Add challenges to make the event more engaging for attendees',
+            AppLocalizations.of(context).collaborationDetailNoChallengesBody,
             style: KolabingTextStyles.captionSecondary.copyWith(
               color: KolabingColors.textTertiary,
             ),
@@ -1396,7 +1416,7 @@ class _ChallengeCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'pts',
+                    AppLocalizations.of(context).collaborationDetailPoints,
                     style: KolabingTextStyles.labelSmall.copyWith(
                       fontSize: 10,
                       color: KolabingColors.textTertiary,
@@ -1424,6 +1444,7 @@ class _QRCodeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1438,7 +1459,7 @@ class _QRCodeSection extends StatelessWidget {
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'QR CODE CHECK-IN',
+                l10n.collaborationDetailQrTitle,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.textTertiary,
@@ -1479,14 +1500,14 @@ class _QRCodeSection extends StatelessWidget {
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
                     Text(
-                      'QR Code',
+                      l10n.collaborationDetailQrPlaceholder,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontWeight: FontWeight.w500,
                         color: KolabingColors.textTertiary,
                       ),
                     ),
                     Text(
-                      'Generated on event day',
+                      l10n.collaborationDetailQrGeneratedOnDay,
                       style: KolabingTextStyles.labelSmall.copyWith(
                         color: KolabingColors.textTertiary,
                       ),
@@ -1498,7 +1519,7 @@ class _QRCodeSection extends StatelessWidget {
               const SizedBox(height: KolabingSpacing.md),
 
               Text(
-                'Attendees scan this QR code at your event to check in and start completing challenges.',
+                l10n.collaborationDetailQrDescription,
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                   height: 1.4,
@@ -1522,7 +1543,7 @@ class _QRCodeSection extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'QR code will be available when the event is created',
+                            l10n.collaborationDetailQrUnavailable,
                             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
                           ),
                           backgroundColor: KolabingColors.onSurfaceVariant,
@@ -1541,7 +1562,7 @@ class _QRCodeSection extends StatelessWidget {
                   ),
                   icon: const Icon(LucideIcons.qrCode, size: 18),
                   label: Text(
-                    'VIEW QR CODE',
+                    l10n.collaborationDetailViewQr,
                     style: KolabingTextStyles.button.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -1693,6 +1714,7 @@ class _ResubscribePrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -1713,7 +1735,7 @@ class _ResubscribePrompt extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Resubscribe to continue',
+                  l10n.collaborationDetailResubscribeTitle,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: KolabingColors.onSurface,
@@ -1724,9 +1746,7 @@ class _ResubscribePrompt extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Your subscription has lapsed, so this ongoing kolab and its '
-            'chat are paused on your side. The community keeps full access. '
-            'Resubscribe to pick up where you left off.',
+            l10n.collaborationDetailResubscribeBody,
             style: KolabingTextStyles.captionSecondary.copyWith(
               color: KolabingColors.onSurfaceVariant,
               height: 1.4,
@@ -1748,7 +1768,7 @@ class _ResubscribePrompt extends StatelessWidget {
               ),
               icon: const Icon(LucideIcons.creditCard, size: 18),
               label: Text(
-                'RESUBSCRIBE',
+                l10n.collaborationDetailResubscribeCta,
                 style: KolabingTextStyles.button.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
@@ -1787,6 +1807,7 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),
@@ -1800,7 +1821,7 @@ class _ErrorState extends StatelessWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load kolab',
+              l10n.collaborationDetailLoadError,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -1811,7 +1832,7 @@ class _ErrorState extends StatelessWidget {
             TextButton(
               onPressed: onRetry,
               child: Text(
-                'Retry',
+                l10n.commonRetry,
                 style: KolabingTextStyles.labelLarge.copyWith(
                   color: KolabingColors.primary,
                 ),
@@ -1834,6 +1855,7 @@ class _TodayScheduledBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -1851,7 +1873,7 @@ class _TodayScheduledBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Today's Kolab!",
+                  l10n.collaborationDetailTodayBannerTitle,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w700,
                     color: KolabingColors.onSurface,
@@ -1859,7 +1881,7 @@ class _TodayScheduledBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "Your Kolab with $partnerName is today. Once it's active you'll be able to mark it complete.",
+                  l10n.collaborationDetailTodayBannerBody(partnerName),
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     color: KolabingColors.onSurfaceVariant,
@@ -1892,6 +1914,7 @@ class _CompleteKolabSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -1914,7 +1937,9 @@ class _CompleteKolabSection extends ConsumerWidget {
               Text(isToday ? '🎉' : '✅', style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text(
-                isToday ? "Complete today's Kolab!" : 'Kolab completed?',
+                isToday
+                    ? l10n.collaborationDetailCompleteTitleToday
+                    : l10n.collaborationDetailCompleteTitle,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -1926,8 +1951,8 @@ class _CompleteKolabSection extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             isToday
-                ? 'Did your Kolab with $partnerName happen? Mark it done.'
-                : 'Did the Kolab with $partnerName happen? Mark it done.',
+                ? l10n.collaborationDetailCompleteBodyToday(partnerName)
+                : l10n.collaborationDetailCompleteBody(partnerName),
             style: KolabingTextStyles.captionSecondary.copyWith(
               color: KolabingColors.onSurfaceVariant,
             ),
@@ -1952,7 +1977,9 @@ class _CompleteKolabSection extends ConsumerWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                isToday ? "Mark it done ✨" : "Yes, it happened ✨",
+                isToday
+                    ? l10n.collaborationDetailMarkDone
+                    : l10n.collaborationDetailItHappened,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -1994,11 +2021,13 @@ class _PostCompletionReviewSection extends ConsumerWidget {
           color: hasReviewed ? KolabingColors.activeBg : KolabingColors.darkBorder,
         ),
       ),
-      child: hasReviewed ? _buildReviewed() : _buildUnreviewed(context, ref),
+      child: hasReviewed
+          ? _buildReviewed(context)
+          : _buildUnreviewed(context, ref),
     );
   }
 
-  Widget _buildReviewed() => Row(
+  Widget _buildReviewed(BuildContext context) => Row(
     children: [
       const Icon(
         Icons.check_circle_rounded,
@@ -2007,7 +2036,7 @@ class _PostCompletionReviewSection extends ConsumerWidget {
       ),
       const SizedBox(width: 8),
       Text(
-        'Review submitted ✓',
+        AppLocalizations.of(context).collaborationDetailReviewSubmitted,
         style: KolabingTextStyles.bodySmall.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.activeText,
@@ -2016,7 +2045,9 @@ class _PostCompletionReviewSection extends ConsumerWidget {
     ],
   );
 
-  Widget _buildUnreviewed(BuildContext context, WidgetRef ref) => Column(
+  Widget _buildUnreviewed(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Row(
@@ -2025,7 +2056,7 @@ class _PostCompletionReviewSection extends ConsumerWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Leave a review',
+              l10n.collaborationDetailLeaveReview,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: KolabingColors.onSurface,
@@ -2042,7 +2073,7 @@ class _PostCompletionReviewSection extends ConsumerWidget {
               borderRadius: KolabingRadius.borderRadiusRound,
             ),
             child: Text(
-              '+10 XP',
+              l10n.collaborationDetailXpBadge,
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: KolabingColors.onSurface,
@@ -2053,7 +2084,7 @@ class _PostCompletionReviewSection extends ConsumerWidget {
       ),
       const SizedBox(height: 4),
       Text(
-        'Help $partnerName build trust on Kolabing.',
+        l10n.collaborationDetailReviewHelp(partnerName),
         style: KolabingTextStyles.captionSecondary.copyWith(
           color: KolabingColors.onSurfaceVariant,
         ),
@@ -2081,11 +2112,12 @@ class _PostCompletionReviewSection extends ConsumerWidget {
             elevation: 0,
           ),
           child: Text(
-            'Leave review +10 XP ✨',
+            l10n.collaborationDetailLeaveReviewCta,
             style: KolabingTextStyles.button,
           ),
         ),
       ),
     ],
-  );
+    );
+  }
 }

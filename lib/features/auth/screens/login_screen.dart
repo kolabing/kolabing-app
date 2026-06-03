@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/permission_service.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../providers/auth_provider.dart';
@@ -165,19 +166,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   String? _validateEmail(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return l10n.authEmailRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return l10n.authEmailInvalid;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return l10n.authPasswordRequired;
     }
     return null;
   }
@@ -238,7 +241,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       debugPrint('$st');
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showErrorSnackBar('Something went wrong. Please try again.');
+      _showErrorSnackBar(AppLocalizations.of(context).commonErrorGeneric);
     }
   }
 
@@ -287,7 +290,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       debugPrint('$st');
       if (!mounted) return;
       setState(() => _isGoogleLoading = false);
-      _showErrorSnackBar('Something went wrong. Please try again.');
+      _showErrorSnackBar(AppLocalizations.of(context).commonErrorGeneric);
     }
   }
 
@@ -333,7 +336,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       debugPrint('$st');
       if (!mounted) return;
       setState(() => _isAppleLoading = false);
-      _showErrorSnackBar('Something went wrong. Please try again.');
+      _showErrorSnackBar(AppLocalizations.of(context).commonErrorGeneric);
     }
   }
 
@@ -388,7 +391,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
+                AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
@@ -403,7 +406,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: isGoogle ? _handleGoogleSignIn : _handleEmailLogin,
         ),
@@ -571,7 +574,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Sign in to your account',
+                    AppLocalizations.of(context).loginPanelTitle,
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textOnDark,
                       fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
@@ -580,7 +583,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Pick up where you left off.',
+                    AppLocalizations.of(context).loginPanelSubtitle,
                     style: KolabingTextStyles.labelMedium.copyWith(
                       color: _kLoginTextMuted,
                       fontSize: ultraCompact ? 11.5 : 12.5,
@@ -607,7 +610,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     ),
                     cursorColor: KolabingColors.primary,
                     decoration: _inputDecoration(
-                      hint: 'Email',
+                      hint: AppLocalizations.of(context).authEmailLabel,
                       prefixIcon: Icons.alternate_email_rounded,
                     ),
                   ),
@@ -628,7 +631,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     ),
                     cursorColor: KolabingColors.primary,
                     decoration: _inputDecoration(
-                      hint: 'Password',
+                      hint: AppLocalizations.of(context).authPasswordLabel,
                       prefixIcon: Icons.lock_outline_rounded,
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -683,7 +686,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 color: KolabingColors.onPrimary,
                               )
                             : Text(
-                                'Sign in',
+                                AppLocalizations.of(context).loginSignInButton,
                                 style: KolabingTextStyles.button.copyWith(
                                   fontSize: compact ? 15 : 16,
                                   letterSpacing: 0.2,
@@ -711,7 +714,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           padding: EdgeInsets.zero,
                         ),
                         child: Text(
-                          'Forgot password?',
+                          AppLocalizations.of(context).loginForgotPassword,
                           style: KolabingTextStyles.labelMedium.copyWith(
                             fontWeight: FontWeight.w700,
                             color: KolabingColors.primary,
@@ -903,7 +906,7 @@ class _HeroCopy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    'Welcome back.',
+    AppLocalizations.of(context).loginHeroWelcome,
     style: KolabingTextStyles.displayLarge.copyWith(
       color: KolabingColors.textOnDark,
       fontSize: headlineSize,
@@ -959,7 +962,7 @@ class _BackButtonState extends State<_BackButton> {
             ),
             const SizedBox(width: 2),
             Text(
-              'Back',
+              AppLocalizations.of(context).commonBack,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -1010,7 +1013,7 @@ class _SignUpLinkState extends State<_SignUpLink> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         child: Text(
-          'Sign up',
+          AppLocalizations.of(context).loginSignUpLink,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
             fontWeight: FontWeight.w700,
@@ -1050,7 +1053,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Account Not Found',
+            AppLocalizations.of(context).loginUserNotFoundTitle,
             style: KolabingTextStyles.headlineMedium.copyWith(
               color: KolabingColors.onSurface,
             ),
@@ -1058,7 +1061,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'No account exists with this Google email. Please create an account first.',
+            AppLocalizations.of(context).loginUserNotFoundMessage,
             style: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.onSurfaceVariant,
               height: 1.6,
@@ -1079,7 +1082,7 @@ class _UserNotFoundDialog extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Create Account',
+                AppLocalizations.of(context).loginCreateAccountButton,
                 style: KolabingTextStyles.button.copyWith(
                   color: KolabingColors.onPrimary,
                 ),
@@ -1090,7 +1093,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           TextButton(
             onPressed: onGotIt,
             child: Text(
-              'Cancel',
+              AppLocalizations.of(context).commonCancel,
               style: KolabingTextStyles.labelLarge.copyWith(
                 color: KolabingColors.textTertiary,
               ),

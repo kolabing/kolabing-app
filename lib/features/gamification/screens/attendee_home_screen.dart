@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
@@ -44,7 +45,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
         if (permission == LocationPermission.denied) {
           setState(() {
             _isLoadingLocation = false;
-            _locationError = 'Location permission denied';
+            _locationError = AppLocalizations.of(context).attendeeHomeLocationDenied;
           });
           return;
         }
@@ -54,7 +55,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
         setState(() {
           _isLoadingLocation = false;
           _locationError =
-              'Location permissions are permanently denied. Please enable them in settings.';
+              AppLocalizations.of(context).attendeeHomeLocationDeniedForever;
         });
         return;
       }
@@ -63,7 +64,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       if (!serviceEnabled) {
         setState(() {
           _isLoadingLocation = false;
-          _locationError = 'Location services are disabled';
+          _locationError = AppLocalizations.of(context).attendeeHomeLocationServicesDisabled;
         });
         return;
       }
@@ -85,7 +86,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     } catch (e) {
       setState(() {
         _isLoadingLocation = false;
-        _locationError = 'Failed to get location: $e';
+        _locationError = AppLocalizations.of(context).attendeeHomeLocationError(e.toString());
       });
     }
   }
@@ -109,6 +110,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
         isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
     final secondaryTextColor =
         isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+    final l10n = AppLocalizations.of(context);
 
     return SafeArea(
       child: RefreshIndicator(
@@ -131,12 +133,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Welcome back',
+                              l10n.attendeeHomeWelcomeBack,
                               style: KolabingTextStyles.bodySmall.copyWith(color: secondaryTextColor),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              user?.displayName ?? 'Attendee',
+                              user?.displayName ?? l10n.attendeeRoleLabel,
                               style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: textColor),
                             ),
                           ],
@@ -163,7 +165,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'NEARBY EVENTS',
+                      l10n.attendeeHomeNearbyEvents,
                       style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: secondaryTextColor, letterSpacing: 1.2),
                     ),
                     if (discoveryState.hasLocation)
@@ -179,7 +181,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              '${discoveryState.radiusKm.toStringAsFixed(0)} km',
+                              l10n.attendeeHomeRadiusKm(discoveryState.radiusKm.toStringAsFixed(0)),
                               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.primary),
                             ),
                           ],
@@ -207,15 +209,15 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     // Location loading
     if (_isLoadingLocation) {
       return [
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(KolabingSpacing.xl),
+            padding: const EdgeInsets.all(KolabingSpacing.xl),
             child: Center(
               child: Column(
                 children: [
-                  CircularProgressIndicator(color: KolabingColors.primary),
-                  SizedBox(height: KolabingSpacing.md),
-                  Text('Getting your location...'),
+                  const CircularProgressIndicator(color: KolabingColors.primary),
+                  const SizedBox(height: KolabingSpacing.md),
+                  Text(AppLocalizations.of(context).attendeeHomeGettingLocation),
                 ],
               ),
             ),
@@ -234,15 +236,15 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     // Discovery loading (no events yet)
     if (state.isLoading && state.events.isEmpty) {
       return [
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(KolabingSpacing.xl),
+            padding: const EdgeInsets.all(KolabingSpacing.xl),
             child: Center(
               child: Column(
                 children: [
-                  CircularProgressIndicator(color: KolabingColors.primary),
-                  SizedBox(height: KolabingSpacing.md),
-                  Text('Searching for events...'),
+                  const CircularProgressIndicator(color: KolabingColors.primary),
+                  const SizedBox(height: KolabingSpacing.md),
+                  Text(AppLocalizations.of(context).attendeeHomeSearchingEvents),
                 ],
               ),
             ),
@@ -289,12 +291,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
-                  'Showing events within ${state.radiusKm.toStringAsFixed(0)} km',
+                  AppLocalizations.of(context).attendeeHomeShowingWithinRadius(state.radiusKm.toStringAsFixed(0)),
                   style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.info),
                 ),
               ),
               Text(
-                '${state.events.length} found',
+                AppLocalizations.of(context).attendeeHomeEventsFound(state.events.length),
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: KolabingColors.info),
               ),
             ],
@@ -341,7 +343,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                         ref.read(discoveryProvider.notifier).loadMore();
                       },
                       icon: const Icon(LucideIcons.chevronDown, size: 16),
-                      label: const Text('Load More'),
+                      label: Text(AppLocalizations.of(context).attendeeHomeLoadMore),
                       style: TextButton.styleFrom(
                         foregroundColor: KolabingColors.primary,
                       ),
@@ -353,13 +355,14 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
   }
 
   Widget _buildStatsSection(dynamic attendeeProfile) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
           child: StatCard(
             icon: LucideIcons.star,
             iconColor: KolabingColors.primary,
-            label: 'Points',
+            label: l10n.attendeeHomeStatPoints,
             value: '${attendeeProfile?.totalPoints ?? 0}',
           ),
         ),
@@ -368,7 +371,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           child: StatCard(
             icon: LucideIcons.target,
             iconColor: KolabingColors.success,
-            label: 'Challenges',
+            label: l10n.attendeeHomeStatChallenges,
             value: '${attendeeProfile?.totalChallengesCompleted ?? 0}',
           ),
         ),
@@ -377,7 +380,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           child: StatCard(
             icon: LucideIcons.calendar,
             iconColor: KolabingColors.info,
-            label: 'Events',
+            label: l10n.attendeeHomeStatEvents,
             value: '${attendeeProfile?.totalEventsAttended ?? 0}',
           ),
         ),
@@ -397,7 +400,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'Location Required',
+            AppLocalizations.of(context).attendeeHomeLocationRequired,
             style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -410,7 +413,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           ElevatedButton.icon(
             onPressed: _initLocation,
             icon: const Icon(LucideIcons.refreshCw, size: 16),
-            label: const Text('Try Again'),
+            label: Text(AppLocalizations.of(context).attendeeHomeTryAgain),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
@@ -422,7 +425,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.sm),
           TextButton(
             onPressed: () => Geolocator.openAppSettings(),
-            child: const Text('Open Settings'),
+            child: Text(AppLocalizations.of(context).attendeeHomeOpenSettings),
           ),
         ],
       ),
@@ -441,12 +444,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            'No Events Nearby',
+            AppLocalizations.of(context).attendeeHomeNoEventsNearby,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Try increasing the search radius\nor check back later for new events.',
+            AppLocalizations.of(context).attendeeHomeNoEventsNearbyHint,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
             textAlign: TextAlign.center,
           ),
@@ -454,7 +457,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           OutlinedButton.icon(
             onPressed: () => _showRadiusFilter(context),
             icon: const Icon(LucideIcons.sliders, size: 16),
-            label: const Text('Adjust Radius'),
+            label: Text(AppLocalizations.of(context).attendeeHomeAdjustRadius),
             style: OutlinedButton.styleFrom(
               foregroundColor: KolabingColors.primary,
               side: const BorderSide(color: KolabingColors.primary),
@@ -480,7 +483,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
-            'Failed to load events',
+            AppLocalizations.of(context).attendeeHomeFailedToLoadEvents,
             style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -493,7 +496,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           TextButton.icon(
             onPressed: _initLocation,
             icon: const Icon(LucideIcons.refreshCw, size: 16),
-            label: const Text('Try Again'),
+            label: Text(AppLocalizations.of(context).attendeeHomeTryAgain),
             style: TextButton.styleFrom(
               foregroundColor: KolabingColors.primary,
             ),
@@ -564,13 +567,13 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'Search Radius',
+            AppLocalizations.of(context).attendeeHomeSearchRadius,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            '${_radius.toStringAsFixed(0)} km',
+            AppLocalizations.of(context).attendeeHomeRadiusKm(_radius.toStringAsFixed(0)),
             style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
             textAlign: TextAlign.center,
           ),
@@ -591,11 +594,11 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '1 km',
+                AppLocalizations.of(context).attendeeHomeRadiusKm('1'),
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
               Text(
-                '50 km',
+                AppLocalizations.of(context).attendeeHomeRadiusKm('50'),
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
               ),
             ],
@@ -612,7 +615,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Apply'),
+              child: Text(AppLocalizations.of(context).attendeeHomeApply),
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),

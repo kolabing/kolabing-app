@@ -6,6 +6,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../event/models/event.dart';
 
 class ProfileEventPickerSheet extends StatefulWidget {
@@ -41,6 +42,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final selectedEvents = widget.events
         .where((event) => _selectedIds.contains(event.id))
         .toList(growable: false);
@@ -74,12 +76,12 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
-                    'Choose from your profile events',
+                    l10n.profileEventPickerTitle,
                     style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
-                    'Select up to ${widget.maxSelection} event${widget.maxSelection == 1 ? '' : 's'} to import.',
+                    l10n.profileEventPickerSubtitle(widget.maxSelection),
                     style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
@@ -156,7 +158,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
+                          child: Text(l10n.commonCancel),
                         ),
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
@@ -169,7 +171,7 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                             backgroundColor: KolabingColors.primary,
                             foregroundColor: KolabingColors.onPrimary,
                           ),
-                          child: const Text('Import events'),
+                          child: Text(l10n.profileEventPickerImport),
                         ),
                       ),
                     ],

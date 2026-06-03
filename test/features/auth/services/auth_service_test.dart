@@ -18,33 +18,39 @@ void main() {
     FlutterSecureStorage.setMockInitialValues(<String, String>{});
   });
 
-  test('getCurrentUser clears stored auth on 401 without a refresh token', () async {
-    const user = UserModel(
-      id: 'user-1',
-      email: 'owner@example.com',
-      userType: UserType.business,
-    );
+  test(
+    'getCurrentUser clears stored auth on 401 without a refresh token',
+    () async {
+      const user = UserModel(
+        id: 'user-1',
+        email: 'owner@example.com',
+        userType: UserType.business,
+      );
 
-    FlutterSecureStorage.setMockInitialValues(<String, String>{
-      'auth_token': 'token-123',
-      'auth_user': jsonEncode(user.toJson()),
-    });
+      FlutterSecureStorage.setMockInitialValues(<String, String>{
+        'auth_token': 'token-123',
+        'auth_user': jsonEncode(user.toJson()),
+      });
 
-    final service = AuthService(
-      secureStorage: const FlutterSecureStorage(),
-      httpClient: MockClient(
-        (_) async => http.Response(
-          jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
-          401,
+      final service = AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: MockClient(
+          (_) async => http.Response(
+            jsonEncode(<String, dynamic>{'message': 'Unauthenticated'}),
+            401,
+          ),
         ),
-      ),
-    );
+      );
 
-    await expectLater(service.getCurrentUser(), throwsA(isA<AuthException>()));
+      await expectLater(
+        service.getCurrentUser(),
+        throwsA(isA<AuthException>()),
+      );
 
-    expect(await service.getToken(), isNull);
-    expect(await service.getStoredUser(), isNull);
-  });
+      expect(await service.getToken(), isNull);
+      expect(await service.getStoredUser(), isNull);
+    },
+  );
 
   test(
     'restoreSessionUser falls back to stored user on network failure',
@@ -62,9 +68,7 @@ void main() {
 
       final service = AuthService(
         secureStorage: const FlutterSecureStorage(),
-        httpClient: MockClient(
-          (_) async => throw Exception('network down'),
-        ),
+        httpClient: MockClient((_) async => throw Exception('network down')),
       );
 
       final restored = await service.restoreSessionUser();

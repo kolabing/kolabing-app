@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:kolabing_app/features/auth/models/user_model.dart';
@@ -12,6 +13,7 @@ import 'package:kolabing_app/features/discovery/models/discovery_item.dart';
 import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
 import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
 import 'package:kolabing_app/widgets/blurred_identity.dart';
+import 'package:kolabing_app/widgets/explore_swipe_card.dart';
 
 void main() {
   testWidgets('explore screen renders segmented feed and updates feed filter', (
@@ -75,7 +77,11 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -195,12 +201,18 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Training & Brunch'), findsOneWidget);
+      // The redesigned card shows the creator name + offer line, not the
+      // opportunity title (the title lives in the detail sheet).
+      expect(find.byType(ExploreSwipeCard), findsOneWidget);
       // Free business: the real community name is RENDERED but visually blurred
       // (not replaced by a placeholder), per the blur-not-block decision.
       expect(find.text('Move Club'), findsWidgets);
@@ -209,8 +221,10 @@ void main() {
         findsWidgets,
       );
 
-      await tester.tap(find.text('Training & Brunch'));
+      await tester.tap(find.byType(ExploreSwipeCard));
       await tester.pumpAndSettle();
+      // The detail sheet shows the opportunity title.
+      expect(find.text('Training & Brunch'), findsOneWidget);
 
       expect(find.text('Move Club'), findsWidgets);
       expect(
@@ -318,12 +332,18 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Training & Brunch'), findsOneWidget);
+      // The redesigned card shows the creator name + offer line, not the
+      // opportunity title (the title lives in the detail sheet).
+      expect(find.byType(ExploreSwipeCard), findsOneWidget);
       // Subscribed business: identity is REVEALED — the real name shows and no
       // BlurredIdentity is active (§2.6 reveal-on-subscribe).
       expect(find.text('Move Club'), findsWidgets);
@@ -332,8 +352,10 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.text('Training & Brunch'));
+      await tester.tap(find.byType(ExploreSwipeCard));
       await tester.pumpAndSettle();
+      // The detail sheet shows the opportunity title.
+      expect(find.text('Training & Brunch'), findsOneWidget);
 
       expect(find.text('Move Club'), findsWidgets);
       expect(

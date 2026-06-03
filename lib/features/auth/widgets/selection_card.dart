@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// User type for selection cards
 enum SelectionUserType {
@@ -102,25 +103,27 @@ class _SelectionCardState extends State<SelectionCard>
     }
   }
 
-  String get _title {
+  String _title(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
       case SelectionUserType.business:
-        return "I'M A BUSINESS";
+        return l10n.selectionCardBusinessTitle;
       case SelectionUserType.community:
-        return "I'M A COMMUNITY";
+        return l10n.selectionCardCommunityTitle;
       case SelectionUserType.attendee:
-        return "I'M AN ATTENDEE";
+        return l10n.selectionCardAttendeeTitle;
     }
   }
 
-  String get _description {
+  String _description(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
       case SelectionUserType.business:
-        return 'Looking for communities to partner with';
+        return l10n.selectionCardBusinessDescription;
       case SelectionUserType.community:
-        return 'Seeking sponsors and kolab partners';
+        return l10n.selectionCardCommunityDescription;
       case SelectionUserType.attendee:
-        return 'Joining events and completing challenges';
+        return l10n.selectionCardAttendeeDescription;
     }
   }
 
@@ -129,7 +132,10 @@ class _SelectionCardState extends State<SelectionCard>
         button: true,
         enabled: widget.isEnabled,
         selected: widget.isSelected,
-        label: '$_title. $_description',
+        label: AppLocalizations.of(context).selectionCardSemanticLabel(
+          _title(context),
+          _description(context),
+        ),
         child: GestureDetector(
           onTapDown: _handleTapDown,
           onTapUp: _handleTapUp,
@@ -178,7 +184,7 @@ class _SelectionCardState extends State<SelectionCard>
 
                   // Title
                   Text(
-                    _title,
+                    _title(context),
                     style: KolabingTextStyles.button.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -191,7 +197,7 @@ class _SelectionCardState extends State<SelectionCard>
 
                   // Description
                   Text(
-                    _description,
+                    _description(context),
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.onSurfaceVariant,
                       height: 1.4,

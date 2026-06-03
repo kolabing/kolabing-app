@@ -10,6 +10,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
@@ -307,7 +308,9 @@ class _CommunityOfferDetailScreenState
                             sigma: 8,
                             child: Text(
                               opportunity.creatorProfile?.displayName ??
-                                  'Unknown',
+                                  AppLocalizations.of(
+                                    context,
+                                  ).communityOfferDetailUnknown,
                               style: KolabingTextStyles.bodyLarge.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
@@ -319,7 +322,9 @@ class _CommunityOfferDetailScreenState
                           ),
                           Text(
                             hideCreatorIdentity
-                                ? 'Subscribe to reveal'
+                                ? AppLocalizations.of(
+                                    context,
+                                  ).communityOfferDetailSubscribeToReveal
                                 : (opportunity.creatorProfile?.userType ?? ''),
                             style: KolabingTextStyles.bodySmall.copyWith(
                               fontWeight: FontWeight.w500,
@@ -471,7 +476,11 @@ class _CommunityOfferDetailScreenState
               ),
               const SizedBox(width: KolabingSpacing.xxs),
               Text(
-                '${opportunity.applicationsCount} application${opportunity.applicationsCount == 1 ? '' : 's'}',
+                AppLocalizations.of(
+                  context,
+                ).communityOfferDetailApplicationsCount(
+                  opportunity.applicationsCount!,
+                ),
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w500,
                   color: KolabingColors.textTertiary,
@@ -490,7 +499,7 @@ class _CommunityOfferDetailScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'CATEGORIES',
+          AppLocalizations.of(context).communityOfferDetailCategories,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             color: KolabingColors.onSurface,
@@ -548,7 +557,7 @@ class _CommunityOfferDetailScreenState
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
-              'BUSINESS OFFER',
+              AppLocalizations.of(context).communityOfferDetailBusinessOffer,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: KolabingColors.activeText,
@@ -560,15 +569,25 @@ class _CommunityOfferDetailScreenState
         const SizedBox(height: KolabingSpacing.sm),
 
         if (opportunity.businessOffer.venue)
-          _buildOfferItem(LucideIcons.building2, 'Venue provided'),
+          _buildOfferItem(
+            LucideIcons.building2,
+            AppLocalizations.of(context).communityOfferDetailVenueProvided,
+          ),
         if (opportunity.businessOffer.foodDrink)
-          _buildOfferItem(LucideIcons.coffee, 'Food & Drink included'),
+          _buildOfferItem(
+            LucideIcons.coffee,
+            AppLocalizations.of(context).communityOfferDetailFoodDrink,
+          ),
         if (opportunity.businessOffer.discount.enabled)
           _buildOfferItem(
             LucideIcons.percent,
             opportunity.businessOffer.discount.percentage != null
-                ? '${opportunity.businessOffer.discount.percentage}% Discount'
-                : 'Discount offered',
+                ? AppLocalizations.of(context).communityOfferDetailDiscountPct(
+                    opportunity.businessOffer.discount.percentage!,
+                  )
+                : AppLocalizations.of(
+                    context,
+                  ).communityOfferDetailDiscountOffered,
           ),
         if (opportunity.businessOffer.products.isNotEmpty)
           ...opportunity.businessOffer.products.map(
@@ -621,7 +640,9 @@ class _CommunityOfferDetailScreenState
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'EXPECTED DELIVERABLES',
+                AppLocalizations.of(
+                  context,
+                ).communityOfferDetailExpectedDeliverables,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.onSurface,
@@ -634,16 +655,28 @@ class _CommunityOfferDetailScreenState
           if (del.socialMediaContent)
             _buildDeliverableItem(
               LucideIcons.instagram,
-              'Social Media Content',
+              AppLocalizations.of(context).communityOfferDetailSocialMedia,
             ),
           if (del.eventActivation)
-            _buildDeliverableItem(LucideIcons.megaphone, 'Event Activation'),
+            _buildDeliverableItem(
+              LucideIcons.megaphone,
+              AppLocalizations.of(context).communityOfferDetailEventActivation,
+            ),
           if (del.productPlacement)
-            _buildDeliverableItem(LucideIcons.package, 'Product Placement'),
+            _buildDeliverableItem(
+              LucideIcons.package,
+              AppLocalizations.of(context).communityOfferDetailProductPlacement,
+            ),
           if (del.communityReach)
-            _buildDeliverableItem(LucideIcons.users, 'Community Reach'),
+            _buildDeliverableItem(
+              LucideIcons.users,
+              AppLocalizations.of(context).communityOfferDetailCommunityReach,
+            ),
           if (del.reviewFeedback)
-            _buildDeliverableItem(LucideIcons.star, 'Review & Feedback'),
+            _buildDeliverableItem(
+              LucideIcons.star,
+              AppLocalizations.of(context).communityOfferDetailReviewFeedback,
+            ),
           if (del.other?.isNotEmpty ?? false)
             _buildDeliverableItem(LucideIcons.plus, del.other!),
         ],
@@ -693,7 +726,7 @@ class _CommunityOfferDetailScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'LOCATION & AVAILABILITY',
+            AppLocalizations.of(context).communityOfferDetailLocationTitle,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: KolabingColors.onSurface,
@@ -704,35 +737,35 @@ class _CommunityOfferDetailScreenState
 
           _buildInfoRow(
             icon: LucideIcons.mapPin,
-            label: 'City',
+            label: AppLocalizations.of(context).communityOfferDetailCity,
             value: opportunity.preferredCity.isNotEmpty
                 ? opportunity.preferredCity
-                : 'Not specified',
+                : AppLocalizations.of(context).communityOfferDetailNotSpecified,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           _buildInfoRow(
             icon: LucideIcons.building2,
-            label: 'Venue',
+            label: AppLocalizations.of(context).communityOfferDetailVenue,
             value: opportunity.venueMode.displayName,
           ),
           if (opportunity.address?.isNotEmpty ?? false) ...[
             const SizedBox(height: KolabingSpacing.sm),
             _buildInfoRow(
               icon: LucideIcons.home,
-              label: 'Address',
+              label: AppLocalizations.of(context).communityOfferDetailAddress,
               value: opportunity.address!,
             ),
           ],
           const SizedBox(height: KolabingSpacing.sm),
           _buildInfoRow(
             icon: LucideIcons.calendar,
-            label: 'Dates',
+            label: AppLocalizations.of(context).communityOfferDetailDates,
             value: dateText,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           _buildInfoRow(
             icon: LucideIcons.clock,
-            label: 'Mode',
+            label: AppLocalizations.of(context).communityOfferDetailMode,
             value: opportunity.availabilityMode.displayName,
           ),
         ],
@@ -793,7 +826,7 @@ class _CommunityOfferDetailScreenState
               const Icon(LucideIcons.eye, size: 18),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
-                'PREVIEW MODE',
+                AppLocalizations.of(context).communityOfferDetailPreviewMode,
                 style: KolabingTextStyles.button.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -820,7 +853,7 @@ class _CommunityOfferDetailScreenState
             ),
           ),
           child: Text(
-            'ALREADY APPLIED',
+            AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
             style: KolabingTextStyles.button.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -849,7 +882,7 @@ class _CommunityOfferDetailScreenState
             const Icon(LucideIcons.send, size: 18),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
-              'APPLY NOW',
+              AppLocalizations.of(context).communityOfferDetailApplyNow,
               style: KolabingTextStyles.button.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -930,7 +963,7 @@ class _CommunityOfferDetailScreenState
         onPressed: () => context.pop(),
       ),
       title: Text(
-        'Opportunity Details',
+        AppLocalizations.of(context).communityOfferDetailTitle,
         style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w600,
           color: KolabingColors.onSurface,
@@ -960,7 +993,7 @@ class _CommunityOfferDetailScreenState
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'Opportunity Not Found',
+              AppLocalizations.of(context).communityOfferDetailNotFound,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -981,7 +1014,7 @@ class _CommunityOfferDetailScreenState
                 ref.invalidate(opportunityDetailProvider(widget.offerId));
               },
               icon: const Icon(LucideIcons.rotateCcw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonRetry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: KolabingColors.primary,
                 foregroundColor: KolabingColors.onPrimary,
@@ -1020,7 +1053,7 @@ class _PreviewModeBanner extends StatelessWidget {
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Text(
-              'You are previewing this kolab as businesses see it',
+              AppLocalizations.of(context).communityOfferDetailPreviewBanner,
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: KolabingColors.onSurface,
@@ -1074,7 +1107,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Past events from this community',
+                AppLocalizations.of(context).communityOfferDetailPastEvents,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -1083,7 +1116,9 @@ class _CommunityPastEventsSection extends ConsumerWidget {
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'See this community\'s recent track record before applying.',
+                AppLocalizations.of(
+                  context,
+                ).communityOfferDetailPastEventsSubtitle,
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
@@ -1250,7 +1285,7 @@ class _BaseOfferCard extends StatelessWidget {
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
-              'THE OFFER',
+              AppLocalizations.of(context).communityOfferDetailTheOffer,
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
@@ -1299,7 +1334,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
-              'EXTRA TERMS UNLOCKED',
+              AppLocalizations.of(context).communityOfferDetailExtraTerms,
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
@@ -1310,19 +1345,20 @@ class _NegotiationTriggersSection extends StatelessWidget {
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'These only show because you have already applied.',
+          AppLocalizations.of(context).communityOfferDetailExtraTermsSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             color: KolabingColors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
-        ...triggers.map(_buildTriggerRow),
+        ...triggers.map((trigger) => _buildTriggerRow(context, trigger)),
       ],
     ),
   );
 
-  Widget _buildTriggerRow(NegotiationTrigger trigger) => Padding(
+  Widget _buildTriggerRow(BuildContext context, NegotiationTrigger trigger) =>
+      Padding(
     padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1339,7 +1375,9 @@ class _NegotiationTriggersSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'IF ${trigger.condition}',
+                AppLocalizations.of(
+                  context,
+                ).communityOfferDetailTriggerCondition(trigger.condition),
                 style: KolabingTextStyles.labelSmall.copyWith(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,

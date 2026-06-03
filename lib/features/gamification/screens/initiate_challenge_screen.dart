@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
@@ -58,7 +59,9 @@ class _InitiateChallengeScreenState
       _showSuccessDialog();
     } else {
       final error = ref.read(initiateChallengeProvider).error;
-      _showErrorSnackBar(error ?? 'Failed to initiate challenge');
+      _showErrorSnackBar(
+        error ?? AppLocalizations.of(context).initiateChallengeFailed,
+      );
     }
   }
 
@@ -88,7 +91,7 @@ class _InitiateChallengeScreenState
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
-                'Challenge Started!',
+                AppLocalizations.of(context).initiateChallengeSuccessTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -97,7 +100,7 @@ class _InitiateChallengeScreenState
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'The verifier will be notified to confirm your challenge completion.',
+                AppLocalizations.of(context).initiateChallengeSuccessBody,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
@@ -120,7 +123,7 @@ class _InitiateChallengeScreenState
                     ),
                   ),
                   child: Text(
-                    'Done',
+                    AppLocalizations.of(context).commonDone,
                     style: KolabingTextStyles.button.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -148,6 +151,7 @@ class _InitiateChallengeScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final initiateState = ref.watch(initiateChallengeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
@@ -171,7 +175,7 @@ class _InitiateChallengeScreenState
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Start Challenge',
+          l10n.initiateChallengeTitle,
           style: KolabingTextStyles.bodyLarge.copyWith(
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -241,7 +245,7 @@ class _InitiateChallengeScreenState
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      '+${widget.challenge!.points} pts',
+                                      l10n.initiateChallengePointsAwarded(widget.challenge!.points),
                                       style: KolabingTextStyles.bodySmall.copyWith(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w700,
@@ -270,7 +274,7 @@ class _InitiateChallengeScreenState
 
                 // Instructions
                 Text(
-                  'How it works',
+                  l10n.initiateChallengeHowItWorks,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
@@ -279,23 +283,23 @@ class _InitiateChallengeScreenState
                 const SizedBox(height: KolabingSpacing.sm),
                 _InstructionStep(
                   number: '1',
-                  text: 'Enter the verifier\'s profile ID',
+                  text: l10n.initiateChallengeStep1,
                 ),
                 _InstructionStep(
                   number: '2',
-                  text: 'Complete the challenge with the verifier present',
+                  text: l10n.initiateChallengeStep2,
                 ),
                 _InstructionStep(
                   number: '3',
-                  text: 'The verifier confirms your completion',
+                  text: l10n.initiateChallengeStep3,
                 ),
-                _InstructionStep(number: '4', text: 'Earn your points!'),
+                _InstructionStep(number: '4', text: l10n.initiateChallengeStep4),
 
                 const SizedBox(height: KolabingSpacing.xl),
 
                 // Verifier ID input
                 Text(
-                  'Verifier Profile ID',
+                  l10n.initiateChallengeVerifierLabel,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: textColor,
@@ -306,7 +310,7 @@ class _InitiateChallengeScreenState
                   controller: _verifierIdController,
                   enabled: !initiateState.isLoading,
                   decoration: InputDecoration(
-                    hintText: 'Enter the verifier\'s profile ID',
+                    hintText: l10n.initiateChallengeVerifierHint,
                     hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
@@ -346,7 +350,7 @@ class _InitiateChallengeScreenState
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter the verifier\'s profile ID';
+                      return l10n.initiateChallengeVerifierRequired;
                     }
                     return null;
                   },
@@ -354,7 +358,7 @@ class _InitiateChallengeScreenState
 
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
-                  'Ask another attendee for their profile ID to verify your challenge',
+                  l10n.initiateChallengeVerifierHelper,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     color: KolabingColors.textTertiary,
@@ -390,7 +394,7 @@ class _InitiateChallengeScreenState
                             ),
                           )
                         : Text(
-                            'START CHALLENGE',
+                            l10n.initiateChallengeSubmit,
                             style: KolabingTextStyles.button.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,

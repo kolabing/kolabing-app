@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 import '../widgets/challenge_card.dart';
@@ -52,6 +53,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
   Widget build(BuildContext context) {
     final challengesAsync = ref.watch(eventChallengesProvider(widget.eventId));
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor:
@@ -68,7 +70,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
           onPressed: () => context.pop(),
         ),
         title: Text(
-          widget.eventName ?? 'Challenges',
+          widget.eventName ?? l10n.eventChallengesTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface),
         ),
         bottom: TabBar(
@@ -77,9 +79,9 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
           labelColor: KolabingColors.primary,
           unselectedLabelColor: KolabingColors.textTertiary,
           labelStyle: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
-          tabs: const [
-            Tab(text: 'All Challenges'),
-            Tab(text: 'Custom'),
+          tabs: [
+            Tab(text: l10n.eventChallengesTabAll),
+            Tab(text: l10n.eventChallengesTabCustom),
           ],
         ),
       ),
@@ -94,7 +96,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               error: null,
               onRefresh: _onRefresh,
               onChallengeTap: _handleChallengeTap,
-              emptyMessage: 'No challenges available for this event',
+              emptyMessage: l10n.eventChallengesEmptyAll,
             ),
 
             // Custom challenges tab
@@ -105,8 +107,8 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               onRefresh: _onRefresh,
               onChallengeTap: _handleChallengeTap,
               emptyMessage: widget.isOrganizer
-                  ? 'Create custom challenges for your event'
-                  : 'No custom challenges yet',
+                  ? l10n.eventChallengesEmptyCustomOrganizer
+                  : l10n.eventChallengesEmptyCustom,
             ),
           ],
         ),
@@ -132,7 +134,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               TextButton.icon(
                 onPressed: _onRefresh,
                 icon: const Icon(LucideIcons.refreshCw, size: 16),
-                label: const Text('Try Again'),
+                label: Text(l10n.commonTryAgain),
               ),
             ],
           ),
@@ -145,7 +147,7 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               foregroundColor: KolabingColors.onPrimary,
               icon: const Icon(LucideIcons.plus),
               label: Text(
-                'New Challenge',
+                l10n.eventChallengesNewChallenge,
                 style: KolabingTextStyles.button,
               ),
             )
@@ -227,7 +229,7 @@ class _ChallengesListView extends StatelessWidget {
             TextButton.icon(
               onPressed: onRefresh,
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
             ),
           ],
         ),
@@ -287,6 +289,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor =
         isDark ? KolabingColors.darkSurface : KolabingColors.surface;
@@ -349,7 +352,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '+${challenge.points} pts',
+                            l10n.eventChallengesPointsAwarded(challenge.points),
                             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
                           ),
                         ],
@@ -384,7 +387,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'System',
+                          l10n.eventChallengesSystemBadge,
                           style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.info),
                         ),
                       ),
@@ -416,7 +419,7 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                     },
                     icon: const Icon(LucideIcons.userPlus),
                     label: Text(
-                      'START CHALLENGE',
+                      l10n.eventChallengesStartChallenge,
                       style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                     ),
                     style: ElevatedButton.styleFrom(
