@@ -2,13 +2,17 @@ name: kolabing_app
 description: "Kolabing - Collaboration marketplace connecting businesses and communities"
 publish_to: 'none'
 
-version: 1.3.0+10
+version: 1.3.2+12
 
 environment:
   sdk: ^3.10.7
 
 dependencies:
   flutter:
+    sdk: flutter
+
+  # Localization (en, es, ca) — official gen-l10n + Material/Cupertino delegates
+  flutter_localizations:
     sdk: flutter
 
   # UI
@@ -97,6 +101,9 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+
+  # Generate AppLocalizations from lib/l10n/*.arb (see l10n.yaml)
+  generate: true
 
   assets:
     - assets/images/

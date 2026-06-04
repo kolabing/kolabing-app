@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
@@ -55,7 +56,7 @@ class _BusinessDashboardScreenState
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ?? 'Business';
+    final userName = authState.user?.displayName ?? AppLocalizations.of(context).dashboardDefaultBusinessName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
@@ -86,7 +87,7 @@ class _BusinessDashboardScreenState
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState('Unable to load dashboard data', isDark);
+      return _buildErrorState(AppLocalizations.of(context).dashboardErrorLoad, isDark);
     }
 
     return ListView(
@@ -127,7 +128,7 @@ class _BusinessDashboardScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'BUSINESS DASHBOARD',
+              AppLocalizations.of(context).dashboardBusinessTitle,
               style: KolabingTextStyles.headlineLarge.copyWith(
                 color: isDark
                     ? KolabingColors.textOnDark
@@ -136,7 +137,7 @@ class _BusinessDashboardScreenState
             ),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
-              'Welcome back, $userName',
+              AppLocalizations.of(context).dashboardWelcomeBack(userName),
               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             ),
           ],
@@ -156,7 +157,7 @@ class _BusinessDashboardScreenState
         children: [
           Expanded(
             child: DashboardStatCard(
-              title: 'Published',
+              title: AppLocalizations.of(context).dashboardStatPublished,
               count: data.opportunities.published,
               icon: LucideIcons.megaphone,
               accentColor: KolabingColors.primary,
@@ -167,7 +168,7 @@ class _BusinessDashboardScreenState
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: DashboardStatCard(
-              title: 'Pending Applications',
+              title: AppLocalizations.of(context).dashboardStatPendingApplications,
               count: data.applicationsReceived.pending,
               icon: LucideIcons.clock,
               iconSlug: UiIconSlug.clock,
@@ -183,7 +184,7 @@ class _BusinessDashboardScreenState
         children: [
           Expanded(
             child: DashboardStatCard(
-              title: 'Active Kolabs',
+              title: AppLocalizations.of(context).dashboardStatActiveKolabs,
               count: data.collaborations.active,
               icon: LucideIcons.users,
               accentColor: const Color(0xFF4CAF50),
@@ -194,7 +195,7 @@ class _BusinessDashboardScreenState
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: DashboardStatCard(
-              title: 'Completed',
+              title: AppLocalizations.of(context).dashboardStatCompleted,
               count: data.collaborations.completed,
               icon: LucideIcons.checkCircle,
               iconSlug: UiIconSlug.checkCircle,
@@ -245,7 +246,7 @@ class _BusinessDashboardScreenState
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'CREATE KOLAB REQUEST',
+                AppLocalizations.of(context).dashboardCreateKolabRequest,
                 maxLines: 1,
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
@@ -278,7 +279,7 @@ class _BusinessDashboardScreenState
               ),
             ),
             child: Text(
-              'FIND A KOLAB',
+              AppLocalizations.of(context).dashboardFindAKolab,
               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
             ),
           ),
@@ -295,7 +296,7 @@ class _BusinessDashboardScreenState
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        'UPCOMING KOLABS',
+        AppLocalizations.of(context).dashboardUpcomingKolabs,
         style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
       ),
       const SizedBox(height: KolabingSpacing.sm),
@@ -331,7 +332,7 @@ class _BusinessDashboardScreenState
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
-          'No upcoming kolabs yet',
+          AppLocalizations.of(context).dashboardNoUpcomingKolabs,
           style: KolabingTextStyles.bodySmall.copyWith(color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                 : KolabingColors.textTertiary),
@@ -370,7 +371,7 @@ class _BusinessDashboardScreenState
               },
               icon: const Icon(LucideIcons.refreshCw, size: 18),
               label: Text(
-                'RETRY',
+                AppLocalizations.of(context).commonRetry,
                 style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
               style: ElevatedButton.styleFrom(

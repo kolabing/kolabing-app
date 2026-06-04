@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
@@ -17,7 +18,11 @@ void main() {
               () => _FakeProfileNotifier(const ProfileState()),
             ),
           ],
-          child: const MaterialApp(home: IntentSelectionScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: IntentSelectionScreen(),
+          ),
         ),
       );
 
@@ -52,7 +57,11 @@ void main() {
               ),
             ),
           ],
-          child: const MaterialApp(home: IntentSelectionScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: IntentSelectionScreen(),
+          ),
         ),
       );
 
@@ -78,7 +87,11 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [profileProvider.overrideWith(() => notifier)],
-          child: const MaterialApp(home: IntentSelectionScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: IntentSelectionScreen(),
+          ),
         ),
       );
 
@@ -119,7 +132,11 @@ void main() {
               ),
             ),
           ],
-          child: const MaterialApp(home: IntentSelectionScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: IntentSelectionScreen(),
+          ),
         ),
       );
 

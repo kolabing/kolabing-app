@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/event/providers/event_provider.dart';
@@ -14,9 +15,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         eventsProvider.overrideWith(
-          () => _FakeEventsNotifier(
-            EventsState(events: [_testEvent()]),
-          ),
+          () => _FakeEventsNotifier(EventsState(events: [_testEvent()])),
         ),
       ],
     );
@@ -26,9 +25,9 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: PastEventsScreen(),
-          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: PastEventsScreen()),
         ),
       ),
     );
@@ -66,10 +65,7 @@ class _FakeEventsNotifier extends EventsNotifier {
 Event _testEvent() => Event(
   id: 'event-1',
   name: 'Wellness Rooftop',
-  partner: const EventPartner(
-    name: 'Run Club',
-    type: PartnerType.community,
-  ),
+  partner: const EventPartner(name: 'Run Club', type: PartnerType.community),
   date: DateTime(2026, 5, 1),
   attendeeCount: 120,
   photos: const [],

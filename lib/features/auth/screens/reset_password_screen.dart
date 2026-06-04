@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
@@ -121,21 +122,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return l10n.authPasswordRequired;
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return l10n.authPasswordTooShort;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return l10n.authConfirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return l10n.authPasswordsDoNotMatch;
     }
     return null;
   }
@@ -148,7 +151,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     FocusScope.of(context).unfocus();
 
     if (_token.isEmpty || _email.isEmpty) {
-      _showErrorSnackBar('Invalid reset link. Please request a new one.');
+      _showErrorSnackBar(AppLocalizations.of(context).resetPasswordInvalidLink);
       return;
     }
 
@@ -197,7 +200,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     } on Exception {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showErrorSnackBar('An unexpected error occurred');
+      _showErrorSnackBar(AppLocalizations.of(context).authUnexpectedError);
     }
   }
 
@@ -233,7 +236,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'No internet connection. Please check your network.',
+                AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textOnDark,
                   fontWeight: FontWeight.w600,
@@ -248,7 +251,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Retry',
+          label: AppLocalizations.of(context).commonRetry,
           textColor: KolabingColors.textOnDark,
           onPressed: _handleResetPassword,
         ),
@@ -285,7 +288,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Back',
+                              AppLocalizations.of(context).commonBack,
                               style: KolabingTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
                                 color: KolabingColors.textOnDark,
@@ -350,7 +353,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
           child: Column(
             children: [
               Text(
-                'RESET PASSWORD',
+                AppLocalizations.of(context).resetPasswordTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
@@ -363,7 +366,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Enter your new password below.',
+                  AppLocalizations.of(context).resetPasswordSubtitle,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: KolabingColors.textTertiary,
                     height: 1.5,
@@ -398,8 +401,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                   color: KolabingColors.textOnDark,
                 ),
                 decoration: _inputDecoration(
-                  label: 'New Password',
-                  hint: 'Enter new password',
+                  label: AppLocalizations.of(context).resetPasswordNewLabel,
+                  hint: AppLocalizations.of(context).resetPasswordNewHint,
                   prefixIcon: Icons.lock_outline,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -432,8 +435,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                   color: KolabingColors.textOnDark,
                 ),
                 decoration: _inputDecoration(
-                  label: 'Confirm Password',
-                  hint: 'Confirm new password',
+                  label: AppLocalizations.of(context).authConfirmPasswordLabel,
+                  hint: AppLocalizations.of(context).resetPasswordConfirmHint,
                   prefixIcon: Icons.lock_outline,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -488,7 +491,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       ),
                     )
                   : Text(
-                      'RESET PASSWORD',
+                      AppLocalizations.of(context).resetPasswordButton,
                       style: KolabingTextStyles.button.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -527,7 +530,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
 
       // Success headline
       Text(
-        'PASSWORD RESET',
+        AppLocalizations.of(context).resetPasswordSuccessTitle,
         style: KolabingTextStyles.bodyLarge.copyWith(
           fontSize: 28,
           fontWeight: FontWeight.w800,
@@ -543,7 +546,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
-          'Your password has been successfully reset. Redirecting you to sign in...',
+          AppLocalizations.of(context).resetPasswordSuccessMessage,
           style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.textTertiary,
             height: 1.5,
@@ -569,7 +572,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             elevation: 0,
           ),
           child: Text(
-            'GO TO SIGN IN',
+            AppLocalizations.of(context).resetPasswordGoToSignIn,
             style: KolabingTextStyles.button.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w700,

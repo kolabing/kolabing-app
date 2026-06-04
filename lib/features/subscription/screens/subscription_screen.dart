@@ -10,6 +10,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
@@ -44,6 +45,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(profileProvider.notifier).refreshSubscription();
+      if (Platform.isIOS) {
+        ref.read(iapProvider.notifier).refreshProducts();
+      }
     });
   }
 
@@ -93,8 +97,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       } on Exception {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to start App Store purchase'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).subscriptionScreenAppleError,
+            ),
             backgroundColor: KolabingColors.error,
           ),
         );
@@ -146,8 +152,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         if (!mounted) return;
         setState(() => _isSubscribing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to create checkout session'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).subscriptionScreenCheckoutError,
+            ),
             backgroundColor: KolabingColors.error,
           ),
         );
@@ -162,7 +170,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
     setState(() {
       _referralCodeApiError = null;
-      _referralCodeHelperText = 'Referral code applied.';
+      _referralCodeHelperText = AppLocalizations.of(
+        context,
+      ).subscriptionReferralCodeApplied;
     });
   }
 
@@ -197,8 +207,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       setState(() => _isReactivating = false);
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Subscription reactivated successfully'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).subscriptionReactivateSuccess,
+            ),
             backgroundColor: KolabingColors.success,
           ),
         );
@@ -222,19 +234,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancel Subscription'),
-        content: const Text(
-          'Your subscription will remain active until the end of the current billing period. You can resubscribe at any time.\n\nAre you sure you want to cancel?',
+        title: Text(AppLocalizations.of(context).subscriptionCancelDialogTitle),
+        content: Text(
+          AppLocalizations.of(context).subscriptionCancelDialogBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Keep Subscription'),
+            child: Text(AppLocalizations.of(context).subscriptionKeepButton),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Cancel Subscription'),
+            child: Text(
+              AppLocalizations.of(context).subscriptionCancelButton,
+            ),
           ),
         ],
       ),
@@ -249,9 +263,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         setState(() => _isCancelling = false);
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Subscription will cancel at the end of billing period',
+                AppLocalizations.of(context).subscriptionCancelScheduledToast,
               ),
               backgroundColor: KolabingColors.success,
             ),
@@ -294,7 +308,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          'Subscription',
+          AppLocalizations.of(context).subscriptionScreenTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
@@ -408,6 +422,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     bool isPastDue,
     bool isCancelPending,
   ) {
+    final l10n = AppLocalizations.of(context);
     IconData icon;
     Color iconColor;
     Color iconBgColor;
@@ -418,26 +433,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       icon = LucideIcons.crown;
       iconColor = KolabingColors.primary;
       iconBgColor = KolabingColors.softYellow;
-      title = 'Premium Business';
-      subtitle = 'Your subscription is active';
+      title = l10n.subscriptionStatusPremiumTitle;
+      subtitle = l10n.subscriptionStatusActiveSubtitle;
     } else if (isActive && isCancelPending) {
       icon = LucideIcons.clock;
       iconColor = KolabingColors.warning;
       iconBgColor = KolabingColors.warning.withValues(alpha: 0.1);
-      title = 'Subscription Ending';
-      subtitle = 'Active until end of billing period';
+      title = l10n.subscriptionStatusEndingTitle;
+      subtitle = l10n.subscriptionStatusEndingSubtitle;
     } else if (isPastDue) {
       icon = LucideIcons.alertTriangle;
       iconColor = KolabingColors.error;
       iconBgColor = KolabingColors.errorBg;
-      title = 'Payment Failed';
-      subtitle = 'Please update your payment method';
+      title = l10n.subscriptionStatusPastDueTitle;
+      subtitle = l10n.subscriptionStatusPastDueSubtitle;
     } else {
       icon = LucideIcons.sparkles;
       iconColor = KolabingColors.textTertiary;
       iconBgColor = KolabingColors.surfaceVariant;
-      title = 'No Active Plan';
-      subtitle = 'Subscribe to publish opportunities';
+      title = l10n.subscriptionStatusNoPlanTitle;
+      subtitle = l10n.subscriptionStatusNoPlanSubtitle;
     }
 
     return Container(
@@ -487,7 +502,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   // Benefits Section (shown when no active subscription)
   // ---------------------------------------------------------------------------
 
-  Widget _buildBenefitsSection(IAPState? iapState) => Container(
+  Widget _buildBenefitsSection(IAPState? iapState) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
       color: KolabingColors.surface,
@@ -504,31 +521,31 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Premium Benefits',
+          l10n.subscriptionBenefitsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
-        const _BenefitItem(
+        _BenefitItem(
           icon: LucideIcons.megaphone,
-          title: 'Publish Opportunities',
-          description: 'Create and publish kolab offers',
+          title: l10n.subscriptionBenefitPublishTitle,
+          description: l10n.subscriptionBenefitPublishDesc,
         ),
-        const _BenefitItem(
+        _BenefitItem(
           icon: LucideIcons.users,
-          title: 'Connect with Communities',
-          description: 'Reach local communities and creators',
+          title: l10n.subscriptionBenefitConnectTitle,
+          description: l10n.subscriptionBenefitConnectDesc,
         ),
-        const _BenefitItem(
+        _BenefitItem(
           icon: LucideIcons.inbox,
-          title: 'Receive Applications',
-          description: 'Get applications from interested communities',
+          title: l10n.subscriptionBenefitApplicationsTitle,
+          description: l10n.subscriptionBenefitApplicationsDesc,
         ),
-        const _BenefitItem(
+        _BenefitItem(
           icon: LucideIcons.barChart2,
-          title: 'Track Performance',
-          description: 'Monitor your kolab metrics',
+          title: l10n.subscriptionBenefitTrackTitle,
+          description: l10n.subscriptionBenefitTrackDesc,
         ),
         const SizedBox(height: KolabingSpacing.md),
         const Divider(height: 1, color: KolabingColors.darkBorder),
@@ -546,7 +563,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: 'EUR/month',
+                        text: l10n.subscriptionPerMonthUnit,
                         style: KolabingTextStyles.bodyLarge.copyWith(
                           color: KolabingColors.onSurfaceVariant,
                         ),
@@ -558,12 +575,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       ],
     ),
   );
+  }
 
   // ---------------------------------------------------------------------------
   // Plan Details (shown when active)
   // ---------------------------------------------------------------------------
 
-  Widget _buildPlanDetails(Subscription subscription) => Container(
+  Widget _buildPlanDetails(Subscription subscription) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
       color: KolabingColors.surface,
@@ -580,49 +600,52 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Plan Details',
+          l10n.subscriptionPlanDetailsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
-        const _DetailRow(
-          label: 'Plan',
-          value: 'Premium Business',
+        _DetailRow(
+          label: l10n.subscriptionDetailPlanLabel,
+          value: l10n.subscriptionStatusPremiumTitle,
           icon: LucideIcons.crown,
         ),
-        const _DetailRow(
-          label: 'Price',
-          value: '29 EUR/month',
+        _DetailRow(
+          label: l10n.subscriptionDetailPriceLabel,
+          value: l10n.subscriptionPriceMonthly,
           icon: LucideIcons.creditCard,
         ),
         if (subscription.currentPeriodStart != null)
           _DetailRow(
-            label: 'Current Period',
+            label: l10n.subscriptionDetailCurrentPeriodLabel,
             value: _formatDate(subscription.currentPeriodStart!),
             icon: LucideIcons.calendarCheck,
           ),
         if (subscription.currentPeriodEnd != null)
           _DetailRow(
-            label: 'Renews On',
+            label: l10n.subscriptionDetailRenewsOnLabel,
             value: _formatDate(subscription.currentPeriodEnd!),
             icon: LucideIcons.calendarClock,
           ),
         if (subscription.daysRemaining != null)
           _DetailRow(
-            label: 'Days Remaining',
-            value: '${subscription.daysRemaining} days',
+            label: l10n.subscriptionDetailDaysRemainingLabel,
+            value: l10n.subscriptionDaysValue(subscription.daysRemaining!),
             icon: LucideIcons.clock,
           ),
       ],
     ),
   );
+  }
 
   // ---------------------------------------------------------------------------
   // Warning Banners
   // ---------------------------------------------------------------------------
 
-  Widget _buildPastDueWarning() => Container(
+  Widget _buildPastDueWarning() {
+    final l10n = AppLocalizations.of(context);
+    return Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
       color: KolabingColors.errorBg,
@@ -642,14 +665,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Payment Failed',
+                l10n.subscriptionStatusPastDueTitle,
                 style: KolabingTextStyles.titleSmall.copyWith(
                   color: KolabingColors.error,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                'Your last payment failed. Update your payment method to continue publishing opportunities.',
+                l10n.subscriptionPastDueWarningBody,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   color: KolabingColors.error,
                 ),
@@ -660,11 +683,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       ],
     ),
   );
+  }
 
   Widget _buildCancelPendingWarning(Subscription subscription) {
+    final l10n = AppLocalizations.of(context);
     final endDate = subscription.currentPeriodEnd != null
         ? _formatDate(subscription.currentPeriodEnd!)
-        : 'end of billing period';
+        : l10n.subscriptionEndOfBillingPeriod;
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -684,14 +709,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Cancellation Scheduled',
+                  l10n.subscriptionCancelPendingTitle,
                   style: KolabingTextStyles.titleSmall.copyWith(
                     color: KolabingColors.warning,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Your subscription is active until $endDate. After that, you will not be able to publish new opportunities.',
+                  l10n.subscriptionCancelPendingBody(endDate),
                   style: KolabingTextStyles.bodySmall.copyWith(
                     color: KolabingColors.warning,
                   ),
@@ -715,6 +740,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     bool isCancelPending,
     IAPState? iapState,
   ) {
+    final l10n = AppLocalizations.of(context);
     final canStartApplePurchase =
         !Platform.isIOS || (iapState?.canPurchase ?? false);
     final isSubscribeBusy =
@@ -743,7 +769,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     )
                   : const Icon(LucideIcons.rotateCcw, size: 20),
               label: Text(
-                'REACTIVATE SUBSCRIPTION',
+                l10n.subscriptionReactivateButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onPrimary,
                 ),
@@ -795,7 +821,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     )
                   : const Icon(LucideIcons.sparkles, size: 20),
               label: Text(
-                Platform.isIOS ? 'SUBSCRIBE' : 'SUBSCRIBE FOR 29 EUR/MONTH',
+                Platform.isIOS
+                    ? l10n.subscriptionSubscribeButton
+                    : l10n.subscriptionSubscribePricedButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onPrimary,
                 ),
@@ -834,7 +862,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               onPressed: _handleManageBilling,
               icon: const Icon(LucideIcons.creditCard, size: 20),
               label: Text(
-                'UPDATE PAYMENT METHOD',
+                l10n.subscriptionUpdatePaymentButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onSurface,
                 ),
@@ -858,7 +886,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               onPressed: _handleManageBilling,
               icon: const Icon(LucideIcons.settings, size: 20),
               label: Text(
-                'MANAGE BILLING',
+                l10n.subscriptionManageBillingButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
                   color: KolabingColors.onSurface,
                 ),
@@ -886,7 +914,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Text(
-                      'Cancel Subscription',
+                      l10n.subscriptionCancelButton,
                       style: KolabingTextStyles.bodyMedium.copyWith(
                         color: KolabingColors.error,
                         decoration: TextDecoration.underline,
@@ -901,13 +929,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   }
 
   Widget _buildApplePriceLabel(IAPState? iapState) {
+    final l10n = AppLocalizations.of(context);
     final state = iapState ?? const IAPState();
 
     if (state.monthlyProduct == null) {
       return Text(
         state.isLoadingProducts
-            ? 'Loading App Store price...'
-            : 'Subscription unavailable',
+            ? l10n.subscriptionLoadingApplePrice
+            : l10n.subscriptionUnavailable,
         style: KolabingTextStyles.titleMedium.copyWith(
           color: KolabingColors.onSurface,
         ),
@@ -916,7 +945,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     }
 
     return Text(
-      '${state.priceString}/month',
+      l10n.subscriptionPricePerMonth(state.priceString),
       style: KolabingTextStyles.displaySmall.copyWith(
         color: KolabingColors.onSurface,
       ),

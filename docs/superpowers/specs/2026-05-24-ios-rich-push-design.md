@@ -45,7 +45,7 @@
 ## Native iOS requirements
 
 - app target and notification service extension share the same App Group
-- app group id used in repo: `group.com.kolabing.kolabingapp.onesignal`
+- app group id used in repo: `group.com.kolabing.kolabingapp.lpfnq76gb6.onesignal`
 - both targets declare `OneSignal_app_groups_key`
 
 ## Backend dependency

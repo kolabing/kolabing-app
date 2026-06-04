@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/leaderboard.dart';
 import '../providers/leaderboard_provider.dart';
 import '../widgets/leaderboard_entry_tile.dart';
@@ -48,10 +49,10 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
         : ref.watch(globalLeaderboardProvider);
 
     final title = eventId != null
-        ? (widget.eventName ?? 'Leaderboard')
+        ? (widget.eventName ?? AppLocalizations.of(context).leaderboardScreenTitle)
         : communityId != null
-        ? (widget.communityName ?? 'Leaderboard')
-        : 'Global Leaderboard';
+        ? (widget.communityName ?? AppLocalizations.of(context).leaderboardScreenTitle)
+        : AppLocalizations.of(context).leaderboardScreenGlobalTitle;
 
     return Scaffold(
       appBar: AppBar(
@@ -113,13 +114,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   KolabingSpacing.sm,
                 ),
                 child: Text(
-                  'RANKINGS',
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurfaceVariant,
-                    letterSpacing: 1.2,
-                  ),
+                  AppLocalizations.of(context).leaderboardScreenRankings,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -192,10 +188,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Your Ranking',
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    fontSize: 12,
-                    color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                  AppLocalizations.of(context).leaderboardScreenYourRanking,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -223,10 +217,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 ),
               ),
               Text(
-                'points',
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 12,
-                  color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                AppLocalizations.of(context).leaderboardScreenPoints,
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -250,19 +242,13 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'No Rankings Yet',
-              style: KolabingTextStyles.bodyLarge.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              AppLocalizations.of(context).leaderboardScreenNoRankings,
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Be the first to earn points\nand claim the top spot!',
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
-              ),
+              AppLocalizations.of(context).leaderboardScreenNoRankingsHint,
+              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -285,11 +271,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load leaderboard',
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
-              ),
+              AppLocalizations.of(context).leaderboardScreenFailedToLoad,
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -311,7 +294,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 }
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

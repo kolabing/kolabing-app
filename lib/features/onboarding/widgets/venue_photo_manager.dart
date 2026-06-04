@@ -3,6 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/onboarding_photo.dart';
 
 class VenuePhotoManager extends StatelessWidget {
@@ -57,7 +58,7 @@ class VenuePhotoManager extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: onAddPhoto,
                 icon: const Icon(LucideIcons.plus, size: 18),
-                label: const Text('Add photo'),
+                label: Text(AppLocalizations.of(context).venuePhotoAddPhoto),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: KolabingColors.onSurface,
                   side: const BorderSide(color: KolabingColors.darkBorder),
@@ -72,7 +73,7 @@ class VenuePhotoManager extends StatelessWidget {
         if (hasGooglePhotos) ...[
           const SizedBox(height: 12),
           Text(
-            'Powered by Google',
+            AppLocalizations.of(context).venuePhotoPoweredByGoogle,
             style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
           ),
         ],
@@ -104,12 +105,12 @@ class _EmptyPhotoState extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Add venue photos',
+          AppLocalizations.of(context).venuePhotoEmptyTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
         ),
         const SizedBox(height: 6),
         Text(
-          'Keep imported Google photos, upload your own, remove what you do not want, and set the final order here.',
+          AppLocalizations.of(context).venuePhotoEmptyDescription,
           style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
           textAlign: TextAlign.center,
         ),
@@ -117,7 +118,7 @@ class _EmptyPhotoState extends StatelessWidget {
         ElevatedButton.icon(
           onPressed: onAddPhoto,
           icon: const Icon(LucideIcons.plus, size: 18),
-          label: const Text('Add photo'),
+          label: Text(AppLocalizations.of(context).venuePhotoAddPhoto),
           style: ElevatedButton.styleFrom(
             backgroundColor: KolabingColors.primary,
             foregroundColor: KolabingColors.onPrimary,
@@ -145,10 +146,11 @@ class _VenuePhotoCard extends StatelessWidget {
   final VoidCallback? onMoveRight;
   final VoidCallback onRemove;
 
-  String get _sourceLabel {
-    if (photo.isGoogleImported) return 'Google import';
-    if (photo.isHosted) return 'Saved photo';
-    return 'Upload';
+  String _sourceLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (photo.isGoogleImported) return l10n.venuePhotoSourceGoogle;
+    if (photo.isHosted) return l10n.venuePhotoSourceSaved;
+    return l10n.venuePhotoSourceUpload;
   }
 
   @override
@@ -175,7 +177,10 @@ class _VenuePhotoCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Photo ${index + 1} of $total',
+                      AppLocalizations.of(context).venuePhotoPositionLabel(
+                        index + 1,
+                        total,
+                      ),
                       style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                     ),
                     const SizedBox(width: 8),
@@ -191,7 +196,7 @@ class _VenuePhotoCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
-                        _sourceLabel,
+                        _sourceLabel(context),
                         style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
                       ),
                     ),
@@ -206,7 +211,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       color: onMoveLeft == null
                           ? KolabingColors.textTertiary
                           : KolabingColors.onSurface,
-                      tooltip: 'Move earlier',
+                      tooltip: AppLocalizations.of(context).venuePhotoMoveEarlier,
                     ),
                     IconButton(
                       onPressed: onMoveRight,
@@ -214,14 +219,14 @@ class _VenuePhotoCard extends StatelessWidget {
                       color: onMoveRight == null
                           ? KolabingColors.textTertiary
                           : KolabingColors.onSurface,
-                      tooltip: 'Move later',
+                      tooltip: AppLocalizations.of(context).venuePhotoMoveLater,
                     ),
                     const Spacer(),
                     IconButton(
                       onPressed: onRemove,
                       icon: const Icon(LucideIcons.trash2, size: 18),
                       color: KolabingColors.error,
-                      tooltip: 'Remove photo',
+                      tooltip: AppLocalizations.of(context).venuePhotoRemovePhoto,
                     ),
                   ],
                 ),
@@ -234,7 +239,7 @@ class _VenuePhotoCard extends StatelessWidget {
                       color: KolabingColors.primary,
                     ),
                     label: Text(
-                      'Photo credits',
+                      AppLocalizations.of(context).venuePhotoCredits,
                       style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.primary),
                     ),
                   ),
@@ -274,7 +279,7 @@ class _VenuePhotoCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Google photo credits',
+                AppLocalizations.of(context).venuePhotoCreditsSheetTitle,
                 style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
               ),
               const SizedBox(height: 8),
@@ -302,7 +307,7 @@ class _VenuePhotoCard extends StatelessWidget {
                 const SizedBox(height: 12),
               ],
               Text(
-                'Powered by Google',
+                AppLocalizations.of(context).venuePhotoPoweredByGoogle,
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
               ),
             ],

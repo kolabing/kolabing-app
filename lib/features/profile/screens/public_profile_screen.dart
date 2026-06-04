@@ -11,6 +11,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
@@ -90,7 +91,7 @@ class PublicProfileScreen extends ConsumerWidget {
                 if (profile.hasAbout) ...[
                   _SectionCard(
                     icon: LucideIcons.fileText,
-                    title: 'About',
+                    title: AppLocalizations.of(context).publicProfileAbout,
                     child: Text(
                       profile.about!,
                       style: KolabingTextStyles.bodyMedium.copyWith(
@@ -113,7 +114,7 @@ class PublicProfileScreen extends ConsumerWidget {
                 const SizedBox(height: KolabingSpacing.md),
 
                 // Past collaborations
-                _buildCollaborationsSection(profile),
+                _buildCollaborationsSection(context, profile),
                 const SizedBox(height: KolabingSpacing.md),
 
                 // Recent reviews
@@ -255,7 +256,7 @@ class PublicProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Failed to load profile',
+              AppLocalizations.of(context).publicProfileLoadError,
               style: KolabingTextStyles.titleMedium.copyWith(
                 color: KolabingColors.onSurface,
               ),
@@ -272,7 +273,7 @@ class PublicProfileScreen extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () => ref.invalidate(publicProfileProvider(profileId)),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Retry'),
+              label: Text(AppLocalizations.of(context).commonRetry),
             ),
           ],
         ),
@@ -282,9 +283,12 @@ class PublicProfileScreen extends ConsumerWidget {
   // Collaborations Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildCollaborationsSection(PublicProfile profile) => _SectionCard(
+  Widget _buildCollaborationsSection(
+    BuildContext context,
+    PublicProfile profile,
+  ) => _SectionCard(
     icon: LucideIcons.trophy,
-    title: 'Past Kolabs',
+    title: AppLocalizations.of(context).publicProfilePastKolabs,
     count: profile.kolabsCount,
     child: profile.hasCollaborations
         ? SizedBox(
@@ -311,7 +315,7 @@ class PublicProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
                   Text(
-                    'No past kolabs yet',
+                    AppLocalizations.of(context).publicProfileNoPastKolabs,
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: KolabingColors.textTertiary,
                     ),
@@ -331,7 +335,7 @@ class PublicProfileScreen extends ConsumerWidget {
     PublicProfile profile,
   ) => _SectionCard(
     icon: LucideIcons.link,
-    title: 'Social Links',
+    title: AppLocalizations.of(context).publicProfileSocialLinks,
     child: Wrap(
       spacing: KolabingSpacing.sm,
       runSpacing: KolabingSpacing.sm,
@@ -687,7 +691,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: Text(
-                'Save for later',
+                AppLocalizations.of(context).publicProfileSaveForLater,
                 style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
@@ -725,7 +729,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
                 ),
                 icon: const Icon(LucideIcons.send, size: 18),
                 label: Text(
-                  'SEND A KOLAB PROPOSAL',
+                  AppLocalizations.of(context).publicProfileSendKolabProposal,
                   style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
                 ),
               ),
@@ -750,13 +754,13 @@ class _RecentReviewsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return _SectionCard(
       icon: Icons.star_rounded,
-      title: 'Recent Reviews',
+      title: AppLocalizations.of(context).publicProfileRecentReviews,
       trailing: TextButton(
         onPressed: () => context.push(
           '/profile/${profile.id}/reviews',
           extra: profile.displayName,
         ),
-        child: const Text('View more'),
+        child: Text(AppLocalizations.of(context).publicProfileViewMore),
       ),
       child: Column(
         children: [

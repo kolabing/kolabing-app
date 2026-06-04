@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
@@ -104,35 +105,36 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
     final totalUnread = ref.watch(totalUnreadCountProvider);
     final badgeCount = pendingSentCount + pendingReceivedCount + totalUnread;
 
+    final l10n = AppLocalizations.of(context);
     final navItems = [
-      const NavItem(
+      NavItem(
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
-        label: 'Home',
+        label: l10n.communityMainNavHome,
         iconSlug: UiIconSlug.home,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.compass,
         activeIcon: LucideIcons.compass,
-        label: 'Explore',
+        label: l10n.communityMainNavExplore,
         iconSlug: UiIconSlug.compass,
       ),
       NavItem(
         icon: LucideIcons.star,
         activeIcon: LucideIcons.star,
-        label: 'My Kolabs',
+        label: l10n.communityMainNavMyKolabs,
         badgeCount: badgeCount > 0 ? badgeCount : null,
         iconSlug: UiIconSlug.star,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.users,
         activeIcon: LucideIcons.users,
-        label: 'Community',
+        label: l10n.communityMainNavCommunity,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
-        label: 'Profile',
+        label: l10n.communityMainNavProfile,
         iconSlug: UiIconSlug.user,
       ),
     ];
@@ -160,7 +162,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           _currentIndex < 2
           ? KolabingFAB(
               onPressed: _onFabPressed,
-              tooltip: 'Create Opportunity',
+              tooltip: l10n.communityMainCreateOpportunityTooltip,
               heroTag: 'community_main_fab',
             )
           : null,

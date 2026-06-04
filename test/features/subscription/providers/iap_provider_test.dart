@@ -50,6 +50,25 @@ void main() {
     expect(result.validatedReferralCode, 'KOLAB-IRSC');
   });
 
+  test('purchase refreshes products before buying when store is ready', () async {
+    final service = _RefreshOnDemandIAPService();
+    final container = ProviderContainer(
+      overrides: [iapServiceProvider.overrideWith((ref) => service)],
+    );
+    addTearDown(container.dispose);
+
+    final notifier = container.read(iapProvider.notifier)
+      ..state = const IAPState(isAvailable: true);
+
+    final result = await notifier.purchase(referralCode: 'kolab-irsc');
+
+    expect(service.initializeCalls, 1);
+    expect(service.purchaseCalls, 1);
+    expect(result.started, isTrue);
+    expect(result.validatedReferralCode, 'KOLAB-IRSC');
+    expect(container.read(iapProvider).priceString, '29.99 EUR');
+  });
+
   test('state exposes loading and product availability guards', () {
     const loadingState = IAPState(isLoadingProducts: true);
     const unavailableProductState = IAPState(isAvailable: true);
@@ -63,13 +82,11 @@ void main() {
       loadingState.purchaseAvailabilityMessage,
       'Loading subscription options from the App Store...',
     );
-    expect(loadingState.priceString, 'Loading...');
+    expect(loadingState.priceString, '30 EUR');
 
-    expect(unavailableProductState.canPurchase, isFalse);
-    expect(
-      unavailableProductState.purchaseAvailabilityMessage,
-      'The subscription product is not available right now. Please try again later.',
-    );
+    expect(unavailableProductState.canPurchase, isTrue);
+    expect(unavailableProductState.purchaseAvailabilityMessage, isNull);
+    expect(unavailableProductState.priceString, '30 EUR');
 
     expect(readyState.canPurchase, isTrue);
     expect(readyState.purchaseAvailabilityMessage, isNull);
@@ -128,6 +145,34 @@ class _ReadyIAPService extends _FakeIAPService {
 
   @override
   List<ProductDetails> get products => <ProductDetails>[_monthlyProduct];
+
+  @override
+  Future<({bool started, String? validatedReferralCode})> purchaseSubscription({
+    String? referralCode,
+  }) async {
+    purchaseCalls += 1;
+    lastReferralCode = referralCode?.toUpperCase();
+    return (started: true, validatedReferralCode: lastReferralCode);
+  }
+}
+
+class _RefreshOnDemandIAPService extends _FakeIAPService {
+  int initializeCalls = 0;
+  String? lastReferralCode;
+  bool _productsReady = false;
+
+  @override
+  Future<void> initialize() async {
+    initializeCalls += 1;
+    _productsReady = true;
+  }
+
+  @override
+  bool get isAvailable => true;
+
+  @override
+  List<ProductDetails> get products =>
+      _productsReady ? <ProductDetails>[_monthlyProduct] : const [];
 
   @override
   Future<({bool started, String? validatedReferralCode})> purchaseSubscription({

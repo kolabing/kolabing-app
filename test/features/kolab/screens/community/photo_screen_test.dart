@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/models/kolab.dart';
@@ -15,10 +16,12 @@ void main() {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    container.read(kolabFormProvider.notifier).selectIntent(
-          IntentType.communitySeeking,
-        );
-    container.read(kolabFormProvider.notifier).addMedia(
+    container
+        .read(kolabFormProvider.notifier)
+        .selectIntent(IntentType.communitySeeking);
+    container
+        .read(kolabFormProvider.notifier)
+        .addMedia(
           const KolabMedia(
             url: 'https://example.com/community-photo.jpg',
             type: 'photo',
@@ -30,9 +33,9 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: PhotoScreen(),
-          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: PhotoScreen()),
         ),
       ),
     );
@@ -44,46 +47,47 @@ void main() {
     expect(find.text('Upload a photo'), findsNothing);
   });
 
-  testWidgets('photo screen shows library selection when reusable photos exist', (
-    WidgetTester tester,
-  ) async {
-    final container = ProviderContainer(
-      overrides: [
-        galleryProvider.overrideWith(
-          () => _FakeGalleryNotifier(
-            GalleryState(
-              photos: [
-                GalleryPhoto.fromUrl(
-                  id: 'photo-1',
-                  rawUrl: '/storage/gallery/community-photo.jpg',
-                ),
-              ],
+  testWidgets(
+    'photo screen shows library selection when reusable photos exist',
+    (WidgetTester tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          galleryProvider.overrideWith(
+            () => _FakeGalleryNotifier(
+              GalleryState(
+                photos: [
+                  GalleryPhoto.fromUrl(
+                    id: 'photo-1',
+                    rawUrl: '/storage/gallery/community-photo.jpg',
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+        ],
+      );
+      addTearDown(container.dispose);
 
-    container.read(kolabFormProvider.notifier).selectIntent(
-          IntentType.communitySeeking,
-        );
+      container
+          .read(kolabFormProvider.notifier)
+          .selectIntent(IntentType.communitySeeking);
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(
-          home: Scaffold(
-            body: PhotoScreen(),
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(body: PhotoScreen()),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    expect(find.text('Choose from gallery or past events'), findsOneWidget);
-  });
+      expect(find.text('Choose from gallery or past events'), findsOneWidget);
+    },
+  );
 }
 
 class _FakeGalleryNotifier extends GalleryNotifier {

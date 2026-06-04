@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/event/providers/event_provider.dart';
@@ -24,6 +25,8 @@ void main() {
             ),
           ],
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: EventDetailScreen(eventId: 'event-1'),
           ),
         ),
@@ -52,10 +55,9 @@ void main() {
             ),
           ],
           child: const MaterialApp(
-            home: EventDetailScreen(
-              eventId: 'event-1',
-              isReadOnly: true,
-            ),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: EventDetailScreen(eventId: 'event-1', isReadOnly: true),
           ),
         ),
       );
@@ -97,10 +99,7 @@ Event _testEvent() => Event(
   date: DateTime(2026, 7, 1),
   attendeeCount: 160,
   photos: const [
-    EventPhoto(
-      id: 'photo-1',
-      url: 'https://example.com/photo.jpg',
-    ),
+    EventPhoto(id: 'photo-1', url: 'https://example.com/photo.jpg'),
   ],
   createdAt: DateTime(2026, 7, 1),
 );

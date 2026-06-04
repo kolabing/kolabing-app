@@ -4,6 +4,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/public_profile.dart';
 import '../services/public_profile_service.dart';
 
@@ -55,7 +56,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
     } on Exception {
       if (!mounted) return;
       setState(() {
-        _error = 'Could not load reviews.';
+        _error = 'load_failed';
         _isLoading = false;
       });
     }
@@ -86,9 +87,10 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final title = (widget.profileName?.trim().isNotEmpty ?? false)
-        ? '${widget.profileName} Reviews'
-        : 'Reviews';
+        ? l10n.profileReviewsTitleNamed(widget.profileName!)
+        : l10n.profileReviewsTitle;
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -101,11 +103,12 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
           style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
         ),
       ),
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -116,13 +119,13 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              _error!,
+              l10n.profileReviewsLoadError,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 color: KolabingColors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
-            TextButton(onPressed: _loadInitial, child: const Text('Retry')),
+            TextButton(onPressed: _loadInitial, child: Text(l10n.commonRetry)),
           ],
         ),
       );
@@ -131,7 +134,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
     if (_reviews.isEmpty) {
       return Center(
         child: Text(
-          'No reviews yet.',
+          l10n.profileReviewsEmpty,
           style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.onSurfaceVariant,
           ),
@@ -160,7 +163,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Load more'),
+                    : Text(AppLocalizations.of(context).profileReviewsLoadMore),
               ),
             ),
           );

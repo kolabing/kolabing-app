@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui_icon.dart';
 import '../models/reward_claim.dart';
 import '../providers/reward_provider.dart';
@@ -22,7 +23,7 @@ class RewardWalletScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Rewards',
+          AppLocalizations.of(context).rewardWalletTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -85,12 +86,12 @@ class RewardWalletScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'No Rewards Yet',
+              AppLocalizations.of(context).rewardWalletEmptyTitle,
               style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Complete challenges and spin the wheel\nto win exciting rewards!',
+              AppLocalizations.of(context).rewardWalletEmptyBody,
               style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
@@ -114,7 +115,7 @@ class RewardWalletScreen extends ConsumerWidget {
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
-              'Failed to load rewards',
+              AppLocalizations.of(context).rewardWalletErrorTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -127,7 +128,7 @@ class RewardWalletScreen extends ConsumerWidget {
             TextButton.icon(
               onPressed: () => ref.invalidate(myRewardsProvider),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
-              label: const Text('Try Again'),
+              label: Text(AppLocalizations.of(context).commonTryAgain),
               style: TextButton.styleFrom(
                 foregroundColor: KolabingColors.primary,
               ),

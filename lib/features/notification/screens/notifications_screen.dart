@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/app_notification.dart';
 import '../providers/notification_provider.dart';
 import '../utils/notification_navigation.dart';
@@ -57,7 +58,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         backgroundColor: KolabingColors.surface,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'Notifications',
+          AppLocalizations.of(context).notificationsScreenTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
@@ -72,7 +73,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               onPressed: () =>
                   ref.read(notificationProvider.notifier).markAllAsRead(),
               child: Text(
-                'Mark all read',
+                AppLocalizations.of(context).notificationsScreenMarkAllRead,
                 style: KolabingTextStyles.labelMedium.copyWith(
                   color: KolabingColors.primary,
                 ),
@@ -80,21 +81,21 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             ),
         ],
       ),
-      body: _buildBody(state),
+      body: _buildBody(context, state),
     );
   }
 
-  Widget _buildBody(NotificationState state) {
+  Widget _buildBody(BuildContext context, NotificationState state) {
     if (state.isLoading) {
       return _buildLoadingState();
     }
 
     if (state.error != null && state.notifications.isEmpty) {
-      return _buildErrorState(state.error!);
+      return _buildErrorState(context, state.error!);
     }
 
     if (state.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return RefreshIndicator(
@@ -152,7 +153,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         child: CircularProgressIndicator(color: KolabingColors.primary),
       );
 
-  Widget _buildErrorState(String error) => Center(
+  Widget _buildErrorState(BuildContext context, String error) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -175,14 +176,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               TextButton(
                 onPressed: () =>
                     ref.read(notificationProvider.notifier).refresh(),
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context).commonRetry),
               ),
             ],
           ),
         ),
       );
 
-  Widget _buildEmptyState() => Center(
+  Widget _buildEmptyState(BuildContext context) => Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
           child: Column(
@@ -195,14 +196,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
-                'No notifications yet',
+                AppLocalizations.of(context).notificationsScreenEmptyTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
-                'When you receive messages or application updates, they\'ll show up here.',
+                AppLocalizations.of(context).notificationsScreenEmptyBody,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.textTertiary,
                 ),

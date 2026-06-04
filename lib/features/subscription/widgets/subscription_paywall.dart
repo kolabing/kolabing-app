@@ -9,6 +9,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
 import '../../business/providers/profile_provider.dart';
@@ -52,6 +53,16 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   final _referralCodeController = TextEditingController();
   String? _referralCodeApiError;
   String? _referralCodeHelperText;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Platform.isIOS) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(iapProvider.notifier).refreshProducts();
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -107,8 +118,10 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     } on Exception {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to start App Store purchase'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).subscriptionPaywallAppleError,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -168,8 +181,10 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to create checkout session'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).subscriptionPaywallCheckoutError,
+          ),
           backgroundColor: KolabingColors.error,
         ),
       );
@@ -183,12 +198,15 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     );
     setState(() {
       _referralCodeApiError = null;
-      _referralCodeHelperText = 'Referral code applied.';
+      _referralCodeHelperText = AppLocalizations.of(
+        context,
+      ).subscriptionReferralCodeApplied;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // Always watch/listen unconditionally (Riverpod hooks must be stable)
     final iapState = ref.watch(iapProvider);
     final isLoading = Platform.isIOS
@@ -256,7 +274,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Title
               Text(
-                'Upgrade to Premium',
+                l10n.subscriptionPaywallTitle,
                 style: KolabingTextStyles.headlineMedium.copyWith(
                   color: KolabingColors.onSurface,
                 ),
@@ -265,7 +283,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Description
               Text(
-                "You've used your 1 free kolab request. Subscribe to create unlimited requests and connect with more communities.",
+                l10n.subscriptionPaywallDescription,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: KolabingColors.onSurfaceVariant,
                 ),
@@ -276,15 +294,15 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               // Benefits
               _buildBenefitRow(
                 LucideIcons.infinity,
-                'Publish unlimited kolab requests',
+                l10n.subscriptionPaywallBenefitUnlimited,
               ),
               _buildBenefitRow(
                 LucideIcons.users,
-                'Connect with local communities',
+                l10n.subscriptionPaywallBenefitConnect,
               ),
               _buildBenefitRow(
                 LucideIcons.inbox,
-                'Receive and manage applications',
+                l10n.subscriptionPaywallBenefitApplications,
               ),
               const SizedBox(height: KolabingSpacing.lg),
 
@@ -309,7 +327,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       ),
                       const SizedBox(width: KolabingSpacing.xs),
                       Text(
-                        '/ month',
+                        l10n.subscriptionPaywallPerMonth,
                         style: KolabingTextStyles.bodyLarge.copyWith(
                           color: KolabingColors.onSurfaceVariant,
                         ),
@@ -317,8 +335,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                     ] else
                       Text(
                         iapState.isLoadingProducts
-                            ? 'Loading App Store price...'
-                            : 'Subscription unavailable',
+                            ? l10n.subscriptionLoadingApplePrice
+                            : l10n.subscriptionUnavailable,
                         style: KolabingTextStyles.titleMedium.copyWith(
                           color: KolabingColors.onSurface,
                         ),
@@ -374,7 +392,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                           ),
                         )
                       : Text(
-                          'SUBSCRIBE NOW',
+                          l10n.subscriptionPaywallSubscribeButton,
                           style: KolabingTextStyles.button.copyWith(
                             color: KolabingColors.onPrimary,
                           ),
@@ -387,7 +405,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text(
-                  'Not Now',
+                  l10n.subscriptionPaywallNotNowButton,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: KolabingColors.textTertiary,
                   ),
@@ -401,7 +419,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       ? null
                       : () => ref.read(iapProvider.notifier).restore(),
                   child: Text(
-                    'Restore Purchases',
+                    l10n.subscriptionRestorePurchasesButton,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: KolabingColors.textTertiary,
                       decoration: TextDecoration.underline,

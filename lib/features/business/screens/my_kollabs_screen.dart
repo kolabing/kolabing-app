@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../kolab/models/kolab.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
@@ -35,10 +36,15 @@ class MyKollabsScreen extends ConsumerStatefulWidget {
 class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
   final _scrollController = ScrollController();
 
-  static const _statusTabs = [
-    (label: 'Published', value: 'published'),
-    (label: 'Draft', value: 'draft'),
-  ];
+  static const _statusTabs = ['published', 'draft'];
+
+  String _statusTabLabel(BuildContext context, String value) {
+    final l10n = AppLocalizations.of(context);
+    return switch (value) {
+      'draft' => l10n.myKolabsTabDraft,
+      _ => l10n.myKolabsTabPublished,
+    };
+  }
 
   @override
   void initState() {
@@ -59,14 +65,6 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     }
   }
 
-  Future<void> _onCreateNew() async {
-    // B1 (2026-05-22): route all NEW creation through the unified /kolab/flow
-    // via /kolab/new (IntentSelectionScreen). The subscription gate for a
-    // non-subscribed business is enforced inside IntentSelectionScreen
-    // (_LockedBusinessCreateState), so we no longer pre-gate here.
-    await context.push(KolabingRoutes.kolabNew);
-  }
-
   void _onEdit(Kolab kolab) {
     final id = kolab.id;
     if (id == null || id.isEmpty) {
@@ -80,10 +78,15 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     final success = await ref.read(myKolabsProvider.notifier).publish(id);
     if (mounted) {
       final state = ref.read(myKolabsProvider);
-      final errorMessage = state.error ?? 'Failed to publish';
+      final errorMessage =
+          state.error ?? AppLocalizations.of(context).myKolabsPublishFailed;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Kolab published!' : errorMessage),
+          content: Text(
+            success
+                ? AppLocalizations.of(context).myKolabsPublished
+                : errorMessage,
+          ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
               ? KolabingColors.success
@@ -97,10 +100,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     final success = await ref.read(myKolabsProvider.notifier).close(id);
     if (mounted) {
       final state = ref.read(myKolabsProvider);
-      final errorMessage = state.error ?? 'Failed to close';
+      final errorMessage =
+          state.error ?? AppLocalizations.of(context).myKolabsCloseFailed;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Kolab closed' : errorMessage),
+          content: Text(
+            success ? AppLocalizations.of(context).myKolabsClosed : errorMessage,
+          ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
               ? KolabingColors.success
@@ -114,19 +120,17 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Kolab'),
-        content: const Text(
-          'Are you sure you want to delete this kolab? This action cannot be undone.',
-        ),
+        title: Text(AppLocalizations.of(context).myKolabsDeleteTitle),
+        content: Text(AppLocalizations.of(context).myKolabsDeleteMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context).myKolabsDelete),
           ),
         ],
       ),
@@ -136,10 +140,15 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       final success = await ref.read(myKolabsProvider.notifier).delete(id);
       if (mounted) {
         final state = ref.read(myKolabsProvider);
-        final errorMessage = state.error ?? 'Failed to delete';
+        final errorMessage =
+            state.error ?? AppLocalizations.of(context).myKolabsDeleteFailed;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(success ? 'Kolab deleted' : errorMessage),
+            content: Text(
+              success
+                  ? AppLocalizations.of(context).myKolabsDeleted
+                  : errorMessage,
+            ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: success
                 ? KolabingColors.success
@@ -218,14 +227,14 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MY KOLABS',
+          AppLocalizations.of(context).myKolabsTitle,
           style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: isDark
                 ? KolabingColors.textOnDark
                 : KolabingColors.onSurface, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Manage your kolabs',
+          AppLocalizations.of(context).myKolabsSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
         ),
       ],
@@ -238,14 +247,14 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
       children: _statusTabs.map((tab) {
-        final isSelected = currentStatus == tab.value;
+        final isSelected = currentStatus == tab;
         return Padding(
           padding: const EdgeInsets.only(right: KolabingSpacing.xs),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                ref.read(myKolabsStatusProvider.notifier).setStatus(tab.value);
+                ref.read(myKolabsStatusProvider.notifier).setStatus(tab);
               },
               borderRadius: KolabingRadius.borderRadiusRound,
               child: AnimatedContainer(
@@ -270,7 +279,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                   ),
                 ),
                 child: Text(
-                  tab.label,
+                  _statusTabLabel(context, tab),
                   style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
                         ? KolabingColors.onPrimary
                         : isDark
@@ -294,7 +303,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           vertical: KolabingSpacing.sm,
         ),
         child: Text(
-          '${listState.total} ${listState.total == 1 ? 'kolab' : 'kolabs'}',
+          AppLocalizations.of(context).myKolabsCount(listState.total),
           style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: isDark
                 ? KolabingColors.textOnDark.withValues(alpha: 0.5)
                 : KolabingColors.textTertiary),
@@ -403,26 +412,16 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'No kolabs yet',
+            AppLocalizations.of(context).myKolabsEmptyTitle,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                   ? KolabingColors.textOnDark
                   : KolabingColors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            'Create your first kolab to start connecting with communities',
+            AppLocalizations.of(context).myKolabsEmptyMessage,
             style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
             textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
-            onPressed: _onCreateNew,
-            icon: const Icon(LucideIcons.plus, size: 18),
-            label: const Text('Create Kolab'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-            ),
           ),
         ],
       ),
@@ -452,7 +451,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
-            'Something went wrong',
+            AppLocalizations.of(context).myKolabsSomethingWrong,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
                   ? KolabingColors.textOnDark
                   : KolabingColors.onSurface),
@@ -469,7 +468,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
               ref.read(myKolabsProvider.notifier).refresh();
             },
             icon: const Icon(LucideIcons.rotateCcw, size: 16),
-            label: const Text('Try again'),
+            label: Text(AppLocalizations.of(context).myKolabsTryAgain),
             style: ElevatedButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,

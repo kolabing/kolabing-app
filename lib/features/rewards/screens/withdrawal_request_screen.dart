@@ -6,6 +6,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../providers/wallet_provider.dart';
 
@@ -58,24 +59,27 @@ class _WithdrawalRequestScreenState
       setState(() => _isSuccess = true);
     } else {
       final error = ref.read(walletProvider).error;
-      setState(() => _errorMessage = error ?? 'Withdrawal request failed');
+      setState(
+        () => _errorMessage =
+            error ?? AppLocalizations.of(context).withdrawalRequestFailed,
+      );
     }
   }
 
   String? _validateIban(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'IBAN is required';
+      return AppLocalizations.of(context).withdrawalIbanRequired;
     }
     final cleaned = value.replaceAll(' ', '');
     if (cleaned.length < 15 || cleaned.length > 34) {
-      return 'Please enter a valid IBAN (15-34 characters)';
+      return AppLocalizations.of(context).withdrawalIbanInvalid;
     }
     return null;
   }
 
   String? _validateAccountHolder(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Account holder name is required';
+      return AppLocalizations.of(context).withdrawalAccountHolderRequired;
     }
     return null;
   }
@@ -92,7 +96,7 @@ class _WithdrawalRequestScreenState
         backgroundColor: KolabingColors.background,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'WITHDRAW',
+          AppLocalizations.of(context).withdrawalScreenTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
@@ -149,14 +153,14 @@ class _WithdrawalRequestScreenState
         ),
         const SizedBox(height: KolabingSpacing.lg),
         Text(
-          'Request Submitted',
+          AppLocalizations.of(context).withdrawalSuccessTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
-          'Your withdrawal request has been submitted successfully. Processing within 5-7 business days.',
+          AppLocalizations.of(context).withdrawalSuccessMessage,
           textAlign: TextAlign.center,
           style: KolabingTextStyles.bodyMedium.copyWith(
             color: KolabingColors.onSurfaceVariant,
@@ -175,7 +179,10 @@ class _WithdrawalRequestScreenState
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
             ),
-            child: Text('BACK TO WALLET', style: KolabingTextStyles.button),
+            child: Text(
+              AppLocalizations.of(context).withdrawalBackToWallet,
+              style: KolabingTextStyles.button,
+            ),
           ),
         ),
       ],
@@ -227,7 +234,7 @@ class _WithdrawalRequestScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Available to withdraw',
+                      AppLocalizations.of(context).withdrawalAvailableLabel,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         color: KolabingColors.onSurfaceVariant,
                       ),
@@ -248,7 +255,7 @@ class _WithdrawalRequestScreenState
 
         // IBAN field
         Text(
-          'IBAN',
+          AppLocalizations.of(context).withdrawalIbanLabel,
           style: KolabingTextStyles.labelMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
@@ -261,7 +268,7 @@ class _WithdrawalRequestScreenState
           validator: _validateIban,
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
-            hintText: 'e.g. DE89 3704 0044 0532 0130 00',
+            hintText: AppLocalizations.of(context).withdrawalIbanHint,
             hintStyle: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.textTertiary,
             ),
@@ -295,7 +302,7 @@ class _WithdrawalRequestScreenState
 
         // Account Holder Name field
         Text(
-          'ACCOUNT HOLDER NAME',
+          AppLocalizations.of(context).withdrawalAccountHolderLabel,
           style: KolabingTextStyles.labelMedium.copyWith(
             color: KolabingColors.onSurface,
           ),
@@ -307,7 +314,7 @@ class _WithdrawalRequestScreenState
           validator: _validateAccountHolder,
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
-            hintText: 'Full name on bank account',
+            hintText: AppLocalizations.of(context).withdrawalAccountHolderHint,
             hintStyle: KolabingTextStyles.bodyMedium.copyWith(
               color: KolabingColors.textTertiary,
             ),
@@ -369,7 +376,9 @@ class _WithdrawalRequestScreenState
                     ),
                   )
                 : Text(
-                    'WITHDRAW EUR ${eurValue.toStringAsFixed(2)}',
+                    AppLocalizations.of(context).withdrawalSubmitButton(
+                      eurValue.toStringAsFixed(2),
+                    ),
                     style: KolabingTextStyles.button,
                   ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_filters.dart';
@@ -27,6 +28,8 @@ void main() {
           ),
         ],
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: ExploreFilterSheet(totalResults: 15)),
         ),
       ),
@@ -35,10 +38,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Search & Filter'), findsOneWidget);
-    expect(find.text('Need'), findsOneWidget);
+    expect(find.text('Offer'), findsOneWidget);
     expect(find.text('Community Type'), findsOneWidget);
     expect(find.text('Audience Size'), findsOneWidget);
-    expect(find.text('Collab Type'), findsNothing);
+    expect(find.text('Kolab Type'), findsNothing);
   });
 
   testWidgets('community viewer sees business offer filters and search', (
@@ -60,6 +63,8 @@ void main() {
           ),
         ],
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(body: ExploreFilterSheet(totalResults: 15)),
         ),
       ),
@@ -67,7 +72,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Collab Type'), findsOneWidget);
+    expect(find.text('Kolab Type'), findsOneWidget);
     expect(find.text('What They Offer'), findsOneWidget);
     expect(find.text('Venue Type'), findsOneWidget);
     expect(find.text('Product Type'), findsOneWidget);

@@ -36,7 +36,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final route = await container.read(splashStateProvider.notifier).initialize();
+      final route = await container
+          .read(splashStateProvider.notifier)
+          .initialize();
 
       final authState = container.read(authProvider);
       expect(authState.isAuthenticated, isTrue);
@@ -46,7 +48,7 @@ void main() {
         anyOf(
           KolabingRoutes.communityDashboard,
           '${KolabingRoutes.permissions}?destination='
-              '${Uri.encodeComponent(KolabingRoutes.communityDashboard)}',
+          '${Uri.encodeComponent(KolabingRoutes.communityDashboard)}',
         ),
       );
     },
@@ -54,11 +56,7 @@ void main() {
 }
 
 class _FakeAuthService extends AuthService {
-  _FakeAuthService({
-    required this.token,
-    this.storedUser,
-    this.restoredUser,
-  });
+  _FakeAuthService({required this.token, this.storedUser, this.restoredUser});
 
   final String? token;
   final UserModel? storedUser;

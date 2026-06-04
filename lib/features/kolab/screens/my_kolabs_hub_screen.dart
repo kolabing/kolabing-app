@@ -6,6 +6,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../collaboration/providers/collaborations_list_provider.dart';
@@ -74,6 +75,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -92,7 +94,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 KolabingSpacing.xs,
               ),
               child: Text(
-                'MY KOLABS',
+                l10n.myKolabsHubTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
@@ -110,11 +112,11 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               unselectedLabelColor: KolabingColors.navInactive,
               indicatorColor: KolabingColors.navBarBackground,
               indicatorWeight: 3,
-              tabs: const [
-                Tab(text: 'OFFERS'),
-                Tab(text: 'REQUESTS'),
-                Tab(text: 'ACTIVE'),
-                Tab(text: 'FINISHED'),
+              tabs: [
+                Tab(text: l10n.myKolabsHubTabOffers),
+                Tab(text: l10n.myKolabsHubTabRequests),
+                Tab(text: l10n.myKolabsHubTabActive),
+                Tab(text: l10n.myKolabsHubTabFinished),
               ],
             ),
             Expanded(
@@ -123,18 +125,15 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 children: [
                   widget.offersTab,
                   const ApplicationsScreen(embedded: true),
-                  const CollaborationsListTab(
+                  CollaborationsListTab(
                     bucket: CollaborationBucket.active,
-                    emptyTitle: 'No active kolabs',
-                    emptyMessage:
-                        'Once an application is accepted by both sides, the '
-                        'kolab shows up here while it’s underway.',
+                    emptyTitle: l10n.myKolabsHubActiveEmptyTitle,
+                    emptyMessage: l10n.myKolabsHubActiveEmptyMessage,
                   ),
-                  const CollaborationsListTab(
+                  CollaborationsListTab(
                     bucket: CollaborationBucket.finished,
-                    emptyTitle: 'Nothing finished yet',
-                    emptyMessage:
-                        'Completed and cancelled kolabs will be collected here.',
+                    emptyTitle: l10n.myKolabsHubFinishedEmptyTitle,
+                    emptyMessage: l10n.myKolabsHubFinishedEmptyMessage,
                   ),
                 ],
               ),
@@ -145,7 +144,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
       floatingActionButton: _tabController.index == 0
           ? KolabingFAB(
               onPressed: () => context.push(KolabingRoutes.kolabNew),
-              tooltip: 'Create Kolab',
+              tooltip: l10n.myKolabsHubCreateTooltip,
               heroTag: 'my_kolabs_hub_fab',
             )
           : null,

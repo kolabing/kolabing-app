@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// User type for selection cards
-enum SelectionUserType {
-  business,
-  community,
-  attendee,
-}
+enum SelectionUserType { business, community, attendee }
 
 /// Selection card for user type (Business or Community)
 ///
@@ -21,6 +18,8 @@ class SelectionCard extends StatefulWidget {
     super.key,
     this.isSelected = false,
     this.isEnabled = true,
+    this.badgeLabel,
+    this.descriptionOverride,
   });
 
   /// The user type this card represents
@@ -34,6 +33,12 @@ class SelectionCard extends StatefulWidget {
 
   /// Whether the card is interactive
   final bool isEnabled;
+
+  /// Optional badge shown inside the card, e.g. "COMING SOON".
+  final String? badgeLabel;
+
+  /// Optional override for the card description copy.
+  final String? descriptionOverride;
 
   @override
   State<SelectionCard> createState() => _SelectionCardState();
@@ -52,13 +57,9 @@ class _SelectionCardState extends State<SelectionCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   @override
@@ -102,106 +103,143 @@ class _SelectionCardState extends State<SelectionCard>
     }
   }
 
-  String get _title {
+  String _title(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
       case SelectionUserType.business:
-        return "I'M A BUSINESS";
+        return l10n.selectionCardBusinessTitle;
       case SelectionUserType.community:
-        return "I'M A COMMUNITY";
+        return l10n.selectionCardCommunityTitle;
       case SelectionUserType.attendee:
-        return "I'M AN ATTENDEE";
+        return l10n.selectionCardAttendeeTitle;
     }
   }
 
-  String get _description {
+  String _description(BuildContext context) {
+    final override = widget.descriptionOverride;
+    if (override != null && override.trim().isNotEmpty) {
+      return override;
+    }
+
+    final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
       case SelectionUserType.business:
-        return 'Looking for communities to partner with';
+        return l10n.selectionCardBusinessDescription;
       case SelectionUserType.community:
-        return 'Seeking sponsors and kolab partners';
+        return l10n.selectionCardCommunityDescription;
       case SelectionUserType.attendee:
-        return 'Joining events and completing challenges';
+        return l10n.selectionCardAttendeeDescription;
     }
   }
 
   @override
-  Widget build(BuildContext context) => Semantics(
-        button: true,
-        enabled: widget.isEnabled,
-        selected: widget.isSelected,
-        label: '$_title. $_description',
-        child: GestureDetector(
-          onTapDown: _handleTapDown,
-          onTapUp: _handleTapUp,
-          onTapCancel: _handleTapCancel,
-          onTap: _handleTap,
-          child: AnimatedBuilder(
-            animation: _scaleAnimation,
-            builder: (context, child) => Transform.scale(
-              scale: _isPressed || widget.isSelected
-                  ? _scaleAnimation.value
-                  : 1.0,
-              child: child,
-            ),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-              decoration: BoxDecoration(
-                color: KolabingColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: _isPressed || widget.isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.darkBorder,
-                  width: 2,
+  Widget build(BuildContext context) {
+    final hasBadge =
+        widget.badgeLabel != null && widget.badgeLabel!.trim().isNotEmpty;
+    final isHighlighted = _isPressed || widget.isSelected || hasBadge;
+    final borderColor = isHighlighted
+        ? KolabingColors.primary
+        : KolabingColors.darkBorder;
+    final shadowColor = isHighlighted
+        ? KolabingColors.primary.withValues(alpha: 0.20)
+        : const Color(0xFF374957).withValues(alpha: 0.10);
+
+    return Semantics(
+      button: true,
+      enabled: widget.isEnabled,
+      selected: widget.isSelected,
+      label: AppLocalizations.of(context).selectionCardSemanticLabel(
+        _title(context),
+        _description(context),
+      ),
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        onTap: _handleTap,
+        child: AnimatedBuilder(
+          animation: _scaleAnimation,
+          builder: (context, child) => Transform.scale(
+            scale: _isPressed || widget.isSelected
+                ? _scaleAnimation.value
+                : 1.0,
+            child: child,
+          ),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+            decoration: BoxDecoration(
+              color: KolabingColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: borderColor, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: shadowColor,
+                  blurRadius: isHighlighted ? 16 : 8,
+                  offset: const Offset(0, 1.5),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _isPressed || widget.isSelected
-                        ? KolabingColors.primary.withValues(alpha: 0.20)
-                        : const Color(0xFF374957).withValues(alpha: 0.10),
-                    blurRadius: _isPressed || widget.isSelected ? 16 : 8,
-                    offset: const Offset(0, 1.5),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon
+                Text(_icon, style: const TextStyle(fontSize: 48)),
+                if (hasBadge) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: KolabingColors.softYellow,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: KolabingColors.primary.withValues(alpha: 0.35),
+                      ),
+                    ),
+                    child: Text(
+                      widget.badgeLabel!,
+                      style: KolabingTextStyles.button.copyWith(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.8,
+                        color: KolabingColors.onSurface,
+                      ),
+                    ),
                   ),
                 ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Icon
-                  Text(
-                    _icon,
-                    style: const TextStyle(fontSize: 48),
-                  ),
-                  const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-                  // Title
-                  Text(
-                    _title,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.onSurface,
-                      letterSpacing: 0.5,
-                    ),
-                    textAlign: TextAlign.center,
+                // Title
+                Text(
+                  _title(context),
+                  style: KolabingTextStyles.button.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.onSurface,
+                    letterSpacing: 0.5,
                   ),
-                  const SizedBox(height: 8),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
 
-                  // Description
-                  Text(
-                    _description,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.onSurfaceVariant,
-                      height: 1.4,
-                    ),
-                    textAlign: TextAlign.center,
+                // Description
+                Text(
+                  _description(context),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: KolabingColors.onSurfaceVariant,
+                    height: 1.4,
                   ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }

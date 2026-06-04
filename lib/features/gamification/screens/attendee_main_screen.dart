@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
@@ -61,28 +62,29 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     final navItems = [
-      const NavItem(
+      NavItem(
         icon: LucideIcons.home,
         activeIcon: LucideIcons.home,
-        label: 'Home',
+        label: l10n.attendeeNavHome,
         iconSlug: UiIconSlug.home,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.users,
         activeIcon: LucideIcons.users,
-        label: 'Communities',
+        label: l10n.attendeeNavCommunities,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.qrCode,
         activeIcon: LucideIcons.qrCode,
-        label: 'Scan',
+        label: l10n.attendeeNavScan,
       ),
-      const NavItem(
+      NavItem(
         icon: LucideIcons.user,
         activeIcon: LucideIcons.user,
-        label: 'Profile',
+        label: l10n.attendeeNavProfile,
         iconSlug: UiIconSlug.user,
       ),
     ];
