@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/glass_button.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
@@ -267,65 +268,26 @@ class _CommunityDashboardScreenState
   // Quick Actions
   // ---------------------------------------------------------------------------
 
-  Widget _buildQuickActions(bool isDark) {
-    return Row(
-      children: [
-        // Primary button: FIND A KOLAB
-        Expanded(
-          child: SizedBox(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                // Switch to Explore tab (index 1)
-                widget.onSwitchTab?.call(1);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: const Color(0xFF5C4A12),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'FIND A KOLAB',
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0, color: const Color(0xFF5C4A12)),
-              ),
-            ),
-          ),
+  Widget _buildQuickActions(bool isDark) => Row(
+    children: [
+      Expanded(
+        child: GlassButton(
+          label: 'find a kolab',
+          onPressed: () => widget.onSwitchTab?.call(1),
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.search,
         ),
-        const SizedBox(width: KolabingSpacing.sm),
-
-        // Outlined button: MY APPLICATIONS
-        Expanded(
-          child: SizedBox(
-            height: 50,
-            child: OutlinedButton(
-              onPressed: () {
-                // Switch to Applications tab (index 3)
-                widget.onSwitchTab?.call(3);
-              },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.onSurface,
-                side: const BorderSide(color: Color(0xFFEAE3D4), width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  'MY APPLICATIONS',
-                  maxLines: 1,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                ),
-              ),
-            ),
-          ),
+      ),
+      const SizedBox(width: KolabingSpacing.sm),
+      Expanded(
+        child: GlassButton(
+          label: 'my applications',
+          onPressed: () => widget.onSwitchTab?.call(3),
+          intent: GlassButtonIntent.neutral,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   // ---------------------------------------------------------------------------
   // Upcoming Collaborations
@@ -412,26 +374,11 @@ class _CommunityDashboardScreenState
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  ref.read(dashboardProvider.notifier).refresh();
-                },
-                icon: const Icon(LucideIcons.refreshCw, size: 18),
-                label: Text(
-                  'RETRY',
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
+            GlassButton(
+              label: 'retry',
+              onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
+              intent: GlassButtonIntent.primary,
+              icon: LucideIcons.refreshCw,
             ),
           ],
         ),
