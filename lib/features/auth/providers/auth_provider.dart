@@ -142,6 +142,15 @@ class AuthNotifier extends Notifier<AuthState> {
     });
   }
 
+  /// Tear down the previous account's user-scoped providers right after a NEW
+  /// account signs in (account switch). Without this, kept-alive Notifiers
+  /// (chat inbox, unread badge, dashboard, community) keep serving the prior
+  /// user's cached data until a manual refresh — FX-9. The token is already
+  /// rotated by [AuthService] at this point, so the rebuild refetches as the
+  /// new user. Scheduled as a microtask so it runs after the authenticated
+  /// state has propagated.
+  void _invalidateAfterSignIn() => _scheduleUserScopedInvalidation();
+
   /// Sign in with email and password
   ///
   /// Returns AuthResult with success/failure information
@@ -163,6 +172,7 @@ class AuthNotifier extends Notifier<AuthState> {
         token: response.token,
         isNewUser: false,
       );
+      _invalidateAfterSignIn();
 
       unawaited(_syncPushIdentity(response.user));
 
@@ -206,6 +216,7 @@ class AuthNotifier extends Notifier<AuthState> {
         token: response.token,
         isNewUser: false,
       );
+      _invalidateAfterSignIn();
 
       unawaited(_syncPushIdentity(response.user));
 
@@ -392,6 +403,7 @@ class AuthNotifier extends Notifier<AuthState> {
         token: response.token,
         isNewUser: response.isNewUser,
       );
+      _invalidateAfterSignIn();
 
       unawaited(_syncPushIdentity(response.user));
 
