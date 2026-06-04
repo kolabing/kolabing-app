@@ -24,15 +24,18 @@ class GlassButton extends StatelessWidget {
 
   Color get _fill => switch (intent) {
         GlassButtonIntent.primary =>
-          const Color(0xFFFFF4C2).withValues(alpha: 0.34),
-        GlassButtonIntent.neutral => Colors.white.withValues(alpha: 0.30),
+          const Color(0xFFFFF4C2).withValues(alpha: 0.72),
+        GlassButtonIntent.neutral =>
+          const Color(0xFFF5F0E8).withValues(alpha: 0.70),
         GlassButtonIntent.destructive =>
           const Color(0xFF9B3B3B).withValues(alpha: 0.10),
       };
 
   Color get _border => switch (intent) {
-        GlassButtonIntent.primary || GlassButtonIntent.neutral =>
-          Colors.white.withValues(alpha: 0.78),
+        GlassButtonIntent.primary =>
+          const Color(0xFFD4B84A).withValues(alpha: 0.55),
+        GlassButtonIntent.neutral =>
+          const Color(0xFFCFC6B3).withValues(alpha: 0.80),
         GlassButtonIntent.destructive =>
           const Color(0xFF9B3B3B).withValues(alpha: 0.35),
       };

@@ -38,9 +38,9 @@ class GlassIconButton extends StatelessWidget {
                     height: 46,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.30),
+                      color: const Color(0xFFF5F0E8).withValues(alpha: 0.70),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.78),
+                        color: const Color(0xFFCFC6B3).withValues(alpha: 0.80),
                       ),
                       boxShadow: const [
                         BoxShadow(
