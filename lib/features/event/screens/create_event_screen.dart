@@ -207,7 +207,20 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ),
         ],
       ),
-      body: ListView(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Guard against being laid out with unbounded width (e.g. when pushed
+          // onto a navigator that sits in a horizontally-unbounded context):
+          // clamp to the device width so the form's full-width fields/buttons
+          // can lay out instead of throwing and rendering blank.
+          final maxWidth = constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : MediaQuery.sizeOf(context).width;
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: ListView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         children: [
           Text(widget.communityName,
@@ -299,6 +312,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
             ),
           ),
         ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
