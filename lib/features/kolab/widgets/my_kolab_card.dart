@@ -7,6 +7,8 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/glass_button.dart';
+import '../../../widgets/glass_icon_button.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../enums/intent_type.dart';
@@ -124,71 +126,86 @@ class MyKolabCard extends StatelessWidget {
   );
 
   Widget _buildActions() {
-    final actions = <Widget>[];
+    Widget? pill;
+    final iconBtns = <Widget>[];
 
-    if (kolab.status == 'published' && onView != null) {
-      actions.add(
-        _ActionBtn(
-          label: 'VIEW',
+    if (kolab.status == 'published') {
+      if (onView != null) {
+        pill = GlassButton(
+          label: 'view',
+          onPressed: onView,
+          intent: GlassButtonIntent.primary,
           icon: LucideIcons.eye,
-          onTap: onView!,
-          primary: true,
-        ),
-      );
-    }
-    if (kolab.canEdit && onEdit != null) {
-      actions.add(
-        _ActionBtn(
-          label: 'EDIT',
+        );
+      }
+      if (kolab.canEdit && onEdit != null) {
+        iconBtns.add(GlassIconButton(
           icon: LucideIcons.edit,
-          onTap: onEdit!,
-          outlined: true,
-        ),
-      );
-    }
-    if (kolab.canPublish && onPublish != null) {
-      actions.add(
-        _ActionBtn(
-          label: 'PUBLISH',
-          icon: LucideIcons.upload,
-          onTap: onPublish!,
-          primary: true,
-        ),
-      );
-    }
-    if (kolab.canClose && onClose != null) {
-      actions.add(
-        _ActionBtn(
-          label: 'CLOSE',
+          onPressed: onEdit,
+          tooltip: 'Edit',
+        ));
+      }
+      if (kolab.canClose && onClose != null) {
+        iconBtns.add(GlassIconButton(
           icon: LucideIcons.xCircle,
-          onTap: onClose!,
-          outlined: true,
-        ),
-      );
-    }
-    if (kolab.canDelete && onDelete != null) {
-      actions.add(
-        _ActionBtn(
-          label: 'DELETE',
-          icon: LucideIcons.trash2,
-          onTap: onDelete!,
-          danger: true,
-        ),
-      );
+          onPressed: onClose,
+          tooltip: 'Close',
+        ));
+      }
+    } else if (kolab.canEdit) {
+      if (onEdit != null) {
+        pill = GlassButton(
+          label: 'edit',
+          onPressed: onEdit,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.edit,
+        );
+      }
+      if (kolab.canPublish && onPublish != null) {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.upload,
+          onPressed: onPublish,
+          tooltip: 'Publish',
+        ));
+      }
+    } else if (kolab.canPublish) {
+      if (onPublish != null) {
+        pill = GlassButton(
+          label: 'publish',
+          onPressed: onPublish,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.upload,
+        );
+      }
     }
 
-    if (actions.isEmpty) return const SizedBox.shrink();
+    if (kolab.canDelete && onDelete != null) {
+      if (pill == null) {
+        pill = GlassButton(
+          label: 'delete',
+          onPressed: onDelete,
+          intent: GlassButtonIntent.destructive,
+          icon: LucideIcons.trash2,
+        );
+      } else {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.trash2,
+          onPressed: onDelete,
+          tooltip: 'Delete',
+        ));
+      }
+    }
+
+    if (pill == null && iconBtns.isEmpty) return const SizedBox.shrink();
 
     return Row(
-      children: actions
-          .expand(
-            (w) => [
-              Expanded(child: w),
-              const SizedBox(width: KolabingSpacing.xs),
-            ],
-          )
-          .toList()
-        ..removeLast(),
+      children: [
+        if (pill != null) Expanded(child: pill),
+        ...iconBtns.expand((btn) => [
+          const SizedBox(width: 9),
+          btn,
+        ]),
+      ],
     );
   }
 }
@@ -244,90 +261,4 @@ class _KolabSquareImage extends StatelessWidget {
       ),
     ),
   );
-}
-
-class _ActionBtn extends StatelessWidget {
-  const _ActionBtn({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.primary = false,
-    this.outlined = false,
-    this.danger = false,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool primary;
-  final bool outlined;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    final fgColor = primary
-        ? KolabingColors.onYellowButton
-        : danger
-        ? KolabingColors.error
-        : KolabingColors.onSurface;
-
-    final child = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 13, color: fgColor),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.fade,
-            softWrap: false,
-            style: KolabingTextStyles.labelSmall.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: fgColor,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ),
-      ],
-    );
-
-    if (primary) {
-      return SizedBox(
-        height: 36,
-        child: ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onYellowButton,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusSm,
-            ),
-          ),
-          child: child,
-        ),
-      );
-    }
-
-    return SizedBox(
-      height: 36,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            color: danger ? KolabingColors.errorBg : KolabingColors.hairline,
-          ),
-          foregroundColor: fgColor,
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
-          ),
-        ),
-        child: child,
-      ),
-    );
-  }
 }
