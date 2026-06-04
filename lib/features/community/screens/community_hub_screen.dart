@@ -10,6 +10,7 @@ import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
 import '../../event/providers/event_provider.dart';
+import '../../event/screens/event_rsvp_screen.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
@@ -205,6 +206,11 @@ class _EventsSection extends ConsumerWidget {
                   subtitle: Text(e.formattedDate,
                       style: KolabingTextStyles.bodySmall.copyWith(
                           color: KolabingColors.onSurfaceVariant)),
+                  trailing: const Icon(LucideIcons.chevronRight, size: 18),
+                  onTap: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(
+                        builder: (_) => EventRsvpScreen(event: e)),
+                  ),
                 ),
               ),
           ],

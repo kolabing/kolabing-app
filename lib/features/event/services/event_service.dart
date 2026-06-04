@@ -205,6 +205,68 @@ class EventService {
   }
 
   // ---------------------------------------------------------------------------
+  // Sign-up / RSVP (Phase 3)
+  // ---------------------------------------------------------------------------
+
+  /// POST /events/{event}/signup — one-tap "I'm going" (or waitlist when full).
+  /// Returns the updated event (my_signup + counts).
+  Future<Event> signup(String eventId) => _signup(eventId, allowRetry: true);
+
+  Future<Event> _signup(String eventId, {required bool allowRetry}) async {
+    final response = await _sendWithRefresh(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/events/$eventId/signup'),
+        headers: await _getHeaders(),
+      ),
+      allowRetry: allowRetry,
+    );
+    return _parseSignupResponse(response, eventId);
+  }
+
+  /// DELETE /events/{event}/signup — leave / cancel (frees a slot; backend
+  /// auto-promotes the next waitlisted member).
+  Future<Event> cancelSignup(String eventId) =>
+      _cancelSignup(eventId, allowRetry: true);
+
+  Future<Event> _cancelSignup(String eventId, {required bool allowRetry}) async {
+    final response = await _sendWithRefresh(
+      () async => _httpClient.delete(
+        Uri.parse('$_baseUrl/events/$eventId/signup'),
+        headers: await _getHeaders(),
+      ),
+      allowRetry: allowRetry,
+    );
+    return _parseSignupResponse(response, eventId);
+  }
+
+  Future<Event> _parseSignupResponse(
+    http.Response response,
+    String eventId,
+  ) async {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final body = response.body.isEmpty
+          ? <String, dynamic>{}
+          : jsonDecode(response.body) as Map<String, dynamic>;
+      final data = body['data'];
+      if (data is Map<String, dynamic>) {
+        if (data['id'] != null && data['name'] != null) {
+          return Event.fromJson(data);
+        }
+        final ev = data['event'];
+        if (ev is Map<String, dynamic>) return Event.fromJson(ev);
+      }
+      // Response wasn't a full event payload — re-fetch for fresh counts.
+      return getEvent(eventId);
+    }
+    var message = 'Could not update your sign-up';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      message = (body['message'] ?? body['error'] ?? message).toString();
+    } catch (_) {}
+    throw Exception(message);
+  }
+
+  // ---------------------------------------------------------------------------
   // Create Event
   // ---------------------------------------------------------------------------
 

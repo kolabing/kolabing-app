@@ -10,6 +10,7 @@ import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../event/models/event.dart';
 import '../../event/providers/event_provider.dart';
+import '../../event/screens/event_rsvp_screen.dart';
 import '../../gamification/screens/leaderboard_screen.dart';
 import '../models/community.dart';
 import '../models/community_membership.dart';
@@ -303,6 +304,11 @@ class _EventTile extends StatelessWidget {
         subtitle: Text(event.formattedDate,
             style: KolabingTextStyles.bodySmall
                 .copyWith(color: KolabingColors.onSurfaceVariant)),
+        trailing: const Icon(LucideIcons.chevronRight, size: 18),
+        onTap: () => Navigator.of(context).push<void>(
+          MaterialPageRoute<void>(
+              builder: (_) => EventRsvpScreen(event: event)),
+        ),
       );
 }
 
