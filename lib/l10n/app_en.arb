@@ -1744,6 +1744,7 @@
   "@communityMainNavMyKolabs": {
     "description": "Community main screen: bottom nav label for the My Kolabs tab"
   },
+  "communityMainNavCommunity": "Community",
   "communityMainNavProfile": "Profile",
   "@communityMainNavProfile": {
     "description": "Community main screen: bottom nav label for the Profile tab"
@@ -2543,6 +2544,7 @@
   "@attendeeNavHome": {
     "description": "Attendee bottom nav: Home tab"
   },
+  "attendeeNavCommunities": "Communities",
   "attendeeNavScan": "Scan",
   "@attendeeNavScan": {
     "description": "Attendee bottom nav: QR Scan tab"

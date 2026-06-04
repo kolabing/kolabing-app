@@ -1359,6 +1359,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityMainNavMyKolabs => 'Els meus Kolabs';
 
   @override
+  String get communityMainNavCommunity => 'Comunitat';
+
+  @override
   String get communityMainNavProfile => 'Perfil';
 
   @override
@@ -1993,6 +1996,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeNavHome => 'Inici';
+
+  @override
+  String get attendeeNavCommunities => 'Comunitats';
 
   @override
   String get attendeeNavScan => 'Escanejar';

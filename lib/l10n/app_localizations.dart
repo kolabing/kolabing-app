@@ -2482,6 +2482,12 @@ abstract class AppLocalizations {
   /// **'My Kolabs'**
   String get communityMainNavMyKolabs;
 
+  /// No description provided for @communityMainNavCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get communityMainNavCommunity;
+
   /// Community main screen: bottom nav label for the Profile tab
   ///
   /// In en, this message translates to:
@@ -3603,6 +3609,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Home'**
   String get attendeeNavHome;
+
+  /// No description provided for @attendeeNavCommunities.
+  ///
+  /// In en, this message translates to:
+  /// **'Communities'**
+  String get attendeeNavCommunities;
 
   /// Attendee bottom nav: QR Scan tab
   ///
