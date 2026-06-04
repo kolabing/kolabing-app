@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/constants/spacing.dart';
 import '../../config/theme/colors.dart';
 import '../../config/theme/typography.dart';
+import '../../features/chat/widgets/chat_inbox_button.dart';
 
 /// Kolabing standard app bar — yellow background, charcoal text/icons.
 class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -42,6 +43,7 @@ class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       actions: actions ??
           [
+            const ChatInboxButton(),
             Padding(
               padding: const EdgeInsets.only(right: KolabingSpacing.md),
               child: CircleAvatar(
