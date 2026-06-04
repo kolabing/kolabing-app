@@ -10,6 +10,7 @@ import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
 import '../../event/providers/event_provider.dart';
+import '../../event/screens/create_event_screen.dart';
 import '../../event/screens/event_rsvp_screen.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
@@ -160,7 +161,8 @@ class _CommunityOverview extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.lg),
           _SectionLabel('Events'),
           const SizedBox(height: KolabingSpacing.sm),
-          _EventsSection(communityId: community.id),
+          _EventsSection(
+              communityId: community.id, communityName: community.name),
           const SizedBox(height: KolabingSpacing.lg),
           _SectionLabel('Chats'),
           const SizedBox(height: KolabingSpacing.sm),
@@ -175,14 +177,18 @@ class _CommunityOverview extends ConsumerWidget {
 /// upcoming`). Read-only list for now; create/RSVP/event-chat come next. Errors
 /// (e.g. backend filter not deployed) degrade to an empty state.
 class _EventsSection extends ConsumerWidget {
-  const _EventsSection({required this.communityId});
+  const _EventsSection({
+    required this.communityId,
+    required this.communityName,
+  });
 
   final String communityId;
+  final String communityName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(communityUpcomingEventsProvider(communityId));
-    return async.when(
+    final content = async.when(
       loading: () => const Padding(
         padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
         child: Center(child: CircularProgressIndicator()),
@@ -216,6 +222,31 @@ class _EventsSection extends ConsumerWidget {
           ],
         );
       },
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        content,
+        const SizedBox(height: KolabingSpacing.sm),
+        OutlinedButton.icon(
+          onPressed: () async {
+            final created = await Navigator.of(context).push<bool>(
+              MaterialPageRoute<bool>(
+                builder: (_) => CreateEventScreen(
+                  communityId: communityId,
+                  communityName: communityName,
+                ),
+              ),
+            );
+            if (created == true) {
+              ref.invalidate(communityUpcomingEventsProvider(communityId));
+            }
+          },
+          icon: const Icon(LucideIcons.plus, size: 18),
+          label: const Text('Create event'),
+        ),
+      ],
     );
   }
 }

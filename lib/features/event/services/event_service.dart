@@ -270,6 +270,60 @@ class EventService {
   // Create Event
   // ---------------------------------------------------------------------------
 
+  /// POST /events — UPCOMING mode (PR #20). JSON, no photos required. Auth =
+  /// owner / can_manage of the community. `starts_at` keys the upcoming branch.
+  Future<Event> createUpcomingEvent({
+    required String communityId,
+    required String name,
+    required DateTime startsAt,
+    DateTime? endsAt,
+    String? location,
+    int? capacity,
+    List<String>? tierGate,
+  }) async {
+    final payload = <String, dynamic>{
+      'community_id': communityId,
+      'name': name,
+      'starts_at': startsAt.toUtc().toIso8601String(),
+      if (endsAt != null) 'ends_at': endsAt.toUtc().toIso8601String(),
+      if (location != null && location.isNotEmpty) 'location': location,
+      if (capacity != null) 'capacity': capacity,
+      if (tierGate != null && tierGate.isNotEmpty) 'tier_gate': tierGate,
+    };
+    final response = await _sendWithRefresh(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/events'),
+        headers: await _getJsonHeaders(),
+        body: jsonEncode(payload),
+      ),
+      allowRetry: true,
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response creating event');
+    }
+    // Surface the first validation error if present, else the message.
+    var message = 'Could not create the event';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final errs = body['errors'];
+      if (errs is Map && errs.isNotEmpty) {
+        final first = errs.values.first;
+        message = (first is List && first.isNotEmpty)
+            ? first.first.toString()
+            : (body['message']?.toString() ?? message);
+      } else {
+        message = body['message']?.toString() ?? message;
+      }
+    } catch (_) {}
+    throw Exception(message);
+  }
+
   /// POST /api/v1/events
   /// Creates a new event with photo files via multipart/form-data.
   Future<Event> createEvent(EventCreateRequest request) async {
