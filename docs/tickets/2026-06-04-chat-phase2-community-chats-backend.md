@@ -1,5 +1,10 @@
 # Backend — Chat Phase 2: community chats + generic thread messages (NF-CHAT)
 
+> ✅ **DONE 2026-06-04** in `kolabing-v2` (282 tests green). Auto main chat on community create
+> (+backfill); `POST /communities/{id}/chats` (≤5 → `chat_limit_reached`); `GET/POST /chats/{thread}/messages`
+> + `POST /chats/{thread}/read`; `ChatMessageResource` gains `thread_id`; tier-gated visibility via
+> `permissions.chat_channels`. Acceptance 1–4 covered by `CommunityChatTest`. Event chats = Phase 3 (needs RSVP).
+
 > **Target repo:** `kolabing-v2`. Builds on shipped Phase 1 (`chat_threads`,
 > `ChatThreadType`, `ChatThreadResource`, `GET /chats`, `/chats/unread-count`,
 > application-backed messages). The **app side is already built** against the
