@@ -207,20 +207,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Guard against being laid out with unbounded width (e.g. when pushed
-          // onto a navigator that sits in a horizontally-unbounded context):
-          // clamp to the device width so the form's full-width fields/buttons
-          // can lay out instead of throwing and rendering blank.
-          final maxWidth = constraints.maxWidth.isFinite
-              ? constraints.maxWidth
-              : MediaQuery.sizeOf(context).width;
-          return Align(
-            alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: ListView(
+      body: ListView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         children: [
           Text(widget.communityName,
@@ -312,10 +299,6 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
             ),
           ),
         ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -370,21 +353,18 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
   Widget _photosPicker() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      // NOTE: the app's OutlinedButtonTheme sets minimumSize.width = infinity
+      // (full-width buttons). Such a button MUST NOT sit in a Row (Rows measure
+      // children with unbounded width → "BoxConstraints forces an infinite
+      // width" → blank screen). Keep it a full-width column child.
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            OutlinedButton.icon(
-              onPressed: _busy ? null : _pickPhotos,
-              icon: const Icon(LucideIcons.imagePlus, size: 18),
-              label: Text(_l10n.eventFormAddFromGallery),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            if (_pickedPhotos.isNotEmpty)
-              Text('${_pickedPhotos.length}',
-                  style: KolabingTextStyles.bodyMedium
-                      .copyWith(fontWeight: FontWeight.w700)),
-          ],
+        OutlinedButton.icon(
+          onPressed: _busy ? null : _pickPhotos,
+          icon: const Icon(LucideIcons.imagePlus, size: 18),
+          label: Text(_pickedPhotos.isEmpty
+              ? _l10n.eventFormAddFromGallery
+              : '${_l10n.eventFormAddFromGallery} (${_pickedPhotos.length})'),
         ),
         if (_pickedPhotos.isNotEmpty) ...[
           const SizedBox(height: KolabingSpacing.sm),
