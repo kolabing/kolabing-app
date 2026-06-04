@@ -7,6 +7,8 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/glass_button.dart';
+import '../../../widgets/glass_icon_button.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -139,53 +141,95 @@ class MyOpportunityCard extends StatelessWidget {
 
   Widget _buildActions() {
     final status = opportunity.status;
-    final actions = <Widget>[];
+    Widget? pill;
+    final iconBtns = <Widget>[];
 
-    if (status == OpportunityStatus.published && onView != null) {
-      actions.add(
-        _ActionBtn(label: 'VIEW', icon: LucideIcons.eye, onTap: onView!, primary: true),
-      );
+    if (status == OpportunityStatus.published) {
+      if (onView != null) {
+        pill = GlassButton(
+          label: 'view',
+          onPressed: onView,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.eye,
+        );
+      }
+      if (status.canEdit && onEdit != null) {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.edit,
+          onPressed: onEdit,
+          tooltip: 'Edit',
+        ));
+      }
+      if (onShare != null) {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.share2,
+          onPressed: onShare,
+          tooltip: 'Share',
+        ));
+      }
+      if (status.canClose && onClose != null) {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.xCircle,
+          onPressed: onClose,
+          tooltip: 'Close',
+        ));
+      }
+    } else if (status.canEdit) {
+      if (onEdit != null) {
+        pill = GlassButton(
+          label: 'edit',
+          onPressed: onEdit,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.edit,
+        );
+      }
+      if (status.canPublish && onPublish != null) {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.upload,
+          onPressed: onPublish,
+          tooltip: 'Publish',
+        ));
+      }
+    } else if (status.canPublish) {
+      if (onPublish != null) {
+        pill = GlassButton(
+          label: 'publish',
+          onPressed: onPublish,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.upload,
+        );
+      }
     }
-    if (status.canEdit && onEdit != null) {
-      actions.add(
-        _ActionBtn(label: 'EDIT', icon: LucideIcons.edit, onTap: onEdit!, outlined: true),
-      );
-    }
-    if (status.canPublish && onPublish != null) {
-      actions.add(
-        _ActionBtn(label: 'PUBLISH', icon: LucideIcons.upload, onTap: onPublish!, primary: true),
-      );
-    }
-    if (status == OpportunityStatus.published && onShare != null) {
-      actions.add(
-        _ActionBtn(label: 'SHARE', icon: LucideIcons.share2, onTap: onShare!, outlined: true),
-      );
-    }
-    if (status.canClose && onClose != null) {
-      actions.add(
-        _ActionBtn(label: 'CLOSE', icon: LucideIcons.xCircle, onTap: onClose!, outlined: true),
-      );
-    }
+
     if (status.canDelete &&
         (opportunity.applicationsCount ?? 0) == 0 &&
         onDelete != null) {
-      actions.add(
-        _ActionBtn(label: 'DELETE', icon: LucideIcons.trash2, onTap: onDelete!, danger: true),
-      );
+      if (pill == null) {
+        pill = GlassButton(
+          label: 'delete',
+          onPressed: onDelete,
+          intent: GlassButtonIntent.destructive,
+          icon: LucideIcons.trash2,
+        );
+      } else {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.trash2,
+          onPressed: onDelete,
+          tooltip: 'Delete',
+        ));
+      }
     }
 
-    if (actions.isEmpty) return const SizedBox.shrink();
+    if (pill == null && iconBtns.isEmpty) return const SizedBox.shrink();
 
     return Row(
-      children: actions
-          .expand(
-            (w) => [
-              Expanded(child: w),
-              const SizedBox(width: KolabingSpacing.xs),
-            ],
-          )
-          .toList()
-        ..removeLast(),
+      children: [
+        if (pill != null) Expanded(child: pill),
+        ...iconBtns.expand((btn) => [
+          const SizedBox(width: 9),
+          btn,
+        ]),
+      ],
     );
   }
 }
@@ -241,90 +285,4 @@ class _KolabSquareImage extends StatelessWidget {
       ),
     ),
   );
-}
-
-class _ActionBtn extends StatelessWidget {
-  const _ActionBtn({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.primary = false,
-    this.outlined = false,
-    this.danger = false,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool primary;
-  final bool outlined;
-  final bool danger;
-
-  @override
-  Widget build(BuildContext context) {
-    final fgColor = primary
-        ? KolabingColors.onYellowButton
-        : danger
-        ? KolabingColors.error
-        : KolabingColors.onSurface;
-
-    final child = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 13, color: fgColor),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.fade,
-            softWrap: false,
-            style: KolabingTextStyles.labelSmall.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: fgColor,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ),
-      ],
-    );
-
-    if (primary) {
-      return SizedBox(
-        height: 36,
-        child: ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onYellowButton,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusSm,
-            ),
-          ),
-          child: child,
-        ),
-      );
-    }
-
-    return SizedBox(
-      height: 36,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            color: danger ? KolabingColors.errorBg : KolabingColors.hairline,
-          ),
-          foregroundColor: fgColor,
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
-          ),
-        ),
-        child: child,
-      ),
-    );
-  }
 }
