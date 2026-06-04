@@ -4,7 +4,6 @@ import '../../application/providers/application_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../community/providers/community_providers.dart';
-import '../../dashboard/providers/dashboard_provider.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../gamification/providers/badge_provider.dart';
 import '../../gamification/providers/checkin_provider.dart';
@@ -50,8 +49,13 @@ import '../../rewards/providers/wallet_provider.dart';
 /// always-mounted widgets, so they MUST be invalidated here (see below).
 void invalidateUserScopedProviders(Ref ref) {
   ref
-    // Home / Dashboard
-    ..invalidate(dashboardProvider)
+    // NOTE: dashboardProvider is intentionally NOT invalidated here. Like the
+    // other AuthScopeGuard notifiers it ref.listen()s authProvider and
+    // reloads/clears itself on every auth transition, so it self-heals on
+    // login AND logout. Invalidating it from AuthNotifier's own ref (the FX-9
+    // post-sign-in path) while it is mounted creates an auth<->dashboard
+    // CircularDependencyError — see the regression test "signInWithEmail
+    // succeeds while dashboardProvider is mounted".
 
     // Explore / discovery feed (role-scoped). This was the missing reset that
     // caused Explore to keep showing the previous account's role feed.
