@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/category_icon.dart';
+import '../../../widgets/glass_button.dart';
 import '../../opportunity/models/opportunity.dart';
 
 /// Card widget for displaying an opportunity in the explore list
@@ -236,54 +237,21 @@ class OpportunityCard extends StatelessWidget {
 
   Widget _buildActionButtons(bool isDark) => Row(
         children: [
-          // View button (outlined)
           Expanded(
-            child: OutlinedButton(
+            child: GlassButton(
+              label: 'view',
               onPressed: onView,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
-                side: BorderSide(
-                  color: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.darkBorder,
-                  width: 1.5,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-              child: Text(
-                'VIEW',
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
+              intent: GlassButtonIntent.neutral,
+              icon: LucideIcons.eye,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
-
-          // Apply button (primary)
           Expanded(
-            child: ElevatedButton(
+            child: GlassButton(
+              label: 'apply',
               onPressed: onApply,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-              child: Text(
-                'APPLY',
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
+              intent: GlassButtonIntent.primary,
+              icon: LucideIcons.send,
             ),
           ),
         ],
