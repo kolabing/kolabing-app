@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/providers/application_provider.dart';
 import '../../business/providers/profile_provider.dart';
+import '../../chat/providers/chat_providers.dart';
+import '../../community/providers/community_providers.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../gamification/providers/badge_provider.dart';
@@ -39,10 +41,13 @@ import '../../rewards/providers/wallet_provider.dart';
 /// role-scoped Explore feed therefore re-resolves to the current user's role
 /// on the next read.
 ///
-/// Note: `*.family` and `autoDispose` providers (chat data, application detail,
-/// public profile by id, unread-count) are auto-disposed when their last
-/// listener detaches on navigation away, but we invalidate them defensively
-/// here too in case a listener is still attached at logout time.
+/// Note: `*.family` and `autoDispose` providers (application chat messages,
+/// application detail, public profile by id, unread-count) are auto-disposed
+/// when their last listener detaches on navigation away, but we invalidate them
+/// defensively here too in case a listener is still attached at logout time.
+/// The NF-CHAT inbox (`chatThreadsProvider`/`chatUnreadProvider`) and NF-6
+/// community providers are plain (non-autoDispose) Notifiers held by
+/// always-mounted widgets, so they MUST be invalidated here (see below).
 void invalidateUserScopedProviders(Ref ref) {
   ref
     // Home / Dashboard
@@ -58,6 +63,15 @@ void invalidateUserScopedProviders(Ref ref) {
     ..invalidate(receivedApplicationsProvider)
     ..invalidate(chatMessagesProvider)
     ..invalidate(unreadMessagesCountProvider)
+
+    // NF-CHAT inbox (plain Notifiers held by the always-mounted app-bar inbox
+    // button — these leaked the previous account's chats across a switch).
+    ..invalidate(chatThreadsProvider)
+    ..invalidate(chatUnreadProvider)
+
+    // NF-6 community management (leader) + memberships (member)
+    ..invalidate(communityManageProvider)
+    ..invalidate(myMembershipsProvider)
 
     // Posts owned by the user (both parallel post systems)
     ..invalidate(opportunityListProvider)

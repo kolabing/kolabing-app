@@ -162,13 +162,14 @@ class ChatService {
             .toList();
       }, 'getMessages');
 
-  /// `POST /chats/{thread}/messages` — send a message.
-  Future<ChatMessage> sendMessage(String threadId, String body) =>
+  /// `POST /chats/{thread}/messages` — send a message. The backend field is
+  /// `content` (verified against the live storeThreadMessage endpoint).
+  Future<ChatMessage> sendMessage(String threadId, String content) =>
       _guard(() async {
         final res = await _httpClient.post(
           Uri.parse('$_baseUrl/chats/$threadId/messages'),
           headers: await _headers(),
-          body: jsonEncode({'body': body}),
+          body: jsonEncode({'content': content}),
         );
         return ChatMessage.fromJson(_unwrap(res) as Map<String, dynamic>);
       }, 'sendMessage');
