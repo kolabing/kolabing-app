@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/glass_button.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
@@ -211,74 +212,32 @@ class _BusinessDashboardScreenState
 
   Widget _buildQuickActions(bool isDark) => Row(
     children: [
-      // Primary button: CREATE COLLAB REQUEST
       Expanded(
-        child: SizedBox(
-          height: 48,
-          child: ElevatedButton(
-            onPressed: () async {
-              final allowed = await SubscriptionPaywall.checkAndShow(
-                context,
-                ref,
-              );
-              if (!allowed || !mounted) {
-                return;
-              }
-
-              await context.push(KolabingRoutes.kolabNew);
-              if (mounted) {
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-                if (mounted) ref.invalidate(dashboardProvider);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                'CREATE KOLAB REQUEST',
-                maxLines: 1,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
-            ),
-          ),
+        child: GlassButton(
+          label: 'create kolab request',
+          onPressed: () async {
+            final allowed = await SubscriptionPaywall.checkAndShow(
+              context,
+              ref,
+            );
+            if (!allowed || !mounted) return;
+            await context.push(KolabingRoutes.kolabNew);
+            if (mounted) {
+              await Future<void>.delayed(const Duration(milliseconds: 300));
+              if (mounted) ref.invalidate(dashboardProvider);
+            }
+          },
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.plus,
         ),
       ),
       const SizedBox(width: KolabingSpacing.sm),
-
-      // Outlined button: FIND A COLLAB
       Expanded(
-        child: SizedBox(
-          height: 48,
-          child: OutlinedButton(
-            onPressed: () {
-              // Switch to Explore tab (index 1)
-              widget.onSwitchTab?.call(1);
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
-              side: BorderSide(
-                color: isDark
-                    ? KolabingColors.darkBorder
-                    : KolabingColors.darkBorder,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              'FIND A KOLAB',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-            ),
-          ),
+        child: GlassButton(
+          label: 'find a kolab',
+          onPressed: () => widget.onSwitchTab?.call(1),
+          intent: GlassButtonIntent.neutral,
+          icon: LucideIcons.search,
         ),
       ),
     ],
@@ -359,26 +318,11 @@ class _BusinessDashboardScreenState
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            height: 48,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                ref.read(dashboardProvider.notifier).refresh();
-              },
-              icon: const Icon(LucideIcons.refreshCw, size: 18),
-              label: Text(
-                'RETRY',
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+          GlassButton(
+            label: 'retry',
+            onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
+            intent: GlassButtonIntent.primary,
+            icon: LucideIcons.refreshCw,
           ),
         ],
       ),
