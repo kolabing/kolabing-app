@@ -99,7 +99,11 @@ class CommunityService {
           Uri.parse('$_baseUrl/me/communities'),
           headers: await _headers(),
         );
-        return _asList(_unwrap(res)).map(Community.fromJson).toList();
+        debugPrint(
+            '🏘️ getMyCommunities → HTTP ${res.statusCode}: ${res.body.substring(0, res.body.length.clamp(0, 300))}');
+        final list = _asList(_unwrap(res)).map(Community.fromJson).toList();
+        debugPrint('🏘️ getMyCommunities parsed ${list.length} communities');
+        return list;
       }, 'getMyCommunities');
 
   /// `GET /me/memberships` — communities the current member belongs to; each
@@ -213,7 +217,11 @@ class CommunityService {
             if (permissions != null) 'permissions': permissions.toJson(),
           }),
         );
-        return CommunityTier.fromJson(_unwrap(res) as Map<String, dynamic>);
+        debugPrint('🏘️ createTier → HTTP ${res.statusCode}: '
+            '${res.body.substring(0, res.body.length.clamp(0, 200))}');
+        final tier = CommunityTier.fromJson(_unwrap(res) as Map<String, dynamic>);
+        debugPrint('🏘️ createTier parsed OK id=${tier.id}');
+        return tier;
       }, 'createTier');
 
   /// `PATCH /tiers/{tier}`.
@@ -256,7 +264,9 @@ class CommunityService {
   // Roster
   // ---------------------------------------------------------------------------
 
-  /// `GET /communities/{id}/members` (paginated).
+  /// `GET /communities/{id}/members` — roster. The backend paginates and
+  /// nests the list as `data: { members: [...], pagination: {...} }`; tolerate
+  /// a flat `data: [...]` too.
   Future<List<CommunityMember>> getMembers(
     String communityId, {
     int page = 1,
@@ -266,7 +276,14 @@ class CommunityService {
           Uri.parse('$_baseUrl/communities/$communityId/members?page=$page'),
           headers: await _headers(),
         );
-        return _asList(_unwrap(res)).map(CommunityMember.fromJson).toList();
+        final data = _unwrap(res);
+        final list = data is Map
+            ? (data['members'] as List<dynamic>? ?? const [])
+            : data as List<dynamic>;
+        return list
+            .cast<Map<String, dynamic>>()
+            .map(CommunityMember.fromJson)
+            .toList();
       }, 'getMembers');
 
   /// `POST /communities/{id}/members` — invite/add by member profile id.

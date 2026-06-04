@@ -33,7 +33,19 @@ class CommunityHubScreen extends ConsumerWidget {
       ),
       data: (communities) {
         if (communities.isEmpty) {
-          return _EmptyState(onCreate: () => _openCreate(context, ref));
+          // Pull-to-refresh so a stale empty result can always recover.
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(myCommunitiesProvider),
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: _EmptyState(onCreate: () => _openCreate(context, ref)),
+                ),
+              ),
+            ),
+          );
         }
         return _CommunityOverview(community: communities.first);
       },
