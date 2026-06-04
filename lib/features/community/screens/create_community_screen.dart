@@ -43,7 +43,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
             type: _type,
             joinPolicy: _joinPolicy,
           );
-      ref.invalidate(myCommunitiesProvider);
+      bumpCommunityRefresh(ref);
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (!mounted) return;

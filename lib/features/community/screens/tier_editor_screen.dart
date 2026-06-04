@@ -97,7 +97,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
       // Refresh the hub's tier list from the editor's own (stable) ref, the
       // moment the write succeeds — don't rely on the caller invalidating
       // after the pop round-trip.
-      ref.invalidate(communityTiersProvider(widget.communityId));
+      bumpCommunityRefresh(ref);
       debugPrint('🏘️ tier saved → invalidated tiers for ${widget.communityId}');
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
@@ -131,7 +131,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
     setState(() => _busy = true);
     try {
       await ref.read(communityServiceProvider).deleteTier(widget.tier!.id);
-      ref.invalidate(communityTiersProvider(widget.communityId));
+      bumpCommunityRefresh(ref);
       debugPrint('🏘️ tier deleted → invalidated tiers for ${widget.communityId}');
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {

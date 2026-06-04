@@ -29,13 +29,13 @@ class CommunityHubScreen extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => _ErrorState(
         message: e.toString(),
-        onRetry: () => ref.invalidate(myCommunitiesProvider),
+        onRetry: () => bumpCommunityRefresh(ref),
       ),
       data: (communities) {
         if (communities.isEmpty) {
           // Pull-to-refresh so a stale empty result can always recover.
           return RefreshIndicator(
-            onRefresh: () async => ref.invalidate(myCommunitiesProvider),
+            onRefresh: () async => bumpCommunityRefresh(ref),
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -57,7 +57,7 @@ class CommunityHubScreen extends ConsumerWidget {
       MaterialPageRoute(builder: (_) => const CreateCommunityScreen()),
     );
     if (created ?? false) {
-      ref.invalidate(myCommunitiesProvider);
+      bumpCommunityRefresh(ref);
     }
   }
 }
@@ -137,10 +137,7 @@ class _CommunityOverview extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return RefreshIndicator(
       onRefresh: () async {
-        ref
-          ..invalidate(myCommunitiesProvider)
-          ..invalidate(communityTiersProvider(community.id))
-          ..invalidate(communityMembersProvider(community.id));
+        bumpCommunityRefresh(ref);
       },
       child: ListView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -236,7 +233,7 @@ class _TiersSection extends ConsumerWidget {
       ),
     );
     if (changed ?? false) {
-      ref.invalidate(communityTiersProvider(communityId));
+      bumpCommunityRefresh(ref);
     }
   }
 
@@ -412,7 +409,7 @@ class _MembersPreview extends ConsumerWidget {
       MaterialPageRoute<void>(
           builder: (_) => RosterScreen(communityId: communityId)),
     );
-    ref.invalidate(communityMembersProvider(communityId));
+    bumpCommunityRefresh(ref);
   }
 
   @override

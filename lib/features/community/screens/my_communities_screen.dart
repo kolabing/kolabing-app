@@ -22,12 +22,12 @@ class MyCommunitiesScreen extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => _Error(
         message: e.toString(),
-        onRetry: () => ref.invalidate(myMembershipsProvider),
+        onRetry: () => bumpCommunityRefresh(ref),
       ),
       data: (memberships) {
         if (memberships.isEmpty) return const _Empty();
         return RefreshIndicator(
-          onRefresh: () async => ref.invalidate(myMembershipsProvider),
+          onRefresh: () async => bumpCommunityRefresh(ref),
           child: ListView.separated(
             padding: const EdgeInsets.all(KolabingSpacing.md),
             itemCount: memberships.length,

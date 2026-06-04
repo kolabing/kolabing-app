@@ -49,7 +49,7 @@ class RosterScreen extends ConsumerWidget {
           }
           return RefreshIndicator(
             onRefresh: () async =>
-                ref.invalidate(communityMembersProvider(communityId)),
+                bumpCommunityRefresh(ref),
             child: ListView.separated(
               padding: const EdgeInsets.all(KolabingSpacing.md),
               itemCount: members.length,
@@ -79,7 +79,7 @@ class RosterScreen extends ConsumerWidget {
           _MemberEditSheet(communityId: communityId, member: member),
     );
     if (changed ?? false) {
-      ref.invalidate(communityMembersProvider(communityId));
+      bumpCommunityRefresh(ref);
     }
   }
 
@@ -134,7 +134,7 @@ class RosterScreen extends ConsumerWidget {
       await ref
           .read(communityServiceProvider)
           .addMember(communityId, email: email);
-      ref.invalidate(communityMembersProvider(communityId));
+      bumpCommunityRefresh(ref);
       if (context.mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Member added')));
@@ -275,7 +275,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
             canManage: _canManage,
             status: _status,
           );
-      ref.invalidate(communityMembersProvider(widget.communityId));
+      bumpCommunityRefresh(ref);
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
@@ -310,7 +310,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
       await ref
           .read(communityServiceProvider)
           .removeMember(widget.communityId, widget.member.id);
-      ref.invalidate(communityMembersProvider(widget.communityId));
+      bumpCommunityRefresh(ref);
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
