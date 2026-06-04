@@ -8077,6 +8077,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Community'**
   String get dashboardDefaultCommunityName;
+
+  /// Event hub: button to open the event chat thread
+  ///
+  /// In en, this message translates to:
+  /// **'Open event chat'**
+  String get eventHubOpenChat;
+
+  /// Event hub: section header for confirmed attendees
+  ///
+  /// In en, this message translates to:
+  /// **'Attendees'**
+  String get eventHubAttendeesTitle;
+
+  /// Event hub: section header for the waitlist
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlist'**
+  String get eventHubWaitlistTitle;
+
+  /// Event hub: empty attendees state
+  ///
+  /// In en, this message translates to:
+  /// **'No one has signed up yet.'**
+  String get eventHubNoAttendees;
+
+  /// Event hub: count of confirmed attendees
+  ///
+  /// In en, this message translates to:
+  /// **'{count} going'**
+  String eventHubGoingCount(num count);
+
+  /// Event hub: count of waitlisted attendees
+  ///
+  /// In en, this message translates to:
+  /// **'{count} on waitlist'**
+  String eventHubWaitlistCount(num count);
+
+  /// Event hub: capacity label
+  ///
+  /// In en, this message translates to:
+  /// **'capacity {count}'**
+  String eventHubCapacity(num count);
+
+  /// Event hub: remaining spots
+  ///
+  /// In en, this message translates to:
+  /// **'{count} spot(s) left'**
+  String eventHubSpotsLeft(num count);
+
+  /// Event hub: unlimited capacity label
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get eventHubUnlimited;
+
+  /// RSVP button: join as going
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m going'**
+  String get eventHubImGoing;
+
+  /// RSVP button: currently going, tap to leave
+  ///
+  /// In en, this message translates to:
+  /// **'Going ✓  ·  tap to leave'**
+  String get eventHubGoingTapToLeave;
+
+  /// RSVP button: join the waitlist when full
+  ///
+  /// In en, this message translates to:
+  /// **'Join waitlist'**
+  String get eventHubJoinWaitlist;
+
+  /// RSVP button: currently waitlisted, tap to leave
+  ///
+  /// In en, this message translates to:
+  /// **'On waitlist  ·  tap to leave'**
+  String get eventHubOnWaitlistTapToLeave;
+
+  /// Event hub: viewer waitlist position
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re #{position} on the waitlist'**
+  String eventHubWaitlistPosition(num position);
+
+  /// Event hub: edit the event
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get eventHubEdit;
+
+  /// Event hub: add photos to the event gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos'**
+  String get eventHubAddPhotos;
+
+  /// Create event form: app bar title
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get eventFormNewTitle;
+
+  /// Edit event form: app bar title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get eventFormEditTitle;
+
+  /// Event form: save action
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get eventFormSave;
+
+  /// Event form: publish a new event
+  ///
+  /// In en, this message translates to:
+  /// **'Publish event'**
+  String get eventFormPublish;
+
+  /// Event form: name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get eventFormNameLabel;
+
+  /// Event form: name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday 10K'**
+  String get eventFormNameHint;
+
+  /// Event form: start date label
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get eventFormStartsLabel;
+
+  /// Event form: end date label
+  ///
+  /// In en, this message translates to:
+  /// **'Ends (optional)'**
+  String get eventFormEndsLabel;
+
+  /// Event form: start date picker hint
+  ///
+  /// In en, this message translates to:
+  /// **'Pick start date & time'**
+  String get eventFormPickStart;
+
+  /// Event form: end date picker hint
+  ///
+  /// In en, this message translates to:
+  /// **'Pick end date & time'**
+  String get eventFormPickEnd;
+
+  /// Event form: location label
+  ///
+  /// In en, this message translates to:
+  /// **'Location (optional)'**
+  String get eventFormLocationLabel;
+
+  /// Event form: location hint
+  ///
+  /// In en, this message translates to:
+  /// **'Ciutadella Park'**
+  String get eventFormLocationHint;
+
+  /// Event form: capacity label
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity (optional)'**
+  String get eventFormCapacityLabel;
+
+  /// Event form: capacity limit toggle label
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get eventFormLimit;
+
+  /// Event form: tier-gate section label
+  ///
+  /// In en, this message translates to:
+  /// **'Who can join'**
+  String get eventFormWhoCanJoin;
+
+  /// Event form: open to all members option
+  ///
+  /// In en, this message translates to:
+  /// **'All members'**
+  String get eventFormAllMembers;
+
+  /// Event form: restrict to selected tiers option
+  ///
+  /// In en, this message translates to:
+  /// **'Selected tiers'**
+  String get eventFormSelectedTiers;
+
+  /// Event form: photos section label
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get eventFormPhotos;
+
+  /// Event form: pick photos from gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Add from gallery'**
+  String get eventFormAddFromGallery;
+
+  /// Event form: note that photos upload after creation
+  ///
+  /// In en, this message translates to:
+  /// **'Photos can be added once the event is created.'**
+  String get eventFormPhotosAfterCreate;
+
+  /// Event form: name validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Event name needs at least 3 characters.'**
+  String get eventFormErrName;
+
+  /// Event form: missing start error
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a start date & time.'**
+  String get eventFormErrStart;
+
+  /// Event form: start-in-past error
+  ///
+  /// In en, this message translates to:
+  /// **'Start must be in the future.'**
+  String get eventFormErrStartFuture;
+
+  /// Event form: end-before-start error
+  ///
+  /// In en, this message translates to:
+  /// **'End must be after the start.'**
+  String get eventFormErrEndAfterStart;
+
+  /// Event form: invalid capacity error
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid capacity, or turn off the limit.'**
+  String get eventFormErrCapacity;
+
+  /// Event form: photos uploaded confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Photos uploaded.'**
+  String get eventFormPhotosUploaded;
+
+  /// Notification settings screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifSettingsTitle;
+
+  /// Notification settings: messages toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get notifSettingsMessages;
+
+  /// Notification settings: messages toggle subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'New chat messages in your communities and events'**
+  String get notifSettingsMessagesSubtitle;
+
+  /// Notification settings: applications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'New applications'**
+  String get notifSettingsApplications;
+
+  /// Notification settings: applications subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'When someone applies to your Kolab'**
+  String get notifSettingsApplicationsSubtitle;
+
+  /// Notification settings: collaboration updates toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Collaboration updates'**
+  String get notifSettingsCollaborations;
+
+  /// Notification settings: collaboration updates subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Status changes on your Kolabs'**
+  String get notifSettingsCollaborationsSubtitle;
+
+  /// Notification settings: marketing toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Tips & updates'**
+  String get notifSettingsMarketing;
+
+  /// Notification settings: marketing subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Occasional product tips and news'**
+  String get notifSettingsMarketingSubtitle;
+
+  /// Notification settings: save failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your preference. Try again.'**
+  String get notifSettingsSaveError;
 }
 
 class _AppLocalizationsDelegate

@@ -145,3 +145,12 @@ class MyMembershipsNotifier extends Notifier<AsyncValue<List<CommunityMembership
 
 final myMembershipsProvider = NotifierProvider<MyMembershipsNotifier,
     AsyncValue<List<CommunityMembership>>>(MyMembershipsNotifier.new);
+
+/// A specific community's tiers (`GET /communities/{id}/tiers`), keyed by id.
+/// Used by surfaces that need tiers for a community other than the leader's
+/// primary (e.g. the event create/edit tier-gate picker). Highest rank first.
+final communityTiersProvider =
+    FutureProvider.family<List<CommunityTier>, String>((ref, communityId) async {
+  final tiers = await ref.read(communityServiceProvider).getTiers(communityId);
+  return [...tiers]..sort((a, b) => b.rank.compareTo(a.rank));
+});

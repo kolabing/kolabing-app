@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/event.dart';
+import '../models/event_signup.dart';
 import '../../../config/constants/api.dart';
 
 /// API base URL
@@ -262,6 +263,146 @@ class EventService {
     try {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
       message = (body['message'] ?? body['error'] ?? message).toString();
+    } catch (_) {}
+    throw Exception(message);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Signups roster (Phase 3 — leader view)
+  // ---------------------------------------------------------------------------
+
+  /// GET /events/{event}/signups — the attendee roster (leader only).
+  /// Response: `{ data: { going:[…], waitlist:[…] } }`.
+  Future<EventSignups> getSignups(String eventId) =>
+      _getSignups(eventId, allowRetry: true);
+
+  Future<EventSignups> _getSignups(
+    String eventId, {
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId/signups');
+    debugPrint('EventService: GET $uri');
+    final response = await _sendWithRefresh(
+      () async => _httpClient.get(uri, headers: await _getHeaders()),
+      allowRetry: allowRetry,
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final body = response.body.isEmpty
+          ? <String, dynamic>{}
+          : jsonDecode(response.body) as Map<String, dynamic>;
+      final data = body['data'];
+      if (data is Map<String, dynamic>) return EventSignups.fromJson(data);
+      return const EventSignups();
+    } else if (response.statusCode == 401) {
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    throw _parseApiError(response);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Photos (Phase 3 — NEW backend endpoint, ships in parallel)
+  // ---------------------------------------------------------------------------
+
+  /// POST /events/{event}/photos — multipart `photos[]`. Returns the updated
+  /// [Event] (with the new photos). NOTE: this backend endpoint is being built
+  /// in parallel (backend ticket 2026-06-05); coded to the agreed contract so
+  /// it works once deployed.
+  Future<Event> addEventPhotos(String eventId, List<String> filePaths) =>
+      _addEventPhotos(eventId, filePaths, allowRetry: true);
+
+  Future<Event> _addEventPhotos(
+    String eventId,
+    List<String> filePaths, {
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId/photos');
+    debugPrint('EventService: POST $uri (${filePaths.length} photo(s))');
+    final request = http.MultipartRequest('POST', uri);
+    request.headers.addAll(await _getHeaders());
+    for (final path in filePaths) {
+      request.files.add(await http.MultipartFile.fromPath('photos[]', path));
+    }
+    final streamed = await _httpClient.send(request);
+    final response = await http.Response.fromStream(streamed);
+    debugPrint('Add event photos status: ${response.statusCode}');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response uploading photos');
+    } else if (response.statusCode == 401) {
+      if (allowRetry) {
+        await _authService.refreshSession();
+        return _addEventPhotos(eventId, filePaths, allowRetry: false);
+      }
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    throw _parseApiError(response);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Update upcoming event (Phase 3 — JSON; edit an upcoming event)
+  // ---------------------------------------------------------------------------
+
+  /// PUT /events/{event} — edit an UPCOMING event (JSON). Mirrors the create
+  /// payload; only sends keys that are provided.
+  Future<Event> updateUpcomingEvent(
+    String eventId, {
+    String? name,
+    DateTime? startsAt,
+    DateTime? endsAt,
+    bool clearEndsAt = false,
+    String? location,
+    int? capacity,
+    bool clearCapacity = false,
+    List<String>? tierGate,
+  }) async {
+    final payload = <String, dynamic>{
+      if (name != null) 'name': name,
+      if (startsAt != null) 'starts_at': startsAt.toUtc().toIso8601String(),
+      if (endsAt != null)
+        'ends_at': endsAt.toUtc().toIso8601String()
+      else if (clearEndsAt)
+        'ends_at': null,
+      if (location != null) 'location': location,
+      if (capacity != null)
+        'capacity': capacity
+      else if (clearCapacity)
+        'capacity': null,
+      if (tierGate != null) 'tier_gate': tierGate,
+    };
+    final response = await _sendWithRefresh(
+      () async => _httpClient.put(
+        Uri.parse('$_baseUrl/events/$eventId'),
+        headers: await _getJsonHeaders(),
+        body: jsonEncode(payload),
+      ),
+      allowRetry: true,
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response updating event');
+    }
+    var message = 'Could not update the event';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final errs = body['errors'];
+      if (errs is Map && errs.isNotEmpty) {
+        final first = errs.values.first;
+        message = (first is List && first.isNotEmpty)
+            ? first.first.toString()
+            : (body['message']?.toString() ?? message);
+      } else {
+        message = body['message']?.toString() ?? message;
+      }
     } catch (_) {}
     throw Exception(message);
   }

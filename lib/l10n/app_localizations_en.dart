@@ -4494,4 +4494,177 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardDefaultCommunityName => 'Community';
+
+  @override
+  String get eventHubOpenChat => 'Open event chat';
+
+  @override
+  String get eventHubAttendeesTitle => 'Attendees';
+
+  @override
+  String get eventHubWaitlistTitle => 'Waitlist';
+
+  @override
+  String get eventHubNoAttendees => 'No one has signed up yet.';
+
+  @override
+  String eventHubGoingCount(num count) {
+    return '$count going';
+  }
+
+  @override
+  String eventHubWaitlistCount(num count) {
+    return '$count on waitlist';
+  }
+
+  @override
+  String eventHubCapacity(num count) {
+    return 'capacity $count';
+  }
+
+  @override
+  String eventHubSpotsLeft(num count) {
+    return '$count spot(s) left';
+  }
+
+  @override
+  String get eventHubUnlimited => 'Unlimited';
+
+  @override
+  String get eventHubImGoing => 'I\'m going';
+
+  @override
+  String get eventHubGoingTapToLeave => 'Going ✓  ·  tap to leave';
+
+  @override
+  String get eventHubJoinWaitlist => 'Join waitlist';
+
+  @override
+  String get eventHubOnWaitlistTapToLeave => 'On waitlist  ·  tap to leave';
+
+  @override
+  String eventHubWaitlistPosition(num position) {
+    return 'You\'re #$position on the waitlist';
+  }
+
+  @override
+  String get eventHubEdit => 'Edit';
+
+  @override
+  String get eventHubAddPhotos => 'Add photos';
+
+  @override
+  String get eventFormNewTitle => 'New event';
+
+  @override
+  String get eventFormEditTitle => 'Edit event';
+
+  @override
+  String get eventFormSave => 'Save';
+
+  @override
+  String get eventFormPublish => 'Publish event';
+
+  @override
+  String get eventFormNameLabel => 'Name';
+
+  @override
+  String get eventFormNameHint => 'Saturday 10K';
+
+  @override
+  String get eventFormStartsLabel => 'Starts';
+
+  @override
+  String get eventFormEndsLabel => 'Ends (optional)';
+
+  @override
+  String get eventFormPickStart => 'Pick start date & time';
+
+  @override
+  String get eventFormPickEnd => 'Pick end date & time';
+
+  @override
+  String get eventFormLocationLabel => 'Location (optional)';
+
+  @override
+  String get eventFormLocationHint => 'Ciutadella Park';
+
+  @override
+  String get eventFormCapacityLabel => 'Capacity (optional)';
+
+  @override
+  String get eventFormLimit => 'Limit';
+
+  @override
+  String get eventFormWhoCanJoin => 'Who can join';
+
+  @override
+  String get eventFormAllMembers => 'All members';
+
+  @override
+  String get eventFormSelectedTiers => 'Selected tiers';
+
+  @override
+  String get eventFormPhotos => 'Photos';
+
+  @override
+  String get eventFormAddFromGallery => 'Add from gallery';
+
+  @override
+  String get eventFormPhotosAfterCreate =>
+      'Photos can be added once the event is created.';
+
+  @override
+  String get eventFormErrName => 'Event name needs at least 3 characters.';
+
+  @override
+  String get eventFormErrStart => 'Pick a start date & time.';
+
+  @override
+  String get eventFormErrStartFuture => 'Start must be in the future.';
+
+  @override
+  String get eventFormErrEndAfterStart => 'End must be after the start.';
+
+  @override
+  String get eventFormErrCapacity =>
+      'Enter a valid capacity, or turn off the limit.';
+
+  @override
+  String get eventFormPhotosUploaded => 'Photos uploaded.';
+
+  @override
+  String get notifSettingsTitle => 'Notifications';
+
+  @override
+  String get notifSettingsMessages => 'Messages';
+
+  @override
+  String get notifSettingsMessagesSubtitle =>
+      'New chat messages in your communities and events';
+
+  @override
+  String get notifSettingsApplications => 'New applications';
+
+  @override
+  String get notifSettingsApplicationsSubtitle =>
+      'When someone applies to your Kolab';
+
+  @override
+  String get notifSettingsCollaborations => 'Collaboration updates';
+
+  @override
+  String get notifSettingsCollaborationsSubtitle =>
+      'Status changes on your Kolabs';
+
+  @override
+  String get notifSettingsMarketing => 'Tips & updates';
+
+  @override
+  String get notifSettingsMarketingSubtitle =>
+      'Occasional product tips and news';
+
+  @override
+  String get notifSettingsSaveError =>
+      'Could not save your preference. Try again.';
 }
