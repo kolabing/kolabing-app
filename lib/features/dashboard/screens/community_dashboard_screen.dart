@@ -18,7 +18,6 @@ import '../widgets/community_stats_strip.dart';
 import '../widgets/dashboard_badges_row.dart';
 import '../widgets/xp_missions_section.dart';
 import '../widgets/dashboard_shimmer.dart';
-import '../widgets/dashboard_stat_card.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
@@ -71,13 +70,14 @@ class _CommunityDashboardScreenState
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
     final userName = authState.user?.displayName ?? 'Community';
+    final photoUrl = authState.user?.profilePhotoUrl;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         color: KolabingColors.primary,
-        child: _buildBody(dashboardState, userName, isDark),
+        child: _buildBody(dashboardState, userName, photoUrl, isDark),
       ),
     );
   }
@@ -85,6 +85,7 @@ class _CommunityDashboardScreenState
   Widget _buildBody(
     DashboardState dashboardState,
     String userName,
+    String? photoUrl,
     bool isDark,
   ) {
     // Loading state
@@ -107,7 +108,7 @@ class _CommunityDashboardScreenState
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
-        _buildHeader(userName, isDark),
+        _buildHeader(userName, photoUrl, isDark),
         const SizedBox(height: KolabingSpacing.lg),
         ..._buildVariantContent(data, isDark),
         const SizedBox(height: KolabingSpacing.xl),
@@ -119,10 +120,7 @@ class _CommunityDashboardScreenState
   // Header
   // ---------------------------------------------------------------------------
 
-  Widget _buildHeader(String userName, bool isDark) {
-    final authState = ref.watch(authProvider);
-    final photoUrl = authState.user?.profilePhotoUrl;
-
+  Widget _buildHeader(String userName, String? photoUrl, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -263,64 +261,6 @@ class _CommunityDashboardScreenState
       const SizedBox(height: KolabingSpacing.lg),
       _buildUpcomingSection(data, isDark),
     ];
-  }
-
-  // ---------------------------------------------------------------------------
-  // Stats Grid
-  // ---------------------------------------------------------------------------
-
-  Widget _buildStatsGrid(CommunityDashboard data) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: DashboardStatCard(
-                title: 'Pending',
-                count: data.applicationsSent.pending,
-                icon: LucideIcons.clock,
-                iconSlug: UiIconSlug.clock,
-                accent: StatCardAccent.pending,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: DashboardStatCard(
-                title: 'Accepted',
-                count: data.applicationsSent.accepted,
-                icon: LucideIcons.checkCircle,
-                iconSlug: UiIconSlug.checkCircle,
-                accent: StatCardAccent.accepted,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: DashboardStatCard(
-                title: 'Active Kolabs',
-                count: data.collaborations.active,
-                icon: LucideIcons.users,
-                iconSlug: UiIconSlug.target,
-                accent: StatCardAccent.active,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: DashboardStatCard(
-                title: 'Completed',
-                count: data.collaborations.completed,
-                icon: LucideIcons.trophy,
-                iconSlug: UiIconSlug.trophy,
-                accent: StatCardAccent.completed,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
   }
 
   // ---------------------------------------------------------------------------
