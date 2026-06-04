@@ -1,5 +1,12 @@
 # Bug — community lists don't refresh after a mutation (APP-side, NF-6)
 
+> ✅ **FIXED + VERIFIED 2026-06-04** (commit on `community-member-flow`). Implemented
+> the Notifier approach below: `CommunityManageNotifier` (community + tiers + roster)
+> + `MyMembershipsNotifier`, with `reloadTiers/reloadMembers/reloadCommunities` setting
+> `state` directly. Verified live on the iOS sim — add/delete tier now updates
+> instantly (logs show `createTier → getTiers refetched N+1` in-session; user confirmed).
+> The temporary `🏘️` debug prints were removed. This ticket is kept for the diagnosis.
+
 > **Repo:** `kolabing-app` (Flutter). **Branch:** `community-member-flow`.
 > **Symptom:** create/delete a tier (also create community, add/remove member)
 > succeeds on the server, but the visible list **does not update until the app

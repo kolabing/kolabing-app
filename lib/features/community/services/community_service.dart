@@ -102,11 +102,7 @@ class CommunityService {
           Uri.parse('$_baseUrl/me/communities'),
           headers: await _headers(),
         );
-        debugPrint(
-            '🏘️ getMyCommunities → HTTP ${res.statusCode}: ${res.body.substring(0, res.body.length.clamp(0, 300))}');
-        final list = _asList(_unwrap(res)).map(Community.fromJson).toList();
-        debugPrint('🏘️ getMyCommunities parsed ${list.length} communities');
-        return list;
+        return _asList(_unwrap(res)).map(Community.fromJson).toList();
       }, 'getMyCommunities');
 
   /// `GET /me/memberships` — communities the current member belongs to; each
@@ -194,10 +190,7 @@ class CommunityService {
           Uri.parse('$_baseUrl/communities/$communityId/tiers'),
           headers: await _headers(),
         );
-        final tiers =
-            _asList(_unwrap(res)).map(CommunityTier.fromJson).toList();
-        debugPrint('🏘️ getTiers refetched ${tiers.length} tiers');
-        return tiers;
+        return _asList(_unwrap(res)).map(CommunityTier.fromJson).toList();
       }, 'getTiers');
 
   /// `POST /communities/{id}/tiers`.
@@ -223,11 +216,7 @@ class CommunityService {
             if (permissions != null) 'permissions': permissions.toJson(),
           }),
         );
-        debugPrint('🏘️ createTier → HTTP ${res.statusCode}: '
-            '${res.body.substring(0, res.body.length.clamp(0, 200))}');
-        final tier = CommunityTier.fromJson(_unwrap(res) as Map<String, dynamic>);
-        debugPrint('🏘️ createTier parsed OK id=${tier.id}');
-        return tier;
+        return CommunityTier.fromJson(_unwrap(res) as Map<String, dynamic>);
       }, 'createTier');
 
   /// `PATCH /tiers/{tier}`.
@@ -263,8 +252,6 @@ class CommunityService {
           Uri.parse('$_baseUrl/tiers/$tierId'),
           headers: await _headers(),
         );
-        debugPrint('🏘️ deleteTier $tierId → HTTP ${res.statusCode}: '
-            '${res.body.substring(0, res.body.length.clamp(0, 150))}');
         _unwrap(res);
       }, 'deleteTier');
 
