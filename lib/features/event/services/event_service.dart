@@ -62,11 +62,15 @@ class EventService {
   /// the authenticated user's events.
   Future<({List<Event> events, EventPagination pagination})> getEvents({
     String? profileId,
+    String? communityId,
+    String? time, // 'upcoming' | 'past' (Phase-3 filter)
     int page = 1,
     int limit = 10,
   }) async {
     return _getEvents(
       profileId: profileId,
+      communityId: communityId,
+      time: time,
       page: page,
       limit: limit,
       allowRetry: true,
@@ -75,6 +79,8 @@ class EventService {
 
   Future<({List<Event> events, EventPagination pagination})> _getEvents({
     String? profileId,
+    String? communityId,
+    String? time,
     required int page,
     required int limit,
     required bool allowRetry,
@@ -83,6 +89,8 @@ class EventService {
       'page': page.toString(),
       'limit': limit.toString(),
       if (profileId != null) 'profile_id': profileId,
+      if (communityId != null) 'community_id': communityId,
+      if (time != null) 'time': time,
     };
 
     final uri = Uri.parse(

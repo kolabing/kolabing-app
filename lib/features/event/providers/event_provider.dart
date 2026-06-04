@@ -287,3 +287,15 @@ final profileEventsProvider =
   final result = await service.getEvents(profileId: profileId);
   return result.events;
 });
+
+/// A community's UPCOMING events (Phase-3 `GET /events?community_id&time=upcoming`).
+/// Returns [] gracefully if the backend filter isn't deployed yet.
+final communityUpcomingEventsProvider =
+    FutureProvider.family<List<Event>, String>((ref, communityId) async {
+  final service = ref.watch(eventServiceProvider);
+  final result = await service.getEvents(
+    communityId: communityId,
+    time: 'upcoming',
+  );
+  return result.events;
+});

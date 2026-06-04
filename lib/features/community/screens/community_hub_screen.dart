@@ -9,6 +9,7 @@ import '../../chat/models/chat_thread.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
+import '../../event/providers/event_provider.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
@@ -156,6 +157,10 @@ class _CommunityOverview extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.sm),
           _MembersPreview(communityId: community.id),
           const SizedBox(height: KolabingSpacing.lg),
+          _SectionLabel('Events'),
+          const SizedBox(height: KolabingSpacing.sm),
+          _EventsSection(communityId: community.id),
+          const SizedBox(height: KolabingSpacing.lg),
           _SectionLabel('Chats'),
           const SizedBox(height: KolabingSpacing.sm),
           _ChatsSection(communityId: community.id),
@@ -163,6 +168,64 @@ class _CommunityOverview extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// This community's upcoming events (Phase-3 `GET /events?community_id&time=
+/// upcoming`). Read-only list for now; create/RSVP/event-chat come next. Errors
+/// (e.g. backend filter not deployed) degrade to an empty state.
+class _EventsSection extends ConsumerWidget {
+  const _EventsSection({required this.communityId});
+
+  final String communityId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(communityUpcomingEventsProvider(communityId));
+    return async.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => const _EventsEmpty(),
+      data: (events) {
+        if (events.isEmpty) return const _EventsEmpty();
+        return Column(
+          children: [
+            for (final e in events)
+              Card(
+                margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+                child: ListTile(
+                  leading: const Icon(LucideIcons.calendar,
+                      color: KolabingColors.onSurface),
+                  title: Text(e.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: KolabingTextStyles.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w600)),
+                  subtitle: Text(e.formattedDate,
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant)),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _EventsEmpty extends StatelessWidget {
+  const _EventsEmpty();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+        child: Text(
+          'No upcoming events yet.',
+          style: KolabingTextStyles.bodySmall
+              .copyWith(color: KolabingColors.onSurfaceVariant),
+        ),
+      );
 }
 
 /// Community chats (main + up to 5 custom). Lists this community's chat threads

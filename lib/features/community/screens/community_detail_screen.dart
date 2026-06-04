@@ -8,6 +8,8 @@ import '../../../config/theme/typography.dart';
 import '../../chat/models/chat_thread.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
+import '../../event/models/event.dart';
+import '../../event/providers/event_provider.dart';
 import '../../gamification/screens/leaderboard_screen.dart';
 import '../models/community.dart';
 import '../models/community_membership.dart';
@@ -73,7 +75,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
               controller: _tabs,
               children: [
                 _ChatsTab(communityId: c.id),
-                const _EventsTab(),
+                _EventsTab(communityId: c.id),
                 _MembersTab(community: c),
                 _DetailsTab(membership: widget.membership),
               ],
@@ -232,16 +234,75 @@ class _ThreadTile extends StatelessWidget {
 // Events tab — placeholder until Phase 3 (events lifecycle + RSVP) ships
 // -----------------------------------------------------------------------------
 
-class _EventsTab extends StatelessWidget {
-  const _EventsTab();
+class _EventsTab extends ConsumerWidget {
+  const _EventsTab({required this.communityId});
+
+  final String communityId;
 
   @override
-  Widget build(BuildContext context) => const _TabMessage(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(communityUpcomingEventsProvider(communityId));
+    return async.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      // A backend that hasn't deployed the Phase-3 filter yet errors here —
+      // treat it as "no events" rather than a scary error.
+      error: (_, __) => const _TabMessage(
         icon: LucideIcons.calendar,
-        title: 'Events are coming',
-        subtitle:
-            'Upcoming events, RSVP and event chats land with Phase 3. Past '
-            'events will show here in the gallery.',
+        title: 'No upcoming events',
+        subtitle: 'Events created for this community will show here.',
+      ),
+      data: (events) {
+        if (events.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: () async =>
+                ref.invalidate(communityUpcomingEventsProvider(communityId)),
+            child: ListView(
+              children: const [
+                SizedBox(height: 120),
+                _TabMessage(
+                  icon: LucideIcons.calendar,
+                  title: 'No upcoming events',
+                  subtitle:
+                      'Events created for this community will show here.',
+                ),
+              ],
+            ),
+          );
+        }
+        return RefreshIndicator(
+          onRefresh: () async =>
+              ref.invalidate(communityUpcomingEventsProvider(communityId)),
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+            itemCount: events.length,
+            itemBuilder: (_, i) => _EventTile(event: events[i]),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _EventTile extends StatelessWidget {
+  const _EventTile({required this.event});
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+        leading: CircleAvatar(
+          backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+          child: const Icon(LucideIcons.calendar,
+              size: 18, color: KolabingColors.onSurface),
+        ),
+        title: Text(event.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: KolabingTextStyles.bodyMedium
+                .copyWith(fontWeight: FontWeight.w600)),
+        subtitle: Text(event.formattedDate,
+            style: KolabingTextStyles.bodySmall
+                .copyWith(color: KolabingColors.onSurfaceVariant)),
       );
 }
 
