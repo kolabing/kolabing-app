@@ -7,7 +7,8 @@ class ChatSender {
   });
 
   factory ChatSender.fromJson(Map<String, dynamic> json) => ChatSender(
-        profileId: json['profile_id'] as String? ?? '',
+        // Tolerate ProfileSummaryResource (`id`) and a flat `profile_id`.
+        profileId: (json['profile_id'] ?? json['id']) as String? ?? '',
         name: json['name'] as String? ?? '',
         avatarUrl: json['avatar_url'] as String?,
       );
@@ -36,12 +37,17 @@ class ChatMessage {
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
         id: json['id'] as String,
-        threadId: json['thread_id'] as String,
-        sender:
-            ChatSender.fromJson(json['sender'] as Map<String, dynamic>? ?? const {}),
-        body: json['body'] as String? ?? '',
+        // thread_id (generic) or application_id (existing collaboration resource).
+        threadId: (json['thread_id'] ?? json['application_id']) as String? ?? '',
+        // sender_profile (ChatMessageResource) or a flat sender.
+        sender: ChatSender.fromJson(
+            (json['sender_profile'] ?? json['sender'] ?? const <String, dynamic>{})
+                as Map<String, dynamic>),
+        // content (ChatMessageResource) or body.
+        body: (json['content'] ?? json['body']) as String? ?? '',
         createdAt: DateTime.parse(json['created_at'] as String),
-        isMine: json['is_mine'] as bool? ?? false,
+        // is_own (ChatMessageResource) or is_mine.
+        isMine: (json['is_own'] ?? json['is_mine']) as bool? ?? false,
       );
 
   final String id;
