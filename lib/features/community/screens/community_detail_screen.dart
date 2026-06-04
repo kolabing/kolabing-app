@@ -255,8 +255,9 @@ class _EventsTab extends ConsumerWidget {
       data: (events) {
         if (events.isEmpty) {
           return RefreshIndicator(
-            onRefresh: () async =>
-                ref.invalidate(communityUpcomingEventsProvider(communityId)),
+            onRefresh: () => ref
+                .read(communityUpcomingEventsProvider(communityId).notifier)
+                .reload(),
             child: ListView(
               children: const [
                 SizedBox(height: 120),
@@ -271,8 +272,9 @@ class _EventsTab extends ConsumerWidget {
           );
         }
         return RefreshIndicator(
-          onRefresh: () async =>
-              ref.invalidate(communityUpcomingEventsProvider(communityId)),
+          onRefresh: () => ref
+              .read(communityUpcomingEventsProvider(communityId).notifier)
+              .reload(),
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
             itemCount: events.length,

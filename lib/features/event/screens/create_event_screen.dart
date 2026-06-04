@@ -180,7 +180,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         }
       }
 
-      ref.invalidate(communityUpcomingEventsProvider(widget.communityId));
+      ref
+          .read(communityUpcomingEventsProvider(widget.communityId).notifier)
+          .reload();
       if (!mounted) return;
       Navigator.of(context).pop<Object>(_isEdit ? result : true);
     } catch (e) {

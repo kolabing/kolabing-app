@@ -73,7 +73,7 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
       });
       final cid = _event.communityId;
       if (cid != null) {
-        ref.invalidate(communityUpcomingEventsProvider(cid));
+        ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
       }
     } catch (e) {
       if (!mounted) return;
@@ -126,7 +126,9 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     if (updated != null && mounted) {
       setState(() => _event = updated);
       final cid = _event.communityId;
-      if (cid != null) ref.invalidate(communityUpcomingEventsProvider(cid));
+      if (cid != null) {
+        ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
+      }
     }
   }
 

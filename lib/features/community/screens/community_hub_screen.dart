@@ -223,8 +223,10 @@ class _EventsSection extends ConsumerWidget {
                         ),
                       ),
                     );
-                    ref.invalidate(
-                        communityUpcomingEventsProvider(communityId));
+                    ref
+                        .read(communityUpcomingEventsProvider(communityId)
+                            .notifier)
+                        .reload();
                   },
                 ),
               ),
@@ -249,7 +251,9 @@ class _EventsSection extends ConsumerWidget {
               ),
             );
             if (created == true) {
-              ref.invalidate(communityUpcomingEventsProvider(communityId));
+              ref
+                  .read(communityUpcomingEventsProvider(communityId).notifier)
+                  .reload();
             }
           },
           icon: const Icon(LucideIcons.plus, size: 18),
