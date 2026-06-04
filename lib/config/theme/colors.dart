@@ -208,6 +208,26 @@ abstract final class KolabingColors {
   static const Color navInactiveSubtle = Color(0xFFCFC6B3);
 
   // ---------------------------------------------------------------------------
+  // Hairline / UI chrome
+  // ---------------------------------------------------------------------------
+
+  /// Hairline border — very subtle dividers and card borders
+  static const Color hairline = Color(0xFFE8E2D6);
+
+  /// Text/icon on yellow button surface
+  static const Color onYellowButton = Color(0xFF78631A);
+
+  // ---------------------------------------------------------------------------
+  // Amber chip palette
+  // ---------------------------------------------------------------------------
+
+  /// Amber chip container fill
+  static const Color amberChipContainer = Color(0xFFFFF0C2);
+
+  /// Amber chip text/icon
+  static const Color amberChipText = Color(0xFFA07010);
+
+  // ---------------------------------------------------------------------------
   // Deprecated tokens — kept until widget files are migrated
   // ---------------------------------------------------------------------------
 
