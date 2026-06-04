@@ -127,8 +127,11 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         iconSlug: UiIconSlug.star,
       ),
       NavItem(
-        icon: LucideIcons.users,
-        activeIcon: LucideIcons.users,
+        // Flag (chapter/club banner) reads as the community hub and is clearly
+        // distinct from the lone-person Profile icon — they were near-identical
+        // when both used users/user.
+        icon: LucideIcons.flag,
+        activeIcon: LucideIcons.flag,
         label: l10n.communityMainNavCommunity,
       ),
       NavItem(

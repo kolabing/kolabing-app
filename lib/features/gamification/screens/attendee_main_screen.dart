@@ -72,8 +72,10 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
         iconSlug: UiIconSlug.home,
       ),
       NavItem(
-        icon: LucideIcons.users,
-        activeIcon: LucideIcons.users,
+        // Flag (chapter/club banner) — distinct from the lone-person Profile
+        // icon, which looked near-identical when this used users vs user.
+        icon: LucideIcons.flag,
+        activeIcon: LucideIcons.flag,
         label: l10n.attendeeNavCommunities,
       ),
       NavItem(
