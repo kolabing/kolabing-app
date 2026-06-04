@@ -13,6 +13,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
+import '../../../widgets/glass_button.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
@@ -421,19 +422,12 @@ class _CommunityProfileScreenState
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton.icon(
+              GlassButton(
+                label: 'try again',
                 onPressed: () =>
                     ref.read(profileProvider.notifier).loadProfile(),
-                icon: const Icon(LucideIcons.rotateCcw, size: 18),
-                label: const Text('TRY AGAIN'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.lg,
-                    vertical: KolabingSpacing.sm,
-                  ),
-                ),
+                intent: GlassButtonIntent.primary,
+                icon: LucideIcons.rotateCcw,
               ),
             ],
           ),
@@ -852,17 +846,11 @@ class _CommunityProfileScreenState
             const SizedBox(height: KolabingSpacing.lg),
 
             // Sign Out Button
-            OutlinedButton.icon(
+            GlassButton(
+              label: 'sign out',
               onPressed: isUpdating ? null : _handleSignOut,
-              icon: const Icon(LucideIcons.logOut, size: 18),
-              label: const Text('SIGN OUT'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.error,
-                side: const BorderSide(color: KolabingColors.error),
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-              ),
+              intent: GlassButtonIntent.destructive,
+              icon: LucideIcons.logOut,
             ),
 
             const SizedBox(height: KolabingSpacing.md),
