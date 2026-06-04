@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
@@ -68,7 +69,7 @@ class _Section {
   final List<ChatThread> threads;
 }
 
-class _ThreadTile extends StatelessWidget {
+class _ThreadTile extends ConsumerWidget {
   const _ThreadTile({required this.thread});
 
   final ChatThread thread;
@@ -82,12 +83,25 @@ class _ThreadTile extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
-      onTap: () => Navigator.of(context).push<void>(
-        MaterialPageRoute<void>(
-            builder: (_) => ChatThreadScreen(thread: thread)),
-      ),
+      onTap: () async {
+        // Phase 1: collaboration (Kolab) chats reuse the existing
+        // application-backed chat screen. Community/event threads (later
+        // phases) use the generic thread screen.
+        if (thread.type == ChatThreadType.collaboration &&
+            thread.applicationId != null) {
+          await context.push('/application/${thread.applicationId}/chat');
+        } else {
+          await Navigator.of(context).push<void>(
+            MaterialPageRoute<void>(
+                builder: (_) => ChatThreadScreen(thread: thread)),
+          );
+        }
+        // Refresh the inbox + badge after returning (read state may have moved).
+        ref.read(chatThreadsProvider.notifier).reload();
+        ref.read(chatUnreadProvider.notifier).refresh();
+      },
       leading: CircleAvatar(
         backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
         child: Icon(
