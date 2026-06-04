@@ -5,6 +5,10 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../chat/models/chat_thread.dart';
+import '../../chat/providers/chat_providers.dart';
+import '../../chat/screens/chat_thread_screen.dart';
+import '../../chat/services/chat_service.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
@@ -151,7 +155,171 @@ class _CommunityOverview extends ConsumerWidget {
           _SectionLabel('Members'),
           const SizedBox(height: KolabingSpacing.sm),
           _MembersPreview(communityId: community.id),
+          const SizedBox(height: KolabingSpacing.lg),
+          _SectionLabel('Chats'),
+          const SizedBox(height: KolabingSpacing.sm),
+          _ChatsSection(communityId: community.id),
         ],
+      ),
+    );
+  }
+}
+
+/// Community chats (main + up to 5 custom). Lists this community's chat threads
+/// and lets the leader create custom ones (≤5). Backend: POST
+/// /communities/{id}/chats (NF-CHAT Phase 2) — until it ships, create errors
+/// gracefully.
+class _ChatsSection extends ConsumerWidget {
+  const _ChatsSection({required this.communityId});
+
+  final String communityId;
+
+  static const _maxCustom = 5;
+
+  Future<void> _create(BuildContext context, WidgetRef ref) async {
+    final controller = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('New chat'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            labelText: 'Chat name',
+            hintText: 'e.g. Exec, Socials, Philanthropy',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+    if (name == null || name.isEmpty) return;
+    try {
+      await ref
+          .read(chatServiceProvider)
+          .createCommunityChat(communityId, name: name);
+      ref.read(chatThreadsProvider.notifier).reload();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('"$name" created')));
+      }
+    } on ChatException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(e.isChatLimitReached
+                ? 'You can have up to $_maxCustom chats'
+                : e.message)));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(chatThreadsProvider);
+    return async.when(
+      loading: () => const _InlineLoader(),
+      error: (e, _) => _InlineError(message: e.toString()),
+      data: (threads) {
+        final mine = threads
+            .where((t) => t.communityId == communityId && t.type.isCommunity)
+            .toList();
+        final customCount =
+            mine.where((t) => t.type == ChatThreadType.communityCustom).length;
+        return Column(
+          children: [
+            if (mine.isEmpty)
+              _InlineHint(
+                icon: LucideIcons.messageCircle,
+                text: 'No chats yet. Your main chat + up to '
+                    '$_maxCustom custom chats live here.',
+              )
+            else
+              for (final t in mine) _ChatRow(thread: t),
+            const SizedBox(height: KolabingSpacing.xs),
+            if (customCount < _maxCustom)
+              _AddTile(
+                label: 'Create chat',
+                onTap: () => _create(context, ref),
+              )
+            else
+              _InlineHint(
+                icon: LucideIcons.lock,
+                text: 'Chat limit reached ($_maxCustom custom chats).',
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ChatRow extends StatelessWidget {
+  const _ChatRow({required this.thread});
+
+  final ChatThread thread;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMain = thread.type == ChatThreadType.communityMain;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+      child: Material(
+        color: KolabingColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => Navigator.of(context).push<void>(
+            MaterialPageRoute<void>(
+                builder: (_) => ChatThreadScreen(thread: thread)),
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: KolabingColors.outlineVariant),
+            ),
+            child: Row(
+              children: [
+                Icon(isMain ? LucideIcons.hash : LucideIcons.messageCircle,
+                    size: 16, color: KolabingColors.onSurfaceVariant),
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: Text(thread.name ?? (isMain ? 'Main' : 'Chat'),
+                      style: KolabingTextStyles.bodyMedium
+                          .copyWith(fontWeight: FontWeight.w600)),
+                ),
+                if (isMain) _Chip(label: 'MAIN'),
+                if (thread.hasUnread) ...[
+                  const SizedBox(width: KolabingSpacing.xs),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: KolabingColors.primary,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text('${thread.unreadCount}',
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: KolabingColors.onPrimary)),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
