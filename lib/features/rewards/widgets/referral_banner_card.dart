@@ -8,6 +8,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/glass_button.dart';
 import '../providers/wallet_provider.dart';
 import '../utils/referral_share.dart';
 
@@ -66,26 +67,12 @@ class ReferralBannerCard extends ConsumerWidget {
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
-                OutlinedButton(
+                GlassButton(
+                  label: 'share referral code',
                   onPressed: () =>
                       _showReferralCodeSheet(context, referralCode),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: KolabingColors.onSurface,
-                    side: const BorderSide(color: Color(0xFFEAE3D4), width: 1.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: KolabingRadius.borderRadiusSm,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: KolabingSpacing.md,
-                      vertical: KolabingSpacing.xs,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    'SHARE REFERRAL CODE',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                  ),
+                  intent: GlassButtonIntent.primary,
+                  icon: LucideIcons.share2,
                 ),
               ],
             ),
