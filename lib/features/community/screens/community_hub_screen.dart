@@ -15,7 +15,7 @@ import 'tier_editor_screen.dart';
 
 /// The Community Leader's "Community" tab.
 ///
-/// Reads [myCommunitiesProvider]:
+/// Reads [communityManageProvider]:
 /// - none yet  → create-your-community empty state
 /// - one       → its overview (header + tiers + roster preview)
 /// - more (NF-7 Premium) → a picker; for now shows the first.
@@ -24,18 +24,19 @@ class CommunityHubScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(myCommunitiesProvider);
+    final async = ref.watch(communityManageProvider).communities;
     return async.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => _ErrorState(
         message: e.toString(),
-        onRetry: () => bumpCommunityRefresh(ref),
+        onRetry: () => ref.read(communityManageProvider.notifier).loadAll(),
       ),
       data: (communities) {
         if (communities.isEmpty) {
           // Pull-to-refresh so a stale empty result can always recover.
           return RefreshIndicator(
-            onRefresh: () async => bumpCommunityRefresh(ref),
+            onRefresh: () =>
+                ref.read(communityManageProvider.notifier).reloadCommunities(),
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -57,7 +58,7 @@ class CommunityHubScreen extends ConsumerWidget {
       MaterialPageRoute(builder: (_) => const CreateCommunityScreen()),
     );
     if (created ?? false) {
-      bumpCommunityRefresh(ref);
+      await ref.read(communityManageProvider.notifier).reloadCommunities();
     }
   }
 }
@@ -136,9 +137,8 @@ class _CommunityOverview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return RefreshIndicator(
-      onRefresh: () async {
-        bumpCommunityRefresh(ref);
-      },
+      onRefresh: () =>
+          ref.read(communityManageProvider.notifier).reloadCommunities(),
       child: ListView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         children: [
@@ -233,13 +233,13 @@ class _TiersSection extends ConsumerWidget {
       ),
     );
     if (changed ?? false) {
-      bumpCommunityRefresh(ref);
+      await ref.read(communityManageProvider.notifier).reloadTiers();
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(communityTiersProvider(communityId));
+    final async = ref.watch(communityManageProvider).tiers;
     return async.when(
       loading: () => const _InlineLoader(),
       error: (e, _) => _InlineError(message: e.toString()),
@@ -409,12 +409,12 @@ class _MembersPreview extends ConsumerWidget {
       MaterialPageRoute<void>(
           builder: (_) => RosterScreen(communityId: communityId)),
     );
-    bumpCommunityRefresh(ref);
+    await ref.read(communityManageProvider.notifier).reloadMembers();
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(communityMembersProvider(communityId));
+    final async = ref.watch(communityManageProvider).members;
     return async.when(
       loading: () => const _InlineLoader(),
       error: (e, _) => _InlineError(message: e.toString()),

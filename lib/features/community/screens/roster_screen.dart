@@ -19,7 +19,7 @@ class RosterScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(communityMembersProvider(communityId));
+    final async = ref.watch(communityManageProvider).members;
     return Scaffold(
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
@@ -49,7 +49,7 @@ class RosterScreen extends ConsumerWidget {
           }
           return RefreshIndicator(
             onRefresh: () async =>
-                bumpCommunityRefresh(ref),
+                ref.read(communityManageProvider.notifier).reloadMembers(),
             child: ListView.separated(
               padding: const EdgeInsets.all(KolabingSpacing.md),
               itemCount: members.length,
@@ -79,7 +79,7 @@ class RosterScreen extends ConsumerWidget {
           _MemberEditSheet(communityId: communityId, member: member),
     );
     if (changed ?? false) {
-      bumpCommunityRefresh(ref);
+      ref.read(communityManageProvider.notifier).reloadMembers();
     }
   }
 
@@ -134,7 +134,7 @@ class RosterScreen extends ConsumerWidget {
       await ref
           .read(communityServiceProvider)
           .addMember(communityId, email: email);
-      bumpCommunityRefresh(ref);
+      ref.read(communityManageProvider.notifier).reloadMembers();
       if (context.mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Member added')));
@@ -275,7 +275,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
             canManage: _canManage,
             status: _status,
           );
-      bumpCommunityRefresh(ref);
+      ref.read(communityManageProvider.notifier).reloadMembers();
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
@@ -310,7 +310,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
       await ref
           .read(communityServiceProvider)
           .removeMember(widget.communityId, widget.member.id);
-      bumpCommunityRefresh(ref);
+      ref.read(communityManageProvider.notifier).reloadMembers();
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
@@ -324,7 +324,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tiersAsync = ref.watch(communityTiersProvider(widget.communityId));
+    final tiersAsync = ref.watch(communityManageProvider).tiers;
     return Padding(
       padding: EdgeInsets.only(
         left: KolabingSpacing.md,
