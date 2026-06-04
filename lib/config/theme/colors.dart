@@ -188,6 +188,16 @@ abstract final class KolabingColors {
   static const Color glassWhite14 = Color(0x24FFFFFF);
 
   // ---------------------------------------------------------------------------
+  // Glass button ink
+  // ---------------------------------------------------------------------------
+
+  /// Warm dark ink used on all glass button intents
+  static const Color glassInk = Color(0xFF57534B);
+
+  /// Destructive ink for glass buttons
+  static const Color glassDestructiveInk = Color(0xFF9B3B3B);
+
+  // ---------------------------------------------------------------------------
   // Navigation Bar
   // ---------------------------------------------------------------------------
 
