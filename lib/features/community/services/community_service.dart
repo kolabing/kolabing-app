@@ -29,6 +29,9 @@ class CommunityException implements Exception {
   /// Tried to self-join an `invite_only` community.
   bool get isInviteOnly => code == 'invite_only';
 
+  /// Invite-by-email matched no Kolabing account.
+  bool get isProfileNotFound => code == 'profile_not_found' || statusCode == 404;
+
   @override
   String toString() => 'CommunityException($code: $message)';
 }
@@ -191,7 +194,10 @@ class CommunityService {
           Uri.parse('$_baseUrl/communities/$communityId/tiers'),
           headers: await _headers(),
         );
-        return _asList(_unwrap(res)).map(CommunityTier.fromJson).toList();
+        final tiers =
+            _asList(_unwrap(res)).map(CommunityTier.fromJson).toList();
+        debugPrint('🏘️ getTiers refetched ${tiers.length} tiers');
+        return tiers;
       }, 'getTiers');
 
   /// `POST /communities/{id}/tiers`.
@@ -257,6 +263,8 @@ class CommunityService {
           Uri.parse('$_baseUrl/tiers/$tierId'),
           headers: await _headers(),
         );
+        debugPrint('🏘️ deleteTier $tierId → HTTP ${res.statusCode}: '
+            '${res.body.substring(0, res.body.length.clamp(0, 150))}');
         _unwrap(res);
       }, 'deleteTier');
 
@@ -286,10 +294,12 @@ class CommunityService {
             .toList();
       }, 'getMembers');
 
-  /// `POST /communities/{id}/members` — invite/add by member profile id.
+  /// `POST /communities/{id}/members` — invite/add a member by the email on
+  /// their Kolabing account. (Backend resolves email → profile; throws with
+  /// `isProfileNotFound` when no account matches.)
   Future<CommunityMember> addMember(
     String communityId, {
-    required String profileId,
+    required String email,
     String? tierId,
   }) =>
       _guard(() async {
@@ -297,7 +307,7 @@ class CommunityService {
           Uri.parse('$_baseUrl/communities/$communityId/members'),
           headers: await _headers(),
           body: jsonEncode({
-            'profile_id': profileId,
+            'email': email,
             if (tierId != null) 'tier_id': tierId,
           }),
         );

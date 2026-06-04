@@ -85,7 +85,7 @@ class RosterScreen extends ConsumerWidget {
 
   Future<void> _invite(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
-    final profileId = await showDialog<String>(
+    final email = await showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Invite member'),
@@ -94,14 +94,17 @@ class RosterScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Add a member by their profile ID. A searchable member picker '
-              'will replace this once the search endpoint ships.',
+              'Add a member by the email on their Kolabing account.',
             ),
             const SizedBox(height: KolabingSpacing.md),
             TextField(
               controller: controller,
+              autofocus: true,
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
               decoration: const InputDecoration(
-                labelText: 'Profile ID',
+                labelText: 'Email',
+                hintText: 'name@example.com',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -112,17 +115,25 @@ class RosterScreen extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel')),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            onPressed: () =>
+                Navigator.of(context).pop(controller.text.trim().toLowerCase()),
             child: const Text('Invite'),
           ),
         ],
       ),
     );
-    if (profileId == null || profileId.isEmpty) return;
+    if (email == null || email.isEmpty) return;
+    if (!email.contains('@') || !email.contains('.')) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Enter a valid email address')));
+      }
+      return;
+    }
     try {
       await ref
           .read(communityServiceProvider)
-          .addMember(communityId, profileId: profileId);
+          .addMember(communityId, email: email);
       ref.invalidate(communityMembersProvider(communityId));
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -130,8 +141,10 @@ class RosterScreen extends ConsumerWidget {
       }
     } on CommunityException catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(e.isProfileNotFound
+                ? 'No Kolabing account found for that email'
+                : e.message)));
       }
     }
   }
@@ -262,6 +275,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
             canManage: _canManage,
             status: _status,
           );
+      ref.invalidate(communityMembersProvider(widget.communityId));
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
@@ -296,6 +310,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
       await ref
           .read(communityServiceProvider)
           .removeMember(widget.communityId, widget.member.id);
+      ref.invalidate(communityMembersProvider(widget.communityId));
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
