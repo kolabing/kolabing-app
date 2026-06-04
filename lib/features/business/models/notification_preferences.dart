@@ -17,7 +17,11 @@ class NotificationPreferences {
       NotificationPreferences(
         emailNotifications: json['email_notifications'] as bool? ?? true,
         whatsappNotifications: json['whatsapp_notifications'] as bool? ?? true,
-        messagesEnabled: json['messages_enabled'] as bool? ?? true,
+        // NF-16 B3: `message_notifications` is the field the backend adds in
+        // parallel; fall back to the legacy `messages_enabled` key, default on.
+        messagesEnabled: json['message_notifications'] as bool? ??
+            json['messages_enabled'] as bool? ??
+            true,
         applicationsEnabled:
             json['applications_enabled'] as bool? ??
             json['new_application_alerts'] as bool? ??
@@ -51,9 +55,15 @@ class NotificationPreferences {
   bool get collaborationUpdates => collaborationsEnabled;
   bool get marketingTips => marketingEnabled;
 
+  /// Convenience alias — the NF-16 wire/field name for [messagesEnabled].
+  bool get messageNotifications => messagesEnabled;
+
   Map<String, dynamic> toJson() => {
         'email_notifications': emailNotifications,
         'whatsapp_notifications': whatsappNotifications,
+        // Write both keys so the prefs round-trip whether or not the backend
+        // has shipped `message_notifications` yet.
+        'message_notifications': messagesEnabled,
         'messages_enabled': messagesEnabled,
         'applications_enabled': applicationsEnabled,
         'collaborations_enabled': collaborationsEnabled,

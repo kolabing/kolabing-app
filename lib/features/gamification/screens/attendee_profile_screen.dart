@@ -185,6 +185,15 @@ class AttendeeProfileScreen extends ConsumerWidget {
               onTap: () => context.push(KolabingRoutes.language),
             ),
 
+            // Notification preferences
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(LucideIcons.bell, size: 20),
+              title: Text(AppLocalizations.of(context).notifSettingsTitle),
+              trailing: const Icon(LucideIcons.chevronRight, size: 18),
+              onTap: () => context.push(KolabingRoutes.notificationSettings),
+            ),
+
             const SizedBox(height: KolabingSpacing.sm),
 
             // Logout button

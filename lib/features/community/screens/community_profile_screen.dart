@@ -861,6 +861,15 @@ class _CommunityProfileScreenState
               onTap: () => context.push(KolabingRoutes.language),
             ),
 
+            const SizedBox(height: KolabingSpacing.sm),
+
+            // Notification preferences
+            _ContactInfoTile(
+              icon: LucideIcons.bell,
+              label: AppLocalizations.of(context).notifSettingsTitle,
+              onTap: () => context.push(KolabingRoutes.notificationSettings),
+            ),
+
             const SizedBox(height: KolabingSpacing.lg),
 
             // Sign Out Button
