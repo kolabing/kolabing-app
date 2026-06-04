@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../config/constants/spacing.dart';
 import '../../config/theme/colors.dart';
 import '../../config/theme/typography.dart';
-import '../../features/chat/widgets/chat_inbox_button.dart';
+import 'profile_avatar_button.dart';
 
 /// Kolabing standard app bar — yellow background, charcoal text/icons.
 class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -41,22 +40,9 @@ class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       centerTitle: true,
-      actions: actions ??
-          [
-            const ChatInboxButton(),
-            Padding(
-              padding: const EdgeInsets.only(right: KolabingSpacing.md),
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: KolabingColors.charcoal,
-                child: Icon(
-                  Icons.person,
-                  size: 18,
-                  color: KolabingColors.navBarBackground,
-                ),
-              ),
-            ),
-          ],
+      // Chat moved to the bottom-nav (NF-12); the avatar opens the now-hidden
+      // profile (community/attendee have no Profile tab anymore).
+      actions: actions ?? const [ProfileAvatarButton()],
     );
   }
 }

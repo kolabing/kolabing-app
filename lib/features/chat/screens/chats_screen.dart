@@ -15,7 +15,12 @@ import 'chat_thread_screen.dart';
 /// attendee = main + tier-granted + RSVP'd event chats). The app just groups
 /// whatever it receives by type.
 class ChatsScreen extends ConsumerStatefulWidget {
-  const ChatsScreen({super.key});
+  const ChatsScreen({super.key, this.embedded = false});
+
+  /// When true, render as a bottom-nav tab body — no Scaffold/AppBar, since the
+  /// role shell already supplies the KolabingAppBar (NF-12). When false, it's a
+  /// standalone pushed screen with its own "Chats" app bar.
+  final bool embedded;
 
   @override
   ConsumerState<ChatsScreen> createState() => _ChatsScreenState();
@@ -41,32 +46,39 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(chatThreadsProvider);
+    final body = async.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => _ErrorState(
+        message: e.toString(),
+        onRetry: () => ref.read(chatThreadsProvider.notifier).reload(),
+      ),
+      data: (threads) {
+        if (threads.isEmpty) return const _EmptyChats();
+        return RefreshIndicator(
+          onRefresh: () => ref.read(chatThreadsProvider.notifier).reload(),
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+            children: _sections(threads)
+                .expand((s) => [
+                      _SectionLabel(s.title),
+                      ...s.threads.map((t) => _ThreadTile(thread: t)),
+                      const SizedBox(height: KolabingSpacing.sm),
+                    ])
+                .toList(),
+          ),
+        );
+      },
+    );
+
+    // As a nav tab the role shell already provides the app bar; render the body
+    // only. As a pushed screen, wrap with our own Scaffold + "Chats" app bar.
+    if (widget.embedded) {
+      return Container(color: KolabingColors.background, child: body);
+    }
     return Scaffold(
       backgroundColor: KolabingColors.background,
       appBar: AppBar(title: const Text('Chats')),
-      body: async.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => _ErrorState(
-          message: e.toString(),
-          onRetry: () => ref.read(chatThreadsProvider.notifier).reload(),
-        ),
-        data: (threads) {
-          if (threads.isEmpty) return const _EmptyChats();
-          return RefreshIndicator(
-            onRefresh: () => ref.read(chatThreadsProvider.notifier).reload(),
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-              children: _sections(threads)
-                  .expand((s) => [
-                        _SectionLabel(s.title),
-                        ...s.threads.map((t) => _ThreadTile(thread: t)),
-                        const SizedBox(height: KolabingSpacing.sm),
-                      ])
-                  .toList(),
-            ),
-          );
-        },
-      ),
+      body: body,
     );
   }
 

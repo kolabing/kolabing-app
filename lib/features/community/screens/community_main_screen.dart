@@ -11,6 +11,8 @@ import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
 import '../../business/screens/explore_screen.dart';
+import '../../chat/providers/chat_providers.dart';
+import '../../chat/screens/chats_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
 import '../../kolab/screens/my_kolabs_hub_screen.dart';
@@ -19,15 +21,15 @@ import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import 'community_hub_screen.dart';
-import 'community_profile_screen.dart';
 import 'my_opportunities_screen.dart';
 
 /// Community user main screen with bottom navigation
 ///
 /// This is the main container for community users after login.
-/// Contains 5 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished),
-/// Community (roster + tiers — NF-6), Profile. The former Applications tab is
-/// now the "Requests" tab inside My Kolabs.
+/// 5 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished), Chats,
+/// Community (roster + tiers — NF-6). Profile moved off the nav (NF-12) — reached
+/// via the app-bar avatar. The former Applications tab is the "Requests" sub-tab
+/// inside My Kolabs.
 class CommunityMainScreen extends ConsumerStatefulWidget {
   const CommunityMainScreen({
     super.key,
@@ -106,6 +108,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
     final badgeCount = pendingSentCount + pendingReceivedCount + totalUnread;
 
     final l10n = AppLocalizations.of(context);
+    final chatUnread = ref.watch(chatUnreadProvider);
     final navItems = [
       NavItem(
         icon: LucideIcons.home,
@@ -127,18 +130,20 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         iconSlug: UiIconSlug.star,
       ),
       NavItem(
+        // Chats promoted to the nav (NF-12), placed before Community per the IA.
+        // TODO(i18n): localize when chat strings are localized.
+        icon: LucideIcons.messageCircle,
+        activeIcon: LucideIcons.messageCircle,
+        label: 'Chats',
+        badgeCount: chatUnread > 0 ? chatUnread : null,
+      ),
+      NavItem(
         // Flag (chapter/club banner) reads as the community hub and is clearly
         // distinct from the lone-person Profile icon — they were near-identical
         // when both used users/user.
         icon: LucideIcons.flag,
         activeIcon: LucideIcons.flag,
         label: l10n.communityMainNavCommunity,
-      ),
-      NavItem(
-        icon: LucideIcons.user,
-        activeIcon: LucideIcons.user,
-        label: l10n.communityMainNavProfile,
-        iconSlug: UiIconSlug.user,
       ),
     ];
 
@@ -155,13 +160,13 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           _CommunityHomeTab(onSwitchTab: _onTabChanged),
           const _CommunityExploreTab(),
           _CommunityMyOppsTab(initialSubTab: widget.initialKolabsSubTab),
+          const ChatsScreen(embedded: true),
           const CommunityHubScreen(),
-          const _CommunityProfileTab(),
         ],
       ),
       floatingActionButton:
           // Create-Opportunity FAB only on Home (0) / Explore (1). Hidden on
-          // My Kolabs (2), Community (3), and Profile (4).
+          // My Kolabs (2), Chats (3), and Community (4).
           _currentIndex < 2
           ? KolabingFAB(
               onPressed: _onFabPressed,
@@ -215,13 +220,6 @@ class _CommunityMyOppsTab extends StatelessWidget {
     offersTab: const MyOpportunitiesScreen(embedded: true),
     initialSubTab: initialSubTab,
   );
-}
-
-class _CommunityProfileTab extends StatelessWidget {
-  const _CommunityProfileTab();
-
-  @override
-  Widget build(BuildContext context) => const CommunityProfileScreen();
 }
 
 // -----------------------------------------------------------------------------

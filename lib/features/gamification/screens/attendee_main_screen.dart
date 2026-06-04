@@ -7,15 +7,17 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
+import '../../chat/providers/chat_providers.dart';
+import '../../chat/screens/chats_screen.dart';
 import '../../community/screens/my_communities_screen.dart';
 import 'attendee_home_screen.dart';
-import 'attendee_profile_screen.dart';
 import 'qr_scanner_screen.dart';
 
 /// Attendee (Community Member) main screen with bottom navigation
 ///
 /// This is the main container for attendee users after login.
-/// Contains 4 tabs: Home, Communities (NF-6), Scan QR (modal), Profile
+/// 4 tabs: Home, Communities (NF-6), Chats, Scan QR (modal). Profile moved off
+/// the nav (NF-12) — reached via the app-bar avatar.
 class AttendeeMainScreen extends ConsumerStatefulWidget {
   const AttendeeMainScreen({
     super.key,
@@ -38,8 +40,8 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
   }
 
   void _onTabChanged(int index) {
-    // Index 2 is the QR Scanner - open as a modal, don't change the tab.
-    if (index == 2) {
+    // Index 3 is the QR Scanner — open as a modal, don't change the tab.
+    if (index == 3) {
       _openQRScanner();
       return;
     }
@@ -63,6 +65,7 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
+    final chatUnread = ref.watch(chatUnreadProvider);
 
     final navItems = [
       NavItem(
@@ -79,15 +82,17 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
         label: l10n.attendeeNavCommunities,
       ),
       NavItem(
+        // Chats promoted to the nav (NF-12); unread badge moves here from the
+        // old app-bar inbox button. TODO(i18n): localize when chat is localized.
+        icon: LucideIcons.messageCircle,
+        activeIcon: LucideIcons.messageCircle,
+        label: 'Chats',
+        badgeCount: chatUnread > 0 ? chatUnread : null,
+      ),
+      NavItem(
         icon: LucideIcons.qrCode,
         activeIcon: LucideIcons.qrCode,
         label: l10n.attendeeNavScan,
-      ),
-      NavItem(
-        icon: LucideIcons.user,
-        activeIcon: LucideIcons.user,
-        label: l10n.attendeeNavProfile,
-        iconSlug: UiIconSlug.user,
       ),
     ];
 
@@ -96,13 +101,13 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
           isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: const KolabingAppBar(),
       body: IndexedStack(
-        // Nav indices: Home 0, Communities 1, Scan 2 (modal, no child),
-        // Profile 3. Collapse the modal slot so children stay 0,1,2.
-        index: _currentIndex < 2 ? _currentIndex : _currentIndex - 1,
+        // Nav indices: Home 0, Communities 1, Chats 2, Scan 3 (modal, no child).
+        // Scan returns early in _onTabChanged, so _currentIndex is only 0..2.
+        index: _currentIndex,
         children: const [
           AttendeeHomeScreen(),
           MyCommunitiesScreen(),
-          AttendeeProfileScreen(),
+          ChatsScreen(embedded: true),
         ],
       ),
       bottomNavigationBar: KolabingBottomNavBar(
