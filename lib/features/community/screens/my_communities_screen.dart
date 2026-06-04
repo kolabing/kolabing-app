@@ -5,9 +5,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
-import '../../gamification/screens/leaderboard_screen.dart';
 import '../models/community_membership.dart';
 import '../providers/community_providers.dart';
+import 'community_detail_screen.dart';
 
 /// The Community Member's view of the communities they belong to and their
 /// tier in each (`GET /me/memberships`). Read-only in v1; tier perks/content
@@ -65,10 +65,7 @@ class _MembershipCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         onTap: () => Navigator.of(context).push<void>(
           MaterialPageRoute<void>(
-            builder: (_) => LeaderboardScreen(
-              communityId: community.id,
-              communityName: community.name,
-            ),
+            builder: (_) => CommunityDetailScreen(membership: membership),
           ),
         ),
         child: Container(

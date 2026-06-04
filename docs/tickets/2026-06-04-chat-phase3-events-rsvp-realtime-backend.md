@@ -1,5 +1,36 @@
 # Backend — Chat Phase 3: event RSVP/sign-up, event chats, real-time (Reverb)
 
+> 🟡 **BACKEND BUILT — pending merge/deploy** (2026-06-05). `kolabing-v2` branch
+> `feat/chat-phase3-events-rsvp`, **PR #18**. 842 tests green (11 new), 0 regressions.
+>
+> **Done (backend):**
+> - Sign-ups: `event_signups` + `EventSignupStatus`; `events` += `starts_at`/`ends_at`/
+>   `location`/`capacity`/`tier_gate`/`collaboration_id` + `isUpcoming()`. `EventSignupService`
+>   = binary going→else waitlisted (row-locked, idempotent), tier-gate + membership eligibility,
+>   **cancel auto-promotes** waitlist head + notifies (`NotificationType::WaitlistPromoted`).
+>   `POST`/`DELETE /events/{event}/signup`, `GET /events/{event}/signups` (leader). `EventResource`
+>   += `my_signup`/`going_count`/`waitlist_count`/`capacity`/`starts_at`/`ends_at`/`location`/
+>   `community_id`/`collaboration_id`/`tier_gate`/`is_upcoming`.
+> - Event chat: `POST /events/{event}/chat` (leader/can_manage) → idempotent `event` thread;
+>   `canAccessThread` Event branch (going OR leader; waitlisted/outsider denied); event threads in
+>   `GET /chats`; reuses Phase-2 `/chats/{thread}/messages` + `/read`.
+> - Real-time: private `chat.thread.{id}` channel in `routes/channels.php` authorized by
+>   `canAccessThread` (same derived access as REST). `NewChatMessage` already broadcasts there.
+> - Lifecycle §6/§6.1: `events.collaboration_id` mirror; `GET /events` filters
+>   `community_id`/`time=upcoming|past`/`attendee=me`/`profile_id`; retroactive past-event creation
+>   + check-in/showcase untouched.
+> - Tests: `EventSignupTest` (7) + `EventChatTest` (4). Acceptance §8.1–3 + §8.5 covered.
+>
+> **Missing / pending:**
+> - PR #18 **not merged**; deploy must run the 2 new migrations (`event_signups`, events columns).
+> - **Ops:** run the Reverb server (`php artisan reverb:start` / supervisor) + confirm prod
+>   `BROADCAST_CONNECTION=reverb` + `REVERB_*`. Channel-auth *logic* is in + covered by access
+>   tests, but there's **no HTTP `/broadcasting/auth` test** and no live 2-client real-time test
+>   (acceptance §8.4 verified at the auth-logic level only).
+> - **App side** (separate): "I'm going" + waitlist UI, event-chat surfacing, Reverb/Echo client.
+> - **Scale:** `EventResource` per-event counts + `visibleThreads` per-thread unread are O(N)/page
+>   — tracked in **NF-15** (`docs/tickets/2026-06-05-backend-scale-audit-optimization.md`).
+
 > **Target repo:** `kolabing-v2`. Builds on shipped Phase 1 (inbox, `ChatThreadType`,
 > `ChatThreadResource`, `GET /chats`, `/chats/unread-count`) and Phase 2 (community
 > main + custom chats, generic `/chats/{thread}/messages`, `ChatMessageResource` +
@@ -134,11 +165,18 @@ business `past_events_screen`; today surfaced in the profile) must read the **sa
   (+ photos) — this is where the gallery + past events live (per the IA decision).
 - **User profile** attended/past = events the viewer checked in to (`event_checkins`)
   or had a past `going` sign-up; this drives the profile "Events" stat.
-- So `GET /events` must support filters: `community_id`, `time=upcoming|past`, and
-  `attendee=me`. The Events tab (upcoming), the community Details tab (past + gallery),
-  and the profile showcase all hit the **same endpoint** with different filters — no
-  separate past-events table or route. The single `events` lifecycle feeds every
-  surface.
+- So `GET /events` must support filters: `community_id`, `time=upcoming|past`,
+  `attendee=me`, and **location/`nearby`** (lat/lng/radius). EVERY event surface is
+  the **same interconnected `events` source**, just a different view/filter:
+  - community **Events** tab → `community_id` + `time=upcoming`
+  - community **Details** tab (past + gallery) → `community_id` + `time=past`
+  - attendee **Home "Nearby Events"** → `nearby` (location) + `time=upcoming`
+  - profile **Events** stat / attended → `attendee=me`
+  - kolab **event picker** → `collaboration_id` / the linked event
+  There is **no separate past-events / nearby-events / showcase model** — one
+  `events` lifecycle feeds them all, and an event created in one surface (e.g. a
+  community event) must appear in every other surface it qualifies for (nearby,
+  attended, kolab-linked, past). Keep them consistent (same id, same fields).
 - **KEEP the retroactive past-event flow** (existing `createEvent` / `add_event_modal`):
   a leader can still create an event **directly in the past** — `starts_at`/`ends_at`
   in the past, with photos + attendee count, **no sign-up/RSVP/waitlist**. Sign-up,
