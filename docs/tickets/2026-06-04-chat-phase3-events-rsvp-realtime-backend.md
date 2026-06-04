@@ -146,6 +146,20 @@ business `past_events_screen`; today surfaced in the profile) must read the **sa
   must therefore support both modes: (a) upcoming event (RSVP-enabled) and (b)
   retroactive past event (showcase-only). Do not remove (b).
 
+## 6.2 Cover photo = a gallery image (shared pool, no separate upload)
+A cover photo and the gallery are the **same image pool** — a cover is just a
+*designated* gallery image, never a separate upload path:
+- Setting an event cover → **pick from the event's gallery (`event_photos`)** OR
+  **upload new**, and an upload **saves into the gallery** and can be set as cover in
+  one step. So `events` carries a `cover_photo_id` → `event_photos` (the chosen
+  image), not a standalone `cover_url`.
+- Same pattern cross-cuts the **community cover** (Details tab gallery) and the
+  **user profile cover** (NF-13): cover = `cover_photo_id` into that entity's gallery;
+  uploading adds to the gallery. One uploader, one pool, pick-or-upload everywhere.
+- Backend: the photo-upload endpoint(s) return the created gallery row; setting a
+  cover is just storing its id. App: a shared "choose from gallery / upload new"
+  cover picker.
+
 ## 7. App contract (already partly built — match these)
 - `POST /events/{id}/chat` → `ChatThreadResource` (app has `ChatService.createEventChat`).
 - Event threads come back in `GET /chats` with `type=event`, `event_id`, `name`.
