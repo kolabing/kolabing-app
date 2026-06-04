@@ -5,6 +5,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../../auth/utils/auth_scope_guard.dart';
 import '../models/event.dart';
+import '../models/event_signup.dart';
 import '../services/event_service.dart';
 
 final eventServiceProvider = Provider<EventService>((ref) {
@@ -299,3 +300,29 @@ final communityUpcomingEventsProvider =
   );
   return result.events;
 });
+
+/// An event's attendee roster (`GET /events/{id}/signups`, leader-scoped).
+///
+/// Notifier (not FutureProvider) so `reload()` sets state directly — the NF-6
+/// refresh lesson (docs/tickets/2026-06-04-tier-instant-refresh-bug.md). Keyed
+/// per eventId via [eventSignupsProvider].
+class EventSignupsNotifier extends Notifier<AsyncValue<EventSignups>> {
+  EventSignupsNotifier(this.eventId);
+
+  final String eventId;
+
+  @override
+  AsyncValue<EventSignups> build() {
+    Future.microtask(reload);
+    return const AsyncLoading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+        () => ref.read(eventServiceProvider).getSignups(eventId));
+  }
+}
+
+final eventSignupsProvider = NotifierProvider.family<EventSignupsNotifier,
+    AsyncValue<EventSignups>, String>(EventSignupsNotifier.new);

@@ -4574,4 +4574,181 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get dashboardDefaultCommunityName => 'Comunitat';
+
+  @override
+  String get eventHubOpenChat => 'Obrir xat de l\'esdeveniment';
+
+  @override
+  String get eventHubAttendeesTitle => 'Assistents';
+
+  @override
+  String get eventHubWaitlistTitle => 'Llista d\'espera';
+
+  @override
+  String get eventHubNoAttendees => 'Encara no s\'hi ha apuntat ningú.';
+
+  @override
+  String eventHubGoingCount(num count) {
+    return '$count hi aniran';
+  }
+
+  @override
+  String eventHubWaitlistCount(num count) {
+    return '$count a la llista d\'espera';
+  }
+
+  @override
+  String eventHubCapacity(num count) {
+    return 'aforament $count';
+  }
+
+  @override
+  String eventHubSpotsLeft(num count) {
+    return 'queden $count plaça/ces';
+  }
+
+  @override
+  String get eventHubUnlimited => 'Il·limitat';
+
+  @override
+  String get eventHubImGoing => 'Hi aniré';
+
+  @override
+  String get eventHubGoingTapToLeave => 'Hi aniràs ✓  ·  toca per sortir';
+
+  @override
+  String get eventHubJoinWaitlist => 'Unir-se a la llista d\'espera';
+
+  @override
+  String get eventHubOnWaitlistTapToLeave =>
+      'A la llista d\'espera  ·  toca per sortir';
+
+  @override
+  String eventHubWaitlistPosition(num position) {
+    return 'Ets el número $position a la llista d\'espera';
+  }
+
+  @override
+  String get eventHubEdit => 'Edita';
+
+  @override
+  String get eventHubAddPhotos => 'Afegir fotos';
+
+  @override
+  String get eventFormNewTitle => 'Nou esdeveniment';
+
+  @override
+  String get eventFormEditTitle => 'Edita l\'esdeveniment';
+
+  @override
+  String get eventFormSave => 'Desa';
+
+  @override
+  String get eventFormPublish => 'Publica l\'esdeveniment';
+
+  @override
+  String get eventFormNameLabel => 'Nom';
+
+  @override
+  String get eventFormNameHint => 'Cursa 10K del dissabte';
+
+  @override
+  String get eventFormStartsLabel => 'Comença';
+
+  @override
+  String get eventFormEndsLabel => 'Acaba (opcional)';
+
+  @override
+  String get eventFormPickStart => 'Tria data i hora d\'inici';
+
+  @override
+  String get eventFormPickEnd => 'Tria data i hora de fi';
+
+  @override
+  String get eventFormLocationLabel => 'Ubicació (opcional)';
+
+  @override
+  String get eventFormLocationHint => 'Parc de la Ciutadella';
+
+  @override
+  String get eventFormCapacityLabel => 'Aforament (opcional)';
+
+  @override
+  String get eventFormLimit => 'Límit';
+
+  @override
+  String get eventFormWhoCanJoin => 'Qui s\'hi pot unir';
+
+  @override
+  String get eventFormAllMembers => 'Tots els membres';
+
+  @override
+  String get eventFormSelectedTiers => 'Nivells seleccionats';
+
+  @override
+  String get eventFormPhotos => 'Fotos';
+
+  @override
+  String get eventFormAddFromGallery => 'Afegir des de la galeria';
+
+  @override
+  String get eventFormPhotosAfterCreate =>
+      'Les fotos es poden afegir un cop creat l\'esdeveniment.';
+
+  @override
+  String get eventFormErrName =>
+      'El nom de l\'esdeveniment necessita almenys 3 caràcters.';
+
+  @override
+  String get eventFormErrStart => 'Tria una data i hora d\'inici.';
+
+  @override
+  String get eventFormErrStartFuture => 'L\'inici ha de ser en el futur.';
+
+  @override
+  String get eventFormErrEndAfterStart =>
+      'El final ha de ser posterior a l\'inici.';
+
+  @override
+  String get eventFormErrCapacity =>
+      'Introdueix un aforament vàlid o desactiva el límit.';
+
+  @override
+  String get eventFormPhotosUploaded => 'Fotos pujades.';
+
+  @override
+  String get notifSettingsTitle => 'Notificacions';
+
+  @override
+  String get notifSettingsMessages => 'Missatges';
+
+  @override
+  String get notifSettingsMessagesSubtitle =>
+      'Nous missatges de xat a les teves comunitats i esdeveniments';
+
+  @override
+  String get notifSettingsApplications => 'Noves sol·licituds';
+
+  @override
+  String get notifSettingsApplicationsSubtitle =>
+      'Quan algú es postula al teu Kolab';
+
+  @override
+  String get notifSettingsCollaborations =>
+      'Actualitzacions de col·laboracions';
+
+  @override
+  String get notifSettingsCollaborationsSubtitle =>
+      'Canvis d\'estat als teus Kolabs';
+
+  @override
+  String get notifSettingsMarketing => 'Consells i novetats';
+
+  @override
+  String get notifSettingsMarketingSubtitle =>
+      'Consells de producte i notícies ocasionals';
+
+  @override
+  String get notifSettingsSaveError =>
+      'No s\'ha pogut desar la teva preferència. Torna-ho a provar.';
 }

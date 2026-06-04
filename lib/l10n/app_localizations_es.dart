@@ -4552,4 +4552,180 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get dashboardDefaultCommunityName => 'Comunidad';
+
+  @override
+  String get eventHubOpenChat => 'Abrir chat del evento';
+
+  @override
+  String get eventHubAttendeesTitle => 'Asistentes';
+
+  @override
+  String get eventHubWaitlistTitle => 'Lista de espera';
+
+  @override
+  String get eventHubNoAttendees => 'Aún no se ha apuntado nadie.';
+
+  @override
+  String eventHubGoingCount(num count) {
+    return '$count asistirán';
+  }
+
+  @override
+  String eventHubWaitlistCount(num count) {
+    return '$count en lista de espera';
+  }
+
+  @override
+  String eventHubCapacity(num count) {
+    return 'aforo $count';
+  }
+
+  @override
+  String eventHubSpotsLeft(num count) {
+    return 'quedan $count plaza(s)';
+  }
+
+  @override
+  String get eventHubUnlimited => 'Ilimitado';
+
+  @override
+  String get eventHubImGoing => 'Voy a ir';
+
+  @override
+  String get eventHubGoingTapToLeave => 'Asistirás ✓  ·  toca para salir';
+
+  @override
+  String get eventHubJoinWaitlist => 'Unirse a la lista de espera';
+
+  @override
+  String get eventHubOnWaitlistTapToLeave =>
+      'En lista de espera  ·  toca para salir';
+
+  @override
+  String eventHubWaitlistPosition(num position) {
+    return 'Eres el número $position en la lista de espera';
+  }
+
+  @override
+  String get eventHubEdit => 'Editar';
+
+  @override
+  String get eventHubAddPhotos => 'Añadir fotos';
+
+  @override
+  String get eventFormNewTitle => 'Nuevo evento';
+
+  @override
+  String get eventFormEditTitle => 'Editar evento';
+
+  @override
+  String get eventFormSave => 'Guardar';
+
+  @override
+  String get eventFormPublish => 'Publicar evento';
+
+  @override
+  String get eventFormNameLabel => 'Nombre';
+
+  @override
+  String get eventFormNameHint => 'Carrera 10K del sábado';
+
+  @override
+  String get eventFormStartsLabel => 'Empieza';
+
+  @override
+  String get eventFormEndsLabel => 'Termina (opcional)';
+
+  @override
+  String get eventFormPickStart => 'Elige fecha y hora de inicio';
+
+  @override
+  String get eventFormPickEnd => 'Elige fecha y hora de fin';
+
+  @override
+  String get eventFormLocationLabel => 'Ubicación (opcional)';
+
+  @override
+  String get eventFormLocationHint => 'Parque de la Ciudadela';
+
+  @override
+  String get eventFormCapacityLabel => 'Aforo (opcional)';
+
+  @override
+  String get eventFormLimit => 'Límite';
+
+  @override
+  String get eventFormWhoCanJoin => 'Quién puede unirse';
+
+  @override
+  String get eventFormAllMembers => 'Todos los miembros';
+
+  @override
+  String get eventFormSelectedTiers => 'Niveles seleccionados';
+
+  @override
+  String get eventFormPhotos => 'Fotos';
+
+  @override
+  String get eventFormAddFromGallery => 'Añadir desde la galería';
+
+  @override
+  String get eventFormPhotosAfterCreate =>
+      'Las fotos se pueden añadir una vez creado el evento.';
+
+  @override
+  String get eventFormErrName =>
+      'El nombre del evento necesita al menos 3 caracteres.';
+
+  @override
+  String get eventFormErrStart => 'Elige una fecha y hora de inicio.';
+
+  @override
+  String get eventFormErrStartFuture => 'El inicio debe ser en el futuro.';
+
+  @override
+  String get eventFormErrEndAfterStart =>
+      'El fin debe ser posterior al inicio.';
+
+  @override
+  String get eventFormErrCapacity =>
+      'Introduce un aforo válido o desactiva el límite.';
+
+  @override
+  String get eventFormPhotosUploaded => 'Fotos subidas.';
+
+  @override
+  String get notifSettingsTitle => 'Notificaciones';
+
+  @override
+  String get notifSettingsMessages => 'Mensajes';
+
+  @override
+  String get notifSettingsMessagesSubtitle =>
+      'Nuevos mensajes de chat en tus comunidades y eventos';
+
+  @override
+  String get notifSettingsApplications => 'Nuevas solicitudes';
+
+  @override
+  String get notifSettingsApplicationsSubtitle =>
+      'Cuando alguien se postula a tu Kolab';
+
+  @override
+  String get notifSettingsCollaborations => 'Actualizaciones de colaboraciones';
+
+  @override
+  String get notifSettingsCollaborationsSubtitle =>
+      'Cambios de estado en tus Kolabs';
+
+  @override
+  String get notifSettingsMarketing => 'Consejos y novedades';
+
+  @override
+  String get notifSettingsMarketingSubtitle =>
+      'Consejos de producto y noticias ocasionales';
+
+  @override
+  String get notifSettingsSaveError =>
+      'No se pudo guardar tu preferencia. Inténtalo de nuevo.';
 }

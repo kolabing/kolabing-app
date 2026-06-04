@@ -35,6 +35,11 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   void initState() {
     super.initState();
     _load();
+    // TODO(NF-16 B4): Reverb/Echo client — ops-gated on PR #21
+    // (/broadcasting/auth) + Reverb server. Subscribe
+    // `private-chat.thread.{widget.thread.id}` here and append the
+    // `message.sent` payload to `_messages` without a refetch. Until Reverb is
+    // up, the poll-on-open in `_load()` keeps the thread current.
   }
 
   @override
