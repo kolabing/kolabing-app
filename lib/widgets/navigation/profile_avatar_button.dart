@@ -43,8 +43,22 @@ class ProfileAvatarButton extends ConsumerWidget {
       UserType.community => const CommunityProfileScreen(),
       _ => const AttendeeProfileScreen(),
     };
+    // The profile screens were built as nav-tab bodies (no app bar of their
+    // own), so when pushed they need a Scaffold + AppBar to provide the back
+    // button — otherwise there is no way to exit (NF-12 regression fix).
     Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(builder: (_) => screen),
+      MaterialPageRoute<void>(
+        builder: (_) => Scaffold(
+          appBar: AppBar(
+            backgroundColor: KolabingColors.navBarBackground,
+            foregroundColor: KolabingColors.charcoal,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: const Text('Profile'),
+          ),
+          body: screen,
+        ),
+      ),
     );
   }
 }
