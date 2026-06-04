@@ -1,5 +1,14 @@
 # Backend — Create UPCOMING events (the missing Phase-3 create path)
 
+> ✅ **DONE 2026-06-05** — `kolabing-v2` PR #20 (branch `feat/create-upcoming-event`).
+> `POST /events` now has an upcoming mode keyed on `starts_at`: requires `community_id`
+> + `name` + `starts_at` (future allowed), optional `ends_at`/`location`/`capacity`/
+> `tier_gate`/`collaboration_id`, photos optional. Auth = owner/`can_manage` of the
+> community (else 403); legacy past-showcase create unchanged. `EventService::buildUpcoming`
+> defaults `partner_name` from the community, `event_date` from `starts_at`, `attendee_count` 0.
+> Returns `EventResource`. Tests: `CreateUpcomingEventTest` (3) + legacy `EventTest` green (44).
+> All 4 acceptance criteria covered. Unblocks the app's leader create-event form.
+
 > **Target repo:** `kolabing-v2`. Phase-3 (PR #18 / commit `78fafaf`) is **deployed**
 > (migrations `event_signups` + `add_phase3_columns_to_events` are Ran on prod). The
 > sign-up/waitlist/event-chat/Reverb/filter layers all work. **Gap:** there is still
