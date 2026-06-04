@@ -14,11 +14,32 @@ import 'chat_thread_screen.dart';
 /// active collaboration chats only; community = main + custom + event + kolabs;
 /// attendee = main + tier-granted + RSVP'd event chats). The app just groups
 /// whatever it receives by type.
-class ChatsScreen extends ConsumerWidget {
+class ChatsScreen extends ConsumerStatefulWidget {
   const ChatsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChatsScreen> createState() => _ChatsScreenState();
+}
+
+class _ChatsScreenState extends ConsumerState<ChatsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // FX-9: always refetch when the inbox opens. The thread/unread providers
+    // are kept-alive and can still hold the PREVIOUS account's data after a
+    // switch (the reported "stale on first load, correct on manual refresh",
+    // e.g. a community's kolab chat showing for an attendee). Forcing a reload
+    // on mount makes every open behave like the pull-to-refresh that already
+    // returns the correct, current-session data.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(chatThreadsProvider.notifier).reload();
+      ref.read(chatUnreadProvider.notifier).refresh();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final async = ref.watch(chatThreadsProvider);
     return Scaffold(
       backgroundColor: KolabingColors.background,
