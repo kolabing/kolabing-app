@@ -104,7 +104,10 @@ class ChatService {
         );
         final data = _unwrap(res);
         if (data is int) return data;
-        if (data is Map) return (data['count'] ?? data['unread'] ?? 0) as int;
+        // Backend returns { total: N }; keep count/unread as tolerant fallbacks.
+        if (data is Map) {
+          return (data['total'] ?? data['count'] ?? data['unread'] ?? 0) as int;
+        }
         return 0;
       }, 'getUnreadCount');
 
