@@ -137,9 +137,8 @@ class _CommunityDashboardScreenState
               Text(
                 AppLocalizations.of(context).dashboardCommunityTitle,
                 style: KolabingTextStyles.headlineLarge.copyWith(
-                  color: isDark
-                      ? context.colors.textOnDark
-                      : context.colors.onSurface,
+                  // titleInk = 80% white in night, ink in light (spec rule #2).
+                  color: context.colors.titleInk,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),

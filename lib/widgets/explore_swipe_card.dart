@@ -88,7 +88,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           child: RepaintBoundary(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Colors.white,
+                // Kolabing-yellow card surface (fixed brand color in both
+                // themes). Content below uses fixed dark ink for legibility.
+                color: KolabingColors.primary,
                 borderRadius: BorderRadius.circular(KolabingRadius.lg),
                 boxShadow: const [KolabingShadows.card],
               ),
@@ -241,7 +243,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       ),
       child: Text(
         AppLocalizations.of(context).exploreSwipeCardMatch(match.score),
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: context.colors.charcoal),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
       ),
     );
   }
@@ -311,7 +313,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           Divider(
             height: 1,
             thickness: 1,
-            color: context.colors.outlineVariant,
+            color: KolabingColors.onSurface.withValues(alpha: 0.12),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           _buildViewDetailsRow(),
@@ -329,7 +331,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       _item.creatorProfile.displayName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.cardTitleLarge.copyWith(color: context.colors.charcoal),
+      style: KolabingTextStyles.cardTitleLarge.copyWith(color: KolabingColors.onSurface),
     );
 
     return Row(
@@ -371,7 +373,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
                 Icon(
                   Icons.location_on_outlined,
                   size: 13,
-                  color: context.colors.navInactive,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 const SizedBox(width: 2),
                 Flexible(
@@ -413,7 +415,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         child: Icon(
           Icons.local_offer_outlined,
           size: 14,
-          color: context.colors.primary,
+          color: KolabingColors.onSurface,
         ),
       ),
       const SizedBox(width: 6),
@@ -422,7 +424,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           offerLine,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary, height: 1.25),
+          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.25),
         ),
       ),
     ],
@@ -433,7 +435,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       Icon(
         Icons.people_alt_outlined,
         size: 14,
-        color: context.colors.navInactive,
+        color: KolabingColors.onSurfaceVariant,
       ),
       const SizedBox(width: 6),
       Expanded(
@@ -450,10 +452,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildTagChips(List<String> chips) {
     // Alternating chip palette using existing design tokens: lavender, sage,
     // and soft yellow. Falls back to surfaceVariant if more chips appear.
+    // Subtle dark-tinted chips on the yellow card, with dark ink labels.
     final fills = <Color>[
-      context.colors.secondaryContainer,
-      context.colors.tertiaryContainer,
-      context.colors.primary,
+      KolabingColors.onSurface.withValues(alpha: 0.08),
+      KolabingColors.onSurface.withValues(alpha: 0.08),
+      KolabingColors.onSurface.withValues(alpha: 0.08),
     ];
 
     return Wrap(
@@ -476,7 +479,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       label,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.charcoal),
+      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
     ),
   );
 
@@ -484,16 +487,16 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     children: [
       Text(
         AppLocalizations.of(context).exploreSwipeCardViewDetails,
-        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.charcoal),
+        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
       ),
       const Spacer(),
       Icon(
         Icons.chevron_right_rounded,
         size: 18,
-        color: context.colors.charcoal,
+        color: KolabingColors.onSurface,
       ),
     ],
   );
 
-  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: context.colors.navInactive);
+  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant);
 }

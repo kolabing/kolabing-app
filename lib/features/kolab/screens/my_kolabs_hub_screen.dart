@@ -99,9 +99,8 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.2,
-                  color: isDark
-                      ? context.colors.textOnDark
-                      : context.colors.onSurface,
+                  // titleInk = 80% white in night, ink in light (spec rule #2).
+                  color: context.colors.titleInk,
                 ),
               ),
             ),
