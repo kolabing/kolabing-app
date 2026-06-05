@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/community.dart';
 import '../providers/community_providers.dart';
 import '../services/community_service.dart';
@@ -58,18 +59,16 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
   }
 
   void _showPremiumUpsell() {
+    final l10n = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Community Premium'),
-        content: const Text(
-          'Your free plan includes one community. Running more than one is part '
-          'of Community Premium — coming soon.',
-        ),
+        title: Text(l10n.createCommunityPremiumTitle),
+        content: Text(l10n.createCommunityPremiumBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Got it'),
+            child: Text(l10n.commonGotIt),
           ),
         ],
       ),
@@ -78,30 +77,32 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: KolabingColors.background,
-      appBar: AppBar(title: const Text('New community')),
+      appBar: AppBar(title: Text(l10n.createCommunityTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(KolabingSpacing.md),
           children: [
-            Text('Name',
+            Text(l10n.createCommunityNameLabel,
                 style: KolabingTextStyles.bodySmall
                     .copyWith(fontWeight: FontWeight.w700)),
             const SizedBox(height: KolabingSpacing.xs),
             TextFormField(
               controller: _nameController,
               textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                hintText: 'e.g. Kappa Delta — Beta Chi, or City Run Club',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.createCommunityNameHint,
+                border: const OutlineInputBorder(),
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? l10n.createCommunityNameRequired
+                  : null,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            Text('Type',
+            Text(l10n.createCommunityTypeLabel,
                 style: KolabingTextStyles.bodySmall
                     .copyWith(fontWeight: FontWeight.w700)),
             const SizedBox(height: KolabingSpacing.xs),
@@ -117,19 +118,19 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
               onChanged: (v) => setState(() => _type = v ?? _type),
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            Text('Who can join',
+            Text(l10n.createCommunityWhoCanJoin,
                 style: KolabingTextStyles.bodySmall
                     .copyWith(fontWeight: FontWeight.w700)),
             const SizedBox(height: KolabingSpacing.xs),
             SegmentedButton<CommunityJoinPolicy>(
-              segments: const [
+              segments: [
                 ButtonSegment(
                   value: CommunityJoinPolicy.open,
-                  label: Text('Anyone'),
+                  label: Text(l10n.createCommunityJoinAnyone),
                 ),
                 ButtonSegment(
                   value: CommunityJoinPolicy.inviteOnly,
-                  label: Text('Invite only'),
+                  label: Text(l10n.createCommunityJoinInviteOnly),
                 ),
               ],
               selected: {_joinPolicy},
@@ -153,7 +154,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
                         color: KolabingColors.onSurface,
                       ),
                     )
-                  : const Text('CREATE COMMUNITY'),
+                  : Text(l10n.createCommunitySubmit),
             ),
           ],
         ),

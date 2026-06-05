@@ -4,6 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## MUST FOLLOW — i18n is mandatory for EVERY new widget (no literal user-facing strings)
+
+This app is fully localized via gen-l10n (`l10n.yaml`, `lib/l10n/app_{en,es,ca}.arb`,
+`AppLocalizations.of(context)`). A new screen/widget is **NOT done** until its strings
+exist in all three ARBs. Whenever you design or add ANY user-facing text:
+
+1. **Never hardcode** a user-facing string in a `.dart` file (no `Text('Create event')`,
+   no literal `labelText:`/`hintText:`/`SnackBar(content: Text('...'))`/dialog titles).
+2. Add the key to `lib/l10n/app_en.arb`, then `app_es.arb` (**es = European/Castilian
+   Spanish**: *Aforo* not *Capacidad* for venue cap, *Local/Lugar*, *Vídeos*) and
+   `app_ca.arb` (**Catalan**), then run `flutter gen-l10n`.
+3. Render via `AppLocalizations.of(context).<key>` (commonly aliased `l10n`). For
+   counts/placeholders use ARB `placeholders` (ICU), not string interpolation.
+4. **Only** exceptions: brand names ("Kolabing"), dynamic backend error text passed
+   through, and pure symbols/emoji.
+
+If you catch a literal while editing a file, fix it in passing. Do not add new debt.
+
+---
+
 ## MUST READ — Backend schema (before any data/model/API/DB change)
 
 Read [`docs/BACKEND-SCHEMA.md`](docs/BACKEND-SCHEMA.md) before changing anything that

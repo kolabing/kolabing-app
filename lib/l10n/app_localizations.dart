@@ -8389,6 +8389,816 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not save your preference. Try again.'**
   String get notifSettingsSaveError;
+
+  /// Chat inbox screen app-bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get chatsTitle;
+
+  /// Tooltip on the app-bar chat inbox icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get chatInboxTooltip;
+
+  /// Fallback title for a chat thread with no name or participants.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chatThreadFallbackTitle;
+
+  /// Subtitle for a chat thread that has messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open'**
+  String get chatThreadTapToOpen;
+
+  /// Subtitle for a chat thread with no messages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get chatThreadNoMessagesYet;
+
+  /// Empty state title on the chat inbox.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats yet'**
+  String get chatInboxEmptyTitle;
+
+  /// Empty state body on the chat inbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversations show up here once a Kolab, community, or event chat gets going.'**
+  String get chatInboxEmptyBody;
+
+  /// Chat inbox section label for the community main chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Main'**
+  String get chatSectionMain;
+
+  /// Chat inbox section label for custom community chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Community chats'**
+  String get chatSectionCommunityChats;
+
+  /// Chat inbox section label for event chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get chatSectionEvents;
+
+  /// Chat inbox section label for collaboration (Kolab) chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabs'**
+  String get chatSectionKolabs;
+
+  /// Hint text in the chat message composer field.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get chatComposerHint;
+
+  /// Empty state inside an open chat thread with no messages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet. Say hi 👋'**
+  String get chatThreadEmptyMessage;
+
+  /// Community detail tab: chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get communityDetailTabChats;
+
+  /// Community detail tab: events.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get communityDetailTabEvents;
+
+  /// Community detail tab: members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get communityDetailTabMembers;
+
+  /// Community detail tab: details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get communityDetailTabDetails;
+
+  /// Community header subtitle: community type and member count.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · {count} members'**
+  String communityDetailTypeAndMembers(String type, int count);
+
+  /// Member count label.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String communityDetailMembersCount(int count);
+
+  /// Title shown when the community chats fail to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load chats'**
+  String get communityDetailChatsLoadError;
+
+  /// Empty state title for the community chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats yet'**
+  String get communityDetailNoChatsTitle;
+
+  /// Empty state body for the community chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'This community’s conversations show up here.'**
+  String get communityDetailNoChatsBody;
+
+  /// Empty state title for the community events tab.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events'**
+  String get communityDetailNoEventsTitle;
+
+  /// Empty state body for the community events tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Events created for this community will show here.'**
+  String get communityDetailNoEventsBody;
+
+  /// Subtitle shown on an event a member's tier cannot access.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked — for another membership tier'**
+  String get communityDetailEventLockedSubtitle;
+
+  /// Snackbar shown when tapping a tier-locked event.
+  ///
+  /// In en, this message translates to:
+  /// **'This event is for a different membership tier.'**
+  String get communityDetailEventLockedSnack;
+
+  /// Button opening the chapter (community-scoped) leaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter leaderboard'**
+  String get communityDetailLeaderboardButton;
+
+  /// Section label for the community description.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get communityDetailAboutLabel;
+
+  /// Section label for the member's own membership details.
+  ///
+  /// In en, this message translates to:
+  /// **'Your membership'**
+  String get communityDetailMembershipLabel;
+
+  /// Row label: the member's tier.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier'**
+  String get communityDetailRowTier;
+
+  /// Row label: the community type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get communityDetailRowType;
+
+  /// Row label: member count.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get communityDetailRowMembers;
+
+  /// Row label: the member's role.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get communityDetailRowRole;
+
+  /// Role value shown when the member can manage the community.
+  ///
+  /// In en, this message translates to:
+  /// **'Can manage'**
+  String get communityDetailRoleCanManage;
+
+  /// Fallback tier name when a member has no assigned tier.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get communityDetailTierFallback;
+
+  /// Section label for the gallery and past events.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery & past events'**
+  String get communityDetailGalleryLabel;
+
+  /// Placeholder body for the gallery section.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos and past events will live here once the events lifecycle ships (Phase 3).'**
+  String get communityDetailGalleryBody;
+
+  /// Shown on a membership card when the member has no tier.
+  ///
+  /// In en, this message translates to:
+  /// **'No tier yet'**
+  String get myCommunitiesNoTier;
+
+  /// Badge shown when the member can manage the community.
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get myCommunitiesAdminBadge;
+
+  /// Empty state title for the member's communities list.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not in any communities yet'**
+  String get myCommunitiesEmptyTitle;
+
+  /// Empty state body for the member's communities list.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a community to earn your place on its tiers and see member-only events and perks.'**
+  String get myCommunitiesEmptyBody;
+
+  /// Empty state title on the community leader hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your community'**
+  String get communityHubEmptyTitle;
+
+  /// Empty state body on the community leader hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a community to build a member roster and set up your own tiers. Your first community is free.'**
+  String get communityHubEmptyBody;
+
+  /// Button to create a community.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE COMMUNITY'**
+  String get communityHubCreateCommunity;
+
+  /// Section label: tiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers'**
+  String get communityHubSectionTiers;
+
+  /// Section label: members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get communityHubSectionMembers;
+
+  /// Section label: events.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get communityHubSectionEvents;
+
+  /// Section label: chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get communityHubSectionChats;
+
+  /// Hub header subtitle with type and member count.
+  ///
+  /// In en, this message translates to:
+  /// **'{type}  ·  {count} members'**
+  String communityHubTypeAndMembers(String type, int count);
+
+  /// Empty state for the hub events section.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events yet.'**
+  String get communityHubNoEvents;
+
+  /// Button to create an event.
+  ///
+  /// In en, this message translates to:
+  /// **'Create event'**
+  String get communityHubCreateEvent;
+
+  /// Dialog title to create a new community chat.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get communityHubNewChatTitle;
+
+  /// Label for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat name'**
+  String get communityHubChatNameLabel;
+
+  /// Hint for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Exec, Socials, Philanthropy'**
+  String get communityHubChatNameHint;
+
+  /// Generic create action in the community hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get communityHubCreate;
+
+  /// Confirmation after creating a custom chat.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" created'**
+  String communityHubChatCreated(String name);
+
+  /// Error when the custom chat limit is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can have up to {count} chats'**
+  String communityHubChatLimit(int count);
+
+  /// Default label on the per-chat access picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Access'**
+  String get communityHubAccess;
+
+  /// Access label when no tier can open the chat.
+  ///
+  /// In en, this message translates to:
+  /// **'No tiers'**
+  String get communityHubAccessNoTiers;
+
+  /// Access label when every tier can open the chat.
+  ///
+  /// In en, this message translates to:
+  /// **'All tiers'**
+  String get communityHubAccessAllTiers;
+
+  /// Access label when one tier can open the chat.
+  ///
+  /// In en, this message translates to:
+  /// **'1 tier'**
+  String get communityHubAccessOneTier;
+
+  /// Access label for how many tiers can open the chat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tiers'**
+  String communityHubAccessTierCount(int count);
+
+  /// Snackbar shown when managing chat access with no tiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Create membership tiers first to gate chats.'**
+  String get communityHubCreateTiersFirst;
+
+  /// Title of the chat access dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can access \"{name}\"?'**
+  String communityHubAccessDialogTitle(String name);
+
+  /// Fallback noun for an unnamed chat in the access dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'chat'**
+  String get communityHubAccessDialogChat;
+
+  /// Explanatory body of the chat access dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You and your managers always have access. Choose which member tiers can open this chat.'**
+  String get communityHubAccessDialogBody;
+
+  /// Confirmation after updating chat access.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat access updated'**
+  String get communityHubChatAccessUpdated;
+
+  /// Hint shown when a community has no chats.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats yet. Your main chat + up to {count} custom chats live here.'**
+  String communityHubNoChatsHint(int count);
+
+  /// Button to create a custom chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Create chat'**
+  String get communityHubCreateChat;
+
+  /// Hint shown when the custom chat limit is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat limit reached ({count} custom chats).'**
+  String communityHubChatLimitReached(int count);
+
+  /// Fallback name for the main community chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Main'**
+  String get communityHubChatMain;
+
+  /// Fallback name for a community chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get communityHubChatFallback;
+
+  /// Chip on the main community chat row.
+  ///
+  /// In en, this message translates to:
+  /// **'MAIN'**
+  String get communityHubChipMain;
+
+  /// Tier detail line: assignment rule plus threshold and unit.
+  ///
+  /// In en, this message translates to:
+  /// **'{rule} · {threshold} {unit}'**
+  String communityHubTierDetail(String rule, int threshold, String unit);
+
+  /// Chip on the default tier.
+  ///
+  /// In en, this message translates to:
+  /// **'DEFAULT'**
+  String get communityHubChipDefault;
+
+  /// Tier rank indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'#{rank}'**
+  String communityHubTierRank(int rank);
+
+  /// Hint shown when a community has no tiers.
+  ///
+  /// In en, this message translates to:
+  /// **'No tiers yet. Add tiers to give members a status ladder.'**
+  String get communityHubNoTiersHint;
+
+  /// Button to add a tier.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tier'**
+  String get communityHubAddTier;
+
+  /// Hint shown when a community has no members.
+  ///
+  /// In en, this message translates to:
+  /// **'No members yet. Invite people or share your join link.'**
+  String get communityHubNoMembersHint;
+
+  /// Button to open the roster.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage members'**
+  String get communityHubManageMembers;
+
+  /// Button to open the full roster, with the total member count.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage all {count} members'**
+  String communityHubManageAllMembers(int count);
+
+  /// Fallback name for a member without a display name.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get communityHubMemberFallback;
+
+  /// Chip shown next to a member who can manage.
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get communityHubChipAdmin;
+
+  /// Error title when the community fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your community'**
+  String get communityHubLoadError;
+
+  /// Title of the Community Premium upsell dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Premium'**
+  String get createCommunityPremiumTitle;
+
+  /// Body of the Community Premium upsell dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free plan includes one community. Running more than one is part of Community Premium — coming soon.'**
+  String get createCommunityPremiumBody;
+
+  /// Create-community screen app-bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'New community'**
+  String get createCommunityTitle;
+
+  /// Label for the community name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get createCommunityNameLabel;
+
+  /// Hint for the community name field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Kappa Delta — Beta Chi, or City Run Club'**
+  String get createCommunityNameHint;
+
+  /// Validation error for an empty community name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get createCommunityNameRequired;
+
+  /// Label for the community type field.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get createCommunityTypeLabel;
+
+  /// Label for the join-policy selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can join'**
+  String get createCommunityWhoCanJoin;
+
+  /// Join policy option: open to anyone.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone'**
+  String get createCommunityJoinAnyone;
+
+  /// Join policy option: invite only.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite only'**
+  String get createCommunityJoinInviteOnly;
+
+  /// Submit button to create the community.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE COMMUNITY'**
+  String get createCommunitySubmit;
+
+  /// App-bar title when editing a tier.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit tier'**
+  String get tierEditorEditTitle;
+
+  /// App-bar title when creating a tier.
+  ///
+  /// In en, this message translates to:
+  /// **'New tier'**
+  String get tierEditorNewTitle;
+
+  /// Tooltip on the delete-tier icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete tier'**
+  String get tierEditorDeleteTooltip;
+
+  /// Title of the delete-tier confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete tier?'**
+  String get tierEditorDeleteTitle;
+
+  /// Body of the delete-tier confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove \"{name}\"? Members in it will need reassigning.'**
+  String tierEditorDeleteBody(String name);
+
+  /// Delete action.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get tierEditorDelete;
+
+  /// Label for the tier name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get tierEditorNameLabel;
+
+  /// Hint for the tier name field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Exec, Active, Captain, Coach'**
+  String get tierEditorNameHint;
+
+  /// Validation error for an empty tier name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get tierEditorNameRequired;
+
+  /// Label for the tier rank field.
+  ///
+  /// In en, this message translates to:
+  /// **'Rank (higher = more senior)'**
+  String get tierEditorRankLabel;
+
+  /// Validation error for the tier rank field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number (1 or higher)'**
+  String get tierEditorRankRequired;
+
+  /// Label for the tier colour picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour'**
+  String get tierEditorColourLabel;
+
+  /// Label for the tier assignment-rule selector.
+  ///
+  /// In en, this message translates to:
+  /// **'How members get this tier'**
+  String get tierEditorRuleLabel;
+
+  /// Label for the tier threshold field.
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold ({unit})'**
+  String tierEditorThresholdLabel(String unit);
+
+  /// Validation error for the tier threshold field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a {unit} threshold'**
+  String tierEditorThresholdRequired(String unit);
+
+  /// Save button when editing a tier.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE'**
+  String get tierEditorSave;
+
+  /// Create button when adding a tier.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE TIER'**
+  String get tierEditorCreate;
+
+  /// Roster screen app-bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get rosterTitle;
+
+  /// Tooltip on the invite-member icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite member'**
+  String get rosterInviteTooltip;
+
+  /// Title of the invite-member dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite member'**
+  String get rosterInviteTitle;
+
+  /// Body of the invite-member dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a member by the email on their Kolabing account.'**
+  String get rosterInviteBody;
+
+  /// Label for the invite email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get rosterInviteEmailLabel;
+
+  /// Hint for the invite email field.
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com'**
+  String get rosterInviteEmailHint;
+
+  /// Invite action.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get rosterInvite;
+
+  /// Error for an invalid invite email.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get rosterInviteInvalidEmail;
+
+  /// Confirmation after adding a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member added'**
+  String get rosterMemberAdded;
+
+  /// Error when no account matches the invited email.
+  ///
+  /// In en, this message translates to:
+  /// **'No Kolabing account found for that email'**
+  String get rosterNoAccountForEmail;
+
+  /// Fallback name for a member without a display name.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get rosterMemberFallback;
+
+  /// Empty state title for the roster.
+  ///
+  /// In en, this message translates to:
+  /// **'No members yet'**
+  String get rosterEmptyTitle;
+
+  /// Empty state button to invite a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a member'**
+  String get rosterInviteMember;
+
+  /// Title of the remove-member confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove member?'**
+  String get rosterRemoveTitle;
+
+  /// Body of the remove-member confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from the community?'**
+  String rosterRemoveBody(String name);
+
+  /// Fallback noun for a member without a name in the remove dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'this member'**
+  String get rosterRemoveBodyFallback;
+
+  /// Remove action.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get rosterRemove;
+
+  /// Label for the member tier selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier'**
+  String get rosterTierLabel;
+
+  /// Dropdown option for no tier.
+  ///
+  /// In en, this message translates to:
+  /// **'No tier'**
+  String get rosterNoTier;
+
+  /// Title for the can-manage toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can manage this community'**
+  String get rosterCanManageTitle;
+
+  /// Subtitle for the can-manage toggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin capability — independent of tier'**
+  String get rosterCanManageSubtitle;
+
+  /// Label for the membership status selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get rosterStatusLabel;
+
+  /// Save button in the member edit sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE'**
+  String get rosterSave;
 }
 
 class _AppLocalizationsDelegate

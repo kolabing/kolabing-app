@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../chat/models/chat_thread.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
@@ -51,6 +52,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final c = _community;
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -60,11 +62,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
           controller: _tabs,
           isScrollable: true,
           tabAlignment: TabAlignment.start,
-          tabs: const [
-            Tab(text: 'Chats'),
-            Tab(text: 'Events'),
-            Tab(text: 'Members'),
-            Tab(text: 'Details'),
+          tabs: [
+            Tab(text: l10n.communityDetailTabChats),
+            Tab(text: l10n.communityDetailTabEvents),
+            Tab(text: l10n.communityDetailTabMembers),
+            Tab(text: l10n.communityDetailTabDetails),
           ],
         ),
       ),
@@ -127,7 +129,8 @@ class _Header extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${c.type.displayName} · ${c.memberCount ?? 0} members',
+                  AppLocalizations.of(context).communityDetailTypeAndMembers(
+                      c.type.displayName, c.memberCount ?? 0),
                   style: KolabingTextStyles.bodySmall
                       .copyWith(color: KolabingColors.onSurfaceVariant),
                 ),
@@ -151,12 +154,13 @@ class _ChatsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final async = ref.watch(chatThreadsProvider);
     return async.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => _TabMessage(
         icon: LucideIcons.alertCircle,
-        title: 'Could not load chats',
+        title: l10n.communityDetailChatsLoadError,
         subtitle: e.toString(),
       ),
       data: (threads) {
@@ -164,10 +168,10 @@ class _ChatsTab extends ConsumerWidget {
             .where((t) => t.communityId == communityId)
             .toList();
         if (mine.isEmpty) {
-          return const _TabMessage(
+          return _TabMessage(
             icon: LucideIcons.messageCircle,
-            title: 'No chats yet',
-            subtitle: 'This community’s conversations show up here.',
+            title: l10n.communityDetailNoChatsTitle,
+            subtitle: l10n.communityDetailNoChatsBody,
           );
         }
         return RefreshIndicator(
@@ -202,7 +206,7 @@ class _ThreadTile extends StatelessWidget {
         ),
       ),
       title: Text(
-        thread.name ?? 'Chat',
+        thread.name ?? AppLocalizations.of(context).chatThreadFallbackTitle,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: KolabingTextStyles.bodyMedium.copyWith(
@@ -242,15 +246,16 @@ class _EventsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final async = ref.watch(communityUpcomingEventsProvider(communityId));
     return async.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       // A backend that hasn't deployed the Phase-3 filter yet errors here —
       // treat it as "no events" rather than a scary error.
-      error: (_, __) => const _TabMessage(
+      error: (_, __) => _TabMessage(
         icon: LucideIcons.calendar,
-        title: 'No upcoming events',
-        subtitle: 'Events created for this community will show here.',
+        title: l10n.communityDetailNoEventsTitle,
+        subtitle: l10n.communityDetailNoEventsBody,
       ),
       data: (events) {
         if (events.isEmpty) {
@@ -259,13 +264,12 @@ class _EventsTab extends ConsumerWidget {
                 .read(communityUpcomingEventsProvider(communityId).notifier)
                 .reload(),
             child: ListView(
-              children: const [
-                SizedBox(height: 120),
+              children: [
+                const SizedBox(height: 120),
                 _TabMessage(
                   icon: LucideIcons.calendar,
-                  title: 'No upcoming events',
-                  subtitle:
-                      'Events created for this community will show here.',
+                  title: l10n.communityDetailNoEventsTitle,
+                  subtitle: l10n.communityDetailNoEventsBody,
                 ),
               ],
             ),
@@ -293,6 +297,7 @@ class _EventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // Tier-gated: a member whose tier is not permitted cannot even open the
     // details. Show a lock and a one-line reason instead of navigating.
     final locked = !event.canAccess;
@@ -312,15 +317,16 @@ class _EventTile extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: locked ? muted : KolabingColors.onSurface)),
       subtitle: Text(
-          locked ? 'Locked — for another membership tier' : event.formattedDate,
+          locked
+              ? l10n.communityDetailEventLockedSubtitle
+              : event.formattedDate,
           style: KolabingTextStyles.bodySmall.copyWith(color: muted)),
       trailing: Icon(locked ? LucideIcons.lock : LucideIcons.chevronRight,
           size: 18, color: locked ? muted : null),
       onTap: locked
           ? () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                      'This event is for a different membership tier.'),
+                SnackBar(
+                  content: Text(l10n.communityDetailEventLockedSnack),
                 ),
               )
           : () => Navigator.of(context).push<void>(
@@ -342,6 +348,7 @@ class _MembersTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       child: Column(
@@ -350,7 +357,7 @@ class _MembersTab extends StatelessWidget {
           const Icon(LucideIcons.users,
               size: 40, color: KolabingColors.onSurfaceVariant),
           const SizedBox(height: KolabingSpacing.md),
-          Text('${community.memberCount ?? 0} members',
+          Text(l10n.communityDetailMembersCount(community.memberCount ?? 0),
               style: KolabingTextStyles.bodyLarge
                   .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: KolabingSpacing.lg),
@@ -364,7 +371,7 @@ class _MembersTab extends StatelessWidget {
               ),
             ),
             icon: const Icon(LucideIcons.trophy, size: 18),
-            label: const Text('Chapter leaderboard'),
+            label: Text(l10n.communityDetailLeaderboardButton),
           ),
         ],
       ),
@@ -383,26 +390,28 @@ class _DetailsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final c = membership.community;
     final tier = membership.tier;
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
         if (c.description != null && c.description!.isNotEmpty) ...[
-          _Label('About'),
+          _Label(l10n.communityDetailAboutLabel),
           Text(c.description!, style: KolabingTextStyles.bodyMedium),
           const SizedBox(height: KolabingSpacing.lg),
         ],
-        _Label('Your membership'),
-        _Row('Tier', tier?.name ?? 'Member'),
-        _Row('Type', c.type.displayName),
-        _Row('Members', '${c.memberCount ?? 0}'),
-        if (membership.canManage) _Row('Role', 'Can manage'),
+        _Label(l10n.communityDetailMembershipLabel),
+        _Row(l10n.communityDetailRowTier,
+            tier?.name ?? l10n.communityDetailTierFallback),
+        _Row(l10n.communityDetailRowType, c.type.displayName),
+        _Row(l10n.communityDetailRowMembers, '${c.memberCount ?? 0}'),
+        if (membership.canManage)
+          _Row(l10n.communityDetailRowRole, l10n.communityDetailRoleCanManage),
         const SizedBox(height: KolabingSpacing.lg),
-        _Label('Gallery & past events'),
+        _Label(l10n.communityDetailGalleryLabel),
         Text(
-          'Photos and past events will live here once the events lifecycle '
-          'ships (Phase 3).',
+          l10n.communityDetailGalleryBody,
           style: KolabingTextStyles.bodySmall
               .copyWith(color: KolabingColors.onSurfaceVariant),
         ),

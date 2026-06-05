@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/community_membership.dart';
 import '../providers/community_providers.dart';
 import 'community_detail_screen.dart';
@@ -48,6 +49,7 @@ class _MembershipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final community = membership.community;
     final tier = membership.tier;
     Color tierColor;
@@ -130,7 +132,7 @@ class _MembershipCard extends StatelessWidget {
                           ),
                         ] else
                           Text(
-                            'No tier yet',
+                            l10n.myCommunitiesNoTier,
                             style: KolabingTextStyles.bodySmall.copyWith(
                               color: KolabingColors.onSurfaceVariant,
                             ),
@@ -149,7 +151,7 @@ class _MembershipCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              'ADMIN',
+                              l10n.myCommunitiesAdminBadge,
                               style: KolabingTextStyles.bodySmall.copyWith(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
@@ -181,47 +183,49 @@ class _Empty extends StatelessWidget {
   const _Empty();
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.xl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.18),
-              shape: BoxShape.circle,
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: KolabingColors.primary.withValues(alpha: 0.18),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                LucideIcons.users,
+                size: 32,
+                color: KolabingColors.onSurface,
+              ),
             ),
-            child: const Icon(
-              LucideIcons.users,
-              size: 32,
-              color: KolabingColors.onSurface,
+            const SizedBox(height: KolabingSpacing.lg),
+            Text(
+              l10n.myCommunitiesEmptyTitle,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          Text(
-            "You're not in any communities yet",
-            textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              l10n.myCommunitiesEmptyBody,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.onSurfaceVariant,
+              ),
             ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          Text(
-            'Join a community to earn your place on its tiers and see '
-            'member-only events and perks.',
-            textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _Error extends StatelessWidget {
@@ -250,7 +254,9 @@ class _Error extends StatelessWidget {
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
+          OutlinedButton(
+              onPressed: onRetry,
+              child: Text(AppLocalizations.of(context).commonRetry)),
         ],
       ),
     ),

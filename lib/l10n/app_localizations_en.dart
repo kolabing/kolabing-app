@@ -4667,4 +4667,458 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notifSettingsSaveError =>
       'Could not save your preference. Try again.';
+
+  @override
+  String get chatsTitle => 'Chats';
+
+  @override
+  String get chatInboxTooltip => 'Chats';
+
+  @override
+  String get chatThreadFallbackTitle => 'Chat';
+
+  @override
+  String get chatThreadTapToOpen => 'Tap to open';
+
+  @override
+  String get chatThreadNoMessagesYet => 'No messages yet';
+
+  @override
+  String get chatInboxEmptyTitle => 'No chats yet';
+
+  @override
+  String get chatInboxEmptyBody =>
+      'Conversations show up here once a Kolab, community, or event chat gets going.';
+
+  @override
+  String get chatSectionMain => 'Main';
+
+  @override
+  String get chatSectionCommunityChats => 'Community chats';
+
+  @override
+  String get chatSectionEvents => 'Events';
+
+  @override
+  String get chatSectionKolabs => 'Kolabs';
+
+  @override
+  String get chatComposerHint => 'Message';
+
+  @override
+  String get chatThreadEmptyMessage => 'No messages yet. Say hi 👋';
+
+  @override
+  String get communityDetailTabChats => 'Chats';
+
+  @override
+  String get communityDetailTabEvents => 'Events';
+
+  @override
+  String get communityDetailTabMembers => 'Members';
+
+  @override
+  String get communityDetailTabDetails => 'Details';
+
+  @override
+  String communityDetailTypeAndMembers(String type, int count) {
+    return '$type · $count members';
+  }
+
+  @override
+  String communityDetailMembersCount(int count) {
+    return '$count members';
+  }
+
+  @override
+  String get communityDetailChatsLoadError => 'Could not load chats';
+
+  @override
+  String get communityDetailNoChatsTitle => 'No chats yet';
+
+  @override
+  String get communityDetailNoChatsBody =>
+      'This community’s conversations show up here.';
+
+  @override
+  String get communityDetailNoEventsTitle => 'No upcoming events';
+
+  @override
+  String get communityDetailNoEventsBody =>
+      'Events created for this community will show here.';
+
+  @override
+  String get communityDetailEventLockedSubtitle =>
+      'Locked — for another membership tier';
+
+  @override
+  String get communityDetailEventLockedSnack =>
+      'This event is for a different membership tier.';
+
+  @override
+  String get communityDetailLeaderboardButton => 'Chapter leaderboard';
+
+  @override
+  String get communityDetailAboutLabel => 'About';
+
+  @override
+  String get communityDetailMembershipLabel => 'Your membership';
+
+  @override
+  String get communityDetailRowTier => 'Tier';
+
+  @override
+  String get communityDetailRowType => 'Type';
+
+  @override
+  String get communityDetailRowMembers => 'Members';
+
+  @override
+  String get communityDetailRowRole => 'Role';
+
+  @override
+  String get communityDetailRoleCanManage => 'Can manage';
+
+  @override
+  String get communityDetailTierFallback => 'Member';
+
+  @override
+  String get communityDetailGalleryLabel => 'Gallery & past events';
+
+  @override
+  String get communityDetailGalleryBody =>
+      'Photos and past events will live here once the events lifecycle ships (Phase 3).';
+
+  @override
+  String get myCommunitiesNoTier => 'No tier yet';
+
+  @override
+  String get myCommunitiesAdminBadge => 'ADMIN';
+
+  @override
+  String get myCommunitiesEmptyTitle => 'You\'re not in any communities yet';
+
+  @override
+  String get myCommunitiesEmptyBody =>
+      'Join a community to earn your place on its tiers and see member-only events and perks.';
+
+  @override
+  String get communityHubEmptyTitle => 'Start your community';
+
+  @override
+  String get communityHubEmptyBody =>
+      'Create a community to build a member roster and set up your own tiers. Your first community is free.';
+
+  @override
+  String get communityHubCreateCommunity => 'CREATE COMMUNITY';
+
+  @override
+  String get communityHubSectionTiers => 'Tiers';
+
+  @override
+  String get communityHubSectionMembers => 'Members';
+
+  @override
+  String get communityHubSectionEvents => 'Events';
+
+  @override
+  String get communityHubSectionChats => 'Chats';
+
+  @override
+  String communityHubTypeAndMembers(String type, int count) {
+    return '$type  ·  $count members';
+  }
+
+  @override
+  String get communityHubNoEvents => 'No upcoming events yet.';
+
+  @override
+  String get communityHubCreateEvent => 'Create event';
+
+  @override
+  String get communityHubNewChatTitle => 'New chat';
+
+  @override
+  String get communityHubChatNameLabel => 'Chat name';
+
+  @override
+  String get communityHubChatNameHint => 'e.g. Exec, Socials, Philanthropy';
+
+  @override
+  String get communityHubCreate => 'Create';
+
+  @override
+  String communityHubChatCreated(String name) {
+    return '\"$name\" created';
+  }
+
+  @override
+  String communityHubChatLimit(int count) {
+    return 'You can have up to $count chats';
+  }
+
+  @override
+  String get communityHubAccess => 'Access';
+
+  @override
+  String get communityHubAccessNoTiers => 'No tiers';
+
+  @override
+  String get communityHubAccessAllTiers => 'All tiers';
+
+  @override
+  String get communityHubAccessOneTier => '1 tier';
+
+  @override
+  String communityHubAccessTierCount(int count) {
+    return '$count tiers';
+  }
+
+  @override
+  String get communityHubCreateTiersFirst =>
+      'Create membership tiers first to gate chats.';
+
+  @override
+  String communityHubAccessDialogTitle(String name) {
+    return 'Who can access \"$name\"?';
+  }
+
+  @override
+  String get communityHubAccessDialogChat => 'chat';
+
+  @override
+  String get communityHubAccessDialogBody =>
+      'You and your managers always have access. Choose which member tiers can open this chat.';
+
+  @override
+  String get communityHubChatAccessUpdated => 'Chat access updated';
+
+  @override
+  String communityHubNoChatsHint(int count) {
+    return 'No chats yet. Your main chat + up to $count custom chats live here.';
+  }
+
+  @override
+  String get communityHubCreateChat => 'Create chat';
+
+  @override
+  String communityHubChatLimitReached(int count) {
+    return 'Chat limit reached ($count custom chats).';
+  }
+
+  @override
+  String get communityHubChatMain => 'Main';
+
+  @override
+  String get communityHubChatFallback => 'Chat';
+
+  @override
+  String get communityHubChipMain => 'MAIN';
+
+  @override
+  String communityHubTierDetail(String rule, int threshold, String unit) {
+    return '$rule · $threshold $unit';
+  }
+
+  @override
+  String get communityHubChipDefault => 'DEFAULT';
+
+  @override
+  String communityHubTierRank(int rank) {
+    return '#$rank';
+  }
+
+  @override
+  String get communityHubNoTiersHint =>
+      'No tiers yet. Add tiers to give members a status ladder.';
+
+  @override
+  String get communityHubAddTier => 'Add tier';
+
+  @override
+  String get communityHubNoMembersHint =>
+      'No members yet. Invite people or share your join link.';
+
+  @override
+  String get communityHubManageMembers => 'Manage members';
+
+  @override
+  String communityHubManageAllMembers(int count) {
+    return 'Manage all $count members';
+  }
+
+  @override
+  String get communityHubMemberFallback => 'Member';
+
+  @override
+  String get communityHubChipAdmin => 'ADMIN';
+
+  @override
+  String get communityHubLoadError => 'Couldn\'t load your community';
+
+  @override
+  String get createCommunityPremiumTitle => 'Community Premium';
+
+  @override
+  String get createCommunityPremiumBody =>
+      'Your free plan includes one community. Running more than one is part of Community Premium — coming soon.';
+
+  @override
+  String get createCommunityTitle => 'New community';
+
+  @override
+  String get createCommunityNameLabel => 'Name';
+
+  @override
+  String get createCommunityNameHint =>
+      'e.g. Kappa Delta — Beta Chi, or City Run Club';
+
+  @override
+  String get createCommunityNameRequired => 'Name is required';
+
+  @override
+  String get createCommunityTypeLabel => 'Type';
+
+  @override
+  String get createCommunityWhoCanJoin => 'Who can join';
+
+  @override
+  String get createCommunityJoinAnyone => 'Anyone';
+
+  @override
+  String get createCommunityJoinInviteOnly => 'Invite only';
+
+  @override
+  String get createCommunitySubmit => 'CREATE COMMUNITY';
+
+  @override
+  String get tierEditorEditTitle => 'Edit tier';
+
+  @override
+  String get tierEditorNewTitle => 'New tier';
+
+  @override
+  String get tierEditorDeleteTooltip => 'Delete tier';
+
+  @override
+  String get tierEditorDeleteTitle => 'Delete tier?';
+
+  @override
+  String tierEditorDeleteBody(String name) {
+    return 'Remove \"$name\"? Members in it will need reassigning.';
+  }
+
+  @override
+  String get tierEditorDelete => 'Delete';
+
+  @override
+  String get tierEditorNameLabel => 'Name';
+
+  @override
+  String get tierEditorNameHint => 'e.g. Exec, Active, Captain, Coach';
+
+  @override
+  String get tierEditorNameRequired => 'Name is required';
+
+  @override
+  String get tierEditorRankLabel => 'Rank (higher = more senior)';
+
+  @override
+  String get tierEditorRankRequired => 'Enter a number (1 or higher)';
+
+  @override
+  String get tierEditorColourLabel => 'Colour';
+
+  @override
+  String get tierEditorRuleLabel => 'How members get this tier';
+
+  @override
+  String tierEditorThresholdLabel(String unit) {
+    return 'Threshold ($unit)';
+  }
+
+  @override
+  String tierEditorThresholdRequired(String unit) {
+    return 'Enter a $unit threshold';
+  }
+
+  @override
+  String get tierEditorSave => 'SAVE';
+
+  @override
+  String get tierEditorCreate => 'CREATE TIER';
+
+  @override
+  String get rosterTitle => 'Members';
+
+  @override
+  String get rosterInviteTooltip => 'Invite member';
+
+  @override
+  String get rosterInviteTitle => 'Invite member';
+
+  @override
+  String get rosterInviteBody =>
+      'Add a member by the email on their Kolabing account.';
+
+  @override
+  String get rosterInviteEmailLabel => 'Email';
+
+  @override
+  String get rosterInviteEmailHint => 'name@example.com';
+
+  @override
+  String get rosterInvite => 'Invite';
+
+  @override
+  String get rosterInviteInvalidEmail => 'Enter a valid email address';
+
+  @override
+  String get rosterMemberAdded => 'Member added';
+
+  @override
+  String get rosterNoAccountForEmail =>
+      'No Kolabing account found for that email';
+
+  @override
+  String get rosterMemberFallback => 'Member';
+
+  @override
+  String get rosterEmptyTitle => 'No members yet';
+
+  @override
+  String get rosterInviteMember => 'Invite a member';
+
+  @override
+  String get rosterRemoveTitle => 'Remove member?';
+
+  @override
+  String rosterRemoveBody(String name) {
+    return 'Remove $name from the community?';
+  }
+
+  @override
+  String get rosterRemoveBodyFallback => 'this member';
+
+  @override
+  String get rosterRemove => 'Remove';
+
+  @override
+  String get rosterTierLabel => 'Tier';
+
+  @override
+  String get rosterNoTier => 'No tier';
+
+  @override
+  String get rosterCanManageTitle => 'Can manage this community';
+
+  @override
+  String get rosterCanManageSubtitle =>
+      'Admin capability — independent of tier';
+
+  @override
+  String get rosterStatusLabel => 'Status';
+
+  @override
+  String get rosterSave => 'SAVE';
 }

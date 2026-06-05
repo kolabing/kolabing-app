@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../providers/chat_providers.dart';
 import '../screens/chats_screen.dart';
 
@@ -18,8 +19,9 @@ class ChatInboxButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final unread = ref.watch(chatUnreadProvider);
     final iconColor = color ?? KolabingColors.charcoal;
+    final l10n = AppLocalizations.of(context);
     return IconButton(
-      tooltip: 'Chats',
+      tooltip: l10n.chatInboxTooltip,
       onPressed: () => Navigator.of(context).push<void>(
         MaterialPageRoute<void>(builder: (_) => const ChatsScreen()),
       ),

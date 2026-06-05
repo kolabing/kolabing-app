@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
@@ -112,12 +113,14 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: KolabingColors.background,
-      appBar: AppBar(title: Text(widget.thread.name ?? 'Chat')),
+      appBar: AppBar(
+          title: Text(widget.thread.name ?? l10n.chatThreadFallbackTitle)),
       body: Column(
         children: [
-          Expanded(child: _body()),
+          Expanded(child: _body(l10n)),
           _Composer(
             controller: _composer,
             sending: _sending,
@@ -128,7 +131,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     );
   }
 
-  Widget _body() {
+  Widget _body(AppLocalizations l10n) {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -145,7 +148,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     }
     if (_messages.isEmpty) {
       return Center(
-        child: Text('No messages yet. Say hi 👋',
+        child: Text(l10n.chatThreadEmptyMessage,
             style: KolabingTextStyles.bodyMedium
                 .copyWith(color: KolabingColors.onSurfaceVariant)),
       );
@@ -235,7 +238,7 @@ class _Composer extends StatelessWidget {
                 maxLines: 4,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  hintText: 'Message',
+                  hintText: AppLocalizations.of(context).chatComposerHint,
                   filled: true,
                   fillColor: KolabingColors.surfaceContainerLow,
                   contentPadding: const EdgeInsets.symmetric(

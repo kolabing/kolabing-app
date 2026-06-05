@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../chat/models/chat_thread.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
@@ -82,6 +83,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),
@@ -100,15 +102,14 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
-              'Start your community',
+              l10n.communityHubEmptyTitle,
               style: KolabingTextStyles.bodyLarge
                   .copyWith(fontSize: 20, fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
-              'Create a community to build a member roster and set up your own '
-              'tiers. Your first community is free.',
+              l10n.communityHubEmptyBody,
               style: KolabingTextStyles.bodySmall
                   .copyWith(color: KolabingColors.onSurfaceVariant),
               textAlign: TextAlign.center,
@@ -123,7 +124,7 @@ class _EmptyState extends StatelessWidget {
                   foregroundColor: KolabingColors.onPrimary,
                   minimumSize: const Size.fromHeight(52),
                 ),
-                child: const Text('CREATE COMMUNITY'),
+                child: Text(l10n.communityHubCreateCommunity),
               ),
             ),
           ],
@@ -144,6 +145,7 @@ class _CommunityOverview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return RefreshIndicator(
       onRefresh: () =>
           ref.read(communityManageProvider.notifier).reloadCommunities(),
@@ -152,20 +154,20 @@ class _CommunityOverview extends ConsumerWidget {
         children: [
           _Header(community: community),
           const SizedBox(height: KolabingSpacing.lg),
-          _SectionLabel('Tiers'),
+          _SectionLabel(l10n.communityHubSectionTiers),
           const SizedBox(height: KolabingSpacing.sm),
           _TiersSection(communityId: community.id),
           const SizedBox(height: KolabingSpacing.lg),
-          _SectionLabel('Members'),
+          _SectionLabel(l10n.communityHubSectionMembers),
           const SizedBox(height: KolabingSpacing.sm),
           _MembersPreview(communityId: community.id),
           const SizedBox(height: KolabingSpacing.lg),
-          _SectionLabel('Events'),
+          _SectionLabel(l10n.communityHubSectionEvents),
           const SizedBox(height: KolabingSpacing.sm),
           _EventsSection(
               communityId: community.id, communityName: community.name),
           const SizedBox(height: KolabingSpacing.lg),
-          _SectionLabel('Chats'),
+          _SectionLabel(l10n.communityHubSectionChats),
           const SizedBox(height: KolabingSpacing.sm),
           _ChatsSection(communityId: community.id),
         ],
@@ -258,7 +260,7 @@ class _EventsSection extends ConsumerWidget {
             }
           },
           icon: const Icon(LucideIcons.plus, size: 18),
-          label: const Text('Create event'),
+          label: Text(AppLocalizations.of(context).communityHubCreateEvent),
         ),
       ],
     );
@@ -272,7 +274,7 @@ class _EventsEmpty extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
         child: Text(
-          'No upcoming events yet.',
+          AppLocalizations.of(context).communityHubNoEvents,
           style: KolabingTextStyles.bodySmall
               .copyWith(color: KolabingColors.onSurfaceVariant),
         ),
@@ -291,28 +293,29 @@ class _ChatsSection extends ConsumerWidget {
   static const _maxCustom = 5;
 
   Future<void> _create(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     final name = await showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('New chat'),
+        title: Text(l10n.communityHubNewChatTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Chat name',
-            hintText: 'e.g. Exec, Socials, Philanthropy',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l10n.communityHubChatNameLabel,
+            hintText: l10n.communityHubChatNameHint,
+            border: const OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel')),
+              child: Text(l10n.commonCancel)),
           TextButton(
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Create'),
+            child: Text(l10n.communityHubCreate),
           ),
         ],
       ),
@@ -324,14 +327,14 @@ class _ChatsSection extends ConsumerWidget {
           .createCommunityChat(communityId, name: name);
       ref.read(chatThreadsProvider.notifier).reload();
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('"$name" created')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.communityHubChatCreated(name))));
       }
     } on ChatException catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(e.isChatLimitReached
-                ? 'You can have up to $_maxCustom chats'
+                ? l10n.communityHubChatLimit(_maxCustom)
                 : e.message)));
       }
     }
@@ -339,14 +342,17 @@ class _ChatsSection extends ConsumerWidget {
 
   /// Short summary of who can currently open a custom chat, by tier count.
   /// (Owners/managers always have access; this counts member tiers granted.)
-  static String _accessLabel(ChatThread thread, List<CommunityTier> tiers) {
+  static String _accessLabel(
+      AppLocalizations l10n, ChatThread thread, List<CommunityTier> tiers) {
     final slug = thread.slug;
-    if (slug == null || tiers.isEmpty) return 'Access';
+    if (slug == null || tiers.isEmpty) return l10n.communityHubAccess;
     final granted =
         tiers.where((t) => t.permissions.chatChannels.contains(slug)).length;
-    if (granted == 0) return 'No tiers';
-    if (granted == tiers.length) return 'All tiers';
-    return granted == 1 ? '1 tier' : '$granted tiers';
+    if (granted == 0) return l10n.communityHubAccessNoTiers;
+    if (granted == tiers.length) return l10n.communityHubAccessAllTiers;
+    return granted == 1
+        ? l10n.communityHubAccessOneTier
+        : l10n.communityHubAccessTierCount(granted);
   }
 
   /// Per-chat tier gating: pick which member tiers can open this custom chat.
@@ -354,11 +360,12 @@ class _ChatsSection extends ConsumerWidget {
   /// (and removes it from the deselected ones).
   Future<void> _manageAccess(BuildContext context, WidgetRef ref,
       ChatThread thread, List<CommunityTier> tiers) async {
+    final l10n = AppLocalizations.of(context);
     final slug = thread.slug;
     if (slug == null) return;
     if (tiers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Create membership tiers first to gate chats.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l10n.communityHubCreateTiersFirst)));
       return;
     }
 
@@ -370,7 +377,8 @@ class _ChatsSection extends ConsumerWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setLocal) => AlertDialog(
-          title: Text('Who can access "${thread.name ?? 'chat'}"?'),
+          title: Text(l10n.communityHubAccessDialogTitle(
+              thread.name ?? l10n.communityHubAccessDialogChat)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -379,8 +387,7 @@ class _ChatsSection extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
                   child: Text(
-                    'You and your managers always have access. Choose which '
-                    'member tiers can open this chat.',
+                    l10n.communityHubAccessDialogBody,
                     style: KolabingTextStyles.bodySmall
                         .copyWith(color: KolabingColors.onSurfaceVariant),
                   ),
@@ -400,10 +407,10 @@ class _ChatsSection extends ConsumerWidget {
           actions: [
             TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(false),
-                child: const Text('Cancel')),
+                child: Text(l10n.commonCancel)),
             TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(true),
-                child: const Text('Save')),
+                child: Text(l10n.commonSave)),
           ],
         ),
       ),
@@ -424,8 +431,8 @@ class _ChatsSection extends ConsumerWidget {
       await ref.read(communityManageProvider.notifier).reloadTiers();
       ref.read(chatThreadsProvider.notifier).reload();
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Chat access updated')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.communityHubChatAccessUpdated)));
       }
     } on CommunityException catch (e) {
       if (context.mounted) {
@@ -437,6 +444,7 @@ class _ChatsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final async = ref.watch(chatThreadsProvider);
     final tiers =
         ref.watch(communityManageProvider).tiers.asData?.value ?? const [];
@@ -454,8 +462,7 @@ class _ChatsSection extends ConsumerWidget {
             if (mine.isEmpty)
               _InlineHint(
                 icon: LucideIcons.messageCircle,
-                text: 'No chats yet. Your main chat + up to '
-                    '$_maxCustom custom chats live here.',
+                text: l10n.communityHubNoChatsHint(_maxCustom),
               )
             else
               for (final t in mine)
@@ -466,19 +473,19 @@ class _ChatsSection extends ConsumerWidget {
                           ? () => _manageAccess(context, ref, t, tiers)
                           : null,
                   accessLabel: t.type == ChatThreadType.communityCustom
-                      ? _accessLabel(t, tiers)
+                      ? _accessLabel(l10n, t, tiers)
                       : null,
                 ),
             const SizedBox(height: KolabingSpacing.xs),
             if (customCount < _maxCustom)
               _AddTile(
-                label: 'Create chat',
+                label: l10n.communityHubCreateChat,
                 onTap: () => _create(context, ref),
               )
             else
               _InlineHint(
                 icon: LucideIcons.lock,
-                text: 'Chat limit reached ($_maxCustom custom chats).',
+                text: l10n.communityHubChatLimitReached(_maxCustom),
               ),
           ],
         );
@@ -501,6 +508,7 @@ class _ChatRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isMain = thread.type == ChatThreadType.communityMain;
     return Padding(
       padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
@@ -526,11 +534,15 @@ class _ChatRow extends StatelessWidget {
                     size: 16, color: KolabingColors.onSurfaceVariant),
                 const SizedBox(width: KolabingSpacing.sm),
                 Expanded(
-                  child: Text(thread.name ?? (isMain ? 'Main' : 'Chat'),
+                  child: Text(
+                      thread.name ??
+                          (isMain
+                              ? l10n.communityHubChatMain
+                              : l10n.communityHubChatFallback),
                       style: KolabingTextStyles.bodyMedium
                           .copyWith(fontWeight: FontWeight.w600)),
                 ),
-                if (isMain) _Chip(label: 'MAIN'),
+                if (isMain) _Chip(label: l10n.communityHubChipMain),
                 if (!isMain && onManageAccess != null)
                   Material(
                     color: Colors.transparent,
@@ -546,7 +558,7 @@ class _ChatRow extends StatelessWidget {
                             const Icon(LucideIcons.lock,
                                 size: 13, color: KolabingColors.onSurfaceVariant),
                             const SizedBox(width: 4),
-                            Text(accessLabel ?? 'Access',
+                            Text(accessLabel ?? l10n.communityHubAccess,
                                 style: KolabingTextStyles.bodySmall.copyWith(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
@@ -619,8 +631,10 @@ class _Header extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${community.type.displayName}'
-                  '${community.memberCount != null ? '  ·  ${community.memberCount} members' : ''}',
+                  community.memberCount != null
+                      ? AppLocalizations.of(context).communityHubTypeAndMembers(
+                          community.type.displayName, community.memberCount!)
+                      : community.type.displayName,
                   style: KolabingTextStyles.bodySmall
                       .copyWith(color: KolabingColors.onSurfaceVariant),
                 ),
@@ -663,6 +677,7 @@ class _TiersSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final async = ref.watch(communityManageProvider).tiers;
     return async.when(
       loading: () => const _InlineLoader(),
@@ -673,12 +688,11 @@ class _TiersSection extends ConsumerWidget {
             children: [
               _InlineHint(
                 icon: LucideIcons.layers,
-                text:
-                    'No tiers yet. Add tiers to give members a status ladder.',
+                text: l10n.communityHubNoTiersHint,
               ),
               const SizedBox(height: KolabingSpacing.sm),
               _AddTile(
-                label: 'Add tier',
+                label: l10n.communityHubAddTier,
                 onTap: () => _openEditor(context, ref),
               ),
             ],
@@ -693,7 +707,7 @@ class _TiersSection extends ConsumerWidget {
               ),
             const SizedBox(height: KolabingSpacing.xs),
             _AddTile(
-              label: 'Add tier',
+              label: l10n.communityHubAddTier,
               onTap: () => _openEditor(context, ref),
             ),
           ],
@@ -711,6 +725,7 @@ class _TierRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     Color dot;
     try {
       dot = tier.color != null
@@ -720,7 +735,8 @@ class _TierRow extends StatelessWidget {
       dot = KolabingColors.primary;
     }
     final detail = tier.assignmentRule.isAutomatic && tier.threshold != null
-        ? '${tier.assignmentRule.displayName} · ${tier.threshold} ${tier.assignmentRule.thresholdUnit}'
+        ? l10n.communityHubTierDetail(tier.assignmentRule.displayName,
+            tier.threshold!, tier.assignmentRule.thresholdUnit)
         : tier.assignmentRule.displayName;
     return Padding(
       padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
@@ -756,7 +772,7 @@ class _TierRow extends StatelessWidget {
                                   .copyWith(fontWeight: FontWeight.w700)),
                           if (tier.isDefault) ...[
                             const SizedBox(width: KolabingSpacing.xs),
-                            _Chip(label: 'DEFAULT'),
+                            _Chip(label: l10n.communityHubChipDefault),
                           ],
                         ],
                       ),
@@ -767,7 +783,7 @@ class _TierRow extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text('#${tier.rank}',
+                Text(l10n.communityHubTierRank(tier.rank),
                     style: KolabingTextStyles.bodySmall
                         .copyWith(color: KolabingColors.onSurfaceVariant)),
                 if (onTap != null) ...[
@@ -838,6 +854,7 @@ class _MembersPreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final async = ref.watch(communityManageProvider).members;
     return async.when(
       loading: () => const _InlineLoader(),
@@ -848,11 +865,11 @@ class _MembersPreview extends ConsumerWidget {
             children: [
               _InlineHint(
                 icon: LucideIcons.userPlus,
-                text: 'No members yet. Invite people or share your join link.',
+                text: l10n.communityHubNoMembersHint,
               ),
               const SizedBox(height: KolabingSpacing.sm),
               _AddTile(
-                label: 'Manage members',
+                label: l10n.communityHubManageMembers,
                 onTap: () => _openRoster(context, ref),
               ),
             ],
@@ -865,8 +882,8 @@ class _MembersPreview extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.xs),
             _AddTile(
               label: members.length > preview.length
-                  ? 'Manage all ${members.length} members'
-                  : 'Manage members',
+                  ? l10n.communityHubManageAllMembers(members.length)
+                  : l10n.communityHubManageMembers,
               onTap: () => _openRoster(context, ref),
             ),
           ],
@@ -883,6 +900,7 @@ class _MemberRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
       child: Row(
@@ -899,11 +917,11 @@ class _MemberRow extends StatelessWidget {
           ),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
-            child: Text(member.memberName ?? 'Member',
+            child: Text(member.memberName ?? l10n.communityHubMemberFallback,
                 style: KolabingTextStyles.bodyMedium),
           ),
           if (member.canManage) ...[
-            _Chip(label: 'ADMIN'),
+            _Chip(label: l10n.communityHubChipAdmin),
             const SizedBox(width: KolabingSpacing.xs),
           ],
         ],
@@ -1008,27 +1026,30 @@ class _ErrorState extends StatelessWidget {
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(LucideIcons.alertCircle,
-                  size: 32, color: KolabingColors.error),
-              const SizedBox(height: KolabingSpacing.md),
-              Text("Couldn't load your community",
-                  style: KolabingTextStyles.bodyLarge
-                      .copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(message,
-                  textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant)),
-              const SizedBox(height: KolabingSpacing.lg),
-              OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(LucideIcons.alertCircle,
+                size: 32, color: KolabingColors.error),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(l10n.communityHubLoadError,
+                style: KolabingTextStyles.bodyLarge
+                    .copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(message,
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.bodySmall
+                    .copyWith(color: KolabingColors.onSurfaceVariant)),
+            const SizedBox(height: KolabingSpacing.lg),
+            OutlinedButton(onPressed: onRetry, child: Text(l10n.commonRetry)),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }

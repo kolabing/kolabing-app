@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
 import '../services/community_service.dart';
@@ -106,19 +107,19 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
   }
 
   Future<void> _delete() async {
+    final l10n = AppLocalizations.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete tier?'),
-        content: Text('Remove "${widget.tier!.name}"? Members in it will need '
-            'reassigning.'),
+        title: Text(l10n.tierEditorDeleteTitle),
+        content: Text(l10n.tierEditorDeleteBody(widget.tier!.name)),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel')),
+              child: Text(l10n.commonCancel)),
           TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete')),
+              child: Text(l10n.tierEditorDelete)),
         ],
       ),
     );
@@ -139,16 +140,18 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
-        title: Text(widget.isEditing ? 'Edit tier' : 'New tier'),
+        title: Text(
+            widget.isEditing ? l10n.tierEditorEditTitle : l10n.tierEditorNewTitle),
         actions: [
           if (widget.isEditing)
             IconButton(
               onPressed: _busy ? null : _delete,
               icon: const Icon(Icons.delete_outline),
-              tooltip: 'Delete tier',
+              tooltip: l10n.tierEditorDeleteTooltip,
             ),
         ],
       ),
@@ -157,19 +160,20 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
         child: ListView(
           padding: const EdgeInsets.all(KolabingSpacing.md),
           children: [
-            _label('Name'),
+            _label(l10n.tierEditorNameLabel),
             TextFormField(
               controller: _nameController,
               textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                hintText: 'e.g. Exec, Active, Captain, Coach',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.tierEditorNameHint,
+                border: const OutlineInputBorder(),
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? l10n.tierEditorNameRequired
+                  : null,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            _label('Rank (higher = more senior)'),
+            _label(l10n.tierEditorRankLabel),
             TextFormField(
               controller: _rankController,
               keyboardType: TextInputType.number,
@@ -178,12 +182,12 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
               validator: (v) {
                 final n = int.tryParse(v ?? '');
                 // Backend requires rank >= 1 (StoreCommunityTierRequest).
-                if (n == null || n < 1) return 'Enter a number (1 or higher)';
+                if (n == null || n < 1) return l10n.tierEditorRankRequired;
                 return null;
               },
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            _label('Colour'),
+            _label(l10n.tierEditorColourLabel),
             const SizedBox(height: KolabingSpacing.xs),
             Wrap(
               spacing: KolabingSpacing.sm,
@@ -192,7 +196,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
               ],
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            _label('How members get this tier'),
+            _label(l10n.tierEditorRuleLabel),
             const SizedBox(height: KolabingSpacing.xs),
             DropdownButtonFormField<TierAssignmentRule>(
               initialValue: _rule,
@@ -207,7 +211,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
             ),
             if (_rule.isAutomatic) ...[
               const SizedBox(height: KolabingSpacing.md),
-              _label('Threshold (${_rule.thresholdUnit})'),
+              _label(l10n.tierEditorThresholdLabel(_rule.thresholdUnit)),
               TextFormField(
                 controller: _thresholdController,
                 keyboardType: TextInputType.number,
@@ -217,7 +221,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
                   suffixText: _rule.thresholdUnit,
                 ),
                 validator: (v) => (int.tryParse(v ?? '') == null)
-                    ? 'Enter a ${_rule.thresholdUnit} threshold'
+                    ? l10n.tierEditorThresholdRequired(_rule.thresholdUnit)
                     : null,
               ),
             ],
@@ -236,7 +240,9 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: KolabingColors.onSurface),
                     )
-                  : Text(widget.isEditing ? 'SAVE' : 'CREATE TIER'),
+                  : Text(widget.isEditing
+                      ? l10n.tierEditorSave
+                      : l10n.tierEditorCreate),
             ),
           ],
         ),

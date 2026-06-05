@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import 'chat_thread_screen.dart';
@@ -45,6 +46,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final async = ref.watch(chatThreadsProvider);
     final body = async.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -58,7 +60,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
           onRefresh: () => ref.read(chatThreadsProvider.notifier).reload(),
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-            children: _sections(threads)
+            children: _sections(l10n, threads)
                 .expand((s) => [
                       _SectionLabel(s.title),
                       ...s.threads.map((t) => _ThreadTile(thread: t)),
@@ -77,20 +79,21 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     }
     return Scaffold(
       backgroundColor: KolabingColors.background,
-      appBar: AppBar(title: const Text('Chats')),
+      appBar: AppBar(title: Text(l10n.chatsTitle)),
       body: body,
     );
   }
 
   /// Group threads by type into labelled sections (only non-empty ones).
-  List<_Section> _sections(List<ChatThread> threads) {
+  List<_Section> _sections(AppLocalizations l10n, List<ChatThread> threads) {
     List<ChatThread> of(ChatThreadType t) =>
         threads.where((x) => x.type == t).toList();
     final groups = <_Section>[
-      _Section('Main', of(ChatThreadType.communityMain)),
-      _Section('Community chats', of(ChatThreadType.communityCustom)),
-      _Section('Events', of(ChatThreadType.event)),
-      _Section('Kolabs', of(ChatThreadType.collaboration)),
+      _Section(l10n.chatSectionMain, of(ChatThreadType.communityMain)),
+      _Section(
+          l10n.chatSectionCommunityChats, of(ChatThreadType.communityCustom)),
+      _Section(l10n.chatSectionEvents, of(ChatThreadType.event)),
+      _Section(l10n.chatSectionKolabs, of(ChatThreadType.collaboration)),
     ];
     return groups.where((s) => s.threads.isNotEmpty).toList();
   }
@@ -107,16 +110,17 @@ class _ThreadTile extends ConsumerWidget {
 
   final ChatThread thread;
 
-  String get _title {
+  String _titleFor(AppLocalizations l10n) {
     if (thread.name != null && thread.name!.isNotEmpty) return thread.name!;
     if (thread.participants.isNotEmpty) {
       return thread.participants.map((p) => p.name).join(', ');
     }
-    return 'Chat';
+    return l10n.chatThreadFallbackTitle;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return ListTile(
       onTap: () async {
         // Phase 1: collaboration (Kolab) chats reuse the existing
@@ -147,14 +151,16 @@ class _ThreadTile extends ConsumerWidget {
           color: KolabingColors.onSurface,
         ),
       ),
-      title: Text(_title,
+      title: Text(_titleFor(l10n),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: KolabingTextStyles.bodyMedium.copyWith(
               fontWeight:
                   thread.hasUnread ? FontWeight.w700 : FontWeight.w600)),
       subtitle: Text(
-        thread.hasMessages ? 'Tap to open' : 'No messages yet',
+        thread.hasMessages
+            ? l10n.chatThreadTapToOpen
+            : l10n.chatThreadNoMessagesYet,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: KolabingTextStyles.bodySmall
@@ -200,38 +206,40 @@ class _EmptyChats extends StatelessWidget {
   const _EmptyChats();
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(LucideIcons.messageCircle,
-                    size: 32, color: KolabingColors.onSurface),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: KolabingColors.primary.withValues(alpha: 0.18),
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text('No chats yet',
-                  style: KolabingTextStyles.bodyLarge
-                      .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
-              const SizedBox(height: KolabingSpacing.sm),
-              Text(
-                'Conversations show up here once a Kolab, community, or event '
-                'chat gets going.',
-                textAlign: TextAlign.center,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.onSurfaceVariant),
-              ),
-            ],
-          ),
+              child: const Icon(LucideIcons.messageCircle,
+                  size: 32, color: KolabingColors.onSurface),
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            Text(l10n.chatInboxEmptyTitle,
+                style: KolabingTextStyles.bodyLarge
+                    .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              l10n.chatInboxEmptyBody,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _ErrorState extends StatelessWidget {
@@ -254,7 +262,9 @@ class _ErrorState extends StatelessWidget {
                   style: KolabingTextStyles.bodySmall
                       .copyWith(color: KolabingColors.onSurfaceVariant)),
               const SizedBox(height: KolabingSpacing.lg),
-              OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
+              OutlinedButton(
+                  onPressed: onRetry,
+                  child: Text(AppLocalizations.of(context).commonRetry)),
             ],
           ),
         ),
