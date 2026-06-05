@@ -155,6 +155,65 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     }
   }
 
+  // Leader: delete (scope-aware for recurring) ------------------------------
+
+  Future<void> _delete() async {
+    var scope = 'this';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setLocal) => AlertDialog(
+          title: Text(_l10n.eventHubDeleteConfirmTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(_l10n.eventHubDeleteConfirmBody(_event.name)),
+              if (_event.isRecurring) ...[
+                const SizedBox(height: KolabingSpacing.sm),
+                for (final opt in [
+                  ('this', _l10n.eventHubDeleteScopeThis),
+                  ('following', _l10n.eventHubDeleteScopeFollowing),
+                  ('series', _l10n.eventHubDeleteScopeSeries),
+                ])
+                  RadioListTile<String>(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    value: opt.$1,
+                    groupValue: scope,
+                    title: Text(opt.$2),
+                    onChanged: (v) => setLocal(() => scope = v ?? 'this'),
+                  ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(_l10n.commonCancel)),
+            TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(_l10n.commonDelete)),
+          ],
+        ),
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await ref.read(eventServiceProvider).deleteEvent(_event.id, scope: scope);
+      final cid = _event.communityId;
+      if (cid != null) {
+        ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
+      }
+      if (!mounted) return;
+      _snack(_l10n.eventHubDeleted);
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      _snack(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
   void _snack(String m) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
 
@@ -170,6 +229,25 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
             TextButton(
               onPressed: _busy ? null : _edit,
               child: Text(_l10n.eventHubEdit),
+            ),
+          if (widget.isLeader)
+            PopupMenuButton<String>(
+              onSelected: (v) {
+                if (v == 'delete') _delete();
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      const Icon(LucideIcons.trash2,
+                          size: 18, color: KolabingColors.error),
+                      const SizedBox(width: KolabingSpacing.sm),
+                      Text(_l10n.eventHubDelete),
+                    ],
+                  ),
+                ),
+              ],
             ),
         ],
       ),

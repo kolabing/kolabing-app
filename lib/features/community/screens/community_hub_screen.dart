@@ -215,7 +215,17 @@ class _EventsSection extends ConsumerWidget {
                   subtitle: Text(e.formattedDate,
                       style: KolabingTextStyles.bodySmall.copyWith(
                           color: KolabingColors.onSurfaceVariant)),
-                  trailing: const Icon(LucideIcons.chevronRight, size: 18),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (e.isRecurring)
+                        const Icon(LucideIcons.repeat,
+                            size: 14, color: KolabingColors.onSurfaceVariant),
+                      if (e.isRecurring)
+                        const SizedBox(width: KolabingSpacing.xs),
+                      const Icon(LucideIcons.chevronRight, size: 18),
+                    ],
+                  ),
                   onTap: () async {
                     await Navigator.of(context).push<void>(
                       MaterialPageRoute<void>(

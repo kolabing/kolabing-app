@@ -26,6 +26,10 @@ class Event {
   /// (no open into details). Defaults to true (legacy/ungated events stay open).
   final bool canAccess;
 
+  /// Set when this event is an occurrence of a recurring series.
+  final String? seriesId;
+  final int? occurrenceIndex;
+
   const Event({
     required this.id,
     required this.name,
@@ -46,7 +50,12 @@ class Event {
     this.isUpcoming = false,
     this.communityId,
     this.canAccess = true,
+    this.seriesId,
+    this.occurrenceIndex,
   });
+
+  /// True when this event belongs to a recurring series.
+  bool get isRecurring => seriesId != null;
 
   /// True when the viewer has a confirmed 'going' sign-up.
   bool get isGoing => mySignupStatus == 'going';
@@ -101,6 +110,8 @@ class Event {
       isUpcoming: json['is_upcoming'] as bool? ?? false,
       communityId: json['community_id'] as String?,
       canAccess: json['can_access'] as bool? ?? true,
+      seriesId: json['series_id'] as String?,
+      occurrenceIndex: (json['occurrence_index'] as num?)?.toInt(),
       photos:
           (json['photos'] as List<dynamic>?)
               ?.map((e) => EventPhoto.fromJson(e as Map<String, dynamic>))
@@ -150,6 +161,8 @@ class Event {
     bool? isUpcoming,
     String? communityId,
     bool? canAccess,
+    String? seriesId,
+    int? occurrenceIndex,
   }) => Event(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -170,6 +183,8 @@ class Event {
     isUpcoming: isUpcoming ?? this.isUpcoming,
     communityId: communityId ?? this.communityId,
     canAccess: canAccess ?? this.canAccess,
+    seriesId: seriesId ?? this.seriesId,
+    occurrenceIndex: occurrenceIndex ?? this.occurrenceIndex,
   );
 
   /// Returns the best available cover media thumbnail.

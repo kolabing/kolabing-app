@@ -4632,6 +4632,33 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventHubEdit => 'Edita';
 
   @override
+  String get commonDelete => 'Elimina';
+
+  @override
+  String get eventHubDelete => 'Elimina l\'esdeveniment';
+
+  @override
+  String get eventHubDeleteConfirmTitle => 'Vols eliminar aquest esdeveniment?';
+
+  @override
+  String eventHubDeleteConfirmBody(String name) {
+    return '\"$name\": s\'avisarà qui hi assisteixi o estigui en llista d\'espera que s\'ha cancel·lat.';
+  }
+
+  @override
+  String get eventHubDeleteScopeThis => 'Només aquest esdeveniment';
+
+  @override
+  String get eventHubDeleteScopeFollowing =>
+      'Aquest i els esdeveniments següents';
+
+  @override
+  String get eventHubDeleteScopeSeries => 'Tota la sèrie';
+
+  @override
+  String get eventHubDeleted => 'Esdeveniment eliminat';
+
+  @override
   String get eventHubAddPhotos => 'Afegir fotos';
 
   @override
@@ -4645,6 +4672,57 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventFormPublish => 'Publica l\'esdeveniment';
+
+  @override
+  String get eventFormRepeatLabel => 'Repeteix';
+
+  @override
+  String get eventFormRepeatNone => 'No es repeteix';
+
+  @override
+  String get eventFormRepeatWeekly => 'Setmanal';
+
+  @override
+  String get eventFormRepeatBiweekly => 'Cada 2 setmanes';
+
+  @override
+  String get eventFormRepeatMonthly => 'Mensual';
+
+  @override
+  String get eventFormRepeatEnds => 'Acaba';
+
+  @override
+  String get eventFormRepeatNever => 'Mai';
+
+  @override
+  String get eventFormRepeatAfter => 'Després de';
+
+  @override
+  String get eventFormRepeatEvents => 'esdeveniments';
+
+  @override
+  String get eventFormRepeatOnDate => 'En una data';
+
+  @override
+  String get eventFormRepeatChatLabel => 'Xat de la sèrie';
+
+  @override
+  String get eventFormRepeatChatPerEvent => 'Un xat per esdeveniment';
+
+  @override
+  String get eventFormRepeatChatShared => 'Un xat compartit per a la sèrie';
+
+  @override
+  String get eventFormPublishSeries => 'Publica la sèrie';
+
+  @override
+  String get eventFormErrWeekday => 'Tria almenys un dia';
+
+  @override
+  String get eventFormErrEndsCount => 'Indica quants esdeveniments';
+
+  @override
+  String get eventFormErrEndsOn => 'Tria una data posterior a l\'inici';
 
   @override
   String get eventFormNameLabel => 'Nom';

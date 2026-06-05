@@ -4551,6 +4551,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventHubEdit => 'Edit';
 
   @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get eventHubDelete => 'Delete event';
+
+  @override
+  String get eventHubDeleteConfirmTitle => 'Delete this event?';
+
+  @override
+  String eventHubDeleteConfirmBody(String name) {
+    return '\"$name\" — anyone going or waitlisted will be notified it\'s cancelled.';
+  }
+
+  @override
+  String get eventHubDeleteScopeThis => 'This event only';
+
+  @override
+  String get eventHubDeleteScopeFollowing => 'This and the following events';
+
+  @override
+  String get eventHubDeleteScopeSeries => 'The entire series';
+
+  @override
+  String get eventHubDeleted => 'Event deleted';
+
+  @override
   String get eventHubAddPhotos => 'Add photos';
 
   @override
@@ -4564,6 +4590,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventFormPublish => 'Publish event';
+
+  @override
+  String get eventFormRepeatLabel => 'Repeat';
+
+  @override
+  String get eventFormRepeatNone => 'Doesn\'t repeat';
+
+  @override
+  String get eventFormRepeatWeekly => 'Weekly';
+
+  @override
+  String get eventFormRepeatBiweekly => 'Every 2 weeks';
+
+  @override
+  String get eventFormRepeatMonthly => 'Monthly';
+
+  @override
+  String get eventFormRepeatEnds => 'Ends';
+
+  @override
+  String get eventFormRepeatNever => 'Never';
+
+  @override
+  String get eventFormRepeatAfter => 'After';
+
+  @override
+  String get eventFormRepeatEvents => 'events';
+
+  @override
+  String get eventFormRepeatOnDate => 'On date';
+
+  @override
+  String get eventFormRepeatChatLabel => 'Chat for this series';
+
+  @override
+  String get eventFormRepeatChatPerEvent => 'One chat per event';
+
+  @override
+  String get eventFormRepeatChatShared => 'One shared series chat';
+
+  @override
+  String get eventFormPublishSeries => 'Publish series';
+
+  @override
+  String get eventFormErrWeekday => 'Pick at least one day';
+
+  @override
+  String get eventFormErrEndsCount => 'Enter how many events';
+
+  @override
+  String get eventFormErrEndsOn => 'Pick an end date after the start';
 
   @override
   String get eventFormNameLabel => 'Name';

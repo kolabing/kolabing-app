@@ -8168,6 +8168,54 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get eventHubEdit;
 
+  /// No description provided for @commonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @eventHubDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete event'**
+  String get eventHubDelete;
+
+  /// No description provided for @eventHubDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this event?'**
+  String get eventHubDeleteConfirmTitle;
+
+  /// No description provided for @eventHubDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" — anyone going or waitlisted will be notified it\'s cancelled.'**
+  String eventHubDeleteConfirmBody(String name);
+
+  /// No description provided for @eventHubDeleteScopeThis.
+  ///
+  /// In en, this message translates to:
+  /// **'This event only'**
+  String get eventHubDeleteScopeThis;
+
+  /// No description provided for @eventHubDeleteScopeFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'This and the following events'**
+  String get eventHubDeleteScopeFollowing;
+
+  /// No description provided for @eventHubDeleteScopeSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'The entire series'**
+  String get eventHubDeleteScopeSeries;
+
+  /// No description provided for @eventHubDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Event deleted'**
+  String get eventHubDeleted;
+
   /// Event hub: add photos to the event gallery
   ///
   /// In en, this message translates to:
@@ -8197,6 +8245,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Publish event'**
   String get eventFormPublish;
+
+  /// No description provided for @eventFormRepeatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get eventFormRepeatLabel;
+
+  /// No description provided for @eventFormRepeatNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Doesn\'t repeat'**
+  String get eventFormRepeatNone;
+
+  /// No description provided for @eventFormRepeatWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get eventFormRepeatWeekly;
+
+  /// No description provided for @eventFormRepeatBiweekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 2 weeks'**
+  String get eventFormRepeatBiweekly;
+
+  /// No description provided for @eventFormRepeatMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get eventFormRepeatMonthly;
+
+  /// No description provided for @eventFormRepeatEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get eventFormRepeatEnds;
+
+  /// No description provided for @eventFormRepeatNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get eventFormRepeatNever;
+
+  /// No description provided for @eventFormRepeatAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After'**
+  String get eventFormRepeatAfter;
+
+  /// No description provided for @eventFormRepeatEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'events'**
+  String get eventFormRepeatEvents;
+
+  /// No description provided for @eventFormRepeatOnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'On date'**
+  String get eventFormRepeatOnDate;
+
+  /// No description provided for @eventFormRepeatChatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat for this series'**
+  String get eventFormRepeatChatLabel;
+
+  /// No description provided for @eventFormRepeatChatPerEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'One chat per event'**
+  String get eventFormRepeatChatPerEvent;
+
+  /// No description provided for @eventFormRepeatChatShared.
+  ///
+  /// In en, this message translates to:
+  /// **'One shared series chat'**
+  String get eventFormRepeatChatShared;
+
+  /// No description provided for @eventFormPublishSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish series'**
+  String get eventFormPublishSeries;
+
+  /// No description provided for @eventFormErrWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick at least one day'**
+  String get eventFormErrWeekday;
+
+  /// No description provided for @eventFormErrEndsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter how many events'**
+  String get eventFormErrEndsCount;
+
+  /// No description provided for @eventFormErrEndsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an end date after the start'**
+  String get eventFormErrEndsOn;
 
   /// Event form: name field label
   ///

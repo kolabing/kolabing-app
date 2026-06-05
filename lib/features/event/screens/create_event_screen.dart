@@ -58,7 +58,19 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   /// Newly picked photos (paths) to upload (edit mode uploads after save).
   final List<XFile> _pickedPhotos = [];
 
+  // Recurrence (create only). 'none' | 'weekly' | 'biweekly' | 'monthly'.
+  String _repeat = 'none';
+  final Set<int> _weekdays = {}; // 0=Sun .. 6=Sat (multi-day = 2x/week etc.)
+  String _endsMode = 'never'; // never | count | until
+  final _endsCount = TextEditingController(text: '8');
+  DateTime? _endsOn;
+  String _chatMode = 'per_event'; // per_event | series
+
   bool get _isEdit => widget.existing != null;
+  bool get _isRecurring => !_isEdit && _repeat != 'none';
+
+  /// Dart weekday (Mon=1..Sun=7) → our 0=Sun..6=Sat.
+  int get _startWeekday => ((_startsAt ?? DateTime.now()).weekday % 7);
 
   @override
   void initState() {
@@ -78,6 +90,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     _name.dispose();
     _location.dispose();
     _capacity.dispose();
+    _endsCount.dispose();
     super.dispose();
   }
 
@@ -139,6 +152,39 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       }
     }
 
+    Map<String, dynamic>? recurrence;
+    if (_isRecurring) {
+      final byweekday = _repeat == 'monthly'
+          ? <int>[_startWeekday]
+          : _weekdays.toList();
+      if (byweekday.isEmpty) {
+        _snack(_l10n.eventFormErrWeekday);
+        return;
+      }
+      int? endsCount;
+      if (_endsMode == 'count') {
+        endsCount = int.tryParse(_endsCount.text.trim());
+        if (endsCount == null || endsCount < 1) {
+          _snack(_l10n.eventFormErrEndsCount);
+          return;
+        }
+      }
+      if (_endsMode == 'until' &&
+          (_endsOn == null || !_endsOn!.isAfter(_startsAt!))) {
+        _snack(_l10n.eventFormErrEndsOn);
+        return;
+      }
+      recurrence = {
+        'frequency': _repeat,
+        'byweekday': byweekday,
+        'chat_mode': _chatMode,
+        'ends_mode': _endsMode,
+        if (_endsMode == 'count') 'ends_count': endsCount,
+        if (_endsMode == 'until')
+          'ends_on': _endsOn!.toUtc().toIso8601String(),
+      };
+    }
+
     setState(() => _busy = true);
     final svc = ref.read(eventServiceProvider);
     try {
@@ -164,6 +210,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           location: _location.text.trim(),
           capacity: cap,
           tierGate: _tierGate(),
+          recurrence: recurrence,
         );
       }
 
@@ -274,6 +321,11 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           _label(_l10n.eventFormWhoCanJoin),
           _tierGatePicker(tiersAsync),
           const SizedBox(height: KolabingSpacing.lg),
+          if (!_isEdit) ...[
+            _label(_l10n.eventFormRepeatLabel),
+            _repeatSection(),
+            const SizedBox(height: KolabingSpacing.lg),
+          ],
           _label(_l10n.eventFormPhotos),
           _photosPicker(),
           const SizedBox(height: KolabingSpacing.xl),
@@ -295,7 +347,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2))
                   : Icon(_isEdit ? LucideIcons.check : LucideIcons.calendarPlus,
                       size: 18),
-              label: Text(_isEdit ? _l10n.eventFormSave : _l10n.eventFormPublish,
+              label: Text(
+                  _isEdit
+                      ? _l10n.eventFormSave
+                      : (_isRecurring
+                          ? _l10n.eventFormPublishSeries
+                          : _l10n.eventFormPublish),
                   style: KolabingTextStyles.bodyMedium
                       .copyWith(fontWeight: FontWeight.w700)),
             ),
@@ -349,6 +406,130 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               ],
             ),
           ),
+      ],
+    );
+  }
+
+  Widget _repeatSection() {
+    // narrowWeekdays is Sunday-first → index matches our 0=Sun..6=Sat.
+    final narrow = MaterialLocalizations.of(context).narrowWeekdays;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: KolabingSpacing.xs,
+          children: [
+            for (final opt in [
+              ('none', _l10n.eventFormRepeatNone),
+              ('weekly', _l10n.eventFormRepeatWeekly),
+              ('biweekly', _l10n.eventFormRepeatBiweekly),
+              ('monthly', _l10n.eventFormRepeatMonthly),
+            ])
+              ChoiceChip(
+                label: Text(opt.$2),
+                selected: _repeat == opt.$1,
+                onSelected: (_) => setState(() {
+                  _repeat = opt.$1;
+                  if (_repeat != 'none' && _weekdays.isEmpty) {
+                    _weekdays.add(_startWeekday);
+                  }
+                }),
+              ),
+          ],
+        ),
+        if (_repeat == 'weekly' || _repeat == 'biweekly') ...[
+          const SizedBox(height: KolabingSpacing.sm),
+          Wrap(
+            spacing: KolabingSpacing.xs,
+            children: [
+              for (var d = 0; d < 7; d++)
+                FilterChip(
+                  label: Text(narrow[d]),
+                  selected: _weekdays.contains(d),
+                  onSelected: (sel) => setState(() {
+                    if (sel) {
+                      _weekdays.add(d);
+                    } else {
+                      _weekdays.remove(d);
+                    }
+                  }),
+                ),
+            ],
+          ),
+        ],
+        if (_repeat != 'none') ...[
+          const SizedBox(height: KolabingSpacing.md),
+          _label(_l10n.eventFormRepeatEnds),
+          Wrap(
+            spacing: KolabingSpacing.xs,
+            children: [
+              for (final opt in [
+                ('never', _l10n.eventFormRepeatNever),
+                ('count', _l10n.eventFormRepeatAfter),
+                ('until', _l10n.eventFormRepeatOnDate),
+              ])
+                ChoiceChip(
+                  label: Text(opt.$2),
+                  selected: _endsMode == opt.$1,
+                  onSelected: (_) => setState(() => _endsMode = opt.$1),
+                ),
+            ],
+          ),
+          if (_endsMode == 'count') ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            Row(
+              children: [
+                SizedBox(
+                  width: 80,
+                  child: TextField(
+                    controller: _endsCount,
+                    keyboardType: TextInputType.number,
+                    decoration: _dec('8'),
+                  ),
+                ),
+                const SizedBox(width: KolabingSpacing.sm),
+                Text(_l10n.eventFormRepeatEvents,
+                    style: KolabingTextStyles.bodyMedium),
+              ],
+            ),
+          ],
+          if (_endsMode == 'until') ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            _DateField(
+              value: _endsOn,
+              hint: _l10n.eventFormRepeatOnDate,
+              onClear:
+                  _endsOn == null ? null : () => setState(() => _endsOn = null),
+              onTap: () async {
+                final now = DateTime.now();
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: _endsOn ??
+                      (_startsAt ?? now).add(const Duration(days: 28)),
+                  firstDate: _startsAt ?? now,
+                  lastDate: now.add(const Duration(days: 365 * 2)),
+                );
+                if (picked != null) setState(() => _endsOn = picked);
+              },
+            ),
+          ],
+          const SizedBox(height: KolabingSpacing.md),
+          _label(_l10n.eventFormRepeatChatLabel),
+          Wrap(
+            spacing: KolabingSpacing.xs,
+            children: [
+              for (final opt in [
+                ('per_event', _l10n.eventFormRepeatChatPerEvent),
+                ('series', _l10n.eventFormRepeatChatShared),
+              ])
+                ChoiceChip(
+                  label: Text(opt.$2),
+                  selected: _chatMode == opt.$1,
+                  onSelected: (_) => setState(() => _chatMode = opt.$1),
+                ),
+            ],
+          ),
+        ],
       ],
     );
   }

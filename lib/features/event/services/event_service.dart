@@ -421,6 +421,7 @@ class EventService {
     String? location,
     int? capacity,
     List<String>? tierGate,
+    Map<String, dynamic>? recurrence,
   }) async {
     final payload = <String, dynamic>{
       'community_id': communityId,
@@ -430,6 +431,9 @@ class EventService {
       if (location != null && location.isNotEmpty) 'location': location,
       if (capacity != null) 'capacity': capacity,
       if (tierGate != null && tierGate.isNotEmpty) 'tier_gate': tierGate,
+      // Recurring → backend builds an event_series and returns the first
+      // occurrence (carrying series_id). See EventSeriesService.
+      if (recurrence != null) 'recurrence': recurrence,
     };
     final response = await _sendWithRefresh(
       () async => _httpClient.post(
@@ -618,14 +622,21 @@ class EventService {
   // Delete Event
   // ---------------------------------------------------------------------------
 
-  /// DELETE /api/v1/events/{id}
-  /// Deletes an event. Only the owner can delete.
-  Future<void> deleteEvent(String eventId) async {
-    return _deleteEvent(eventId, allowRetry: true);
+  /// DELETE /api/v1/events/{id}[?scope=this|following|series]
+  /// Deletes an event. Only the owner/manager can delete. `scope` only matters
+  /// for events that belong to a recurring series.
+  Future<void> deleteEvent(String eventId, {String scope = 'this'}) async {
+    return _deleteEvent(eventId, scope: scope, allowRetry: true);
   }
 
-  Future<void> _deleteEvent(String eventId, {required bool allowRetry}) async {
-    final uri = Uri.parse('$_baseUrl/events/$eventId');
+  Future<void> _deleteEvent(
+    String eventId, {
+    required String scope,
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId').replace(
+      queryParameters: scope == 'this' ? null : {'scope': scope},
+    );
     debugPrint('EventService: DELETE $uri');
 
     try {
