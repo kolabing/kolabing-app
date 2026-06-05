@@ -31,23 +31,27 @@ abstract final class KolabingTextStyles {
   // ---------------------------------------------------------------------------
 
   static TextStyle get displayLarge => GoogleFonts.anton(
-        fontSize: 80,
+        fontSize: 64,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
         height: 90 / 80,
-        letterSpacing: 0.02 * 80,
+        letterSpacing: 0.02 * 64,
       );
 
   static TextStyle get displayMedium => GoogleFonts.anton(
-        fontSize: 48,
+        fontSize: 38,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
         height: 56 / 48,
-        letterSpacing: 0.01 * 48,
+        letterSpacing: 0.02 * 38,
       );
 
   static TextStyle get displaySmall => GoogleFonts.anton(
-        fontSize: 32,
+        fontSize: 26,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
         height: 40 / 32,
+        letterSpacing: 0.02 * 26,
       );
 
   // ---------------------------------------------------------------------------
@@ -55,14 +59,18 @@ abstract final class KolabingTextStyles {
   // ---------------------------------------------------------------------------
 
   static TextStyle get headlineLarge => GoogleFonts.anton(
-        fontSize: 32,
+        fontSize: 26,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
         height: 38 / 32,
+        letterSpacing: 0.02 * 26,
       );
 
   static TextStyle get headlineMedium => GoogleFonts.anton(
-        fontSize: 24,
+        fontSize: 19,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
+        letterSpacing: 0.02 * 19,
       );
 
   // ---------------------------------------------------------------------------
@@ -126,16 +134,20 @@ abstract final class KolabingTextStyles {
   // Component-specific styles (kept for explicit widget usage)
   // ---------------------------------------------------------------------------
 
-  /// Hero card title — Anton 48px. Large explore swipe cards.
+  /// Hero card title — Anton 38px. Large explore swipe cards.
   static TextStyle get cardTitleHero => GoogleFonts.anton(
-        fontSize: 48,
+        fontSize: 38,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
+        letterSpacing: 0.02 * 38,
       );
 
-  /// Standard card title — Anton 32px.
+  /// Standard card title — Anton 26px.
   static TextStyle get cardTitleLarge => GoogleFonts.anton(
-        fontSize: 32,
+        fontSize: 26,
         fontWeight: FontWeight.w400,
+        color: const Color(0xFF857E70),
+        letterSpacing: 0.02 * 26,
       );
 
   /// Button label — Hanken Grotesk 14px SemiBold, spaced.
@@ -157,17 +169,19 @@ abstract final class KolabingTextStyles {
 
   /// @deprecated Use [headlineLarge]
   static TextStyle get pageTitle => GoogleFonts.anton(
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
+        color: const Color(0xFF857E70),
+        letterSpacing: 0.02 * 18,
         height: 1.1,
       );
 
   /// @deprecated Use [headlineMedium]
   static TextStyle get pageTitleSmall => GoogleFonts.anton(
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
+        color: const Color(0xFF857E70),
+        letterSpacing: 0.02 * 14,
         height: 1.1,
       );
 
