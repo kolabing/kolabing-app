@@ -49,10 +49,10 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: KolabingColors.background,
+        systemNavigationBarColor: context.colors.background,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -128,7 +128,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
         _ => l10n.businessStep2PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: KolabingColors.error),
+        SnackBar(content: Text(message), backgroundColor: context.colors.error),
       );
     } finally {
       if (mounted) {
@@ -149,7 +149,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
           content: Text(
             AppLocalizations.of(context).businessStep2IncompleteError,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -248,7 +248,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
         _phoneError == null;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -273,7 +273,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         style: KolabingTextStyles.bodyLarge.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -283,7 +283,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       child: Text(
                         AppLocalizations.of(context).businessStep2Subtitle,
                         style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -294,18 +294,18 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: KolabingColors.softYellow,
+                          color: context.colors.softYellow,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: KolabingColors.softYellowBorder,
+                            color: context.colors.softYellowBorder,
                           ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               LucideIcons.sparkles,
                               size: 18,
-                              color: KolabingColors.primaryDark,
+                              color: context.colors.primaryDark,
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -315,7 +315,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                 ).businessStep2ImportedBanner,
                                 style: KolabingTextStyles.captionSecondary.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: KolabingColors.primaryDark,
+                                  color: context.colors.primaryDark,
                                 ),
                               ),
                             ),
@@ -373,7 +373,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     Text(
                       AppLocalizations.of(context).businessStep2BusinessTypeHint,
                       style: KolabingTextStyles.captionSecondary.copyWith(
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -400,9 +400,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                           );
                         },
                       ),
-                      loading: () => const Center(
+                      loading: () => Center(
                         child: CircularProgressIndicator(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                       error: (_, __) => Text(
@@ -410,7 +410,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                           context,
                         ).businessStep2BusinessTypesLoadError,
                         style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.error,
+                          color: context.colors.error,
                         ),
                       ),
                     ),
@@ -438,13 +438,13 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? KolabingColors.primary
-                                  : KolabingColors.surfaceVariant,
+                                  ? context.colors.primary
+                                  : context.colors.surfaceVariant,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isSelected
-                                    ? KolabingColors.primary
-                                    : KolabingColors.darkBorder,
+                                    ? context.colors.primary
+                                    : context.colors.darkBorder,
                               ),
                             ),
                             child: Row(
@@ -454,8 +454,8 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                   type.icon,
                                   size: 16,
                                   color: isSelected
-                                      ? KolabingColors.onPrimary
-                                      : KolabingColors.onSurface,
+                                      ? context.colors.onPrimary
+                                      : context.colors.onSurface,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -465,8 +465,8 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                         ? FontWeight.w700
                                         : FontWeight.w500,
                                     color: isSelected
-                                        ? KolabingColors.onPrimary
-                                        : KolabingColors.onSurface,
+                                        ? context.colors.onPrimary
+                                        : context.colors.onSurface,
                                   ),
                                 ),
                               ],
@@ -485,7 +485,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     Text(
                       AppLocalizations.of(context).businessStep2CapacityHelper,
                       style: KolabingTextStyles.captionSecondary.copyWith(
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -596,12 +596,12 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                 child: ElevatedButton(
                   onPressed: canContinue ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
+                    disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
-                    disabledForegroundColor: KolabingColors.onPrimary
+                    disabledForegroundColor: context.colors.onPrimary
                         .withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -672,19 +672,19 @@ class _VenueAddressCard extends StatelessWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
+            Icon(
               LucideIcons.mapPin,
               size: 18,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -692,7 +692,7 @@ class _VenueAddressCard extends StatelessWidget {
                 address,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
             ),
@@ -703,23 +703,23 @@ class _VenueAddressCard extends StatelessWidget {
           Text(
             city,
             style: KolabingTextStyles.captionSecondary.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
         ],
         const SizedBox(height: 12),
         TextButton.icon(
           onPressed: onChangeVenue,
-          icon: const Icon(
+          icon: Icon(
             LucideIcons.refreshCcw,
             size: 16,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
           ),
           label: Text(
             AppLocalizations.of(context).businessStep2ChangeVenue,
             style: KolabingTextStyles.captionSecondary.copyWith(
               fontWeight: FontWeight.w600,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
           ),
         ),
@@ -738,7 +738,7 @@ class _FieldLabel extends StatelessWidget {
     label,
     style: KolabingTextStyles.bodySmall.copyWith(
       fontWeight: FontWeight.w700,
-      color: KolabingColors.onSurface,
+      color: context.colors.onSurface,
     ),
   );
 }
@@ -750,37 +750,37 @@ InputDecoration _inputDecoration({
 }) => InputDecoration(
   hintText: hint,
   hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-    color: KolabingColors.textTertiary,
+    color: context.colors.textTertiary,
   ),
   prefixIcon: prefixIcon == null
       ? null
-      : Icon(prefixIcon, size: 20, color: KolabingColors.textTertiary),
+      : Icon(prefixIcon, size: 20, color: context.colors.textTertiary),
   errorText: errorText,
   errorStyle: KolabingTextStyles.bodySmall.copyWith(
     fontSize: 12,
     fontWeight: FontWeight.w500,
-    color: KolabingColors.error,
+    color: context.colors.error,
   ),
   filled: true,
-  fillColor: KolabingColors.surfaceVariant,
+  fillColor: context.colors.surfaceVariant,
   border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    borderSide: BorderSide(color: context.colors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    borderSide: BorderSide(color: context.colors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.primary, width: 1.5),
+    borderSide: BorderSide(color: context.colors.primary, width: 1.5),
   ),
   errorBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.error),
+    borderSide: BorderSide(color: context.colors.error),
   ),
   focusedErrorBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: KolabingColors.error, width: 1.5),
+    borderSide: BorderSide(color: context.colors.error, width: 1.5),
   ),
 );

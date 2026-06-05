@@ -142,7 +142,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(
             widget.isEditing ? l10n.tierEditorEditTitle : l10n.tierEditorNewTitle),
@@ -229,16 +229,16 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
             FilledButton(
               onPressed: _busy ? null : _save,
               style: FilledButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 minimumSize: const Size.fromHeight(52),
               ),
               child: _busy
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: KolabingColors.onSurface),
+                          strokeWidth: 2, color: context.colors.onSurface),
                     )
                   : Text(widget.isEditing
                       ? l10n.tierEditorSave
@@ -263,7 +263,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
     try {
       c = Color(int.parse(hex.replaceFirst('#', '0xff')));
     } catch (_) {
-      c = KolabingColors.primary;
+      c = context.colors.primary;
     }
     return GestureDetector(
       onTap: () => setState(() => _color = selected ? null : hex),
@@ -274,12 +274,12 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
           color: c,
           shape: BoxShape.circle,
           border: Border.all(
-            color: selected ? KolabingColors.onSurface : KolabingColors.outlineVariant,
+            color: selected ? context.colors.onSurface : context.colors.outlineVariant,
             width: selected ? 2.5 : 1,
           ),
         ),
         child: selected
-            ? const Icon(Icons.check, size: 18, color: KolabingColors.onSurface)
+            ? Icon(Icons.check, size: 18, color: context.colors.onSurface)
             : null,
       ),
     );

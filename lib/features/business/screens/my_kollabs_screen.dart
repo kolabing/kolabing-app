@@ -89,8 +89,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
-              ? KolabingColors.success
-              : KolabingColors.error,
+              ? context.colors.success
+              : context.colors.error,
         ),
       );
     }
@@ -109,8 +109,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
-              ? KolabingColors.success
-              : KolabingColors.error,
+              ? context.colors.success
+              : context.colors.error,
         ),
       );
     }
@@ -129,7 +129,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(AppLocalizations.of(context).myKolabsDelete),
           ),
         ],
@@ -151,8 +151,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
             ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: success
-                ? KolabingColors.success
-                : KolabingColors.error,
+                ? context.colors.success
+                : context.colors.error,
           ),
         );
       }
@@ -210,8 +210,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
+          ? context.colors.surface
+          : context.colors.background,
       body: SafeArea(child: body),
     );
   }
@@ -229,13 +229,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         Text(
           AppLocalizations.of(context).myKolabsTitle,
           style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: isDark
-                ? KolabingColors.textOnDark
-                : KolabingColors.onSurface, letterSpacing: 1.2),
+                ? context.colors.textOnDark
+                : context.colors.onSurface, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           AppLocalizations.of(context).myKolabsSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ],
     ),
@@ -265,26 +265,26 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? KolabingColors.primary
+                      ? context.colors.primary
                       : isDark
-                      ? KolabingColors.darkSurface
-                      : KolabingColors.surface,
+                      ? context.colors.darkSurface
+                      : context.colors.surface,
                   borderRadius: KolabingRadius.borderRadiusRound,
                   border: Border.all(
                     color: isSelected
-                        ? KolabingColors.primary
+                        ? context.colors.primary
                         : isDark
-                        ? KolabingColors.darkBorder
-                        : KolabingColors.darkBorder,
+                        ? context.colors.darkBorder
+                        : context.colors.darkBorder,
                   ),
                 ),
                 child: Text(
                   _statusTabLabel(context, tab),
                   style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
-                        ? KolabingColors.onPrimary
+                        ? context.colors.onPrimary
                         : isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface),
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface),
                 ),
               ),
             ),
@@ -305,13 +305,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         child: Text(
           AppLocalizations.of(context).myKolabsCount(listState.total),
           style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: isDark
-                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                : KolabingColors.textTertiary),
+                ? context.colors.textOnDark.withValues(alpha: 0.5)
+                : context.colors.textTertiary),
         ),
       ),
       Expanded(
         child: RefreshIndicator(
-          color: KolabingColors.primary,
+          color: context.colors.primary,
           onRefresh: () async {
             await ref.read(myKolabsProvider.notifier).refresh();
           },
@@ -329,11 +329,11 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                 const SizedBox(height: KolabingSpacing.sm),
             itemBuilder: (context, index) {
               if (index >= listState.kolabs.length) {
-                return const Center(
+                return Center(
                   child: Padding(
                     padding: EdgeInsets.all(KolabingSpacing.md),
                     child: CircularProgressIndicator(
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                       strokeWidth: 2,
                     ),
                   ),
@@ -365,17 +365,17 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
           child: Shimmer.fromColors(
             baseColor: isDark
-                ? KolabingColors.darkSurface
-                : KolabingColors.surfaceVariant,
+                ? context.colors.darkSurface
+                : context.colors.surfaceVariant,
             highlightColor: isDark
-                ? KolabingColors.darkBorder
-                : KolabingColors.surface,
+                ? context.colors.darkBorder
+                : context.colors.surface,
             child: Container(
               height: 120,
               decoration: BoxDecoration(
                 color: isDark
-                    ? KolabingColors.darkSurface
-                    : KolabingColors.surface,
+                    ? context.colors.darkSurface
+                    : context.colors.surface,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),
@@ -394,8 +394,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           DecoratedBox(
             decoration: BoxDecoration(
               color: isDark
-                  ? KolabingColors.darkSurface
-                  : KolabingColors.surfaceVariant,
+                  ? context.colors.darkSurface
+                  : context.colors.surfaceVariant,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -405,8 +405,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
                 LucideIcons.briefcase,
                 size: 36,
                 color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                    : KolabingColors.textTertiary,
+                    ? context.colors.textOnDark.withValues(alpha: 0.5)
+                    : context.colors.textTertiary,
               ),
             ),
           ),
@@ -414,13 +414,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           Text(
             AppLocalizations.of(context).myKolabsEmptyTitle,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface),
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             AppLocalizations.of(context).myKolabsEmptyMessage,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -434,9 +434,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const DecoratedBox(
+          DecoratedBox(
             decoration: BoxDecoration(
-              color: KolabingColors.errorBg,
+              color: context.colors.errorBg,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -445,7 +445,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
               child: Icon(
                 LucideIcons.alertCircle,
                 size: 36,
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
             ),
           ),
@@ -453,13 +453,13 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
           Text(
             AppLocalizations.of(context).myKolabsSomethingWrong,
             style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface),
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -470,8 +470,8 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
             icon: const Icon(LucideIcons.rotateCcw, size: 16),
             label: Text(AppLocalizations.of(context).myKolabsTryAgain),
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
             ),
           ),
         ],

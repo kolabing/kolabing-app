@@ -62,7 +62,7 @@ class _CommunityDashboardScreenState
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
-        color: KolabingColors.primary,
+        color: context.colors.primary,
         child: _buildBody(dashboardState, userName, isDark),
       ),
     );
@@ -138,14 +138,14 @@ class _CommunityDashboardScreenState
                 AppLocalizations.of(context).dashboardCommunityTitle,
                 style: KolabingTextStyles.headlineLarge.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 AppLocalizations.of(context).dashboardWelcomeBack(userName),
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               ),
             ],
           ),
@@ -199,7 +199,7 @@ class _CommunityDashboardScreenState
                 icon: LucideIcons.users,
                 iconSlug: UiIconSlug.target,
                 iconVariant: UiIconVariant.expressive,
-                accentColor: KolabingColors.info,
+                accentColor: context.colors.info,
                 index: 2,
               ),
             ),
@@ -238,8 +238,8 @@ class _CommunityDashboardScreenState
                 widget.onSwitchTab?.call(1);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -265,12 +265,12 @@ class _CommunityDashboardScreenState
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
                 side: BorderSide(
                   color: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.darkBorder,
+                      ? context.colors.darkBorder
+                      : context.colors.darkBorder,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -333,15 +333,15 @@ class _CommunityDashboardScreenState
             icon: UiIconSlug.calendar,
             size: 40,
             color: isDark
-                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                : KolabingColors.textTertiary,
+                ? context.colors.textOnDark.withValues(alpha: 0.5)
+                : context.colors.textTertiary,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             AppLocalizations.of(context).dashboardNoUpcomingKolabs,
             style: KolabingTextStyles.bodySmall.copyWith(color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                  : KolabingColors.textTertiary),
+                  ? context.colors.textOnDark.withValues(alpha: 0.5)
+                  : context.colors.textTertiary),
           ),
         ],
       ),
@@ -362,12 +362,12 @@ class _CommunityDashboardScreenState
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               message,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -383,8 +383,8 @@ class _CommunityDashboardScreenState
                   style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

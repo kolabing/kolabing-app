@@ -19,7 +19,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(notificationSettingsProvider);
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(title: Text(l10n.notifSettingsTitle)),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -32,7 +32,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                 Text(e.toString().replaceFirst('Exception: ', ''),
                     textAlign: TextAlign.center,
                     style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant)),
+                        .copyWith(color: context.colors.onSurfaceVariant)),
                 const SizedBox(height: KolabingSpacing.lg),
                 OutlinedButton(
                   onPressed: () =>

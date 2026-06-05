@@ -64,12 +64,12 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           // Section header
           Text(
             l10n.eventDetailsHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.eventDetailsSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -83,28 +83,28 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                 ref.read(kolabFormProvider.notifier).updateTitle(value),
             // C1: dismiss keyboard on tap-outside so the bottom action bar is reachable.
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
             decoration: InputDecoration(
               hintText: l10n.eventDetailsTitleHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
               filled: true,
-              fillColor: KolabingColors.surface,
+              fillColor: context.colors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
                 borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
+                    BorderSide(color: context.colors.primary, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.error),
+                borderSide: BorderSide(color: context.colors.error),
               ),
               errorText: state.fieldErrors['title'],
             ),
@@ -122,28 +122,28 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
             onChanged: (value) =>
                 ref.read(kolabFormProvider.notifier).updateDescription(value),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
             decoration: InputDecoration(
               hintText: l10n.eventDetailsDescriptionHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
               filled: true,
-              fillColor: KolabingColors.surface,
+              fillColor: context.colors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
                 borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
+                    BorderSide(color: context.colors.primary, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.error),
+                borderSide: BorderSide(color: context.colors.error),
               ),
               errorText: state.fieldErrors['description'],
             ),
@@ -154,7 +154,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           // "What you offer in return" section header
           Text(
             l10n.eventDetailsOffersHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           if (state.fieldErrors['offers_in_return'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
@@ -176,13 +176,13 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                   padding: const EdgeInsets.all(KolabingSpacing.sm),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? KolabingColors.softYellow
-                        : KolabingColors.surface,
+                        ? context.colors.softYellow
+                        : context.colors.surface,
                     borderRadius: KolabingRadius.borderRadiusMd,
                     border: Border.all(
                       color: isSelected
-                          ? KolabingColors.primary
-                          : KolabingColors.darkBorder,
+                          ? context.colors.primary
+                          : context.colors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -195,21 +195,21 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                         height: 24,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? KolabingColors.primary
+                              ? context.colors.primary
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
                             color: isSelected
-                                ? KolabingColors.primary
-                                : KolabingColors.darkBorder,
+                                ? context.colors.primary
+                                : context.colors.darkBorder,
                             width: 2,
                           ),
                         ),
                         child: isSelected
-                            ? const Icon(
+                            ? Icon(
                                 Icons.check,
                                 size: 16,
-                                color: KolabingColors.onPrimary,
+                                color: context.colors.onPrimary,
                               )
                             : null,
                       ),
@@ -220,12 +220,12 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                           children: [
                             Text(
                               deliverable.displayName,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               deliverable.subtitle,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -243,7 +243,7 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
 
   Widget _buildLabel(String label) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
       );
 
   Widget _buildFieldError(String error) => Container(
@@ -252,21 +252,21 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           vertical: KolabingSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
+          color: context.colors.errorBg,
           borderRadius: KolabingRadius.borderRadiusSm,
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 14,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Expanded(
               child: Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
               ),
             ),
           ],

@@ -93,14 +93,14 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         : l10n.profileReviewsTitle;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.surface,
-        foregroundColor: KolabingColors.onSurface,
+        backgroundColor: context.colors.surface,
+        foregroundColor: context.colors.onSurface,
         elevation: 0,
         title: Text(
           title,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
         ),
       ),
       body: _buildBody(context),
@@ -121,7 +121,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
             Text(
               l10n.profileReviewsLoadError,
               style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -136,7 +136,7 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         child: Text(
           l10n.profileReviewsEmpty,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       );
@@ -183,9 +183,9 @@ class _ProfileReviewListCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,12 +200,12 @@ class _ProfileReviewListCard extends StatelessWidget {
                 children: [
                   Text(
                     review.reviewer.displayName,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   ),
                   Text(
                     _formatReviewDate(review.createdAt),
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ],
@@ -222,7 +222,7 @@ class _ProfileReviewListCard extends StatelessWidget {
                   ? Icons.star_rounded
                   : Icons.star_border_rounded,
               size: 18,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
           ),
         ),
@@ -231,7 +231,7 @@ class _ProfileReviewListCard extends StatelessWidget {
           Text(
             review.body!,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
               height: 1.5,
             ),
           ),
@@ -255,10 +255,10 @@ class _ReviewAvatar extends StatelessWidget {
 
     return CircleAvatar(
       radius: 20,
-      backgroundColor: KolabingColors.primary.withValues(alpha: 0.12),
+      backgroundColor: context.colors.primary.withValues(alpha: 0.12),
       child: Text(
         reviewer.initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
       ),
     );
   }

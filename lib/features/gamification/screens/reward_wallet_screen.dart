@@ -30,8 +30,8 @@ class RewardWalletScreen extends ConsumerWidget {
       ),
       body: rewardsAsync.when(
         data: (response) => _buildContent(context, ref, response.rewards),
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: KolabingColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (error, stack) => _buildErrorState(
           context,
@@ -55,7 +55,7 @@ class RewardWalletScreen extends ConsumerWidget {
       onRefresh: () async {
         ref.invalidate(myRewardsProvider);
       },
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: ListView.separated(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         itemCount: rewards.length,
@@ -82,17 +82,17 @@ class RewardWalletScreen extends ConsumerWidget {
               icon: UiIconSlug.gift,
               size: 80,
               variant: UiIconVariant.expressive,
-              color: KolabingColors.textTertiary.withValues(alpha: 0.5),
+              color: context.colors.textTertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               AppLocalizations.of(context).rewardWalletEmptyTitle,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               AppLocalizations.of(context).rewardWalletEmptyBody,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -111,17 +111,17 @@ class RewardWalletScreen extends ConsumerWidget {
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error.withValues(alpha: 0.7),
+              color: context.colors.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).rewardWalletErrorTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -130,7 +130,7 @@ class RewardWalletScreen extends ConsumerWidget {
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).commonTryAgain),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
+                foregroundColor: context.colors.primary,
               ),
             ),
           ],

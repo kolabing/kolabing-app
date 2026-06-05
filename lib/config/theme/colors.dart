@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+// Re-export the runtime token extension so every file that imports colors.dart
+// (i.e. every former KolabingColors consumer) can resolve `context.colors.xxx`
+// without an extra import after the night-mode migration.
+export 'color_tokens.dart';
+
 /// Kolabing design system colors — Atmospheric Editorial
 ///
 /// Palette: warm parchment surfaces, muted yellow CTA, ink-black text,

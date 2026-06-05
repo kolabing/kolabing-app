@@ -39,11 +39,11 @@ class PointsBadge extends StatelessWidget {
     }
 
     final bgColor = isEarned
-        ? KolabingColors.primary
-        : KolabingColors.primary.withValues(alpha: 0.15);
+        ? context.colors.primary
+        : context.colors.primary.withValues(alpha: 0.15);
     final textColor = isEarned
-        ? KolabingColors.onPrimary
-        : KolabingColors.primary;
+        ? context.colors.onPrimary
+        : context.colors.primary;
 
     return Container(
       padding: padding,

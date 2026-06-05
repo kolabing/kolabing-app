@@ -26,7 +26,7 @@ class PublicGallerySection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -43,23 +43,23 @@ class PublicGallerySection extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.image,
                 size: 20,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'Gallery',
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 '${photos.length}',
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
@@ -88,11 +88,11 @@ class PublicGallerySection extends StatelessWidget {
                   borderRadius: KolabingRadius.borderRadiusSm,
                   child: photo.url.isEmpty
                       ? Container(
-                          color: KolabingColors.surfaceVariant,
-                          child: const Icon(
+                          color: context.colors.surfaceVariant,
+                          child: Icon(
                             LucideIcons.imageOff,
                             size: 24,
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                         )
                       : Image.network(
@@ -101,25 +101,25 @@ class PublicGallerySection extends StatelessWidget {
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
-                              color: KolabingColors.surfaceVariant,
-                              child: const Center(
+                              color: context.colors.surfaceVariant,
+                              child: Center(
                                 child: SizedBox(
                                   width: 16,
                                   height: 16,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: KolabingColors.primary,
+                                    color: context.colors.primary,
                                   ),
                                 ),
                               ),
                             );
                           },
                           errorBuilder: (_, __, ___) => Container(
-                            color: KolabingColors.surfaceVariant,
-                            child: const Icon(
+                            color: context.colors.surfaceVariant,
+                            child: Icon(
                               LucideIcons.imageOff,
                               size: 24,
-                              color: KolabingColors.textTertiary,
+                              color: context.colors.textTertiary,
                             ),
                           ),
                         ),

@@ -105,14 +105,14 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         appBar: AppBar(
-          backgroundColor: KolabingColors.surface,
+          backgroundColor: context.colors.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               LucideIcons.arrowLeft,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             onPressed: () {
               if (formState.isSubmitting || formState.isPublishing) return;
@@ -125,7 +125,7 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
           ),
           title: Text(
             _getTitle(l10n, intentType),
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
           ),
           centerTitle: true,
         ),
@@ -159,21 +159,21 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                   ),
                   padding: const EdgeInsets.all(KolabingSpacing.sm),
                   decoration: BoxDecoration(
-                    color: KolabingColors.error.withValues(alpha: 0.1),
+                    color: context.colors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.alertCircle,
-                        color: KolabingColors.error,
+                        color: context.colors.error,
                         size: 18,
                       ),
                       const SizedBox(width: KolabingSpacing.xs),
                       Expanded(
                         child: Text(
                           formState.error!,
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.error),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.error),
                         ),
                       ),
                     ],
@@ -297,8 +297,8 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
             Container(
               width: 64,
               height: 64,
-              decoration: const BoxDecoration(
-                color: KolabingColors.success,
+              decoration: BoxDecoration(
+                color: context.colors.success,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -312,14 +312,14 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
               wasPublished
                   ? l10n.kolabFlowPublishedTitle
                   : l10n.kolabFlowDraftSavedTitle,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               wasPublished
                   ? l10n.kolabFlowPublishedMessage
                   : l10n.kolabFlowDraftSavedMessage,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -340,8 +340,8 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                 if (context.canPop()) context.pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

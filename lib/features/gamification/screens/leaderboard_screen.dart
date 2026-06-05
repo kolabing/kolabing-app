@@ -66,8 +66,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
       ),
       body: leaderboardAsync.when(
         data: (response) => _buildContent(context, response),
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: KolabingColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (error, stack) => _buildErrorState(context, error.toString()),
       ),
@@ -93,7 +93,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
           ref.invalidate(globalLeaderboardProvider);
         }
       },
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: CustomScrollView(
         slivers: [
           // Podium
@@ -115,7 +115,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).leaderboardScreenRankings,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -145,8 +145,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            KolabingColors.primary,
-            KolabingColors.primary.withValues(alpha: 0.8),
+            context.colors.primary,
+            context.colors.primary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -154,7 +154,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -175,7 +175,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 '#${myRank.rank}',
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
             ),
@@ -189,7 +189,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               children: [
                 Text(
                   AppLocalizations.of(context).leaderboardScreenYourRanking,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -197,7 +197,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   myRank.displayName,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.onPrimary,
+                    color: context.colors.onPrimary,
                   ),
                 ),
               ],
@@ -213,12 +213,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
               Text(
                 AppLocalizations.of(context).leaderboardScreenPoints,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onPrimary.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -238,17 +238,17 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             Icon(
               LucideIcons.trophy,
               size: 80,
-              color: KolabingColors.textTertiary.withValues(alpha: 0.5),
+              color: context.colors.textTertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               AppLocalizations.of(context).leaderboardScreenNoRankings,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               AppLocalizations.of(context).leaderboardScreenNoRankingsHint,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -267,18 +267,18 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error.withValues(alpha: 0.7),
+              color: context.colors.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).leaderboardScreenFailedToLoad,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -296,7 +296,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
+                foregroundColor: context.colors.primary,
               ),
             ),
           ],

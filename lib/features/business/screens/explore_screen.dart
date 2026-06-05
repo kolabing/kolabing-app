@@ -158,7 +158,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         (authUser?.subscription?.isActive ?? false);
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -217,12 +217,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   vertical: KolabingSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: KolabingColors.surface,
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(KolabingRadius.round),
                   border: Border.all(
                     color: hasFilters
-                        ? KolabingColors.primary
-                        : KolabingColors.darkBorder,
+                        ? context.colors.primary
+                        : context.colors.darkBorder,
                   ),
                 ),
                 child: Row(
@@ -231,16 +231,16 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       hasFilters ? LucideIcons.filterX : LucideIcons.search,
                       size: 16,
                       color: hasFilters
-                          ? KolabingColors.primary
-                          : KolabingColors.textTertiary,
+                          ? context.colors.primary
+                          : context.colors.textTertiary,
                     ),
                     const SizedBox(width: KolabingSpacing.xs),
                     Expanded(
                       child: Text(
                         filterLabel,
                         style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: hasFilters
-                              ? KolabingColors.onSurface
-                              : KolabingColors.textTertiary),
+                              ? context.colors.onSurface
+                              : context.colors.textTertiary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -320,9 +320,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       itemCount: itemCount,
       itemBuilder: (BuildContext context, int index) {
         if (index >= activeItems.length) {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(
-              color: KolabingColors.primary,
+              color: context.colors.primary,
               strokeWidth: 2,
             ),
           );
@@ -354,11 +354,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     child: ClipRRect(
       borderRadius: BorderRadius.circular(KolabingRadius.xl),
       child: Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
+        baseColor: context.colors.surfaceVariant,
+        highlightColor: context.colors.surface,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: KolabingColors.surfaceVariant,
+            color: context.colors.surfaceVariant,
             borderRadius: BorderRadius.circular(KolabingRadius.xl),
           ),
           child: Stack(
@@ -374,7 +374,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: 120,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: KolabingColors.darkBorder,
+                        color: context.colors.darkBorder,
                         borderRadius: BorderRadius.circular(
                           KolabingRadius.round,
                         ),
@@ -385,7 +385,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: 220,
                       height: 22,
                       decoration: BoxDecoration(
-                        color: KolabingColors.darkBorder,
+                        color: context.colors.darkBorder,
                         borderRadius: KolabingRadius.borderRadiusSm,
                       ),
                     ),
@@ -401,7 +401,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                             width: 72,
                             height: 22,
                             decoration: BoxDecoration(
-                              color: KolabingColors.darkBorder,
+                              color: context.colors.darkBorder,
                               borderRadius: BorderRadius.circular(
                                 KolabingRadius.round,
                               ),
@@ -415,7 +415,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: double.infinity,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: KolabingColors.darkBorder,
+                        color: context.colors.darkBorder,
                         borderRadius: KolabingRadius.borderRadiusSm,
                       ),
                     ),
@@ -424,7 +424,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       width: 180,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: KolabingColors.darkBorder,
+                        color: context.colors.darkBorder,
                         borderRadius: KolabingRadius.borderRadiusSm,
                       ),
                     ),
@@ -449,8 +449,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             DecoratedBox(
-              decoration: const BoxDecoration(
-                color: KolabingColors.surfaceVariant,
+              decoration: BoxDecoration(
+                color: context.colors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
               child: SizedBox(
@@ -461,7 +461,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       ? LucideIcons.searchX
                       : LucideIcons.sparkles,
                   size: 36,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ),
@@ -472,7 +472,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? AppLocalizations.of(context).exploreEmptyNoRecommended
                   : AppLocalizations.of(context).exploreEmptyNoOpportunities,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -483,7 +483,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : AppLocalizations.of(
                       context,
                     ).exploreEmptyNoOpportunitiesHint,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             if (filters.hasActiveFilters) ...[
@@ -495,7 +495,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 icon: const Icon(LucideIcons.rotateCcw, size: 16),
                 label: Text(AppLocalizations.of(context).exploreClearFilters),
                 style: TextButton.styleFrom(
-                  foregroundColor: KolabingColors.primary,
+                  foregroundColor: context.colors.primary,
                 ),
               ),
             ],
@@ -512,9 +512,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const DecoratedBox(
+          DecoratedBox(
             decoration: BoxDecoration(
-              color: KolabingColors.errorBg,
+              color: context.colors.errorBg,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -523,19 +523,19 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               child: Icon(
                 LucideIcons.alertCircle,
                 size: 36,
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).exploreSomethingWrong,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -564,9 +564,9 @@ class _FeedToggle extends StatelessWidget {
     child: Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Row(
         children: [
@@ -608,15 +608,15 @@ class _FeedSegment extends StatelessWidget {
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: isSelected ? KolabingColors.primary : Colors.transparent,
+        color: isSelected ? context.colors.primary : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
       ),
       alignment: Alignment.center,
       child: Text(
         label,
         style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: isSelected
-              ? KolabingColors.onPrimary
-              : KolabingColors.onSurfaceVariant),
+              ? context.colors.onPrimary
+              : context.colors.onSurfaceVariant),
       ),
     ),
   );

@@ -98,7 +98,7 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.surface : KolabingColors.background,
+          isDark ? context.colors.surface : context.colors.background,
       appBar: const KolabingAppBar(),
       body: IndexedStack(
         // Nav indices: Home 0, Communities 1, Chats 2, Scan 3 (modal, no child).

@@ -63,20 +63,20 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         isBusiness && !profileState.isSubscribed;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.surface,
+        backgroundColor: context.colors.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             LucideIcons.arrowLeft,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           l10n.intentSelectionAppBarTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
       ),
@@ -108,14 +108,14 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       isCommunity
                           ? l10n.intentSelectionCommunityTitle
                           : l10n.intentSelectionBusinessTitle,
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       isCommunity
                           ? l10n.intentSelectionCommunitySubtitle
                           : l10n.intentSelectionBusinessSubtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                     ),
                     const SizedBox(height: KolabingSpacing.xl),
                     if (isCommunity) ...[
@@ -124,7 +124,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                         title: l10n.intentSelectionFindVenueTitle,
                         subtitle: l10n.intentSelectionFindVenueSubtitle,
                         badge: l10n.intentSelectionBadgeFree,
-                        badgeColor: KolabingColors.success,
+                        badgeColor: context.colors.success,
                         onTap: () {
                           ref
                               .read(kolabFormProvider.notifier)
@@ -166,22 +166,22 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.alertCircle,
                         size: 40,
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
                         profileState.error ?? l10n.intentSelectionProfileLoadError,
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         l10n.intentSelectionProfileLoadErrorHint,
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                       ),
                       const SizedBox(height: KolabingSpacing.lg),
                       ElevatedButton(
@@ -216,27 +216,27 @@ class _LockedBusinessCreateState extends StatelessWidget {
           Container(
             width: 72,
             height: 72,
-            decoration: const BoxDecoration(
-              color: KolabingColors.softYellow,
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.crown,
               size: 34,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             l10n.intentSelectionLockedTitle,
             textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             l10n.intentSelectionLockedSubtitle,
             textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
           ),
           const SizedBox(height: KolabingSpacing.xl),
           SizedBox(
@@ -277,9 +277,9 @@ class _IntentOption extends StatelessWidget {
     child: Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Row(
         children: [
@@ -287,10 +287,10 @@ class _IntentOption extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: KolabingRadius.borderRadiusMd,
             ),
-            child: Icon(icon, color: KolabingColors.onSurface, size: 24),
+            child: Icon(icon, color: context.colors.onSurface, size: 24),
           ),
           const SizedBox(width: KolabingSpacing.md),
           Expanded(
@@ -299,12 +299,12 @@ class _IntentOption extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                 ),
                 if (badge != null) ...[
                   const SizedBox(height: KolabingSpacing.xs),
@@ -314,23 +314,23 @@ class _IntentOption extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: (badgeColor ?? KolabingColors.primary).withValues(
+                      color: (badgeColor ?? context.colors.primary).withValues(
                         alpha: 0.2,
                       ),
                       borderRadius: KolabingRadius.borderRadiusSm,
                     ),
                     child: Text(
                       badge!,
-                      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 0.5),
+                      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 0.5),
                     ),
                   ),
                 ],
               ],
             ),
           ),
-          const Icon(
+          Icon(
             LucideIcons.chevronRight,
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
             size: 20,
           ),
         ],

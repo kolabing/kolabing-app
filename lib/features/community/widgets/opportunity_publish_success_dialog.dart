@@ -39,13 +39,13 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: KolabingColors.success.withValues(alpha: 0.1),
+              color: context.colors.success.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.checkCircle,
               size: 48,
-              color: KolabingColors.success,
+              color: context.colors.success,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -53,14 +53,14 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
             isDraft
                 ? l10n.opportunityPublishSuccessDraftTitle
                 : l10n.opportunityPublishSuccessPublishedTitle,
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             isDraft
                 ? l10n.opportunityPublishSuccessDraftBody
                 : l10n.opportunityPublishSuccessPublishedBody,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -79,8 +79,8 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
           child: ElevatedButton(
             onPressed: onViewOpportunities,
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,

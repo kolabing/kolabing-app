@@ -232,7 +232,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style:
-                  TextButton.styleFrom(foregroundColor: KolabingColors.error),
+                  TextButton.styleFrom(foregroundColor: context.colors.error),
               child: Text(dialogL10n.myOpportunitiesDeleteConfirm),
             ),
           ],
@@ -263,8 +263,8 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         content: Text(message),
         behavior: SnackBarBehavior.floating,
         backgroundColor: isSuccess
-            ? KolabingColors.success
-            : KolabingColors.error,
+            ? context.colors.success
+            : context.colors.error,
       ),
     );
   }
@@ -313,7 +313,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     }
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(child: body),
       floatingActionButton: KolabingFAB(
         onPressed: _onCreateNew,
@@ -338,13 +338,13 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         Text(
           l10n.myOpportunitiesHeaderTitle,
           style: KolabingTextStyles.pageTitle.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.myOpportunitiesHeaderSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ],
     ),
@@ -378,20 +378,20 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.surface,
+                      ? context.colors.primary
+                      : context.colors.surface,
                   borderRadius: KolabingRadius.borderRadiusRound,
                   border: Border.all(
                     color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.darkBorder,
+                        ? context.colors.primary
+                        : context.colors.darkBorder,
                   ),
                 ),
                 child: Text(
                   _statusTabLabel(l10n, tab.value),
                   style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.onSurface),
+                        ? context.colors.onPrimary
+                        : context.colors.onSurface),
                 ),
               ),
             ),
@@ -412,12 +412,12 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         ),
         child: Text(
           AppLocalizations.of(context).myOpportunitiesCount(listState.total),
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
+          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: context.colors.textTertiary),
         ),
       ),
       Expanded(
         child: RefreshIndicator(
-          color: KolabingColors.primary,
+          color: context.colors.primary,
           onRefresh: () async {
             await ref.read(myOpportunitiesProvider.notifier).refresh();
           },
@@ -436,11 +436,11 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
                 const SizedBox(height: KolabingSpacing.sm),
             itemBuilder: (context, index) {
               if (index >= listState.opportunities.length) {
-                return const Center(
+                return Center(
                   child: Padding(
                     padding: EdgeInsets.all(KolabingSpacing.md),
                     child: CircularProgressIndicator(
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                       strokeWidth: 2,
                     ),
                   ),
@@ -482,12 +482,12 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
         (index) => Padding(
           padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
           child: Shimmer.fromColors(
-            baseColor: KolabingColors.surfaceVariant,
-            highlightColor: KolabingColors.surface,
+            baseColor: context.colors.surfaceVariant,
+            highlightColor: context.colors.surface,
             child: Container(
               height: 120,
               decoration: BoxDecoration(
-                color: KolabingColors.surface,
+                color: context.colors.surface,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),
@@ -505,9 +505,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const DecoratedBox(
+          DecoratedBox(
             decoration: BoxDecoration(
-              color: KolabingColors.surfaceVariant,
+              color: context.colors.surfaceVariant,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -516,19 +516,19 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
               child: Icon(
                 LucideIcons.star,
                 size: 36,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             l10n.myOpportunitiesEmptyTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.myOpportunitiesEmptyBody,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -537,8 +537,8 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
             icon: const Icon(LucideIcons.plus, size: 18),
             label: Text(l10n.myOpportunitiesEmptyCreateButton),
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
             ),
           ),
         ],
@@ -555,9 +555,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const DecoratedBox(
+          DecoratedBox(
             decoration: BoxDecoration(
-              color: KolabingColors.errorBg,
+              color: context.colors.errorBg,
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -566,19 +566,19 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
               child: Icon(
                 LucideIcons.alertCircle,
                 size: 36,
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             l10n.myOpportunitiesErrorTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -587,8 +587,8 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
               ref.read(myOpportunitiesProvider.notifier).refresh();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
             ),
             child: Text(l10n.commonRetry),
           ),

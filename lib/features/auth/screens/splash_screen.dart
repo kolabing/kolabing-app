@@ -67,10 +67,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   void _configureSystemUI() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: KolabingColors.primary,
+        systemNavigationBarColor: context.colors.primary,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -146,7 +146,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: false,
     child: Scaffold(
-      backgroundColor: KolabingColors.primary,
+      backgroundColor: context.colors.primary,
       body: AnimatedBuilder(
         animation: Listenable.merge([_entryController, _exitController]),
         builder: (context, child) => Opacity(

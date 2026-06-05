@@ -55,7 +55,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     final l10n = AppLocalizations.of(context);
     final c = _community;
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(c.name),
         bottom: TabBar(
@@ -105,16 +105,16 @@ class _Header extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
-      color: KolabingColors.surfaceContainerLow,
+      color: context.colors.surfaceContainerLow,
       child: Row(
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+            backgroundColor: context.colors.primary.withValues(alpha: 0.2),
             backgroundImage:
                 c.avatarUrl != null ? NetworkImage(c.avatarUrl!) : null,
             child: c.avatarUrl == null
-                ? const Icon(LucideIcons.flag, color: KolabingColors.onSurface)
+                ? Icon(LucideIcons.flag, color: context.colors.onSurface)
                 : null,
           ),
           const SizedBox(width: KolabingSpacing.md),
@@ -132,7 +132,7 @@ class _Header extends StatelessWidget {
                   AppLocalizations.of(context).communityDetailTypeAndMembers(
                       c.type.displayName, c.memberCount ?? 0),
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                      .copyWith(color: context.colors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -196,13 +196,13 @@ class _ThreadTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+        backgroundColor: context.colors.primary.withValues(alpha: 0.2),
         child: Icon(
           thread.type == ChatThreadType.event
               ? LucideIcons.calendar
               : LucideIcons.messageCircle,
           size: 18,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
       title: Text(
@@ -217,14 +217,14 @@ class _ThreadTile extends StatelessWidget {
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
-                color: KolabingColors.primary,
+                color: context.colors.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text('${thread.unreadCount}',
                   style: KolabingTextStyles.bodySmall.copyWith(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.onPrimary)),
+                      color: context.colors.onPrimary)),
             )
           : null,
       onTap: () => Navigator.of(context).push<void>(
@@ -301,21 +301,21 @@ class _EventTile extends StatelessWidget {
     // Tier-gated: a member whose tier is not permitted cannot even open the
     // details. Show a lock and a one-line reason instead of navigating.
     final locked = !event.canAccess;
-    final muted = KolabingColors.onSurfaceVariant;
+    final muted = context.colors.onSurfaceVariant;
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: locked
             ? muted.withValues(alpha: 0.15)
-            : KolabingColors.primary.withValues(alpha: 0.2),
+            : context.colors.primary.withValues(alpha: 0.2),
         child: Icon(locked ? LucideIcons.lock : LucideIcons.calendar,
-            size: 18, color: locked ? muted : KolabingColors.onSurface),
+            size: 18, color: locked ? muted : context.colors.onSurface),
       ),
       title: Text(event.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: KolabingTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: locked ? muted : KolabingColors.onSurface)),
+              color: locked ? muted : context.colors.onSurface)),
       subtitle: Text(
           locked
               ? l10n.communityDetailEventLockedSubtitle
@@ -354,8 +354,8 @@ class _MembersTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(LucideIcons.users,
-              size: 40, color: KolabingColors.onSurfaceVariant),
+          Icon(LucideIcons.users,
+              size: 40, color: context.colors.onSurfaceVariant),
           const SizedBox(height: KolabingSpacing.md),
           Text(l10n.communityDetailMembersCount(community.memberCount ?? 0),
               style: KolabingTextStyles.bodyLarge
@@ -413,7 +413,7 @@ class _DetailsTab extends StatelessWidget {
         Text(
           l10n.communityDetailGalleryBody,
           style: KolabingTextStyles.bodySmall
-              .copyWith(color: KolabingColors.onSurfaceVariant),
+              .copyWith(color: context.colors.onSurfaceVariant),
         ),
       ],
     );
@@ -431,7 +431,7 @@ class _Label extends StatelessWidget {
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.1,
-                color: KolabingColors.onSurfaceVariant)),
+                color: context.colors.onSurfaceVariant)),
       );
 }
 
@@ -447,7 +447,7 @@ class _Row extends StatelessWidget {
           children: [
             Text(label,
                 style: KolabingTextStyles.bodyMedium
-                    .copyWith(color: KolabingColors.onSurfaceVariant)),
+                    .copyWith(color: context.colors.onSurfaceVariant)),
             Text(value,
                 style: KolabingTextStyles.bodyMedium
                     .copyWith(fontWeight: FontWeight.w700)),
@@ -474,7 +474,7 @@ class _TabMessage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 40, color: KolabingColors.onSurfaceVariant),
+              Icon(icon, size: 40, color: context.colors.onSurfaceVariant),
               const SizedBox(height: KolabingSpacing.md),
               Text(title,
                   style: KolabingTextStyles.bodyLarge
@@ -483,7 +483,7 @@ class _TabMessage extends StatelessWidget {
               Text(subtitle,
                   textAlign: TextAlign.center,
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant)),
+                      .copyWith(color: context.colors.onSurfaceVariant)),
             ],
           ),
         ),

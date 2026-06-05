@@ -51,14 +51,14 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
       children: [
         TabBar(
           controller: _tabController,
-          indicatorColor: KolabingColors.primary,
+          indicatorColor: context.colors.primary,
           indicatorWeight: 3,
           labelColor: isDark
-              ? KolabingColors.textOnDark
-              : KolabingColors.onSurface,
+              ? context.colors.textOnDark
+              : context.colors.onSurface,
           unselectedLabelColor: isDark
-              ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-              : KolabingColors.textTertiary,
+              ? context.colors.textOnDark.withValues(alpha: 0.5)
+              : context.colors.textTertiary,
           labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
           unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
           tabs: [
@@ -68,7 +68,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
         ),
         Divider(
           height: 1,
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+          color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
         ),
       ],
     );
@@ -91,16 +91,16 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.surface : KolabingColors.background,
+          isDark ? context.colors.surface : context.colors.background,
       appBar: AppBar(
         backgroundColor:
-            isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+            isDark ? context.colors.darkSurface : context.colors.surface,
         elevation: 0,
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context).applicationsTitle,
           style: KolabingTextStyles.pageTitleSmall.copyWith(
-            color: isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
+            color: isDark ? context.colors.textOnDark : context.colors.onSurface,
           ),
         ),
         bottom: PreferredSize(
@@ -125,7 +125,7 @@ class _SentApplicationsTab extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(myApplicationsProvider.notifier).refresh(),
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: _buildBody(context, state, isDark: isDark),
     );
   }
@@ -180,26 +180,26 @@ class _SentApplicationsTab extends ConsumerWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.1),
+                  color: context.colors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.send,
                   size: 36,
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 AppLocalizations.of(context).applicationsSentEmptyTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface),
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 AppLocalizations.of(context).applicationsSentEmptyBody,
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -221,7 +221,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () =>
           ref.read(receivedApplicationsProvider.notifier).refresh(),
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: _buildBody(context, state, isDark),
     );
   }
@@ -278,26 +278,26 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.1),
+                  color: context.colors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.inbox,
                   size: 36,
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 AppLocalizations.of(context).applicationsReceivedEmptyTitle,
                 style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface),
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 AppLocalizations.of(context).applicationsReceivedEmptyBody,
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -312,9 +312,9 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
 
 Widget _buildLoadingState(bool isDark) => Shimmer.fromColors(
       baseColor:
-          isDark ? KolabingColors.darkSurface : KolabingColors.surfaceVariant,
+          isDark ? context.colors.darkSurface : context.colors.surfaceVariant,
       highlightColor:
-          isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+          isDark ? context.colors.darkBorder : context.colors.surface,
       child: ListView.separated(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         itemCount: 5,
@@ -322,7 +322,7 @@ Widget _buildLoadingState(bool isDark) => Shimmer.fromColors(
         itemBuilder: (_, _) => Container(
           height: 100,
           decoration: BoxDecoration(
-            color: isDark ? KolabingColors.darkSurface : Colors.white,
+            color: isDark ? context.colors.darkSurface : Colors.white,
             borderRadius: KolabingRadius.borderRadiusMd,
           ),
         ),
@@ -335,22 +335,22 @@ Widget _buildErrorState(BuildContext context, String error, bool isDark) => Cent
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).applicationsErrorTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface),
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
           ],
@@ -386,7 +386,7 @@ class _ApplicationCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+          color: isDark ? context.colors.darkSurface : context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           boxShadow: isDark
               ? null
@@ -417,8 +417,8 @@ class _ApplicationCard extends StatelessWidget {
                         child: Text(
                           application.opportunityTitle,
                           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
-                                ? KolabingColors.textOnDark
-                                : KolabingColors.onSurface),
+                                ? context.colors.textOnDark
+                                : context.colors.onSurface),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -433,14 +433,14 @@ class _ApplicationCard extends StatelessWidget {
                     isReceived
                         ? AppLocalizations.of(context).applicationCardFrom(application.applicantName)
                         : AppLocalizations.of(context).applicationCardTo(application.recipientName),
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
 
                   // Message preview
                   Text(
                     application.message,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -450,15 +450,15 @@ class _ApplicationCard extends StatelessWidget {
                   Row(
                     children: [
                       // Created time
-                      const Icon(
+                      Icon(
                         LucideIcons.clock,
                         size: 12,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         application.createdAtDisplay,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                       ),
 
                       const Spacer(),
@@ -471,7 +471,7 @@ class _ApplicationCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: KolabingColors.error,
+                            color: context.colors.error,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -480,10 +480,10 @@ class _ApplicationCard extends StatelessWidget {
                           ),
                         ),
                       ] else ...[
-                        const Icon(
+                        Icon(
                           LucideIcons.chevronRight,
                           size: 18,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                       ],
                     ],
@@ -512,7 +512,7 @@ class _ApplicationCard extends StatelessWidget {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.1),
+        color: context.colors.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: avatarUrl != null
@@ -530,7 +530,7 @@ class _ApplicationCard extends StatelessWidget {
   Widget _avatarPlaceholder(String name) => Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.primary),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.primary),
         ),
       );
 
@@ -538,23 +538,23 @@ class _ApplicationCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final (bgColor, textColor, label) = switch (application.status) {
       ApplicationStatus.pending => (
-          KolabingColors.pendingBg,
-          KolabingColors.pendingText,
+          context.colors.pendingBg,
+          context.colors.pendingText,
           l10n.applicationStatusPending,
         ),
       ApplicationStatus.accepted => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText,
+          context.colors.activeBg,
+          context.colors.activeText,
           l10n.applicationStatusAccepted,
         ),
       ApplicationStatus.declined => (
-          KolabingColors.errorBg,
-          KolabingColors.error,
+          context.colors.errorBg,
+          context.colors.error,
           l10n.applicationStatusDeclined,
         ),
       ApplicationStatus.withdrawn => (
-          KolabingColors.surfaceVariant,
-          KolabingColors.textTertiary,
+          context.colors.surfaceVariant,
+          context.colors.textTertiary,
           l10n.applicationStatusWithdrawn,
         ),
     };

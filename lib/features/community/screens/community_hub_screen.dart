@@ -94,11 +94,11 @@ class _EmptyState extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.18),
+                color: context.colors.primary.withValues(alpha: 0.18),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.users,
-                  size: 32, color: KolabingColors.onSurface),
+              child: Icon(LucideIcons.users,
+                  size: 32, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
@@ -111,7 +111,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               l10n.communityHubEmptyBody,
               style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant),
+                  .copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.xl),
@@ -120,8 +120,8 @@ class _EmptyState extends StatelessWidget {
               child: FilledButton(
                 onPressed: onCreate,
                 style: FilledButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
                   minimumSize: const Size.fromHeight(52),
                 ),
                 child: Text(l10n.communityHubCreateCommunity),
@@ -205,8 +205,8 @@ class _EventsSection extends ConsumerWidget {
               Card(
                 margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
                 child: ListTile(
-                  leading: const Icon(LucideIcons.calendar,
-                      color: KolabingColors.onSurface),
+                  leading: Icon(LucideIcons.calendar,
+                      color: context.colors.onSurface),
                   title: Text(e.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -214,13 +214,13 @@ class _EventsSection extends ConsumerWidget {
                           .copyWith(fontWeight: FontWeight.w600)),
                   subtitle: Text(e.formattedDate,
                       style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurfaceVariant)),
+                          color: context.colors.onSurfaceVariant)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (e.isRecurring)
-                        const Icon(LucideIcons.repeat,
-                            size: 14, color: KolabingColors.onSurfaceVariant),
+                        Icon(LucideIcons.repeat,
+                            size: 14, color: context.colors.onSurfaceVariant),
                       if (e.isRecurring)
                         const SizedBox(width: KolabingSpacing.xs),
                       const Icon(LucideIcons.chevronRight, size: 18),
@@ -286,7 +286,7 @@ class _EventsEmpty extends StatelessWidget {
         child: Text(
           AppLocalizations.of(context).communityHubNoEvents,
           style: KolabingTextStyles.bodySmall
-              .copyWith(color: KolabingColors.onSurfaceVariant),
+              .copyWith(color: context.colors.onSurfaceVariant),
         ),
       );
 }
@@ -399,7 +399,7 @@ class _ChatsSection extends ConsumerWidget {
                   child: Text(
                     l10n.communityHubAccessDialogBody,
                     style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant),
+                        .copyWith(color: context.colors.onSurfaceVariant),
                   ),
                 ),
                 for (final t in tiers)
@@ -523,7 +523,7 @@ class _ChatRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
       child: Material(
-        color: KolabingColors.surfaceContainerLow,
+        color: context.colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -536,12 +536,12 @@ class _ChatRow extends StatelessWidget {
                 horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: KolabingColors.outlineVariant),
+              border: Border.all(color: context.colors.outlineVariant),
             ),
             child: Row(
               children: [
                 Icon(isMain ? LucideIcons.hash : LucideIcons.messageCircle,
-                    size: 16, color: KolabingColors.onSurfaceVariant),
+                    size: 16, color: context.colors.onSurfaceVariant),
                 const SizedBox(width: KolabingSpacing.sm),
                 Expanded(
                   child: Text(
@@ -565,14 +565,14 @@ class _ChatRow extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(LucideIcons.lock,
-                                size: 13, color: KolabingColors.onSurfaceVariant),
+                            Icon(LucideIcons.lock,
+                                size: 13, color: context.colors.onSurfaceVariant),
                             const SizedBox(width: 4),
                             Text(accessLabel ?? l10n.communityHubAccess,
                                 style: KolabingTextStyles.bodySmall.copyWith(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
-                                    color: KolabingColors.onSurfaceVariant)),
+                                    color: context.colors.onSurfaceVariant)),
                           ],
                         ),
                       ),
@@ -584,14 +584,14 @@ class _ChatRow extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                     decoration: BoxDecoration(
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text('${thread.unreadCount}',
                         style: KolabingTextStyles.bodySmall.copyWith(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: KolabingColors.onPrimary)),
+                            color: context.colors.onPrimary)),
                   ),
                 ],
               ],
@@ -613,20 +613,20 @@ class _Header extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceContainerLow,
+        color: context.colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: KolabingColors.outlineVariant),
+        border: Border.all(color: context.colors.outlineVariant),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+            backgroundColor: context.colors.primary.withValues(alpha: 0.2),
             backgroundImage: community.avatarUrl != null
                 ? NetworkImage(community.avatarUrl!)
                 : null,
             child: community.avatarUrl == null
-                ? const Icon(LucideIcons.users, color: KolabingColors.onSurface)
+                ? Icon(LucideIcons.users, color: context.colors.onSurface)
                 : null,
           ),
           const SizedBox(width: KolabingSpacing.md),
@@ -646,7 +646,7 @@ class _Header extends StatelessWidget {
                           community.type.displayName, community.memberCount!)
                       : community.type.displayName,
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                      .copyWith(color: context.colors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -656,7 +656,7 @@ class _Header extends StatelessWidget {
                 ? LucideIcons.globe
                 : LucideIcons.lock,
             size: 18,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ],
       ),
@@ -740,9 +740,9 @@ class _TierRow extends StatelessWidget {
     try {
       dot = tier.color != null
           ? Color(int.parse(tier.color!.replaceFirst('#', '0xff')))
-          : KolabingColors.primary;
+          : context.colors.primary;
     } catch (_) {
-      dot = KolabingColors.primary;
+      dot = context.colors.primary;
     }
     final detail = tier.assignmentRule.isAutomatic && tier.threshold != null
         ? l10n.communityHubTierDetail(tier.assignmentRule.displayName,
@@ -751,7 +751,7 @@ class _TierRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
       child: Material(
-        color: KolabingColors.surfaceContainerLow,
+        color: context.colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: onTap,
@@ -761,7 +761,7 @@ class _TierRow extends StatelessWidget {
                 horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: KolabingColors.outlineVariant),
+              border: Border.all(color: context.colors.outlineVariant),
             ),
             child: Row(
               children: [
@@ -789,17 +789,17 @@ class _TierRow extends StatelessWidget {
                       Text(detail,
                           style: KolabingTextStyles.bodySmall.copyWith(
                               fontSize: 12,
-                              color: KolabingColors.onSurfaceVariant)),
+                              color: context.colors.onSurfaceVariant)),
                     ],
                   ),
                 ),
                 Text(l10n.communityHubTierRank(tier.rank),
                     style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant)),
+                        .copyWith(color: context.colors.onSurfaceVariant)),
                 if (onTap != null) ...[
                   const SizedBox(width: KolabingSpacing.xs),
-                  const Icon(LucideIcons.chevronRight,
-                      size: 16, color: KolabingColors.onSurfaceVariant),
+                  Icon(LucideIcons.chevronRight,
+                      size: 16, color: context.colors.onSurfaceVariant),
                 ],
               ],
             ),
@@ -829,15 +829,15 @@ class _AddTile extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: KolabingColors.outline,
+                color: context.colors.outline,
                 style: BorderStyle.solid,
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(LucideIcons.plus,
-                    size: 16, color: KolabingColors.onSurface),
+                Icon(LucideIcons.plus,
+                    size: 16, color: context.colors.onSurface),
                 const SizedBox(width: KolabingSpacing.xs),
                 Text(label,
                     style: KolabingTextStyles.bodyMedium
@@ -917,7 +917,7 @@ class _MemberRow extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: KolabingColors.surfaceContainerHigh,
+            backgroundColor: context.colors.surfaceContainerHigh,
             backgroundImage: member.memberAvatarUrl != null
                 ? NetworkImage(member.memberAvatarUrl!)
                 : null,
@@ -955,7 +955,7 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
-          color: KolabingColors.onSurfaceVariant,
+          color: context.colors.onSurfaceVariant,
         ),
       );
 }
@@ -968,14 +968,14 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.2),
+          color: context.colors.primary.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(label,
             style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurface)),
+                color: context.colors.onSurface)),
       );
 }
 
@@ -1002,18 +1002,18 @@ class _InlineHint extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surfaceContainerLow,
+          color: context.colors.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: KolabingColors.outlineVariant),
+          border: Border.all(color: context.colors.outlineVariant),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
+            Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(text,
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant)),
+                      .copyWith(color: context.colors.onSurfaceVariant)),
             ),
           ],
         ),
@@ -1044,8 +1044,8 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.alertCircle,
-                size: 32, color: KolabingColors.error),
+            Icon(LucideIcons.alertCircle,
+                size: 32, color: context.colors.error),
             const SizedBox(height: KolabingSpacing.md),
             Text(l10n.communityHubLoadError,
                 style: KolabingTextStyles.bodyLarge
@@ -1054,7 +1054,7 @@ class _ErrorState extends StatelessWidget {
             Text(message,
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.onSurfaceVariant)),
+                    .copyWith(color: context.colors.onSurfaceVariant)),
             const SizedBox(height: KolabingSpacing.lg),
             OutlinedButton(onPressed: onRetry, child: Text(l10n.commonRetry)),
           ],

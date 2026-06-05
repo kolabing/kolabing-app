@@ -58,7 +58,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(AppLocalizations.of(context).businessProfileSignOut),
           ),
         ],
@@ -90,7 +90,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(AppLocalizations.of(context).businessProfileDelete),
           ),
         ],
@@ -116,7 +116,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   Future<void> _handleChangePhoto() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -130,7 +130,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.darkBorder,
+                  color: context.colors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -138,7 +138,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               Text(
                 AppLocalizations.of(context).businessProfileChangePhotoTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -147,12 +147,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    color: context.colors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.camera,
-                    color: KolabingColors.primary,
+                    color: context.colors.primary,
                   ),
                 ),
                 title: Text(
@@ -168,12 +168,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: KolabingColors.info.withValues(alpha: 0.1),
+                    color: context.colors.info.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.image,
-                    color: KolabingColors.info,
+                    color: context.colors.info,
                   ),
                 ),
                 title: Text(
@@ -246,7 +246,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               content: Text(
                 AppLocalizations.of(context).businessProfilePhotoUpdated,
               ),
-              backgroundColor: KolabingColors.success,
+              backgroundColor: context.colors.success,
             ),
           );
         }
@@ -259,7 +259,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             content: Text(
               AppLocalizations.of(context).businessProfilePhotoUpdateFailed,
             ),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -276,7 +276,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error!),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
             action: SnackBarAction(
               label: AppLocalizations.of(context).businessProfileDismiss,
               textColor: Colors.white,
@@ -293,8 +293,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
+          ? context.colors.surface
+          : context.colors.background,
       body: SafeArea(child: _buildBody(state, isDark)),
     );
   }
@@ -334,11 +334,11 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         // Header shimmer
         Shimmer.fromColors(
           baseColor: isDark
-              ? KolabingColors.darkSurface
-              : KolabingColors.surfaceVariant,
+              ? context.colors.darkSurface
+              : context.colors.surfaceVariant,
           highlightColor: isDark
-              ? KolabingColors.darkBorder
-              : KolabingColors.surface,
+              ? context.colors.darkBorder
+              : context.colors.surface,
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -392,15 +392,15 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
             child: Shimmer.fromColors(
               baseColor: isDark
-                  ? KolabingColors.darkSurface
-                  : KolabingColors.surfaceVariant,
+                  ? context.colors.darkSurface
+                  : context.colors.surfaceVariant,
               highlightColor: isDark
-                  ? KolabingColors.darkBorder
-                  : KolabingColors.surface,
+                  ? context.colors.darkBorder
+                  : context.colors.surface,
               child: Container(
                 height: 120,
                 decoration: BoxDecoration(
-                  color: isDark ? KolabingColors.darkSurface : Colors.white,
+                  color: isDark ? context.colors.darkSurface : Colors.white,
                   borderRadius: KolabingRadius.borderRadiusLg,
                 ),
               ),
@@ -420,14 +420,14 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           Container(
             width: 80,
             height: 80,
-            decoration: const BoxDecoration(
-              color: KolabingColors.errorBg,
+            decoration: BoxDecoration(
+              color: context.colors.errorBg,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.alertCircle,
               size: 36,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -435,15 +435,15 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             AppLocalizations.of(context).businessProfileSomethingWrong,
             style: KolabingTextStyles.headlineSmall.copyWith(
               color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -453,8 +453,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             icon: const Icon(LucideIcons.rotateCcw, size: 18),
             label: Text(AppLocalizations.of(context).businessProfileTryAgain),
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.lg,
                 vertical: KolabingSpacing.sm,
@@ -474,7 +474,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(profileProvider.notifier).refresh(),
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -546,7 +546,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: isDark
             ? null
@@ -570,7 +570,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: KolabingColors.primary, width: 3),
+                    border: Border.all(color: context.colors.primary, width: 3),
                   ),
                   child: ClipOval(
                     child: photoUrl != null
@@ -593,19 +593,19 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isDark
-                            ? KolabingColors.darkSurface
-                            : KolabingColors.surface,
+                            ? context.colors.darkSurface
+                            : context.colors.surface,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       LucideIcons.camera,
                       size: 16,
-                      color: KolabingColors.onPrimary,
+                      color: context.colors.onPrimary,
                     ),
                   ),
                 ),
@@ -639,8 +639,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             name,
             style: KolabingTextStyles.headlineMedium.copyWith(
               color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -654,14 +654,14 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               vertical: KolabingSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: KolabingRadius.borderRadiusRound,
-              border: Border.all(color: KolabingColors.softYellowBorder),
+              border: Border.all(color: context.colors.softYellowBorder),
             ),
             child: Text(
               businessType,
               style: KolabingTextStyles.labelSmall.copyWith(
-                color: KolabingColors.accentOrangeText,
+                color: context.colors.accentOrangeText,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -672,12 +672,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
   }
 
   Widget _buildAvatarPlaceholder(String name) => Container(
-    color: KolabingColors.surfaceVariant,
+    color: context.colors.surfaceVariant,
     child: Center(
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
         style: KolabingTextStyles.displaySmall.copyWith(
-          color: KolabingColors.textTertiary,
+          color: context.colors.textTertiary,
         ),
       ),
     ),
@@ -688,7 +688,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     child: Text(
       about,
       style: KolabingTextStyles.bodyMedium.copyWith(
-        color: KolabingColors.onSurfaceVariant,
+        color: context.colors.onSurfaceVariant,
       ),
     ),
   );
@@ -715,15 +715,15 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 height: 48,
                 decoration: BoxDecoration(
                   color: isActive
-                      ? KolabingColors.success.withValues(alpha: 0.1)
-                      : KolabingColors.surfaceVariant,
+                      ? context.colors.success.withValues(alpha: 0.1)
+                      : context.colors.surfaceVariant,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isActive ? LucideIcons.crown : LucideIcons.sparkles,
                   color: isActive
-                      ? KolabingColors.success
-                      : KolabingColors.textTertiary,
+                      ? context.colors.success
+                      : context.colors.textTertiary,
                   size: 24,
                 ),
               ),
@@ -741,7 +741,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                               context,
                             ).businessProfileNoActivePlan,
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -755,7 +755,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           // Subscription details
           if (hasSubscription && isActive) ...[
             const SizedBox(height: KolabingSpacing.md),
-            const Divider(height: 1, color: KolabingColors.darkBorder),
+            Divider(height: 1, color: context.colors.darkBorder),
             const SizedBox(height: KolabingSpacing.md),
 
             // Renewal date
@@ -784,18 +784,18 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(KolabingSpacing.sm),
                 decoration: BoxDecoration(
-                  color: KolabingColors.warning.withValues(alpha: 0.1),
+                  color: context.colors.warning.withValues(alpha: 0.1),
                   borderRadius: KolabingRadius.borderRadiusSm,
                   border: Border.all(
-                    color: KolabingColors.warning.withValues(alpha: 0.3),
+                    color: context.colors.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.alertTriangle,
                       size: 16,
-                      color: KolabingColors.warning,
+                      color: context.colors.warning,
                     ),
                     const SizedBox(width: KolabingSpacing.xs),
                     Expanded(
@@ -804,7 +804,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                           context,
                         ).businessProfileSubscriptionEnding,
                         style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.warning,
+                          color: context.colors.warning,
                         ),
                       ),
                     ),
@@ -825,8 +825,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 AppLocalizations.of(context).businessProfileManageSubscription,
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.onSurface,
-                side: const BorderSide(color: KolabingColors.darkBorder),
+                foregroundColor: context.colors.onSurface,
+                side: BorderSide(color: context.colors.darkBorder),
                 padding: const EdgeInsets.symmetric(
                   vertical: KolabingSpacing.sm,
                 ),
@@ -840,8 +840,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 AppLocalizations.of(context).businessProfileUpgradePremium,
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 padding: const EdgeInsets.symmetric(
                   vertical: KolabingSpacing.sm,
                 ),
@@ -860,20 +860,20 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
     switch (status) {
       case SubscriptionStatus.active:
-        bgColor = KolabingColors.activeBg;
-        textColor = KolabingColors.success;
+        bgColor = context.colors.activeBg;
+        textColor = context.colors.success;
         label = l10n.businessProfileStatusActive;
       case SubscriptionStatus.cancelled:
-        bgColor = KolabingColors.pendingBg;
-        textColor = KolabingColors.warning;
+        bgColor = context.colors.pendingBg;
+        textColor = context.colors.warning;
         label = l10n.businessProfileStatusCancelled;
       case SubscriptionStatus.pastDue:
-        bgColor = KolabingColors.errorBg;
-        textColor = KolabingColors.error;
+        bgColor = context.colors.errorBg;
+        textColor = context.colors.error;
         label = l10n.businessProfileStatusPastDue;
       default:
-        bgColor = KolabingColors.surfaceVariant;
-        textColor = KolabingColors.textTertiary;
+        bgColor = context.colors.surfaceVariant;
+        textColor = context.colors.textTertiary;
         label = l10n.businessProfileStatusInactive;
     }
 
@@ -902,18 +902,18 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     required String value,
   }) => Row(
     children: [
-      Icon(icon, size: 16, color: KolabingColors.textTertiary),
+      Icon(icon, size: 16, color: context.colors.textTertiary),
       const SizedBox(width: KolabingSpacing.xs),
       Text(
         '$label: ',
         style: KolabingTextStyles.bodySmall.copyWith(
-          color: KolabingColors.onSurfaceVariant,
+          color: context.colors.onSurfaceVariant,
         ),
       ),
       Text(
         value,
         style: KolabingTextStyles.bodySmall.copyWith(
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -1020,17 +1020,17 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         // Email
         Row(
           children: [
-            const Icon(
+            Icon(
               LucideIcons.mail,
               size: 20,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(
                 email,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1055,8 +1055,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           icon: const Icon(LucideIcons.logOut, size: 18),
           label: Text(AppLocalizations.of(context).businessProfileSignOut),
           style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.error,
-            side: const BorderSide(color: KolabingColors.error),
+            foregroundColor: context.colors.error,
+            side: BorderSide(color: context.colors.error),
             padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
           ),
         ),
@@ -1073,12 +1073,12 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
               textAlign: TextAlign.center,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: isUpdating
-                    ? KolabingColors.textTertiary
-                    : KolabingColors.error,
+                    ? context.colors.textTertiary
+                    : context.colors.error,
                 decoration: TextDecoration.underline,
                 decorationColor: isUpdating
-                    ? KolabingColors.textTertiary
-                    : KolabingColors.error,
+                    ? context.colors.textTertiary
+                    : context.colors.error,
               ),
             ),
           ),
@@ -1110,7 +1110,7 @@ class _SectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: isDark
             ? null
@@ -1129,15 +1129,15 @@ class _SectionCard extends StatelessWidget {
           Row(
             children: [
               if (titleIcon != null) ...[
-                Icon(titleIcon, size: 20, color: KolabingColors.primary),
+                Icon(titleIcon, size: 20, color: context.colors.primary),
                 const SizedBox(width: KolabingSpacing.xs),
               ],
               Text(
                 title,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
             ],
@@ -1176,8 +1176,8 @@ class _ContactInfoTile extends StatelessWidget {
               icon,
               size: 20,
               color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                  : KolabingColors.textTertiary,
+                  ? context.colors.textOnDark.withValues(alpha: 0.6)
+                  : context.colors.textTertiary,
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
@@ -1185,10 +1185,10 @@ class _ContactInfoTile extends StatelessWidget {
                 label,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: onTap != null
-                      ? KolabingColors.info
+                      ? context.colors.info
                       : isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
             ),
@@ -1197,8 +1197,8 @@ class _ContactInfoTile extends StatelessWidget {
                 LucideIcons.externalLink,
                 size: 16,
                 color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                    : KolabingColors.textTertiary,
+                    ? context.colors.textOnDark.withValues(alpha: 0.6)
+                    : context.colors.textTertiary,
               ),
           ],
         ),
@@ -1247,16 +1247,16 @@ class _NotificationToggle extends StatelessWidget {
                   label,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface,
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
                   ),
                 ),
               ),
               Switch(
                 value: value,
                 onChanged: isUpdating ? null : onChanged,
-                activeThumbColor: KolabingColors.primary,
-                activeTrackColor: KolabingColors.primary.withValues(alpha: 0.5),
+                activeThumbColor: context.colors.primary,
+                activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
               ),
             ],
           ),

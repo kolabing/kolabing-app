@@ -180,8 +180,8 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          KolabingColors.primary.withValues(alpha: 0.3),
-          KolabingColors.surfaceVariant,
+          context.colors.primary.withValues(alpha: 0.3),
+          context.colors.surfaceVariant,
         ],
       ),
     ),
@@ -191,9 +191,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         height: 96,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: KolabingColors.primary.withValues(alpha: 0.15),
+          color: context.colors.primary.withValues(alpha: 0.15),
           border: Border.all(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -203,7 +203,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
                   _item.creatorProfile.displayName.isNotEmpty
               ? _item.creatorProfile.displayName[0].toUpperCase()
               : '?',
-          style: KolabingTextStyles.cardTitleHero.copyWith(color: KolabingColors.onSurface.withValues(alpha: 0.6)),
+          style: KolabingTextStyles.cardTitleHero.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6)),
         ),
       ),
     ),
@@ -216,7 +216,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         : null;
 
     return ColoredBox(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       child: Center(
         child: SizedBox(
           width: 40,
@@ -224,7 +224,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           child: CircularProgressIndicator(
             value: value,
             strokeWidth: 2.5,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
           ),
         ),
       ),
@@ -236,12 +236,12 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: KolabingColors.primary,
+        color: context.colors.primary,
         borderRadius: BorderRadius.circular(KolabingRadius.sm),
       ),
       child: Text(
         AppLocalizations.of(context).exploreSwipeCardMatch(match.score),
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: KolabingColors.charcoal),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: context.colors.charcoal),
       ),
     );
   }
@@ -308,10 +308,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
             _buildTagChips(chips),
           ],
           const SizedBox(height: KolabingSpacing.sm),
-          const Divider(
+          Divider(
             height: 1,
             thickness: 1,
-            color: KolabingColors.outlineVariant,
+            color: context.colors.outlineVariant,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           _buildViewDetailsRow(),
@@ -329,7 +329,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       _item.creatorProfile.displayName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.cardTitleLarge.copyWith(color: KolabingColors.charcoal),
+      style: KolabingTextStyles.cardTitleLarge.copyWith(color: context.colors.charcoal),
     );
 
     return Row(
@@ -368,10 +368,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
                   ),
                 ),
                 Text(' · ', style: _secondaryStyle),
-                const Icon(
+                Icon(
                   Icons.location_on_outlined,
                   size: 13,
-                  color: KolabingColors.navInactive,
+                  color: context.colors.navInactive,
                 ),
                 const SizedBox(width: 2),
                 Flexible(
@@ -408,12 +408,12 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildOfferRow(String offerLine) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Padding(
+      Padding(
         padding: EdgeInsets.only(top: 1),
         child: Icon(
           Icons.local_offer_outlined,
           size: 14,
-          color: KolabingColors.primary,
+          color: context.colors.primary,
         ),
       ),
       const SizedBox(width: 6),
@@ -422,7 +422,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           offerLine,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary, height: 1.25),
+          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary, height: 1.25),
         ),
       ),
     ],
@@ -430,10 +430,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   Widget _buildMembersRow(int pastEvents) => Row(
     children: [
-      const Icon(
+      Icon(
         Icons.people_alt_outlined,
         size: 14,
-        color: KolabingColors.navInactive,
+        color: context.colors.navInactive,
       ),
       const SizedBox(width: 6),
       Expanded(
@@ -450,10 +450,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildTagChips(List<String> chips) {
     // Alternating chip palette using existing design tokens: lavender, sage,
     // and soft yellow. Falls back to surfaceVariant if more chips appear.
-    const fills = <Color>[
-      KolabingColors.secondaryContainer,
-      KolabingColors.tertiaryContainer,
-      KolabingColors.primary,
+    fills = <Color>[
+      context.colors.secondaryContainer,
+      context.colors.tertiaryContainer,
+      context.colors.primary,
     ];
 
     return Wrap(
@@ -476,7 +476,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       label,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.charcoal),
+      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.charcoal),
     ),
   );
 
@@ -484,16 +484,16 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     children: [
       Text(
         AppLocalizations.of(context).exploreSwipeCardViewDetails,
-        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.charcoal),
+        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.charcoal),
       ),
       const Spacer(),
-      const Icon(
+      Icon(
         Icons.chevron_right_rounded,
         size: 18,
-        color: KolabingColors.charcoal,
+        color: context.colors.charcoal,
       ),
     ],
   );
 
-  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.navInactive);
+  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: context.colors.navInactive);
 }

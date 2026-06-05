@@ -221,7 +221,7 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
   Widget build(BuildContext context) {
     final e = _event;
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(e.name, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
@@ -240,8 +240,8 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                   value: 'delete',
                   child: Row(
                     children: [
-                      const Icon(LucideIcons.trash2,
-                          size: 18, color: KolabingColors.error),
+                      Icon(LucideIcons.trash2,
+                          size: 18, color: context.colors.error),
                       const SizedBox(width: KolabingSpacing.sm),
                       Text(_l10n.eventHubDelete),
                     ],
@@ -299,7 +299,7 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                 child: Text(
                   _l10n.eventHubWaitlistPosition(e.waitlistPosition!),
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                      .copyWith(color: context.colors.onSurfaceVariant),
                 ),
               ),
             ],
@@ -332,8 +332,8 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
         child: FilledButton.icon(
           onPressed: _openingChat ? null : _openChat,
           style: FilledButton.styleFrom(
-            backgroundColor: KolabingColors.surfaceContainerHigh,
-            foregroundColor: KolabingColors.onSurface,
+            backgroundColor: context.colors.surfaceContainerHigh,
+            foregroundColor: context.colors.onSurface,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -356,26 +356,26 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
       _ when e.isGoing => (
           _l10n.eventHubGoingTapToLeave,
           LucideIcons.check,
-          KolabingColors.success,
-          KolabingColors.onSurface,
+          context.colors.success,
+          context.colors.onSurface,
         ),
       _ when e.isWaitlisted => (
           _l10n.eventHubOnWaitlistTapToLeave,
           LucideIcons.clock,
-          KolabingColors.surfaceContainerHigh,
-          KolabingColors.onSurface,
+          context.colors.surfaceContainerHigh,
+          context.colors.onSurface,
         ),
       _ when e.isFull => (
           _l10n.eventHubJoinWaitlist,
           LucideIcons.userPlus,
-          KolabingColors.surfaceContainerHigh,
-          KolabingColors.onSurface,
+          context.colors.surfaceContainerHigh,
+          context.colors.onSurface,
         ),
       _ => (
           _l10n.eventHubImGoing,
           LucideIcons.check,
-          KolabingColors.primary,
-          KolabingColors.onPrimary,
+          context.colors.primary,
+          context.colors.onPrimary,
         ),
     };
     return SizedBox(
@@ -432,7 +432,7 @@ class _AttendeesSection extends ConsumerWidget {
         child: Text(
           l10n.eventHubNoAttendees,
           style: KolabingTextStyles.bodySmall
-              .copyWith(color: KolabingColors.onSurfaceVariant),
+              .copyWith(color: context.colors.onSurfaceVariant),
         ),
       ),
       data: (signups) {
@@ -440,7 +440,7 @@ class _AttendeesSection extends ConsumerWidget {
           return Text(
             l10n.eventHubNoAttendees,
             style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+                .copyWith(color: context.colors.onSurfaceVariant),
           );
         }
         return Column(
@@ -473,7 +473,7 @@ class _AttendeeTile extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
-        backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+        backgroundColor: context.colors.primary.withValues(alpha: 0.2),
         backgroundImage:
             signup.avatarUrl != null ? NetworkImage(signup.avatarUrl!) : null,
         child: signup.avatarUrl == null
@@ -492,7 +492,7 @@ class _AttendeeTile extends StatelessWidget {
       trailing: signup.isWaitlisted && signup.waitlistPosition != null
           ? Text('#${signup.waitlistPosition}',
               style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant))
+                  .copyWith(color: context.colors.onSurfaceVariant))
           : null,
     );
   }
@@ -511,7 +511,7 @@ class _SectionLabel extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       );
@@ -542,9 +542,9 @@ class _Gallery extends StatelessWidget {
               errorBuilder: (_, __, ___) => Container(
                 width: 96,
                 height: 96,
-                color: KolabingColors.surfaceVariant,
-                child: const Icon(LucideIcons.image,
-                    color: KolabingColors.textTertiary),
+                color: context.colors.surfaceVariant,
+                child: Icon(LucideIcons.image,
+                    color: context.colors.textTertiary),
               ),
             ),
           );
@@ -564,7 +564,7 @@ class _InfoRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
+            Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(child: Text(text, style: KolabingTextStyles.bodyMedium)),
           ],

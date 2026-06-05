@@ -36,8 +36,8 @@ class RewardDetailScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: reward == null
-          ? const Center(
-              child: CircularProgressIndicator(color: KolabingColors.primary),
+          ? Center(
+              child: CircularProgressIndicator(color: context.colors.primary),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -73,7 +73,7 @@ class RewardDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -90,13 +90,13 @@ class RewardDetailScreen extends ConsumerWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.1),
+              color: context.colors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.gift,
               size: 40,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -107,7 +107,7 @@ class RewardDetailScreen extends ConsumerWidget {
             style: KolabingTextStyles.bodyLarge.copyWith(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -118,7 +118,7 @@ class RewardDetailScreen extends ConsumerWidget {
             Text(
               reward.eventReward!.description!,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -133,14 +133,14 @@ class RewardDetailScreen extends ConsumerWidget {
               Icon(
                 LucideIcons.calendar,
                 size: 16,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: 4),
               Text(
                 'Won on ${_formatDate(reward.wonAt)}',
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
@@ -156,8 +156,8 @@ class RewardDetailScreen extends ConsumerWidget {
                   LucideIcons.clock,
                   size: 16,
                   color: reward.status == RewardClaimStatus.expired
-                      ? KolabingColors.error
-                      : KolabingColors.textTertiary,
+                      ? context.colors.error
+                      : context.colors.textTertiary,
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -167,8 +167,8 @@ class RewardDetailScreen extends ConsumerWidget {
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     color: reward.status == RewardClaimStatus.expired
-                        ? KolabingColors.error
-                        : KolabingColors.textTertiary,
+                        ? context.colors.error
+                        : context.colors.textTertiary,
                   ),
                 ),
               ],
@@ -186,17 +186,17 @@ class RewardDetailScreen extends ConsumerWidget {
 
     switch (reward.status) {
       case RewardClaimStatus.available:
-        badgeColor = KolabingColors.success;
+        badgeColor = context.colors.success;
         icon = LucideIcons.checkCircle;
         text = 'Available to Redeem';
         break;
       case RewardClaimStatus.redeemed:
-        badgeColor = KolabingColors.info;
+        badgeColor = context.colors.info;
         icon = LucideIcons.checkCheck;
         text = 'Redeemed';
         break;
       case RewardClaimStatus.expired:
-        badgeColor = KolabingColors.error;
+        badgeColor = context.colors.error;
         icon = LucideIcons.xCircle;
         text = 'Expired';
         break;
@@ -246,7 +246,7 @@ class RewardDetailScreen extends ConsumerWidget {
         Text(
           'Show this QR code to the organizer to redeem your reward',
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),
@@ -263,19 +263,19 @@ class RewardDetailScreen extends ConsumerWidget {
                         .generateQR(rewardClaimId);
                   },
             icon: state.isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: KolabingColors.onPrimary,
+                      color: context.colors.onPrimary,
                     ),
                   )
                 : const Icon(LucideIcons.qrCode),
             label: Text(state.isLoading ? 'Generating...' : 'Generate QR Code'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -288,7 +288,7 @@ class RewardDetailScreen extends ConsumerWidget {
             state.error!,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             textAlign: TextAlign.center,
           ),
@@ -316,7 +316,7 @@ class RewardDetailScreen extends ConsumerWidget {
           Text(
             'Show this QR code to the organizer',
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -325,13 +325,13 @@ class RewardDetailScreen extends ConsumerWidget {
             version: QrVersions.auto,
             size: 200,
             backgroundColor: Colors.white,
-            eyeStyle: const QrEyeStyle(
+            eyeStyle: QrEyeStyle(
               eyeShape: QrEyeShape.square,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
-            dataModuleStyle: const QrDataModuleStyle(
+            dataModuleStyle: QrDataModuleStyle(
               dataModuleShape: QrDataModuleShape.square,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -339,7 +339,7 @@ class RewardDetailScreen extends ConsumerWidget {
             'This QR code expires in 5 minutes',
             style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
         ],
@@ -351,7 +351,7 @@ class RewardDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.info.withValues(alpha: 0.1),
+        color: context.colors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -359,14 +359,14 @@ class RewardDetailScreen extends ConsumerWidget {
           Icon(
             LucideIcons.checkCircle2,
             size: 48,
-            color: KolabingColors.info,
+            color: context.colors.info,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'This reward has been redeemed',
             style: KolabingTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: KolabingColors.info,
+              color: context.colors.info,
             ),
           ),
           if (reward.redeemedAt != null) ...[
@@ -375,7 +375,7 @@ class RewardDetailScreen extends ConsumerWidget {
               'Redeemed on ${_formatDate(reward.redeemedAt!)}',
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -388,7 +388,7 @@ class RewardDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.error.withValues(alpha: 0.1),
+        color: context.colors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -396,14 +396,14 @@ class RewardDetailScreen extends ConsumerWidget {
           Icon(
             LucideIcons.xCircle,
             size: 48,
-            color: KolabingColors.error,
+            color: context.colors.error,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'This reward has expired',
             style: KolabingTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -411,7 +411,7 @@ class RewardDetailScreen extends ConsumerWidget {
             'Rewards must be redeemed before their expiration date',
             style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 12,
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

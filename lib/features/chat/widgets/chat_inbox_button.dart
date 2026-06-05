@@ -18,7 +18,7 @@ class ChatInboxButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unread = ref.watch(chatUnreadProvider);
-    final iconColor = color ?? KolabingColors.charcoal;
+    final iconColor = color ?? context.colors.charcoal;
     final l10n = AppLocalizations.of(context);
     return IconButton(
       tooltip: l10n.chatInboxTooltip,
@@ -37,7 +37,7 @@ class ChatInboxButton extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 constraints: const BoxConstraints(minWidth: 16),
                 decoration: BoxDecoration(
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -46,7 +46,7 @@ class ChatInboxButton extends ConsumerWidget {
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.onPrimary,
+                    color: context.colors.onPrimary,
                   ),
                 ),
               ),

@@ -54,16 +54,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final state = ref.watch(walletProvider);
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         surfaceTintColor: Colors.transparent,
         title: Text(
           AppLocalizations.of(context).walletScreenTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         centerTitle: true,
@@ -122,8 +122,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   Widget _buildXpCard(WalletState state) {
     if (state.isLoading && state.wallet == null) {
       return Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
+        baseColor: context.colors.surfaceVariant,
+        highlightColor: context.colors.surface,
         child: Container(
           height: 180,
           decoration: BoxDecoration(
@@ -140,11 +140,11 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        gradient: KolabingColors.primaryGradient,
+        gradient: context.colors.primaryGradient,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -159,7 +159,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             style: KolabingTextStyles.bodyLarge.copyWith(
               fontSize: 48,
               fontWeight: FontWeight.w800,
-              color: KolabingColors.onPrimary,
+              color: context.colors.onPrimary,
               height: 1.1,
             ),
           ),
@@ -170,7 +170,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
-              color: KolabingColors.onPrimary.withValues(alpha: 0.7),
+              color: context.colors.onPrimary.withValues(alpha: 0.7),
             ),
           ),
 
@@ -190,7 +190,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           Text(
             AppLocalizations.of(context).walletScreenTotalXp(wallet.totalXp),
             style: KolabingTextStyles.captionSecondary.copyWith(
-              color: KolabingColors.onPrimary.withValues(alpha: 0.8),
+              color: context.colors.onPrimary.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -206,7 +206,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         vertical: KolabingSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.onPrimary.withValues(alpha: 0.2),
+        color: context.colors.onPrimary.withValues(alpha: 0.2),
         borderRadius: KolabingRadius.borderRadiusRound,
       ),
       child: Text(
@@ -214,7 +214,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
-          color: KolabingColors.onPrimary,
+          color: context.colors.onPrimary,
         ),
       ),
     );
@@ -230,9 +230,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           child: LinearProgressIndicator(
             value: level.progress(points),
             minHeight: 6,
-            backgroundColor: KolabingColors.onPrimary.withValues(alpha: 0.15),
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              KolabingColors.onPrimary,
+            backgroundColor: context.colors.onPrimary.withValues(alpha: 0.15),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              context.colors.onPrimary,
             ),
           ),
         ),
@@ -244,7 +244,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               level.next?.title ?? '',
             ),
             style: KolabingTextStyles.labelSmall.copyWith(
-              color: KolabingColors.onPrimary.withValues(alpha: 0.65),
+              color: context.colors.onPrimary.withValues(alpha: 0.65),
             ),
           ),
         ],
@@ -259,7 +259,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   Widget _buildMissionsCard() => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
@@ -305,8 +305,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   Widget _buildBadgesGrid(WalletState state) {
     if (state.isLoading && state.badges.isEmpty) {
       return Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
+        baseColor: context.colors.surfaceVariant,
+        highlightColor: context.colors.surface,
         child: GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
@@ -359,7 +359,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -379,7 +379,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: KolabingColors.softYellow,
+                  color: context.colors.softYellow,
                   borderRadius: KolabingRadius.borderRadiusMd,
                 ),
                 child: Icon(LucideIcons.gift, size: 18),
@@ -393,13 +393,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       AppLocalizations.of(context).walletScreenEarnCashTitle,
                       style: KolabingTextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                     Text(
                       AppLocalizations.of(context).walletScreenEarnCashSubtitle,
                       style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -423,8 +423,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     height: 8,
                     decoration: BoxDecoration(
                       color: done
-                          ? KolabingColors.primary
-                          : KolabingColors.surfaceVariant,
+                          ? context.colors.primary
+                          : context.colors.surfaceVariant,
                       borderRadius: KolabingRadius.borderRadiusRound,
                     ),
                   ),
@@ -444,7 +444,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     remaining,
                   ),
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
 
@@ -458,9 +458,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               horizontal: KolabingSpacing.md,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: KolabingRadius.borderRadiusMd,
-              border: Border.all(color: KolabingColors.softYellowBorder),
+              border: Border.all(color: context.colors.softYellowBorder),
             ),
             child: Row(
               children: [
@@ -472,13 +472,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      color: KolabingColors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(LucideIcons.copy, size: 18),
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -489,7 +489,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                           AppLocalizations.of(context).referralCodeCopied,
                         ),
                         duration: const Duration(seconds: 2),
-                        backgroundColor: KolabingColors.success,
+                        backgroundColor: context.colors.success,
                       ),
                     );
                   },
@@ -522,8 +522,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       style: KolabingTextStyles.button,
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: KolabingRadius.borderRadiusMd,
                       ),
@@ -540,9 +540,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       onPressed: () =>
                           context.push(KolabingRoutes.communityWalletWithdraw),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.onSurface,
-                        side: const BorderSide(
-                          color: KolabingColors.onSurface,
+                        foregroundColor: context.colors.onSurface,
+                        side: BorderSide(
+                          color: context.colors.onSurface,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: KolabingRadius.borderRadiusMd,
@@ -572,8 +572,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
     if (state.isLoading && ledger.isEmpty) {
       return Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
+        baseColor: context.colors.surfaceVariant,
+        highlightColor: context.colors.surface,
         child: Column(
           children: List.generate(
             3,
@@ -614,8 +614,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               child: OutlinedButton(
                 onPressed: _loadMoreLedger,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: KolabingColors.onSurfaceVariant,
-                  side: const BorderSide(color: KolabingColors.darkBorder),
+                  foregroundColor: context.colors.onSurfaceVariant,
+                  side: BorderSide(color: context.colors.darkBorder),
                   shape: RoundedRectangleBorder(
                     borderRadius: KolabingRadius.borderRadiusMd,
                   ),
@@ -623,7 +623,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 child: Text(
                   AppLocalizations.of(context).walletScreenLoadMore,
                   style: KolabingTextStyles.buttonSmall.copyWith(
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -642,7 +642,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     style: KolabingTextStyles.bodySmall.copyWith(
       fontWeight: FontWeight.w700,
       letterSpacing: 1.0,
-      color: KolabingColors.onSurfaceVariant,
+      color: context.colors.onSurfaceVariant,
     ),
   );
 
@@ -650,15 +650,15 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     width: double.infinity,
     padding: const EdgeInsets.all(KolabingSpacing.xl),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Text(
       message,
       textAlign: TextAlign.center,
       style: KolabingTextStyles.bodyMedium.copyWith(
-        color: KolabingColors.textTertiary,
+        color: context.colors.textTertiary,
       ),
     ),
   );
@@ -686,10 +686,10 @@ class _MissionRow extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: KolabingColors.activeBg,
+          color: context.colors.activeBg,
           borderRadius: KolabingRadius.borderRadiusMd,
         ),
-        child: Icon(icon, size: 18, color: KolabingColors.activeText),
+        child: Icon(icon, size: 18, color: context.colors.activeText),
       ),
       const SizedBox(width: KolabingSpacing.sm),
       Expanded(child: Text(label, style: KolabingTextStyles.bodyMedium)),
@@ -699,7 +699,7 @@ class _MissionRow extends StatelessWidget {
           vertical: KolabingSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.softYellow,
+          color: context.colors.softYellow,
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Text(
@@ -707,7 +707,7 @@ class _MissionRow extends StatelessWidget {
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
       ),
@@ -731,16 +731,16 @@ class _BadgeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
-          color: isUnlocked ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: isUnlocked ? context.colors.primary : context.colors.darkBorder,
           width: isUnlocked ? 2 : 1,
         ),
         boxShadow: isUnlocked
             ? [
                 BoxShadow(
-                  color: KolabingColors.primary.withValues(alpha: 0.15),
+                  color: context.colors.primary.withValues(alpha: 0.15),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -755,16 +755,16 @@ class _BadgeCard extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               color: isUnlocked
-                  ? KolabingColors.primary.withValues(alpha: 0.15)
-                  : KolabingColors.surfaceVariant,
+                  ? context.colors.primary.withValues(alpha: 0.15)
+                  : context.colors.surfaceVariant,
               shape: BoxShape.circle,
             ),
             child: Icon(
               badge.slug.icon,
               size: 24,
               color: isUnlocked
-                  ? KolabingColors.primary
-                  : KolabingColors.textTertiary,
+                  ? context.colors.primary
+                  : context.colors.textTertiary,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -774,8 +774,8 @@ class _BadgeCard extends StatelessWidget {
             style: KolabingTextStyles.captionSecondary.copyWith(
               fontWeight: FontWeight.w600,
               color: isUnlocked
-                  ? KolabingColors.onSurface
-                  : KolabingColors.textTertiary,
+                  ? context.colors.onSurface
+                  : context.colors.textTertiary,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
@@ -784,8 +784,8 @@ class _BadgeCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodySmall.copyWith(
               color: isUnlocked
-                  ? KolabingColors.activeText
-                  : KolabingColors.textTertiary,
+                  ? context.colors.activeText
+                  : context.colors.textTertiary,
             ),
           ),
         ],
@@ -812,7 +812,7 @@ class _LedgerRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.sm),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
         ),
         child: Row(
@@ -822,16 +822,16 @@ class _LedgerRow extends StatelessWidget {
               height: 32,
               decoration: BoxDecoration(
                 color: isEarned
-                    ? KolabingColors.activeBg
-                    : KolabingColors.errorBg,
+                    ? context.colors.activeBg
+                    : context.colors.errorBg,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 entry.eventType.icon,
                 size: 16,
                 color: isEarned
-                    ? KolabingColors.activeText
-                    : KolabingColors.errorText,
+                    ? context.colors.activeText
+                    : context.colors.errorText,
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -844,7 +844,7 @@ class _LedgerRow extends StatelessWidget {
                         ? entry.description
                         : entry.eventType.displayLabel,
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -853,7 +853,7 @@ class _LedgerRow extends StatelessWidget {
                   Text(
                     _formatDate(entry.createdAt),
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ],
@@ -867,8 +867,8 @@ class _LedgerRow extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isEarned
-                    ? KolabingColors.activeBg
-                    : KolabingColors.errorBg,
+                    ? context.colors.activeBg
+                    : context.colors.errorBg,
                 borderRadius: KolabingRadius.borderRadiusRound,
               ),
               child: Text(
@@ -882,8 +882,8 @@ class _LedgerRow extends StatelessWidget {
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isEarned
-                      ? KolabingColors.activeText
-                      : KolabingColors.errorText,
+                      ? context.colors.activeText
+                      : context.colors.errorText,
                 ),
               ),
             ),

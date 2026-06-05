@@ -256,23 +256,23 @@ class EventCard extends StatelessWidget {
   }
 
   Widget _buildPlaceholder() => Container(
-    color: KolabingColors.surfaceVariant,
-    child: const Center(
+    color: context.colors.surfaceVariant,
+    child: Center(
       child: Icon(
         LucideIcons.image,
         size: 32,
-        color: KolabingColors.textTertiary,
+        color: context.colors.textTertiary,
       ),
     ),
   );
 
   Widget _buildPartnerPlaceholder() => Container(
-    color: KolabingColors.primary,
+    color: context.colors.primary,
     child: Center(
       child: Text(
         event.partner.name.isNotEmpty ? event.partner.name[0] : '?',
-        style: const TextStyle(
-          color: KolabingColors.onPrimary,
+        style: TextStyle(
+          color: context.colors.onPrimary,
           fontSize: 10,
           fontWeight: FontWeight.bold,
         ),

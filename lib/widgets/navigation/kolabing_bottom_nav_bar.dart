@@ -50,10 +50,10 @@ class KolabingBottomNavBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: KolabingColors.navBarBackground,
+        color: context.colors.navBarBackground,
         border: Border(
           top: BorderSide(
-            color: KolabingColors.charcoal.withValues(alpha: 0.08),
+            color: context.colors.charcoal.withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -96,11 +96,11 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor = isSelected
-        ? KolabingColors.navBarBackground
-        : KolabingColors.navInactive;
+        ? context.colors.navBarBackground
+        : context.colors.navInactive;
     final labelColor = isSelected
-        ? KolabingColors.navBarBackground
-        : KolabingColors.navInactive;
+        ? context.colors.navBarBackground
+        : context.colors.navInactive;
 
     return Expanded(
       child: GestureDetector(
@@ -118,7 +118,7 @@ class _NavBarItem extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? KolabingColors.charcoal
+                    ? context.colors.charcoal
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(KolabingRadius.round),
               ),
@@ -196,7 +196,7 @@ class _NumericBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       constraints: const BoxConstraints(minWidth: 18),
       decoration: BoxDecoration(
-        color: KolabingColors.error,
+        color: context.colors.error,
         borderRadius: BorderRadius.circular(9),
       ),
       child: Text(
@@ -219,10 +219,10 @@ class _DotBadge extends StatelessWidget {
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: KolabingColors.charcoal,
+        color: context.colors.charcoal,
         shape: BoxShape.circle,
         border: Border.all(
-          color: KolabingColors.navBarBackground,
+          color: context.colors.navBarBackground,
           width: 2,
         ),
       ),

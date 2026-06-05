@@ -51,9 +51,9 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
       lastDate: DateTime.now(),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: KolabingColors.primary,
-            onPrimary: KolabingColors.onPrimary,
+          colorScheme: ColorScheme.light(
+            primary: context.colors.primary,
+            onPrimary: context.colors.onPrimary,
           ),
         ),
         child: child!,
@@ -70,7 +70,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).addEventMaxPhotos),
-          backgroundColor: KolabingColors.warning,
+          backgroundColor: context.colors.warning,
         ),
       );
       return;
@@ -99,7 +99,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).addEventMaxVideos),
-          backgroundColor: KolabingColors.warning,
+          backgroundColor: context.colors.warning,
         ),
       );
       return;
@@ -126,7 +126,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).addEventAtLeastOnePhoto),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -153,14 +153,14 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context).addEventSuccess),
-              backgroundColor: KolabingColors.success,
+              backgroundColor: context.colors.success,
             ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context).addEventFailure),
-              backgroundColor: KolabingColors.error,
+              backgroundColor: context.colors.error,
             ),
           );
         }
@@ -181,7 +181,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
     return Container(
       margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 20),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -193,7 +193,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.darkBorder,
+              color: context.colors.darkBorder,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -207,8 +207,8 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                   l10n.addEventTitle,
                   style: KolabingTextStyles.headlineSmall.copyWith(
                     color: isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface,
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -216,8 +216,8 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(LucideIcons.x),
                   color: isDark
-                      ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                      : KolabingColors.textTertiary,
+                      ? context.colors.textOnDark.withValues(alpha: 0.6)
+                      : context.colors.textTertiary,
                 ),
               ],
             ),
@@ -225,7 +225,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
 
           Divider(
             height: 1,
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+            color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
           ),
 
           // Form
@@ -315,8 +315,8 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                     ElevatedButton(
                       onPressed: _isLoading ? null : _submit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: KolabingColors.primary,
-                        foregroundColor: KolabingColors.onPrimary,
+                        backgroundColor: context.colors.primary,
+                        foregroundColor: context.colors.onPrimary,
                         padding: const EdgeInsets.symmetric(
                           vertical: KolabingSpacing.md,
                         ),
@@ -325,12 +325,12 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                         ),
                       ),
                       child: _isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: KolabingColors.onPrimary,
+                                color: context.colors.onPrimary,
                               ),
                             )
                           : Text(l10n.addEventSubmitButton),
@@ -360,7 +360,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         Text(
           label,
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -372,15 +372,15 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
             prefixIcon: Icon(
               icon,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
               size: 20,
             ),
             filled: true,
-            fillColor: KolabingColors.surfaceVariant,
+            fillColor: context.colors.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
               borderSide: BorderSide.none,
@@ -391,14 +391,14 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(
-                color: KolabingColors.primary,
+              borderSide: BorderSide(
+                color: context.colors.primary,
                 width: 2,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.error),
+              borderSide: BorderSide(color: context.colors.error),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
@@ -420,7 +420,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         Text(
           AppLocalizations.of(context).addEventDateLabel,
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -433,27 +433,27 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
               vertical: KolabingSpacing.sm + 4,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.surfaceVariant,
+              color: context.colors.surfaceVariant,
               borderRadius: KolabingRadius.borderRadiusMd,
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.calendar,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   size: 20,
                 ),
                 const SizedBox(width: KolabingSpacing.sm),
                 Text(
                   formattedDate,
                   style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 const Spacer(),
-                const Icon(
+                Icon(
                   LucideIcons.chevronDown,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   size: 20,
                 ),
               ],
@@ -473,14 +473,14 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             Text(
               AppLocalizations.of(context).addEventPhotosLabel,
               style: KolabingTextStyles.labelMedium.copyWith(
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).addEventPhotosCounter(_selectedPhotos.length),
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ],
@@ -499,26 +499,26 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                     width: 100,
                     margin: const EdgeInsets.only(right: KolabingSpacing.sm),
                     decoration: BoxDecoration(
-                      color: KolabingColors.surfaceVariant,
+                      color: context.colors.surfaceVariant,
                       borderRadius: KolabingRadius.borderRadiusMd,
                       border: Border.all(
-                        color: KolabingColors.darkBorder,
+                        color: context.colors.darkBorder,
                         style: BorderStyle.solid,
                       ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.imagePlus,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                           size: 28,
                         ),
                         const SizedBox(height: KolabingSpacing.xs),
                         Text(
                           AppLocalizations.of(context).addEventAddPhotoButton,
                           style: KolabingTextStyles.labelSmall.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                         ),
                       ],
@@ -583,14 +583,14 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
         Text(
           AppLocalizations.of(context).addEventVideoLabel,
           style: KolabingTextStyles.labelMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           AppLocalizations.of(context).addEventVideoDescription,
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -600,8 +600,8 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             icon: const Icon(LucideIcons.video, size: 18),
             label: Text(AppLocalizations.of(context).addEventAddVideoButton),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.onSurface,
-              side: const BorderSide(color: KolabingColors.darkBorder),
+              foregroundColor: context.colors.onSurface,
+              side: BorderSide(color: context.colors.darkBorder),
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
@@ -623,23 +623,23 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                 ),
                 padding: const EdgeInsets.all(KolabingSpacing.sm),
                 decoration: BoxDecoration(
-                  color: KolabingColors.surfaceVariant,
+                  color: context.colors.surfaceVariant,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.darkBorder),
+                  border: Border.all(color: context.colors.darkBorder),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.video,
                       size: 18,
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                     const SizedBox(width: KolabingSpacing.sm),
                     Expanded(
                       child: Text(
                         fileName,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -647,10 +647,10 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                     ),
                     IconButton(
                       onPressed: () => _removeVideo(index),
-                      icon: const Icon(
+                      icon: Icon(
                         LucideIcons.trash2,
                         size: 18,
-                        color: KolabingColors.error,
+                        color: context.colors.error,
                       ),
                     ),
                   ],

@@ -151,8 +151,8 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
+          ? context.colors.surface
+          : context.colors.background,
       appBar: const KolabingAppBar(),
       body: IndexedStack(
         index: _currentIndex,

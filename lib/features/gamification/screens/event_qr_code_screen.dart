@@ -27,11 +27,11 @@ class EventQRCodeScreen extends ConsumerWidget {
     final qrTokenAsync = ref.watch(qrTokenProvider(eventId));
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor =
-        isDark ? KolabingColors.surface : KolabingColors.background;
+        isDark ? context.colors.surface : context.colors.background;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
+        isDark ? context.colors.textOnDark : context.colors.onSurface;
     final surfaceColor =
-        isDark ? KolabingColors.darkSurface : KolabingColors.surface;
+        isDark ? context.colors.darkSurface : context.colors.surface;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -85,7 +85,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color:
-                        isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+                        isDark ? context.colors.darkBorder : context.colors.darkBorder,
                   ),
                   boxShadow: isDark
                       ? null
@@ -114,7 +114,7 @@ class EventQRCodeScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(KolabingSpacing.md),
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.1),
+                  color: context.colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -122,15 +122,15 @@ class EventQRCodeScreen extends ConsumerWidget {
                     Icon(
                       LucideIcons.info,
                       size: 20,
-                      color: KolabingColors.primary.withValues(alpha: 0.8),
+                      color: context.colors.primary.withValues(alpha: 0.8),
                     ),
                     const SizedBox(width: KolabingSpacing.sm),
                     Expanded(
                       child: Text(
                         AppLocalizations.of(context).eventQrInstructions,
                         style: KolabingTextStyles.bodySmall.copyWith(color: isDark
-                              ? KolabingColors.textOnDark
-                              : KolabingColors.onSurface),
+                              ? context.colors.textOnDark
+                              : context.colors.onSurface),
                       ),
                     ),
                   ],
@@ -149,8 +149,8 @@ class EventQRCodeScreen extends ConsumerWidget {
                   icon: const Icon(LucideIcons.users, size: 18),
                   label: Text(AppLocalizations.of(context).eventQrViewCheckins),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: KolabingColors.primary,
-                    side: const BorderSide(color: KolabingColors.primary),
+                    foregroundColor: context.colors.primary,
+                    side: BorderSide(color: context.colors.primary),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -173,11 +173,11 @@ class EventQRCodeScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(color: KolabingColors.primary),
+            CircularProgressIndicator(color: context.colors.primary),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).eventQrGenerating,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             ),
           ],
         ),
@@ -196,17 +196,17 @@ class EventQRCodeScreen extends ConsumerWidget {
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error.withValues(alpha: 0.7),
+              color: context.colors.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).eventQrErrorTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -215,7 +215,7 @@ class EventQRCodeScreen extends ConsumerWidget {
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).commonTryAgain),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
+                foregroundColor: context.colors.primary,
               ),
             ),
           ],
@@ -258,7 +258,7 @@ class EventQRCodeScreen extends ConsumerWidget {
           icon: const Icon(LucideIcons.copy, size: 16),
           label: Text(AppLocalizations.of(context).eventQrCopyToken),
           style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.onSurfaceVariant,
+            foregroundColor: context.colors.onSurfaceVariant,
           ),
         ),
       ],
@@ -270,7 +270,7 @@ class EventQRCodeScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context).eventQrTokenCopied),
-        backgroundColor: KolabingColors.success,
+        backgroundColor: context.colors.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 2),

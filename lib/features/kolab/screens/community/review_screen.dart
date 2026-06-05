@@ -41,12 +41,12 @@ class ReviewScreen extends ConsumerWidget {
           // Section header
           Text(
             'REVIEW & PUBLISH',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Make sure everything looks correct before publishing',
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -55,9 +55,9 @@ class ReviewScreen extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(KolabingSpacing.md),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: KolabingRadius.borderRadiusLg,
-              border: Border.all(color: KolabingColors.darkBorder),
+              border: Border.all(color: context.colors.darkBorder),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,14 +73,14 @@ class ReviewScreen extends ConsumerWidget {
                     children: [
                       Text(
                         kolab.title.isEmpty ? 'Untitled Kolab' : kolab.title,
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         kolab.description.isEmpty
                             ? 'No description provided'
                             : kolab.description,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -103,7 +103,7 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.needs.isEmpty)
                         Text(
                           'No needs selected',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
                         )
                       else
                         Wrap(
@@ -132,7 +132,7 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.offersInReturn.isEmpty)
                         Text(
                           'No deliverables selected',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
                         )
                       else
                         Wrap(
@@ -247,7 +247,7 @@ class ReviewScreen extends ConsumerWidget {
                       ] else
                         Text(
                           'Not set',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
                         ),
                     ],
                   ),
@@ -262,7 +262,7 @@ class ReviewScreen extends ConsumerWidget {
           Center(
             child: Text(
               'Tap any section above to edit',
-              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary, fontStyle: FontStyle.italic),
+              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary, fontStyle: FontStyle.italic),
             ),
           ),
         ],
@@ -288,12 +288,12 @@ class ReviewScreen extends ConsumerWidget {
         children: [
           Expanded(child: child),
           const SizedBox(width: KolabingSpacing.xs),
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 2),
             child: Icon(
               LucideIcons.pencil,
               size: 16,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
         ],
@@ -303,17 +303,17 @@ class ReviewScreen extends ConsumerWidget {
 
   Widget _buildReviewLabel(String label) => Text(
     label.toUpperCase(),
-    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.8),
+    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.8),
   );
 
   Widget _buildReviewInfoRow(IconData icon, String label) => Row(
     children: [
-      Icon(icon, size: 16, color: KolabingColors.onSurfaceVariant),
+      Icon(icon, size: 16, color: context.colors.onSurfaceVariant),
       const SizedBox(width: KolabingSpacing.xs),
       Expanded(
         child: Text(
           label,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ),
     ],
@@ -325,13 +325,13 @@ class ReviewScreen extends ConsumerWidget {
       vertical: KolabingSpacing.xxs,
     ),
     decoration: BoxDecoration(
-      color: KolabingColors.softYellow,
+      color: context.colors.softYellow,
       borderRadius: KolabingRadius.borderRadiusSm,
-      border: Border.all(color: KolabingColors.softYellowBorder),
+      border: Border.all(color: context.colors.softYellowBorder),
     ),
     child: Text(
       label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
     ),
   );
 

@@ -50,17 +50,17 @@ class OnboardingProgressIndicator extends StatelessWidget {
       height: 12,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive ? KolabingColors.secondary : KolabingColors.darkBorder,
+        color: isActive ? context.colors.secondary : context.colors.darkBorder,
         border: Border.all(
-          color: isActive ? KolabingColors.secondary : KolabingColors.darkBorder,
+          color: isActive ? context.colors.secondary : context.colors.darkBorder,
           width: 2,
         ),
       ),
       child: isCompleted
-          ? const Icon(
+          ? Icon(
               Icons.check,
               size: 8,
-              color: KolabingColors.onAccent,
+              color: context.colors.onAccent,
             )
           : null,
     );
@@ -75,7 +75,7 @@ class OnboardingProgressIndicator extends StatelessWidget {
       height: 2,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: isActive ? KolabingColors.secondary : KolabingColors.darkBorder,
+        color: isActive ? context.colors.secondary : context.colors.darkBorder,
         borderRadius: BorderRadius.circular(1),
       ),
     );

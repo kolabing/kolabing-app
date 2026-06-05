@@ -24,9 +24,9 @@ class SummaryCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: KolabingColors.darkBorder),
+          border: Border.all(color: context.colors.darkBorder),
           boxShadow: [
             BoxShadow(
               color: const Color(0xFF000000).withValues(alpha: 0.06),
@@ -45,11 +45,11 @@ class SummaryCard extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: KolabingColors.surfaceVariant,
+                    color: context.colors.surfaceVariant,
                     border: Border.all(
                       color: data.photoBase64 != null
-                          ? KolabingColors.primary
-                          : KolabingColors.darkBorder,
+                          ? context.colors.primary
+                          : context.colors.darkBorder,
                       width: 2,
                     ),
                     image: data.photoBase64 != null
@@ -60,10 +60,10 @@ class SummaryCard extends StatelessWidget {
                         : null,
                   ),
                   child: data.photoBase64 == null
-                      ? const Icon(
+                      ? Icon(
                           LucideIcons.user,
                           size: 24,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         )
                       : null,
                 ),
@@ -74,12 +74,12 @@ class SummaryCard extends StatelessWidget {
                     children: [
                       Text(
                         data.name ?? 'No name',
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${data.isBusiness ? data.businessTypesSummary : (data.typeName ?? 'Unknown type')} \u2022 ${data.location?.city ?? data.cityName ?? 'Unknown city'}',
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -93,7 +93,7 @@ class SummaryCard extends StatelessWidget {
                 data.tiktok != null ||
                 data.website != null) ...[
               const SizedBox(height: 16),
-              const Divider(color: KolabingColors.darkBorder, height: 1),
+              Divider(color: context.colors.darkBorder, height: 1),
               const SizedBox(height: 16),
               if (data.isBusiness &&
                   data.venueName != null &&
@@ -127,7 +127,7 @@ class SummaryCard extends StatelessWidget {
               if (data.about != null && data.about!.isNotEmpty) ...[
                 Text(
                   data.about!,
-                  style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+                  style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -185,13 +185,13 @@ class _SummaryDetailItem extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 1),
-          child: Icon(icon, size: 16, color: KolabingColors.textTertiary),
+          child: Icon(icon, size: 16, color: context.colors.textTertiary),
         ),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
             text,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant, height: 1.35),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant, height: 1.35),
             softWrap: true,
           ),
         ),
@@ -216,14 +216,14 @@ class _SummaryInlineItem extends StatelessWidget {
     width: width,
     child: Row(
       children: [
-        Icon(icon, size: 16, color: KolabingColors.textTertiary),
+        Icon(icon, size: 16, color: context.colors.textTertiary),
         const SizedBox(width: 4),
         Expanded(
           child: Text(
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
           ),
         ),
       ],

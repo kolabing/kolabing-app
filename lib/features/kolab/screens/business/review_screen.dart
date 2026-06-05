@@ -55,7 +55,7 @@ class ReviewScreen extends ConsumerWidget {
 
         Text(
           'CHECKLIST',
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 1.2),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -271,9 +271,9 @@ class _PreviewCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -304,13 +304,13 @@ class _PreviewCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: KolabingColors.softYellow,
+                    color: context.colors.softYellow,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: KolabingColors.softYellowBorder),
+                    border: Border.all(color: context.colors.softYellowBorder),
                   ),
                   child: Text(
                     isVenue ? 'VENUE PROMOTION' : 'PRODUCT PROMOTION',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: KolabingColors.accentOrangeText, letterSpacing: 1.0),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: context.colors.accentOrangeText, letterSpacing: 1.0),
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
@@ -320,14 +320,14 @@ class _PreviewCard extends StatelessWidget {
                   headline.isNotEmpty ? headline : 'Untitled kolab',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.2),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface, height: 1.2),
                 ),
 
                 if (subhead.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
                     subhead,
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                   ),
                 ],
 
@@ -337,7 +337,7 @@ class _PreviewCard extends StatelessWidget {
                     kolab.description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
                   ),
                 ],
 
@@ -345,15 +345,15 @@ class _PreviewCard extends StatelessWidget {
                   const SizedBox(height: KolabingSpacing.sm),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.mapPin,
                         size: 14,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         kolab.preferredCity,
-                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -376,12 +376,12 @@ class _CoverImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (url == null || url!.isEmpty) {
       return Container(
-        color: KolabingColors.surfaceVariant,
-        child: const Center(
+        color: context.colors.surfaceVariant,
+        child: Center(
           child: Icon(
             LucideIcons.image,
             size: 32,
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
           ),
         ),
       );
@@ -401,12 +401,12 @@ class _CoverImage extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-        color: KolabingColors.surfaceVariant,
-        child: const Center(
+        color: context.colors.surfaceVariant,
+        child: Center(
           child: Icon(
             LucideIcons.imageOff,
             size: 28,
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
           ),
         ),
       );
@@ -425,13 +425,13 @@ class _StatusBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = ready
-        ? KolabingColors.success.withValues(alpha: 0.16)
-        : KolabingColors.warning.withValues(alpha: 0.16);
+        ? context.colors.success.withValues(alpha: 0.16)
+        : context.colors.warning.withValues(alpha: 0.16);
     final border = ready
-        ? KolabingColors.success.withValues(alpha: 0.4)
-        : KolabingColors.warning.withValues(alpha: 0.4);
+        ? context.colors.success.withValues(alpha: 0.4)
+        : context.colors.warning.withValues(alpha: 0.4);
     final iconColor =
-        ready ? const Color(0xFF1A8C46) : KolabingColors.accentOrangeText;
+        ready ? const Color(0xFF1A8C46) : context.colors.accentOrangeText;
     final icon = ready ? LucideIcons.checkCircle : LucideIcons.alertCircle;
     final title = ready
         ? 'Ready to publish'
@@ -458,12 +458,12 @@ class _StatusBanner extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
                 ),
               ],
             ),
@@ -507,18 +507,18 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ({Color bg, Color fg, IconData icon}) badge = switch (section.status) {
       _Status.complete => (
-          bg: KolabingColors.success.withValues(alpha: 0.18),
+          bg: context.colors.success.withValues(alpha: 0.18),
           fg: const Color(0xFF1A8C46),
           icon: LucideIcons.check,
         ),
       _Status.missing => (
-          bg: KolabingColors.error.withValues(alpha: 0.14),
-          fg: KolabingColors.error,
+          bg: context.colors.error.withValues(alpha: 0.14),
+          fg: context.colors.error,
           icon: LucideIcons.alertCircle,
         ),
       _Status.optional => (
-          bg: KolabingColors.surfaceVariant,
-          fg: KolabingColors.textTertiary,
+          bg: context.colors.surfaceVariant,
+          fg: context.colors.textTertiary,
           icon: LucideIcons.minus,
         ),
     };
@@ -531,12 +531,12 @@ class _SectionCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(KolabingSpacing.md),
           decoration: BoxDecoration(
-            color: KolabingColors.surface,
+            color: context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
               color: section.status == _Status.missing
-                  ? KolabingColors.error.withValues(alpha: 0.3)
-                  : KolabingColors.darkBorder,
+                  ? context.colors.error.withValues(alpha: 0.3)
+                  : context.colors.darkBorder,
             ),
           ),
           child: Row(
@@ -563,12 +563,12 @@ class _SectionCard extends StatelessWidget {
                         Icon(
                           section.icon,
                           size: 14,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           section.title,
-                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         ),
                       ],
                     ),
@@ -578,8 +578,8 @@ class _SectionCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: KolabingTextStyles.captionSecondary.copyWith(color: section.status == _Status.missing
-                            ? KolabingColors.error
-                            : KolabingColors.onSurfaceVariant, height: 1.4),
+                            ? context.colors.error
+                            : context.colors.onSurfaceVariant, height: 1.4),
                     ),
                     if (section.secondary != null) ...[
                       const SizedBox(height: 2),
@@ -587,7 +587,7 @@ class _SectionCard extends StatelessWidget {
                         section.secondary!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                       ),
                     ],
                   ],
@@ -595,10 +595,10 @@ class _SectionCard extends StatelessWidget {
               ),
 
               const SizedBox(width: KolabingSpacing.xs),
-              const Icon(
+              Icon(
                 LucideIcons.chevronRight,
                 size: 18,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ],
           ),

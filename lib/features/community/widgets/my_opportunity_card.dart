@@ -38,7 +38,7 @@ class MyOpportunityCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return DecoratedBox(
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
@@ -63,17 +63,17 @@ class MyOpportunityCard extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.users,
                       size: 14,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       l10n.myOpportunityCardApplicationsCount(
                         opportunity.applicationsCount!,
                       ),
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.textTertiary),
                     ),
                   ],
                 ),
@@ -86,7 +86,7 @@ class MyOpportunityCard extends StatelessWidget {
             opportunity.title.isNotEmpty
                 ? opportunity.title
                 : l10n.myOpportunityCardUntitled,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface, height: 1.3),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -225,20 +225,20 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (backgroundColor, textColor) = switch (status) {
       OpportunityStatus.draft => (
-        KolabingColors.pendingBg,
-        KolabingColors.pendingText,
+        context.colors.pendingBg,
+        context.colors.pendingText,
       ),
       OpportunityStatus.published => (
-        KolabingColors.activeBg,
-        KolabingColors.activeText,
+        context.colors.activeBg,
+        context.colors.activeText,
       ),
       OpportunityStatus.closed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
       ),
       OpportunityStatus.completed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
       ),
     };
 
@@ -270,17 +270,17 @@ class _InfoPill extends StatelessWidget {
     height: 26,
     padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
     decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       borderRadius: KolabingRadius.borderRadiusRound,
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 12, color: KolabingColors.textTertiary),
+        Icon(icon, size: 12, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.xxs),
         Text(
           label,
-          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ],
     ),
@@ -307,10 +307,10 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final foregroundColor = primary
-        ? KolabingColors.onPrimary
+        ? context.colors.onPrimary
         : danger
-        ? KolabingColors.error
-        : KolabingColors.onSurface;
+        ? context.colors.error
+        : context.colors.onSurface;
 
     if (primary) {
       return SizedBox(
@@ -318,8 +318,8 @@ class _ActionButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
+            backgroundColor: context.colors.primary,
+            foregroundColor: context.colors.onPrimary,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
             shape: RoundedRectangleBorder(
@@ -343,8 +343,8 @@ class _ActionButton extends StatelessWidget {
           foregroundColor: foregroundColor,
           side: BorderSide(
             color: danger
-                ? KolabingColors.error.withValues(alpha: 0.5)
-                : KolabingColors.darkBorder,
+                ? context.colors.error.withValues(alpha: 0.5)
+                : context.colors.darkBorder,
           ),
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
           shape: RoundedRectangleBorder(

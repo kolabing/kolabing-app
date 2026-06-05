@@ -80,8 +80,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -102,7 +102,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: KolabingColors.darkBorder,
+                    color: context.colors.darkBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -112,7 +112,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
               // Title
               Text(
                 'Select Time',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 17, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 17, fontWeight: FontWeight.w600, color: context.colors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.md),
 
@@ -129,7 +129,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                       child: Container(
                         height: _itemExtent,
                         decoration: BoxDecoration(
-                          color: KolabingColors.softYellow,
+                          color: context.colors.softYellow,
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
@@ -157,7 +157,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Text(
                             ':',
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 30, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 30, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                           ),
                         ),
 
@@ -189,8 +189,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                KolabingColors.surface,
-                                KolabingColors.surface.withValues(alpha: 0),
+                                context.colors.surface,
+                                context.colors.surface.withValues(alpha: 0),
                               ],
                             ),
                           ),
@@ -211,8 +211,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
                               colors: [
-                                KolabingColors.surface,
-                                KolabingColors.surface.withValues(alpha: 0),
+                                context.colors.surface,
+                                context.colors.surface.withValues(alpha: 0),
                               ],
                             ),
                           ),
@@ -232,8 +232,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.onSurfaceVariant,
-                        side: const BorderSide(color: KolabingColors.darkBorder),
+                        foregroundColor: context.colors.onSurfaceVariant,
+                        side: BorderSide(color: context.colors.darkBorder),
                         padding:
                             const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -253,8 +253,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                         TimeOfDay(hour: _hour, minute: _minute),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: KolabingColors.primary,
-                        foregroundColor: KolabingColors.onPrimary,
+                        backgroundColor: context.colors.primary,
+                        foregroundColor: context.colors.onPrimary,
                         elevation: 0,
                         padding:
                             const EdgeInsets.symmetric(vertical: 14),
@@ -297,8 +297,8 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
             child: Text(
               _pad(i),
               style: KolabingTextStyles.bodyMedium.copyWith(fontSize: isSelected ? 26 : 18, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400, color: isSelected
-                    ? KolabingColors.onSurface
-                    : KolabingColors.onSurfaceVariant.withValues(alpha: 0.45)),
+                    ? context.colors.onSurface
+                    : context.colors.onSurfaceVariant.withValues(alpha: 0.45)),
             ),
           );
         }),

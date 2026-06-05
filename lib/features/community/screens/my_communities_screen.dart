@@ -56,12 +56,12 @@ class _MembershipCard extends StatelessWidget {
     try {
       tierColor = tier?.color != null
           ? Color(int.parse(tier!.color!.replaceFirst('#', '0xff')))
-          : KolabingColors.primary;
+          : context.colors.primary;
     } catch (_) {
-      tierColor = KolabingColors.primary;
+      tierColor = context.colors.primary;
     }
     return Material(
-      color: KolabingColors.surfaceContainerLow,
+      color: context.colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -74,20 +74,20 @@ class _MembershipCard extends StatelessWidget {
           padding: const EdgeInsets.all(KolabingSpacing.md),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: KolabingColors.outlineVariant),
+            border: Border.all(color: context.colors.outlineVariant),
           ),
           child: Row(
             children: [
               CircleAvatar(
                 radius: 26,
-                backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+                backgroundColor: context.colors.primary.withValues(alpha: 0.2),
                 backgroundImage: community.avatarUrl != null
                     ? NetworkImage(community.avatarUrl!)
                     : null,
                 child: community.avatarUrl == null
-                    ? const Icon(
+                    ? Icon(
                         LucideIcons.users,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       )
                     : null,
               ),
@@ -108,7 +108,7 @@ class _MembershipCard extends StatelessWidget {
                       community.type.displayName,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 12,
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -134,7 +134,7 @@ class _MembershipCard extends StatelessWidget {
                           Text(
                             l10n.myCommunitiesNoTier,
                             style: KolabingTextStyles.bodySmall.copyWith(
-                              color: KolabingColors.onSurfaceVariant,
+                              color: context.colors.onSurfaceVariant,
                             ),
                           ),
                         if (membership.canManage) ...[
@@ -145,7 +145,7 @@ class _MembershipCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: KolabingColors.primary.withValues(
+                              color: context.colors.primary.withValues(
                                 alpha: 0.2,
                               ),
                               borderRadius: BorderRadius.circular(6),
@@ -155,7 +155,7 @@ class _MembershipCard extends StatelessWidget {
                               style: KolabingTextStyles.bodySmall.copyWith(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
-                                color: KolabingColors.onSurface,
+                                color: context.colors.onSurface,
                               ),
                             ),
                           ),
@@ -166,10 +166,10 @@ class _MembershipCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: KolabingSpacing.sm),
-              const Icon(
+              Icon(
                 LucideIcons.trophy,
                 size: 18,
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ],
           ),
@@ -195,13 +195,13 @@ class _Empty extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.18),
+                color: context.colors.primary.withValues(alpha: 0.18),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 LucideIcons.users,
                 size: 32,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -218,7 +218,7 @@ class _Empty extends StatelessWidget {
               l10n.myCommunitiesEmptyBody,
               textAlign: TextAlign.center,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -240,17 +240,17 @@ class _Error extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             LucideIcons.alertCircle,
             size: 32,
-            color: KolabingColors.error,
+            color: context.colors.error,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             message,
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),

@@ -38,10 +38,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: KolabingColors.background,
+        systemNavigationBarColor: context.colors.background,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -104,7 +104,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Later',
-              style: KolabingTextStyles.button.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.button.copyWith(color: context.colors.onSurfaceVariant),
             ),
           ),
           TextButton(
@@ -114,7 +114,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             },
             child: Text(
               'Open Settings',
-              style: KolabingTextStyles.button.copyWith(color: KolabingColors.primary),
+              style: KolabingTextStyles.button.copyWith(color: context.colors.primary),
             ),
           ),
         ],
@@ -132,7 +132,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   Widget build(BuildContext context) => PopScope(
     canPop: false,
     child: Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.lg),
@@ -214,8 +214,8 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               child: ElevatedButton(
                 onPressed: _continue,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

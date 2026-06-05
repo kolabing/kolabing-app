@@ -115,7 +115,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
           title: Text(widget.thread.name ?? l10n.chatThreadFallbackTitle)),
       body: Column(
@@ -142,7 +142,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
           child: Text(_error!,
               textAlign: TextAlign.center,
               style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+                  .copyWith(color: context.colors.onSurfaceVariant)),
         ),
       );
     }
@@ -150,7 +150,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       return Center(
         child: Text(l10n.chatThreadEmptyMessage,
             style: KolabingTextStyles.bodyMedium
-                .copyWith(color: KolabingColors.onSurfaceVariant)),
+                .copyWith(color: context.colors.onSurfaceVariant)),
       );
     }
     return ListView.builder(
@@ -181,8 +181,8 @@ class _MessageBubble extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: mine
-              ? KolabingColors.primary
-              : KolabingColors.surfaceContainerHigh,
+              ? context.colors.primary
+              : context.colors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -194,12 +194,12 @@ class _MessageBubble extends StatelessWidget {
                   style: KolabingTextStyles.bodySmall.copyWith(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.onSurfaceVariant)),
+                      color: context.colors.onSurfaceVariant)),
             Text(message.body,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                     color: mine
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.onSurface)),
+                        ? context.colors.onPrimary
+                        : context.colors.onSurface)),
           ],
         ),
       ),
@@ -225,9 +225,9 @@ class _Composer extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.sm),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           border: Border(
-              top: BorderSide(color: KolabingColors.outlineVariant)),
+              top: BorderSide(color: context.colors.outlineVariant)),
         ),
         child: Row(
           children: [
@@ -240,7 +240,7 @@ class _Composer extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context).chatComposerHint,
                   filled: true,
-                  fillColor: KolabingColors.surfaceContainerLow,
+                  fillColor: context.colors.surfaceContainerLow,
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: KolabingSpacing.md,
                       vertical: KolabingSpacing.sm),
@@ -253,7 +253,7 @@ class _Composer extends StatelessWidget {
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Material(
-              color: KolabingColors.primary,
+              color: context.colors.primary,
               borderRadius: BorderRadius.circular(24),
               child: InkWell(
                 borderRadius: BorderRadius.circular(24),
@@ -261,14 +261,14 @@ class _Composer extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: sending
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: KolabingColors.onSurface))
-                      : const Icon(LucideIcons.send,
-                          size: 20, color: KolabingColors.onPrimary),
+                              color: context.colors.onSurface))
+                      : Icon(LucideIcons.send,
+                          size: 20, color: context.colors.onPrimary),
                 ),
               ),
             ),

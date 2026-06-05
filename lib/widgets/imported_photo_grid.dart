@@ -90,14 +90,14 @@ class ImportedPhotoGrid extends StatelessWidget {
                   loadingBuilder: (context, child, progress) {
                     if (progress == null) return child;
                     return Container(
-                      color: KolabingColors.surfaceVariant,
+                      color: context.colors.surfaceVariant,
                       alignment: Alignment.center,
-                      child: const SizedBox(
+                      child: SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                     );
@@ -112,7 +112,7 @@ class ImportedPhotoGrid extends StatelessWidget {
                     width: 26,
                     height: 26,
                     decoration: BoxDecoration(
-                      color: KolabingColors.error,
+                      color: context.colors.error,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -138,11 +138,11 @@ class ImportedPhotoGrid extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-    color: KolabingColors.surfaceVariant,
+    color: context.colors.surfaceVariant,
     alignment: Alignment.center,
-    child: const Icon(
+    child: Icon(
       LucideIcons.imageOff,
-      color: KolabingColors.textTertiary,
+      color: context.colors.textTertiary,
       size: 22,
     ),
   );
@@ -156,6 +156,6 @@ class GoogleAttributionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     'Powered by Google',
-    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
+    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
   );
 }

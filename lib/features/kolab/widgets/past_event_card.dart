@@ -41,8 +41,8 @@ class PastEventCard extends StatelessWidget {
   Widget _buildAddCard() => GestureDetector(
     onTap: onAdd,
     child: CustomPaint(
-      painter: const _DashedBorderPainter(
-        color: KolabingColors.darkBorder,
+      painter: _DashedBorderPainter(
+        color: context.colors.darkBorder,
         radius: KolabingRadius.md,
       ),
       child: Container(
@@ -53,20 +53,20 @@ class PastEventCard extends StatelessWidget {
             Container(
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
-                color: KolabingColors.background,
+              decoration: BoxDecoration(
+                color: context.colors.background,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 LucideIcons.plus,
                 size: 20,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               'Add a past event',
-              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
             ),
           ],
         ),
@@ -85,9 +85,9 @@ class PastEventCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,14 +96,14 @@ class PastEventCard extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: const BoxDecoration(
-              color: KolabingColors.softYellow,
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.calendar,
               size: 18,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -114,29 +114,29 @@ class PastEventCard extends StatelessWidget {
               children: [
                 Text(
                   e.name,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: KolabingSpacing.xxxs),
                 Text(
                   formattedDate,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                 ),
                 if (e.partnerName != null && e.partnerName!.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.xxxs),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.users,
                         size: 13,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: KolabingSpacing.xxs),
                       Expanded(
                         child: Text(
                           e.partnerName!,
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -152,21 +152,21 @@ class PastEventCard extends StatelessWidget {
                       vertical: KolabingSpacing.xxxs,
                     ),
                     decoration: BoxDecoration(
-                      color: KolabingColors.background,
+                      color: context.colors.background,
                       borderRadius: KolabingRadius.borderRadiusXs,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.image,
                           size: 12,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                         const SizedBox(width: KolabingSpacing.xxs),
                         Text(
                           '${e.photos.length} photo${e.photos.length == 1 ? '' : 's'}',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
                         ),
                       ],
                     ),
@@ -180,21 +180,21 @@ class PastEventCard extends StatelessWidget {
                       vertical: KolabingSpacing.xxxs,
                     ),
                     decoration: BoxDecoration(
-                      color: KolabingColors.background,
+                      color: context.colors.background,
                       borderRadius: KolabingRadius.borderRadiusXs,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.video,
                           size: 12,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                         const SizedBox(width: KolabingSpacing.xxs),
                         Text(
                           '${e.videos.length} video${e.videos.length == 1 ? '' : 's'}',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
                         ),
                       ],
                     ),
@@ -207,9 +207,9 @@ class PastEventCard extends StatelessWidget {
           if (onRemove != null)
             GestureDetector(
               onTap: onRemove,
-              child: const DecoratedBox(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: KolabingColors.errorBg,
+                  color: context.colors.errorBg,
                   shape: BoxShape.circle,
                 ),
                 child: SizedBox(
@@ -218,7 +218,7 @@ class PastEventCard extends StatelessWidget {
                   child: Icon(
                     LucideIcons.x,
                     size: 14,
-                    color: KolabingColors.error,
+                    color: context.colors.error,
                   ),
                 ),
               ),

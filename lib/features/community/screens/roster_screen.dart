@@ -23,7 +23,7 @@ class RosterScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(communityManageProvider).members;
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(l10n.rosterTitle),
         actions: [
@@ -42,7 +42,7 @@ class RosterScreen extends ConsumerWidget {
             child: Text(e.toString(),
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.onSurfaceVariant)),
+                    .copyWith(color: context.colors.onSurfaceVariant)),
           ),
         ),
         data: (members) {
@@ -76,7 +76,7 @@ class RosterScreen extends ConsumerWidget {
     final changed = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       builder: (_) =>
           _MemberEditSheet(communityId: communityId, member: member),
     );
@@ -160,7 +160,7 @@ class _MemberTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: KolabingColors.surfaceContainerLow,
+      color: context.colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -169,13 +169,13 @@ class _MemberTile extends StatelessWidget {
           padding: const EdgeInsets.all(KolabingSpacing.sm),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: KolabingColors.outlineVariant),
+            border: Border.all(color: context.colors.outlineVariant),
           ),
           child: Row(
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: KolabingColors.surfaceContainerHigh,
+                backgroundColor: context.colors.surfaceContainerHigh,
                 backgroundImage: member.memberAvatarUrl != null
                     ? NetworkImage(member.memberAvatarUrl!)
                     : null,
@@ -197,16 +197,16 @@ class _MemberTile extends StatelessWidget {
                       Text(member.status.displayName,
                           style: KolabingTextStyles.bodySmall.copyWith(
                               fontSize: 12,
-                              color: KolabingColors.onSurfaceVariant)),
+                              color: context.colors.onSurfaceVariant)),
                   ],
                 ),
               ),
               if (member.canManage)
-                const Icon(LucideIcons.shield,
-                    size: 16, color: KolabingColors.onSurfaceVariant),
+                Icon(LucideIcons.shield,
+                    size: 16, color: context.colors.onSurfaceVariant),
               const SizedBox(width: KolabingSpacing.xs),
-              const Icon(LucideIcons.chevronRight,
-                  size: 16, color: KolabingColors.onSurfaceVariant),
+              Icon(LucideIcons.chevronRight,
+                  size: 16, color: context.colors.onSurfaceVariant),
             ],
           ),
         ),
@@ -228,8 +228,8 @@ class _EmptyRoster extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.users,
-                size: 32, color: KolabingColors.onSurfaceVariant),
+            Icon(LucideIcons.users,
+                size: 32, color: context.colors.onSurfaceVariant),
             const SizedBox(height: KolabingSpacing.md),
             Text(l10n.rosterEmptyTitle,
                 style: KolabingTextStyles.bodyLarge
@@ -240,8 +240,8 @@ class _EmptyRoster extends StatelessWidget {
               icon: const Icon(LucideIcons.userPlus, size: 18),
               label: Text(l10n.rosterInviteMember),
               style: FilledButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
               ),
             ),
           ],
@@ -358,7 +358,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
             loading: () => const LinearProgressIndicator(),
             error: (e, _) => Text(e.toString(),
                 style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.error)),
+                    .copyWith(color: context.colors.error)),
             data: (tiers) => DropdownButtonFormField<String?>(
               initialValue:
                   tiers.any((t) => t.id == _tierId) ? _tierId : null,
@@ -379,7 +379,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
             title: Text(l10n.rosterCanManageTitle),
             subtitle: Text(l10n.rosterCanManageSubtitle),
             value: _canManage,
-            activeThumbColor: KolabingColors.primary,
+            activeThumbColor: context.colors.primary,
             onChanged: (v) => setState(() => _canManage = v),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -409,7 +409,7 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
                   icon: const Icon(LucideIcons.userMinus, size: 18),
                   label: Text(l10n.rosterRemove),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: KolabingColors.error,
+                    foregroundColor: context.colors.error,
                     minimumSize: const Size.fromHeight(48),
                   ),
                 ),
@@ -419,17 +419,17 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
                 child: FilledButton(
                   onPressed: _busy ? null : _save,
                   style: FilledButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
                     minimumSize: const Size.fromHeight(48),
                   ),
                   child: _busy
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: KolabingColors.onSurface))
+                              color: context.colors.onSurface))
                       : Text(l10n.rosterSave),
                 ),
               ),

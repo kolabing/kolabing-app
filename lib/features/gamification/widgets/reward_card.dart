@@ -25,7 +25,7 @@ class RewardCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _getBorderColor(),
@@ -60,14 +60,14 @@ class RewardCard extends StatelessWidget {
                 children: [
                   Text(
                     rewardClaim.eventReward?.name ?? 'Mystery Reward',
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Won ${_formatDate(rewardClaim.wonAt)}',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -87,15 +87,15 @@ class RewardCard extends StatelessWidget {
 
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
-        color = KolabingColors.success;
+        color = context.colors.success;
         text = 'Available';
         break;
       case RewardClaimStatus.redeemed:
-        color = KolabingColors.info;
+        color = context.colors.info;
         text = 'Redeemed';
         break;
       case RewardClaimStatus.expired:
-        color = KolabingColors.error;
+        color = context.colors.error;
         text = 'Expired';
         break;
     }
@@ -119,33 +119,33 @@ class RewardCard extends StatelessWidget {
   Color _getBorderColor() {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
-        return KolabingColors.success.withValues(alpha: 0.3);
+        return context.colors.success.withValues(alpha: 0.3);
       case RewardClaimStatus.redeemed:
-        return KolabingColors.darkBorder;
+        return context.colors.darkBorder;
       case RewardClaimStatus.expired:
-        return KolabingColors.error.withValues(alpha: 0.3);
+        return context.colors.error.withValues(alpha: 0.3);
     }
   }
 
   Color _getIconBackgroundColor() {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
-        return KolabingColors.success.withValues(alpha: 0.1);
+        return context.colors.success.withValues(alpha: 0.1);
       case RewardClaimStatus.redeemed:
-        return KolabingColors.info.withValues(alpha: 0.1);
+        return context.colors.info.withValues(alpha: 0.1);
       case RewardClaimStatus.expired:
-        return KolabingColors.error.withValues(alpha: 0.1);
+        return context.colors.error.withValues(alpha: 0.1);
     }
   }
 
   Color _getIconColor() {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
-        return KolabingColors.success;
+        return context.colors.success;
       case RewardClaimStatus.redeemed:
-        return KolabingColors.info;
+        return context.colors.info;
       case RewardClaimStatus.expired:
-        return KolabingColors.error;
+        return context.colors.error;
     }
   }
 

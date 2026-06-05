@@ -75,10 +75,10 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     // As a nav tab the role shell already provides the app bar; render the body
     // only. As a pushed screen, wrap with our own Scaffold + "Chats" app bar.
     if (widget.embedded) {
-      return Container(color: KolabingColors.background, child: body);
+      return Container(color: context.colors.background, child: body);
     }
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(title: Text(l10n.chatsTitle)),
       body: body,
     );
@@ -140,7 +140,7 @@ class _ThreadTile extends ConsumerWidget {
         ref.read(chatUnreadProvider.notifier).refresh();
       },
       leading: CircleAvatar(
-        backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+        backgroundColor: context.colors.primary.withValues(alpha: 0.2),
         child: Icon(
           thread.type == ChatThreadType.event
               ? LucideIcons.calendar
@@ -148,7 +148,7 @@ class _ThreadTile extends ConsumerWidget {
                   ? LucideIcons.briefcase
                   : LucideIcons.messageCircle,
           size: 18,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
       title: Text(_titleFor(l10n),
@@ -164,21 +164,21 @@ class _ThreadTile extends ConsumerWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: KolabingTextStyles.bodySmall
-            .copyWith(color: KolabingColors.onSurfaceVariant),
+            .copyWith(color: context.colors.onSurfaceVariant),
       ),
       trailing: thread.hasUnread
           ? Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
-                color: KolabingColors.primary,
+                color: context.colors.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text('${thread.unreadCount}',
                   style: KolabingTextStyles.bodySmall.copyWith(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.onPrimary)),
+                      color: context.colors.onPrimary)),
             )
           : null,
     );
@@ -198,7 +198,7 @@ class _SectionLabel extends StatelessWidget {
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
-                color: KolabingColors.onSurfaceVariant)),
+                color: context.colors.onSurfaceVariant)),
       );
 }
 
@@ -218,11 +218,11 @@ class _EmptyChats extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.18),
+                color: context.colors.primary.withValues(alpha: 0.18),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.messageCircle,
-                  size: 32, color: KolabingColors.onSurface),
+              child: Icon(LucideIcons.messageCircle,
+                  size: 32, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(l10n.chatInboxEmptyTitle,
@@ -233,7 +233,7 @@ class _EmptyChats extends StatelessWidget {
               l10n.chatInboxEmptyBody,
               textAlign: TextAlign.center,
               style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant),
+                  .copyWith(color: context.colors.onSurfaceVariant),
             ),
           ],
         ),
@@ -254,13 +254,13 @@ class _ErrorState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.alertCircle,
-                  size: 32, color: KolabingColors.error),
+              Icon(LucideIcons.alertCircle,
+                  size: 32, color: context.colors.error),
               const SizedBox(height: KolabingSpacing.md),
               Text(message,
                   textAlign: TextAlign.center,
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant)),
+                      .copyWith(color: context.colors.onSurfaceVariant)),
               const SizedBox(height: KolabingSpacing.lg),
               OutlinedButton(
                   onPressed: onRetry,

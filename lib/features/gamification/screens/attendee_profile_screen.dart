@@ -22,11 +22,11 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
+        isDark ? context.colors.textOnDark : context.colors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
     final surfaceColor =
-        isDark ? KolabingColors.darkSurface : KolabingColors.surface;
+        isDark ? context.colors.darkSurface : context.colors.surface;
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -43,16 +43,16 @@ class AttendeeProfileScreen extends ConsumerWidget {
               height: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: KolabingColors.primary.withValues(alpha: 0.2),
+                color: context.colors.primary.withValues(alpha: 0.2),
                 border: Border.all(
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                   width: 3,
                 ),
               ),
               child: Center(
                 child: Text(
                   _getInitials(user?.displayName ?? 'A'),
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: context.colors.primary),
                 ),
               ),
             ),
@@ -89,7 +89,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 Expanded(
                   child: StatCard(
                     icon: LucideIcons.star,
-                    iconColor: KolabingColors.primary,
+                    iconColor: context.colors.primary,
                     label: l10n.attendeeProfileTotalPoints,
                     value: '${attendeeProfile?.totalPoints ?? 0}',
                     showBackground: true,
@@ -99,7 +99,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 Expanded(
                   child: StatCard(
                     icon: LucideIcons.target,
-                    iconColor: KolabingColors.success,
+                    iconColor: context.colors.success,
                     label: l10n.attendeeProfileChallenges,
                     value: '${attendeeProfile?.totalChallengesCompleted ?? 0}',
                     showBackground: true,
@@ -115,7 +115,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 Expanded(
                   child: StatCard(
                     icon: LucideIcons.calendar,
-                    iconColor: KolabingColors.info,
+                    iconColor: context.colors.info,
                     label: l10n.attendeeProfileEventsAttended,
                     value: '${attendeeProfile?.totalEventsAttended ?? 0}',
                     showBackground: true,
@@ -132,7 +132,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+                  color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
                 ),
               ),
               child: Column(
@@ -147,8 +147,8 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   Divider(
                     height: 1,
                     color: isDark
-                        ? KolabingColors.darkBorder
-                        : KolabingColors.darkBorder,
+                        ? context.colors.darkBorder
+                        : context.colors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.bell,
@@ -160,8 +160,8 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   Divider(
                     height: 1,
                     color: isDark
-                        ? KolabingColors.darkBorder
-                        : KolabingColors.darkBorder,
+                        ? context.colors.darkBorder
+                        : context.colors.darkBorder,
                   ),
                   _SettingsItem(
                     icon: LucideIcons.helpCircle,
@@ -204,8 +204,8 @@ class AttendeeProfileScreen extends ConsumerWidget {
                 icon: const Icon(LucideIcons.logOut, size: 18),
                 label: Text(l10n.attendeeProfileSignOut),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: KolabingColors.error,
-                  side: const BorderSide(color: KolabingColors.error),
+                  foregroundColor: context.colors.error,
+                  side: BorderSide(color: context.colors.error),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -242,7 +242,7 @@ class AttendeeProfileScreen extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.error,
+              foregroundColor: context.colors.error,
             ),
             child: Text(AppLocalizations.of(context).attendeeProfileSignOut),
           ),
@@ -274,7 +274,7 @@ class _SettingsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
+        isDark ? context.colors.textOnDark : context.colors.onSurface;
 
     return Material(
       color: Colors.transparent,
@@ -291,7 +291,7 @@ class _SettingsItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
@@ -303,7 +303,7 @@ class _SettingsItem extends StatelessWidget {
               Icon(
                 LucideIcons.chevronRight,
                 size: 20,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ],
           ),

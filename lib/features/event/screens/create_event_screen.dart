@@ -246,7 +246,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   Widget build(BuildContext context) {
     final tiersAsync = ref.watch(communityTiersProvider(widget.communityId));
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(_isEdit ? _l10n.eventFormEditTitle : _l10n.eventFormNewTitle),
         actions: [
@@ -261,7 +261,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         children: [
           Text(widget.communityName,
               style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+                  .copyWith(color: context.colors.onSurfaceVariant)),
           const SizedBox(height: KolabingSpacing.md),
           _label(_l10n.eventFormNameLabel),
           TextField(
@@ -316,7 +316,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           else
             Text(_l10n.eventHubUnlimited,
                 style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.onSurfaceVariant)),
+                    .copyWith(color: context.colors.onSurfaceVariant)),
           const SizedBox(height: KolabingSpacing.lg),
           _label(_l10n.eventFormWhoCanJoin),
           _tierGatePicker(tiersAsync),
@@ -335,8 +335,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
             child: FilledButton.icon(
               onPressed: _busy ? null : _submit,
               style: FilledButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
@@ -570,9 +570,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                       errorBuilder: (_, __, ___) => Container(
                         width: 72,
                         height: 72,
-                        color: KolabingColors.surfaceVariant,
-                        child: const Icon(LucideIcons.image,
-                            color: KolabingColors.textTertiary),
+                        color: context.colors.surfaceVariant,
+                        child: Icon(LucideIcons.image,
+                            color: context.colors.textTertiary),
                       ),
                     ),
                   ),
@@ -599,13 +599,13 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         child: Text(t,
             style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurfaceVariant)),
+                color: context.colors.onSurfaceVariant)),
       );
 
   InputDecoration _dec(String hint) => InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: KolabingColors.surfaceContainerLow,
+        fillColor: context.colors.surfaceContainerLow,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
@@ -634,7 +634,7 @@ class _DateField extends StatelessWidget {
       child: InputDecorator(
         decoration: InputDecoration(
           filled: true,
-          fillColor: KolabingColors.surfaceContainerLow,
+          fillColor: context.colors.surfaceContainerLow,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
@@ -648,8 +648,8 @@ class _DateField extends StatelessWidget {
           value != null ? _fmt(value!) : hint,
           style: KolabingTextStyles.bodyMedium.copyWith(
             color: value != null
-                ? KolabingColors.onSurface
-                : KolabingColors.onSurfaceVariant,
+                ? context.colors.onSurface
+                : context.colors.onSurfaceVariant,
           ),
         ),
       ),
