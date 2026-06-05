@@ -16,6 +16,7 @@ import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
+import '../services/community_service.dart';
 import 'create_community_screen.dart';
 import 'roster_screen.dart';
 import 'tier_editor_screen.dart';
@@ -336,9 +337,109 @@ class _ChatsSection extends ConsumerWidget {
     }
   }
 
+  /// Short summary of who can currently open a custom chat, by tier count.
+  /// (Owners/managers always have access; this counts member tiers granted.)
+  static String _accessLabel(ChatThread thread, List<CommunityTier> tiers) {
+    final slug = thread.slug;
+    if (slug == null || tiers.isEmpty) return 'Access';
+    final granted =
+        tiers.where((t) => t.permissions.chatChannels.contains(slug)).length;
+    if (granted == 0) return 'No tiers';
+    if (granted == tiers.length) return 'All tiers';
+    return granted == 1 ? '1 tier' : '$granted tiers';
+  }
+
+  /// Per-chat tier gating: pick which member tiers can open this custom chat.
+  /// Writes the chat's slug into each selected tier's permissions.chat_channels
+  /// (and removes it from the deselected ones).
+  Future<void> _manageAccess(BuildContext context, WidgetRef ref,
+      ChatThread thread, List<CommunityTier> tiers) async {
+    final slug = thread.slug;
+    if (slug == null) return;
+    if (tiers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Create membership tiers first to gate chats.')));
+      return;
+    }
+
+    final selected = {
+      for (final t in tiers) t.id: t.permissions.chatChannels.contains(slug),
+    };
+
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setLocal) => AlertDialog(
+          title: Text('Who can access "${thread.name ?? 'chat'}"?'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+                  child: Text(
+                    'You and your managers always have access. Choose which '
+                    'member tiers can open this chat.',
+                    style: KolabingTextStyles.bodySmall
+                        .copyWith(color: KolabingColors.onSurfaceVariant),
+                  ),
+                ),
+                for (final t in tiers)
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    value: selected[t.id] ?? false,
+                    title: Text(t.name),
+                    onChanged: (v) =>
+                        setLocal(() => selected[t.id] = v ?? false),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: const Text('Save')),
+          ],
+        ),
+      ),
+    );
+    if (saved != true) return;
+
+    final svc = ref.read(communityServiceProvider);
+    try {
+      for (final t in tiers) {
+        final has = t.permissions.chatChannels.contains(slug);
+        final want = selected[t.id] ?? false;
+        if (has == want) continue;
+        final next = [...t.permissions.chatChannels];
+        want ? next.add(slug) : next.remove(slug);
+        await svc.updateTier(t.id,
+            permissions: t.permissions.copyWith(chatChannels: next));
+      }
+      await ref.read(communityManageProvider.notifier).reloadTiers();
+      ref.read(chatThreadsProvider.notifier).reload();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Chat access updated')));
+      }
+    } on CommunityException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(chatThreadsProvider);
+    final tiers =
+        ref.watch(communityManageProvider).tiers.asData?.value ?? const [];
     return async.when(
       loading: () => const _InlineLoader(),
       error: (e, _) => _InlineError(message: e.toString()),
@@ -357,7 +458,17 @@ class _ChatsSection extends ConsumerWidget {
                     '$_maxCustom custom chats live here.',
               )
             else
-              for (final t in mine) _ChatRow(thread: t),
+              for (final t in mine)
+                _ChatRow(
+                  thread: t,
+                  onManageAccess:
+                      t.type == ChatThreadType.communityCustom && t.slug != null
+                          ? () => _manageAccess(context, ref, t, tiers)
+                          : null,
+                  accessLabel: t.type == ChatThreadType.communityCustom
+                      ? _accessLabel(t, tiers)
+                      : null,
+                ),
             const SizedBox(height: KolabingSpacing.xs),
             if (customCount < _maxCustom)
               _AddTile(
@@ -377,9 +488,16 @@ class _ChatsSection extends ConsumerWidget {
 }
 
 class _ChatRow extends StatelessWidget {
-  const _ChatRow({required this.thread});
+  const _ChatRow({required this.thread, this.onManageAccess, this.accessLabel});
 
   final ChatThread thread;
+
+  /// Custom chats only: opens the "who can access" tier picker. Null for the
+  /// main chat (always all members) and member-facing views.
+  final VoidCallback? onManageAccess;
+
+  /// Short summary of current access, e.g. "All", "2 tiers".
+  final String? accessLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -413,6 +531,31 @@ class _ChatRow extends StatelessWidget {
                           .copyWith(fontWeight: FontWeight.w600)),
                 ),
                 if (isMain) _Chip(label: 'MAIN'),
+                if (!isMain && onManageAccess != null)
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: onManageAccess,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: KolabingSpacing.xs, vertical: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LucideIcons.lock,
+                                size: 13, color: KolabingColors.onSurfaceVariant),
+                            const SizedBox(width: 4),
+                            Text(accessLabel ?? 'Access',
+                                style: KolabingTextStyles.bodySmall.copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: KolabingColors.onSurfaceVariant)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 if (thread.hasUnread) ...[
                   const SizedBox(width: KolabingSpacing.xs),
                   Container(

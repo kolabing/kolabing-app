@@ -75,6 +75,7 @@ class ChatThread {
     required this.id,
     required this.type,
     this.name,
+    this.slug,
     this.applicationId,
     this.communityId,
     this.collaborationId,
@@ -94,6 +95,7 @@ class ChatThread {
       id: json['id'] as String,
       type: ChatThreadType.fromString(json['type'] as String? ?? 'community_custom'),
       name: json['name'] as String?,
+      slug: json['slug'] as String?,
       applicationId: json['application_id'] as String?,
       communityId: json['community_id'] as String?,
       collaborationId: json['collaboration_id'] as String?,
@@ -113,6 +115,10 @@ class ChatThread {
   /// Display name. For [ChatThreadType.communityMain] the backend may send the
   /// community name; falls back to a sensible default in the UI when null.
   final String? name;
+
+  /// Stable per-community slug (custom chats). This is the gating key: a tier
+  /// grants access by listing this slug in its `permissions.chat_channels`.
+  final String? slug;
 
   /// For collaboration threads, the application that backs the chat — messages
   /// are read/sent via the existing `/applications/{id}/messages` endpoints.
@@ -134,6 +140,7 @@ class ChatThread {
         'id': id,
         'type': type.toApiValue(),
         if (name != null) 'name': name,
+        if (slug != null) 'slug': slug,
         if (applicationId != null) 'application_id': applicationId,
         if (communityId != null) 'community_id': communityId,
         if (collaborationId != null) 'collaboration_id': collaborationId,
@@ -149,6 +156,7 @@ class ChatThread {
     String? id,
     ChatThreadType? type,
     String? name,
+    String? slug,
     String? applicationId,
     String? communityId,
     String? collaborationId,
@@ -162,6 +170,7 @@ class ChatThread {
         id: id ?? this.id,
         type: type ?? this.type,
         name: name ?? this.name,
+        slug: slug ?? this.slug,
         applicationId: applicationId ?? this.applicationId,
         communityId: communityId ?? this.communityId,
         collaborationId: collaborationId ?? this.collaborationId,

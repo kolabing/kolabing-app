@@ -292,26 +292,43 @@ class _EventTile extends StatelessWidget {
   final Event event;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-        leading: CircleAvatar(
-          backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
-          child: const Icon(LucideIcons.calendar,
-              size: 18, color: KolabingColors.onSurface),
-        ),
-        title: Text(event.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: KolabingTextStyles.bodyMedium
-                .copyWith(fontWeight: FontWeight.w600)),
-        subtitle: Text(event.formattedDate,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant)),
-        trailing: const Icon(LucideIcons.chevronRight, size: 18),
-        onTap: () => Navigator.of(context).push<void>(
-          MaterialPageRoute<void>(
-              builder: (_) => EventHubScreen(event: event)),
-        ),
-      );
+  Widget build(BuildContext context) {
+    // Tier-gated: a member whose tier is not permitted cannot even open the
+    // details. Show a lock and a one-line reason instead of navigating.
+    final locked = !event.canAccess;
+    final muted = KolabingColors.onSurfaceVariant;
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: locked
+            ? muted.withValues(alpha: 0.15)
+            : KolabingColors.primary.withValues(alpha: 0.2),
+        child: Icon(locked ? LucideIcons.lock : LucideIcons.calendar,
+            size: 18, color: locked ? muted : KolabingColors.onSurface),
+      ),
+      title: Text(event.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+              color: locked ? muted : KolabingColors.onSurface)),
+      subtitle: Text(
+          locked ? 'Locked — for another membership tier' : event.formattedDate,
+          style: KolabingTextStyles.bodySmall.copyWith(color: muted)),
+      trailing: Icon(locked ? LucideIcons.lock : LucideIcons.chevronRight,
+          size: 18, color: locked ? muted : null),
+      onTap: locked
+          ? () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      'This event is for a different membership tier.'),
+                ),
+              )
+          : () => Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                    builder: (_) => EventHubScreen(event: event)),
+              ),
+    );
+  }
 }
 
 // -----------------------------------------------------------------------------

@@ -125,6 +125,20 @@ class TierPermissions {
         'perks': perks,
         'capabilities': capabilities,
       };
+
+  TierPermissions copyWith({
+    List<String>? view,
+    List<String>? chatChannels,
+    List<String>? perks,
+    List<String>? capabilities,
+  }) =>
+      TierPermissions(
+        view: view ?? this.view,
+        chatChannels: chatChannels ?? this.chatChannels,
+        perks: perks ?? this.perks,
+        capabilities: capabilities ?? this.capabilities,
+        raw: raw,
+      );
 }
 
 /// A leader-defined rung within a single community.

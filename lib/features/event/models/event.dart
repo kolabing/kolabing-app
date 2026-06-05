@@ -21,6 +21,11 @@ class Event {
   final bool isUpcoming;
   final String? communityId;
 
+  /// Viewer-scoped gate (`can_access` from the API). False when this member's
+  /// tier is not in the event's `tier_gate` — the app then locks the event
+  /// (no open into details). Defaults to true (legacy/ungated events stay open).
+  final bool canAccess;
+
   const Event({
     required this.id,
     required this.name,
@@ -40,6 +45,7 @@ class Event {
     this.waitlistPosition,
     this.isUpcoming = false,
     this.communityId,
+    this.canAccess = true,
   });
 
   /// True when the viewer has a confirmed 'going' sign-up.
@@ -94,6 +100,7 @@ class Event {
       waitlistPosition: waitlistPosition,
       isUpcoming: json['is_upcoming'] as bool? ?? false,
       communityId: json['community_id'] as String?,
+      canAccess: json['can_access'] as bool? ?? true,
       photos:
           (json['photos'] as List<dynamic>?)
               ?.map((e) => EventPhoto.fromJson(e as Map<String, dynamic>))
@@ -142,6 +149,7 @@ class Event {
     int? waitlistPosition,
     bool? isUpcoming,
     String? communityId,
+    bool? canAccess,
   }) => Event(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -161,6 +169,7 @@ class Event {
     waitlistPosition: waitlistPosition ?? this.waitlistPosition,
     isUpcoming: isUpcoming ?? this.isUpcoming,
     communityId: communityId ?? this.communityId,
+    canAccess: canAccess ?? this.canAccess,
   );
 
   /// Returns the best available cover media thumbnail.
