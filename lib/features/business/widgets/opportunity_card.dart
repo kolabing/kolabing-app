@@ -31,7 +31,7 @@ class OpportunityCard extends StatelessWidget {
 
     return DecoratedBox(
         decoration: BoxDecoration(
-          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+          color: isDark ? context.colors.darkSurface : context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusLg,
           boxShadow: isDark
               ? null
@@ -49,15 +49,15 @@ class OpportunityCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header: Avatar, Creator Name, Status
-              _buildHeader(isDark),
+              _buildHeader(context, isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Title
               Text(
                 opportunity.title,
                 style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface, height: 1.3),
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface, height: 1.3),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -66,7 +66,7 @@ class OpportunityCard extends StatelessWidget {
               // Description
               Text(
                 opportunity.description,
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -74,29 +74,29 @@ class OpportunityCard extends StatelessWidget {
 
               // Category chips
               if (opportunity.categories.isNotEmpty) ...[
-                _buildCategoryChips(isDark),
+                _buildCategoryChips(context, isDark),
                 const SizedBox(height: KolabingSpacing.sm),
               ],
 
               // Info tags row (city, venue mode, dates)
-              _buildInfoTags(isDark),
+              _buildInfoTags(context, isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Offer summary
               if (opportunity.businessOffer.hasAnyOffer) ...[
-                _buildOfferSummary(),
+                _buildOfferSummary(context),
                 const SizedBox(height: KolabingSpacing.sm),
               ],
 
               // Action buttons
-              _buildActionButtons(isDark),
+              _buildActionButtons(context, isDark),
             ],
           ),
         ),
       );
   }
 
-  Widget _buildHeader(bool isDark) => Row(
+  Widget _buildHeader(BuildContext context, bool isDark) => Row(
         children: [
           // Creator avatar
           _CreatorAvatar(
@@ -114,16 +114,16 @@ class OpportunityCard extends StatelessWidget {
                 Text(
                   opportunity.creatorProfile?.displayName ?? 'Unknown',
                   style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface),
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   opportunity.creatorProfile?.userType ?? '',
                   style: KolabingTextStyles.captionSecondary.copyWith(color: isDark
-                        ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                        : KolabingColors.textTertiary),
+                        ? context.colors.textOnDark.withValues(alpha: 0.5)
+                        : context.colors.textTertiary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -136,7 +136,7 @@ class OpportunityCard extends StatelessWidget {
         ],
       );
 
-  Widget _buildCategoryChips(bool isDark) => Wrap(
+  Widget _buildCategoryChips(BuildContext context, bool isDark) => Wrap(
         spacing: KolabingSpacing.xxs,
         runSpacing: KolabingSpacing.xxs,
         children: opportunity.categories
@@ -147,7 +147,7 @@ class OpportunityCard extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    color: context.colors.primary.withValues(alpha: 0.1),
                     borderRadius: KolabingRadius.borderRadiusRound,
                   ),
                   child: Row(
@@ -158,8 +158,8 @@ class OpportunityCard extends StatelessWidget {
                       Text(
                         cat,
                         style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: isDark
-                              ? KolabingColors.textOnDark
-                              : KolabingColors.onSurface),
+                              ? context.colors.textOnDark
+                              : context.colors.onSurface),
                       ),
                     ],
                   ),
@@ -167,7 +167,7 @@ class OpportunityCard extends StatelessWidget {
             .toList(),
       );
 
-  Widget _buildInfoTags(bool isDark) {
+  Widget _buildInfoTags(BuildContext context, bool isDark) {
     final dateFormat = DateFormat('MMM d');
     final dateText =
         '${dateFormat.format(opportunity.availabilityStart)} - ${dateFormat.format(opportunity.availabilityEnd)}';
@@ -201,31 +201,31 @@ class OpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildOfferSummary() => Container(
+  Widget _buildOfferSummary(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(
           horizontal: KolabingSpacing.sm,
           vertical: KolabingSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.success.withValues(alpha: 0.1),
+          color: context.colors.success.withValues(alpha: 0.1),
           borderRadius: KolabingRadius.borderRadiusSm,
           border: Border.all(
-            color: KolabingColors.success.withValues(alpha: 0.3),
+            color: context.colors.success.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               LucideIcons.gift,
               size: 14,
-              color: KolabingColors.activeText,
+              color: context.colors.activeText,
             ),
             const SizedBox(width: KolabingSpacing.xxs),
             Flexible(
               child: Text(
                 opportunity.offerSummary,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.activeText),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.activeText),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -234,7 +234,7 @@ class OpportunityCard extends StatelessWidget {
         ),
       );
 
-  Widget _buildActionButtons(bool isDark) => Row(
+  Widget _buildActionButtons(BuildContext context, bool isDark) => Row(
         children: [
           // View button (outlined)
           Expanded(
@@ -242,12 +242,12 @@ class OpportunityCard extends StatelessWidget {
               onPressed: onView,
               style: OutlinedButton.styleFrom(
                 foregroundColor: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
                 side: BorderSide(
                   color: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.darkBorder,
+                      ? context.colors.darkBorder
+                      : context.colors.darkBorder,
                   width: 1.5,
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -270,8 +270,8 @@ class OpportunityCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onApply,
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(
                   vertical: KolabingSpacing.sm,
@@ -307,10 +307,10 @@ class _CreatorAvatar extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.15),
+          color: context.colors.primary.withValues(alpha: 0.15),
           shape: BoxShape.circle,
           border: Border.all(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
@@ -321,18 +321,18 @@ class _CreatorAvatar extends StatelessWidget {
                   width: 48,
                   height: 48,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => _buildInitial(),
+                  errorBuilder: (context, error, stackTrace) => _buildInitial(context),
                 ),
               )
-            : _buildInitial(),
+            : _buildInitial(context),
       );
 
-  Widget _buildInitial() => Center(
+  Widget _buildInitial(BuildContext context) => Center(
         child: Text(
           initial,
           style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
-                ? KolabingColors.textOnDark
-                : KolabingColors.onSurface),
+                ? context.colors.textOnDark
+                : context.colors.onSurface),
         ),
       );
 }
@@ -347,13 +347,13 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (backgroundColor, textColor) = switch (status) {
       OpportunityStatus.published =>
-        (KolabingColors.activeBg, KolabingColors.activeText),
+        (context.colors.activeBg, context.colors.activeText),
       OpportunityStatus.draft =>
-        (KolabingColors.pendingBg, KolabingColors.pendingText),
+        (context.colors.pendingBg, context.colors.pendingText),
       OpportunityStatus.closed =>
-        (KolabingColors.completedBg, KolabingColors.completedText),
+        (context.colors.completedBg, context.colors.completedText),
       OpportunityStatus.completed =>
-        (KolabingColors.completedBg, KolabingColors.completedText),
+        (context.colors.completedBg, context.colors.completedText),
     };
 
     return Container(
@@ -393,7 +393,7 @@ class _TagPill extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color:
-              isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
+              isDark ? context.colors.darkBorder : context.colors.surfaceVariant,
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Row(
@@ -403,13 +403,13 @@ class _TagPill extends StatelessWidget {
               icon,
               size: 12,
               color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                  : KolabingColors.textTertiary,
+                  ? context.colors.textOnDark.withValues(alpha: 0.5)
+                  : context.colors.textTertiary,
             ),
             const SizedBox(width: KolabingSpacing.xxs),
             Text(
               label,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
             ),
           ],
         ),

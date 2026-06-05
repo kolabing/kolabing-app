@@ -22,17 +22,17 @@ class CollaborationRewardNudge extends StatelessWidget {
         vertical: KolabingSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.softYellow,
+        color: context.colors.softYellow,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.softYellowBorder),
+        border: Border.all(color: context.colors.softYellowBorder),
       ),
       child: Row(
         children: [
           // Star icon
-          const Icon(
+          Icon(
             LucideIcons.star,
             size: 20,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
           const SizedBox(width: KolabingSpacing.xs),
 
@@ -42,14 +42,14 @@ class CollaborationRewardNudge extends StatelessWidget {
               children: [
                 Text(
                   '+10 XP earned',
-                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
                 ),
                 const SizedBox(width: KolabingSpacing.xxs),
                 Flexible(
                   child: Text(
                     'Post a review to earn +10 XP more',
                     overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                   ),
                 ),
               ],
@@ -64,7 +64,7 @@ class CollaborationRewardNudge extends StatelessWidget {
               // replace this callback as needed.
             },
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.onSurface,
+              foregroundColor: context.colors.onSurface,
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.xs,
               ),

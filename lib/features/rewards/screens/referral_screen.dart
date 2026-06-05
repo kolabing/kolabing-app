@@ -32,13 +32,13 @@ class ReferralScreen extends ConsumerWidget {
     final isBusiness = resolvedUserType == UserType.business;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         surfaceTintColor: Colors.transparent,
         title: Text(
           AppLocalizations.of(context).referralScreenTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -86,11 +86,11 @@ class ReferralScreen extends ConsumerWidget {
       horizontal: KolabingSpacing.lg,
     ),
     decoration: BoxDecoration(
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
-          color: KolabingColors.primary.withValues(alpha: 0.3),
+          color: context.colors.primary.withValues(alpha: 0.3),
           blurRadius: 12,
           offset: const Offset(0, 4),
         ),
@@ -100,13 +100,13 @@ class ReferralScreen extends ConsumerWidget {
       children: [
         Text(
           AppLocalizations.of(context).referralScreenYourCode,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onPrimary.withValues(alpha: 0.7), letterSpacing: 1.2),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onPrimary.withValues(alpha: 0.7), letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           code,
           textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 32, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary, letterSpacing: 3.0),
+          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 32, fontWeight: FontWeight.w700, color: context.colors.onPrimary, letterSpacing: 3.0),
         ),
       ],
     ),
@@ -135,7 +135,7 @@ class ReferralScreen extends ConsumerWidget {
                     AppLocalizations.of(context).referralCodeCopied,
                   ),
                   duration: const Duration(seconds: 2),
-                  backgroundColor: KolabingColors.success,
+                  backgroundColor: context.colors.success,
                 ),
               );
             },
@@ -145,8 +145,8 @@ class ReferralScreen extends ConsumerWidget {
               style: KolabingTextStyles.buttonSmall,
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.onSurface,
-              side: const BorderSide(color: KolabingColors.darkBorder),
+              foregroundColor: context.colors.onSurface,
+              side: BorderSide(color: context.colors.darkBorder),
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
@@ -173,8 +173,8 @@ class ReferralScreen extends ConsumerWidget {
               style: KolabingTextStyles.buttonSmall,
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
+              backgroundColor: context.colors.primary,
+              foregroundColor: context.colors.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
@@ -195,7 +195,7 @@ class ReferralScreen extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -210,11 +210,12 @@ class ReferralScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.referralScreenHowItWorks,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
           _buildStep(
+            context,
             number: 1,
             title: l10n.referralScreenStep1Title,
             description: l10n.referralScreenStep1Desc,
@@ -222,6 +223,7 @@ class ReferralScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStep(
+            context,
             number: 2,
             title: l10n.referralScreenStep2Title,
             description: l10n.referralScreenStep2Desc,
@@ -229,6 +231,7 @@ class ReferralScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStep(
+            context,
             number: 3,
             title: isBusiness
                 ? l10n.referralScreenStep3TitleBusiness
@@ -242,7 +245,8 @@ class ReferralScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStep({
+  Widget _buildStep(
+    BuildContext context, {
     required int number,
     required String title,
     required String description,
@@ -252,14 +256,14 @@ class ReferralScreen extends ConsumerWidget {
       Container(
         width: 32,
         height: 32,
-        decoration: const BoxDecoration(
-          color: KolabingColors.primary,
+        decoration: BoxDecoration(
+          color: context.colors.primary,
           shape: BoxShape.circle,
         ),
         child: Center(
           child: Text(
             '$number',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onPrimary),
           ),
         ),
       ),
@@ -271,14 +275,14 @@ class ReferralScreen extends ConsumerWidget {
             Text(
               title,
               style: KolabingTextStyles.titleSmall.copyWith(
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               description,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -297,7 +301,7 @@ class ReferralScreen extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -312,24 +316,27 @@ class ReferralScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.referralScreenRewardTiers,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
           if (isBusiness) ...[
             _buildTierRow(
+              context,
               icon: LucideIcons.userPlus,
               condition: l10n.referralScreenTierBusinessCondition,
               reward: l10n.referralScreenTierBusinessReward,
             ),
           ] else ...[
             _buildTierRow(
+              context,
               icon: LucideIcons.userPlus,
               condition: l10n.referralScreenTier1MonthCondition,
               reward: l10n.referralScreenTier1MonthReward,
             ),
             const Divider(height: KolabingSpacing.lg),
             _buildTierRow(
+              context,
               icon: LucideIcons.userPlus,
               condition: l10n.referralScreenTier4MonthCondition,
               reward: l10n.referralScreenTier4MonthReward,
@@ -340,7 +347,8 @@ class ReferralScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTierRow({
+  Widget _buildTierRow(
+    BuildContext context, {
     required IconData icon,
     required String condition,
     required String reward,
@@ -350,17 +358,17 @@ class ReferralScreen extends ConsumerWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.15),
+          color: context.colors.primary.withValues(alpha: 0.15),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 20, color: KolabingColors.primary),
+        child: Icon(icon, size: 20, color: context.colors.primary),
       ),
       const SizedBox(width: KolabingSpacing.sm),
       Expanded(
         child: Text(
           condition,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
       ),
@@ -370,13 +378,13 @@ class ReferralScreen extends ConsumerWidget {
           vertical: KolabingSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.activeBg,
+          color: context.colors.activeBg,
           borderRadius: KolabingRadius.borderRadiusRound,
         ),
         child: Text(
           reward,
           style: KolabingTextStyles.labelSmall.copyWith(
-            color: KolabingColors.activeText,
+            color: context.colors.activeText,
             fontWeight: FontWeight.w600,
           ),
         ),

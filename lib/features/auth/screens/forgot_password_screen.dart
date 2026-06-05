@@ -164,11 +164,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -182,9 +182,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -192,21 +192,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: _handleSendResetLink,
         ),
       ),
@@ -329,7 +329,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   border: Border.all(color: _kForgotPanelBorder),
                   boxShadow: [
                     BoxShadow(
-                      color: KolabingColors.overlayDark30,
+                      color: context.colors.overlayDark30,
                       blurRadius: 32,
                       offset: const Offset(0, 18),
                     ),
@@ -372,7 +372,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           Text(
             AppLocalizations.of(context).forgotPasswordFormTitle,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
               fontWeight: FontWeight.w700,
             ),
@@ -399,7 +399,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => _handleSendResetLink(),
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               fontWeight: FontWeight.w600,
             ),
             cursorColor: _kForgotAccent,
@@ -429,7 +429,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 onPressed: _isLoading ? null : _handleSendResetLink,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _kForgotAccent,
-                  foregroundColor: KolabingColors.onPrimary,
+                  foregroundColor: context.colors.onPrimary,
                   disabledBackgroundColor: _kForgotAccent.withValues(
                     alpha: 0.70,
                   ),
@@ -439,13 +439,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   ),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            KolabingColors.onPrimary,
+                            context.colors.onPrimary,
                           ),
                         ),
                       )
@@ -455,7 +455,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           fontSize: compact ? 15 : 16,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
-                          color: KolabingColors.onPrimary,
+                          color: context.colors.onPrimary,
                         ),
                       ),
               ),
@@ -494,7 +494,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         Text(
           AppLocalizations.of(context).forgotPasswordSuccessTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
             fontWeight: FontWeight.w700,
           ),
@@ -528,7 +528,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 child: Text(
                   _emailController.text.trim(),
                   style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.textOnDark,
+                    color: context.colors.textOnDark,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                   ),
@@ -548,7 +548,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               onPressed: () => context.go(_kLoginRoute),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _kForgotAccent,
-                foregroundColor: KolabingColors.onPrimary,
+                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
@@ -560,7 +560,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   fontSize: compact ? 15 : 16,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.0,
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
             ),
@@ -624,11 +624,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.error),
+      borderSide: BorderSide(color: context.colors.error),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.error, width: 1.6),
+      borderSide: BorderSide(color: context.colors.error, width: 1.6),
     ),
     errorStyle: KolabingTextStyles.labelSmall.copyWith(
       color: const Color(0xFFFFA7B8),
@@ -743,14 +743,14 @@ class _HeroCopy extends StatelessWidget {
           text: emailSent
               ? l10n.forgotPasswordHeroSentLine1
               : l10n.forgotPasswordHeroLine1,
-          color: KolabingColors.textOnDark,
+          color: context.colors.textOnDark,
           size: headlineSize,
         ),
         _HeroLine(
           text: emailSent
               ? l10n.forgotPasswordHeroSentLine2
               : l10n.forgotPasswordHeroLine2,
-          color: KolabingColors.textOnDark,
+          color: context.colors.textOnDark,
           size: headlineSize,
         ),
         _HeroLine(
@@ -834,17 +834,17 @@ class _BackButtonState extends State<_BackButton> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 14,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
             ),
             const SizedBox(width: 2),
             Text(
               AppLocalizations.of(context).commonBack,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textOnDark,
+                color: context.colors.textOnDark,
               ),
             ),
           ],

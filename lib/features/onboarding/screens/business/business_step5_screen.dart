@@ -55,7 +55,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -80,7 +80,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
           content: Text(
             AppLocalizations.of(context).businessStep5PickAddressError,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -179,7 +179,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
         content: Text(
           AppLocalizations.of(context).businessStep5ImportFallback,
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
       ),
     );
   }
@@ -205,7 +205,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
     final suggestions = ref.watch(placeSuggestionsProvider(_query.trim()));
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Stack(
           children: [
@@ -228,13 +228,13 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 32),
                           Text(
                             AppLocalizations.of(context).businessStep5Title,
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             AppLocalizations.of(context).businessStep5Subtitle,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -249,16 +249,16 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                 }
                               });
                             },
-                            style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
                             decoration: InputDecoration(
                               hintText: AppLocalizations.of(
                                 context,
                               ).businessStep5SearchHint,
-                              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
-                              prefixIcon: const Icon(
+                              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+                              prefixIcon: Icon(
                                 LucideIcons.search,
                                 size: 20,
-                                color: KolabingColors.textTertiary,
+                                color: context.colors.textTertiary,
                               ),
                               suffixIcon: _searchController.text.isNotEmpty
                                   ? IconButton(
@@ -269,31 +269,31 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                           _selectedPlace = null;
                                         });
                                       },
-                                      icon: const Icon(
+                                      icon: Icon(
                                         LucideIcons.x,
                                         size: 18,
-                                        color: KolabingColors.textTertiary,
+                                        color: context.colors.textTertiary,
                                       ),
                                     )
                                   : null,
                               filled: true,
-                              fillColor: KolabingColors.surfaceVariant,
+                              fillColor: context.colors.surfaceVariant,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
+                                borderSide: BorderSide(
+                                  color: context.colors.primary,
                                   width: 1.5,
                                 ),
                               ),
@@ -308,7 +308,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Powered by Google',
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -332,9 +332,9 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                 return ListView.separated(
                                   itemCount: items.length,
                                   separatorBuilder: (context, index) =>
-                                      const Divider(
+                                      Divider(
                                         height: 1,
-                                        color: KolabingColors.darkBorder,
+                                        color: context.colors.darkBorder,
                                       ),
                                   itemBuilder: (context, index) {
                                     final place = items[index];
@@ -352,26 +352,26 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                             ? LucideIcons.checkCircle2
                                             : LucideIcons.mapPin,
                                         color: isSelected
-                                            ? KolabingColors.success
-                                            : KolabingColors.textTertiary,
+                                            ? context.colors.success
+                                            : context.colors.textTertiary,
                                         size: 20,
                                       ),
                                       title: Text(
                                         place.title,
-                                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                                       ),
                                       subtitle: Text(
                                         place.formattedAddress,
-                                        style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                                        style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                                       ),
                                       onTap: () => _handlePlaceSelected(place),
                                     );
                                   },
                                 );
                               },
-                              loading: () => const Center(
+                              loading: () => Center(
                                 child: CircularProgressIndicator(
-                                  color: KolabingColors.primary,
+                                  color: context.colors.primary,
                                 ),
                               ),
                               error: (error, _) => _buildHint(
@@ -395,11 +395,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             ? _handleContinue
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: KolabingColors.primary,
-                          foregroundColor: KolabingColors.onPrimary,
-                          disabledBackgroundColor: KolabingColors.primary
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: context.colors.onPrimary,
+                          disabledBackgroundColor: context.colors.primary
                               .withValues(alpha: 0.5),
-                          disabledForegroundColor: KolabingColors.onPrimary
+                          disabledForegroundColor: context.colors.onPrimary
                               .withValues(alpha: 0.5),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -425,7 +425,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                       margin: const EdgeInsets.symmetric(horizontal: 32),
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: KolabingColors.surface,
+                        color: context.colors.surface,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -438,13 +438,13 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const CircularProgressIndicator(
-                            color: KolabingColors.primary,
+                          CircularProgressIndicator(
+                            color: context.colors.primary,
                           ),
                           const SizedBox(height: 18),
                           Text(
                             AppLocalizations.of(context).businessStep5Importing,
-                            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -462,7 +462,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
   Widget _buildHint(String message) => Center(
     child: Text(
       message,
-      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
       textAlign: TextAlign.center,
     ),
   );
@@ -488,7 +488,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
         .toList(growable: false);
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -508,7 +508,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                     Center(
                       child: Text(
                         AppLocalizations.of(context).businessStep5PreviewTitle,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -518,7 +518,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                         AppLocalizations.of(
                           context,
                         ).businessStep5PreviewSubtitle,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -550,12 +550,12 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                 child: ElevatedButton(
                   onPressed: _isImporting ? null : _handleContinueFromPreview,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
+                    disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
-                    disabledForegroundColor: KolabingColors.onPrimary
+                    disabledForegroundColor: context.colors.onPrimary
                         .withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -586,36 +586,36 @@ class _SelectedAddressCard extends StatelessWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
+            Icon(
               LucideIcons.checkCircle2,
               size: 18,
-              color: KolabingColors.success,
+              color: context.colors.success,
             ),
             const SizedBox(width: 8),
             Text(
               AppLocalizations.of(context).businessStep5SelectedAddress,
-              style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           place.title,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
         ),
         const SizedBox(height: 4),
         Text(
           place.formattedAddress,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ],
     ),

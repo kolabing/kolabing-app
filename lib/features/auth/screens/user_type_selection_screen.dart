@@ -56,7 +56,7 @@ class _UserTypeSelectionScreenState
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -151,7 +151,7 @@ class _UserTypeSelectionScreenState
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: KolabingColors.background,
+    backgroundColor: context.colors.background,
     body: SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +178,7 @@ class _UserTypeSelectionScreenState
                       style: KolabingTextStyles.bodyLarge.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                         letterSpacing: 1.5,
                       ),
                       textAlign: TextAlign.center,
@@ -194,7 +194,7 @@ class _UserTypeSelectionScreenState
                     child: Text(
                       'Select your account type to get started',
                       style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -315,17 +315,17 @@ class _BackButtonState extends State<_BackButton> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               size: 20,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             const SizedBox(width: 4),
             Text(
               'Back',
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
           ],
@@ -364,7 +364,7 @@ class _LoginLinkState extends State<_LoginLink> {
           textAlign: TextAlign.center,
           text: TextSpan(
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             children: [
               const TextSpan(text: 'Already have an account? '),
@@ -372,7 +372,7 @@ class _LoginLinkState extends State<_LoginLink> {
                 text: 'Login',
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                   decoration: _isPressed ? TextDecoration.underline : null,
                 ),
               ),

@@ -79,8 +79,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.85,
     ),
-    decoration: const BoxDecoration(
-      color: KolabingColors.surface,
+    decoration: BoxDecoration(
+      color: context.colors.surface,
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(KolabingRadius.xxl),
       ),
@@ -95,7 +95,7 @@ class ExploreDetailSheet extends ConsumerWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.darkBorder,
+              color: context.colors.darkBorder,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -115,7 +115,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               children: [
                 _buildHeaderRow(context),
                 const SizedBox(height: KolabingSpacing.lg),
-                _buildTitleSection(),
+                _buildTitleSection(context),
                 const SizedBox(height: KolabingSpacing.lg),
                 if (discoveryItem?.isCommunityRequest ?? false) ...[
                   _buildBusinessExploreSummary(context),
@@ -125,7 +125,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                   _buildOfferSummarySection(context),
                   const SizedBox(height: KolabingSpacing.lg),
                 ],
-                _buildLocationAndDetails(),
+                _buildLocationAndDetails(context),
                 if (opportunity.availabilityMode ==
                         AvailabilityMode.recurring &&
                     opportunity.recurringDays.isNotEmpty) ...[
@@ -134,7 +134,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 ],
                 if (opportunity.categories.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.lg),
-                  _buildCategoriesSection(),
+                  _buildCategoriesSection(context),
                 ],
                 if (!hideCreatorIdentity &&
                     (discoveryItem?.isCommunityRequest ?? false) &&
@@ -181,7 +181,7 @@ class ExploreDetailSheet extends ConsumerWidget {
           enabled: hideCreatorIdentity,
           sigma: 14,
           borderRadius: BorderRadius.circular(32),
-          child: _buildAvatar(avatarUrl, initial),
+          child: _buildAvatar(context, avatarUrl, initial),
         ),
         const SizedBox(width: KolabingSpacing.sm),
 
@@ -198,7 +198,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                   style: KolabingTextStyles.bodyLarge.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -210,7 +210,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                   AppLocalizations.of(context).exploreDetailSubscribeToReveal,
                   style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ),
               ],
@@ -225,18 +225,22 @@ class ExploreDetailSheet extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(LucideIcons.x),
           style: IconButton.styleFrom(
-            foregroundColor: KolabingColors.textTertiary,
+            foregroundColor: context.colors.textTertiary,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildAvatar(String? avatarUrl, String initial) => Container(
+  Widget _buildAvatar(
+    BuildContext context,
+    String? avatarUrl,
+    String initial,
+  ) => Container(
     width: 64,
     height: 64,
     decoration: BoxDecoration(
-      color: KolabingColors.primary.withValues(alpha: 0.1),
+      color: context.colors.primary.withValues(alpha: 0.1),
       shape: BoxShape.circle,
     ),
     child: avatarUrl != null && avatarUrl.isNotEmpty
@@ -246,17 +250,17 @@ class ExploreDetailSheet extends ConsumerWidget {
               width: 64,
               height: 64,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => _buildAvatarFallback(initial),
+              errorBuilder: (_, _, _) => _buildAvatarFallback(context, initial),
             ),
           )
-        : _buildAvatarFallback(initial),
+        : _buildAvatarFallback(context, initial),
   );
 
-  Widget _buildAvatarFallback(String initial) => Center(
+  Widget _buildAvatarFallback(BuildContext context, String initial) => Center(
     child: Text(
       initial,
       style: KolabingTextStyles.headlineMedium.copyWith(
-        color: KolabingColors.primary,
+        color: context.colors.primary,
       ),
     ),
   );
@@ -272,14 +276,14 @@ class ExploreDetailSheet extends ConsumerWidget {
         vertical: KolabingSpacing.xxxs,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.activeBg,
+        color: context.colors.activeBg,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
       ),
       child: Text(
         label,
         style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.activeText,
+          color: context.colors.activeText,
         ),
       ),
     );
@@ -289,14 +293,14 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Title Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildTitleSection() => Column(
+  Widget _buildTitleSection(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         opportunity.title,
         style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
       if (opportunity.description.isNotEmpty) ...[
@@ -304,7 +308,7 @@ class ExploreDetailSheet extends ConsumerWidget {
         Text(
           opportunity.description,
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       ],
@@ -321,18 +325,21 @@ class ExploreDetailSheet extends ConsumerWidget {
     final sections = <Widget>[
       if (request.needTypeLabels.isNotEmpty)
         _buildSummaryCard(
+          context,
           icon: LucideIcons.search,
           title: l10n.exploreDetailLookingFor,
           value: request.needTypeLabels.join(', '),
         ),
       if (request.offerInReturnLabels.isNotEmpty)
         _buildSummaryCard(
+          context,
           icon: LucideIcons.gift,
           title: l10n.exploreDetailWhatTheyOffer,
           value: request.offerInReturnLabels.join(', '),
         ),
       if (request.communitySize != null || request.typicalAttendance != null)
         _buildSummaryCard(
+          context,
           icon: LucideIcons.users,
           title: l10n.exploreDetailCommunitySize,
           value: _buildScaleLabel(context, request),
@@ -351,7 +358,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard({
+  Widget _buildSummaryCard(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String value,
@@ -359,13 +367,13 @@ class ExploreDetailSheet extends ConsumerWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       borderRadius: KolabingRadius.borderRadiusMd,
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
+        Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Column(
@@ -376,7 +384,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
               const SizedBox(height: 2),
@@ -385,7 +393,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   height: 1.45,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
             ],
@@ -417,7 +425,7 @@ class ExploreDetailSheet extends ConsumerWidget {
       Text(
         AppLocalizations.of(context).exploreDetailWhatsOffered,
         style: KolabingTextStyles.labelLarge.copyWith(
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
       const SizedBox(height: KolabingSpacing.xs),
@@ -425,18 +433,18 @@ class ExploreDetailSheet extends ConsumerWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.success.withValues(alpha: 0.1),
+          color: context.colors.success.withValues(alpha: 0.1),
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color: KolabingColors.success.withValues(alpha: 0.3),
+            color: context.colors.success.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               LucideIcons.gift,
               size: 18,
-              color: KolabingColors.success,
+              color: context.colors.success,
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
@@ -444,7 +452,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 opportunity.offerSummary,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
             ),
@@ -458,7 +466,7 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Location & Details Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildLocationAndDetails() {
+  Widget _buildLocationAndDetails(BuildContext context) {
     final dateFormat = DateFormat('MMM d');
     final startFormatted = dateFormat.format(opportunity.availabilityStart);
     final endFormatted = dateFormat.format(opportunity.availabilityEnd);
@@ -492,29 +500,31 @@ class ExploreDetailSheet extends ConsumerWidget {
     return Wrap(
       spacing: KolabingSpacing.xs,
       runSpacing: KolabingSpacing.xs,
-      children: items.map(_buildDetailPill).toList(),
+      children: items
+          .map((item) => _buildDetailPill(context, item))
+          .toList(),
     );
   }
 
-  Widget _buildDetailPill(_DetailItem item) => Container(
+  Widget _buildDetailPill(BuildContext context, _DetailItem item) => Container(
     padding: const EdgeInsets.symmetric(
       horizontal: KolabingSpacing.sm,
       vertical: KolabingSpacing.xs,
     ),
     decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       borderRadius: BorderRadius.circular(KolabingRadius.round),
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(item.icon, size: 14, color: KolabingColors.onSurfaceVariant),
+        Icon(item.icon, size: 14, color: context.colors.onSurfaceVariant),
         const SizedBox(width: KolabingSpacing.xxs),
         Flexible(
           child: Text(
             item.label,
             style: KolabingTextStyles.labelMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -537,7 +547,7 @@ class ExploreDetailSheet extends ConsumerWidget {
         Text(
           AppLocalizations.of(context).exploreDetailAvailableDays,
           style: KolabingTextStyles.labelLarge.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -552,8 +562,8 @@ class ExploreDetailSheet extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: isAvailable
-                    ? KolabingColors.info
-                    : KolabingColors.surfaceVariant,
+                    ? context.colors.info
+                    : context.colors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -562,8 +572,8 @@ class ExploreDetailSheet extends ConsumerWidget {
                 style: KolabingTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isAvailable
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.textTertiary,
+                      ? context.colors.textOnDark
+                      : context.colors.textTertiary,
                 ),
               ),
             );
@@ -577,7 +587,7 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Categories Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildCategoriesSection() => Wrap(
+  Widget _buildCategoriesSection(BuildContext context) => Wrap(
     spacing: KolabingSpacing.xs,
     runSpacing: KolabingSpacing.xs,
     children: opportunity.categories
@@ -588,7 +598,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               vertical: KolabingSpacing.xxs,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.1),
+              color: context.colors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(KolabingRadius.round),
             ),
             child: Row(
@@ -600,7 +610,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                   category,
                   style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
               ],
@@ -626,7 +636,7 @@ class ExploreDetailSheet extends ConsumerWidget {
         KolabingSpacing.md + bottomPadding,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -657,8 +667,8 @@ class ExploreDetailSheet extends ConsumerWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: KolabingRadius.borderRadiusMd,
@@ -681,7 +691,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 ),
               ),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.onSurfaceVariant,
+                foregroundColor: context.colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -739,7 +749,7 @@ class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
               Text(
                 AppLocalizations.of(context).exploreDetailPastEventPhotos,
                 style: KolabingTextStyles.labelLarge.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -747,7 +757,7 @@ class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
                 AppLocalizations.of(context).exploreDetailRecentMoments,
                 style: KolabingTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w400,
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
@@ -776,8 +786,8 @@ class _PastEventPhotosSectionState extends State<_PastEventPhotosSection> {
                       height: 8,
                       decoration: BoxDecoration(
                         color: isActive
-                            ? KolabingColors.primary
-                            : KolabingColors.darkBorder,
+                            ? context.colors.primary
+                            : context.colors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     );
@@ -826,11 +836,11 @@ class _PastEventPhotoCard extends StatelessWidget {
             slide.photoUrl,
             fit: BoxFit.cover,
             errorBuilder: (_, _, _) => Container(
-              color: KolabingColors.surfaceVariant,
+              color: context.colors.surfaceVariant,
               alignment: Alignment.center,
-              child: const Icon(
+              child: Icon(
                 LucideIcons.imageOff,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ),
@@ -859,7 +869,7 @@ class _PastEventPhotoCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.textOnDark,
+                    color: context.colors.textOnDark,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -867,7 +877,7 @@ class _PastEventPhotoCard extends StatelessWidget {
                   slide.subtitle,
                   style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.textOnDark.withValues(alpha: 0.85),
+                    color: context.colors.textOnDark.withValues(alpha: 0.85),
                   ),
                 ),
               ],

@@ -27,11 +27,11 @@ class LeaderboardEntryTile extends StatelessWidget {
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
         color: isCurrentUser
-            ? KolabingColors.primary.withValues(alpha: 0.1)
-            : KolabingColors.surface,
+            ? context.colors.primary.withValues(alpha: 0.1)
+            : context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: isCurrentUser
-            ? Border.all(color: KolabingColors.primary.withValues(alpha: 0.3))
+            ? Border.all(color: context.colors.primary.withValues(alpha: 0.3))
             : null,
         boxShadow: [
           BoxShadow(
@@ -49,8 +49,8 @@ class LeaderboardEntryTile extends StatelessWidget {
             child: Text(
               '#${entry.rank}',
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: isCurrentUser
-                    ? KolabingColors.primary
-                    : KolabingColors.onSurfaceVariant),
+                    ? context.colors.primary
+                    : context.colors.onSurfaceVariant),
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -58,7 +58,7 @@ class LeaderboardEntryTile extends StatelessWidget {
           // Avatar
           CircleAvatar(
             radius: 20,
-            backgroundColor: KolabingColors.primary.withValues(alpha: 0.1),
+            backgroundColor: context.colors.primary.withValues(alpha: 0.1),
             backgroundImage: entry.profilePhoto != null
                 ? NetworkImage(entry.profilePhoto!)
                 : null,
@@ -67,7 +67,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                     entry.displayName.isNotEmpty
                         ? entry.displayName[0].toUpperCase()
                         : '?',
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
                   )
                 : null,
           ),
@@ -83,7 +83,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         entry.displayName,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -96,12 +96,12 @@ class LeaderboardEntryTile extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           'You',
-                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: context.colors.onPrimary),
                         ),
                       ),
                     ],
@@ -115,15 +115,15 @@ class LeaderboardEntryTile extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.star,
                 size: 16,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
               const SizedBox(width: 4),
               Text(
                 '${entry.totalPoints}',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
               ),
             ],
           ),

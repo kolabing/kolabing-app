@@ -35,14 +35,14 @@ class CollaborationsListTab extends ConsumerWidget {
         : ref.watch(finishedCollaborationsProvider);
 
     return RefreshIndicator(
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       onRefresh: () => ref.refresh(collaborationsListProvider.future),
       child: async.when(
-        loading: () => const Center(
+        loading: () => Center(
           child: Padding(
             padding: EdgeInsets.all(KolabingSpacing.xl),
             child: CircularProgressIndicator(
-              color: KolabingColors.primary,
+              color: context.colors.primary,
               strokeWidth: 2,
             ),
           ),
@@ -103,7 +103,7 @@ class _CollaborationCard extends StatelessWidget {
         : collaboration.communityPartner.name;
 
     return Material(
-      color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+      color: isDark ? context.colors.darkSurface : context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       child: InkWell(
         borderRadius: KolabingRadius.borderRadiusLg,
@@ -120,7 +120,7 @@ class _CollaborationCard extends StatelessWidget {
                   Icon(
                     LucideIcons.chevronRight,
                     size: 18,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ],
               ),
@@ -131,8 +131,8 @@ class _CollaborationCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   height: 1.3,
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -143,13 +143,13 @@ class _CollaborationCard extends StatelessWidget {
                   Icon(
                     LucideIcons.calendar,
                     size: 12,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     collaboration.formattedDate,
                     style: KolabingTextStyles.captionSecondary.copyWith(
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                   if (collaboration.scheduledTime != null &&
@@ -158,14 +158,14 @@ class _CollaborationCard extends StatelessWidget {
                     Icon(
                       LucideIcons.clock,
                       size: 12,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
                         collaboration.scheduledTime!,
                         style: KolabingTextStyles.captionSecondary.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -190,24 +190,24 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bg, fg) = switch (status) {
       CollaborationStatus.scheduled => (
-        KolabingColors.secondaryContainer,
-        KolabingColors.secondary,
+        context.colors.secondaryContainer,
+        context.colors.secondary,
       ),
       CollaborationStatus.inProgress => (
-        KolabingColors.activeBg,
-        KolabingColors.activeText,
+        context.colors.activeBg,
+        context.colors.activeText,
       ),
       CollaborationStatus.pendingConfirmation => (
-        KolabingColors.pendingBg,
-        KolabingColors.pendingText,
+        context.colors.pendingBg,
+        context.colors.pendingText,
       ),
       CollaborationStatus.completed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
       ),
       CollaborationStatus.cancelled => (
-        KolabingColors.errorBg,
-        KolabingColors.errorText,
+        context.colors.errorBg,
+        context.colors.errorText,
       ),
     };
 
@@ -271,14 +271,14 @@ class _Message extends StatelessWidget {
         DecoratedBox(
           decoration: BoxDecoration(
             color: isDark
-                ? KolabingColors.darkSurface
-                : KolabingColors.surfaceVariant,
+                ? context.colors.darkSurface
+                : context.colors.surfaceVariant,
             shape: BoxShape.circle,
           ),
           child: SizedBox(
             width: 80,
             height: 80,
-            child: Icon(icon, size: 36, color: KolabingColors.textTertiary),
+            child: Icon(icon, size: 36, color: context.colors.textTertiary),
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
@@ -288,15 +288,15 @@ class _Message extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: isDark
-                ? KolabingColors.textOnDark
-                : KolabingColors.onSurface,
+                ? context.colors.textOnDark
+                : context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           message,
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),

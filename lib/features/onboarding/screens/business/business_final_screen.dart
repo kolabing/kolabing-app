@@ -72,7 +72,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -290,28 +290,31 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 AppLocalizations.of(context).businessFinalNoInternet,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.textOnDark,
+                ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: () {
             final authState = ref.read(authProvider);
             final authenticatedFlow =
@@ -332,9 +335,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: KolabingColors.error.withValues(alpha: 0.08),
+        color: context.colors.error.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: KolabingColors.error.withValues(alpha: 0.3)),
+        border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,16 +345,19 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
+              Icon(
                 Icons.error_outline_rounded,
                 size: 20,
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.error,
+                  ),
                 ),
               ),
               IconButton(
@@ -361,10 +367,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                   _bannerErrorTitle = null;
                   _bannerErrorDetails = null;
                 }),
-                icon: const Icon(
+                icon: Icon(
                   Icons.close_rounded,
                   size: 18,
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
             ],
@@ -375,13 +381,17 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: KolabingColors.darkBorder),
+                border: Border.all(color: context.colors.darkBorder),
               ),
               child: SelectableText(
                 details,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant, height: 1.5),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 12,
+                  color: context.colors.onSurfaceVariant,
+                  height: 1.5,
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -402,24 +412,28 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        AppLocalizations.of(
-                          context,
-                        ).businessFinalErrorCopied,
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
+                        AppLocalizations.of(context).businessFinalErrorCopied,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.textOnDark,
+                        ),
                       ),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
                     ),
                   );
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.copy_rounded,
                   size: 16,
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
                 label: Text(
                   AppLocalizations.of(context).businessFinalCopyDetails,
-                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.error,
+                  ),
                 ),
               ),
             ),
@@ -448,7 +462,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
     return PopScope(
       canPop: !_isLoading,
       child: Scaffold(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () => FocusScope.of(context).unfocus(),
@@ -470,15 +484,18 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.onSurface,
+                                color: context.colors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 AppLocalizations.of(context).commonBack,
-                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+                                style: KolabingTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: context.colors.onSurface,
+                                ),
                               ),
                             ],
                           ),
@@ -514,7 +531,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 : AppLocalizations.of(
                                     context,
                                   ).businessFinalTitleNewAccount,
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.onSurface,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -528,7 +549,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 : AppLocalizations.of(
                                     context,
                                   ).businessFinalSubtitleNewAccount,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -543,15 +566,20 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.edit_outlined,
                                   size: 16,
-                                  color: KolabingColors.primary,
+                                  color: context.colors.primary,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  AppLocalizations.of(context).businessFinalEdit,
-                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                                  AppLocalizations.of(
+                                    context,
+                                  ).businessFinalEdit,
+                                  style: KolabingTextStyles.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: context.colors.primary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -586,30 +614,30 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 ).businessFinalEmailHint,
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 filled: true,
-                                fillColor: KolabingColors.surface,
+                                fillColor: context.colors.surface,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.darkBorder,
+                                  borderSide: BorderSide(
+                                    color: context.colors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.darkBorder,
+                                  borderSide: BorderSide(
+                                    color: context.colors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.primary,
+                                  borderSide: BorderSide(
+                                    color: context.colors.primary,
                                     width: 2,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.error,
+                                  borderSide: BorderSide(
+                                    color: context.colors.error,
                                   ),
                                 ),
                               ),
@@ -654,30 +682,30 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   },
                                 ),
                                 filled: true,
-                                fillColor: KolabingColors.surface,
+                                fillColor: context.colors.surface,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.darkBorder,
+                                  borderSide: BorderSide(
+                                    color: context.colors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.darkBorder,
+                                  borderSide: BorderSide(
+                                    color: context.colors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.primary,
+                                  borderSide: BorderSide(
+                                    color: context.colors.primary,
                                     width: 2,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.error,
+                                  borderSide: BorderSide(
+                                    color: context.colors.error,
                                   ),
                                 ),
                               ),
@@ -735,30 +763,30 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   },
                                 ),
                                 filled: true,
-                                fillColor: KolabingColors.surface,
+                                fillColor: context.colors.surface,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.darkBorder,
+                                  borderSide: BorderSide(
+                                    color: context.colors.darkBorder,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.darkBorder,
+                                  borderSide: BorderSide(
+                                    color: context.colors.darkBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.primary,
+                                  borderSide: BorderSide(
+                                    color: context.colors.primary,
                                     width: 2,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: KolabingColors.error,
+                                  borderSide: BorderSide(
+                                    color: context.colors.error,
                                   ),
                                 ),
                               ),
@@ -769,18 +797,18 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               width: double.infinity,
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: KolabingColors.surface,
+                                color: context.colors.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: KolabingColors.darkBorder,
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.check_circle_outline_rounded,
-                                    color: KolabingColors.primary,
+                                    color: context.colors.primary,
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -788,7 +816,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                       AppLocalizations.of(
                                         context,
                                       ).businessFinalAuthenticatedInfo,
-                                      style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+                                      style: KolabingTextStyles.captionSecondary
+                                          .copyWith(
+                                            color:
+                                                context.colors.onSurfaceVariant,
+                                            height: 1.4,
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -818,9 +851,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                   authenticatedFlow: authenticatedFlow,
                                 ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: KolabingColors.primary,
-                            foregroundColor: KolabingColors.onPrimary,
-                            disabledBackgroundColor: KolabingColors.primary
+                            backgroundColor: context.colors.primary,
+                            foregroundColor: context.colors.onPrimary,
+                            disabledBackgroundColor: context.colors.primary
                                 .withValues(alpha: 0.7),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -828,21 +861,21 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             elevation: 0,
                           ),
                           child: _isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      KolabingColors.onPrimary,
+                                      context.colors.onPrimary,
                                     ),
                                   ),
                                 )
                               : _showSuccess
-                              ? const Icon(
+                              ? Icon(
                                   Icons.check_rounded,
                                   size: 24,
-                                  color: KolabingColors.onPrimary,
+                                  color: context.colors.onPrimary,
                                 )
                               : Text(
                                   authenticatedFlow
@@ -852,7 +885,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                       : AppLocalizations.of(
                                           context,
                                         ).businessFinalCreateAccountButton,
-                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
+                                  style: KolabingTextStyles.button.copyWith(
+                                    fontSize: 16,
+                                    letterSpacing: 1.0,
+                                  ),
                                 ),
                         ),
                       ),
@@ -867,7 +903,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             : AppLocalizations.of(
                                 context,
                               ).businessFinalTermsNewAccount,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12,
+                          color: context.colors.textTertiary,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],

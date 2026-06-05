@@ -64,7 +64,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
@@ -72,7 +72,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         Text(
           l10n.pastEventsSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
@@ -95,9 +95,9 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                   : l10n.pastEventsSelectFromProfile,
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.primary,
+              foregroundColor: context.colors.primary,
               side: BorderSide(
-                color: KolabingColors.primary.withValues(alpha: 0.5),
+                color: context.colors.primary.withValues(alpha: 0.5),
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.md,
@@ -131,27 +131,27 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
             child: Container(
               padding: const EdgeInsets.all(KolabingSpacing.md),
               decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
+                color: context.colors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
-                  color: KolabingColors.darkBorder,
+                  color: context.colors.darkBorder,
                   style: BorderStyle.solid,
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.plus,
                     size: 20,
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                   const SizedBox(width: KolabingSpacing.xs),
                   Text(
                     l10n.pastEventsAddPastEvent,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -195,7 +195,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         content: Text(
           AppLocalizations.of(context).pastEventsImported(selectedEvents.length),
         ),
-        backgroundColor: KolabingColors.success,
+        backgroundColor: context.colors.success,
       ),
     );
   }
@@ -294,8 +294,8 @@ class _PastEventEntryState extends State<_PastEventEntry> {
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: KolabingColors.primary,
-            onPrimary: KolabingColors.onPrimary,
+            primary: context.colors.primary,
+            onPrimary: context.colors.onPrimary,
           ),
         ),
         child: child!,
@@ -314,9 +314,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,16 +328,16 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 l10n.pastEventsEventNumber(widget.index + 1),
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const Spacer(),
               GestureDetector(
                 onTap: widget.onRemove,
-                child: const Icon(
+                child: Icon(
                   LucideIcons.trash2,
                   size: 18,
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
             ],
@@ -349,14 +349,14 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             l10n.pastEventsEventNameLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _nameController,
-            decoration: _inputDecoration(hint: l10n.pastEventsEventNameHint),
-            style: _inputTextStyle,
+            decoration: _inputDecoration(context, hint: l10n.pastEventsEventNameHint),
+            style: _inputTextStyle(context),
             onChanged: (v) {
               widget.onUpdate(widget.event.copyWith(name: v));
             },
@@ -368,7 +368,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             l10n.pastEventsDateLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -381,17 +381,17 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 vertical: 14,
               ),
               decoration: BoxDecoration(
-                color: KolabingColors.surface,
+                color: context.colors.surface,
                 borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(color: KolabingColors.darkBorder),
+                border: Border.all(color: context.colors.darkBorder),
               ),
               child: Row(
                 children: [
-                  Expanded(child: Text(dateFormatted, style: _inputTextStyle)),
-                  const Icon(
+                  Expanded(child: Text(dateFormatted, style: _inputTextStyle(context))),
+                  Icon(
                     LucideIcons.calendar,
                     size: 18,
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ],
               ),
@@ -404,14 +404,14 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             l10n.pastEventsPartnerNameLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _partnerController,
-            decoration: _inputDecoration(hint: l10n.pastEventsPartnerNameHint),
-            style: _inputTextStyle,
+            decoration: _inputDecoration(context, hint: l10n.pastEventsPartnerNameHint),
+            style: _inputTextStyle(context),
             onChanged: (v) {
               widget.onUpdate(
                 widget.event.copyWith(
@@ -428,7 +428,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             l10n.pastEventsPhotosLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -475,7 +475,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
             l10n.pastEventsRecapVideoLabel,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -547,9 +547,9 @@ class _EventPhotoRow extends StatelessWidget {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: KolabingColors.softYellow,
+                  color: context.colors.softYellow,
                   borderRadius: KolabingRadius.borderRadiusSm,
-                  border: Border.all(color: KolabingColors.softYellowBorder),
+                  border: Border.all(color: context.colors.softYellowBorder),
                 ),
                 child: ClipRRect(
                   borderRadius: KolabingRadius.borderRadiusSm,
@@ -567,11 +567,11 @@ class _EventPhotoRow extends StatelessWidget {
                           height: 72,
                           fit: BoxFit.cover,
                         )
-                      : const Center(
+                      : Center(
                           child: Icon(
                             LucideIcons.image,
                             size: 20,
-                            color: KolabingColors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                         ),
                 ),
@@ -584,8 +584,8 @@ class _EventPhotoRow extends StatelessWidget {
                   child: Container(
                     width: 18,
                     height: 18,
-                    decoration: const BoxDecoration(
-                      color: KolabingColors.error,
+                    decoration: BoxDecoration(
+                      color: context.colors.error,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -605,15 +605,15 @@ class _EventPhotoRow extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
+                color: context.colors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(color: KolabingColors.darkBorder),
+                border: Border.all(color: context.colors.darkBorder),
               ),
-              child: const Center(
+              child: Center(
                 child: Icon(
                   LucideIcons.plus,
                   size: 20,
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
             ),
@@ -647,32 +647,32 @@ class _EventVideoRow extends StatelessWidget {
             width: 180,
             padding: const EdgeInsets.all(KolabingSpacing.sm),
             decoration: BoxDecoration(
-              color: KolabingColors.surfaceVariant,
+              color: context.colors.surfaceVariant,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.darkBorder),
+              border: Border.all(color: context.colors.darkBorder),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.video,
                   size: 18,
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context).pastEventsRecapVideoChip,
                     style: KolabingTextStyles.captionSecondary.copyWith(
-                      color: KolabingColors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                   ),
                 ),
                 GestureDetector(
                   onTap: () => onRemove(i),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.x,
                     size: 16,
-                    color: KolabingColors.error,
+                    color: context.colors.error,
                   ),
                 ),
               ],
@@ -685,15 +685,15 @@ class _EventVideoRow extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
+                color: context.colors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusSm,
-                border: Border.all(color: KolabingColors.darkBorder),
+                border: Border.all(color: context.colors.darkBorder),
               ),
-              child: const Center(
+              child: Center(
                 child: Icon(
                   LucideIcons.video,
                   size: 20,
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
             ),
@@ -707,43 +707,44 @@ class _EventVideoRow extends StatelessWidget {
 // Shared helpers (file-private)
 // =============================================================================
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) => InputDecoration(
   hintText: hint,
   hintStyle: KolabingTextStyles.bodySmall.copyWith(
-    color: KolabingColors.textTertiary,
+    color: context.colors.textTertiary,
   ),
   errorText: error,
   errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
   filled: true,
-  fillColor: KolabingColors.surface,
+  fillColor: context.colors.surface,
   contentPadding: const EdgeInsets.symmetric(
     horizontal: KolabingSpacing.md,
     vertical: 14,
   ),
   border: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    borderSide: BorderSide(color: context.colors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    borderSide: BorderSide(color: context.colors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.borderFocus, width: 1.5),
+    borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
   ),
   errorBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.borderError),
+    borderSide: BorderSide(color: context.colors.borderError),
   ),
   focusedErrorBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.borderError, width: 1.5),
+    borderSide: BorderSide(color: context.colors.borderError, width: 1.5),
   ),
 );
 
-TextStyle get _inputTextStyle =>
-    KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);
+TextStyle _inputTextStyle(BuildContext context) =>
+    KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);

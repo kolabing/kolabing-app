@@ -53,14 +53,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final state = ref.watch(notificationProvider);
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.surface,
+        backgroundColor: context.colors.surface,
         surfaceTintColor: Colors.transparent,
         title: Text(
           AppLocalizations.of(context).notificationsScreenTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         leading: IconButton(
@@ -75,7 +75,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               child: Text(
                 AppLocalizations.of(context).notificationsScreenMarkAllRead,
                 style: KolabingTextStyles.labelMedium.copyWith(
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                 ),
               ),
             ),
@@ -99,25 +99,25 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     }
 
     return RefreshIndicator(
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       onRefresh: () => ref.read(notificationProvider.notifier).refresh(),
       child: ListView.separated(
         controller: _scrollController,
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
         itemCount:
             state.notifications.length + (state.isLoadingMore ? 1 : 0),
-        separatorBuilder: (_, __) => const Divider(
+        separatorBuilder: (_, __) => Divider(
           height: 1,
           indent: 72,
-          color: KolabingColors.darkBorder,
+          color: context.colors.darkBorder,
         ),
         itemBuilder: (context, index) {
           if (index == state.notifications.length) {
-            return const Center(
+            return Center(
               child: Padding(
                 padding: EdgeInsets.all(KolabingSpacing.md),
                 child:
-                    CircularProgressIndicator(color: KolabingColors.primary),
+                    CircularProgressIndicator(color: context.colors.primary),
               ),
             );
           }
@@ -149,8 +149,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     }
   }
 
-  Widget _buildLoadingState() => const Center(
-        child: CircularProgressIndicator(color: KolabingColors.primary),
+  Widget _buildLoadingState() => Center(
+        child: CircularProgressIndicator(color: context.colors.primary),
       );
 
   Widget _buildErrorState(BuildContext context, String error) => Center(
@@ -162,13 +162,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               Icon(
                 LucideIcons.alertCircle,
                 size: 48,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 error,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -192,20 +192,20 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               Icon(
                 LucideIcons.bellOff,
                 size: 48,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 AppLocalizations.of(context).notificationsScreenEmptyTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 AppLocalizations.of(context).notificationsScreenEmptyBody,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -232,8 +232,8 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: notification.isRead
-          ? KolabingColors.surface
-          : KolabingColors.primary.withValues(alpha: 0.06),
+          ? context.colors.surface
+          : context.colors.primary.withValues(alpha: 0.06),
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -245,7 +245,7 @@ class _NotificationTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Icon / Avatar
-              _buildLeading(),
+              _buildLeading(context),
               const SizedBox(width: KolabingSpacing.sm),
 
               // Content
@@ -260,7 +260,7 @@ class _NotificationTile extends StatelessWidget {
                           child: Text(
                             notification.actorName ?? notification.title,
                             style: KolabingTextStyles.titleSmall.copyWith(
-                              color: KolabingColors.onSurface,
+                              color: context.colors.onSurface,
                               fontWeight: notification.isRead
                                   ? FontWeight.w500
                                   : FontWeight.w700,
@@ -273,7 +273,7 @@ class _NotificationTile extends StatelessWidget {
                         Text(
                           notification.timeAgo,
                           style: KolabingTextStyles.bodySmall.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                         ),
                       ],
@@ -285,8 +285,8 @@ class _NotificationTile extends StatelessWidget {
                       notification.body,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         color: notification.isRead
-                            ? KolabingColors.textTertiary
-                            : KolabingColors.onSurfaceVariant,
+                            ? context.colors.textTertiary
+                            : context.colors.onSurfaceVariant,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -302,8 +302,8 @@ class _NotificationTile extends StatelessWidget {
                   width: 8,
                   height: 8,
                   margin: const EdgeInsets.only(top: 6),
-                  decoration: const BoxDecoration(
-                    color: KolabingColors.primary,
+                  decoration: BoxDecoration(
+                    color: context.colors.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -315,76 +315,76 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  Widget _buildLeading() {
+  Widget _buildLeading(BuildContext context) {
     // Show avatar if available
     if (notification.actorAvatarUrl != null &&
         notification.actorAvatarUrl!.isNotEmpty) {
       return CircleAvatar(
         radius: 22,
-        backgroundColor: KolabingColors.surfaceVariant,
+        backgroundColor: context.colors.surfaceVariant,
         child: ClipOval(
           child: CachedNetworkImage(
             imageUrl: notification.actorAvatarUrl!,
             width: 44,
             height: 44,
             fit: BoxFit.cover,
-            errorWidget: (_, __, ___) => _buildIconAvatar(),
+            errorWidget: (_, __, ___) => _buildIconAvatar(context),
           ),
         ),
       );
     }
 
-    return _buildIconAvatar();
+    return _buildIconAvatar(context);
   }
 
-  Widget _buildIconAvatar() {
+  Widget _buildIconAvatar(BuildContext context) {
     final (IconData icon, Color bgColor, Color iconColor) =
         switch (notification.type) {
       NotificationType.newMessage => (
           LucideIcons.messageCircle,
-          KolabingColors.info.withValues(alpha: 0.12),
-          KolabingColors.info,
+          context.colors.info.withValues(alpha: 0.12),
+          context.colors.info,
         ),
       NotificationType.applicationReceived => (
           LucideIcons.inbox,
-          KolabingColors.primary.withValues(alpha: 0.15),
-          KolabingColors.accentOrangeText,
+          context.colors.primary.withValues(alpha: 0.15),
+          context.colors.accentOrangeText,
         ),
       NotificationType.applicationAccepted => (
           LucideIcons.checkCircle,
-          KolabingColors.success.withValues(alpha: 0.15),
+          context.colors.success.withValues(alpha: 0.15),
           const Color(0xFF155724),
         ),
       NotificationType.applicationDeclined => (
           LucideIcons.xCircle,
-          KolabingColors.error.withValues(alpha: 0.12),
-          KolabingColors.error,
+          context.colors.error.withValues(alpha: 0.12),
+          context.colors.error,
         ),
       NotificationType.badgeAwarded => (
           LucideIcons.badgeCheck,
-          KolabingColors.primary.withValues(alpha: 0.12),
-          KolabingColors.primary,
+          context.colors.primary.withValues(alpha: 0.12),
+          context.colors.primary,
         ),
       NotificationType.challengeVerified => (
           LucideIcons.shieldCheck,
-          KolabingColors.info.withValues(alpha: 0.12),
-          KolabingColors.info,
+          context.colors.info.withValues(alpha: 0.12),
+          context.colors.info,
         ),
       NotificationType.rewardWon => (
           LucideIcons.gift,
-          KolabingColors.success.withValues(alpha: 0.15),
+          context.colors.success.withValues(alpha: 0.15),
           const Color(0xFF155724),
         ),
       NotificationType.collabDayReminder ||
       NotificationType.collabFollowUpReminder => (
           LucideIcons.calendarCheck,
-          KolabingColors.primary.withValues(alpha: 0.15),
-          KolabingColors.accentOrangeText,
+          context.colors.primary.withValues(alpha: 0.15),
+          context.colors.accentOrangeText,
         ),
       NotificationType.unknown => (
           LucideIcons.bell,
-          KolabingColors.surfaceVariant,
-          KolabingColors.onSurfaceVariant,
+          context.colors.surfaceVariant,
+          context.colors.onSurfaceVariant,
         ),
     };
 

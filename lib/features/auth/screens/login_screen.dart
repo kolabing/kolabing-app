@@ -367,7 +367,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void _showUserNotFoundDialog() {
     showDialog<void>(
       context: context,
-      barrierColor: KolabingColors.overlayDark60,
+      barrierColor: context.colors.overlayDark60,
       builder: (context) => _UserNotFoundDialog(
         onCreateAccount: () {
           Navigator.of(context).pop();
@@ -383,9 +383,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -393,21 +393,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: isGoogle ? _handleGoogleSignIn : _handleEmailLogin,
         ),
       ),
@@ -420,11 +420,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -576,7 +576,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   Text(
                     AppLocalizations.of(context).loginPanelTitle,
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
+                      color: context.colors.textOnDark,
                       fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
                       fontWeight: FontWeight.w700,
                     ),
@@ -604,11 +604,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
+                      color: context.colors.textOnDark,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
-                    cursorColor: KolabingColors.primary,
+                    cursorColor: context.colors.primary,
                     decoration: _inputDecoration(
                       hint: AppLocalizations.of(context).authEmailLabel,
                       prefixIcon: Icons.alternate_email_rounded,
@@ -625,11 +625,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _handleEmailLogin(),
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
+                      color: context.colors.textOnDark,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
-                    cursorColor: KolabingColors.primary,
+                    cursorColor: context.colors.primary,
                     decoration: _inputDecoration(
                       hint: AppLocalizations.of(context).authPasswordLabel,
                       prefixIcon: Icons.lock_outline_rounded,
@@ -658,9 +658,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       child: ElevatedButton(
                         onPressed: _anyLoading ? null : _handleEmailLogin,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: KolabingColors.primary,
-                          foregroundColor: KolabingColors.onPrimary,
-                          disabledBackgroundColor: KolabingColors.primary.withValues(
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: context.colors.onPrimary,
+                          disabledBackgroundColor: context.colors.primary.withValues(
                             alpha: 0.70,
                           ),
                           elevation: 0,
@@ -669,28 +669,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           ),
                         ),
                         child: _isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 22,
                                 height: 22,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2.5,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    KolabingColors.onPrimary,
+                                    context.colors.onPrimary,
                                   ),
                                 ),
                               )
                             : _showSuccess
-                            ? const Icon(
+                            ? Icon(
                                 Icons.check_rounded,
                                 size: 24,
-                                color: KolabingColors.onPrimary,
+                                color: context.colors.onPrimary,
                               )
                             : Text(
                                 AppLocalizations.of(context).loginSignInButton,
                                 style: KolabingTextStyles.button.copyWith(
                                   fontSize: compact ? 15 : 16,
                                   letterSpacing: 0.2,
-                                  color: KolabingColors.onPrimary,
+                                  color: context.colors.onPrimary,
                                 ),
                               ),
                       ),
@@ -708,7 +708,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             ? null
                             : () => context.push(_kForgotPasswordRoute),
                         style: TextButton.styleFrom(
-                          foregroundColor: KolabingColors.primary,
+                          foregroundColor: context.colors.primary,
                           minimumSize: const Size(0, 32),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           padding: EdgeInsets.zero,
@@ -717,7 +717,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           AppLocalizations.of(context).loginForgotPassword,
                           style: KolabingTextStyles.labelMedium.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: KolabingColors.primary,
+                            color: context.colors.primary,
                           ),
                         ),
                       ),
@@ -791,15 +791,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.primary, width: 1.6),
+      borderSide: BorderSide(color: context.colors.primary, width: 1.6),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.error),
+      borderSide: BorderSide(color: context.colors.error),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.error, width: 1.6),
+      borderSide: BorderSide(color: context.colors.error, width: 1.6),
     ),
     errorStyle: KolabingTextStyles.labelSmall.copyWith(
       fontSize: 11.5,
@@ -908,7 +908,7 @@ class _HeroCopy extends StatelessWidget {
   Widget build(BuildContext context) => Text(
     AppLocalizations.of(context).loginHeroWelcome,
     style: KolabingTextStyles.displayLarge.copyWith(
-      color: KolabingColors.textOnDark,
+      color: context.colors.textOnDark,
       fontSize: headlineSize,
       height: 1.0,
       letterSpacing: 0.3,
@@ -955,10 +955,10 @@ class _BackButtonState extends State<_BackButton> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 14,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
             ),
             const SizedBox(width: 2),
             Text(
@@ -966,7 +966,7 @@ class _BackButtonState extends State<_BackButton> {
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.textOnDark,
+                color: context.colors.textOnDark,
               ),
             ),
           ],
@@ -1017,9 +1017,9 @@ class _SignUpLinkState extends State<_SignUpLink> {
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
             decoration: _isPressed ? TextDecoration.underline : null,
-            decorationColor: KolabingColors.primary,
+            decorationColor: context.colors.primary,
           ),
         ),
       ),
@@ -1039,23 +1039,23 @@ class _UserNotFoundDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-    backgroundColor: KolabingColors.darkSurface,
+    backgroundColor: context.colors.darkSurface,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.person_off_outlined,
             size: 48,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
           ),
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context).loginUserNotFoundTitle,
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1063,7 +1063,7 @@ class _UserNotFoundDialog extends StatelessWidget {
           Text(
             AppLocalizations.of(context).loginUserNotFoundMessage,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
               height: 1.6,
             ),
             textAlign: TextAlign.center,
@@ -1075,8 +1075,8 @@ class _UserNotFoundDialog extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onCreateAccount,
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -1084,7 +1084,7 @@ class _UserNotFoundDialog extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context).loginCreateAccountButton,
                 style: KolabingTextStyles.button.copyWith(
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
             ),
@@ -1095,7 +1095,7 @@ class _UserNotFoundDialog extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context).commonCancel,
               style: KolabingTextStyles.labelLarge.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ),

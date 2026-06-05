@@ -5,6 +5,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../../auth/utils/auth_scope_guard.dart';
 import '../models/event.dart';
+import '../models/event_signup.dart';
 import '../services/event_service.dart';
 
 final eventServiceProvider = Provider<EventService>((ref) {
@@ -287,3 +288,65 @@ final profileEventsProvider =
   final result = await service.getEvents(profileId: profileId);
   return result.events;
 });
+
+/// A community's UPCOMING events (Phase-3 `GET /events?community_id&time=upcoming`).
+///
+/// Notifier (not FutureProvider) so `reload()` sets `state` directly — a plain
+/// `invalidate` does NOT reliably recompute a kept-alive `FutureProvider` watched
+/// from inside the role `IndexedStack`, so create/edit/RSVP looked stale until a
+/// full app restart (docs/tickets/2026-06-04-tier-instant-refresh-bug.md). Keyed
+/// per communityId. Returns [] gracefully if the backend filter isn't deployed.
+class CommunityUpcomingEventsNotifier
+    extends Notifier<AsyncValue<List<Event>>> {
+  CommunityUpcomingEventsNotifier(this.communityId);
+
+  final String communityId;
+
+  @override
+  AsyncValue<List<Event>> build() {
+    Future.microtask(reload);
+    return const AsyncValue.loading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final result = await ref.read(eventServiceProvider).getEvents(
+            communityId: communityId,
+            time: 'upcoming',
+          );
+      return result.events;
+    });
+  }
+}
+
+final communityUpcomingEventsProvider = NotifierProvider.family<
+    CommunityUpcomingEventsNotifier, AsyncValue<List<Event>>, String>(
+  CommunityUpcomingEventsNotifier.new,
+);
+
+/// An event's attendee roster (`GET /events/{id}/signups`, leader-scoped).
+///
+/// Notifier (not FutureProvider) so `reload()` sets state directly — the NF-6
+/// refresh lesson (docs/tickets/2026-06-04-tier-instant-refresh-bug.md). Keyed
+/// per eventId via [eventSignupsProvider].
+class EventSignupsNotifier extends Notifier<AsyncValue<EventSignups>> {
+  EventSignupsNotifier(this.eventId);
+
+  final String eventId;
+
+  @override
+  AsyncValue<EventSignups> build() {
+    Future.microtask(reload);
+    return const AsyncLoading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+        () => ref.read(eventServiceProvider).getSignups(eventId));
+  }
+}
+
+final eventSignupsProvider = NotifierProvider.family<EventSignupsNotifier,
+    AsyncValue<EventSignups>, String>(EventSignupsNotifier.new);

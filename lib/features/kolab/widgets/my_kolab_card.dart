@@ -34,7 +34,7 @@ class MyKolabCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -59,7 +59,7 @@ class MyKolabCard extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               kolab.title.isNotEmpty ? kolab.title : l10n.myKolabCardUntitled,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface, height: 1.3),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface, height: 1.3),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -204,23 +204,23 @@ class _StatusBadge extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final (backgroundColor, textColor, label) = switch (status) {
       'published' => (
-        KolabingColors.activeBg,
-        KolabingColors.activeText,
+        context.colors.activeBg,
+        context.colors.activeText,
         l10n.myKolabCardStatusPublished,
       ),
       'closed' => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
         l10n.myKolabCardStatusClosed,
       ),
       'completed' => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
         l10n.myKolabCardStatusCompleted,
       ),
       _ => (
-        KolabingColors.pendingBg,
-        KolabingColors.pendingText,
+        context.colors.pendingBg,
+        context.colors.pendingText,
         l10n.myKolabCardStatusDraft,
       ),
     };
@@ -253,17 +253,17 @@ class _InfoPill extends StatelessWidget {
     height: 26,
     padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
     decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       borderRadius: KolabingRadius.borderRadiusRound,
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 12, color: KolabingColors.textTertiary),
+        Icon(icon, size: 12, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.xxs),
         Text(
           label,
-          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ],
     ),
@@ -290,10 +290,10 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final foregroundColor = primary
-        ? KolabingColors.onPrimary
+        ? context.colors.onPrimary
         : danger
-        ? KolabingColors.error
-        : KolabingColors.onSurface;
+        ? context.colors.error
+        : context.colors.onSurface;
 
     if (primary) {
       return SizedBox(
@@ -301,8 +301,8 @@ class _ActionButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
+            backgroundColor: context.colors.primary,
+            foregroundColor: context.colors.onPrimary,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
             shape: RoundedRectangleBorder(
@@ -324,7 +324,7 @@ class _ActionButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: danger ? KolabingColors.errorBg : KolabingColors.darkBorder,
+            color: danger ? context.colors.errorBg : context.colors.darkBorder,
           ),
           foregroundColor: foregroundColor,
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),

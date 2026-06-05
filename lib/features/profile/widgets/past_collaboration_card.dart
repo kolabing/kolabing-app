@@ -23,9 +23,9 @@ class PastCollaborationCard extends StatelessWidget {
       width: 240,
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.darkBorder, width: 1),
+        border: Border.all(color: context.colors.darkBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +35,7 @@ class PastCollaborationCard extends StatelessWidget {
           Text(
             collaboration.title,
             style: KolabingTextStyles.titleSmall.copyWith(
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -55,7 +55,7 @@ class PastCollaborationCard extends StatelessWidget {
                 child: Text(
                   'with ${collaboration.partnerName}',
                   style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -71,18 +71,18 @@ class PastCollaborationCard extends StatelessWidget {
               Icon(
                 LucideIcons.calendar,
                 size: 12,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: 4),
               Text(
                 DateFormat('MMM yyyy').format(collaboration.completedAt),
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: KolabingColors.success.withValues(alpha: 0.15),
+                  color: context.colors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -91,12 +91,12 @@ class PastCollaborationCard extends StatelessWidget {
                     Icon(
                       LucideIcons.checkCircle,
                       size: 10,
-                      color: KolabingColors.success,
+                      color: context.colors.success,
                     ),
                     const SizedBox(width: 3),
                     Text(
                       'Completed',
-                      style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: KolabingColors.success),
+                      style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: context.colors.success),
                     ),
                   ],
                 ),
@@ -151,13 +151,13 @@ class _InitialCircle extends StatelessWidget {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: KolabingColors.primary.withValues(alpha: 0.2),
+      color: context.colors.primary.withValues(alpha: 0.2),
       shape: BoxShape.circle,
     ),
     child: Center(
       child: Text(
         initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
       ),
     ),
   );

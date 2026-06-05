@@ -34,9 +34,9 @@ class KolabReviewCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(children: _buildSections(l10n)),
     );
@@ -468,18 +468,18 @@ class _ReviewSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
+              Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
               ),
-              const Icon(
+              Icon(
                 LucideIcons.pencil,
                 size: 16,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ],
           ),
@@ -497,7 +497,7 @@ class _SectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      const Divider(height: 1, thickness: 1, color: KolabingColors.darkBorder);
+      Divider(height: 1, thickness: 1, color: context.colors.darkBorder);
 }
 
 /// A labelled field in a review section.
@@ -513,12 +513,12 @@ class _ReviewField extends StatelessWidget {
     children: [
       Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
       ),
       const SizedBox(height: KolabingSpacing.xxxs),
       Text(
         value,
-        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface),
       ),
     ],
   );
@@ -542,12 +542,12 @@ class _ChipList extends StatelessWidget {
               vertical: KolabingSpacing.xxs,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: KolabingRadius.borderRadiusXs,
             ),
             child: Text(
               item,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.onSurface),
             ),
           ),
         )
@@ -564,6 +564,6 @@ class _EmptyHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary, fontStyle: FontStyle.italic),
+    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary, fontStyle: FontStyle.italic),
   );
 }

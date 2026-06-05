@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../config/constants/spacing.dart';
 import '../../config/theme/colors.dart';
 import '../../config/theme/typography.dart';
+import 'profile_avatar_button.dart';
 
 /// Kolabing standard app bar — yellow background, charcoal text/icons.
 class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -21,40 +21,28 @@ class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: KolabingColors.navBarBackground,
+      backgroundColor: context.colors.navBarBackground,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       leading: showBackButton
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
-              color: KolabingColors.charcoal,
+              color: context.colors.charcoal,
               onPressed: () => Navigator.of(context).pop(),
             )
           : null,
       title: Text(
         'KOLABING',
         style: KolabingTextStyles.headlineMedium.copyWith(
-          color: KolabingColors.charcoal,
+          color: context.colors.charcoal,
           letterSpacing: 2.0,
         ),
       ),
       centerTitle: true,
-      actions: actions ??
-          [
-            Padding(
-              padding: const EdgeInsets.only(right: KolabingSpacing.md),
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: KolabingColors.charcoal,
-                child: Icon(
-                  Icons.person,
-                  size: 18,
-                  color: KolabingColors.navBarBackground,
-                ),
-              ),
-            ),
-          ],
+      // Chat moved to the bottom-nav (NF-12); the avatar opens the now-hidden
+      // profile (community/attendee have no Profile tab anymore).
+      actions: actions ?? const [ProfileAvatarButton()],
     );
   }
 }

@@ -142,8 +142,8 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
     final bottomPadding = MediaQuery.viewInsetsOf(context).bottom;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -163,7 +163,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
               height: 4,
               margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: KolabingRadius.borderRadiusRound,
               ),
             ),
@@ -174,14 +174,14 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             l10n.kolabReviewSheetTitle,
             style: KolabingTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             l10n.kolabReviewSheetSubtitle(widget.partnerName),
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
 
@@ -203,27 +203,27 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             decoration: InputDecoration(
               hintText: l10n.kolabReviewSheetCommentHint,
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               filled: true,
-              fillColor: KolabingColors.background,
+              fillColor: context.colors.background,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(
-                  color: KolabingColors.primary,
+                borderSide: BorderSide(
+                  color: context.colors.primary,
                   width: 1.5,
                 ),
               ),
               counterStyle: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ),
@@ -241,7 +241,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             Text(
               _error!,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
               textAlign: TextAlign.center,
             ),
@@ -255,21 +255,21 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             child: ElevatedButton(
               onPressed: _canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 disabledBackgroundColor:
-                    KolabingColors.primary.withValues(alpha: 0.4),
+                    context.colors.primary.withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: KolabingRadius.borderRadiusMd,
                 ),
               ),
               child: _isSubmitting
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: KolabingColors.onPrimary,
+                        color: context.colors.onPrimary,
                       ),
                     )
                   : Text(
@@ -287,7 +287,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             child: Text(
               l10n.kolabReviewSheetSkip,
               style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ),
@@ -322,8 +322,8 @@ class _StarRating extends StatelessWidget {
               filled ? LucideIcons.star : LucideIcons.star,
               size: 36,
               color: filled
-                  ? KolabingColors.primary
-                  : KolabingColors.darkBorder,
+                  ? context.colors.primary
+                  : context.colors.darkBorder,
             ),
           ),
         );
@@ -350,7 +350,7 @@ class _WouldCollabRow extends StatelessWidget {
         Text(
           l10n.kolabReviewSheetWouldAgain,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const Spacer(),
@@ -393,19 +393,19 @@ class _ToggleChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: selected
-              ? KolabingColors.primary
-              : KolabingColors.background,
+              ? context.colors.primary
+              : context.colors.background,
           borderRadius: KolabingRadius.borderRadiusRound,
           border: Border.all(
-            color: selected ? KolabingColors.primary : KolabingColors.darkBorder,
+            color: selected ? context.colors.primary : context.colors.darkBorder,
           ),
         ),
         child: Text(
           label,
           style: KolabingTextStyles.labelSmall.copyWith(
             color: selected
-                ? KolabingColors.onPrimary
-                : KolabingColors.onSurfaceVariant,
+                ? context.colors.onPrimary
+                : context.colors.onSurfaceVariant,
             fontWeight: FontWeight.w600,
           ),
         ),

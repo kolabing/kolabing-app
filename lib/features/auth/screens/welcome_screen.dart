@@ -328,7 +328,7 @@ class _HeroBackdropState extends State<_HeroBackdrop> {
                   center: const Alignment(0, -0.4),
                   radius: 0.9,
                   colors: <Color>[
-                    KolabingColors.primary.withValues(alpha: 0.12),
+                    context.colors.primary.withValues(alpha: 0.12),
                     Colors.transparent,
                   ],
                 ),
@@ -390,7 +390,7 @@ class _Headline extends StatelessWidget {
       fontSize: fontSize,
       letterSpacing: -0.5,
       height: 1.02,
-      color: KolabingColors.textOnDark,
+      color: context.colors.textOnDark,
     );
     final l10n = AppLocalizations.of(context);
     return Column(
@@ -436,8 +436,8 @@ class _PrimaryCta extends StatelessWidget {
     child: FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
-        backgroundColor: KolabingColors.primary,
-        foregroundColor: KolabingColors.onPrimary,
+        backgroundColor: context.colors.primary,
+        foregroundColor: context.colors.onPrimary,
         elevation: 0,
         shadowColor: Colors.transparent,
         minimumSize: const Size.fromHeight(54),
@@ -462,10 +462,10 @@ class _PrimaryCta extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          const Icon(
+          Icon(
             LucideIcons.arrowRight,
             size: 18,
-            color: KolabingColors.onPrimary,
+            color: context.colors.onPrimary,
           ),
         ],
       ),

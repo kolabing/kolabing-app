@@ -84,12 +84,12 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           // Section header
           Text(
             l10n.communityInfoTypeHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.communityInfoTypeSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
 
           // Community types error
@@ -123,23 +123,23 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? KolabingColors.softYellow
-                        : KolabingColors.surface,
+                        ? context.colors.softYellow
+                        : context.colors.surface,
                     borderRadius: KolabingRadius.borderRadiusSm,
                     border: Border.all(
                       color: isSelected
-                          ? KolabingColors.primary
-                          : KolabingColors.darkBorder,
+                          ? context.colors.primary
+                          : context.colors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
                   child: Text(
                     type,
                     style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isMaxReached
-                          ? KolabingColors.textTertiary
+                          ? context.colors.textTertiary
                           : isSelected
-                              ? KolabingColors.onSurface
-                              : KolabingColors.onSurfaceVariant),
+                              ? context.colors.onSurface
+                              : context.colors.onSurfaceVariant),
                   ),
                 ),
               );
@@ -161,28 +161,28 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
               final parsed = int.tryParse(value);
               ref.read(kolabFormProvider.notifier).updateCommunitySize(parsed);
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
             decoration: InputDecoration(
               hintText: l10n.communityInfoCommunitySizeHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
               filled: true,
-              fillColor: KolabingColors.surface,
+              fillColor: context.colors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
                 borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
+                    BorderSide(color: context.colors.primary, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.error),
+                borderSide: BorderSide(color: context.colors.error),
               ),
               errorText: state.fieldErrors['community_size'],
             ),
@@ -205,28 +205,28 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateTypicalAttendance(parsed);
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
             decoration: InputDecoration(
               hintText: l10n.communityInfoExpectedAttendeesHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
               filled: true,
-              fillColor: KolabingColors.surface,
+              fillColor: context.colors.surface,
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
                 borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
+                    BorderSide(color: context.colors.primary, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.error),
+                borderSide: BorderSide(color: context.colors.error),
               ),
               errorText: state.fieldErrors['typical_attendance'],
             ),
@@ -238,7 +238,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   Widget _buildLabel(String label) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
       );
 
   Widget _buildFieldError(String error) => Container(
@@ -247,21 +247,21 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           vertical: KolabingSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
+          color: context.colors.errorBg,
           borderRadius: KolabingRadius.borderRadiusSm,
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 14,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Expanded(
               child: Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
               ),
             ),
           ],

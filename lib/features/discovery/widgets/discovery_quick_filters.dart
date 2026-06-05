@@ -281,11 +281,11 @@ class _QuickChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: data.isActive
-            ? KolabingColors.softYellow
-            : KolabingColors.surface,
+            ? context.colors.softYellow
+            : context.colors.surface,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: data.isActive ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: data.isActive ? context.colors.primary : context.colors.darkBorder,
         ),
       ),
       child: Row(
@@ -293,15 +293,15 @@ class _QuickChip extends StatelessWidget {
         children: [
           Text(
             data.label,
-            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: context.colors.onSurface),
           ),
           const SizedBox(width: 6),
           Icon(
             LucideIcons.slidersHorizontal,
             size: 14,
             color: data.isActive
-                ? KolabingColors.onSurface
-                : KolabingColors.textTertiary,
+                ? context.colors.onSurface
+                : context.colors.textTertiary,
           ),
         ],
       ),

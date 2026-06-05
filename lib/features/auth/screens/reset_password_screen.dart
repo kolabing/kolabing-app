@@ -65,7 +65,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         systemNavigationBarColor: KolabingColors.surface,
@@ -210,11 +210,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -228,9 +228,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -238,21 +238,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: _handleResetPassword,
         ),
       ),
@@ -263,7 +263,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       resizeToAvoidBottomInset: false,
       body: KeyboardAvoidingContent(
         child: SafeArea(
@@ -281,17 +281,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.arrow_back_ios_rounded,
                               size: 20,
-                              color: KolabingColors.textOnDark,
+                              color: context.colors.textOnDark,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               AppLocalizations.of(context).commonBack,
                               style: KolabingTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
-                                color: KolabingColors.textOnDark,
+                                color: context.colors.textOnDark,
                               ),
                             ),
                           ],
@@ -333,13 +333,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.15),
+              color: context.colors.primary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.lock_outline_rounded,
               size: 40,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
           ),
         ),
@@ -357,7 +357,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   letterSpacing: 1.2,
                 ),
                 textAlign: TextAlign.center,
@@ -368,7 +368,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 child: Text(
                   AppLocalizations.of(context).resetPasswordSubtitle,
                   style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -398,7 +398,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                   _confirmPasswordFocusNode.requestFocus();
                 },
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                 ),
                 decoration: _inputDecoration(
                   label: AppLocalizations.of(context).resetPasswordNewLabel,
@@ -409,7 +409,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       _obscurePassword
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                     onPressed: () {
                       setState(() {
@@ -432,7 +432,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _handleResetPassword(),
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                 ),
                 decoration: _inputDecoration(
                   label: AppLocalizations.of(context).authConfirmPasswordLabel,
@@ -443,7 +443,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       _obscureConfirmPassword
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                     onPressed: () {
                       setState(() {
@@ -469,9 +469,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             child: ElevatedButton(
               onPressed: _isLoading ? null : _handleResetPassword,
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                disabledBackgroundColor: KolabingColors.primary.withValues(
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
+                disabledBackgroundColor: context.colors.primary.withValues(
                   alpha: 0.7,
                 ),
                 shape: RoundedRectangleBorder(
@@ -480,13 +480,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                 elevation: 0,
               ),
               child: _isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          KolabingColors.onPrimary,
+                          context.colors.onPrimary,
                         ),
                       ),
                     )
@@ -516,13 +516,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         width: 80,
         height: 80,
         decoration: BoxDecoration(
-          color: KolabingColors.success.withValues(alpha: 0.15),
+          color: context.colors.success.withValues(alpha: 0.15),
           shape: BoxShape.circle,
         ),
-        child: const Icon(
+        child: Icon(
           Icons.check_circle_outline_rounded,
           size: 40,
-          color: KolabingColors.success,
+          color: context.colors.success,
         ),
       ),
 
@@ -534,7 +534,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         style: KolabingTextStyles.bodyLarge.copyWith(
           fontSize: 28,
           fontWeight: FontWeight.w800,
-          color: KolabingColors.textOnDark,
+          color: context.colors.textOnDark,
           letterSpacing: 1.2,
         ),
         textAlign: TextAlign.center,
@@ -548,7 +548,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         child: Text(
           AppLocalizations.of(context).resetPasswordSuccessMessage,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -564,8 +564,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         child: ElevatedButton(
           onPressed: () => context.go('/auth/login'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
+            backgroundColor: context.colors.primary,
+            foregroundColor: context.colors.onPrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -594,35 +594,35 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   }) => InputDecoration(
     labelText: label,
     hintText: hint,
-    labelStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+    labelStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
     hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-      color: KolabingColors.textTertiary.withValues(alpha: 0.6),
+      color: context.colors.textTertiary.withValues(alpha: 0.6),
     ),
-    prefixIcon: Icon(prefixIcon, color: KolabingColors.textTertiary),
+    prefixIcon: Icon(prefixIcon, color: context.colors.textTertiary),
     suffixIcon: suffixIcon,
     filled: true,
-    fillColor: KolabingColors.darkSurface,
+    fillColor: context.colors.darkSurface,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+      borderSide: BorderSide(color: context.colors.darkBorder),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+      borderSide: BorderSide(color: context.colors.darkBorder),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
+      borderSide: BorderSide(color: context.colors.primary, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.error),
+      borderSide: BorderSide(color: context.colors.error),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.error, width: 2),
+      borderSide: BorderSide(color: context.colors.error, width: 2),
     ),
-    errorStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.error, fontSize: 12),
+    errorStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.error, fontSize: 12),
   );
 }
 

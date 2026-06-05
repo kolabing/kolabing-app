@@ -48,12 +48,12 @@ class IntentCard extends StatelessWidget {
           padding: const EdgeInsets.all(KolabingSpacing.lg - 4), // 20dp
           decoration: BoxDecoration(
             color: isSelected
-                ? KolabingColors.softYellow
-                : KolabingColors.surface,
+                ? context.colors.softYellow
+                : context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
               color:
-                  isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
+                  isSelected ? context.colors.primary : context.colors.darkBorder,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -66,16 +66,16 @@ class IntentCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isSelected
-                      ? KolabingColors.primary.withValues(alpha: 0.2)
-                      : KolabingColors.background,
+                      ? context.colors.primary.withValues(alpha: 0.2)
+                      : context.colors.background,
                 ),
                 child: Center(
                   child: Icon(
                     icon,
                     size: 22,
                     color: isSelected
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.onSurfaceVariant,
+                        ? context.colors.onPrimary
+                        : context.colors.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -87,12 +87,12 @@ class IntentCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xxxs),
                     Text(
                       subtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -108,12 +108,12 @@ class IntentCard extends StatelessWidget {
                     vertical: KolabingSpacing.xxs,
                   ),
                   decoration: BoxDecoration(
-                    color: KolabingColors.softYellow,
+                    color: context.colors.softYellow,
                     borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Text(
                     badge!,
-                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   ),
                 ),
               ],

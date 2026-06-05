@@ -91,7 +91,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                 content: Text(
                   AppLocalizations.of(context).photoUploadFileTooLarge,
                 ),
-                backgroundColor: KolabingColors.error,
+                backgroundColor: context.colors.error,
               ),
             );
           }
@@ -106,7 +106,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_friendlyPickerError(e)),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -118,7 +118,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
             content: Text(
               AppLocalizations.of(context).photoUploadSelectFailed,
             ),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -202,13 +202,13 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
               },
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 LucideIcons.trash2,
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
               title: Text(
                 AppLocalizations.of(context).photoUploadRemovePhoto,
-                style: const TextStyle(color: KolabingColors.error),
+                style: TextStyle(color: context.colors.error),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -244,10 +244,10 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
             width: double.infinity,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: KolabingColors.surfaceVariant,
+              color: context.colors.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 style: widget.photoBase64 == null
                     ? BorderStyle.none
                     : BorderStyle.solid,
@@ -263,11 +263,11 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                     shape: BoxShape.circle,
                     color: widget.photoBase64 != null
                         ? Colors.transparent
-                        : KolabingColors.surface,
+                        : context.colors.surface,
                     border: Border.all(
                       color: widget.photoBase64 != null
-                          ? KolabingColors.primary
-                          : KolabingColors.darkBorder,
+                          ? context.colors.primary
+                          : context.colors.darkBorder,
                       width: 2,
                       style: widget.photoBase64 != null
                           ? BorderStyle.solid
@@ -281,10 +281,10 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                         : null,
                   ),
                   child: widget.photoBase64 == null
-                      ? const Icon(
+                      ? Icon(
                           LucideIcons.camera,
                           size: 32,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         )
                       : null,
                 ),
@@ -295,7 +295,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                   widget.photoBase64 == null
                       ? widget.addLabel
                       : AppLocalizations.of(context).photoUploadTapToChange,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                 ),
               ],
             ),

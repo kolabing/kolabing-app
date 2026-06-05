@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/event.dart';
+import '../models/event_signup.dart';
 import '../../../config/constants/api.dart';
 
 /// API base URL
@@ -62,11 +63,15 @@ class EventService {
   /// the authenticated user's events.
   Future<({List<Event> events, EventPagination pagination})> getEvents({
     String? profileId,
+    String? communityId,
+    String? time, // 'upcoming' | 'past' (Phase-3 filter)
     int page = 1,
     int limit = 10,
   }) async {
     return _getEvents(
       profileId: profileId,
+      communityId: communityId,
+      time: time,
       page: page,
       limit: limit,
       allowRetry: true,
@@ -75,6 +80,8 @@ class EventService {
 
   Future<({List<Event> events, EventPagination pagination})> _getEvents({
     String? profileId,
+    String? communityId,
+    String? time,
     required int page,
     required int limit,
     required bool allowRetry,
@@ -83,6 +90,8 @@ class EventService {
       'page': page.toString(),
       'limit': limit.toString(),
       if (profileId != null) 'profile_id': profileId,
+      if (communityId != null) 'community_id': communityId,
+      if (time != null) 'time': time,
     };
 
     final uri = Uri.parse(
@@ -197,8 +206,268 @@ class EventService {
   }
 
   // ---------------------------------------------------------------------------
+  // Sign-up / RSVP (Phase 3)
+  // ---------------------------------------------------------------------------
+
+  /// POST /events/{event}/signup — one-tap "I'm going" (or waitlist when full).
+  /// Returns the updated event (my_signup + counts).
+  Future<Event> signup(String eventId) => _signup(eventId, allowRetry: true);
+
+  Future<Event> _signup(String eventId, {required bool allowRetry}) async {
+    final response = await _sendWithRefresh(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/events/$eventId/signup'),
+        headers: await _getHeaders(),
+      ),
+      allowRetry: allowRetry,
+    );
+    return _parseSignupResponse(response, eventId);
+  }
+
+  /// DELETE /events/{event}/signup — leave / cancel (frees a slot; backend
+  /// auto-promotes the next waitlisted member).
+  Future<Event> cancelSignup(String eventId) =>
+      _cancelSignup(eventId, allowRetry: true);
+
+  Future<Event> _cancelSignup(String eventId, {required bool allowRetry}) async {
+    final response = await _sendWithRefresh(
+      () async => _httpClient.delete(
+        Uri.parse('$_baseUrl/events/$eventId/signup'),
+        headers: await _getHeaders(),
+      ),
+      allowRetry: allowRetry,
+    );
+    return _parseSignupResponse(response, eventId);
+  }
+
+  Future<Event> _parseSignupResponse(
+    http.Response response,
+    String eventId,
+  ) async {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final body = response.body.isEmpty
+          ? <String, dynamic>{}
+          : jsonDecode(response.body) as Map<String, dynamic>;
+      final data = body['data'];
+      if (data is Map<String, dynamic>) {
+        if (data['id'] != null && data['name'] != null) {
+          return Event.fromJson(data);
+        }
+        final ev = data['event'];
+        if (ev is Map<String, dynamic>) return Event.fromJson(ev);
+      }
+      // Response wasn't a full event payload — re-fetch for fresh counts.
+      return getEvent(eventId);
+    }
+    var message = 'Could not update your sign-up';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      message = (body['message'] ?? body['error'] ?? message).toString();
+    } catch (_) {}
+    throw Exception(message);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Signups roster (Phase 3 — leader view)
+  // ---------------------------------------------------------------------------
+
+  /// GET /events/{event}/signups — the attendee roster (leader only).
+  /// Response: `{ data: { going:[…], waitlist:[…] } }`.
+  Future<EventSignups> getSignups(String eventId) =>
+      _getSignups(eventId, allowRetry: true);
+
+  Future<EventSignups> _getSignups(
+    String eventId, {
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId/signups');
+    debugPrint('EventService: GET $uri');
+    final response = await _sendWithRefresh(
+      () async => _httpClient.get(uri, headers: await _getHeaders()),
+      allowRetry: allowRetry,
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final body = response.body.isEmpty
+          ? <String, dynamic>{}
+          : jsonDecode(response.body) as Map<String, dynamic>;
+      final data = body['data'];
+      if (data is Map<String, dynamic>) return EventSignups.fromJson(data);
+      return const EventSignups();
+    } else if (response.statusCode == 401) {
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    throw _parseApiError(response);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Photos (Phase 3 — NEW backend endpoint, ships in parallel)
+  // ---------------------------------------------------------------------------
+
+  /// POST /events/{event}/photos — multipart `photos[]`. Returns the updated
+  /// [Event] (with the new photos). NOTE: this backend endpoint is being built
+  /// in parallel (backend ticket 2026-06-05); coded to the agreed contract so
+  /// it works once deployed.
+  Future<Event> addEventPhotos(String eventId, List<String> filePaths) =>
+      _addEventPhotos(eventId, filePaths, allowRetry: true);
+
+  Future<Event> _addEventPhotos(
+    String eventId,
+    List<String> filePaths, {
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId/photos');
+    debugPrint('EventService: POST $uri (${filePaths.length} photo(s))');
+    final request = http.MultipartRequest('POST', uri);
+    request.headers.addAll(await _getHeaders());
+    for (final path in filePaths) {
+      request.files.add(await http.MultipartFile.fromPath('photos[]', path));
+    }
+    final streamed = await _httpClient.send(request);
+    final response = await http.Response.fromStream(streamed);
+    debugPrint('Add event photos status: ${response.statusCode}');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response uploading photos');
+    } else if (response.statusCode == 401) {
+      if (allowRetry) {
+        await _authService.refreshSession();
+        return _addEventPhotos(eventId, filePaths, allowRetry: false);
+      }
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    throw _parseApiError(response);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Update upcoming event (Phase 3 — JSON; edit an upcoming event)
+  // ---------------------------------------------------------------------------
+
+  /// PUT /events/{event} — edit an UPCOMING event (JSON). Mirrors the create
+  /// payload; only sends keys that are provided.
+  Future<Event> updateUpcomingEvent(
+    String eventId, {
+    String? name,
+    DateTime? startsAt,
+    DateTime? endsAt,
+    bool clearEndsAt = false,
+    String? location,
+    int? capacity,
+    bool clearCapacity = false,
+    List<String>? tierGate,
+  }) async {
+    final payload = <String, dynamic>{
+      if (name != null) 'name': name,
+      if (startsAt != null) 'starts_at': startsAt.toUtc().toIso8601String(),
+      if (endsAt != null)
+        'ends_at': endsAt.toUtc().toIso8601String()
+      else if (clearEndsAt)
+        'ends_at': null,
+      if (location != null) 'location': location,
+      if (capacity != null)
+        'capacity': capacity
+      else if (clearCapacity)
+        'capacity': null,
+      if (tierGate != null) 'tier_gate': tierGate,
+    };
+    final response = await _sendWithRefresh(
+      () async => _httpClient.put(
+        Uri.parse('$_baseUrl/events/$eventId'),
+        headers: await _getJsonHeaders(),
+        body: jsonEncode(payload),
+      ),
+      allowRetry: true,
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response updating event');
+    }
+    var message = 'Could not update the event';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final errs = body['errors'];
+      if (errs is Map && errs.isNotEmpty) {
+        final first = errs.values.first;
+        message = (first is List && first.isNotEmpty)
+            ? first.first.toString()
+            : (body['message']?.toString() ?? message);
+      } else {
+        message = body['message']?.toString() ?? message;
+      }
+    } catch (_) {}
+    throw Exception(message);
+  }
+
+  // ---------------------------------------------------------------------------
   // Create Event
   // ---------------------------------------------------------------------------
+
+  /// POST /events — UPCOMING mode (PR #20). JSON, no photos required. Auth =
+  /// owner / can_manage of the community. `starts_at` keys the upcoming branch.
+  Future<Event> createUpcomingEvent({
+    required String communityId,
+    required String name,
+    required DateTime startsAt,
+    DateTime? endsAt,
+    String? location,
+    int? capacity,
+    List<String>? tierGate,
+    Map<String, dynamic>? recurrence,
+  }) async {
+    final payload = <String, dynamic>{
+      'community_id': communityId,
+      'name': name,
+      'starts_at': startsAt.toUtc().toIso8601String(),
+      if (endsAt != null) 'ends_at': endsAt.toUtc().toIso8601String(),
+      if (location != null && location.isNotEmpty) 'location': location,
+      if (capacity != null) 'capacity': capacity,
+      if (tierGate != null && tierGate.isNotEmpty) 'tier_gate': tierGate,
+      // Recurring → backend builds an event_series and returns the first
+      // occurrence (carrying series_id). See EventSeriesService.
+      if (recurrence != null) 'recurrence': recurrence,
+    };
+    final response = await _sendWithRefresh(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/events'),
+        headers: await _getJsonHeaders(),
+        body: jsonEncode(payload),
+      ),
+      allowRetry: true,
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response creating event');
+    }
+    // Surface the first validation error if present, else the message.
+    var message = 'Could not create the event';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final errs = body['errors'];
+      if (errs is Map && errs.isNotEmpty) {
+        final first = errs.values.first;
+        message = (first is List && first.isNotEmpty)
+            ? first.first.toString()
+            : (body['message']?.toString() ?? message);
+      } else {
+        message = body['message']?.toString() ?? message;
+      }
+    } catch (_) {}
+    throw Exception(message);
+  }
 
   /// POST /api/v1/events
   /// Creates a new event with photo files via multipart/form-data.
@@ -353,14 +622,21 @@ class EventService {
   // Delete Event
   // ---------------------------------------------------------------------------
 
-  /// DELETE /api/v1/events/{id}
-  /// Deletes an event. Only the owner can delete.
-  Future<void> deleteEvent(String eventId) async {
-    return _deleteEvent(eventId, allowRetry: true);
+  /// DELETE /api/v1/events/{id}[?scope=this|following|series]
+  /// Deletes an event. Only the owner/manager can delete. `scope` only matters
+  /// for events that belong to a recurring series.
+  Future<void> deleteEvent(String eventId, {String scope = 'this'}) async {
+    return _deleteEvent(eventId, scope: scope, allowRetry: true);
   }
 
-  Future<void> _deleteEvent(String eventId, {required bool allowRetry}) async {
-    final uri = Uri.parse('$_baseUrl/events/$eventId');
+  Future<void> _deleteEvent(
+    String eventId, {
+    required String scope,
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId').replace(
+      queryParameters: scope == 'this' ? null : {'scope': scope},
+    );
     debugPrint('EventService: DELETE $uri');
 
     try {

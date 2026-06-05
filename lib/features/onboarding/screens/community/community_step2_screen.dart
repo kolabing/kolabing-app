@@ -28,7 +28,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -49,7 +49,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
           content: Text(
             AppLocalizations.of(context).communityStep2TypeRequired,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -70,7 +70,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
     final canContinue = data?.type != null;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -94,7 +94,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     Center(
                       child: Text(
                         l10n.communityStep2Title,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -104,7 +104,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                     Center(
                       child: Text(
                         l10n.communityStep2Subtitle,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -135,23 +135,23 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                           );
                         },
                       ),
-                      loading: () => const Center(
+                      loading: () => Center(
                         child: CircularProgressIndicator(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                       error: (error, stack) => Center(
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.error_outline,
-                              color: KolabingColors.error,
+                              color: context.colors.error,
                               size: 48,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               l10n.communityStep2LoadError,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
@@ -178,12 +178,12 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                 child: ElevatedButton(
                   onPressed: canContinue ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
                     disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
+                        context.colors.primary.withValues(alpha: 0.5),
                     disabledForegroundColor:
-                        KolabingColors.onPrimary.withValues(alpha: 0.5),
+                        context.colors.onPrimary.withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

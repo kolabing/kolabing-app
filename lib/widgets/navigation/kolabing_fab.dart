@@ -44,8 +44,8 @@ class KolabingFAB extends StatelessWidget {
         focusElevation: 0,
         hoverElevation: 0,
         highlightElevation: 0,
-        backgroundColor: KolabingColors.primary,
-        foregroundColor: KolabingColors.onPrimary,
+        backgroundColor: context.colors.primary,
+        foregroundColor: context.colors.onPrimary,
         shape: const CircleBorder(),
         child: icon == LucideIcons.plus
             ? const UiIcon(icon: UiIconSlug.plus, size: 24)
@@ -91,8 +91,8 @@ class KolabingExtendedFAB extends StatelessWidget {
         focusElevation: 0,
         hoverElevation: 0,
         highlightElevation: 0,
-        backgroundColor: KolabingColors.primary,
-        foregroundColor: KolabingColors.onPrimary,
+        backgroundColor: context.colors.primary,
+        foregroundColor: context.colors.onPrimary,
         icon: Icon(icon, size: 20),
         label: Text(
           label.toUpperCase(),

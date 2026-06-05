@@ -10,6 +10,26 @@ class Event {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  // Phase-3 (upcoming events / RSVP). Null/0 for legacy past-showcase events.
+  final DateTime? startsAt;
+  final String? location;
+  final int? capacity; // null = unlimited
+  final int goingCount;
+  final int waitlistCount;
+  final String? mySignupStatus; // 'going' | 'waitlisted' | null
+  final int? waitlistPosition;
+  final bool isUpcoming;
+  final String? communityId;
+
+  /// Viewer-scoped gate (`can_access` from the API). False when this member's
+  /// tier is not in the event's `tier_gate` — the app then locks the event
+  /// (no open into details). Defaults to true (legacy/ungated events stay open).
+  final bool canAccess;
+
+  /// Set when this event is an occurrence of a recurring series.
+  final String? seriesId;
+  final int? occurrenceIndex;
+
   const Event({
     required this.id,
     required this.name,
@@ -20,7 +40,31 @@ class Event {
     this.videos = const [],
     required this.createdAt,
     this.updatedAt,
+    this.startsAt,
+    this.location,
+    this.capacity,
+    this.goingCount = 0,
+    this.waitlistCount = 0,
+    this.mySignupStatus,
+    this.waitlistPosition,
+    this.isUpcoming = false,
+    this.communityId,
+    this.canAccess = true,
+    this.seriesId,
+    this.occurrenceIndex,
   });
+
+  /// True when this event belongs to a recurring series.
+  bool get isRecurring => seriesId != null;
+
+  /// True when the viewer has a confirmed 'going' sign-up.
+  bool get isGoing => mySignupStatus == 'going';
+
+  /// True when the viewer is on the waitlist.
+  bool get isWaitlisted => mySignupStatus == 'waitlisted';
+
+  /// True when capacity is set and the going count has reached it.
+  bool get isFull => capacity != null && goingCount >= capacity!;
 
   factory Event.fromJson(Map<String, dynamic> json) {
     // Partner can be a full object or null (when partner_name text is used)
@@ -37,12 +81,37 @@ class Event {
       );
     }
 
+    // my_signup is null, a string, or { status, waitlist_position }.
+    final sig = json['my_signup'];
+    String? mySignupStatus;
+    int? waitlistPosition;
+    if (sig is Map<String, dynamic>) {
+      mySignupStatus = sig['status'] as String?;
+      waitlistPosition = (sig['waitlist_position'] as num?)?.toInt();
+    } else if (sig is String) {
+      mySignupStatus = sig;
+    }
+
     return Event(
       id: json['id'] as String,
       name: json['name'] as String,
       partner: partner,
       date: DateTime.parse(json['date'] as String),
       attendeeCount: (json['attendee_count'] as num?)?.toInt() ?? 0,
+      startsAt: json['starts_at'] != null
+          ? DateTime.tryParse(json['starts_at'] as String)
+          : null,
+      location: json['location'] as String?,
+      capacity: (json['capacity'] as num?)?.toInt(),
+      goingCount: (json['going_count'] as num?)?.toInt() ?? 0,
+      waitlistCount: (json['waitlist_count'] as num?)?.toInt() ?? 0,
+      mySignupStatus: mySignupStatus,
+      waitlistPosition: waitlistPosition,
+      isUpcoming: json['is_upcoming'] as bool? ?? false,
+      communityId: json['community_id'] as String?,
+      canAccess: json['can_access'] as bool? ?? true,
+      seriesId: json['series_id'] as String?,
+      occurrenceIndex: (json['occurrence_index'] as num?)?.toInt(),
       photos:
           (json['photos'] as List<dynamic>?)
               ?.map((e) => EventPhoto.fromJson(e as Map<String, dynamic>))
@@ -82,6 +151,18 @@ class Event {
     List<EventVideo>? videos,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? startsAt,
+    String? location,
+    int? capacity,
+    int? goingCount,
+    int? waitlistCount,
+    String? mySignupStatus,
+    int? waitlistPosition,
+    bool? isUpcoming,
+    String? communityId,
+    bool? canAccess,
+    String? seriesId,
+    int? occurrenceIndex,
   }) => Event(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -92,6 +173,18 @@ class Event {
     videos: videos ?? this.videos,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    startsAt: startsAt ?? this.startsAt,
+    location: location ?? this.location,
+    capacity: capacity ?? this.capacity,
+    goingCount: goingCount ?? this.goingCount,
+    waitlistCount: waitlistCount ?? this.waitlistCount,
+    mySignupStatus: mySignupStatus ?? this.mySignupStatus,
+    waitlistPosition: waitlistPosition ?? this.waitlistPosition,
+    isUpcoming: isUpcoming ?? this.isUpcoming,
+    communityId: communityId ?? this.communityId,
+    canAccess: canAccess ?? this.canAccess,
+    seriesId: seriesId ?? this.seriesId,
+    occurrenceIndex: occurrenceIndex ?? this.occurrenceIndex,
   );
 
   /// Returns the best available cover media thumbnail.

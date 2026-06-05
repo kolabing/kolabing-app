@@ -31,13 +31,13 @@ class RewardBadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      compact ? _buildCompact() : _buildGrid();
+      compact ? _buildCompact(context) : _buildGrid(context);
 
   // ---------------------------------------------------------------------------
   // Grid mode (160 x 180)
   // ---------------------------------------------------------------------------
 
-  Widget _buildGrid() {
+  Widget _buildGrid(BuildContext context) {
     final isUnlocked = badge.isUnlocked;
 
     return AnimatedOpacity(
@@ -48,18 +48,18 @@ class RewardBadgeCard extends StatelessWidget {
         height: 180,
         padding: const EdgeInsets.all(KolabingSpacing.sm),
         decoration: BoxDecoration(
-          color: isUnlocked ? KolabingColors.surface : KolabingColors.surfaceVariant,
+          color: isUnlocked ? context.colors.surface : context.colors.surfaceVariant,
           borderRadius: KolabingRadius.borderRadiusLg,
           border: Border.all(
             color: isUnlocked
-                ? KolabingColors.primary
-                : KolabingColors.darkBorder,
+                ? context.colors.primary
+                : context.colors.darkBorder,
             width: isUnlocked ? 2 : 1,
           ),
           boxShadow: isUnlocked
               ? [
                   BoxShadow(
-                    color: KolabingColors.primary.withValues(alpha: 0.15),
+                    color: context.colors.primary.withValues(alpha: 0.15),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -70,6 +70,7 @@ class RewardBadgeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildIconCircle(
+              context,
               size: 64,
               iconSize: 28,
               isUnlocked: isUnlocked,
@@ -81,8 +82,8 @@ class RewardBadgeCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: isUnlocked
-                    ? KolabingColors.onSurface
-                    : KolabingColors.textTertiary),
+                    ? context.colors.onSurface
+                    : context.colors.textTertiary),
             ),
             const SizedBox(height: KolabingSpacing.xxxs),
             Text(
@@ -95,8 +96,8 @@ class RewardBadgeCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w400, color: isUnlocked
-                    ? KolabingColors.onSurfaceVariant
-                    : KolabingColors.textTertiary),
+                    ? context.colors.onSurfaceVariant
+                    : context.colors.textTertiary),
             ),
           ],
         ),
@@ -108,7 +109,7 @@ class RewardBadgeCard extends StatelessWidget {
   // Compact mode (80 x 96)
   // ---------------------------------------------------------------------------
 
-  Widget _buildCompact() {
+  Widget _buildCompact(BuildContext context) {
     final isUnlocked = badge.isUnlocked;
 
     return AnimatedOpacity(
@@ -121,6 +122,7 @@ class RewardBadgeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildIconCircle(
+              context,
               size: 40,
               iconSize: 18,
               isUnlocked: isUnlocked,
@@ -132,8 +134,8 @@ class RewardBadgeCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isUnlocked
-                    ? KolabingColors.onSurface
-                    : KolabingColors.textTertiary),
+                    ? context.colors.onSurface
+                    : context.colors.textTertiary),
             ),
           ],
         ),
@@ -145,7 +147,8 @@ class RewardBadgeCard extends StatelessWidget {
   // Shared icon circle
   // ---------------------------------------------------------------------------
 
-  Widget _buildIconCircle({
+  Widget _buildIconCircle(
+    BuildContext context, {
     required double size,
     required double iconSize,
     required bool isUnlocked,
@@ -156,20 +159,20 @@ class RewardBadgeCard extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isUnlocked
-              ? KolabingColors.softYellow
-              : KolabingColors.surfaceVariant,
+              ? context.colors.softYellow
+              : context.colors.surfaceVariant,
           border: Border.all(
             color: isUnlocked
-                ? KolabingColors.softYellowBorder
-                : KolabingColors.darkBorder,
+                ? context.colors.softYellowBorder
+                : context.colors.darkBorder,
           ),
         ),
         child: Icon(
           badge.slug.icon,
           size: iconSize,
           color: isUnlocked
-              ? KolabingColors.onSurface
-              : KolabingColors.textTertiary,
+              ? context.colors.onSurface
+              : context.colors.textTertiary,
         ),
       );
 }

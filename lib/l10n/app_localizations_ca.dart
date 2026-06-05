@@ -1359,6 +1359,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityMainNavMyKolabs => 'Els meus Kolabs';
 
   @override
+  String get communityMainNavCommunity => 'Comunitat';
+
+  @override
   String get communityMainNavProfile => 'Perfil';
 
   @override
@@ -1993,6 +1996,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeNavHome => 'Inici';
+
+  @override
+  String get attendeeNavCommunities => 'Comunitats';
 
   @override
   String get attendeeNavScan => 'Escanejar';
@@ -4568,4 +4574,716 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get dashboardDefaultCommunityName => 'Comunitat';
+
+  @override
+  String get eventHubOpenChat => 'Obrir xat de l\'esdeveniment';
+
+  @override
+  String get eventHubAttendeesTitle => 'Assistents';
+
+  @override
+  String get eventHubWaitlistTitle => 'Llista d\'espera';
+
+  @override
+  String get eventHubNoAttendees => 'Encara no s\'hi ha apuntat ningú.';
+
+  @override
+  String eventHubGoingCount(num count) {
+    return '$count hi aniran';
+  }
+
+  @override
+  String eventHubWaitlistCount(num count) {
+    return '$count a la llista d\'espera';
+  }
+
+  @override
+  String eventHubCapacity(num count) {
+    return 'aforament $count';
+  }
+
+  @override
+  String eventHubSpotsLeft(num count) {
+    return 'queden $count plaça/ces';
+  }
+
+  @override
+  String get eventHubUnlimited => 'Il·limitat';
+
+  @override
+  String get eventHubImGoing => 'Hi aniré';
+
+  @override
+  String get eventHubGoingTapToLeave => 'Hi aniràs ✓  ·  toca per sortir';
+
+  @override
+  String get eventHubJoinWaitlist => 'Unir-se a la llista d\'espera';
+
+  @override
+  String get eventHubOnWaitlistTapToLeave =>
+      'A la llista d\'espera  ·  toca per sortir';
+
+  @override
+  String eventHubWaitlistPosition(num position) {
+    return 'Ets el número $position a la llista d\'espera';
+  }
+
+  @override
+  String get eventHubEdit => 'Edita';
+
+  @override
+  String get commonDelete => 'Elimina';
+
+  @override
+  String get eventHubDelete => 'Elimina l\'esdeveniment';
+
+  @override
+  String get eventHubDeleteConfirmTitle => 'Vols eliminar aquest esdeveniment?';
+
+  @override
+  String eventHubDeleteConfirmBody(String name) {
+    return '\"$name\": s\'avisarà qui hi assisteixi o estigui en llista d\'espera que s\'ha cancel·lat.';
+  }
+
+  @override
+  String get eventHubDeleteScopeThis => 'Només aquest esdeveniment';
+
+  @override
+  String get eventHubDeleteScopeFollowing =>
+      'Aquest i els esdeveniments següents';
+
+  @override
+  String get eventHubDeleteScopeSeries => 'Tota la sèrie';
+
+  @override
+  String get eventHubDeleted => 'Esdeveniment eliminat';
+
+  @override
+  String get eventHubAddPhotos => 'Afegir fotos';
+
+  @override
+  String get eventFormNewTitle => 'Nou esdeveniment';
+
+  @override
+  String get eventFormEditTitle => 'Edita l\'esdeveniment';
+
+  @override
+  String get eventFormSave => 'Desa';
+
+  @override
+  String get eventFormPublish => 'Publica l\'esdeveniment';
+
+  @override
+  String get eventFormRepeatLabel => 'Repeteix';
+
+  @override
+  String get eventFormRepeatNone => 'No es repeteix';
+
+  @override
+  String get eventFormRepeatWeekly => 'Setmanal';
+
+  @override
+  String get eventFormRepeatBiweekly => 'Cada 2 setmanes';
+
+  @override
+  String get eventFormRepeatMonthly => 'Mensual';
+
+  @override
+  String get eventFormRepeatEnds => 'Acaba';
+
+  @override
+  String get eventFormRepeatNever => 'Mai';
+
+  @override
+  String get eventFormRepeatAfter => 'Després de';
+
+  @override
+  String get eventFormRepeatEvents => 'esdeveniments';
+
+  @override
+  String get eventFormRepeatOnDate => 'En una data';
+
+  @override
+  String get eventFormRepeatChatLabel => 'Xat de la sèrie';
+
+  @override
+  String get eventFormRepeatChatPerEvent => 'Un xat per esdeveniment';
+
+  @override
+  String get eventFormRepeatChatShared => 'Un xat compartit per a la sèrie';
+
+  @override
+  String get eventFormPublishSeries => 'Publica la sèrie';
+
+  @override
+  String get eventFormErrWeekday => 'Tria almenys un dia';
+
+  @override
+  String get eventFormErrEndsCount => 'Indica quants esdeveniments';
+
+  @override
+  String get eventFormErrEndsOn => 'Tria una data posterior a l\'inici';
+
+  @override
+  String get eventFormNameLabel => 'Nom';
+
+  @override
+  String get eventFormNameHint => 'Cursa 10K del dissabte';
+
+  @override
+  String get eventFormStartsLabel => 'Comença';
+
+  @override
+  String get eventFormEndsLabel => 'Acaba (opcional)';
+
+  @override
+  String get eventFormPickStart => 'Tria data i hora d\'inici';
+
+  @override
+  String get eventFormPickEnd => 'Tria data i hora de fi';
+
+  @override
+  String get eventFormLocationLabel => 'Ubicació (opcional)';
+
+  @override
+  String get eventFormLocationHint => 'Parc de la Ciutadella';
+
+  @override
+  String get eventFormCapacityLabel => 'Aforament (opcional)';
+
+  @override
+  String get eventFormLimit => 'Límit';
+
+  @override
+  String get eventFormWhoCanJoin => 'Qui s\'hi pot unir';
+
+  @override
+  String get eventFormAllMembers => 'Tots els membres';
+
+  @override
+  String get eventFormSelectedTiers => 'Nivells seleccionats';
+
+  @override
+  String get eventFormPhotos => 'Fotos';
+
+  @override
+  String get eventFormAddFromGallery => 'Afegir des de la galeria';
+
+  @override
+  String get eventFormPhotosAfterCreate =>
+      'Les fotos es poden afegir un cop creat l\'esdeveniment.';
+
+  @override
+  String get eventFormErrName =>
+      'El nom de l\'esdeveniment necessita almenys 3 caràcters.';
+
+  @override
+  String get eventFormErrStart => 'Tria una data i hora d\'inici.';
+
+  @override
+  String get eventFormErrStartFuture => 'L\'inici ha de ser en el futur.';
+
+  @override
+  String get eventFormErrEndAfterStart =>
+      'El final ha de ser posterior a l\'inici.';
+
+  @override
+  String get eventFormErrCapacity =>
+      'Introdueix un aforament vàlid o desactiva el límit.';
+
+  @override
+  String get eventFormPhotosUploaded => 'Fotos pujades.';
+
+  @override
+  String get notifSettingsTitle => 'Notificacions';
+
+  @override
+  String get notifSettingsMessages => 'Missatges';
+
+  @override
+  String get notifSettingsMessagesSubtitle =>
+      'Nous missatges de xat a les teves comunitats i esdeveniments';
+
+  @override
+  String get notifSettingsApplications => 'Noves sol·licituds';
+
+  @override
+  String get notifSettingsApplicationsSubtitle =>
+      'Quan algú es postula al teu Kolab';
+
+  @override
+  String get notifSettingsCollaborations =>
+      'Actualitzacions de col·laboracions';
+
+  @override
+  String get notifSettingsCollaborationsSubtitle =>
+      'Canvis d\'estat als teus Kolabs';
+
+  @override
+  String get notifSettingsMarketing => 'Consells i novetats';
+
+  @override
+  String get notifSettingsMarketingSubtitle =>
+      'Consells de producte i notícies ocasionals';
+
+  @override
+  String get notifSettingsSaveError =>
+      'No s\'ha pogut desar la teva preferència. Torna-ho a provar.';
+
+  @override
+  String get chatsTitle => 'Xats';
+
+  @override
+  String get chatInboxTooltip => 'Xats';
+
+  @override
+  String get chatThreadFallbackTitle => 'Xat';
+
+  @override
+  String get chatThreadTapToOpen => 'Toca per obrir';
+
+  @override
+  String get chatThreadNoMessagesYet => 'Encara no hi ha missatges';
+
+  @override
+  String get chatInboxEmptyTitle => 'Encara no hi ha xats';
+
+  @override
+  String get chatInboxEmptyBody =>
+      'Les converses apareixeran aquí quan s\'iniciï un xat d\'un Kolab, una comunitat o un esdeveniment.';
+
+  @override
+  String get chatSectionMain => 'Principal';
+
+  @override
+  String get chatSectionCommunityChats => 'Xats de la comunitat';
+
+  @override
+  String get chatSectionEvents => 'Esdeveniments';
+
+  @override
+  String get chatSectionKolabs => 'Kolabs';
+
+  @override
+  String get chatComposerHint => 'Missatge';
+
+  @override
+  String get chatThreadEmptyMessage => 'Encara no hi ha missatges. Saluda 👋';
+
+  @override
+  String get communityDetailTabChats => 'Xats';
+
+  @override
+  String get communityDetailTabEvents => 'Esdeveniments';
+
+  @override
+  String get communityDetailTabMembers => 'Membres';
+
+  @override
+  String get communityDetailTabDetails => 'Detalls';
+
+  @override
+  String communityDetailTypeAndMembers(String type, int count) {
+    return '$type · $count membres';
+  }
+
+  @override
+  String communityDetailMembersCount(int count) {
+    return '$count membres';
+  }
+
+  @override
+  String get communityDetailChatsLoadError =>
+      'No s\'han pogut carregar els xats';
+
+  @override
+  String get communityDetailNoChatsTitle => 'Encara no hi ha xats';
+
+  @override
+  String get communityDetailNoChatsBody =>
+      'Les converses d\'aquesta comunitat apareixeran aquí.';
+
+  @override
+  String get communityDetailNoEventsTitle => 'No hi ha esdeveniments propers';
+
+  @override
+  String get communityDetailNoEventsBody =>
+      'Els esdeveniments creats per a aquesta comunitat apareixeran aquí.';
+
+  @override
+  String get communityDetailEventLockedSubtitle =>
+      'Bloquejat — per a un altre nivell de membres';
+
+  @override
+  String get communityDetailEventLockedSnack =>
+      'Aquest esdeveniment és per a un altre nivell de membres.';
+
+  @override
+  String get communityDetailLeaderboardButton => 'Classificació del capítol';
+
+  @override
+  String get communityDetailAboutLabel => 'Sobre';
+
+  @override
+  String get communityDetailMembershipLabel => 'La teva afiliació';
+
+  @override
+  String get communityDetailRowTier => 'Nivell';
+
+  @override
+  String get communityDetailRowType => 'Tipus';
+
+  @override
+  String get communityDetailRowMembers => 'Membres';
+
+  @override
+  String get communityDetailRowRole => 'Rol';
+
+  @override
+  String get communityDetailRoleCanManage => 'Pot gestionar';
+
+  @override
+  String get communityDetailTierFallback => 'Membre';
+
+  @override
+  String get communityDetailGalleryLabel => 'Galeria i esdeveniments passats';
+
+  @override
+  String get communityDetailGalleryBody =>
+      'Les fotos i els esdeveniments passats seran aquí quan es llanci el cicle de vida d\'esdeveniments (Fase 3).';
+
+  @override
+  String get myCommunitiesNoTier => 'Encara sense nivell';
+
+  @override
+  String get myCommunitiesAdminBadge => 'ADMIN';
+
+  @override
+  String get myCommunitiesEmptyTitle => 'Encara no pertanys a cap comunitat';
+
+  @override
+  String get myCommunitiesEmptyBody =>
+      'Uneix-te a una comunitat per guanyar-te el teu lloc als seus nivells i veure esdeveniments i avantatges exclusius per a membres.';
+
+  @override
+  String get communityHubEmptyTitle => 'Crea la teva comunitat';
+
+  @override
+  String get communityHubEmptyBody =>
+      'Crea una comunitat per formar una llista de membres i configurar els teus propis nivells. La teva primera comunitat és gratuïta.';
+
+  @override
+  String get communityHubCreateCommunity => 'CREA COMUNITAT';
+
+  @override
+  String get communityHubSectionTiers => 'Nivells';
+
+  @override
+  String get communityHubSectionMembers => 'Membres';
+
+  @override
+  String get communityHubSectionEvents => 'Esdeveniments';
+
+  @override
+  String get communityHubSectionChats => 'Xats';
+
+  @override
+  String communityHubTypeAndMembers(String type, int count) {
+    return '$type  ·  $count membres';
+  }
+
+  @override
+  String get communityHubNoEvents => 'Encara no hi ha esdeveniments propers.';
+
+  @override
+  String get communityHubCreateEvent => 'Crea esdeveniment';
+
+  @override
+  String get communityHubNewChatTitle => 'Nou xat';
+
+  @override
+  String get communityHubChatNameLabel => 'Nom del xat';
+
+  @override
+  String get communityHubChatNameHint => 'p. ex. Junta, Social, Filantropia';
+
+  @override
+  String get communityHubCreate => 'Crea';
+
+  @override
+  String communityHubChatCreated(String name) {
+    return '\"$name\" creat';
+  }
+
+  @override
+  String communityHubChatLimit(int count) {
+    return 'Pots tenir fins a $count xats';
+  }
+
+  @override
+  String get communityHubAccess => 'Accés';
+
+  @override
+  String get communityHubAccessNoTiers => 'Cap nivell';
+
+  @override
+  String get communityHubAccessAllTiers => 'Tots els nivells';
+
+  @override
+  String get communityHubAccessOneTier => '1 nivell';
+
+  @override
+  String communityHubAccessTierCount(int count) {
+    return '$count nivells';
+  }
+
+  @override
+  String get communityHubCreateTiersFirst =>
+      'Crea primer nivells de membres per restringir els xats.';
+
+  @override
+  String communityHubAccessDialogTitle(String name) {
+    return 'Qui pot accedir a \"$name\"?';
+  }
+
+  @override
+  String get communityHubAccessDialogChat => 'xat';
+
+  @override
+  String get communityHubAccessDialogBody =>
+      'Tu i els teus gestors sempre hi teniu accés. Tria quins nivells de membres poden obrir aquest xat.';
+
+  @override
+  String get communityHubChatAccessUpdated => 'Accés al xat actualitzat';
+
+  @override
+  String communityHubNoChatsHint(int count) {
+    return 'Encara no hi ha xats. El teu xat principal i fins a $count xats personalitzats apareixeran aquí.';
+  }
+
+  @override
+  String get communityHubCreateChat => 'Crea xat';
+
+  @override
+  String communityHubChatLimitReached(int count) {
+    return 'S\'ha assolit el límit de xats ($count xats personalitzats).';
+  }
+
+  @override
+  String get communityHubChatMain => 'Principal';
+
+  @override
+  String get communityHubChatFallback => 'Xat';
+
+  @override
+  String get communityHubChipMain => 'PRINCIPAL';
+
+  @override
+  String communityHubTierDetail(String rule, int threshold, String unit) {
+    return '$rule · $threshold $unit';
+  }
+
+  @override
+  String get communityHubChipDefault => 'PREDETERMINAT';
+
+  @override
+  String communityHubTierRank(int rank) {
+    return '#$rank';
+  }
+
+  @override
+  String get communityHubNoTiersHint =>
+      'Encara no hi ha nivells. Afegeix nivells per donar als membres una escala d\'estatus.';
+
+  @override
+  String get communityHubAddTier => 'Afegeix nivell';
+
+  @override
+  String get communityHubNoMembersHint =>
+      'Encara no hi ha membres. Convida persones o comparteix el teu enllaç d\'invitació.';
+
+  @override
+  String get communityHubManageMembers => 'Gestiona membres';
+
+  @override
+  String communityHubManageAllMembers(int count) {
+    return 'Gestiona els $count membres';
+  }
+
+  @override
+  String get communityHubMemberFallback => 'Membre';
+
+  @override
+  String get communityHubChipAdmin => 'ADMIN';
+
+  @override
+  String get communityHubLoadError =>
+      'No s\'ha pogut carregar la teva comunitat';
+
+  @override
+  String get createCommunityPremiumTitle => 'Community Premium';
+
+  @override
+  String get createCommunityPremiumBody =>
+      'El teu pla gratuït inclou una comunitat. Gestionar-ne més d\'una forma part de Community Premium — properament.';
+
+  @override
+  String get createCommunityTitle => 'Nova comunitat';
+
+  @override
+  String get createCommunityNameLabel => 'Nom';
+
+  @override
+  String get createCommunityNameHint =>
+      'p. ex. Kappa Delta — Beta Chi, o Club de Running de la Ciutat';
+
+  @override
+  String get createCommunityNameRequired => 'El nom és obligatori';
+
+  @override
+  String get createCommunityTypeLabel => 'Tipus';
+
+  @override
+  String get createCommunityWhoCanJoin => 'Qui s\'hi pot unir';
+
+  @override
+  String get createCommunityJoinAnyone => 'Qualsevol';
+
+  @override
+  String get createCommunityJoinInviteOnly => 'Només amb invitació';
+
+  @override
+  String get createCommunitySubmit => 'CREA COMUNITAT';
+
+  @override
+  String get tierEditorEditTitle => 'Edita nivell';
+
+  @override
+  String get tierEditorNewTitle => 'Nou nivell';
+
+  @override
+  String get tierEditorDeleteTooltip => 'Elimina nivell';
+
+  @override
+  String get tierEditorDeleteTitle => 'Vols eliminar el nivell?';
+
+  @override
+  String tierEditorDeleteBody(String name) {
+    return 'Vols eliminar \"$name\"? Caldrà reassignar els membres que el tinguin.';
+  }
+
+  @override
+  String get tierEditorDelete => 'Elimina';
+
+  @override
+  String get tierEditorNameLabel => 'Nom';
+
+  @override
+  String get tierEditorNameHint => 'p. ex. Junta, Actiu, Capità, Entrenador';
+
+  @override
+  String get tierEditorNameRequired => 'El nom és obligatori';
+
+  @override
+  String get tierEditorRankLabel => 'Rang (més alt = més sènior)';
+
+  @override
+  String get tierEditorRankRequired => 'Introdueix un número (1 o superior)';
+
+  @override
+  String get tierEditorColourLabel => 'Color';
+
+  @override
+  String get tierEditorRuleLabel => 'Com obtenen els membres aquest nivell';
+
+  @override
+  String tierEditorThresholdLabel(String unit) {
+    return 'Llindar ($unit)';
+  }
+
+  @override
+  String tierEditorThresholdRequired(String unit) {
+    return 'Introdueix un llindar de $unit';
+  }
+
+  @override
+  String get tierEditorSave => 'DESA';
+
+  @override
+  String get tierEditorCreate => 'CREA NIVELL';
+
+  @override
+  String get rosterTitle => 'Membres';
+
+  @override
+  String get rosterInviteTooltip => 'Convida membre';
+
+  @override
+  String get rosterInviteTitle => 'Convida membre';
+
+  @override
+  String get rosterInviteBody =>
+      'Afegeix un membre amb el correu del seu compte de Kolabing.';
+
+  @override
+  String get rosterInviteEmailLabel => 'Correu electrònic';
+
+  @override
+  String get rosterInviteEmailHint => 'nom@exemple.com';
+
+  @override
+  String get rosterInvite => 'Convida';
+
+  @override
+  String get rosterInviteInvalidEmail =>
+      'Introdueix un correu electrònic vàlid';
+
+  @override
+  String get rosterMemberAdded => 'Membre afegit';
+
+  @override
+  String get rosterNoAccountForEmail =>
+      'No s\'ha trobat cap compte de Kolabing amb aquest correu';
+
+  @override
+  String get rosterMemberFallback => 'Membre';
+
+  @override
+  String get rosterEmptyTitle => 'Encara no hi ha membres';
+
+  @override
+  String get rosterInviteMember => 'Convida un membre';
+
+  @override
+  String get rosterRemoveTitle => 'Vols eliminar el membre?';
+
+  @override
+  String rosterRemoveBody(String name) {
+    return 'Vols eliminar $name de la comunitat?';
+  }
+
+  @override
+  String get rosterRemoveBodyFallback => 'aquest membre';
+
+  @override
+  String get rosterRemove => 'Elimina';
+
+  @override
+  String get rosterTierLabel => 'Nivell';
+
+  @override
+  String get rosterNoTier => 'Sense nivell';
+
+  @override
+  String get rosterCanManageTitle => 'Pot gestionar aquesta comunitat';
+
+  @override
+  String get rosterCanManageSubtitle =>
+      'Capacitat d\'administració — independent del nivell';
+
+  @override
+  String get rosterStatusLabel => 'Estat';
+
+  @override
+  String get rosterSave => 'DESA';
 }

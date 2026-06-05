@@ -62,8 +62,8 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: KolabingColors.primary,
-            onPrimary: KolabingColors.onPrimary,
+            primary: context.colors.primary,
+            onPrimary: context.colors.onPrimary,
           ),
         ),
         child: child!,
@@ -101,7 +101,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
         // -- Section header
         Text(
           'AVAILABILITY',
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -111,7 +111,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['availability_mode']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
             ),
           ),
 
@@ -172,7 +172,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       children: [
         Text(
           'DATE RANGE',
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         GestureDetector(
@@ -184,9 +184,9 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
               vertical: 14,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.darkBorder),
+              border: Border.all(color: context.colors.darkBorder),
             ),
             child: Row(
               children: [
@@ -194,14 +194,14 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                   child: Text(
                     rangeText,
                     style: KolabingTextStyles.bodySmall.copyWith(color: hasRange
-                          ? KolabingColors.onSurface
-                          : KolabingColors.textTertiary),
+                          ? context.colors.onSurface
+                          : context.colors.textTertiary),
                   ),
                 ),
-                const Icon(
+                Icon(
                   LucideIcons.calendar,
                   size: 18,
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ],
             ),
@@ -212,7 +212,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
             padding: const EdgeInsets.only(top: KolabingSpacing.xs),
             child: Text(
               errors['availability_start']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
             ),
           ),
       ],
@@ -230,7 +230,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
       children: [
         Text(
           'PREFERRED TIME',
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         GestureDetector(
@@ -242,9 +242,9 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
               vertical: 14,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: KolabingColors.darkBorder),
+              border: Border.all(color: context.colors.darkBorder),
             ),
             child: Row(
               children: [
@@ -252,14 +252,14 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
                   child: Text(
                     timeText,
                     style: KolabingTextStyles.bodySmall.copyWith(color: hasTime
-                          ? KolabingColors.onSurface
-                          : KolabingColors.textTertiary),
+                          ? context.colors.onSurface
+                          : context.colors.textTertiary),
                   ),
                 ),
-                const Icon(
+                Icon(
                   LucideIcons.clock,
                   size: 18,
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ],
             ),
@@ -274,7 +274,7 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
     children: [
       Text(
         'RECURRING DAYS',
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
       ),
       const SizedBox(height: KolabingSpacing.xs),
       Row(
@@ -290,21 +290,21 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
               height: 42,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? KolabingColors.primary
-                    : KolabingColors.surface,
+                    ? context.colors.primary
+                    : context.colors.surface,
                 borderRadius: KolabingRadius.borderRadiusSm,
                 border: Border.all(
                   color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.darkBorder,
+                      ? context.colors.primary
+                      : context.colors.darkBorder,
                 ),
               ),
               child: Center(
                 child: Text(
                   _dayLabels[index],
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
-                        ? KolabingColors.onPrimary
-                        : KolabingColors.onSurface),
+                        ? context.colors.onPrimary
+                        : context.colors.onSurface),
                 ),
               ),
             ),
@@ -350,10 +350,10 @@ class _ModeCard extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        color: isSelected ? context.colors.softYellow : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: isSelected ? context.colors.primary : context.colors.darkBorder,
         ),
       ),
       child: Row(
@@ -364,20 +364,20 @@ class _ModeCard extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: isSelected ? KolabingColors.primary : Colors.transparent,
+              color: isSelected ? context.colors.primary : Colors.transparent,
               shape: BoxShape.circle,
               border: Border.all(
                 color: isSelected
-                    ? KolabingColors.primary
-                    : KolabingColors.darkBorder,
+                    ? context.colors.primary
+                    : context.colors.darkBorder,
                 width: 1.5,
               ),
             ),
             child: isSelected
-                ? const Icon(
+                ? Icon(
                     LucideIcons.check,
                     size: 14,
-                    color: KolabingColors.onPrimary,
+                    color: context.colors.onPrimary,
                   )
                 : null,
           ),
@@ -388,8 +388,8 @@ class _ModeCard extends StatelessWidget {
             icon,
             size: 20,
             color: isSelected
-                ? KolabingColors.onSurface
-                : KolabingColors.onSurfaceVariant,
+                ? context.colors.onSurface
+                : context.colors.onSurfaceVariant,
           ),
           const SizedBox(width: KolabingSpacing.sm),
 
@@ -400,12 +400,12 @@ class _ModeCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                 ),
               ],
             ),

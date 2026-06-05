@@ -29,11 +29,11 @@ class ChallengeCompletionCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor =
-        isDark ? KolabingColors.darkSurface : KolabingColors.surface;
+        isDark ? context.colors.darkSurface : context.colors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
+        isDark ? context.colors.textOnDark : context.colors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -46,7 +46,7 @@ class ChallengeCompletionCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+              color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
             ),
           ),
           child: Column(
@@ -56,7 +56,7 @@ class ChallengeCompletionCard extends StatelessWidget {
               Row(
                 children: [
                   // Status icon
-                  _buildStatusIcon(),
+                  _buildStatusIcon(context),
                   const SizedBox(width: KolabingSpacing.sm),
 
                   // Challenge name and event
@@ -103,7 +103,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                   const Spacer(),
 
                   // Status badge
-                  _buildStatusBadge(l10n),
+                  _buildStatusBadge(context, l10n),
                 ],
               ),
 
@@ -117,10 +117,10 @@ class ChallengeCompletionCard extends StatelessWidget {
                       Expanded(
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               LucideIcons.user,
                               size: 14,
-                              color: KolabingColors.textTertiary,
+                              color: context.colors.textTertiary,
                             ),
                             const SizedBox(width: 4),
                             Expanded(
@@ -140,7 +140,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                         _ActionButton(
                           icon: LucideIcons.x,
                           label: l10n.challengeCompletionReject,
-                          color: KolabingColors.error,
+                          color: context.colors.error,
                           onPressed: onReject!,
                         ),
                       if (onVerify != null) ...[
@@ -148,7 +148,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                         _ActionButton(
                           icon: LucideIcons.check,
                           label: l10n.challengeCompletionVerify,
-                          color: KolabingColors.success,
+                          color: context.colors.success,
                           onPressed: onVerify!,
                         ),
                       ],
@@ -162,7 +162,7 @@ class ChallengeCompletionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(BuildContext context) {
     IconData icon;
     Color color;
     Color bgColor;
@@ -170,16 +170,16 @@ class ChallengeCompletionCard extends StatelessWidget {
     switch (completion.status) {
       case ChallengeCompletionStatus.verified:
         icon = LucideIcons.checkCircle;
-        color = KolabingColors.success;
-        bgColor = KolabingColors.success.withValues(alpha: 0.15);
+        color = context.colors.success;
+        bgColor = context.colors.success.withValues(alpha: 0.15);
       case ChallengeCompletionStatus.rejected:
         icon = LucideIcons.xCircle;
-        color = KolabingColors.error;
-        bgColor = KolabingColors.error.withValues(alpha: 0.15);
+        color = context.colors.error;
+        bgColor = context.colors.error.withValues(alpha: 0.15);
       case ChallengeCompletionStatus.pending:
         icon = LucideIcons.clock;
-        color = KolabingColors.warning;
-        bgColor = KolabingColors.warning.withValues(alpha: 0.15);
+        color = context.colors.warning;
+        bgColor = context.colors.warning.withValues(alpha: 0.15);
     }
 
     return Container(
@@ -197,7 +197,7 @@ class ChallengeCompletionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(AppLocalizations l10n) {
+  Widget _buildStatusBadge(BuildContext context, AppLocalizations l10n) {
     String text;
     Color bgColor;
     Color textColor;
@@ -205,16 +205,16 @@ class ChallengeCompletionCard extends StatelessWidget {
     switch (completion.status) {
       case ChallengeCompletionStatus.verified:
         text = l10n.challengeCompletionStatusVerified;
-        bgColor = KolabingColors.activeBg;
-        textColor = KolabingColors.activeText;
+        bgColor = context.colors.activeBg;
+        textColor = context.colors.activeText;
       case ChallengeCompletionStatus.rejected:
         text = l10n.challengeCompletionStatusRejected;
-        bgColor = KolabingColors.errorBg;
-        textColor = KolabingColors.errorText;
+        bgColor = context.colors.errorBg;
+        textColor = context.colors.errorText;
       case ChallengeCompletionStatus.pending:
         text = l10n.challengeCompletionStatusPending;
-        bgColor = KolabingColors.pendingBg;
-        textColor = KolabingColors.pendingText;
+        bgColor = context.colors.pendingBg;
+        textColor = context.colors.pendingText;
     }
 
     return Container(

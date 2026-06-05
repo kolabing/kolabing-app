@@ -104,29 +104,29 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: KolabingColors.success.withValues(alpha: 0.15),
+                  color: context.colors.success.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.check,
                   size: 40,
-                  color: KolabingColors.success,
+                  color: context.colors.success,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 AppLocalizations.of(context).qrScannerSuccessTitle,
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 AppLocalizations.of(context).qrScannerSuccessSubtitle,
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
               Text(
                 eventName,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -138,7 +138,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                     Navigator.of(context).pop(); // Close scanner
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.success,
+                    backgroundColor: context.colors.success,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -172,24 +172,24 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: KolabingColors.error.withValues(alpha: 0.15),
+                  color: context.colors.error.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.x,
                   size: 40,
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 AppLocalizations.of(context).qrScannerErrorTitle,
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -202,8 +202,8 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                         Navigator.of(context).pop(); // Close scanner
                       },
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.onSurfaceVariant,
-                        side: const BorderSide(color: KolabingColors.darkBorder),
+                        foregroundColor: context.colors.onSurfaceVariant,
+                        side: BorderSide(color: context.colors.darkBorder),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -217,8 +217,8 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                     child: ElevatedButton(
                       onPressed: _retryScanning,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: KolabingColors.primary,
-                        foregroundColor: KolabingColors.onPrimary,
+                        backgroundColor: context.colors.primary,
+                        foregroundColor: context.colors.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -252,8 +252,8 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -265,7 +265,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -279,14 +279,14 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               children: [
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
+                  icon: Icon(
                     LucideIcons.x,
-                    color: KolabingColors.textOnDark,
+                    color: context.colors.textOnDark,
                   ),
                 ),
                 Text(
                   AppLocalizations.of(context).qrScannerTitle,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.textOnDark),
                 ),
                 const SizedBox(width: 48), // Balance the close button
               ],
@@ -315,8 +315,8 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: _isProcessing
-                              ? KolabingColors.success
-                              : KolabingColors.primary,
+                              ? context.colors.success
+                              : context.colors.primary,
                           width: 3,
                         ),
                         borderRadius: BorderRadius.circular(20),
@@ -324,7 +324,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                     ),
 
                     // Corner markers
-                    _buildCornerMarkers(),
+                    _buildCornerMarkers(context),
 
                     // Processing indicator
                     if (checkinState.isLoading)
@@ -334,13 +334,13 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const CircularProgressIndicator(
-                                color: KolabingColors.primary,
+                              CircularProgressIndicator(
+                                color: context.colors.primary,
                               ),
                               const SizedBox(height: KolabingSpacing.md),
                               Text(
                                 AppLocalizations.of(context).qrScannerCheckingIn,
-                                style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textOnDark),
+                                style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textOnDark),
                               ),
                             ],
                           ),
@@ -359,13 +359,13 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
               children: [
                 Text(
                   AppLocalizations.of(context).qrScannerInstructionTitle,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textOnDark),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.textOnDark),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   AppLocalizations.of(context).qrScannerInstructionSubtitle,
-                  style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -378,10 +378,10 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     );
   }
 
-  Widget _buildCornerMarkers() {
+  Widget _buildCornerMarkers(BuildContext context) {
     const double size = 30;
     const double thickness = 4;
-    const color = KolabingColors.primary;
+    final color = context.colors.primary;
 
     return Stack(
       children: [

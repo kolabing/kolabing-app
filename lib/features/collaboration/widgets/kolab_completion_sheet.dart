@@ -221,8 +221,8 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 60),
-      decoration: const BoxDecoration(
-        color: KolabingColors.darkSurface,
+      decoration: BoxDecoration(
+        color: context.colors.darkSurface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
@@ -233,7 +233,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.darkBorder,
+              color: context.colors.darkBorder,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -332,7 +332,7 @@ class _StepConfirm extends StatelessWidget {
           l10n.kolabCompletionConfirmTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             fontSize: 22,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -340,7 +340,7 @@ class _StepConfirm extends StatelessWidget {
           l10n.kolabCompletionConfirmSubtitle(partnerName),
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 32),
@@ -355,7 +355,7 @@ class _StepConfirm extends StatelessWidget {
               error!,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 13,
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
             ),
           ),
@@ -421,7 +421,7 @@ class _StepFeedback extends StatelessWidget {
           l10n.kolabCompletionFeedbackTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
             fontSize: 22,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -429,7 +429,7 @@ class _StepFeedback extends StatelessWidget {
           l10n.kolabCompletionFeedbackSubtitle(partnerName),
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 24),
@@ -445,8 +445,8 @@ class _StepFeedback extends StatelessWidget {
                   filled ? Icons.star_rounded : Icons.star_outline_rounded,
                   size: 40,
                   color: filled
-                      ? KolabingColors.primary
-                      : KolabingColors.onSurfaceVariant,
+                      ? context.colors.primary
+                      : context.colors.onSurfaceVariant,
                 ),
               );
             }),
@@ -461,10 +461,10 @@ class _StepFeedback extends StatelessWidget {
           decoration: InputDecoration(
             hintText: l10n.kolabCompletionFeedbackCommentHint,
             filled: true,
-            fillColor: KolabingColors.background,
+            fillColor: context.colors.background,
             border: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: const BorderSide(color: KolabingColors.darkBorder),
+              borderSide: BorderSide(color: context.colors.darkBorder),
             ),
           ),
         ),
@@ -474,7 +474,7 @@ class _StepFeedback extends StatelessWidget {
           l10n.kolabCompletionFeedbackWouldAgain,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -502,7 +502,7 @@ class _StepFeedback extends StatelessWidget {
           Text(
             error!,
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
           ),
           const SizedBox(height: 12),
@@ -520,7 +520,7 @@ class _StepFeedback extends StatelessWidget {
             child: Text(
               l10n.kolabCompletionFeedbackTapStar,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ),
@@ -556,10 +556,10 @@ class _ChoiceChip extends StatelessWidget {
         height: 44,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? KolabingColors.primary : KolabingColors.background,
+          color: selected ? context.colors.primary : context.colors.background,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color: selected ? KolabingColors.primary : KolabingColors.darkBorder,
+            color: selected ? context.colors.primary : context.colors.darkBorder,
           ),
         ),
         child: Text(
@@ -567,8 +567,8 @@ class _ChoiceChip extends StatelessWidget {
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: selected
-                ? KolabingColors.onPrimary
-                : KolabingColors.onSurface,
+                ? context.colors.onPrimary
+                : context.colors.onSurface,
           ),
         ),
       ),
@@ -613,7 +613,7 @@ class _StepCelebration extends StatelessWidget {
               Text(
                 l10n.kolabCompletionCelebrationTitle,
                 style: KolabingTextStyles.headlineMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -621,7 +621,7 @@ class _StepCelebration extends StatelessWidget {
               Text(
                 l10n.kolabCompletionCelebrationBody,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -650,14 +650,14 @@ class _XpPreviewBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: KolabingColors.primary,
+        color: context.colors.primary,
         borderRadius: BorderRadius.circular(50),
       ),
       child: Text(
         AppLocalizations.of(context).kolabCompletionXpEarned(baseXp),
         style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w700,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
     );
@@ -686,7 +686,7 @@ class _StepDone extends StatelessWidget {
         Text(
           l10n.kolabCompletionDoneTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
           textAlign: TextAlign.center,
         ),
@@ -694,7 +694,7 @@ class _StepDone extends StatelessWidget {
         Text(
           l10n.kolabCompletionDoneBody,
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
             height: 1.4,
           ),
           textAlign: TextAlign.center,
@@ -705,8 +705,8 @@ class _StepDone extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                KolabingColors.primary,
-                KolabingColors.primary.withOpacity(0.7),
+                context.colors.primary,
+                context.colors.primary.withOpacity(0.7),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -719,14 +719,14 @@ class _StepDone extends StatelessWidget {
                 l10n.kolabCompletionDoneXp(totalXp),
                 style: KolabingTextStyles.headlineLarge.copyWith(
                   fontSize: 36,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               Text(
                 l10n.kolabCompletionDoneXpLabel,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 13,
-                  color: KolabingColors.onSurface.withOpacity(0.6),
+                  color: context.colors.onSurface.withOpacity(0.6),
                 ),
               ),
             ],
@@ -762,24 +762,24 @@ class _PrimaryButton extends StatelessWidget {
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: onTap != null ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: onTap != null ? context.colors.primary : context.colors.darkBorder,
           borderRadius: BorderRadius.circular(14),
         ),
         alignment: Alignment.center,
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               )
             : Text(
                 label,
                 style: KolabingTextStyles.button.copyWith(
                   fontSize: 16,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
       ),
@@ -805,7 +805,7 @@ class _SecondaryButton extends StatelessWidget {
           label,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       ),

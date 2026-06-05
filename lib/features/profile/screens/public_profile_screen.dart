@@ -48,10 +48,10 @@ class PublicProfileScreen extends ConsumerWidget {
     final viewer = ref.watch(authProvider).user;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: profileAsync.when(
         loading: () =>
-            _buildWithOptimisticHeader(context, body: _buildLoadingBody()),
+            _buildWithOptimisticHeader(context, body: _buildLoadingBody(context)),
         error: (error, _) => _buildWithOptimisticHeader(
           context,
           body: _buildErrorBody(context, ref, error.toString()),
@@ -95,7 +95,7 @@ class PublicProfileScreen extends ConsumerWidget {
                     child: Text(
                       profile.about!,
                       style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                         height: 1.5,
                       ),
                     ),
@@ -149,7 +149,7 @@ class PublicProfileScreen extends ConsumerWidget {
       SliverAppBar(
         expandedHeight: 160,
         pinned: true,
-        backgroundColor: KolabingColors.primary,
+        backgroundColor: context.colors.primary,
         leading: const _BackButton(),
         flexibleSpace: FlexibleSpaceBar(
           background: DecoratedBox(
@@ -158,8 +158,8 @@ class PublicProfileScreen extends ConsumerWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  KolabingColors.primary,
-                  KolabingColors.primary.withValues(alpha: 0.7),
+                  context.colors.primary,
+                  context.colors.primary.withValues(alpha: 0.7),
                 ],
               ),
             ),
@@ -172,7 +172,7 @@ class PublicProfileScreen extends ConsumerWidget {
                   KolabingSpacing.md,
                 ),
                 child: creatorProfile != null
-                    ? _buildOptimisticHeaderContent()
+                    ? _buildOptimisticHeaderContent(context)
                     : const SizedBox.shrink(),
               ),
             ),
@@ -186,7 +186,7 @@ class PublicProfileScreen extends ConsumerWidget {
     ],
   );
 
-  Widget _buildOptimisticHeaderContent() {
+  Widget _buildOptimisticHeaderContent(BuildContext context) {
     final cp = creatorProfile;
     if (cp == null) {
       return const SizedBox.shrink();
@@ -203,13 +203,13 @@ class PublicProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 cp.displayName,
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 cp.userType.toUpperCase(),
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
               ),
             ],
           ),
@@ -222,24 +222,24 @@ class PublicProfileScreen extends ConsumerWidget {
   // Loading & Error
   // ---------------------------------------------------------------------------
 
-  Widget _buildLoadingBody() => Shimmer.fromColors(
-    baseColor: KolabingColors.surfaceVariant,
-    highlightColor: KolabingColors.surface,
+  Widget _buildLoadingBody(BuildContext context) => Shimmer.fromColors(
+    baseColor: context.colors.surfaceVariant,
+    highlightColor: context.colors.surface,
     child: Column(
       children: [
-        _buildShimmerBlock(80),
+        _buildShimmerBlock(context, 80),
         const SizedBox(height: KolabingSpacing.md),
-        _buildShimmerBlock(120),
+        _buildShimmerBlock(context, 120),
         const SizedBox(height: KolabingSpacing.md),
-        _buildShimmerBlock(100),
+        _buildShimmerBlock(context, 100),
       ],
     ),
   );
 
-  Widget _buildShimmerBlock(double height) => Container(
+  Widget _buildShimmerBlock(BuildContext context, double height) => Container(
     height: height,
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surfaceContainer,
       borderRadius: KolabingRadius.borderRadiusLg,
     ),
   );
@@ -249,23 +249,23 @@ class PublicProfileScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               AppLocalizations.of(context).publicProfileLoadError,
               style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -308,16 +308,16 @@ class PublicProfileScreen extends ConsumerWidget {
             child: Center(
               child: Column(
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.users,
                     size: 32,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
                   Text(
                     AppLocalizations.of(context).publicProfileNoPastKolabs,
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ],
@@ -384,7 +384,7 @@ class _ProfileSliverHeader extends StatelessWidget {
   Widget build(BuildContext context) => SliverAppBar(
     expandedHeight: 180,
     pinned: true,
-    backgroundColor: KolabingColors.primary,
+    backgroundColor: context.colors.primary,
     leading: const _BackButton(),
     flexibleSpace: FlexibleSpaceBar(
       background: DecoratedBox(
@@ -393,8 +393,8 @@ class _ProfileSliverHeader extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              KolabingColors.primary,
-              KolabingColors.primary.withValues(alpha: 0.7),
+              context.colors.primary,
+              context.colors.primary.withValues(alpha: 0.7),
             ],
           ),
         ),
@@ -421,7 +421,7 @@ class _ProfileSliverHeader extends StatelessWidget {
                     children: [
                       Text(
                         profile.displayName,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -429,22 +429,22 @@ class _ProfileSliverHeader extends StatelessWidget {
                       if (profile.typeLabel != null)
                         Text(
                           profile.typeLabel!,
-                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
                         ),
                       if (profile.cityName != null &&
                           profile.cityName!.isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               LucideIcons.mapPin,
                               size: 12,
-                              color: KolabingColors.onSurfaceVariant,
+                              color: context.colors.onSurfaceVariant,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               profile.cityName!,
-                              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -481,10 +481,10 @@ class _BackButton extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             LucideIcons.arrowLeft,
             size: 20,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
       ),
@@ -519,14 +519,15 @@ class _AvatarWidget extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorWidget: (context, error, stackTrace) => _buildInitialCircle(),
+          errorWidget: (context, error, stackTrace) =>
+              _buildInitialCircle(context),
         ),
       );
     }
-    return _buildInitialCircle();
+    return _buildInitialCircle(context);
   }
 
-  Widget _buildInitialCircle() => Container(
+  Widget _buildInitialCircle(BuildContext context) => Container(
     width: size,
     height: size,
     decoration: BoxDecoration(
@@ -536,7 +537,7 @@ class _AvatarWidget extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
       ),
     ),
   );
@@ -565,7 +566,7 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
@@ -581,12 +582,12 @@ class _SectionCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 20, color: KolabingColors.primary),
+            Icon(icon, size: 20, color: context.colors.primary),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               title,
               style: KolabingTextStyles.titleMedium.copyWith(
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             if (count != null && count! > 0) ...[
@@ -594,12 +595,12 @@ class _SectionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.15),
+                  color: context.colors.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   '$count',
-                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
               ),
             ],
@@ -637,18 +638,18 @@ class _SocialLinkChip extends StatelessWidget {
         vertical: KolabingSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
+        color: context.colors.surfaceVariant,
         borderRadius: KolabingRadius.borderRadiusRound,
-        border: Border.all(color: KolabingColors.darkBorder, width: 1),
+        border: Border.all(color: context.colors.darkBorder, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: KolabingColors.primary),
+          Icon(icon, size: 16, color: context.colors.primary),
           const SizedBox(width: 6),
           Text(
             label,
-            style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
           ),
         ],
       ),
@@ -676,9 +677,9 @@ class _SendKolabBottomBar extends ConsumerWidget {
         KolabingSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         border: Border(
-          top: BorderSide(color: KolabingColors.darkBorder.withValues(alpha: 0.5)),
+          top: BorderSide(color: context.colors.darkBorder.withValues(alpha: 0.5)),
         ),
       ),
       child: Row(
@@ -687,7 +688,7 @@ class _SendKolabBottomBar extends ConsumerWidget {
             child: TextButton(
               onPressed: () => Navigator.of(context).maybePop(),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.onSurfaceVariant,
+                foregroundColor: context.colors.onSurfaceVariant,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: Text(
@@ -720,8 +721,8 @@ class _SendKolabBottomBar extends ConsumerWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: context.colors.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(KolabingRadius.md),
                   ),
@@ -785,9 +786,9 @@ class _PublicProfileReviewCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: KolabingColors.background,
+        color: context.colors.background,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -806,12 +807,12 @@ class _PublicProfileReviewCard extends StatelessWidget {
                   children: [
                     Text(
                       review.reviewer.displayName,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     ),
                     Text(
                       _formatReviewDate(review.createdAt),
                       style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                   ],
@@ -825,7 +826,7 @@ class _PublicProfileReviewCard extends StatelessWidget {
                         ? Icons.star_rounded
                         : Icons.star_border_rounded,
                     size: 16,
-                    color: KolabingColors.primary,
+                    color: context.colors.primary,
                   ),
                 ),
               ),
@@ -836,7 +837,7 @@ class _PublicProfileReviewCard extends StatelessWidget {
             Text(
               review.body!,
               style: KolabingTextStyles.bodyMedium.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
                 height: 1.45,
               ),
             ),

@@ -88,7 +88,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         systemNavigationBarColor: KolabingColors.surface,
@@ -172,7 +172,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   void _showUserTypeMismatchDialog(UserType? existingType) {
     showDialog<void>(
       context: context,
-      barrierColor: KolabingColors.overlayDark60,
+      barrierColor: context.colors.overlayDark60,
       builder: (context) => _UserTypeMismatchDialog(
         existingType: existingType,
         onGotIt: () => Navigator.of(context).pop(),
@@ -185,9 +185,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -195,21 +195,21 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: _handleGoogleSignIn,
         ),
       ),
@@ -222,18 +222,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonDismiss,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },
@@ -250,7 +250,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       body: AnimatedBuilder(
         animation: _exitController,
         builder: (context, child) =>
@@ -280,7 +280,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   child: Text(
                     AppLocalizations.of(context).signInTitle,
                     style: KolabingTextStyles.displayLarge.copyWith(
-                      color: KolabingColors.textOnDark,
+                      color: context.colors.textOnDark,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -295,7 +295,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   child: Text(
                     AppLocalizations.of(context).signInSubtitle,
                     style: KolabingTextStyles.bodyLarge.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -374,7 +374,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-    backgroundColor: KolabingColors.darkSurface,
+    backgroundColor: context.colors.darkSurface,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Padding(
       padding: const EdgeInsets.all(24),
@@ -384,7 +384,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
           Text(
             AppLocalizations.of(context).signInTypeMismatchTitle,
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
             ),
             textAlign: TextAlign.center,
           ),
@@ -407,8 +407,8 @@ class _UserTypeMismatchDialog extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onGotIt,
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -416,7 +416,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context).commonGotIt,
                 style: KolabingTextStyles.button.copyWith(
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
             ),

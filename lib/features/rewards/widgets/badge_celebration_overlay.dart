@@ -126,14 +126,14 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                     child: Container(
                       width: 96,
                       height: 96,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: KolabingColors.softYellow,
+                        color: context.colors.softYellow,
                       ),
                       child: Icon(
                         widget.badge.slug.icon,
                         size: 44,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                   ),
@@ -151,7 +151,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   // Badge display name
                   Text(
                     widget.badge.slug.displayName,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.primary),
                   ),
 
                   const SizedBox(height: KolabingSpacing.xs),
@@ -173,7 +173,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                     child: ElevatedButton(
                       onPressed: widget.onDismiss,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: KolabingColors.primary,
+                        backgroundColor: context.colors.primary,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: KolabingRadius.borderRadiusMd,
@@ -202,9 +202,9 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
               numberOfParticles: 25,
               gravity: 0.15,
               emissionFrequency: 0.06,
-              colors: const [
-                KolabingColors.primary,
-                KolabingColors.success,
+              colors: [
+                context.colors.primary,
+                context.colors.success,
                 Color(0xFFFF6B6B),
                 Color(0xFF6BC5FF),
                 Color(0xFFFFE082),

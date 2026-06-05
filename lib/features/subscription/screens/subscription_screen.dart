@@ -82,7 +82,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(e.error.message),
-              backgroundColor: KolabingColors.error,
+              backgroundColor: context.colors.error,
             ),
           );
         }
@@ -91,7 +91,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       } on Exception {
@@ -101,7 +101,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             content: Text(
               AppLocalizations.of(context).subscriptionScreenAppleError,
             ),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -135,7 +135,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(e.error.message),
-              backgroundColor: KolabingColors.error,
+              backgroundColor: context.colors.error,
             ),
           );
         }
@@ -145,7 +145,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       } on Exception {
@@ -156,7 +156,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             content: Text(
               AppLocalizations.of(context).subscriptionScreenCheckoutError,
             ),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -211,7 +211,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             content: Text(
               AppLocalizations.of(context).subscriptionReactivateSuccess,
             ),
-            backgroundColor: KolabingColors.success,
+            backgroundColor: context.colors.success,
           ),
         );
       }
@@ -245,7 +245,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(
               AppLocalizations.of(context).subscriptionCancelButton,
             ),
@@ -267,7 +267,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               content: Text(
                 AppLocalizations.of(context).subscriptionCancelScheduledToast,
               ),
-              backgroundColor: KolabingColors.success,
+              backgroundColor: context.colors.success,
             ),
           );
         }
@@ -286,7 +286,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(next.error!),
-              backgroundColor: KolabingColors.error,
+              backgroundColor: context.colors.error,
             ),
           );
         }
@@ -297,23 +297,23 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(next.error!),
-              backgroundColor: KolabingColors.error,
+              backgroundColor: context.colors.error,
             ),
           );
         }
       });
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).subscriptionScreenTitle,
           style: KolabingTextStyles.headlineMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
@@ -339,12 +339,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         (index) => Padding(
           padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
           child: Shimmer.fromColors(
-            baseColor: KolabingColors.surfaceVariant,
-            highlightColor: KolabingColors.surface,
+            baseColor: context.colors.surfaceVariant,
+            highlightColor: context.colors.surface,
             child: Container(
               height: index == 0 ? 200 : 120,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),
@@ -431,26 +431,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
     if (isActive && !isCancelPending) {
       icon = LucideIcons.crown;
-      iconColor = KolabingColors.primary;
-      iconBgColor = KolabingColors.softYellow;
+      iconColor = context.colors.primary;
+      iconBgColor = context.colors.softYellow;
       title = l10n.subscriptionStatusPremiumTitle;
       subtitle = l10n.subscriptionStatusActiveSubtitle;
     } else if (isActive && isCancelPending) {
       icon = LucideIcons.clock;
-      iconColor = KolabingColors.warning;
-      iconBgColor = KolabingColors.warning.withValues(alpha: 0.1);
+      iconColor = context.colors.warning;
+      iconBgColor = context.colors.warning.withValues(alpha: 0.1);
       title = l10n.subscriptionStatusEndingTitle;
       subtitle = l10n.subscriptionStatusEndingSubtitle;
     } else if (isPastDue) {
       icon = LucideIcons.alertTriangle;
-      iconColor = KolabingColors.error;
-      iconBgColor = KolabingColors.errorBg;
+      iconColor = context.colors.error;
+      iconBgColor = context.colors.errorBg;
       title = l10n.subscriptionStatusPastDueTitle;
       subtitle = l10n.subscriptionStatusPastDueSubtitle;
     } else {
       icon = LucideIcons.sparkles;
-      iconColor = KolabingColors.textTertiary;
-      iconBgColor = KolabingColors.surfaceVariant;
+      iconColor = context.colors.textTertiary;
+      iconBgColor = context.colors.surfaceVariant;
       title = l10n.subscriptionStatusNoPlanTitle;
       subtitle = l10n.subscriptionStatusNoPlanSubtitle;
     }
@@ -458,7 +458,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -483,14 +483,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           Text(
             title,
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             subtitle,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -507,7 +507,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
@@ -523,7 +523,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Text(
           l10n.subscriptionBenefitsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -548,7 +548,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           description: l10n.subscriptionBenefitTrackDesc,
         ),
         const SizedBox(height: KolabingSpacing.md),
-        const Divider(height: 1, color: KolabingColors.darkBorder),
+        Divider(height: 1, color: context.colors.darkBorder),
         const SizedBox(height: KolabingSpacing.md),
         Center(
           child: Platform.isIOS
@@ -559,13 +559,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       TextSpan(
                         text: '29 ',
                         style: KolabingTextStyles.displaySmall.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       TextSpan(
                         text: l10n.subscriptionPerMonthUnit,
                         style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -586,7 +586,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
@@ -602,7 +602,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Text(
           l10n.subscriptionPlanDetailsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -648,15 +648,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.errorBg,
+      color: context.colors.errorBg,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.error.withValues(alpha: 0.3)),
+      border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
     ),
     child: Row(
       children: [
-        const Icon(
+        Icon(
           LucideIcons.alertTriangle,
-          color: KolabingColors.error,
+          color: context.colors.error,
           size: 24,
         ),
         const SizedBox(width: KolabingSpacing.sm),
@@ -667,14 +667,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Text(
                 l10n.subscriptionStatusPastDueTitle,
                 style: KolabingTextStyles.titleSmall.copyWith(
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 l10n.subscriptionPastDueWarningBody,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
             ],
@@ -694,15 +694,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.warning.withValues(alpha: 0.1),
+        color: context.colors.warning.withValues(alpha: 0.1),
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: KolabingColors.warning.withValues(alpha: 0.3),
+          color: context.colors.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.info, color: KolabingColors.warning, size: 24),
+          Icon(LucideIcons.info, color: context.colors.warning, size: 24),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Column(
@@ -711,14 +711,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 Text(
                   l10n.subscriptionCancelPendingTitle,
                   style: KolabingTextStyles.titleSmall.copyWith(
-                    color: KolabingColors.warning,
+                    color: context.colors.warning,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   l10n.subscriptionCancelPendingBody(endDate),
                   style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.warning,
+                    color: context.colors.warning,
                   ),
                 ),
               ],
@@ -759,24 +759,24 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             child: ElevatedButton.icon(
               onPressed: _isReactivating ? null : _handleReactivate,
               icon: _isReactivating
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: KolabingColors.onPrimary,
+                        color: context.colors.onPrimary,
                       ),
                     )
                   : const Icon(LucideIcons.rotateCcw, size: 20),
               label: Text(
                 l10n.subscriptionReactivateButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -811,12 +811,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   ? _handleSubscribe
                   : null,
               icon: isSubscribeBusy
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: KolabingColors.onPrimary,
+                        color: context.colors.onPrimary,
                       ),
                     )
                   : const Icon(LucideIcons.sparkles, size: 20),
@@ -825,12 +825,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     ? l10n.subscriptionSubscribeButton
                     : l10n.subscriptionSubscribePricedButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -845,8 +845,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               iapState!.purchaseAvailabilityMessage!,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: iapState.isLoadingProducts
-                    ? KolabingColors.textTertiary
-                    : KolabingColors.error,
+                    ? context.colors.textTertiary
+                    : context.colors.error,
               ),
               textAlign: TextAlign.center,
             ),
@@ -864,12 +864,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               label: Text(
                 l10n.subscriptionUpdatePaymentButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.onSurface,
-                side: const BorderSide(color: KolabingColors.darkBorder),
+                foregroundColor: context.colors.onSurface,
+                side: BorderSide(color: context.colors.darkBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -888,12 +888,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               label: Text(
                 l10n.subscriptionManageBillingButton,
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.onSurface,
-                side: const BorderSide(color: KolabingColors.darkBorder),
+                foregroundColor: context.colors.onSurface,
+                side: BorderSide(color: context.colors.darkBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -916,9 +916,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   : Text(
                       l10n.subscriptionCancelButton,
                       style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: KolabingColors.error,
+                        color: context.colors.error,
                         decoration: TextDecoration.underline,
-                        decorationColor: KolabingColors.error,
+                        decorationColor: context.colors.error,
                       ),
                     ),
             ),
@@ -938,7 +938,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ? l10n.subscriptionLoadingApplePrice
             : l10n.subscriptionUnavailable,
         style: KolabingTextStyles.titleMedium.copyWith(
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
         textAlign: TextAlign.center,
       );
@@ -947,7 +947,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Text(
       l10n.subscriptionPricePerMonth(state.priceString),
       style: KolabingTextStyles.displaySmall.copyWith(
-        color: KolabingColors.onSurface,
+        color: context.colors.onSurface,
       ),
     );
   }
@@ -995,10 +995,10 @@ class _BenefitItem extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: KolabingColors.primary.withValues(alpha: 0.1),
+            color: context.colors.primary.withValues(alpha: 0.1),
             borderRadius: KolabingRadius.borderRadiusSm,
           ),
-          child: Icon(icon, color: KolabingColors.primary, size: 20),
+          child: Icon(icon, color: context.colors.primary, size: 20),
         ),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
@@ -1008,13 +1008,13 @@ class _BenefitItem extends StatelessWidget {
               Text(
                 title,
                 style: KolabingTextStyles.titleSmall.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               Text(
                 description,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -1045,20 +1045,20 @@ class _DetailRow extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
     child: Row(
       children: [
-        Icon(icon, size: 18, color: KolabingColors.textTertiary),
+        Icon(icon, size: 18, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Text(
             label,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
         ),
         Text(
           value,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),

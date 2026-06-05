@@ -45,9 +45,9 @@ class DashboardStatCard extends StatelessWidget {
   /// Position index — even = lavender, odd = sage
   final int index;
 
-  Color get _cardColor => index.isEven
-      ? KolabingColors.secondaryContainer
-      : KolabingColors.tertiaryContainer;
+  Color _cardColor(BuildContext context) => index.isEven
+      ? context.colors.secondaryContainer
+      : context.colors.tertiaryContainer;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class DashboardStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : _cardColor,
+        color: isDark ? context.colors.darkSurface : _cardColor(context),
         borderRadius: KolabingRadius.borderRadiusXl,
       ),
       child: Column(
@@ -68,8 +68,8 @@ class DashboardStatCard extends StatelessWidget {
             title,
             style: KolabingTextStyles.labelSmall.copyWith(
               color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.45)
-                  : KolabingColors.textTertiary,
+                  ? context.colors.textOnDark.withValues(alpha: 0.45)
+                  : context.colors.textTertiary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -88,8 +88,8 @@ class DashboardStatCard extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   letterSpacing: -0.5,
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
 
@@ -122,8 +122,8 @@ class DashboardStatCard extends StatelessWidget {
               subtitle!,
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.45)
-                    : KolabingColors.onSurfaceVariant,
+                    ? context.colors.textOnDark.withValues(alpha: 0.45)
+                    : context.colors.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

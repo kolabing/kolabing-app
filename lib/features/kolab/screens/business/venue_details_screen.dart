@@ -84,10 +84,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
+            context,
             hint: l10n.venueDetailsListingTitleHint,
             error: errors['title'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateTitle,
           // C1: dismiss keyboard on tap-outside so the action bar is reachable.
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
@@ -100,10 +101,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
+            context,
             hint: l10n.venueDetailsCampaignDescriptionHint,
             error: errors['description'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -113,17 +115,18 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.venueDetailsOfferHeadlineHelper,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
+            context,
             hint: l10n.venueDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -143,16 +146,16 @@ class _VenueSummaryCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.softYellow,
+          color: context.colors.softYellow,
           borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: KolabingColors.softYellowBorder),
+          border: Border.all(color: context.colors.softYellowBorder),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.venueDetailsPrimaryVenue,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.primaryDark, letterSpacing: 0.8),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.primaryDark, letterSpacing: 0.8),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             _SummaryRow(
@@ -190,7 +193,7 @@ class _SummaryRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: KolabingColors.primaryDark),
+          Icon(icon, size: 18, color: context.colors.primaryDark),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Column(
@@ -198,12 +201,12 @@ class _SummaryRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                 ),
               ],
             ),
@@ -212,44 +215,46 @@ class _SummaryRow extends StatelessWidget {
       );
 }
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) =>
     InputDecoration(
       hintText: hint,
-      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
+      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
       errorText: error,
       errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
       filled: true,
-      fillColor: KolabingColors.surface,
+      fillColor: context.colors.surface,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.md,
         vertical: 14,
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.darkBorder),
+        borderSide: BorderSide(color: context.colors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.darkBorder),
+        borderSide: BorderSide(color: context.colors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderFocus, width: 1.5),
+        borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.error),
+        borderSide: BorderSide(color: context.colors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.error, width: 1.5),
+        borderSide: BorderSide(color: context.colors.error, width: 1.5),
       ),
     );
 
-final _inputTextStyle = KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface);
+TextStyle _inputTextStyle(BuildContext context) =>
+    KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});
@@ -259,7 +264,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1),
       );
 }
 
@@ -271,6 +276,6 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
       );
 }

@@ -138,10 +138,10 @@ class _SelectionCardState extends State<SelectionCard>
         widget.badgeLabel != null && widget.badgeLabel!.trim().isNotEmpty;
     final isHighlighted = _isPressed || widget.isSelected || hasBadge;
     final borderColor = isHighlighted
-        ? KolabingColors.primary
-        : KolabingColors.darkBorder;
+        ? context.colors.primary
+        : context.colors.darkBorder;
     final shadowColor = isHighlighted
-        ? KolabingColors.primary.withValues(alpha: 0.20)
+        ? context.colors.primary.withValues(alpha: 0.20)
         : const Color(0xFF374957).withValues(alpha: 0.10);
 
     return Semantics(
@@ -170,7 +170,7 @@ class _SelectionCardState extends State<SelectionCard>
             curve: Curves.easeOut,
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: borderColor, width: 2),
               boxShadow: [
@@ -194,10 +194,10 @@ class _SelectionCardState extends State<SelectionCard>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: KolabingColors.softYellow,
+                      color: context.colors.softYellow,
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: KolabingColors.primary.withValues(alpha: 0.35),
+                        color: context.colors.primary.withValues(alpha: 0.35),
                       ),
                     ),
                     child: Text(
@@ -206,7 +206,7 @@ class _SelectionCardState extends State<SelectionCard>
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.8,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                   ),
@@ -219,7 +219,7 @@ class _SelectionCardState extends State<SelectionCard>
                   style: KolabingTextStyles.button.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                     letterSpacing: 0.5,
                   ),
                   textAlign: TextAlign.center,
@@ -230,7 +230,7 @@ class _SelectionCardState extends State<SelectionCard>
                 Text(
                   _description(context),
                   style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,

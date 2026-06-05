@@ -103,7 +103,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.error.message),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -112,7 +112,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
     } on Exception {
@@ -122,7 +122,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           content: Text(
             AppLocalizations.of(context).subscriptionPaywallAppleError,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
     }
@@ -164,7 +164,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.error.message),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -174,7 +174,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
     } on Exception {
@@ -185,7 +185,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           content: Text(
             AppLocalizations.of(context).subscriptionPaywallCheckoutError,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
     }
@@ -234,8 +234,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
     return Container(
       margin: EdgeInsets.only(bottom: bottomPadding),
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -250,7 +250,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.darkBorder,
+                  color: context.colors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -260,13 +260,13 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Container(
                 width: 72,
                 height: 72,
-                decoration: const BoxDecoration(
-                  color: KolabingColors.softYellow,
+                decoration: BoxDecoration(
+                  color: context.colors.softYellow,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.crown,
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                   size: 36,
                 ),
               ),
@@ -276,7 +276,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Text(
                 l10n.subscriptionPaywallTitle,
                 style: KolabingTextStyles.headlineMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -285,7 +285,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Text(
                 l10n.subscriptionPaywallDescription,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -311,9 +311,9 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(KolabingSpacing.md),
                 decoration: BoxDecoration(
-                  color: KolabingColors.softYellow,
+                  color: context.colors.softYellow,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.softYellowBorder),
+                  border: Border.all(color: context.colors.softYellowBorder),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -322,14 +322,14 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       Text(
                         Platform.isIOS ? iapState.priceString : '29 EUR',
                         style: KolabingTextStyles.headlineLarge.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       const SizedBox(width: KolabingSpacing.xs),
                       Text(
                         l10n.subscriptionPaywallPerMonth,
                         style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                         ),
                       ),
                     ] else
@@ -338,7 +338,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                             ? l10n.subscriptionLoadingApplePrice
                             : l10n.subscriptionUnavailable,
                         style: KolabingTextStyles.titleMedium.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                   ],
@@ -372,9 +372,9 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       ? null
                       : _handleSubscribe,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
+                    disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
                     elevation: 0,
@@ -383,18 +383,18 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                     ),
                   ),
                   child: isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: KolabingColors.onPrimary,
+                            color: context.colors.onPrimary,
                           ),
                         )
                       : Text(
                           l10n.subscriptionPaywallSubscribeButton,
                           style: KolabingTextStyles.button.copyWith(
-                            color: KolabingColors.onPrimary,
+                            color: context.colors.onPrimary,
                           ),
                         ),
                 ),
@@ -407,7 +407,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 child: Text(
                   l10n.subscriptionPaywallNotNowButton,
                   style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ),
               ),
@@ -421,7 +421,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                   child: Text(
                     l10n.subscriptionRestorePurchasesButton,
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -440,8 +440,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                         iapState.error != null ||
                             (!iapState.isLoadingProducts &&
                                 !iapState.canPurchase)
-                        ? KolabingColors.error
-                        : KolabingColors.textTertiary;
+                        ? context.colors.error
+                        : context.colors.textTertiary;
 
                     return Padding(
                       padding: const EdgeInsets.only(top: KolabingSpacing.xs),
@@ -471,17 +471,17 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: KolabingColors.success.withValues(alpha: 0.1),
+            color: context.colors.success.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: KolabingColors.success, size: 16),
+          child: Icon(icon, color: context.colors.success, size: 16),
         ),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Text(
             text,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
         ),
