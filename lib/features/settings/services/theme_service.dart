@@ -17,11 +17,12 @@ class ThemeService {
     switch (value) {
       case 'light':
         return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
       case 'system':
-      default:
         return ThemeMode.system;
+      case 'dark':
+      default:
+        // First launch / no saved preference → Night is the default theme.
+        return ThemeMode.dark;
     }
   }
 
