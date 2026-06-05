@@ -19,6 +19,8 @@ import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
 import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/event/screens/public_events_screen.dart';
+import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
@@ -225,6 +227,9 @@ abstract final class KolabingRoutes {
   /// Public profile reviews list
   static const String publicProfileReviews = '/profile/:id/reviews';
 
+  /// Friends home (accepted list + requests inbox + suggested), Batch 5.
+  static const String friends = '/friends';
+
   /// Event detail screen
   static const String eventDetail = '/event/:id';
 
@@ -246,8 +251,22 @@ abstract final class KolabingRoutes {
   /// Attendee dashboard (home)
   static const String attendeeDashboard = '/attendee';
 
+  /// Attendee Explore — public-events discovery feed (Batch 3)
+  static const String explore = '/explore';
+
   /// Attendee profile
   static const String attendeeProfile = '/attendee/profile';
+
+  /// Attendee profile detail (Batch 4: stats, badges, communities, events).
+  /// Public view of an attendee's profile by id.
+  static const String attendeeProfileView = '/attendee/profile/:id';
+
+  /// Build a path to a specific attendee's profile detail view.
+  static String buildAttendeeProfileViewPath(String profileId) =>
+      '/attendee/profile/$profileId';
+
+  /// Current user's full events-attended history (Batch 4).
+  static const String attendeeEventsAttended = '/attendee/events-attended';
 
   /// Event QR code display (for organizers)
   static const String eventQRCode = '/attendee/events/:eventId/qr';
@@ -736,6 +755,12 @@ final GoRouter kolabingRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: KolabingRoutes.friends,
+      name: 'friends',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FriendsScreen(),
+    ),
+    GoRoute(
       path: '/event/:id',
       name: 'eventDetail',
       builder: (BuildContext context, GoRouterState state) {
@@ -756,6 +781,35 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'attendeeDashboard',
       builder: (BuildContext context, GoRouterState state) =>
           const AttendeeMainScreen(),
+    ),
+
+    // Explore — public-events discovery feed (Batch 3). Also reachable as the
+    // attendee shell's Explore tab; this route supports deep-links.
+    GoRoute(
+      path: KolabingRoutes.explore,
+      name: 'explore',
+      builder: (BuildContext context, GoRouterState state) =>
+          const PublicEventsScreen(),
+    ),
+
+    // Current user's full events-attended history (`/me/events-attended`).
+    // Registered before the public-profile-by-id route so the static segment
+    // wins over `/attendee/profile/:id` style matching.
+    GoRoute(
+      path: KolabingRoutes.attendeeEventsAttended,
+      name: 'attendeeEventsAttended',
+      builder: (BuildContext context, GoRouterState state) =>
+          const EventsAttendedScreen(),
+    ),
+
+    // Public attendee profile detail (stats, badges, communities, events).
+    GoRoute(
+      path: KolabingRoutes.attendeeProfileView,
+      name: 'attendeeProfileView',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'];
+        return AttendeeProfileDetailScreen(profileId: id);
+      },
     ),
 
     GoRoute(

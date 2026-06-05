@@ -1,7 +1,9 @@
 export 'attendee_home_screen.dart';
 export 'attendee_main_screen.dart';
+export 'attendee_profile_detail_screen.dart';
 export 'attendee_profile_screen.dart';
 export 'badges_screen.dart';
+export 'events_attended_screen.dart';
 export 'create_challenge_screen.dart';
 export 'event_challenges_screen.dart';
 export 'event_discovery_screen.dart';

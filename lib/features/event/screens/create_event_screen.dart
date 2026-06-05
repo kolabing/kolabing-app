@@ -50,6 +50,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   bool _limited = false;
   bool _busy = false;
 
+  /// Public vs members-only (Batch 3). Defaults to members-only — events are
+  /// community-scoped unless the leader opts into public discovery.
+  EventVisibility _visibility = EventVisibility.membersOnly;
+
   /// Tier-gate: empty list (+ [_allMembers] true) = open to all. When
   /// [_allMembers] is false, the selected tier ids become `tier_gate`.
   bool _allMembers = true;
@@ -82,6 +86,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       _startsAt = e.startsAt ?? e.date;
       _limited = e.capacity != null;
       if (e.capacity != null) _capacity.text = e.capacity.toString();
+      _visibility = e.visibility;
     }
   }
 
@@ -200,6 +205,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           capacity: cap,
           clearCapacity: !_limited,
           tierGate: _tierGate() ?? const [],
+          visibility: _visibility,
         );
       } else {
         result = await svc.createUpcomingEvent(
@@ -210,6 +216,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           location: _location.text.trim(),
           capacity: cap,
           tierGate: _tierGate(),
+          visibility: _visibility,
           recurrence: recurrence,
         );
       }
@@ -318,6 +325,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 style: KolabingTextStyles.bodySmall
                     .copyWith(color: KolabingColors.onSurfaceVariant)),
           const SizedBox(height: KolabingSpacing.lg),
+          _label(_l10n.eventFormVisibilityLabel),
+          _visibilityPicker(),
+          const SizedBox(height: KolabingSpacing.lg),
           _label(_l10n.eventFormWhoCanJoin),
           _tierGatePicker(tiersAsync),
           const SizedBox(height: KolabingSpacing.lg),
@@ -359,6 +369,40 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _visibilityPicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RadioListTile<EventVisibility>(
+          contentPadding: EdgeInsets.zero,
+          value: EventVisibility.membersOnly,
+          groupValue: _visibility,
+          onChanged: (v) => setState(
+              () => _visibility = v ?? EventVisibility.membersOnly),
+          title: Text(_l10n.eventFormVisibilityMembers),
+          subtitle: Text(
+            _l10n.eventFormVisibilityMembersHint,
+            style: KolabingTextStyles.bodySmall
+                .copyWith(color: KolabingColors.onSurfaceVariant),
+          ),
+        ),
+        RadioListTile<EventVisibility>(
+          contentPadding: EdgeInsets.zero,
+          value: EventVisibility.public,
+          groupValue: _visibility,
+          onChanged: (v) =>
+              setState(() => _visibility = v ?? EventVisibility.public),
+          title: Text(_l10n.eventFormVisibilityPublic),
+          subtitle: Text(
+            _l10n.eventFormVisibilityPublicHint,
+            style: KolabingTextStyles.bodySmall
+                .copyWith(color: KolabingColors.onSurfaceVariant),
+          ),
+        ),
+      ],
     );
   }
 

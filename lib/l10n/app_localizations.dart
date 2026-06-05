@@ -9349,6 +9349,594 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SAVE'**
   String get rosterSave;
+
+  /// Title of the friends list screen and tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendsTitle;
+
+  /// Tab label for the accepted friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendsTabFriends;
+
+  /// Tab label for the friend requests inbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get friendsTabRequests;
+
+  /// Placeholder for the friends search field.
+  ///
+  /// In en, this message translates to:
+  /// **'Search friends'**
+  String get friendsSearchHint;
+
+  /// Empty state title for the accepted friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet'**
+  String get friendsEmptyTitle;
+
+  /// Empty state body for the accepted friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with people you meet at events.'**
+  String get friendsEmptyBody;
+
+  /// Shown when a friends search returns nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends match your search.'**
+  String get friendsSearchEmpty;
+
+  /// Section header for incoming friend requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming'**
+  String get friendsRequestsIncomingSection;
+
+  /// Section header for sent (pending) friend requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get friendsRequestsSentSection;
+
+  /// Empty state for the friend requests inbox.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests.'**
+  String get friendsRequestsEmpty;
+
+  /// Section header for suggested friends.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get friendsSuggestedSection;
+
+  /// Subtitle explaining the co-attendance suggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'People you have seen at events'**
+  String get friendsSuggestedSubtitle;
+
+  /// Co-attendance count for a suggested friend.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 shared event} other{{count} shared events}}'**
+  String friendsSharedEvents(int count);
+
+  /// Add-friend button label (no relationship yet).
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get friendActionAdd;
+
+  /// Button label when a sent request is awaiting a response.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get friendActionPending;
+
+  /// Button label when the other person has sent me a request.
+  ///
+  /// In en, this message translates to:
+  /// **'Respond'**
+  String get friendActionRespond;
+
+  /// Button label when already friends (opens a menu).
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendActionFriends;
+
+  /// Accept a friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get friendActionAccept;
+
+  /// Decline a friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get friendActionDecline;
+
+  /// Cancel a sent friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get friendActionCancelRequest;
+
+  /// Remove an existing friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfriend'**
+  String get friendActionUnfriend;
+
+  /// Block a profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get friendActionBlock;
+
+  /// Unblock a previously blocked profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get friendActionUnblock;
+
+  /// Button label when the profile is blocked by me.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get friendActionBlocked;
+
+  /// Title of the unfriend confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfriend?'**
+  String get friendUnfriendTitle;
+
+  /// Body of the unfriend confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from your friends?'**
+  String friendUnfriendBody(String name);
+
+  /// Title of the block confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Block?'**
+  String get friendBlockTitle;
+
+  /// Body of the block confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}? They will be removed from your friends and cannot contact you.'**
+  String friendBlockBody(String name);
+
+  /// Fallback noun for a friend without a name.
+  ///
+  /// In en, this message translates to:
+  /// **'this person'**
+  String get friendFallbackName;
+
+  /// Title of the create-chat dialog in the Chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get chatManageNewChatTitle;
+
+  /// Title of the rename-chat dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename chat'**
+  String get chatManageRenameTitle;
+
+  /// Label for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat name'**
+  String get chatManageNameLabel;
+
+  /// Hint for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Exec, Socials, Philanthropy'**
+  String get chatManageNameHint;
+
+  /// Create button in the new-chat dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get chatManageCreate;
+
+  /// Rename action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get chatManageRename;
+
+  /// Delete action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatManageDelete;
+
+  /// Label on the create-chat button in the Chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Create chat'**
+  String get chatManageCreateChat;
+
+  /// Snackbar after a chat is created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created \"{name}\"'**
+  String chatManageChatCreated(String name);
+
+  /// Snackbar after a chat is renamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat renamed'**
+  String get chatManageChatRenamed;
+
+  /// Snackbar after a chat is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat deleted'**
+  String get chatManageChatDeleted;
+
+  /// Snackbar when the custom chat cap is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the limit of {count} custom chats.'**
+  String chatManageChatLimit(int count);
+
+  /// Confirm dialog title for deleting a chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get chatManageDeleteTitle;
+
+  /// Confirm dialog body for deleting a chat (notes it is recoverable).
+  ///
+  /// In en, this message translates to:
+  /// **'Members will lose access to \"{name}\". You can recover it later if you change your mind.'**
+  String chatManageDeleteBody(String name);
+
+  /// Title of the community picker shown before creating a chat when the viewer manages more than one community.
+  ///
+  /// In en, this message translates to:
+  /// **'Which community?'**
+  String get chatManageWhichCommunity;
+
+  /// Section label for open chats the viewer can join.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats you can join'**
+  String get chatJoinSectionTitle;
+
+  /// Join button label for an open chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get chatJoinAction;
+
+  /// Snackbar after joining an open chat.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined \"{name}\"'**
+  String chatJoinedSnack(String name);
+
+  /// Tooltip on the info icon in an event chat header that opens the event detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Open event'**
+  String get chatThreadOpenEvent;
+
+  /// Title of the thread members / participants sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get chatMembersTitle;
+
+  /// Empty state in the members sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'No members to manage yet.'**
+  String get chatMembersEmpty;
+
+  /// Remove (ban) action label for a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get chatMemberRemove;
+
+  /// Confirm dialog title for banning a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String chatMemberRemoveTitle(String name);
+
+  /// Confirm dialog body for banning a member.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll lose access to this chat and won\'t be able to rejoin.'**
+  String get chatMemberRemoveBody;
+
+  /// Snackbar after a member is banned.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was removed'**
+  String chatMemberRemoved(String name);
+
+  /// Tooltip on the manage-members icon in the thread header.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage members'**
+  String get chatThreadManageMembers;
+
+  /// Event form: public vs members-only section label
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get eventFormVisibilityLabel;
+
+  /// Event form: public visibility option
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get eventFormVisibilityPublic;
+
+  /// Event form: explanation of public visibility
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can discover and RSVP to this event.'**
+  String get eventFormVisibilityPublicHint;
+
+  /// Event form: members-only visibility option
+  ///
+  /// In en, this message translates to:
+  /// **'Members only'**
+  String get eventFormVisibilityMembers;
+
+  /// Event form: explanation of members-only visibility
+  ///
+  /// In en, this message translates to:
+  /// **'Only community members can see and RSVP to this event.'**
+  String get eventFormVisibilityMembersHint;
+
+  /// Public events feed: screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Explore events'**
+  String get exploreTitle;
+
+  /// Bottom nav label for the public events feed
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get exploreNavLabel;
+
+  /// Public events feed: badge on a public event card
+  ///
+  /// In en, this message translates to:
+  /// **'PUBLIC'**
+  String get explorePublicBadge;
+
+  /// Public events feed: count of attendees marked going
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No one going yet} =1{1 going} other{{count} going}}'**
+  String exploreGoingCount(int count);
+
+  /// Public events feed: RSVP button on a public event
+  ///
+  /// In en, this message translates to:
+  /// **'RSVP'**
+  String get exploreRsvp;
+
+  /// Public events feed: confirmed RSVP state
+  ///
+  /// In en, this message translates to:
+  /// **'Going'**
+  String get exploreGoing;
+
+  /// Public events feed: event at capacity
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get exploreFull;
+
+  /// Members-only gate: CTA to join the community before RSVP
+  ///
+  /// In en, this message translates to:
+  /// **'Join community to RSVP'**
+  String get exploreJoinToRsvp;
+
+  /// Public events feed: RSVP success confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re going!'**
+  String get exploreRsvpSuccess;
+
+  /// Public events feed: empty state title
+  ///
+  /// In en, this message translates to:
+  /// **'No public events right now'**
+  String get exploreEmpty;
+
+  /// Public events feed: empty state hint
+  ///
+  /// In en, this message translates to:
+  /// **'Check back soon for upcoming public events near you.'**
+  String get exploreEmptyHint;
+
+  /// Public events feed: error state title
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load events'**
+  String get exploreLoadFailed;
+
+  /// Public events feed: load next page
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get exploreLoadMore;
+
+  /// Members-only gate sheet: title
+  ///
+  /// In en, this message translates to:
+  /// **'Members-only event'**
+  String get exploreMembersOnlyTitle;
+
+  /// Members-only gate sheet: body
+  ///
+  /// In en, this message translates to:
+  /// **'This event is for community members. Join {community} to RSVP.'**
+  String exploreMembersOnlyBody(String community);
+
+  /// Members-only gate sheet: body when community name is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'This event is for community members. Join the community to RSVP.'**
+  String get exploreMembersOnlyBodyGeneric;
+
+  /// Members-only gate sheet: open the community detail
+  ///
+  /// In en, this message translates to:
+  /// **'View community'**
+  String get exploreViewCommunity;
+
+  /// App bar title for the attendee profile screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get attendeeProfileTitle;
+
+  /// Attendee points label with count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} points'**
+  String attendeeProfilePoints(int count);
+
+  /// Level chip label with the level number.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {number}'**
+  String attendeeProfileLevelLabel(int number);
+
+  /// Shown when the attendee has not reached any level.
+  ///
+  /// In en, this message translates to:
+  /// **'No level yet'**
+  String get attendeeProfileNoLevel;
+
+  /// XP progress within the current level.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {max} XP'**
+  String attendeeProfileXpProgress(int current, int max);
+
+  /// Section header for the badges grid.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get attendeeProfileBadges;
+
+  /// Empty state for the badges grid.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges earned yet'**
+  String get attendeeProfileBadgesEmpty;
+
+  /// Section header for the communities list.
+  ///
+  /// In en, this message translates to:
+  /// **'Communities'**
+  String get attendeeProfileCommunities;
+
+  /// Empty state for the communities list.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a member of any community yet'**
+  String get attendeeProfileCommunitiesEmpty;
+
+  /// Section header for the events-attended preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Events Attended'**
+  String get attendeeProfileEventsAttendedSection;
+
+  /// Empty state for the events-attended preview.
+  ///
+  /// In en, this message translates to:
+  /// **'No events attended yet'**
+  String get attendeeProfileEventsAttendedEmpty;
+
+  /// Action to open the full events-attended list.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get attendeeProfileSeeAll;
+
+  /// Friends count shown on the profile header.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} friends'**
+  String attendeeProfileFriendsCount(int count);
+
+  /// Placeholder action on a public profile to add the attendee as a friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add friend'**
+  String get attendeeProfileAddFriend;
+
+  /// Error state for the attendee profile screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load profile'**
+  String get attendeeProfileError;
+
+  /// Badge shown on a community the attendee can manage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get attendeeProfileManageBadge;
+
+  /// App bar title for the full events-attended list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Events Attended'**
+  String get eventsAttendedTitle;
+
+  /// Total events-attended count in the list header.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 event} other{{count} events}}'**
+  String eventsAttendedTotal(int count);
+
+  /// Empty state for the full events-attended list.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t attended any events yet'**
+  String get eventsAttendedEmpty;
+
+  /// Error state for the full events-attended list.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load events'**
+  String get eventsAttendedError;
+
+  /// Check-in timestamp line for an attended event.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked in {date}'**
+  String eventsAttendedCheckedIn(String date);
 }
 
 class _AppLocalizationsDelegate

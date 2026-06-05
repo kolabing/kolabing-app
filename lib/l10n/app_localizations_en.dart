@@ -5198,4 +5198,357 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rosterSave => 'SAVE';
+
+  @override
+  String get friendsTitle => 'Friends';
+
+  @override
+  String get friendsTabFriends => 'Friends';
+
+  @override
+  String get friendsTabRequests => 'Requests';
+
+  @override
+  String get friendsSearchHint => 'Search friends';
+
+  @override
+  String get friendsEmptyTitle => 'No friends yet';
+
+  @override
+  String get friendsEmptyBody => 'Connect with people you meet at events.';
+
+  @override
+  String get friendsSearchEmpty => 'No friends match your search.';
+
+  @override
+  String get friendsRequestsIncomingSection => 'Incoming';
+
+  @override
+  String get friendsRequestsSentSection => 'Sent';
+
+  @override
+  String get friendsRequestsEmpty => 'No pending requests.';
+
+  @override
+  String get friendsSuggestedSection => 'Suggested';
+
+  @override
+  String get friendsSuggestedSubtitle => 'People you have seen at events';
+
+  @override
+  String friendsSharedEvents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count shared events',
+      one: '1 shared event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get friendActionAdd => 'Add';
+
+  @override
+  String get friendActionPending => 'Pending';
+
+  @override
+  String get friendActionRespond => 'Respond';
+
+  @override
+  String get friendActionFriends => 'Friends';
+
+  @override
+  String get friendActionAccept => 'Accept';
+
+  @override
+  String get friendActionDecline => 'Decline';
+
+  @override
+  String get friendActionCancelRequest => 'Cancel request';
+
+  @override
+  String get friendActionUnfriend => 'Unfriend';
+
+  @override
+  String get friendActionBlock => 'Block';
+
+  @override
+  String get friendActionUnblock => 'Unblock';
+
+  @override
+  String get friendActionBlocked => 'Blocked';
+
+  @override
+  String get friendUnfriendTitle => 'Unfriend?';
+
+  @override
+  String friendUnfriendBody(String name) {
+    return 'Remove $name from your friends?';
+  }
+
+  @override
+  String get friendBlockTitle => 'Block?';
+
+  @override
+  String friendBlockBody(String name) {
+    return 'Block $name? They will be removed from your friends and cannot contact you.';
+  }
+
+  @override
+  String get friendFallbackName => 'this person';
+
+  @override
+  String get chatManageNewChatTitle => 'New chat';
+
+  @override
+  String get chatManageRenameTitle => 'Rename chat';
+
+  @override
+  String get chatManageNameLabel => 'Chat name';
+
+  @override
+  String get chatManageNameHint => 'e.g. Exec, Socials, Philanthropy';
+
+  @override
+  String get chatManageCreate => 'Create';
+
+  @override
+  String get chatManageRename => 'Rename';
+
+  @override
+  String get chatManageDelete => 'Delete';
+
+  @override
+  String get chatManageCreateChat => 'Create chat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'Created \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'Chat renamed';
+
+  @override
+  String get chatManageChatDeleted => 'Chat deleted';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'You\'ve reached the limit of $count custom chats.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => 'Delete this chat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Members will lose access to \"$name\". You can recover it later if you change your mind.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => 'Which community?';
+
+  @override
+  String get chatJoinSectionTitle => 'Chats you can join';
+
+  @override
+  String get chatJoinAction => 'Join';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'You joined \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Open event';
+
+  @override
+  String get chatMembersTitle => 'Members';
+
+  @override
+  String get chatMembersEmpty => 'No members to manage yet.';
+
+  @override
+  String get chatMemberRemove => 'Remove';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'They\'ll lose access to this chat and won\'t be able to rejoin.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return '$name was removed';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Manage members';
+
+  @override
+  String get eventFormVisibilityLabel => 'Visibility';
+
+  @override
+  String get eventFormVisibilityPublic => 'Public';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Anyone can discover and RSVP to this event.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Members only';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Only community members can see and RSVP to this event.';
+
+  @override
+  String get exploreTitle => 'Explore events';
+
+  @override
+  String get exploreNavLabel => 'Explore';
+
+  @override
+  String get explorePublicBadge => 'PUBLIC';
+
+  @override
+  String exploreGoingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count going',
+      one: '1 going',
+      zero: 'No one going yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreRsvp => 'RSVP';
+
+  @override
+  String get exploreGoing => 'Going';
+
+  @override
+  String get exploreFull => 'Full';
+
+  @override
+  String get exploreJoinToRsvp => 'Join community to RSVP';
+
+  @override
+  String get exploreRsvpSuccess => 'You\'re going!';
+
+  @override
+  String get exploreEmpty => 'No public events right now';
+
+  @override
+  String get exploreEmptyHint =>
+      'Check back soon for upcoming public events near you.';
+
+  @override
+  String get exploreLoadFailed => 'Couldn\'t load events';
+
+  @override
+  String get exploreLoadMore => 'Load more';
+
+  @override
+  String get exploreMembersOnlyTitle => 'Members-only event';
+
+  @override
+  String exploreMembersOnlyBody(String community) {
+    return 'This event is for community members. Join $community to RSVP.';
+  }
+
+  @override
+  String get exploreMembersOnlyBodyGeneric =>
+      'This event is for community members. Join the community to RSVP.';
+
+  @override
+  String get exploreViewCommunity => 'View community';
+
+  @override
+  String get attendeeProfileTitle => 'Profile';
+
+  @override
+  String attendeeProfilePoints(int count) {
+    return '$count points';
+  }
+
+  @override
+  String attendeeProfileLevelLabel(int number) {
+    return 'Level $number';
+  }
+
+  @override
+  String get attendeeProfileNoLevel => 'No level yet';
+
+  @override
+  String attendeeProfileXpProgress(int current, int max) {
+    return '$current / $max XP';
+  }
+
+  @override
+  String get attendeeProfileBadges => 'Badges';
+
+  @override
+  String get attendeeProfileBadgesEmpty => 'No badges earned yet';
+
+  @override
+  String get attendeeProfileCommunities => 'Communities';
+
+  @override
+  String get attendeeProfileCommunitiesEmpty =>
+      'Not a member of any community yet';
+
+  @override
+  String get attendeeProfileEventsAttendedSection => 'Events Attended';
+
+  @override
+  String get attendeeProfileEventsAttendedEmpty => 'No events attended yet';
+
+  @override
+  String get attendeeProfileSeeAll => 'See all';
+
+  @override
+  String attendeeProfileFriendsCount(int count) {
+    return '$count friends';
+  }
+
+  @override
+  String get attendeeProfileAddFriend => 'Add friend';
+
+  @override
+  String get attendeeProfileError => 'Could not load profile';
+
+  @override
+  String get attendeeProfileManageBadge => 'Manage';
+
+  @override
+  String get eventsAttendedTitle => 'Events Attended';
+
+  @override
+  String eventsAttendedTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventsAttendedEmpty => 'You haven\'t attended any events yet';
+
+  @override
+  String get eventsAttendedError => 'Could not load events';
+
+  @override
+  String eventsAttendedCheckedIn(String date) {
+    return 'Checked in $date';
+  }
 }

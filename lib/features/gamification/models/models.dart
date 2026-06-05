@@ -1,4 +1,5 @@
 export 'attendee_profile.dart';
+export 'attendee_profile_detail.dart';
 export 'badge.dart';
 export 'challenge.dart';
 export 'challenge_completion.dart';

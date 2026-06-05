@@ -10,14 +10,16 @@ import '../../../widgets/ui_icon.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chats_screen.dart';
 import '../../community/screens/my_communities_screen.dart';
+import '../../event/screens/public_events_screen.dart';
 import 'attendee_home_screen.dart';
 import 'qr_scanner_screen.dart';
 
 /// Attendee (Community Member) main screen with bottom navigation
 ///
 /// This is the main container for attendee users after login.
-/// 4 tabs: Home, Communities (NF-6), Chats, Scan QR (modal). Profile moved off
-/// the nav (NF-12) — reached via the app-bar avatar.
+/// 5 tabs: Home, Explore (Batch 3 public events), Communities (NF-6), Chats,
+/// Scan QR (modal). Profile moved off the nav (NF-12) — reached via the app-bar
+/// avatar.
 class AttendeeMainScreen extends ConsumerStatefulWidget {
   const AttendeeMainScreen({
     super.key,
@@ -40,8 +42,8 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
   }
 
   void _onTabChanged(int index) {
-    // Index 3 is the QR Scanner — open as a modal, don't change the tab.
-    if (index == 3) {
+    // Last index is the QR Scanner — open as a modal, don't change the tab.
+    if (index == 4) {
       _openQRScanner();
       return;
     }
@@ -75,6 +77,12 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
         iconSlug: UiIconSlug.home,
       ),
       NavItem(
+        // Explore — the public-events discovery feed (Batch 3).
+        icon: LucideIcons.compass,
+        activeIcon: LucideIcons.compass,
+        label: l10n.exploreNavLabel,
+      ),
+      NavItem(
         // Flag (chapter/club banner) — distinct from the lone-person Profile
         // icon, which looked near-identical when this used users vs user.
         icon: LucideIcons.flag,
@@ -101,11 +109,13 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
           isDark ? KolabingColors.surface : KolabingColors.background,
       appBar: const KolabingAppBar(),
       body: IndexedStack(
-        // Nav indices: Home 0, Communities 1, Chats 2, Scan 3 (modal, no child).
-        // Scan returns early in _onTabChanged, so _currentIndex is only 0..2.
+        // Nav indices: Home 0, Explore 1, Communities 2, Chats 3, Scan 4
+        // (modal, no child). Scan returns early in _onTabChanged, so
+        // _currentIndex is only 0..3.
         index: _currentIndex,
         children: const [
           AttendeeHomeScreen(),
+          PublicEventsScreen(),
           MyCommunitiesScreen(),
           ChatsScreen(embedded: true),
         ],

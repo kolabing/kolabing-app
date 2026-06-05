@@ -1,3 +1,4 @@
+export 'attendee_profile_service.dart';
 export 'badge_service.dart';
 export 'challenge_service.dart';
 export 'checkin_service.dart';

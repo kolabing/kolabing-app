@@ -1329,7 +1329,6 @@
   "dashboardNoUpcomingKolabs": "Aún no hay kolabs próximos",
   "dashboardDefaultBusinessName": "Negocio",
   "dashboardDefaultCommunityName": "Comunidad",
-
   "eventHubOpenChat": "Abrir chat del evento",
   "eventHubAttendeesTitle": "Asistentes",
   "eventHubWaitlistTitle": "Lista de espera",
@@ -1354,7 +1353,6 @@
   "eventHubDeleteScopeSeries": "Toda la serie",
   "eventHubDeleted": "Evento eliminado",
   "eventHubAddPhotos": "Añadir fotos",
-
   "eventFormNewTitle": "Nuevo evento",
   "eventFormEditTitle": "Editar evento",
   "eventFormSave": "Guardar",
@@ -1398,7 +1396,6 @@
   "eventFormErrEndAfterStart": "El fin debe ser posterior al inicio.",
   "eventFormErrCapacity": "Introduce un aforo válido o desactiva el límite.",
   "eventFormPhotosUploaded": "Fotos subidas.",
-
   "notifSettingsTitle": "Notificaciones",
   "notifSettingsMessages": "Mensajes",
   "notifSettingsMessagesSubtitle": "Nuevos mensajes de chat en tus comunidades y eventos",
@@ -1409,7 +1406,6 @@
   "notifSettingsMarketing": "Consejos y novedades",
   "notifSettingsMarketingSubtitle": "Consejos de producto y noticias ocasionales",
   "notifSettingsSaveError": "No se pudo guardar tu preferencia. Inténtalo de nuevo.",
-
   "chatsTitle": "Chats",
   "chatInboxTooltip": "Chats",
   "chatThreadFallbackTitle": "Chat",
@@ -1423,7 +1419,6 @@
   "chatSectionKolabs": "Kolabs",
   "chatComposerHint": "Mensaje",
   "chatThreadEmptyMessage": "Aún no hay mensajes. Saluda 👋",
-
   "communityDetailTabChats": "Chats",
   "communityDetailTabEvents": "Eventos",
   "communityDetailTabMembers": "Miembros",
@@ -1448,12 +1443,10 @@
   "communityDetailTierFallback": "Miembro",
   "communityDetailGalleryLabel": "Galería y eventos pasados",
   "communityDetailGalleryBody": "Las fotos y los eventos pasados estarán aquí cuando se lance el ciclo de vida de eventos (Fase 3).",
-
   "myCommunitiesNoTier": "Sin nivel todavía",
   "myCommunitiesAdminBadge": "ADMIN",
   "myCommunitiesEmptyTitle": "Aún no perteneces a ninguna comunidad",
   "myCommunitiesEmptyBody": "Únete a una comunidad para ganarte tu lugar en sus niveles y ver eventos y ventajas exclusivos para miembros.",
-
   "communityHubEmptyTitle": "Crea tu comunidad",
   "communityHubEmptyBody": "Crea una comunidad para formar una lista de miembros y configurar tus propios niveles. Tu primera comunidad es gratis.",
   "communityHubCreateCommunity": "CREAR COMUNIDAD",
@@ -1497,7 +1490,6 @@
   "communityHubMemberFallback": "Miembro",
   "communityHubChipAdmin": "ADMIN",
   "communityHubLoadError": "No se pudo cargar tu comunidad",
-
   "createCommunityPremiumTitle": "Community Premium",
   "createCommunityPremiumBody": "Tu plan gratuito incluye una comunidad. Gestionar más de una forma parte de Community Premium — próximamente.",
   "createCommunityTitle": "Nueva comunidad",
@@ -1509,7 +1501,6 @@
   "createCommunityJoinAnyone": "Cualquiera",
   "createCommunityJoinInviteOnly": "Solo con invitación",
   "createCommunitySubmit": "CREAR COMUNIDAD",
-
   "tierEditorEditTitle": "Editar nivel",
   "tierEditorNewTitle": "Nuevo nivel",
   "tierEditorDeleteTooltip": "Eliminar nivel",
@@ -1527,7 +1518,6 @@
   "tierEditorThresholdRequired": "Introduce un umbral de {unit}",
   "tierEditorSave": "GUARDAR",
   "tierEditorCreate": "CREAR NIVEL",
-
   "rosterTitle": "Miembros",
   "rosterInviteTooltip": "Invitar miembro",
   "rosterInviteTitle": "Invitar miembro",
@@ -1550,5 +1540,124 @@
   "rosterCanManageTitle": "Puede gestionar esta comunidad",
   "rosterCanManageSubtitle": "Capacidad de administración — independiente del nivel",
   "rosterStatusLabel": "Estado",
-  "rosterSave": "GUARDAR"
+  "rosterSave": "GUARDAR",
+  "friendsTitle": "Amigos",
+  "friendsTabFriends": "Amigos",
+  "friendsTabRequests": "Solicitudes",
+  "friendsSearchHint": "Buscar amigos",
+  "friendsEmptyTitle": "Aún no tienes amigos",
+  "friendsEmptyBody": "Conecta con personas que conoces en los eventos.",
+  "friendsSearchEmpty": "Ningún amigo coincide con tu búsqueda.",
+  "friendsRequestsIncomingSection": "Recibidas",
+  "friendsRequestsSentSection": "Enviadas",
+  "friendsRequestsEmpty": "No tienes solicitudes pendientes.",
+  "friendsSuggestedSection": "Sugeridos",
+  "friendsSuggestedSubtitle": "Personas que has visto en eventos",
+  "friendsSharedEvents": "{count, plural, =1{1 evento en común} other{{count} eventos en común}}",
+  "@friendsSharedEvents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "friendActionAdd": "Agregar",
+  "friendActionPending": "Pendiente",
+  "friendActionRespond": "Responder",
+  "friendActionFriends": "Amigos",
+  "friendActionAccept": "Aceptar",
+  "friendActionDecline": "Rechazar",
+  "friendActionCancelRequest": "Cancelar solicitud",
+  "friendActionUnfriend": "Eliminar amigo",
+  "friendActionBlock": "Bloquear",
+  "friendActionUnblock": "Desbloquear",
+  "friendActionBlocked": "Bloqueado",
+  "friendUnfriendTitle": "¿Eliminar amigo?",
+  "friendUnfriendBody": "¿Quitar a {name} de tus amigos?",
+  "@friendUnfriendBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "friendBlockTitle": "¿Bloquear?",
+  "friendBlockBody": "¿Bloquear a {name}? Se eliminará de tus amigos y no podrá contactarte.",
+  "@friendBlockBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "friendFallbackName": "esta persona",
+  "chatManageNewChatTitle": "Nuevo chat",
+  "chatManageRenameTitle": "Renombrar chat",
+  "chatManageNameLabel": "Nombre del chat",
+  "chatManageNameHint": "p. ej. Directivos, Sociales, Filantropía",
+  "chatManageCreate": "Crear",
+  "chatManageRename": "Renombrar",
+  "chatManageDelete": "Eliminar",
+  "chatManageCreateChat": "Crear chat",
+  "chatManageChatCreated": "Se creó \"{name}\"",
+  "chatManageChatRenamed": "Chat renombrado",
+  "chatManageChatDeleted": "Chat eliminado",
+  "chatManageChatLimit": "Llegaste al límite de {count} chats personalizados.",
+  "chatManageDeleteTitle": "¿Eliminar este chat?",
+  "chatManageDeleteBody": "Los miembros perderán acceso a \"{name}\". Puedes recuperarlo después si cambias de opinión.",
+  "chatManageWhichCommunity": "¿Cuál comunidad?",
+  "chatJoinSectionTitle": "Chats a los que te puedes unir",
+  "chatJoinAction": "Unirme",
+  "chatJoinedSnack": "Te uniste a \"{name}\"",
+  "chatThreadOpenEvent": "Abrir evento",
+  "chatMembersTitle": "Miembros",
+  "chatMembersEmpty": "Aún no hay miembros para administrar.",
+  "chatMemberRemove": "Quitar",
+  "chatMemberRemoveTitle": "¿Quitar a {name}?",
+  "chatMemberRemoveBody": "Perderá acceso a este chat y no podrá volver a unirse.",
+  "chatMemberRemoved": "Se quitó a {name}",
+  "chatThreadManageMembers": "Administrar miembros",
+  "eventFormVisibilityLabel": "Visibilidad",
+  "eventFormVisibilityPublic": "Público",
+  "eventFormVisibilityPublicHint": "Cualquiera puede descubrir este evento y confirmar asistencia.",
+  "eventFormVisibilityMembers": "Solo miembros",
+  "eventFormVisibilityMembersHint": "Solo los miembros de la comunidad pueden ver este evento y confirmar asistencia.",
+  "exploreTitle": "Explorar eventos",
+  "exploreNavLabel": "Explorar",
+  "explorePublicBadge": "PÚBLICO",
+  "exploreGoingCount": "{count, plural, =0{Nadie asiste todavía} =1{1 asistente} other{{count} asistentes}}",
+  "exploreRsvp": "Asistir",
+  "exploreGoing": "Asistes",
+  "exploreFull": "Lleno",
+  "exploreJoinToRsvp": "Únete a la comunidad para asistir",
+  "exploreRsvpSuccess": "¡Confirmaste tu asistencia!",
+  "exploreEmpty": "No hay eventos públicos por ahora",
+  "exploreEmptyHint": "Vuelve pronto para ver próximos eventos públicos cerca de ti.",
+  "exploreLoadFailed": "No se pudieron cargar los eventos",
+  "exploreLoadMore": "Cargar más",
+  "exploreMembersOnlyTitle": "Evento solo para miembros",
+  "exploreMembersOnlyBody": "Este evento es para miembros de la comunidad. Únete a {community} para asistir.",
+  "exploreMembersOnlyBodyGeneric": "Este evento es para miembros de la comunidad. Únete a la comunidad para asistir.",
+  "exploreViewCommunity": "Ver comunidad",
+  "attendeeProfileTitle": "Perfil",
+  "attendeeProfilePoints": "{count} puntos",
+  "attendeeProfileLevelLabel": "Nivel {number}",
+  "attendeeProfileNoLevel": "Aún sin nivel",
+  "attendeeProfileXpProgress": "{current} / {max} XP",
+  "attendeeProfileBadges": "Insignias",
+  "attendeeProfileBadgesEmpty": "Aún no tienes insignias",
+  "attendeeProfileCommunities": "Comunidades",
+  "attendeeProfileCommunitiesEmpty": "Aún no eres miembro de ninguna comunidad",
+  "attendeeProfileEventsAttendedSection": "Eventos asistidos",
+  "attendeeProfileEventsAttendedEmpty": "Aún no has asistido a eventos",
+  "attendeeProfileSeeAll": "Ver todos",
+  "attendeeProfileFriendsCount": "{count} amigos",
+  "attendeeProfileAddFriend": "Agregar amigo",
+  "attendeeProfileError": "No se pudo cargar el perfil",
+  "attendeeProfileManageBadge": "Administrar",
+  "eventsAttendedTitle": "Eventos asistidos",
+  "eventsAttendedTotal": "{count, plural, =1{1 evento} other{{count} eventos}}",
+  "eventsAttendedEmpty": "Todavía no has asistido a ningún evento",
+  "eventsAttendedError": "No se pudieron cargar los eventos",
+  "eventsAttendedCheckedIn": "Registrado el {date}"
 }

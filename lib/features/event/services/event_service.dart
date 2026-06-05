@@ -7,10 +7,31 @@ import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/event.dart';
 import '../models/event_signup.dart';
+import '../models/public_event.dart';
 import '../../../config/constants/api.dart';
 
 /// API base URL
 const String _baseUrl = ApiConfig.baseUrl;
+
+/// Thrown when an attendee tries to RSVP to a members-only event they are not a
+/// member of (backend HTTP 403 with `error: community_membership_required`).
+///
+/// Carries [communityId] / [communityName] (when the backend echoes them) so
+/// the UI can offer the "Join community to RSVP" path without a second fetch.
+class MembersOnlyRsvpException implements Exception {
+  const MembersOnlyRsvpException({
+    this.communityId,
+    this.communityName,
+    this.message = 'Join this community to RSVP.',
+  });
+
+  final String? communityId;
+  final String? communityName;
+  final String message;
+
+  @override
+  String toString() => 'MembersOnlyRsvpException: $message';
+}
 
 /// Service for managing past events via the API
 class EventService {
@@ -206,6 +227,59 @@ class EventService {
   }
 
   // ---------------------------------------------------------------------------
+  // Public events discovery (Batch 3)
+  // ---------------------------------------------------------------------------
+
+  /// GET /events/discovery — the upcoming PUBLIC events feed for attendees.
+  /// Paginated. Every item is `visibility: public` and open to any attendee to
+  /// RSVP. Members-only events never appear here.
+  Future<PublicEventsPage> getDiscovery({int page = 1, int perPage = 15}) =>
+      _getDiscovery(page: page, perPage: perPage, allowRetry: true);
+
+  Future<PublicEventsPage> _getDiscovery({
+    required int page,
+    required int perPage,
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/discovery').replace(
+      queryParameters: <String, String>{
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      },
+    );
+    debugPrint('EventService: GET $uri');
+
+    try {
+      final response = await _sendWithRefresh(
+        () async => _httpClient.get(uri, headers: await _getHeaders()),
+        allowRetry: allowRetry,
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['data'];
+        if (data is Map<String, dynamic>) {
+          return PublicEventsPage.fromJson(data);
+        }
+        if (data is List) {
+          return PublicEventsPage.fromJson(<String, dynamic>{'events': data});
+        }
+        return PublicEventsPage.fromJson(json);
+      } else if (response.statusCode == 401) {
+        throw const AuthException('Session expired. Please sign in again.');
+      }
+      throw _parseApiError(response);
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } on Exception catch (e) {
+      debugPrint('Discovery events error: $e');
+      throw NetworkException('Failed to load public events: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Sign-up / RSVP (Phase 3)
   // ---------------------------------------------------------------------------
 
@@ -259,11 +333,36 @@ class EventService {
       // Response wasn't a full event payload — re-fetch for fresh counts.
       return getEvent(eventId);
     }
-    var message = 'Could not update your sign-up';
+
+    Map<String, dynamic>? body;
     try {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      message = (body['message'] ?? body['error'] ?? message).toString();
+      body = jsonDecode(response.body) as Map<String, dynamic>;
     } catch (_) {}
+
+    // Members-only gate: 403 with `error: community_membership_required`. Surface
+    // a typed exception so the UI offers "Join community to RSVP" instead of a
+    // raw error toast. The backend may echo the community in the payload.
+    final errorCode = body?['error']?.toString();
+    if (response.statusCode == 403 &&
+        errorCode == 'community_membership_required') {
+      final community = body?['community'];
+      String? communityId;
+      String? communityName;
+      if (community is Map<String, dynamic>) {
+        communityId = community['id'] as String?;
+        communityName = community['name'] as String?;
+      }
+      communityId ??= body?['community_id'] as String?;
+      throw MembersOnlyRsvpException(
+        communityId: communityId,
+        communityName: communityName,
+        message: (body?['message'] as String?) ?? 'Join this community to RSVP.',
+      );
+    }
+
+    final message =
+        (body?['message'] ?? body?['error'] ?? 'Could not update your sign-up')
+            .toString();
     throw Exception(message);
   }
 
@@ -359,6 +458,7 @@ class EventService {
     int? capacity,
     bool clearCapacity = false,
     List<String>? tierGate,
+    EventVisibility? visibility,
   }) async {
     final payload = <String, dynamic>{
       if (name != null) 'name': name,
@@ -373,6 +473,7 @@ class EventService {
       else if (clearCapacity)
         'capacity': null,
       if (tierGate != null) 'tier_gate': tierGate,
+      if (visibility != null) 'visibility': visibility.apiValue,
     };
     final response = await _sendWithRefresh(
       () async => _httpClient.put(
@@ -421,6 +522,7 @@ class EventService {
     String? location,
     int? capacity,
     List<String>? tierGate,
+    EventVisibility? visibility,
     Map<String, dynamic>? recurrence,
   }) async {
     final payload = <String, dynamic>{
@@ -431,6 +533,7 @@ class EventService {
       if (location != null && location.isNotEmpty) 'location': location,
       if (capacity != null) 'capacity': capacity,
       if (tierGate != null && tierGate.isNotEmpty) 'tier_gate': tierGate,
+      if (visibility != null) 'visibility': visibility.apiValue,
       // Recurring → backend builds an event_series and returns the first
       // occurrence (carrying series_id). See EventSeriesService.
       if (recurrence != null) 'recurrence': recurrence,

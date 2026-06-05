@@ -1,3 +1,20 @@
+/// Visibility of an event (Batch 3 — public discovery).
+///
+/// `public` events surface in the attendee `/events/discovery` feed and any
+/// attendee may RSVP. `membersOnly` events are gated: RSVP returns HTTP 403
+/// `community_membership_required` for non-members.
+enum EventVisibility {
+  public,
+  membersOnly;
+
+  /// Backend wire value (`events.visibility`). Never rename without a backend
+  /// change.
+  String get apiValue => this == EventVisibility.public ? 'public' : 'members_only';
+
+  static EventVisibility fromApi(String? value) =>
+      value == 'public' ? EventVisibility.public : EventVisibility.membersOnly;
+}
+
 /// Event model representing a past collaboration event
 class Event {
   final String id;
@@ -20,6 +37,10 @@ class Event {
   final int? waitlistPosition;
   final bool isUpcoming;
   final String? communityId;
+
+  /// Public vs members-only (Batch 3). Defaults to [EventVisibility.membersOnly]
+  /// for legacy/community events that predate the field.
+  final EventVisibility visibility;
 
   /// Viewer-scoped gate (`can_access` from the API). False when this member's
   /// tier is not in the event's `tier_gate` — the app then locks the event
@@ -49,10 +70,14 @@ class Event {
     this.waitlistPosition,
     this.isUpcoming = false,
     this.communityId,
+    this.visibility = EventVisibility.membersOnly,
     this.canAccess = true,
     this.seriesId,
     this.occurrenceIndex,
   });
+
+  /// True when the event is publicly discoverable and open to any attendee.
+  bool get isPublic => visibility == EventVisibility.public;
 
   /// True when this event belongs to a recurring series.
   bool get isRecurring => seriesId != null;
@@ -109,6 +134,7 @@ class Event {
       waitlistPosition: waitlistPosition,
       isUpcoming: json['is_upcoming'] as bool? ?? false,
       communityId: json['community_id'] as String?,
+      visibility: EventVisibility.fromApi(json['visibility'] as String?),
       canAccess: json['can_access'] as bool? ?? true,
       seriesId: json['series_id'] as String?,
       occurrenceIndex: (json['occurrence_index'] as num?)?.toInt(),
@@ -160,6 +186,7 @@ class Event {
     int? waitlistPosition,
     bool? isUpcoming,
     String? communityId,
+    EventVisibility? visibility,
     bool? canAccess,
     String? seriesId,
     int? occurrenceIndex,
@@ -182,6 +209,7 @@ class Event {
     waitlistPosition: waitlistPosition ?? this.waitlistPosition,
     isUpcoming: isUpcoming ?? this.isUpcoming,
     communityId: communityId ?? this.communityId,
+    visibility: visibility ?? this.visibility,
     canAccess: canAccess ?? this.canAccess,
     seriesId: seriesId ?? this.seriesId,
     occurrenceIndex: occurrenceIndex ?? this.occurrenceIndex,

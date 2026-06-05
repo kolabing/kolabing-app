@@ -5286,4 +5286,361 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get rosterSave => 'DESA';
+
+  @override
+  String get friendsTitle => 'Amics';
+
+  @override
+  String get friendsTabFriends => 'Amics';
+
+  @override
+  String get friendsTabRequests => 'Sol·licituds';
+
+  @override
+  String get friendsSearchHint => 'Cerca amics';
+
+  @override
+  String get friendsEmptyTitle => 'Encara no tens amics';
+
+  @override
+  String get friendsEmptyBody =>
+      'Connecta amb persones que coneixes als esdeveniments.';
+
+  @override
+  String get friendsSearchEmpty => 'Cap amic coincideix amb la teva cerca.';
+
+  @override
+  String get friendsRequestsIncomingSection => 'Rebudes';
+
+  @override
+  String get friendsRequestsSentSection => 'Enviades';
+
+  @override
+  String get friendsRequestsEmpty => 'No tens sol·licituds pendents.';
+
+  @override
+  String get friendsSuggestedSection => 'Suggerits';
+
+  @override
+  String get friendsSuggestedSubtitle =>
+      'Persones que has vist a esdeveniments';
+
+  @override
+  String friendsSharedEvents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count esdeveniments en comú',
+      one: '1 esdeveniment en comú',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get friendActionAdd => 'Afegeix';
+
+  @override
+  String get friendActionPending => 'Pendent';
+
+  @override
+  String get friendActionRespond => 'Respon';
+
+  @override
+  String get friendActionFriends => 'Amics';
+
+  @override
+  String get friendActionAccept => 'Accepta';
+
+  @override
+  String get friendActionDecline => 'Rebutja';
+
+  @override
+  String get friendActionCancelRequest => 'Cancel·la la sol·licitud';
+
+  @override
+  String get friendActionUnfriend => 'Elimina amic';
+
+  @override
+  String get friendActionBlock => 'Bloqueja';
+
+  @override
+  String get friendActionUnblock => 'Desbloqueja';
+
+  @override
+  String get friendActionBlocked => 'Bloquejat';
+
+  @override
+  String get friendUnfriendTitle => 'Vols eliminar l\'amic?';
+
+  @override
+  String friendUnfriendBody(String name) {
+    return 'Vols treure $name dels teus amics?';
+  }
+
+  @override
+  String get friendBlockTitle => 'Vols bloquejar?';
+
+  @override
+  String friendBlockBody(String name) {
+    return 'Vols bloquejar $name? S\'eliminarà dels teus amics i no podrà contactar-te.';
+  }
+
+  @override
+  String get friendFallbackName => 'aquesta persona';
+
+  @override
+  String get chatManageNewChatTitle => 'Nou xat';
+
+  @override
+  String get chatManageRenameTitle => 'Reanomena el xat';
+
+  @override
+  String get chatManageNameLabel => 'Nom del xat';
+
+  @override
+  String get chatManageNameHint => 'p. ex. Directius, Socials, Filantropia';
+
+  @override
+  String get chatManageCreate => 'Crea';
+
+  @override
+  String get chatManageRename => 'Reanomena';
+
+  @override
+  String get chatManageDelete => 'Elimina';
+
+  @override
+  String get chatManageCreateChat => 'Crea un xat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'S\'ha creat \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'S\'ha reanomenat el xat';
+
+  @override
+  String get chatManageChatDeleted => 'S\'ha eliminat el xat';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'Has arribat al límit de $count xats personalitzats.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => 'Vols eliminar aquest xat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Els membres perdran l\'accés a \"$name\". El pots recuperar més tard si canvies d\'opinió.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => 'Quina comunitat?';
+
+  @override
+  String get chatJoinSectionTitle => 'Xats als quals et pots unir';
+
+  @override
+  String get chatJoinAction => 'Uneix-t\'hi';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'T\'has unit a \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Obre l\'esdeveniment';
+
+  @override
+  String get chatMembersTitle => 'Membres';
+
+  @override
+  String get chatMembersEmpty => 'Encara no hi ha membres per administrar.';
+
+  @override
+  String get chatMemberRemove => 'Treu';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return 'Vols treure $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'Perdrà l\'accés a aquest xat i no s\'hi podrà tornar a unir.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return 'S\'ha tret $name';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Administra els membres';
+
+  @override
+  String get eventFormVisibilityLabel => 'Visibilitat';
+
+  @override
+  String get eventFormVisibilityPublic => 'Públic';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Qualsevol pot descobrir aquest esdeveniment i confirmar assistència.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Només membres';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Només els membres de la comunitat poden veure aquest esdeveniment i confirmar assistència.';
+
+  @override
+  String get exploreTitle => 'Explora esdeveniments';
+
+  @override
+  String get exploreNavLabel => 'Explora';
+
+  @override
+  String get explorePublicBadge => 'PÚBLIC';
+
+  @override
+  String exploreGoingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count assistents',
+      one: '1 assistent',
+      zero: 'Encara no hi va ningú',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreRsvp => 'Hi vaig';
+
+  @override
+  String get exploreGoing => 'Hi vas';
+
+  @override
+  String get exploreFull => 'Ple';
+
+  @override
+  String get exploreJoinToRsvp => 'Uneix-te a la comunitat per assistir';
+
+  @override
+  String get exploreRsvpSuccess => 'Has confirmat l\'assistència!';
+
+  @override
+  String get exploreEmpty => 'Ara mateix no hi ha esdeveniments públics';
+
+  @override
+  String get exploreEmptyHint =>
+      'Torna aviat per veure propers esdeveniments públics a prop teu.';
+
+  @override
+  String get exploreLoadFailed => 'No s\'han pogut carregar els esdeveniments';
+
+  @override
+  String get exploreLoadMore => 'Carrega\'n més';
+
+  @override
+  String get exploreMembersOnlyTitle => 'Esdeveniment només per a membres';
+
+  @override
+  String exploreMembersOnlyBody(String community) {
+    return 'Aquest esdeveniment és per a membres de la comunitat. Uneix-te a $community per assistir.';
+  }
+
+  @override
+  String get exploreMembersOnlyBodyGeneric =>
+      'Aquest esdeveniment és per a membres de la comunitat. Uneix-te a la comunitat per assistir.';
+
+  @override
+  String get exploreViewCommunity => 'Mostra la comunitat';
+
+  @override
+  String get attendeeProfileTitle => 'Perfil';
+
+  @override
+  String attendeeProfilePoints(int count) {
+    return '$count punts';
+  }
+
+  @override
+  String attendeeProfileLevelLabel(int number) {
+    return 'Nivell $number';
+  }
+
+  @override
+  String get attendeeProfileNoLevel => 'Encara sense nivell';
+
+  @override
+  String attendeeProfileXpProgress(int current, int max) {
+    return '$current / $max XP';
+  }
+
+  @override
+  String get attendeeProfileBadges => 'Insígnies';
+
+  @override
+  String get attendeeProfileBadgesEmpty => 'Encara no tens insígnies';
+
+  @override
+  String get attendeeProfileCommunities => 'Comunitats';
+
+  @override
+  String get attendeeProfileCommunitiesEmpty =>
+      'Encara no ets membre de cap comunitat';
+
+  @override
+  String get attendeeProfileEventsAttendedSection => 'Esdeveniments assistits';
+
+  @override
+  String get attendeeProfileEventsAttendedEmpty =>
+      'Encara no has assistit a cap esdeveniment';
+
+  @override
+  String get attendeeProfileSeeAll => 'Veure\'ls tots';
+
+  @override
+  String attendeeProfileFriendsCount(int count) {
+    return '$count amics';
+  }
+
+  @override
+  String get attendeeProfileAddFriend => 'Afegeix amic';
+
+  @override
+  String get attendeeProfileError => 'No s\'ha pogut carregar el perfil';
+
+  @override
+  String get attendeeProfileManageBadge => 'Gestiona';
+
+  @override
+  String get eventsAttendedTitle => 'Esdeveniments assistits';
+
+  @override
+  String eventsAttendedTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count esdeveniments',
+      one: '1 esdeveniment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventsAttendedEmpty => 'Encara no has assistit a cap esdeveniment';
+
+  @override
+  String get eventsAttendedError =>
+      'No s\'han pogut carregar els esdeveniments';
+
+  @override
+  String eventsAttendedCheckedIn(String date) {
+    return 'Registrat el $date';
+  }
 }
