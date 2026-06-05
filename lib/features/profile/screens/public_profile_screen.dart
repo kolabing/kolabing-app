@@ -227,19 +227,19 @@ class PublicProfileScreen extends ConsumerWidget {
     highlightColor: context.colors.surface,
     child: Column(
       children: [
-        _buildShimmerBlock(80),
+        _buildShimmerBlock(context, 80),
         const SizedBox(height: KolabingSpacing.md),
-        _buildShimmerBlock(120),
+        _buildShimmerBlock(context, 120),
         const SizedBox(height: KolabingSpacing.md),
-        _buildShimmerBlock(100),
+        _buildShimmerBlock(context, 100),
       ],
     ),
   );
 
-  Widget _buildShimmerBlock(double height) => Container(
+  Widget _buildShimmerBlock(BuildContext context, double height) => Container(
     height: height,
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surfaceContainer,
       borderRadius: KolabingRadius.borderRadiusLg,
     ),
   );

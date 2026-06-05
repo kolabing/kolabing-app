@@ -127,7 +127,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         child: Container(
           height: 180,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.colors.surfaceContainer,
             borderRadius: KolabingRadius.borderRadiusLg,
           ),
         ),
@@ -318,7 +318,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             4,
             (_) => Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),
@@ -582,7 +582,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               child: Container(
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.surfaceContainer,
                   borderRadius: KolabingRadius.borderRadiusMd,
                 ),
               ),

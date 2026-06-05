@@ -342,7 +342,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? context.colors.darkSurface : Colors.white,
               borderRadius: KolabingRadius.borderRadiusLg,
             ),
             child: Row(
@@ -350,8 +350,8 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 Container(
                   width: 80,
                   height: 80,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: isDark ? context.colors.darkSurface : Colors.white,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -364,7 +364,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                         width: 150,
                         height: 20,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? context.colors.darkSurface : Colors.white,
                           borderRadius: KolabingRadius.borderRadiusSm,
                         ),
                       ),
@@ -373,7 +373,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                         width: 80,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? context.colors.darkSurface : Colors.white,
                           borderRadius: KolabingRadius.borderRadiusSm,
                         ),
                       ),

@@ -93,7 +93,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           '$permissionName Permission',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         content: Text(
           '$permissionName access was denied. You can enable it from your device settings.',
@@ -104,7 +107,9 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Later',
-              style: KolabingTextStyles.button.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.button.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ),
           TextButton(
@@ -114,7 +119,9 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             },
             child: Text(
               'Open Settings',
-              style: KolabingTextStyles.button.copyWith(color: context.colors.primary),
+              style: KolabingTextStyles.button.copyWith(
+                color: context.colors.primary,
+              ),
             ),
           ),
         ],
@@ -160,7 +167,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             // Title
             Text(
               'ENABLE PERMISSIONS',
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: const Color(0xFF232323),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF232323),
                 letterSpacing: 1.0,
               ),
               textAlign: TextAlign.center,
@@ -174,7 +184,8 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               ),
               child: Text(
                 'To get the best experience, Kolabing needs a few permissions.',
-                style: KolabingTextStyles.bodySmall.copyWith(color: const Color(0xFF6B7280),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: const Color(0xFF6B7280),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -223,7 +234,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 ),
                 child: Text(
                   'CONTINUE',
-                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
+                  style: KolabingTextStyles.button.copyWith(
+                    fontSize: 16,
+                    letterSpacing: 1.0,
+                  ),
                 ),
               ),
             ),
@@ -232,7 +246,9 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             // Help text
             Text(
               'You can change these later in your device settings.',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: const Color(0xFF9CA3AF),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                color: const Color(0xFF9CA3AF),
               ),
               textAlign: TextAlign.center,
             ),
@@ -254,7 +270,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   }) => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surfaceContainer,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
         color: isGranted
@@ -283,13 +299,18 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             children: [
               Text(
                 title,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF232323),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF232323),
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: const Color(0xFF6B7280),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: const Color(0xFF6B7280),
                   height: 1.3,
                 ),
               ),

@@ -299,7 +299,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
             Expanded(
               child: Text(
                 AppLocalizations.of(context).businessFinalNoInternet,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.textOnDark),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.textOnDark,
+                ),
               ),
             ),
           ],
@@ -351,7 +354,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.error),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.error,
+                  ),
                 ),
               ),
               IconButton(
@@ -375,13 +381,17 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: context.colors.darkBorder),
               ),
               child: SelectableText(
                 details,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant, height: 1.5),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 12,
+                  color: context.colors.onSurfaceVariant,
+                  height: 1.5,
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -402,10 +412,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        AppLocalizations.of(
-                          context,
-                        ).businessFinalErrorCopied,
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.textOnDark),
+                        AppLocalizations.of(context).businessFinalErrorCopied,
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.textOnDark,
+                        ),
                       ),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -419,7 +430,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                 ),
                 label: Text(
                   AppLocalizations.of(context).businessFinalCopyDetails,
-                  style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.error),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.error,
+                  ),
                 ),
               ),
             ),
@@ -478,7 +492,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                               const SizedBox(width: 4),
                               Text(
                                 AppLocalizations.of(context).commonBack,
-                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
+                                style: KolabingTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: context.colors.onSurface,
+                                ),
                               ),
                             ],
                           ),
@@ -514,7 +531,11 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 : AppLocalizations.of(
                                     context,
                                   ).businessFinalTitleNewAccount,
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.onSurface,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -528,7 +549,9 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 : AppLocalizations.of(
                                     context,
                                   ).businessFinalSubtitleNewAccount,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -550,8 +573,13 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  AppLocalizations.of(context).businessFinalEdit,
-                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
+                                  AppLocalizations.of(
+                                    context,
+                                  ).businessFinalEdit,
+                                  style: KolabingTextStyles.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: context.colors.primary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -788,7 +816,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                       AppLocalizations.of(
                                         context,
                                       ).businessFinalAuthenticatedInfo,
-                                      style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+                                      style: KolabingTextStyles.captionSecondary
+                                          .copyWith(
+                                            color:
+                                                context.colors.onSurfaceVariant,
+                                            height: 1.4,
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -852,7 +885,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                       : AppLocalizations.of(
                                           context,
                                         ).businessFinalCreateAccountButton,
-                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
+                                  style: KolabingTextStyles.button.copyWith(
+                                    fontSize: 16,
+                                    letterSpacing: 1.0,
+                                  ),
                                 ),
                         ),
                       ),
@@ -867,7 +903,10 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             : AppLocalizations.of(
                                 context,
                               ).businessFinalTermsNewAccount,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12,
+                          color: context.colors.textTertiary,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],

@@ -936,7 +936,7 @@ class _CommunityOfferDetailScreenState
               height: 24,
               width: 200,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusSm,
               ),
             ),
@@ -944,7 +944,7 @@ class _CommunityOfferDetailScreenState
             Container(
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),

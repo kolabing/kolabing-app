@@ -344,7 +344,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             child: Container(
               height: index == 0 ? 200 : 120,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),

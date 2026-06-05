@@ -45,10 +45,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
     _animation = Tween<double>(
       begin: 0,
       end: 0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
   }
 
   @override
@@ -65,8 +62,9 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
     });
 
     // Make API call
-    final result =
-        await ref.read(spinProvider.notifier).spin(widget.challengeCompletionId);
+    final result = await ref
+        .read(spinProvider.notifier)
+        .spin(widget.challengeCompletionId);
 
     if (result == null) {
       setState(() {
@@ -78,15 +76,13 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
     // Calculate final rotation
     final random = math.Random();
     final baseRotations = 5 + random.nextInt(3); // 5-7 full rotations
-    final finalAngle = baseRotations * 2 * math.pi + random.nextDouble() * 2 * math.pi;
+    final finalAngle =
+        baseRotations * 2 * math.pi + random.nextDouble() * 2 * math.pi;
 
     _animation = Tween<double>(
       begin: 0,
       end: finalAngle,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward().then((_) {
       setState(() {
@@ -107,7 +103,10 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           'Spin to Win',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: Colors.white),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
       ),
@@ -117,11 +116,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
             const SizedBox(height: KolabingSpacing.xl),
 
             // Wheel
-            Expanded(
-              child: Center(
-                child: _buildWheel(),
-              ),
-            ),
+            Expanded(child: Center(child: _buildWheel())),
 
             // Spin button or result
             Padding(
@@ -259,7 +254,9 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
                 const SizedBox(width: KolabingSpacing.sm),
                 Text(
                   spinState.error!,
-                  style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.error),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.error,
+                  ),
                 ),
               ],
             ),
@@ -290,7 +287,11 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
                   )
                 : Text(
                     'SPIN THE WHEEL',
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: 1.2),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                    ),
                   ),
           ),
         ),
@@ -305,7 +306,7 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surfaceContainer,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -313,18 +314,26 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
           Icon(
             won ? LucideIcons.partyPopper : LucideIcons.rotateCcw,
             size: 48,
-            color: won ? context.colors.success : context.colors.onSurfaceVariant,
+            color: won
+                ? context.colors.success
+                : context.colors.onSurfaceVariant,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             won ? 'Congratulations!' : 'Better luck next time!',
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+            ),
           ),
           if (won && reward != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               'You won: ${reward.name}',
-              style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
           const SizedBox(height: KolabingSpacing.lg),
@@ -342,7 +351,9 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
               ),
               child: Text(
                 won ? 'View Reward' : 'Close',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

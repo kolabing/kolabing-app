@@ -334,7 +334,7 @@ class _CommunityProfileScreenState
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? context.colors.darkSurface : Colors.white,
                   borderRadius: KolabingRadius.borderRadiusLg,
                 ),
                 child: Row(
@@ -342,8 +342,8 @@ class _CommunityProfileScreenState
                     Container(
                       width: 80,
                       height: 80,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: isDark ? context.colors.darkSurface : Colors.white,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -356,7 +356,7 @@ class _CommunityProfileScreenState
                             width: 150,
                             height: 20,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? context.colors.darkSurface : Colors.white,
                               borderRadius: KolabingRadius.borderRadiusSm,
                             ),
                           ),
@@ -365,7 +365,7 @@ class _CommunityProfileScreenState
                             width: 80,
                             height: 24,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? context.colors.darkSurface : Colors.white,
                               borderRadius: KolabingRadius.borderRadiusSm,
                             ),
                           ),
