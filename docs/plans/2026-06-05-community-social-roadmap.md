@@ -148,3 +148,43 @@ All blocks are in scope; addressed in this dependency order:
       │   +is_open  +deleted_at  +slug +name +event_id +last_message_at
       └─1:N─ community_members (status, tier, can_manage)
 ```
+
+---
+
+## Parallel execution model
+
+Lanes are independent verticals (distinct tables + controllers). Agents run
+concurrently in **isolated git worktrees**; within a lane, tasks are consecutive
+(they share files). Three files are SHARED and integrated centrally by the
+orchestrator after each lane lands, to avoid collisions:
+`routes/api.php`, `app/Providers/AppServiceProvider.php`, and the ROLES docs.
+
+```
+ WAVE 1  (backend kolabing-v2 — 4 parallel lanes, zero cross-deps)
+ +-------------+-------------+-------------+-------------------+
+ | LANE CHAT   | LANE EVENTS | LANE FRIENDS| LANE ATTENDEE-PROF|
+ | B1          | B3 backend  | B5 backend  | B4 backend        |
+ | migrate ->  | visibility->| friendships>| profile-agg ->    |
+ | models ->   | discovery ->| endpoints ->| events-attended ->|
+ | del/rename/ | rsvp rules->| suggested   | tests             |
+ | join/ban -> | tests       | (>=3 shared)|                   |
+ | access/res->|             | -> tests    |                   |
+ | tests       |             |             |                   |
+ +------+------+------+------+------+------+---------+---------+
+        |             |             |                |
+ WAVE 2 (each depends only on its Wave-1 lane)        |
+ +------+-------------+------+------+-----+------------+-------+
+ | B7 OPERATOR PANEL  | B2 CHAT APP | B6 COMMUNITY PROFILE    |
+ |   <- CHAT          |  <- CHAT    |   6a-6e independent      |
+ | B3 APP <- EVENTS   | B5 APP      |   6f (chats) <- CHAT     |
+ | B4 APP <- ATTENDEE |  <- FRIENDS |                          |
+ +--------------------+-------------+--------------------------+
+
+ SHARED (orchestrator integrates): routes/api.php · AppServiceProvider · ROLES-*.md
+```
+
+**Lane ownership:** each agent creates only its feature's new files + its own
+tests (green in its worktree), and reports the exact route block / policy
+registration / ROLES-doc delta it needs. The orchestrator applies those three
+shared edits and runs the full suite once all lanes merge.
+
