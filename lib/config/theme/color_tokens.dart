@@ -601,7 +601,12 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
 }
 
 /// Ergonomic access: `context.colors.onSurface`.
+///
+/// Falls back to the light token set when no [KolabingColorTokens] extension is
+/// registered on the ambient theme (e.g. a widget pumped in a bare test harness
+/// or rendered outside the app's themed tree), so it never null-crashes.
 extension KolabingColorsX on BuildContext {
   KolabingColorTokens get colors =>
-      Theme.of(this).extension<KolabingColorTokens>()!;
+      Theme.of(this).extension<KolabingColorTokens>() ??
+      KolabingColorTokens.light;
 }

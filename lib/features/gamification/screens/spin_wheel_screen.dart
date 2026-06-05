@@ -168,6 +168,14 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
                   painter: _WheelPainter(
                     segments: widget.rewards.length + 1, // +1 for "Try Again"
                     rewards: widget.rewards,
+                    colors: [
+                      context.colors.primary,
+                      context.colors.success,
+                      context.colors.info,
+                      context.colors.warning,
+                      const Color(0xFF9B59B6),
+                      const Color(0xFFE74C3C),
+                    ],
                   ),
                 ),
               ),
@@ -348,25 +356,18 @@ class _WheelPainter extends CustomPainter {
   _WheelPainter({
     required this.segments,
     required this.rewards,
+    required this.colors,
   });
 
   final int segments;
   final List<EventReward> rewards;
+  final List<Color> colors;
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
     final segmentAngle = 2 * math.pi / segments;
-
-    final colors = [
-      context.colors.primary,
-      context.colors.success,
-      context.colors.info,
-      context.colors.warning,
-      const Color(0xFF9B59B6),
-      const Color(0xFFE74C3C),
-    ];
 
     for (int i = 0; i < segments; i++) {
       final startAngle = i * segmentAngle - math.pi / 2;

@@ -37,7 +37,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: context.colors.background,
+        systemNavigationBarColor: KolabingColors.background,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );

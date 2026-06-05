@@ -49,7 +49,7 @@ class LeaderboardPodium extends StatelessWidget {
         children: [
           // 2nd place
           if (ordered[0] != null)
-            _buildPodiumEntry(ordered[0]!, 2, 100)
+            _buildPodiumEntry(context, ordered[0]!, 2, 100)
           else
             const SizedBox(width: 100),
 
@@ -57,7 +57,7 @@ class LeaderboardPodium extends StatelessWidget {
 
           // 1st place
           if (ordered[1] != null)
-            _buildPodiumEntry(ordered[1]!, 1, 130)
+            _buildPodiumEntry(context, ordered[1]!, 1, 130)
           else
             const SizedBox(width: 100),
 
@@ -65,7 +65,7 @@ class LeaderboardPodium extends StatelessWidget {
 
           // 3rd place
           if (ordered[2] != null)
-            _buildPodiumEntry(ordered[2]!, 3, 80)
+            _buildPodiumEntry(context, ordered[2]!, 3, 80)
           else
             const SizedBox(width: 100),
         ],
@@ -73,7 +73,8 @@ class LeaderboardPodium extends StatelessWidget {
     );
   }
 
-  Widget _buildPodiumEntry(LeaderboardEntry entry, int rank, double height) {
+  Widget _buildPodiumEntry(
+      BuildContext context, LeaderboardEntry entry, int rank, double height) {
     Color crownColor;
     Color bgColor;
 

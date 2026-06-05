@@ -31,13 +31,13 @@ class RewardBadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      compact ? _buildCompact() : _buildGrid();
+      compact ? _buildCompact(context) : _buildGrid(context);
 
   // ---------------------------------------------------------------------------
   // Grid mode (160 x 180)
   // ---------------------------------------------------------------------------
 
-  Widget _buildGrid() {
+  Widget _buildGrid(BuildContext context) {
     final isUnlocked = badge.isUnlocked;
 
     return AnimatedOpacity(
@@ -70,6 +70,7 @@ class RewardBadgeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildIconCircle(
+              context,
               size: 64,
               iconSize: 28,
               isUnlocked: isUnlocked,
@@ -108,7 +109,7 @@ class RewardBadgeCard extends StatelessWidget {
   // Compact mode (80 x 96)
   // ---------------------------------------------------------------------------
 
-  Widget _buildCompact() {
+  Widget _buildCompact(BuildContext context) {
     final isUnlocked = badge.isUnlocked;
 
     return AnimatedOpacity(
@@ -121,6 +122,7 @@ class RewardBadgeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildIconCircle(
+              context,
               size: 40,
               iconSize: 18,
               isUnlocked: isUnlocked,
@@ -145,7 +147,8 @@ class RewardBadgeCard extends StatelessWidget {
   // Shared icon circle
   // ---------------------------------------------------------------------------
 
-  Widget _buildIconCircle({
+  Widget _buildIconCircle(
+    BuildContext context, {
     required double size,
     required double iconSize,
     required bool isUnlocked,

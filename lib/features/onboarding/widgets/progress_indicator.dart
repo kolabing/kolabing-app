@@ -30,17 +30,17 @@ class OnboardingProgressIndicator extends StatelessWidget {
               // Even indices are circles, odd indices are lines
               if (index.isEven) {
                 final stepNumber = (index ~/ 2) + 1;
-                return _buildCircle(stepNumber);
+                return _buildCircle(context, stepNumber);
               } else {
                 final stepNumber = (index ~/ 2) + 1;
-                return _buildLine(stepNumber);
+                return _buildLine(context, stepNumber);
               }
             },
           ),
         ),
       );
 
-  Widget _buildCircle(int stepNumber) {
+  Widget _buildCircle(BuildContext context, int stepNumber) {
     final isActive = stepNumber <= currentStep;
     final isCompleted = stepNumber < currentStep;
 
@@ -66,7 +66,7 @@ class OnboardingProgressIndicator extends StatelessWidget {
     );
   }
 
-  Widget _buildLine(int stepBeforeNumber) {
+  Widget _buildLine(BuildContext context, int stepBeforeNumber) {
     final isActive = stepBeforeNumber < currentStep;
 
     return AnimatedContainer(

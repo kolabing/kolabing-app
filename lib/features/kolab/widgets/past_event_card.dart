@@ -32,13 +32,13 @@ class PastEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      event == null ? _buildAddCard() : _buildEventCard();
+      event == null ? _buildAddCard(context) : _buildEventCard(context);
 
   // ---------------------------------------------------------------------------
   // Add mode — dashed border placeholder
   // ---------------------------------------------------------------------------
 
-  Widget _buildAddCard() => GestureDetector(
+  Widget _buildAddCard(BuildContext context) => GestureDetector(
     onTap: onAdd,
     child: CustomPaint(
       painter: _DashedBorderPainter(
@@ -78,7 +78,7 @@ class PastEventCard extends StatelessWidget {
   // Existing event card
   // ---------------------------------------------------------------------------
 
-  Widget _buildEventCard() {
+  Widget _buildEventCard(BuildContext context) {
     final e = event!;
     final formattedDate = DateFormat('MMM dd, yyyy').format(e.date);
 

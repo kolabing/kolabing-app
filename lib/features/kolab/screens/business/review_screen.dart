@@ -390,17 +390,17 @@ class _CoverImage extends StatelessWidget {
       return Image.network(
         url!,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _placeholder(),
+        errorBuilder: (_, __, ___) => _placeholder(context),
       );
     }
     return Image.file(
       File(url!),
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => _placeholder(),
+      errorBuilder: (_, __, ___) => _placeholder(context),
     );
   }
 
-  Widget _placeholder() => Container(
+  Widget _placeholder(BuildContext context) => Container(
         color: context.colors.surfaceVariant,
         child: Center(
           child: Icon(

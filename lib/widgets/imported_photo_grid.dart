@@ -81,12 +81,13 @@ class ImportedPhotoGrid extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               if (resolvedUrl.isEmpty)
-                _placeholder()
+                _placeholder(context)
               else
                 Image.network(
                   resolvedUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => _placeholder(),
+                  errorBuilder: (context, error, stackTrace) =>
+                      _placeholder(context),
                   loadingBuilder: (context, child, progress) {
                     if (progress == null) return child;
                     return Container(
@@ -137,7 +138,7 @@ class ImportedPhotoGrid extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() => Container(
+  Widget _placeholder(BuildContext context) => Container(
     color: context.colors.surfaceVariant,
     alignment: Alignment.center,
     child: Icon(

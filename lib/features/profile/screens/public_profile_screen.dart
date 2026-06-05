@@ -51,7 +51,7 @@ class PublicProfileScreen extends ConsumerWidget {
       backgroundColor: context.colors.background,
       body: profileAsync.when(
         loading: () =>
-            _buildWithOptimisticHeader(context, body: _buildLoadingBody()),
+            _buildWithOptimisticHeader(context, body: _buildLoadingBody(context)),
         error: (error, _) => _buildWithOptimisticHeader(
           context,
           body: _buildErrorBody(context, ref, error.toString()),
@@ -172,7 +172,7 @@ class PublicProfileScreen extends ConsumerWidget {
                   KolabingSpacing.md,
                 ),
                 child: creatorProfile != null
-                    ? _buildOptimisticHeaderContent()
+                    ? _buildOptimisticHeaderContent(context)
                     : const SizedBox.shrink(),
               ),
             ),
@@ -186,7 +186,7 @@ class PublicProfileScreen extends ConsumerWidget {
     ],
   );
 
-  Widget _buildOptimisticHeaderContent() {
+  Widget _buildOptimisticHeaderContent(BuildContext context) {
     final cp = creatorProfile;
     if (cp == null) {
       return const SizedBox.shrink();
@@ -222,7 +222,7 @@ class PublicProfileScreen extends ConsumerWidget {
   // Loading & Error
   // ---------------------------------------------------------------------------
 
-  Widget _buildLoadingBody() => Shimmer.fromColors(
+  Widget _buildLoadingBody(BuildContext context) => Shimmer.fromColors(
     baseColor: context.colors.surfaceVariant,
     highlightColor: context.colors.surface,
     child: Column(
@@ -519,14 +519,15 @@ class _AvatarWidget extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorWidget: (context, error, stackTrace) => _buildInitialCircle(),
+          errorWidget: (context, error, stackTrace) =>
+              _buildInitialCircle(context),
         ),
       );
     }
-    return _buildInitialCircle();
+    return _buildInitialCircle(context);
   }
 
-  Widget _buildInitialCircle() => Container(
+  Widget _buildInitialCircle(BuildContext context) => Container(
     width: size,
     height: size,
     decoration: BoxDecoration(

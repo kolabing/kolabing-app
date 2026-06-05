@@ -84,10 +84,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
+            context,
             hint: l10n.venueDetailsListingTitleHint,
             error: errors['title'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateTitle,
           // C1: dismiss keyboard on tap-outside so the action bar is reachable.
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
@@ -100,10 +101,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
+            context,
             hint: l10n.venueDetailsCampaignDescriptionHint,
             error: errors['description'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -120,10 +122,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
+            context,
             hint: l10n.venueDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -212,7 +215,8 @@ class _SummaryRow extends StatelessWidget {
       );
 }
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) =>
@@ -249,7 +253,8 @@ InputDecoration _inputDecoration({
       ),
     );
 
-final _inputTextStyle = KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface);
+TextStyle _inputTextStyle(BuildContext context) =>
+    KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});

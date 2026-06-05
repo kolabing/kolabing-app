@@ -82,10 +82,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsListingTitleHint,
             error: errors['title'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateTitle,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -98,10 +99,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           controller: _nameController,
           maxLength: 255,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsProductNameHint,
             error: errors['product_name'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateProductName,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -177,10 +179,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsDescriptionHint,
             error: errors['description'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -197,10 +200,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -215,10 +219,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ? kolab.preferredCity
                   : null,
               decoration: _inputDecoration(
+                context,
                 hint: l10n.productDetailsSelectCityHint,
                 error: errors['preferred_city'],
               ),
-              style: _inputTextStyle,
+              style: _inputTextStyle(context),
               icon: Icon(
                 LucideIcons.chevronDown,
                 size: 20,
@@ -228,7 +233,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   .map(
                     (c) => DropdownMenuItem(
                       value: c.name,
-                      child: Text(c.name, style: _inputTextStyle),
+                      child: Text(c.name, style: _inputTextStyle(context)),
                     ),
                   )
                   .toList(),
@@ -256,7 +261,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 // Shared helpers (file-private)
 // =============================================================================
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) =>
@@ -293,7 +299,8 @@ InputDecoration _inputDecoration({
       ),
     );
 
-TextStyle get _inputTextStyle => KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
+TextStyle _inputTextStyle(BuildContext context) =>
+    KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
 
 // ---------------------------------------------------------------------------
 // Reusable small widgets

@@ -123,10 +123,11 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: _inputDecoration(
+              context,
               hint: 'e.g. 500',
               error: errors['min_community_size'],
             ),
-            style: _inputTextStyle,
+            style: _inputTextStyle(context),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             onSubmitted: (_) => FocusScope.of(context).unfocus(),
             onChanged: (v) {
@@ -167,7 +168,8 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
 // Shared helpers (file-private)
 // =============================================================================
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) => InputDecoration(
@@ -203,7 +205,7 @@ InputDecoration _inputDecoration({
   ),
 );
 
-TextStyle get _inputTextStyle =>
+TextStyle _inputTextStyle(BuildContext context) =>
     KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
 
 // =============================================================================

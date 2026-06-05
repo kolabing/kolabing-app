@@ -342,14 +342,14 @@ class _PhotoPreview extends StatelessWidget {
         width: 84,
         height: 84,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _placeholder(),
+        errorBuilder: (context, _, _) => _placeholder(context),
       );
     }
 
-    return _placeholder();
+    return _placeholder(context);
   }
 
-  Widget _placeholder() => Container(
+  Widget _placeholder(BuildContext context) => Container(
     width: 84,
     height: 84,
     color: context.colors.surfaceVariant,

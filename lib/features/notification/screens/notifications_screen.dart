@@ -245,7 +245,7 @@ class _NotificationTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Icon / Avatar
-              _buildLeading(),
+              _buildLeading(context),
               const SizedBox(width: KolabingSpacing.sm),
 
               // Content
@@ -315,7 +315,7 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  Widget _buildLeading() {
+  Widget _buildLeading(BuildContext context) {
     // Show avatar if available
     if (notification.actorAvatarUrl != null &&
         notification.actorAvatarUrl!.isNotEmpty) {
@@ -328,16 +328,16 @@ class _NotificationTile extends StatelessWidget {
             width: 44,
             height: 44,
             fit: BoxFit.cover,
-            errorWidget: (_, __, ___) => _buildIconAvatar(),
+            errorWidget: (_, __, ___) => _buildIconAvatar(context),
           ),
         ),
       );
     }
 
-    return _buildIconAvatar();
+    return _buildIconAvatar(context);
   }
 
-  Widget _buildIconAvatar() {
+  Widget _buildIconAvatar(BuildContext context) {
     final (IconData icon, Color bgColor, Color iconColor) =
         switch (notification.type) {
       NotificationType.newMessage => (

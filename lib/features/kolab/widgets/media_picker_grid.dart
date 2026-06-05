@@ -90,10 +90,10 @@ class _MediaSlot extends StatelessWidget {
               Image.network(
                 media.url,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildPlaceholder(),
+                errorBuilder: (_, _, _) => _buildPlaceholder(context),
               )
             else
-              _buildPlaceholder(),
+              _buildPlaceholder(context),
             // Video overlay icon
             if (media.type == 'video')
               Center(
@@ -136,7 +136,7 @@ class _MediaSlot extends StatelessWidget {
         ),
       );
 
-  Widget _buildPlaceholder() => ColoredBox(
+  Widget _buildPlaceholder(BuildContext context) => ColoredBox(
         color: context.colors.surfaceVariant,
         child: Center(
           child: Icon(

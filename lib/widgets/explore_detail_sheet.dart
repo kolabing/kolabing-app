@@ -115,7 +115,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               children: [
                 _buildHeaderRow(context),
                 const SizedBox(height: KolabingSpacing.lg),
-                _buildTitleSection(),
+                _buildTitleSection(context),
                 const SizedBox(height: KolabingSpacing.lg),
                 if (discoveryItem?.isCommunityRequest ?? false) ...[
                   _buildBusinessExploreSummary(context),
@@ -125,7 +125,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                   _buildOfferSummarySection(context),
                   const SizedBox(height: KolabingSpacing.lg),
                 ],
-                _buildLocationAndDetails(),
+                _buildLocationAndDetails(context),
                 if (opportunity.availabilityMode ==
                         AvailabilityMode.recurring &&
                     opportunity.recurringDays.isNotEmpty) ...[
@@ -134,7 +134,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 ],
                 if (opportunity.categories.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.lg),
-                  _buildCategoriesSection(),
+                  _buildCategoriesSection(context),
                 ],
                 if (!hideCreatorIdentity &&
                     (discoveryItem?.isCommunityRequest ?? false) &&
@@ -181,7 +181,7 @@ class ExploreDetailSheet extends ConsumerWidget {
           enabled: hideCreatorIdentity,
           sigma: 14,
           borderRadius: BorderRadius.circular(32),
-          child: _buildAvatar(avatarUrl, initial),
+          child: _buildAvatar(context, avatarUrl, initial),
         ),
         const SizedBox(width: KolabingSpacing.sm),
 
@@ -232,7 +232,11 @@ class ExploreDetailSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildAvatar(String? avatarUrl, String initial) => Container(
+  Widget _buildAvatar(
+    BuildContext context,
+    String? avatarUrl,
+    String initial,
+  ) => Container(
     width: 64,
     height: 64,
     decoration: BoxDecoration(
@@ -246,13 +250,13 @@ class ExploreDetailSheet extends ConsumerWidget {
               width: 64,
               height: 64,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => _buildAvatarFallback(initial),
+              errorBuilder: (_, _, _) => _buildAvatarFallback(context, initial),
             ),
           )
-        : _buildAvatarFallback(initial),
+        : _buildAvatarFallback(context, initial),
   );
 
-  Widget _buildAvatarFallback(String initial) => Center(
+  Widget _buildAvatarFallback(BuildContext context, String initial) => Center(
     child: Text(
       initial,
       style: KolabingTextStyles.headlineMedium.copyWith(
@@ -289,7 +293,7 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Title Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildTitleSection() => Column(
+  Widget _buildTitleSection(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
@@ -321,18 +325,21 @@ class ExploreDetailSheet extends ConsumerWidget {
     final sections = <Widget>[
       if (request.needTypeLabels.isNotEmpty)
         _buildSummaryCard(
+          context,
           icon: LucideIcons.search,
           title: l10n.exploreDetailLookingFor,
           value: request.needTypeLabels.join(', '),
         ),
       if (request.offerInReturnLabels.isNotEmpty)
         _buildSummaryCard(
+          context,
           icon: LucideIcons.gift,
           title: l10n.exploreDetailWhatTheyOffer,
           value: request.offerInReturnLabels.join(', '),
         ),
       if (request.communitySize != null || request.typicalAttendance != null)
         _buildSummaryCard(
+          context,
           icon: LucideIcons.users,
           title: l10n.exploreDetailCommunitySize,
           value: _buildScaleLabel(context, request),
@@ -351,7 +358,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard({
+  Widget _buildSummaryCard(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String value,
@@ -458,7 +466,7 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Location & Details Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildLocationAndDetails() {
+  Widget _buildLocationAndDetails(BuildContext context) {
     final dateFormat = DateFormat('MMM d');
     final startFormatted = dateFormat.format(opportunity.availabilityStart);
     final endFormatted = dateFormat.format(opportunity.availabilityEnd);
@@ -492,11 +500,13 @@ class ExploreDetailSheet extends ConsumerWidget {
     return Wrap(
       spacing: KolabingSpacing.xs,
       runSpacing: KolabingSpacing.xs,
-      children: items.map(_buildDetailPill).toList(),
+      children: items
+          .map((item) => _buildDetailPill(context, item))
+          .toList(),
     );
   }
 
-  Widget _buildDetailPill(_DetailItem item) => Container(
+  Widget _buildDetailPill(BuildContext context, _DetailItem item) => Container(
     padding: const EdgeInsets.symmetric(
       horizontal: KolabingSpacing.sm,
       vertical: KolabingSpacing.xs,
@@ -577,7 +587,7 @@ class ExploreDetailSheet extends ConsumerWidget {
   // Categories Section
   // ---------------------------------------------------------------------------
 
-  Widget _buildCategoriesSection() => Wrap(
+  Widget _buildCategoriesSection(BuildContext context) => Wrap(
     spacing: KolabingSpacing.xs,
     runSpacing: KolabingSpacing.xs,
     children: opportunity.categories

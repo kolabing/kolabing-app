@@ -867,7 +867,7 @@ class _MessageBubble extends StatelessWidget {
         children: [
           // Show avatar for received messages
           if (!isOwn) ...[
-            _buildAvatar(senderProfile),
+            _buildAvatar(context, senderProfile),
             const SizedBox(width: KolabingSpacing.xs),
           ],
           // Message bubble
@@ -948,7 +948,7 @@ class _MessageBubble extends StatelessWidget {
                       // Read receipts for own messages
                       if (isOwn) ...[
                         const SizedBox(width: 4),
-                        _buildReadReceipt(),
+                        _buildReadReceipt(context),
                       ],
                     ],
                   ),
@@ -963,7 +963,7 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(SenderProfile profile) {
+  Widget _buildAvatar(BuildContext context, SenderProfile profile) {
     if (profile.profilePhoto != null && profile.profilePhoto!.isNotEmpty) {
       return ClipOval(
         child: Image.network(
@@ -971,14 +971,14 @@ class _MessageBubble extends StatelessWidget {
           width: 28,
           height: 28,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _buildFallbackAvatar(profile),
+          errorBuilder: (_, __, ___) => _buildFallbackAvatar(context, profile),
         ),
       );
     }
-    return _buildFallbackAvatar(profile);
+    return _buildFallbackAvatar(context, profile);
   }
 
-  Widget _buildFallbackAvatar(SenderProfile profile) {
+  Widget _buildFallbackAvatar(BuildContext context, SenderProfile profile) {
     return Container(
       width: 28,
       height: 28,
@@ -1002,7 +1002,7 @@ class _MessageBubble extends StatelessWidget {
   /// Build read receipt indicator
   /// Single check (checkmark) = sent
   /// Double check (checkmarks) = read
-  Widget _buildReadReceipt() {
+  Widget _buildReadReceipt(BuildContext context) {
     final isRead = message.isRead;
     final iconColor = context.colors.onPrimary.withValues(alpha: 0.7);
 

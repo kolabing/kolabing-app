@@ -324,7 +324,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                     ),
 
                     // Corner markers
-                    _buildCornerMarkers(),
+                    _buildCornerMarkers(context),
 
                     // Processing indicator
                     if (checkinState.isLoading)
@@ -378,10 +378,10 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     );
   }
 
-  Widget _buildCornerMarkers() {
+  Widget _buildCornerMarkers(BuildContext context) {
     const double size = 30;
     const double thickness = 4;
-    color = context.colors.primary;
+    final color = context.colors.primary;
 
     return Stack(
       children: [

@@ -189,6 +189,7 @@ class StatsScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStatRow(
+            context,
             LucideIcons.gift,
             l10n.statsScreenRewardsWon,
             '${stats.totalRewardsWon}',
@@ -198,6 +199,7 @@ class StatsScreen extends ConsumerWidget {
           const Divider(height: KolabingSpacing.lg),
 
           _buildStatRow(
+            context,
             LucideIcons.checkCircle,
             l10n.statsScreenRewardsRedeemed,
             '${stats.totalRewardsRedeemed}',
@@ -206,6 +208,7 @@ class StatsScreen extends ConsumerWidget {
           const Divider(height: KolabingSpacing.lg),
 
           _buildStatRow(
+            context,
             LucideIcons.mapPin,
             l10n.statsScreenEventsDiscovered,
             '${stats.totalEventsDiscovered}',
@@ -214,6 +217,7 @@ class StatsScreen extends ConsumerWidget {
           const Divider(height: KolabingSpacing.lg),
 
           _buildStatRow(
+            context,
             LucideIcons.clock,
             l10n.statsScreenSpinsUsed,
             '${stats.totalSpins}',
@@ -226,6 +230,7 @@ class StatsScreen extends ConsumerWidget {
   }
 
   Widget _buildStatRow(
+    BuildContext context,
     IconData icon,
     String label,
     String value,

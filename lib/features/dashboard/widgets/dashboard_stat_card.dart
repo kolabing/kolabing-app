@@ -45,7 +45,7 @@ class DashboardStatCard extends StatelessWidget {
   /// Position index — even = lavender, odd = sage
   final int index;
 
-  Color get _cardColor => index.isEven
+  Color _cardColor(BuildContext context) => index.isEven
       ? context.colors.secondaryContainer
       : context.colors.tertiaryContainer;
 
@@ -56,7 +56,7 @@ class DashboardStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? context.colors.darkSurface : _cardColor,
+        color: isDark ? context.colors.darkSurface : _cardColor(context),
         borderRadius: KolabingRadius.borderRadiusXl,
       ),
       child: Column(

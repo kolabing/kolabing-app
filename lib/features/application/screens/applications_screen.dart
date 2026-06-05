@@ -136,7 +136,7 @@ class _SentApplicationsTab extends ConsumerWidget {
     required bool isDark,
   }) {
     if (state.isLoading) {
-      return _buildLoadingState(isDark);
+      return _buildLoadingState(context, isDark);
     }
 
     if (state.error != null) {
@@ -228,7 +228,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
 
   Widget _buildBody(BuildContext context, ApplicationsState state, bool isDark) {
     if (state.isLoading) {
-      return _buildLoadingState(isDark);
+      return _buildLoadingState(context, isDark);
     }
 
     if (state.error != null) {
@@ -310,7 +310,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
 // Shared helpers
 // =============================================================================
 
-Widget _buildLoadingState(bool isDark) => Shimmer.fromColors(
+Widget _buildLoadingState(BuildContext context, bool isDark) => Shimmer.fromColors(
       baseColor:
           isDark ? context.colors.darkSurface : context.colors.surfaceVariant,
       highlightColor:
@@ -402,7 +402,7 @@ class _ApplicationCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Avatar
-            _buildAvatar(),
+            _buildAvatar(context),
             const SizedBox(width: KolabingSpacing.sm),
 
             // Content
@@ -496,7 +496,7 @@ class _ApplicationCard extends StatelessWidget {
       ),
     );
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(BuildContext context) {
     final String? avatarUrl;
     final String name;
 
@@ -520,14 +520,14 @@ class _ApplicationCard extends StatelessWidget {
               child: Image.network(
                 avatarUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _avatarPlaceholder(name),
+                errorBuilder: (_, _, _) => _avatarPlaceholder(context, name),
               ),
             )
-          : _avatarPlaceholder(name),
+          : _avatarPlaceholder(context, name),
     );
   }
 
-  Widget _avatarPlaceholder(String name) => Center(
+  Widget _avatarPlaceholder(BuildContext context, String name) => Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
           style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.primary),

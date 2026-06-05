@@ -450,7 +450,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildTagChips(List<String> chips) {
     // Alternating chip palette using existing design tokens: lavender, sage,
     // and soft yellow. Falls back to surfaceVariant if more chips appear.
-    fills = <Color>[
+    final fills = <Color>[
       context.colors.secondaryContainer,
       context.colors.tertiaryContainer,
       context.colors.primary,

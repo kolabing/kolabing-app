@@ -52,7 +52,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: context.colors.background,
+        systemNavigationBarColor: KolabingColors.background,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -358,6 +358,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       maxLength: 255,
                       onChanged: notifier.updateName,
                       decoration: _inputDecoration(
+                        context,
                         hint: AppLocalizations.of(
                           context,
                         ).businessStep2BusinessNameHint,
@@ -495,6 +496,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onChanged: (value) =>
                           notifier.updateVenueCapacity(int.tryParse(value)),
                       decoration: _inputDecoration(
+                        context,
                         hint: AppLocalizations.of(
                           context,
                         ).businessStep2CapacityHint,
@@ -528,6 +530,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       maxLength: 1000,
                       onChanged: notifier.updateAbout,
                       decoration: _inputDecoration(
+                        context,
                         hint: AppLocalizations.of(context).businessStep2AboutHint,
                       ),
                     ),
@@ -547,6 +550,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         notifier.updatePhone(_normalizePhoneNumber(value));
                       },
                       decoration: _inputDecoration(
+                        context,
                         hint: '+34612345678',
                         prefixIcon: LucideIcons.phone,
                         errorText: _phoneError,
@@ -563,6 +567,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       controller: _instagramController,
                       onChanged: notifier.updateInstagram,
                       decoration: _inputDecoration(
+                        context,
                         hint: '@yourbusiness',
                         prefixIcon: LucideIcons.instagram,
                       ),
@@ -579,6 +584,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       keyboardType: TextInputType.url,
                       onChanged: notifier.updateWebsite,
                       decoration: _inputDecoration(
+                        context,
                         hint: 'yourbusiness.com',
                         prefixIcon: LucideIcons.globe,
                       ),
@@ -743,7 +749,8 @@ class _FieldLabel extends StatelessWidget {
   );
 }
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   IconData? prefixIcon,
   String? errorText,

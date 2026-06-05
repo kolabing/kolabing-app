@@ -70,7 +70,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: context.colors.primary,
+        systemNavigationBarColor: KolabingColors.primary,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );

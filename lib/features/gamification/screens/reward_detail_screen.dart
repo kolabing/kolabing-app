@@ -45,11 +45,11 @@ class RewardDetailScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Reward Info Card
-                  _buildRewardInfoCard(reward),
+                  _buildRewardInfoCard(context, reward),
                   const SizedBox(height: KolabingSpacing.lg),
 
                   // Status Badge
-                  _buildStatusBadge(reward),
+                  _buildStatusBadge(context, reward),
                   const SizedBox(height: KolabingSpacing.lg),
 
                   // QR Code Section
@@ -58,18 +58,18 @@ class RewardDetailScreen extends ConsumerWidget {
 
                   // Redeemed Info
                   if (reward.status == RewardClaimStatus.redeemed)
-                    _buildRedeemedInfo(reward),
+                    _buildRedeemedInfo(context, reward),
 
                   // Expired Info
                   if (reward.status == RewardClaimStatus.expired)
-                    _buildExpiredInfo(),
+                    _buildExpiredInfo(context),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildRewardInfoCard(RewardClaim reward) {
+  Widget _buildRewardInfoCard(BuildContext context, RewardClaim reward) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -179,7 +179,7 @@ class RewardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusBadge(RewardClaim reward) {
+  Widget _buildStatusBadge(BuildContext context, RewardClaim reward) {
     Color badgeColor;
     IconData icon;
     String text;
@@ -238,7 +238,7 @@ class RewardDetailScreen extends ConsumerWidget {
     RedeemQRState state,
   ) {
     if (state.isGenerated && state.rewardClaim?.redeemToken != null) {
-      return _buildQRCode(state.rewardClaim!.redeemToken!);
+      return _buildQRCode(context, state.rewardClaim!.redeemToken!);
     }
 
     return Column(
@@ -297,7 +297,7 @@ class RewardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQRCode(String token) {
+  Widget _buildQRCode(BuildContext context, String token) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -347,7 +347,7 @@ class RewardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRedeemedInfo(RewardClaim reward) {
+  Widget _buildRedeemedInfo(BuildContext context, RewardClaim reward) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -384,7 +384,7 @@ class RewardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildExpiredInfo() {
+  Widget _buildExpiredInfo(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(

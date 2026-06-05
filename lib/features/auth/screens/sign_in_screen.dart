@@ -91,7 +91,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: context.colors.surface,
+        systemNavigationBarColor: KolabingColors.surface,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );

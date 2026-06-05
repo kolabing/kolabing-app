@@ -56,7 +56,7 @@ class ChallengeCompletionCard extends StatelessWidget {
               Row(
                 children: [
                   // Status icon
-                  _buildStatusIcon(),
+                  _buildStatusIcon(context),
                   const SizedBox(width: KolabingSpacing.sm),
 
                   // Challenge name and event
@@ -103,7 +103,7 @@ class ChallengeCompletionCard extends StatelessWidget {
                   const Spacer(),
 
                   // Status badge
-                  _buildStatusBadge(l10n),
+                  _buildStatusBadge(context, l10n),
                 ],
               ),
 
@@ -162,7 +162,7 @@ class ChallengeCompletionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(BuildContext context) {
     IconData icon;
     Color color;
     Color bgColor;
@@ -197,7 +197,7 @@ class ChallengeCompletionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(AppLocalizations l10n) {
+  Widget _buildStatusBadge(BuildContext context, AppLocalizations l10n) {
     String text;
     Color bgColor;
     Color textColor;

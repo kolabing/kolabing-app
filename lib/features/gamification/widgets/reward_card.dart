@@ -28,7 +28,7 @@ class RewardCard extends StatelessWidget {
           color: context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _getBorderColor(),
+            color: _getBorderColor(context),
             width: 1.5,
           ),
           boxShadow: [
@@ -46,10 +46,10 @@ class RewardCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: _getIconBackgroundColor(),
+                color: _getIconBackgroundColor(context),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(child: _buildStatusIcon()),
+              child: Center(child: _buildStatusIcon(context)),
             ),
             const SizedBox(width: KolabingSpacing.md),
 
@@ -74,14 +74,14 @@ class RewardCard extends StatelessWidget {
             ),
 
             // Status badge
-            _buildStatusBadge(),
+            _buildStatusBadge(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(BuildContext context) {
     Color color;
     String text;
 
@@ -116,7 +116,7 @@ class RewardCard extends StatelessWidget {
     );
   }
 
-  Color _getBorderColor() {
+  Color _getBorderColor(BuildContext context) {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
         return context.colors.success.withValues(alpha: 0.3);
@@ -127,7 +127,7 @@ class RewardCard extends StatelessWidget {
     }
   }
 
-  Color _getIconBackgroundColor() {
+  Color _getIconBackgroundColor(BuildContext context) {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
         return context.colors.success.withValues(alpha: 0.1);
@@ -138,7 +138,7 @@ class RewardCard extends StatelessWidget {
     }
   }
 
-  Color _getIconColor() {
+  Color _getIconColor(BuildContext context) {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
         return context.colors.success;
@@ -149,7 +149,7 @@ class RewardCard extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(BuildContext context) {
     switch (rewardClaim.status) {
       case RewardClaimStatus.available:
         return const UiIcon(
@@ -167,7 +167,7 @@ class RewardCard extends StatelessWidget {
         return UiIcon(
           icon: UiIconSlug.clock,
           size: 28,
-          color: _getIconColor(),
+          color: _getIconColor(context),
         );
     }
   }

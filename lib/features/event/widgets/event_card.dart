@@ -47,9 +47,9 @@ class EventCard extends StatelessWidget {
                     ? Image.network(
                         event.coverPhotoUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                        errorBuilder: (_, __, ___) => _buildPlaceholder(context),
                       )
-                    : _buildPlaceholder(),
+                    : _buildPlaceholder(context),
               ),
 
               // Gradient overlay
@@ -204,9 +204,9 @@ class EventCard extends StatelessWidget {
                                     event.partner.profilePhoto!,
                                     fit: BoxFit.cover,
                                     errorBuilder: (_, __, ___) =>
-                                        _buildPartnerPlaceholder(),
+                                        _buildPartnerPlaceholder(context),
                                   )
-                                : _buildPartnerPlaceholder(),
+                                : _buildPartnerPlaceholder(context),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -255,7 +255,7 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholder() => Container(
+  Widget _buildPlaceholder(BuildContext context) => Container(
     color: context.colors.surfaceVariant,
     child: Center(
       child: Icon(
@@ -266,7 +266,7 @@ class EventCard extends StatelessWidget {
     ),
   );
 
-  Widget _buildPartnerPlaceholder() => Container(
+  Widget _buildPartnerPlaceholder(BuildContext context) => Container(
     color: context.colors.primary,
     child: Center(
       child: Text(

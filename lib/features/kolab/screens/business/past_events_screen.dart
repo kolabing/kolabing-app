@@ -355,8 +355,8 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _nameController,
-            decoration: _inputDecoration(hint: l10n.pastEventsEventNameHint),
-            style: _inputTextStyle,
+            decoration: _inputDecoration(context, hint: l10n.pastEventsEventNameHint),
+            style: _inputTextStyle(context),
             onChanged: (v) {
               widget.onUpdate(widget.event.copyWith(name: v));
             },
@@ -387,7 +387,7 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               ),
               child: Row(
                 children: [
-                  Expanded(child: Text(dateFormatted, style: _inputTextStyle)),
+                  Expanded(child: Text(dateFormatted, style: _inputTextStyle(context))),
                   Icon(
                     LucideIcons.calendar,
                     size: 18,
@@ -410,8 +410,8 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _partnerController,
-            decoration: _inputDecoration(hint: l10n.pastEventsPartnerNameHint),
-            style: _inputTextStyle,
+            decoration: _inputDecoration(context, hint: l10n.pastEventsPartnerNameHint),
+            style: _inputTextStyle(context),
             onChanged: (v) {
               widget.onUpdate(
                 widget.event.copyWith(
@@ -707,7 +707,8 @@ class _EventVideoRow extends StatelessWidget {
 // Shared helpers (file-private)
 // =============================================================================
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) => InputDecoration(
@@ -745,5 +746,5 @@ InputDecoration _inputDecoration({
   ),
 );
 
-TextStyle get _inputTextStyle =>
+TextStyle _inputTextStyle(BuildContext context) =>
     KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);

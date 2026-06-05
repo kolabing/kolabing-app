@@ -68,7 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: context.colors.surface,
+        systemNavigationBarColor: KolabingColors.surface,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );

@@ -1190,13 +1190,14 @@ class _CreatorAvatar extends StatelessWidget {
               width: size,
               height: size,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => _buildInitial(),
+              errorBuilder: (context, error, stackTrace) =>
+                  _buildInitial(context),
             ),
           )
-        : _buildInitial(),
+        : _buildInitial(context),
   );
 
-  Widget _buildInitial() => Center(
+  Widget _buildInitial(BuildContext context) => Center(
     child: Text(
       initial,
       style: KolabingTextStyles.bodyMedium.copyWith(

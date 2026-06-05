@@ -49,7 +49,7 @@ class OpportunityCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header: Avatar, Creator Name, Status
-              _buildHeader(isDark),
+              _buildHeader(context, isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Title
@@ -74,29 +74,29 @@ class OpportunityCard extends StatelessWidget {
 
               // Category chips
               if (opportunity.categories.isNotEmpty) ...[
-                _buildCategoryChips(isDark),
+                _buildCategoryChips(context, isDark),
                 const SizedBox(height: KolabingSpacing.sm),
               ],
 
               // Info tags row (city, venue mode, dates)
-              _buildInfoTags(isDark),
+              _buildInfoTags(context, isDark),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Offer summary
               if (opportunity.businessOffer.hasAnyOffer) ...[
-                _buildOfferSummary(),
+                _buildOfferSummary(context),
                 const SizedBox(height: KolabingSpacing.sm),
               ],
 
               // Action buttons
-              _buildActionButtons(isDark),
+              _buildActionButtons(context, isDark),
             ],
           ),
         ),
       );
   }
 
-  Widget _buildHeader(bool isDark) => Row(
+  Widget _buildHeader(BuildContext context, bool isDark) => Row(
         children: [
           // Creator avatar
           _CreatorAvatar(
@@ -136,7 +136,7 @@ class OpportunityCard extends StatelessWidget {
         ],
       );
 
-  Widget _buildCategoryChips(bool isDark) => Wrap(
+  Widget _buildCategoryChips(BuildContext context, bool isDark) => Wrap(
         spacing: KolabingSpacing.xxs,
         runSpacing: KolabingSpacing.xxs,
         children: opportunity.categories
@@ -167,7 +167,7 @@ class OpportunityCard extends StatelessWidget {
             .toList(),
       );
 
-  Widget _buildInfoTags(bool isDark) {
+  Widget _buildInfoTags(BuildContext context, bool isDark) {
     final dateFormat = DateFormat('MMM d');
     final dateText =
         '${dateFormat.format(opportunity.availabilityStart)} - ${dateFormat.format(opportunity.availabilityEnd)}';
@@ -201,7 +201,7 @@ class OpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildOfferSummary() => Container(
+  Widget _buildOfferSummary(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(
           horizontal: KolabingSpacing.sm,
           vertical: KolabingSpacing.xs,
@@ -234,7 +234,7 @@ class OpportunityCard extends StatelessWidget {
         ),
       );
 
-  Widget _buildActionButtons(bool isDark) => Row(
+  Widget _buildActionButtons(BuildContext context, bool isDark) => Row(
         children: [
           // View button (outlined)
           Expanded(
@@ -321,13 +321,13 @@ class _CreatorAvatar extends StatelessWidget {
                   width: 48,
                   height: 48,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => _buildInitial(),
+                  errorBuilder: (context, error, stackTrace) => _buildInitial(context),
                 ),
               )
-            : _buildInitial(),
+            : _buildInitial(context),
       );
 
-  Widget _buildInitial() => Center(
+  Widget _buildInitial(BuildContext context) => Center(
         child: Text(
           initial,
           style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark

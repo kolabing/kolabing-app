@@ -215,6 +215,7 @@ class ReferralScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.lg),
 
           _buildStep(
+            context,
             number: 1,
             title: l10n.referralScreenStep1Title,
             description: l10n.referralScreenStep1Desc,
@@ -222,6 +223,7 @@ class ReferralScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStep(
+            context,
             number: 2,
             title: l10n.referralScreenStep2Title,
             description: l10n.referralScreenStep2Desc,
@@ -229,6 +231,7 @@ class ReferralScreen extends ConsumerWidget {
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStep(
+            context,
             number: 3,
             title: isBusiness
                 ? l10n.referralScreenStep3TitleBusiness
@@ -242,7 +245,8 @@ class ReferralScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStep({
+  Widget _buildStep(
+    BuildContext context, {
     required int number,
     required String title,
     required String description,
@@ -318,18 +322,21 @@ class ReferralScreen extends ConsumerWidget {
 
           if (isBusiness) ...[
             _buildTierRow(
+              context,
               icon: LucideIcons.userPlus,
               condition: l10n.referralScreenTierBusinessCondition,
               reward: l10n.referralScreenTierBusinessReward,
             ),
           ] else ...[
             _buildTierRow(
+              context,
               icon: LucideIcons.userPlus,
               condition: l10n.referralScreenTier1MonthCondition,
               reward: l10n.referralScreenTier1MonthReward,
             ),
             const Divider(height: KolabingSpacing.lg),
             _buildTierRow(
+              context,
               icon: LucideIcons.userPlus,
               condition: l10n.referralScreenTier4MonthCondition,
               reward: l10n.referralScreenTier4MonthReward,
@@ -340,7 +347,8 @@ class ReferralScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTierRow({
+  Widget _buildTierRow(
+    BuildContext context, {
     required IconData icon,
     required String condition,
     required String reward,

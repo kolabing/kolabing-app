@@ -41,6 +41,7 @@ class PastEventsSection extends ConsumerWidget {
     // Own profile → use global notifier provider
     final state = ref.watch(eventsProvider);
     return _buildContainer(
+      context: context,
       isDark: isDark,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,6 +64,7 @@ class PastEventsSection extends ConsumerWidget {
 
     return asyncEvents.when(
       loading: () => _buildContainer(
+        context: context,
         isDark: isDark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,11 +72,12 @@ class PastEventsSection extends ConsumerWidget {
           children: [
             _buildHeader(context, ref, const [], isDark),
             const SizedBox(height: KolabingSpacing.md),
-            _buildLoadingState(isDark),
+            _buildLoadingState(context, isDark),
           ],
         ),
       ),
       error: (error, _) => _buildContainer(
+        context: context,
         isDark: isDark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,6 +94,7 @@ class PastEventsSection extends ConsumerWidget {
         if (events.isEmpty) return const SizedBox.shrink();
 
         return _buildContainer(
+          context: context,
           isDark: isDark,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +114,10 @@ class PastEventsSection extends ConsumerWidget {
   // Shared container
   // ---------------------------------------------------------------------------
 
-  Widget _buildContainer({required bool isDark, required Widget child}) {
+  Widget _buildContainer(
+      {required BuildContext context,
+      required bool isDark,
+      required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -199,7 +206,7 @@ class PastEventsSection extends ConsumerWidget {
   Widget _buildOwnContent(
       BuildContext context, WidgetRef ref, EventsState state, bool isDark) {
     if (state.isLoading) {
-      return _buildLoadingState(isDark);
+      return _buildLoadingState(context, isDark);
     }
 
     if (state.error != null && state.events.isEmpty) {
@@ -217,7 +224,7 @@ class PastEventsSection extends ConsumerWidget {
   // Shared widgets
   // ---------------------------------------------------------------------------
 
-  Widget _buildLoadingState(bool isDark) {
+  Widget _buildLoadingState(BuildContext context, bool isDark) {
     return SizedBox(
       height: 220,
       child: ListView.separated(

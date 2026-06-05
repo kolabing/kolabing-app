@@ -38,7 +38,7 @@ class NeedsScreen extends ConsumerWidget {
           // Error
           if (state.fieldErrors['needs'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
-            _buildFieldError(state.fieldErrors['needs']!),
+            _buildFieldError(context, state.fieldErrors['needs']!),
           ],
 
           const SizedBox(height: KolabingSpacing.lg),
@@ -100,7 +100,7 @@ class NeedsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildFieldError(String error) => Container(
+  Widget _buildFieldError(BuildContext context, String error) => Container(
         padding: const EdgeInsets.symmetric(
           horizontal: KolabingSpacing.sm,
           vertical: KolabingSpacing.xs,
