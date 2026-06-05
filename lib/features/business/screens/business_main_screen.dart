@@ -10,6 +10,8 @@ import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
+import '../../chat/providers/chat_providers.dart';
+import '../../chat/screens/chats_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/business_dashboard_screen.dart';
 import '../../kolab/screens/my_kolabs_hub_screen.dart';
@@ -21,7 +23,7 @@ import 'my_kollabs_screen.dart';
 /// Business user main screen with bottom navigation
 ///
 /// This is the main container for business users after login.
-/// Contains 4 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished),
+/// 5 tabs: Home, Explore, My Kolabs (Offers/Requests/Active/Finished), Chats,
 /// Profile. The former Applications tab is now the "Requests" tab inside
 /// My Kolabs.
 class BusinessMainScreen extends ConsumerStatefulWidget {
@@ -83,6 +85,7 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
     final badgeCount = pendingApplicationsCount + totalUnread;
 
     final l10n = AppLocalizations.of(context);
+    final chatUnread = ref.watch(chatUnreadProvider);
     final navItems = [
       NavItem(
         icon: LucideIcons.home,
@@ -102,6 +105,14 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         label: l10n.businessNavMyKolabs,
         badgeCount: badgeCount > 0 ? badgeCount : null,
         iconSlug: UiIconSlug.briefcase,
+      ),
+      NavItem(
+        // Chats promoted to the nav (NF-12); business keeps its Profile tab.
+        // TODO(i18n): localize when chat strings are localized.
+        icon: LucideIcons.messageCircle,
+        activeIcon: LucideIcons.messageCircle,
+        label: 'Chats',
+        badgeCount: chatUnread > 0 ? chatUnread : null,
       ),
       NavItem(
         icon: LucideIcons.user,
@@ -124,12 +135,14 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
           _BusinessHomeTab(onSwitchTab: _onTabChanged),
           const _BusinessExploreTab(),
           _BusinessKollabsTab(initialSubTab: widget.initialKolabsSubTab),
+          const ChatsScreen(embedded: true),
           const _BusinessProfileTab(),
         ],
       ),
       floatingActionButton:
-          _currentIndex != 2 && // My Kolabs hub provides its own create FAB
-              _currentIndex != 3 // Hide on profile tab
+          // Show only on Home (0) / Explore (1). Hidden on My Kolabs (2, has its
+          // own create FAB), Chats (3), and Profile (4).
+          _currentIndex < 2
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: l10n.businessMainCreateKolabTooltip,

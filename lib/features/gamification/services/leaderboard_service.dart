@@ -15,8 +15,8 @@ class LeaderboardService {
   LeaderboardService({
     required AuthService authService,
     http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  }) : _authService = authService,
+       _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -45,11 +45,15 @@ class LeaderboardService {
         },
       );
 
-      debugPrint('Get Event Leaderboard response status: ${response.statusCode}');
+      debugPrint(
+        'Get Event Leaderboard response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        return LeaderboardResponse.fromJson(json['data'] as Map<String, dynamic>);
+        return LeaderboardResponse.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw LeaderboardException(
@@ -64,18 +68,21 @@ class LeaderboardService {
     }
   }
 
-  /// Get global leaderboard
+  /// Get global leaderboard, or a chapter-scoped one when [communityId] is set.
   ///
-  /// GET /api/v1/leaderboard/global
+  /// GET /api/v1/leaderboard/global  (optional ?community_id= for one community)
   Future<LeaderboardResponse> getGlobalLeaderboard({
     int limit = 50,
+    String? communityId,
   }) async {
     final token = await _authService.getToken();
     if (token == null) {
       throw const LeaderboardException('Not authenticated');
     }
 
-    final url = '$_baseUrl/leaderboard/global?limit=$limit';
+    final url =
+        '$_baseUrl/leaderboard/global?limit=$limit'
+        '${communityId != null ? '&community_id=$communityId' : ''}';
     debugPrint('Get Global Leaderboard: GET $url');
 
     try {
@@ -87,11 +94,15 @@ class LeaderboardService {
         },
       );
 
-      debugPrint('Get Global Leaderboard response status: ${response.statusCode}');
+      debugPrint(
+        'Get Global Leaderboard response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        return LeaderboardResponse.fromJson(json['data'] as Map<String, dynamic>);
+        return LeaderboardResponse.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw LeaderboardException(

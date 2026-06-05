@@ -19,26 +19,29 @@ typedef EventLeaderboardParams = ({String eventId, int limit});
 
 /// Provider for event leaderboard
 final eventLeaderboardProvider =
-    FutureProvider.family<LeaderboardResponse, EventLeaderboardParams>(
-        (ref, params) async {
-  final service = ref.watch(leaderboardServiceProvider);
-  return service.getEventLeaderboard(params.eventId, limit: params.limit);
-});
+    FutureProvider.family<LeaderboardResponse, EventLeaderboardParams>((
+      ref,
+      params,
+    ) async {
+      final service = ref.watch(leaderboardServiceProvider);
+      return service.getEventLeaderboard(params.eventId, limit: params.limit);
+    });
 
 /// Simplified provider for event leaderboard with default limit
 final eventLeaderboardSimpleProvider =
     FutureProvider.family<LeaderboardResponse, String>((ref, eventId) async {
-  final service = ref.watch(leaderboardServiceProvider);
-  return service.getEventLeaderboard(eventId);
-});
+      final service = ref.watch(leaderboardServiceProvider);
+      return service.getEventLeaderboard(eventId);
+    });
 
 // =============================================================================
 // Global Leaderboard Provider
 // =============================================================================
 
 /// Provider for global leaderboard with default limit
-final globalLeaderboardProvider =
-    FutureProvider<LeaderboardResponse>((ref) async {
+final globalLeaderboardProvider = FutureProvider<LeaderboardResponse>((
+  ref,
+) async {
   final service = ref.watch(leaderboardServiceProvider);
   return service.getGlobalLeaderboard();
 });
@@ -46,6 +49,17 @@ final globalLeaderboardProvider =
 /// Provider for global leaderboard with custom limit
 final globalLeaderboardWithLimitProvider =
     FutureProvider.family<LeaderboardResponse, int>((ref, limit) async {
-  final service = ref.watch(leaderboardServiceProvider);
-  return service.getGlobalLeaderboard(limit: limit);
-});
+      final service = ref.watch(leaderboardServiceProvider);
+      return service.getGlobalLeaderboard(limit: limit);
+    });
+
+/// Chapter-scoped leaderboard — the global leaderboard filtered to one
+/// community (NF-6). Backed by GET /leaderboard/global?community_id=.
+final chapterLeaderboardProvider =
+    FutureProvider.family<LeaderboardResponse, String>((
+      ref,
+      communityId,
+    ) async {
+      final service = ref.watch(leaderboardServiceProvider);
+      return service.getGlobalLeaderboard(communityId: communityId);
+    });
