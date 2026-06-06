@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
@@ -145,7 +147,19 @@ class CommunityService {
             if (avatarUrl != null) 'avatar_url': avatarUrl,
           }),
         );
-        return Community.fromJson(_unwrap(res) as Map<String, dynamic>);
+        final community = Community.fromJson(
+          _unwrap(res) as Map<String, dynamic>,
+        );
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.communityCreated,
+            properties: {
+              'community_id': community.id,
+              'type': type.toApiValue(),
+            },
+          ),
+        );
+        return community;
       }, 'createCommunity');
 
   /// `PATCH /communities/{id}`.
@@ -177,7 +191,16 @@ class CommunityService {
           Uri.parse('$_baseUrl/communities/$communityId/join'),
           headers: await _headers(),
         );
-        return CommunityMember.fromJson(_unwrap(res) as Map<String, dynamic>);
+        final member = CommunityMember.fromJson(
+          _unwrap(res) as Map<String, dynamic>,
+        );
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.communityJoined,
+            properties: {'community_id': communityId},
+          ),
+        );
+        return member;
       }, 'joinCommunity');
 
   // ---------------------------------------------------------------------------
@@ -216,7 +239,14 @@ class CommunityService {
             if (permissions != null) 'permissions': permissions.toJson(),
           }),
         );
-        return CommunityTier.fromJson(_unwrap(res) as Map<String, dynamic>);
+        final tier = CommunityTier.fromJson(_unwrap(res) as Map<String, dynamic>);
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.tierCreated,
+            properties: {'community_id': communityId},
+          ),
+        );
+        return tier;
       }, 'createTier');
 
   /// `PATCH /tiers/{tier}`.

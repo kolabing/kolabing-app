@@ -83,6 +83,7 @@ dependencies:
   # Gamification / Rewards
   share_plus: ^10.1.4
   confetti: ^0.8.0
+  posthog_flutter: ^5.26.0
 
 dev_dependencies:
   flutter_test:

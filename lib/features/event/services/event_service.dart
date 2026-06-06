@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/event.dart';
@@ -211,7 +213,16 @@ class EventService {
 
   /// POST /events/{event}/signup — one-tap "I'm going" (or waitlist when full).
   /// Returns the updated event (my_signup + counts).
-  Future<Event> signup(String eventId) => _signup(eventId, allowRetry: true);
+  Future<Event> signup(String eventId) async {
+    final event = await _signup(eventId, allowRetry: true);
+    unawaited(
+      AnalyticsService.instance.capture(
+        AnalyticsEvents.eventSignup,
+        properties: {'event_id': eventId},
+      ),
+    );
+    return event;
+  }
 
   Future<Event> _signup(String eventId, {required bool allowRetry}) async {
     final response = await _sendWithRefresh(
@@ -448,7 +459,18 @@ class EventService {
       final data = json['data'];
       if (data is Map<String, dynamic>) {
         final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
-        return Event.fromJson(ev as Map<String, dynamic>);
+        final created = Event.fromJson(ev as Map<String, dynamic>);
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.eventCreated,
+            properties: {
+              'event_id': created.id,
+              'mode': 'upcoming',
+              'is_recurring': recurrence != null,
+            },
+          ),
+        );
+        return created;
       }
       throw Exception('Unexpected response creating event');
     }
@@ -521,23 +543,29 @@ class EventService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'];
-        if (data != null && data is Map<String, dynamic>) {
-          return Event.fromJson(data);
-        }
-        // API returned success but no parseable data - build from request
-        return Event(
-          id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
-          name: request.name,
-          partner: EventPartner(
-            name: request.partnerName,
-            type: request.partnerType,
+        final created = (data != null && data is Map<String, dynamic>)
+            ? Event.fromJson(data)
+            // API returned success but no parseable data - build from request
+            : Event(
+                id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+                name: request.name,
+                partner: EventPartner(
+                  name: request.partnerName,
+                  type: request.partnerType,
+                ),
+                date: request.date,
+                attendeeCount: request.attendeeCount,
+                photos: const [],
+                videos: const [],
+                createdAt: DateTime.now(),
+              );
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.eventCreated,
+            properties: {'event_id': created.id, 'mode': 'showcase'},
           ),
-          date: request.date,
-          attendeeCount: request.attendeeCount,
-          photos: const [],
-          videos: const [],
-          createdAt: DateTime.now(),
         );
+        return created;
       } else if (response.statusCode == 401) {
         if (allowRetry) {
           await _authService.refreshSession();
