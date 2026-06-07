@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolab_status_badge.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
@@ -192,7 +193,7 @@ class _SentApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 AppLocalizations.of(context).applicationsSentEmptyTitle,
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
+                style: KolabingTextStyles.titleMedium.copyWith(color: isDark
                       ? context.colors.textOnDark
                       : context.colors.onSurface),
               ),
@@ -290,7 +291,7 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
               const SizedBox(height: KolabingSpacing.lg),
               Text(
                 AppLocalizations.of(context).applicationsReceivedEmptyTitle,
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: isDark
+                style: KolabingTextStyles.titleMedium.copyWith(color: isDark
                       ? context.colors.textOnDark
                       : context.colors.onSurface),
               ),
@@ -322,7 +323,7 @@ Widget _buildLoadingState(BuildContext context, bool isDark) => Shimmer.fromColo
         itemBuilder: (_, _) => Container(
           height: 100,
           decoration: BoxDecoration(
-            color: isDark ? context.colors.darkSurface : Colors.white,
+            color: isDark ? context.colors.darkSurface : context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
           ),
         ),
@@ -343,7 +344,7 @@ Widget _buildErrorState(BuildContext context, String error, bool isDark) => Cent
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).applicationsErrorTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
+              style: KolabingTextStyles.titleMedium.copyWith(color: isDark
                     ? context.colors.textOnDark
                     : context.colors.onSurface),
             ),
@@ -381,197 +382,154 @@ class _ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-      onTap: onTap,
-      borderRadius: KolabingRadius.borderRadiusMd,
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: isDark ? context.colors.darkSurface : context.colors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+    onTap: onTap,
+    borderRadius: KolabingRadius.borderRadiusMd,
+    child: Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: isDark
+            ? null
+            : Border.all(color: context.colors.hairline),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                KolabStatusBadge(status: application.status.name),
+                const SizedBox(height: 6),
+                Text(
+                  application.opportunityTitle,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
                   ),
-                ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Avatar
-            _buildAvatar(context),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          application.opportunityTitle,
-                          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: isDark
-                                ? context.colors.textOnDark
-                                : context.colors.onSurface),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      _buildStatusBadge(context),
-                    ],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isReceived
+                      ? AppLocalizations.of(context)
+                          .applicationCardFrom(application.applicantName)
+                      : AppLocalizations.of(context)
+                          .applicationCardTo(application.recipientName),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.onSurfaceVariant,
                   ),
-                  const SizedBox(height: KolabingSpacing.xxs),
-
-                  // Name label: "From:" for received, "To:" for sent
-                  Text(
-                    isReceived
-                        ? AppLocalizations.of(context).applicationCardFrom(application.applicantName)
-                        : AppLocalizations.of(context).applicationCardTo(application.recipientName),
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+                Text(
+                  application.message,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
                   ),
-                  const SizedBox(height: KolabingSpacing.xs),
-
-                  // Message preview
-                  Text(
-                    application.message,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: KolabingSpacing.xs),
-
-                  // Footer
-                  Row(
-                    children: [
-                      // Created time
-                      Icon(
-                        LucideIcons.clock,
-                        size: 12,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+                Row(
+                  children: [
+                    Icon(
+                      LucideIcons.clock,
+                      size: 12,
+                      color: context.colors.textTertiary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      application.createdAtDisplay,
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 12,
                         color: context.colors.textTertiary,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        application.createdAtDisplay,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                    ),
+                    const Spacer(),
+                    if (application.unreadCount > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.colors.error,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${application.unreadCount}',
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.textOnDark,
+                          ),
+                        ),
+                      )
+                    else
+                      Icon(
+                        LucideIcons.chevronRight,
+                        size: 18,
+                        color: context.colors.textTertiary,
                       ),
-
-                      const Spacer(),
-
-                      // Unread indicator
-                      if (application.unreadCount > 0) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: context.colors.error,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${application.unreadCount}',
-                            style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: Colors.white),
-                          ),
-                        ),
-                      ] else ...[
-                        Icon(
-                          LucideIcons.chevronRight,
-                          size: 18,
-                          color: context.colors.textTertiary,
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          _buildSquareImage(),
+        ],
       ),
-    );
+    ),
+  );
 
-  Widget _buildAvatar(BuildContext context) {
-    final String? avatarUrl;
-    final String name;
+  Widget _buildSquareImage() {
+    const size = 68.0;
+    const radius = 14.0;
 
-    if (isReceived) {
-      avatarUrl = application.applicantAvatar;
-      name = application.applicantName;
-    } else {
-      avatarUrl = application.recipientAvatar;
-      name = application.recipientName;
-    }
+    final imageUrl = application.opportunity?.offerPhoto;
+    final initials = application.opportunityTitle.isNotEmpty
+        ? application.opportunityTitle[0].toUpperCase()
+        : 'K';
 
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: context.colors.primary.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: avatarUrl != null
-          ? ClipOval(
-              child: Image.network(
-                avatarUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _avatarPlaceholder(context, name),
-              ),
-            )
-          : _avatarPlaceholder(context, name),
-    );
-  }
-
-  Widget _avatarPlaceholder(BuildContext context, String name) => Center(
-        child: Text(
-          name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.primary),
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.network(
+          imageUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _imagePlaceholder(size, radius, initials),
         ),
       );
-
-  Widget _buildStatusBadge(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final (bgColor, textColor, label) = switch (application.status) {
-      ApplicationStatus.pending => (
-          context.colors.pendingBg,
-          context.colors.pendingText,
-          l10n.applicationStatusPending,
-        ),
-      ApplicationStatus.accepted => (
-          context.colors.activeBg,
-          context.colors.activeText,
-          l10n.applicationStatusAccepted,
-        ),
-      ApplicationStatus.declined => (
-          context.colors.errorBg,
-          context.colors.error,
-          l10n.applicationStatusDeclined,
-        ),
-      ApplicationStatus.withdrawn => (
-          context.colors.surfaceVariant,
-          context.colors.textTertiary,
-          l10n.applicationStatusWithdrawn,
-        ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.xs,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        label,
-        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
-      ),
-    );
+    }
+    return _imagePlaceholder(size, radius, initials);
   }
+
+  Widget _imagePlaceholder(double size, double radius, String initials) =>
+      Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFF4C2), Color(0xFFFFE28C)],
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          initials,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF5C4A12),
+          ),
+        ),
+      );
 }

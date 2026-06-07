@@ -23,15 +23,14 @@ class NavItem {
   final bool showDot;
 
   /// Optional UiIconSlug. When provided, [UiIcon] is rendered instead of
-  /// the Lucide [icon]/[activeIcon] IconData, allowing custom SVG branding
-  /// in the bottom nav while keeping backward compatibility.
+  /// the Lucide [icon]/[activeIcon] IconData.
   final UiIconSlug? iconSlug;
 }
 
 /// Kolabing custom bottom navigation bar
 ///
-/// A styled bottom navigation bar following the design system.
-/// Supports numeric badges and dot indicators.
+/// White background with rounded top corners. Each tab shows icon + label.
+/// Active tab uses charcoal icon/label + short underline indicator.
 class KolabingBottomNavBar extends StatelessWidget {
   const KolabingBottomNavBar({
     required this.items,
@@ -57,13 +56,19 @@ class KolabingBottomNavBar extends StatelessWidget {
             width: 1,
           ),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
           height: 64,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
               items.length,
               (index) => _NavBarItem(

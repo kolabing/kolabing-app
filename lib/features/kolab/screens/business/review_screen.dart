@@ -431,7 +431,7 @@ class _StatusBanner extends StatelessWidget {
         ? context.colors.success.withValues(alpha: 0.4)
         : context.colors.warning.withValues(alpha: 0.4);
     final iconColor =
-        ready ? const Color(0xFF1A8C46) : context.colors.accentOrangeText;
+        ready ? context.colors.success : context.colors.accentOrangeText;
     final icon = ready ? LucideIcons.checkCircle : LucideIcons.alertCircle;
     final title = ready
         ? 'Ready to publish'
@@ -508,7 +508,7 @@ class _SectionCard extends StatelessWidget {
     final ({Color bg, Color fg, IconData icon}) badge = switch (section.status) {
       _Status.complete => (
           bg: context.colors.success.withValues(alpha: 0.18),
-          fg: const Color(0xFF1A8C46),
+          fg: context.colors.success,
           icon: LucideIcons.check,
         ),
       _Status.missing => (

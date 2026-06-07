@@ -15,6 +15,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
+import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../opportunity/utils/opportunity_share.dart';
@@ -63,8 +64,10 @@ class MyOpportunitiesScreen extends ConsumerStatefulWidget {
       _MyOpportunitiesScreenState();
 }
 
-class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
+class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
+    with SingleTickerProviderStateMixin {
   final _scrollController = ScrollController();
+  late final TabController _statusTabController;
 
   static const _statusTabs = [
     (value: 'published'),
@@ -85,10 +88,17 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _statusTabController = TabController(
+      length: _statusTabs.length,
+      vsync: this,
+    )..addListener(_onStatusTabChange);
   }
 
   @override
   void dispose() {
+    _statusTabController
+      ..removeListener(_onStatusTabChange)
+      ..dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -97,6 +107,13 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       ref.read(myOpportunitiesProvider.notifier).loadMore();
+    }
+  }
+
+  void _onStatusTabChange() {
+    if (!_statusTabController.indexIsChanging) {
+      ref.read(myOpportunitiesStatusProvider.notifier).status =
+          _statusTabs[_statusTabController.index].value;
     }
   }
 
@@ -353,53 +370,19 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen> {
 
   Widget _buildStatusTabs(String? currentStatus) {
     final l10n = AppLocalizations.of(context);
-    return SizedBox(
-    height: 44,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-      children: _statusTabs.map((tab) {
-        final isSelected = currentStatus == tab.value;
-        return Padding(
-          padding: const EdgeInsets.only(right: KolabingSpacing.xs),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                ref.read(myOpportunitiesStatusProvider.notifier).status =
-                    tab.value;
-              },
-              borderRadius: KolabingRadius.borderRadiusRound,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? context.colors.primary
-                      : context.colors.surface,
-                  borderRadius: KolabingRadius.borderRadiusRound,
-                  border: Border.all(
-                    color: isSelected
-                        ? context.colors.primary
-                        : context.colors.darkBorder,
-                  ),
-                ),
-                child: Text(
-                  _statusTabLabel(l10n, tab.value),
-                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
-                        ? context.colors.onPrimary
-                        : context.colors.onSurface),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    ),
-  );
+    final selectedIndex = _statusTabs.indexWhere((t) => t.value == currentStatus);
+    if (selectedIndex >= 0 &&
+        _statusTabController.index != selectedIndex &&
+        !_statusTabController.indexIsChanging) {
+      _statusTabController.index = selectedIndex;
+    }
+
+    return MyKolabsSubTabs(
+      controller: _statusTabController,
+      labels: _statusTabs
+          .map((t) => _statusTabLabel(l10n, t.value).toUpperCase())
+          .toList(),
+    );
   }
 
   Widget _buildList(OpportunityListState listState) => Column(

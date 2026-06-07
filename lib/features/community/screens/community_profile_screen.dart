@@ -14,6 +14,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
+import '../../../widgets/glass_button.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
@@ -442,19 +443,12 @@ class _CommunityProfileScreenState
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton.icon(
+              GlassButton(
+                label: l10n.communityProfileTryAgain,
                 onPressed: () =>
                     ref.read(profileProvider.notifier).loadProfile(),
-                icon: const Icon(LucideIcons.rotateCcw, size: 18),
-                label: Text(l10n.communityProfileTryAgain),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.lg,
-                    vertical: KolabingSpacing.sm,
-                  ),
-                ),
+                intent: GlassButtonIntent.primary,
+                icon: LucideIcons.rotateCcw,
               ),
             ],
           ),
@@ -467,10 +461,15 @@ class _CommunityProfileScreenState
     final about = profile.communityProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
 
-    return RefreshIndicator(
-      onRefresh: () => ref.read(profileProvider.notifier).refresh(),
-      color: context.colors.primary,
-      child: SingleChildScrollView(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildProfileScreenHeader(isDark),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () => ref.read(profileProvider.notifier).refresh(),
+            color: context.colors.primary,
+            child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
@@ -518,8 +517,39 @@ class _CommunityProfileScreenState
           ],
         ),
       ),
+          ),
+        ),
+      ],
     );
   }
+
+  Widget _buildProfileScreenHeader(bool isDark) => Padding(
+    padding: const EdgeInsets.fromLTRB(
+      KolabingSpacing.md,
+      KolabingSpacing.md,
+      KolabingSpacing.md,
+      KolabingSpacing.xs,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Text(
+            'PROFILE',
+            style: KolabingTextStyles.headlineLarge.copyWith(
+              color: context.colors.onSurface,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+        Icon(
+          LucideIcons.pencil,
+          size: 20,
+          color: context.colors.onSurfaceVariant,
+        ),
+      ],
+    ),
+  );
 
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final l10n = AppLocalizations.of(context);
@@ -530,21 +560,14 @@ class _CommunityProfileScreenState
         profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Avatar with edit button
           Stack(
@@ -552,8 +575,8 @@ class _CommunityProfileScreenState
               GestureDetector(
                 onTap: isUpdating ? null : _handleChangePhoto,
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
@@ -626,17 +649,18 @@ class _CommunityProfileScreenState
           // Name
           Text(
             name,
-            style: KolabingTextStyles.headlineMedium.copyWith(
+            style: KolabingTextStyles.titleLarge.copyWith(
               color: isDark
                   ? context.colors.textOnDark
                   : context.colors.onSurface,
+              letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
           ),
 
           const SizedBox(height: KolabingSpacing.xs),
 
-          // Community type badge
+          // Community type badge — slate palette
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
@@ -873,17 +897,11 @@ class _CommunityProfileScreenState
             const SizedBox(height: KolabingSpacing.lg),
 
             // Sign Out Button
-            OutlinedButton.icon(
+            GlassButton(
+              label: l10n.communityProfileSignOutButton,
               onPressed: isUpdating ? null : _handleSignOut,
-              icon: const Icon(LucideIcons.logOut, size: 18),
-              label: Text(l10n.communityProfileSignOutButton),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: context.colors.error,
-                side: BorderSide(color: context.colors.error),
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-              ),
+              intent: GlassButtonIntent.destructive,
+              icon: LucideIcons.logOut,
             ),
 
             const SizedBox(height: KolabingSpacing.md),
@@ -937,26 +955,17 @@ class _SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            title,
-            style: KolabingTextStyles.titleMedium.copyWith(
-              color: isDark
-                  ? context.colors.textOnDark
-                  : context.colors.onSurface,
+            title.toUpperCase(),
+            style: KolabingTextStyles.labelLarge.copyWith(
+              color: context.colors.textTertiary,
+              letterSpacing: 1.0,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),

@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../../../widgets/ui_icon.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
-import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/glass_button.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
-import '../../rewards/widgets/xp_progress_card.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
+import '../widgets/community_xp_summary_card.dart';
+import '../widgets/community_stats_strip.dart';
+import '../widgets/dashboard_badges_row.dart';
+import '../widgets/xp_missions_section.dart';
 import '../widgets/dashboard_shimmer.dart';
-import '../widgets/dashboard_stat_card.dart';
 import '../widgets/upcoming_collaboration_card.dart';
+import '../../rewards/providers/wallet_provider.dart';
+
+/// Local-only preview switch — change this constant to compare layouts.
+/// Does not affect production builds.
+enum DashboardPreviewVariant { optionA, optionB, optionC }
+
+const _kDashboardVariant = DashboardPreviewVariant.optionB;
 
 /// Community Dashboard Screen
 ///
@@ -45,6 +55,11 @@ class _CommunityDashboardScreenState
       if (!state.isInitialized && !state.isLoading) {
         ref.read(dashboardProvider.notifier).load();
       }
+      // Also load wallet data so badges and XP are available on the dashboard.
+      final walletState = ref.read(walletProvider);
+      if (walletState.wallet == null && !walletState.isLoading) {
+        ref.read(walletProvider.notifier).load();
+      }
     });
   }
 
@@ -56,14 +71,16 @@ class _CommunityDashboardScreenState
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ?? AppLocalizations.of(context).dashboardDefaultCommunityName;
+    final userName = authState.user?.displayName ??
+        AppLocalizations.of(context).dashboardDefaultCommunityName;
+    final photoUrl = authState.user?.profilePhotoUrl;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         color: context.colors.primary,
-        child: _buildBody(dashboardState, userName, isDark),
+        child: _buildBody(dashboardState, userName, photoUrl, isDark),
       ),
     );
   }
@@ -71,6 +88,7 @@ class _CommunityDashboardScreenState
   Widget _buildBody(
     DashboardState dashboardState,
     String userName,
+    String? photoUrl,
     bool isDark,
   ) {
     // Loading state
@@ -93,31 +111,10 @@ class _CommunityDashboardScreenState
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
-        // Header
-        _buildHeader(userName, isDark),
+        _buildHeader(userName, photoUrl, isDark),
         const SizedBox(height: KolabingSpacing.lg),
-
-        // Stats grid 2x2
-        _buildStatsGrid(data),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Referral banner first — community-growth action
-        const ReferralBannerCard(),
-        const SizedBox(height: KolabingSpacing.md),
-
-        // XP progress card
-        XpProgressCard(
-          onTap: () => context.push(KolabingRoutes.communityWallet),
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Quick actions
-        _buildQuickActions(isDark),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Upcoming collaborations
-        _buildUpcomingSection(data, isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        ..._buildVariantContent(data, isDark),
+        const SizedBox(height: KolabingSpacing.xl),
       ],
     );
   }
@@ -126,7 +123,7 @@ class _CommunityDashboardScreenState
   // Header
   // ---------------------------------------------------------------------------
 
-  Widget _buildHeader(String userName, bool isDark) {
+  Widget _buildHeader(String userName, String? photoUrl, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,156 +136,159 @@ class _CommunityDashboardScreenState
                 style: KolabingTextStyles.headlineLarge.copyWith(
                   // titleInk = 80% white in night, ink in light (spec rule #2).
                   color: context.colors.titleInk,
+                  letterSpacing: 1.0,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 AppLocalizations.of(context).dashboardWelcomeBack(userName),
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
               ),
             ],
           ),
         ),
         const NotificationBell(),
+        const SizedBox(width: KolabingSpacing.xs),
+        GestureDetector(
+          onTap: () => widget.onSwitchTab?.call(3),
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: context.colors.hairline, width: 1.5),
+              color: context.colors.surfaceContainerLow,
+            ),
+            child: ClipOval(
+              child: photoUrl != null && photoUrl.isNotEmpty
+                  ? Image.network(photoUrl, fit: BoxFit.cover)
+                  : Icon(LucideIcons.user, size: 20, color: context.colors.onSurfaceVariant),
+            ),
+          ),
+        ),
       ],
     );
   }
 
   // ---------------------------------------------------------------------------
-  // Stats Grid
+  // Variant dispatcher
   // ---------------------------------------------------------------------------
 
-  Widget _buildStatsGrid(CommunityDashboard data) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: DashboardStatCard(
-                title: AppLocalizations.of(context).dashboardStatPending,
-                count: data.applicationsSent.pending,
-                icon: LucideIcons.clock,
-                iconSlug: UiIconSlug.clock,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: const Color(0xFFFF9800),
-                index: 0,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: DashboardStatCard(
-                title: AppLocalizations.of(context).dashboardStatAccepted,
-                count: data.applicationsSent.accepted,
-                icon: LucideIcons.checkCircle,
-                iconSlug: UiIconSlug.checkCircle,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: const Color(0xFF4CAF50),
-                index: 1,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: DashboardStatCard(
-                title: AppLocalizations.of(context).dashboardStatActiveKolabs,
-                count: data.collaborations.active,
-                icon: LucideIcons.users,
-                iconSlug: UiIconSlug.target,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: context.colors.info,
-                index: 2,
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: DashboardStatCard(
-                title: AppLocalizations.of(context).dashboardStatCompleted,
-                count: data.collaborations.completed,
-                icon: LucideIcons.trophy,
-                iconSlug: UiIconSlug.trophy,
-                iconVariant: UiIconVariant.expressive,
-                accentColor: const Color(0xFF9C27B0),
-                index: 3,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+  List<Widget> _buildVariantContent(CommunityDashboard data, bool isDark) {
+    switch (_kDashboardVariant) {
+      case DashboardPreviewVariant.optionA:
+        return _buildVariantA(data, isDark);
+      case DashboardPreviewVariant.optionB:
+        return _buildVariantB(data, isDark);
+      case DashboardPreviewVariant.optionC:
+        return _buildVariantC(data, isDark);
+    }
+  }
+
+  List<Widget> _buildVariantB(CommunityDashboard data, bool isDark) {
+    return [
+      // 1. XP summary card (sage green, non-tappable)
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 2. Today's XP missions
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 3. Compact stats strip
+      CommunityStatsStrip(
+        pending: data.applicationsSent.pending,
+        accepted: data.applicationsSent.accepted,
+        active: data.collaborations.active,
+        completed: data.collaborations.completed,
+      ),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 4. Badges row
+      const DashboardBadgesRow(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 5. Referral card — pastel yellow style
+      const ReferralBannerCard(usePastelStyle: true),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 6. Quick actions
+      _buildQuickActions(isDark),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 7. Upcoming kolabs
+      _buildUpcomingSection(data, isDark),
+    ];
+  }
+
+  List<Widget> _buildVariantA(CommunityDashboard data, bool isDark) {
+    return [
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+      CommunityStatsStrip(
+        pending: data.applicationsSent.pending,
+        accepted: data.applicationsSent.accepted,
+        active: data.collaborations.active,
+        completed: data.collaborations.completed,
+      ),
+      const SizedBox(height: KolabingSpacing.lg),
+      const ReferralBannerCard(usePastelStyle: true),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildQuickActions(isDark),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildUpcomingSection(data, isDark),
+    ];
+  }
+
+  List<Widget> _buildVariantC(CommunityDashboard data, bool isDark) {
+    return [
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+      CommunityStatsStrip(
+        pending: data.applicationsSent.pending,
+        accepted: data.applicationsSent.accepted,
+        active: data.collaborations.active,
+        completed: data.collaborations.completed,
+      ),
+      const SizedBox(height: KolabingSpacing.lg),
+      const DashboardBadgesRow(),
+      const SizedBox(height: KolabingSpacing.lg),
+      const ReferralBannerCard(usePastelStyle: true),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildQuickActions(isDark),
+      const SizedBox(height: KolabingSpacing.lg),
+      _buildUpcomingSection(data, isDark),
+    ];
   }
 
   // ---------------------------------------------------------------------------
   // Quick Actions
   // ---------------------------------------------------------------------------
 
-  Widget _buildQuickActions(bool isDark) {
-    return Row(
-      children: [
-        // Primary button: FIND A COLLAB
-        Expanded(
-          child: SizedBox(
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                // Switch to Explore tab (index 1)
-                widget.onSwitchTab?.call(1);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context).dashboardFindAKolab,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
-            ),
-          ),
+  Widget _buildQuickActions(bool isDark) => Row(
+    children: [
+      Expanded(
+        child: GlassButton(
+          label: AppLocalizations.of(context).dashboardFindAKolab,
+          onPressed: () => widget.onSwitchTab?.call(1),
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.search,
         ),
-        const SizedBox(width: KolabingSpacing.sm),
-
-        // Outlined button: MY APPLICATIONS
-        Expanded(
-          child: SizedBox(
-            height: 48,
-            child: OutlinedButton(
-              onPressed: () {
-                // Switch to Applications tab (index 3)
-                widget.onSwitchTab?.call(3);
-              },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: isDark
-                    ? context.colors.textOnDark
-                    : context.colors.onSurface,
-                side: BorderSide(
-                  color: isDark
-                      ? context.colors.darkBorder
-                      : context.colors.darkBorder,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  AppLocalizations.of(context).dashboardMyApplications,
-                  maxLines: 1,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                ),
-              ),
-            ),
-          ),
+      ),
+      const SizedBox(width: KolabingSpacing.sm),
+      Expanded(
+        child: GlassButton(
+          label: AppLocalizations.of(context).dashboardMyApplications,
+          onPressed: () => widget.onSwitchTab?.call(3),
+          intent: GlassButtonIntent.neutral,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   // ---------------------------------------------------------------------------
   // Upcoming Collaborations
@@ -300,7 +300,7 @@ class _CommunityDashboardScreenState
       children: [
         Text(
           AppLocalizations.of(context).dashboardUpcomingKolabs,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
+          style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -326,11 +326,20 @@ class _CommunityDashboardScreenState
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
+      decoration: BoxDecoration(
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(
+          color: context.colors.hairline,
+          width: 1.5,
+          // Dashed border via CustomPainter would be ideal, but a solid hairline
+          // border keeps the diff minimal while conveying the empty-state container.
+        ),
+      ),
       child: Column(
         children: [
           UiIcon(
             icon: UiIconSlug.calendar,
-            size: 40,
+            size: 36,
             color: isDark
                 ? context.colors.textOnDark.withValues(alpha: 0.5)
                 : context.colors.textTertiary,
@@ -370,26 +379,11 @@ class _CommunityDashboardScreenState
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  ref.read(dashboardProvider.notifier).refresh();
-                },
-                icon: const Icon(LucideIcons.refreshCw, size: 18),
-                label: Text(
-                  AppLocalizations.of(context).commonRetry,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
+            GlassButton(
+              label: AppLocalizations.of(context).commonRetry,
+              onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
+              intent: GlassButtonIntent.primary,
+              icon: LucideIcons.refreshCw,
             ),
           ],
         ),

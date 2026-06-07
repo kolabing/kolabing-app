@@ -7,6 +7,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolab_status_badge.dart';
 import '../models/collaboration.dart';
 import '../providers/collaborations_list_provider.dart';
 
@@ -102,133 +103,139 @@ class _CollaborationCard extends StatelessWidget {
         ? '${collaboration.businessPartner.name} × ${collaboration.communityPartner.name}'
         : collaboration.communityPartner.name;
 
+    final imageUrl = collaboration.opportunity?.offerPhoto;
+    final initials = partner.isNotEmpty ? partner[0].toUpperCase() : 'K';
+
     return Material(
-      color: isDark ? context.colors.darkSurface : context.colors.surface,
+      color: Colors.transparent,
       borderRadius: KolabingRadius.borderRadiusLg,
       child: InkWell(
         borderRadius: KolabingRadius.borderRadiusLg,
         onTap: () => context.push('/collaboration/${collaboration.id}'),
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          child: Column(
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: isDark ? context.colors.darkSurface : context.colors.surface,
+            borderRadius: KolabingRadius.borderRadiusLg,
+            border: isDark
+                ? null
+                : Border.all(color: context.colors.hairline),
+          ),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  _StatusBadge(status: collaboration.status),
-                  const Spacer(),
-                  Icon(
-                    LucideIcons.chevronRight,
-                    size: 18,
-                    color: context.colors.textTertiary,
-                  ),
-                ],
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-              Text(
-                partner,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  height: 1.3,
-                  color: isDark
-                      ? context.colors.textOnDark
-                      : context.colors.onSurface,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Row(
-                children: [
-                  Icon(
-                    LucideIcons.calendar,
-                    size: 12,
-                    color: context.colors.textTertiary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    collaboration.formattedDate,
-                    style: KolabingTextStyles.captionSecondary.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                  ),
-                  if (collaboration.scheduledTime != null &&
-                      collaboration.scheduledTime!.isNotEmpty) ...[
-                    const SizedBox(width: KolabingSpacing.sm),
-                    Icon(
-                      LucideIcons.clock,
-                      size: 12,
-                      color: context.colors.textTertiary,
-                    ),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        collaboration.scheduledTime!,
-                        style: KolabingTextStyles.captionSecondary.copyWith(
-                          color: context.colors.onSurfaceVariant,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    KolabStatusBadge(status: collaboration.status.toApiValue()),
+                    const SizedBox(height: 6),
+                    Text(
+                      partner,
+                      style: KolabingTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        height: 1.3,
+                        color: isDark
+                            ? context.colors.textOnDark
+                            : context.colors.onSurface,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 7),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.calendar,
+                          size: 12,
+                          color: context.colors.textTertiary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          collaboration.formattedDate,
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
+                        ),
+                        if (collaboration.scheduledTime != null &&
+                            collaboration.scheduledTime!.isNotEmpty) ...[
+                          const SizedBox(width: KolabingSpacing.sm),
+                          Icon(
+                            LucideIcons.clock,
+                            size: 12,
+                            color: context.colors.textTertiary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              collaboration.scheduledTime!,
+                              style: KolabingTextStyles.captionSecondary.copyWith(
+                                color: context.colors.onSurfaceVariant,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 16,
+                          color: context.colors.textTertiary,
+                        ),
+                      ],
                     ),
                   ],
-                ],
+                ),
               ),
+              const SizedBox(width: KolabingSpacing.sm),
+              _buildSquareImage(imageUrl, initials),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.status});
+  Widget _buildSquareImage(String? imageUrl, String initials) {
+    const size = 68.0;
+    const radius = 14.0;
 
-  final CollaborationStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    final (bg, fg) = switch (status) {
-      CollaborationStatus.scheduled => (
-        context.colors.secondaryContainer,
-        context.colors.secondary,
-      ),
-      CollaborationStatus.inProgress => (
-        context.colors.activeBg,
-        context.colors.activeText,
-      ),
-      CollaborationStatus.pendingConfirmation => (
-        context.colors.pendingBg,
-        context.colors.pendingText,
-      ),
-      CollaborationStatus.completed => (
-        context.colors.completedBg,
-        context.colors.completedText,
-      ),
-      CollaborationStatus.cancelled => (
-        context.colors.errorBg,
-        context.colors.errorText,
-      ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.xs,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        status.label,
-        style: KolabingTextStyles.labelSmall.copyWith(
-          fontWeight: FontWeight.w600,
-          color: fg,
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.network(
+          imageUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _placeholder(size, radius, initials),
         ),
-      ),
-    );
+      );
+    }
+    return _placeholder(size, radius, initials);
   }
+
+  Widget _placeholder(double size, double radius, String initials) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(radius),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFF4C2), Color(0xFFFFE28C)],
+      ),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      initials,
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF5C4A12),
+      ),
+    ),
+  );
 }
 
 class _ScrollableCenter extends StatelessWidget {

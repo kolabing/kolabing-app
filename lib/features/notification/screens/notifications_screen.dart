@@ -353,7 +353,7 @@ class _NotificationTile extends StatelessWidget {
       NotificationType.applicationAccepted => (
           LucideIcons.checkCircle,
           context.colors.success.withValues(alpha: 0.15),
-          const Color(0xFF155724),
+          context.colors.activeText,
         ),
       NotificationType.applicationDeclined => (
           LucideIcons.xCircle,
@@ -373,7 +373,7 @@ class _NotificationTile extends StatelessWidget {
       NotificationType.rewardWon => (
           LucideIcons.gift,
           context.colors.success.withValues(alpha: 0.15),
-          const Color(0xFF155724),
+          context.colors.activeText,
         ),
       NotificationType.collabDayReminder ||
       NotificationType.collabFollowUpReminder => (

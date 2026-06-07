@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../kolab/models/kolab.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
+import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../providers/profile_provider.dart';
 
@@ -33,10 +34,15 @@ class MyKollabsScreen extends ConsumerStatefulWidget {
   ConsumerState<MyKollabsScreen> createState() => _MyKollabsScreenState();
 }
 
-class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
+class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
+    with SingleTickerProviderStateMixin {
   final _scrollController = ScrollController();
+  late final TabController _statusTabController;
 
-  static const _statusTabs = ['published', 'draft'];
+  static const _statusTabs = [
+    (label: 'Published', value: 'published'),
+    (label: 'Draft', value: 'draft'),
+  ];
 
   String _statusTabLabel(BuildContext context, String value) {
     final l10n = AppLocalizations.of(context);
@@ -50,10 +56,17 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _statusTabController = TabController(
+      length: _statusTabs.length,
+      vsync: this,
+    )..addListener(_onStatusTabChange);
   }
 
   @override
   void dispose() {
+    _statusTabController
+      ..removeListener(_onStatusTabChange)
+      ..dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -63,6 +76,22 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       ref.read(myKolabsProvider.notifier).loadMore();
     }
+  }
+
+  void _onStatusTabChange() {
+    if (!_statusTabController.indexIsChanging) {
+      ref
+          .read(myKolabsStatusProvider.notifier)
+          .setStatus(_statusTabs[_statusTabController.index].value);
+    }
+  }
+
+  Future<void> _onCreateNew() async {
+    // B1 (2026-05-22): route all NEW creation through the unified /kolab/flow
+    // via /kolab/new (IntentSelectionScreen). The subscription gate for a
+    // non-subscribed business is enforced inside IntentSelectionScreen
+    // (_LockedBusinessCreateState), so we no longer pre-gate here.
+    await context.push(KolabingRoutes.kolabNew);
   }
 
   void _onEdit(Kolab kolab) {
@@ -241,58 +270,21 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen> {
     ),
   );
 
-  Widget _buildStatusTabs(String? currentStatus, bool isDark) => SizedBox(
-    height: 44,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-      children: _statusTabs.map((tab) {
-        final isSelected = currentStatus == tab;
-        return Padding(
-          padding: const EdgeInsets.only(right: KolabingSpacing.xs),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                ref.read(myKolabsStatusProvider.notifier).setStatus(tab);
-              },
-              borderRadius: KolabingRadius.borderRadiusRound,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? context.colors.primary
-                      : isDark
-                      ? context.colors.darkSurface
-                      : context.colors.surface,
-                  borderRadius: KolabingRadius.borderRadiusRound,
-                  border: Border.all(
-                    color: isSelected
-                        ? context.colors.primary
-                        : isDark
-                        ? context.colors.darkBorder
-                        : context.colors.darkBorder,
-                  ),
-                ),
-                child: Text(
-                  _statusTabLabel(context, tab),
-                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: isSelected
-                        ? context.colors.onPrimary
-                        : isDark
-                        ? context.colors.textOnDark
-                        : context.colors.onSurface),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    ),
-  );
+  Widget _buildStatusTabs(String? currentStatus, bool isDark) {
+    final selectedIndex = _statusTabs.indexWhere((t) => t.value == currentStatus);
+    if (selectedIndex >= 0 &&
+        _statusTabController.index != selectedIndex &&
+        !_statusTabController.indexIsChanging) {
+      _statusTabController.index = selectedIndex;
+    }
+
+    return MyKolabsSubTabs(
+      controller: _statusTabController,
+      labels: _statusTabs
+          .map((t) => _statusTabLabel(context, t.value).toUpperCase())
+          .toList(),
+    );
+  }
 
   Widget _buildList(MyKolabsState listState, bool isDark) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,

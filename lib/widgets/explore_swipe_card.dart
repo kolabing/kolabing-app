@@ -243,7 +243,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       ),
       child: Text(
         AppLocalizations.of(context).exploreSwipeCardMatch(match.score),
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: context.colors.onSurface),
       ),
     );
   }
@@ -289,7 +289,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     final chips = _item.primaryBadges;
 
     return Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
+      padding: const EdgeInsets.all(KolabingSpacing.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +331,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
       _item.creatorProfile.displayName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.cardTitleLarge.copyWith(color: KolabingColors.onSurface),
+      style: KolabingTextStyles.cardTitleLarge.copyWith(
+        color: context.colors.onSurface,
+        letterSpacing: -0.5,
+      ),
     );
 
     return Row(
@@ -450,38 +453,61 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   );
 
   Widget _buildTagChips(List<String> chips) {
-    // Alternating chip palette using existing design tokens: lavender, sage,
-    // and soft yellow. Falls back to surfaceVariant if more chips appear.
-    // Subtle dark-tinted chips on the yellow card, with dark ink labels.
-    final fills = <Color>[
-      KolabingColors.onSurface.withValues(alpha: 0.08),
-      KolabingColors.onSurface.withValues(alpha: 0.08),
-      KolabingColors.onSurface.withValues(alpha: 0.08),
-    ];
-
     return Wrap(
       spacing: 6,
       runSpacing: 6,
       children: [
-        for (var i = 0; i < chips.length; i++)
-          _buildChip(chips[i], fills[i % fills.length]),
+        for (final chip in chips) _buildChip(chip),
       ],
     );
   }
 
-  Widget _buildChip(String label, Color fill) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: fill,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Text(
-      label,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
-    ),
-  );
+  /// Maps a category label to a semantic (fill, text) pair.
+  ///
+  /// Matching is case-insensitive substring — lavender for sport/running,
+  /// yellow for food/drink, sage for wellness/nature, blue-grey for arts/music,
+  /// neutral fallback for everything else.
+  (Color fill, Color text) _chipColors(String label) {
+    final l = label.toLowerCase();
+    if (_matchesAny(l, ['run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike'])) {
+      return (KolabingColors.secondaryContainer, KolabingColors.secondary);
+    }
+    if (_matchesAny(l, ['food', 'coffee', 'drink', 'restaurant', 'bar', 'gastro', 'cook'])) {
+      return (KolabingColors.softYellow, KolabingColors.onSurface);
+    }
+    if (_matchesAny(l, ['wellness', 'nature', 'eco', 'health', 'organic', 'mindful', 'spa'])) {
+      return (KolabingColors.tertiaryContainer, KolabingColors.tertiary);
+    }
+    if (_matchesAny(l, ['music', 'art', 'culture', 'film', 'photo', 'design', 'theatre', 'dance'])) {
+      return (KolabingColors.categoryBlueGrey, KolabingColors.categoryBlueGreyText);
+    }
+    return (KolabingColors.surfaceContainerHigh, KolabingColors.onSurfaceVariant);
+  }
+
+  bool _matchesAny(String label, List<String> keywords) =>
+      keywords.any((kw) => label.contains(kw));
+
+  Widget _buildChip(String label) {
+    final (fill, textColor) = _chipColors(label);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: fill,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: KolabingTextStyles.labelSmall.copyWith(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+          letterSpacing: 0.3,
+        ),
+      ),
+    );
+  }
 
   Widget _buildViewDetailsRow() => Row(
     children: [
@@ -498,5 +524,8 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     ],
   );
 
-  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant);
+  TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(
+    fontWeight: FontWeight.w400,
+    color: KolabingColors.textTertiary,
+  );
 }

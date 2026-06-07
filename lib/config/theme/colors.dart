@@ -193,6 +193,16 @@ abstract final class KolabingColors {
   static const Color glassWhite14 = Color(0x24FFFFFF);
 
   // ---------------------------------------------------------------------------
+  // Glass button ink
+  // ---------------------------------------------------------------------------
+
+  /// Warm dark ink used on all glass button intents
+  static const Color glassInk = Color(0xFF57534B);
+
+  /// Destructive ink for glass buttons
+  static const Color glassDestructiveInk = Color(0xFF9B3B3B);
+
+  // ---------------------------------------------------------------------------
   // Navigation Bar
   // ---------------------------------------------------------------------------
 
@@ -211,6 +221,26 @@ abstract final class KolabingColors {
 
   /// Inactive nav label — outline-variant color
   static const Color navInactiveSubtle = Color(0xFFCFC6B3);
+
+  // ---------------------------------------------------------------------------
+  // Hairline / UI chrome
+  // ---------------------------------------------------------------------------
+
+  /// Hairline border — very subtle dividers and card borders
+  static const Color hairline = Color(0xFFE8E2D6);
+
+  /// Text/icon on yellow button surface
+  static const Color onYellowButton = Color(0xFF78631A);
+
+  // ---------------------------------------------------------------------------
+  // Amber chip palette
+  // ---------------------------------------------------------------------------
+
+  /// Amber chip container fill
+  static const Color amberChipContainer = Color(0xFFFFF0C2);
+
+  /// Amber chip text/icon
+  static const Color amberChipText = Color(0xFFA07010);
 
   // ---------------------------------------------------------------------------
   // Deprecated tokens — kept until widget files are migrated
@@ -233,6 +263,29 @@ abstract final class KolabingColors {
 
   /// @deprecated Use [secondary]
   static const Color onAccent = Color(0xFFFFFFFF);
+
+  // ---------------------------------------------------------------------------
+  // XP / Gamification — mint green sub-identity (community rewards layer only)
+  // ---------------------------------------------------------------------------
+
+  /// Mint green — XP progress bar fill, gamification accent
+  static const Color xpGreen = Color(0xFF7AE7A3);
+
+  /// Soft mint fill — XP card background
+  static const Color xpGreenContainer = Color(0xFFE8F9F1);
+
+  /// Text/icon on mint fill
+  static const Color xpGreenOnContainer = Color(0xFF1A6644);
+
+  // ---------------------------------------------------------------------------
+  // Category chip palette — Explore card semantic chip colors
+  // ---------------------------------------------------------------------------
+
+  /// Soft blue-grey fill — Music / Art / Culture / Film / Photo chips
+  static const Color categoryBlueGrey = Color(0xFFDDE3EC);
+
+  /// Text on blue-grey chip fill
+  static const Color categoryBlueGreyText = Color(0xFF3D4A5C);
 
   // ---------------------------------------------------------------------------
   // Gradient

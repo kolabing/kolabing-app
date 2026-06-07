@@ -284,8 +284,8 @@ class _StatusHeader extends StatelessWidget {
         context.colors.activeText,
       ),
       CollaborationStatus.pendingConfirmation => (
-        const Color(0xFFFFF3CD),
-        const Color(0xFF856404),
+        context.colors.pendingBg,
+        context.colors.pendingText,
       ),
       CollaborationStatus.completed => (
         context.colors.completedBg,
@@ -1290,16 +1290,16 @@ class _ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final (diffColor, diffBgColor) = switch (challenge.difficulty) {
       ChallengeDifficulty.easy => (
-        const Color(0xFF155724),
-        const Color(0xFFD4EDDA),
+        context.colors.activeText,
+        context.colors.activeBg,
       ),
       ChallengeDifficulty.medium => (
-        const Color(0xFF856404),
-        const Color(0xFFFFF3CD),
+        context.colors.pendingText,
+        context.colors.pendingBg,
       ),
       ChallengeDifficulty.hard => (
-        const Color(0xFF721C24),
-        const Color(0xFFF8D7DA),
+        context.colors.errorText,
+        context.colors.errorBg,
       ),
     };
 

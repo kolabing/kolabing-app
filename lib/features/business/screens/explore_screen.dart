@@ -163,20 +163,22 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         bottom: false,
         child: Column(
           children: [
+            _buildHeader(),
+            const SizedBox(height: 6),
             _buildTopBar(filters, listState),
-            const SizedBox(height: KolabingSpacing.xs),
+            const SizedBox(height: 6),
             _FeedToggle(
               feed: filters.feed,
               onChanged: (DiscoveryFeed value) =>
                   ref.read(discoveryFiltersProvider.notifier).setFeed(value),
             ),
-            const SizedBox(height: KolabingSpacing.sm),
+            const SizedBox(height: KolabingSpacing.xs),
             DiscoveryQuickFilters(
               filters: filters,
               isCommunityViewer: _isCommunityViewer,
               onOpenFilters: _openFilterSheet,
             ),
-            const SizedBox(height: KolabingSpacing.sm),
+            const SizedBox(height: KolabingSpacing.xs),
             Expanded(
               child: listState.isLoading
                   ? _buildLoadingState()
@@ -195,73 +197,100 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
-  Widget _buildTopBar(DiscoveryFilters filters, DiscoveryListState listState) {
-    final filterLabel = _buildFilterLabel(context, filters, listState.total);
-    final hasFilters = filters.hasActiveFilters;
+  Widget _buildHeader() {
+    final photoUrl = ref.watch(authProvider).user?.profilePhotoUrl;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         KolabingSpacing.md,
         KolabingSpacing.xs,
-        KolabingSpacing.xs,
-        KolabingSpacing.xs,
+        KolabingSpacing.md,
+        0,
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: GestureDetector(
-              onTap: _openFilterSheet,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(KolabingRadius.round),
-                  border: Border.all(
-                    color: hasFilters
-                        ? context.colors.primary
-                        : context.colors.darkBorder,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      hasFilters ? LucideIcons.filterX : LucideIcons.search,
-                      size: 16,
-                      color: hasFilters
-                          ? context.colors.primary
-                          : context.colors.textTertiary,
-                    ),
-                    const SizedBox(width: KolabingSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        filterLabel,
-                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: hasFilters
-                              ? context.colors.onSurface
-                              : context.colors.textTertiary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
+            child: Text(
+              'EXPLORE',
+              style: KolabingTextStyles.headlineLarge.copyWith(
+                color: context.colors.onSurface,
+                letterSpacing: 1.0,
               ),
             ),
           ),
-          const SizedBox(width: KolabingSpacing.xs),
           const NotificationBell(),
+          const SizedBox(width: KolabingSpacing.xs),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: context.colors.darkBorder, width: 1.5),
+              color: context.colors.surfaceContainerLow,
+            ),
+            child: ClipOval(
+              child: photoUrl != null && photoUrl.isNotEmpty
+                  ? Image.network(photoUrl, fit: BoxFit.cover)
+                  : Icon(LucideIcons.user, size: 20, color: context.colors.onSurfaceVariant),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  String _buildFilterLabel(
-    BuildContext context,
-    DiscoveryFilters filters,
-    int total,
-  ) {
+  Widget _buildTopBar(DiscoveryFilters filters, DiscoveryListState listState) {
+    final filterLabel = _buildFilterLabel(filters, listState.total);
+    final hasFilters = filters.hasActiveFilters;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+      child: GestureDetector(
+        onTap: _openFilterSheet,
+        child: Container(
+          height: 44,
+          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(KolabingRadius.round),
+            border: Border.all(
+              color: hasFilters
+                  ? context.colors.primary
+                  : context.colors.darkBorder,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                hasFilters ? LucideIcons.filterX : LucideIcons.search,
+                size: 16,
+                color: hasFilters
+                    ? context.colors.primary
+                    : context.colors.textTertiary,
+              ),
+              const SizedBox(width: KolabingSpacing.xs),
+              Expanded(
+                child: Text(
+                  filterLabel,
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: hasFilters
+                        ? context.colors.onSurface
+                        : context.colors.textTertiary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _buildFilterLabel(DiscoveryFilters filters, int total) {
     final l10n = AppLocalizations.of(context);
     if (!filters.hasActiveFilters) {
       return filters.feed == DiscoveryFeed.recommended
@@ -606,7 +635,7 @@ class _FeedSegment extends StatelessWidget {
     onTap: onTap,
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: isSelected ? context.colors.primary : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),

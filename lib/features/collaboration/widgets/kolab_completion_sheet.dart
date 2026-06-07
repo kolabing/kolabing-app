@@ -348,7 +348,7 @@ class _StepConfirm extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFEEF0),
+              color: context.colors.errorBg,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

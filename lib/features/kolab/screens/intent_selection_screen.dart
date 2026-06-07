@@ -76,7 +76,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         ),
         title: Text(
           l10n.intentSelectionAppBarTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.eyebrow.copyWith(color: context.colors.onSurface),
         ),
         centerTitle: true,
       ),
@@ -108,7 +108,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       isCommunity
                           ? l10n.intentSelectionCommunityTitle
                           : l10n.intentSelectionBusinessTitle,
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                      style: KolabingTextStyles.titleLarge.copyWith(color: context.colors.onSurface),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
@@ -175,7 +175,7 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       Text(
                         profileState.error ?? l10n.intentSelectionProfileLoadError,
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                        style: KolabingTextStyles.titleMedium.copyWith(color: context.colors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(

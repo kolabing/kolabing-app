@@ -1,3 +1,4 @@
+// lib/features/kolab/widgets/my_kolab_card.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -7,6 +8,10 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/glass_button.dart';
+import '../../../widgets/glass_icon_button.dart';
+import '../../../widgets/kolab_chip.dart';
+import '../../../widgets/kolab_status_badge.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
@@ -29,6 +34,34 @@ class MyKolabCard extends StatelessWidget {
   final VoidCallback? onClose;
   final VoidCallback? onDelete;
 
+  String? get _imageUrl =>
+      kolab.media.isNotEmpty ? kolab.media.first.url : null;
+
+  String get _initials {
+    final t = kolab.title.trim();
+    return t.isNotEmpty ? t[0].toUpperCase() : 'K';
+  }
+
+  String get _availabilityLabel {
+    final start = kolab.availabilityStart;
+    final end = kolab.availabilityEnd;
+    if (start == null) return '';
+    final fmt = DateFormat('MMM d');
+    return end != null
+        ? '${fmt.format(start)} – ${fmt.format(end)}'
+        : fmt.format(start);
+  }
+
+  String get _secondaryLabel {
+    if (kolab.intentType == IntentType.communitySeeking) {
+      return kolab.communityTypeLabels.take(2).join(', ');
+    }
+    if (kolab.intentType == IntentType.venuePromotion) {
+      return kolab.venueName ?? '';
+    }
+    return kolab.productName ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -36,341 +69,202 @@ class MyKolabCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        child: Column(
+        padding: const EdgeInsets.all(14),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                _StatusBadge(status: kolab.status),
-                const Spacer(),
-                _InfoPill(icon: kolab.intentType.icon, label: kolab.typeLabel),
-              ],
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            Text(
-              kolab.title.isNotEmpty ? kolab.title : l10n.myKolabCardUntitled,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface, height: 1.3),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Wrap(
-              spacing: KolabingSpacing.xs,
-              runSpacing: KolabingSpacing.xs,
-              children: [
-                if (kolab.preferredCity.isNotEmpty)
-                  _InfoPill(
-                    icon: LucideIcons.mapPin,
-                    label: kolab.preferredCity,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  KolabStatusBadge(status: kolab.status),
+                  const SizedBox(height: 6),
+                  Text(
+                    kolab.title.isNotEmpty
+                        ? kolab.title
+                        : l10n.myKolabCardUntitled,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: context.colors.onSurface,
+                      height: 1.3,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                if (_availabilityLabel.isNotEmpty)
-                  _InfoPill(
-                    icon: LucideIcons.calendar,
-                    label: _availabilityLabel,
+                  const SizedBox(height: 7),
+                  Wrap(
+                    spacing: KolabingSpacing.xs,
+                    runSpacing: KolabingSpacing.xs,
+                    children: [
+                      if (kolab.preferredCity.isNotEmpty)
+                        KolabChip(
+                          label: kolab.preferredCity,
+                          variant: KolabChipVariant.amber,
+                          icon: LucideIcons.mapPin,
+                        ),
+                      if (_availabilityLabel.isNotEmpty)
+                        KolabChip(
+                          label: _availabilityLabel,
+                          variant: KolabChipVariant.sage,
+                          icon: LucideIcons.calendar,
+                        ),
+                      if (_secondaryLabel.isNotEmpty)
+                        KolabChip(
+                          label: _secondaryLabel,
+                          variant: KolabChipVariant.lavender,
+                        ),
+                    ],
                   ),
-                if (_secondaryLabel.isNotEmpty)
-                  _InfoPill(icon: LucideIcons.tag, label: _secondaryLabel),
-              ],
+                  const SizedBox(height: 8),
+                  _buildActions(),
+                ],
+              ),
             ),
-            const SizedBox(height: KolabingSpacing.sm),
-            _buildActions(l10n),
+            const SizedBox(width: KolabingSpacing.sm),
+            _KolabSquareImage(imageUrl: _imageUrl, initials: _initials),
           ],
         ),
       ),
     );
   }
 
-  String get _availabilityLabel {
-    final start = kolab.availabilityStart;
-    final end = kolab.availabilityEnd;
-    if (start == null) {
-      return '';
-    }
+  Widget _buildActions() {
+    Widget? pill;
+    final iconBtns = <Widget>[];
 
-    final formatter = DateFormat('MMM d');
-    if (end != null) {
-      return '${formatter.format(start)} - ${formatter.format(end)}';
-    }
-    return formatter.format(start);
-  }
-
-  String get _secondaryLabel {
-    if (kolab.intentType == IntentType.communitySeeking) {
-      final types = kolab.communityTypeLabels.take(2).join(', ');
-      return types;
-    }
-
-    if (kolab.intentType == IntentType.venuePromotion) {
-      return kolab.venueName ?? '';
-    }
-
-    return kolab.productName ?? '';
-  }
-
-  Widget _buildActions(AppLocalizations l10n) {
-    final actions = <Widget>[];
-
-    if (kolab.status == 'published' && onView != null) {
-      actions.add(
-        _ActionButton(
-          label: l10n.myKolabCardActionView,
+    if (kolab.status == 'published') {
+      if (onView != null) {
+        pill = GlassButton(
+          label: 'view',
+          onPressed: onView,
+          intent: GlassButtonIntent.primary,
           icon: LucideIcons.eye,
-          onTap: onView!,
-          primary: true,
-        ),
-      );
-    }
-
-    if (kolab.canEdit && onEdit != null) {
-      actions.add(
-        _ActionButton(
-          label: l10n.myKolabCardActionEdit,
+        );
+      }
+      if (kolab.canEdit && onEdit != null) {
+        iconBtns.add(GlassIconButton(
           icon: LucideIcons.edit,
-          onTap: onEdit!,
-          outlined: true,
-        ),
-      );
-    }
-
-    if (kolab.canPublish && onPublish != null) {
-      actions.add(
-        _ActionButton(
-          label: l10n.myKolabCardActionPublish,
-          icon: LucideIcons.upload,
-          onTap: onPublish!,
-          primary: true,
-        ),
-      );
-    }
-
-    if (kolab.canClose && onClose != null) {
-      actions.add(
-        _ActionButton(
-          label: l10n.myKolabCardActionClose,
+          onPressed: onEdit,
+          tooltip: 'Edit',
+        ));
+      }
+      if (kolab.canClose && onClose != null) {
+        iconBtns.add(GlassIconButton(
           icon: LucideIcons.xCircle,
-          onTap: onClose!,
-          outlined: true,
-        ),
-      );
+          onPressed: onClose,
+          tooltip: 'Close',
+        ));
+      }
+    } else if (kolab.canEdit) {
+      if (onEdit != null) {
+        pill = GlassButton(
+          label: 'edit',
+          onPressed: onEdit,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.edit,
+        );
+      }
+      if (kolab.canPublish && onPublish != null) {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.upload,
+          onPressed: onPublish,
+          tooltip: 'Publish',
+        ));
+      }
+    } else if (kolab.canPublish) {
+      if (onPublish != null) {
+        pill = GlassButton(
+          label: 'publish',
+          onPressed: onPublish,
+          intent: GlassButtonIntent.primary,
+          icon: LucideIcons.upload,
+        );
+      }
     }
 
     if (kolab.canDelete && onDelete != null) {
-      actions.add(
-        _ActionButton(
-          label: l10n.myKolabCardActionDelete,
+      if (pill == null) {
+        pill = GlassButton(
+          label: 'delete',
+          onPressed: onDelete,
+          intent: GlassButtonIntent.destructive,
           icon: LucideIcons.trash2,
-          onTap: onDelete!,
-          danger: true,
-        ),
-      );
+        );
+      } else {
+        iconBtns.add(GlassIconButton(
+          icon: LucideIcons.trash2,
+          onPressed: onDelete,
+          tooltip: 'Delete',
+        ));
+      }
     }
 
-    if (actions.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (pill == null && iconBtns.isEmpty) return const SizedBox.shrink();
 
     return Row(
-      children:
-          actions
-              .expand(
-                (widget) => [
-                  Expanded(child: widget),
-                  const SizedBox(width: KolabingSpacing.xs),
-                ],
-              )
-              .toList()
-            ..removeLast(),
-    );
-  }
-}
-
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.status});
-
-  final String status;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final (backgroundColor, textColor, label) = switch (status) {
-      'published' => (
-        context.colors.activeBg,
-        context.colors.activeText,
-        l10n.myKolabCardStatusPublished,
-      ),
-      'closed' => (
-        context.colors.completedBg,
-        context.colors.completedText,
-        l10n.myKolabCardStatusClosed,
-      ),
-      'completed' => (
-        context.colors.completedBg,
-        context.colors.completedText,
-        l10n.myKolabCardStatusCompleted,
-      ),
-      _ => (
-        context.colors.pendingBg,
-        context.colors.pendingText,
-        l10n.myKolabCardStatusDraft,
-      ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: KolabingRadius.borderRadiusRound,
-      ),
-      child: Text(
-        label,
-        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: textColor, letterSpacing: 0.5),
-      ),
-    );
-  }
-}
-
-class _InfoPill extends StatelessWidget {
-  const _InfoPill({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    height: 26,
-    padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-    decoration: BoxDecoration(
-      color: context.colors.surfaceVariant,
-      borderRadius: KolabingRadius.borderRadiusRound,
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 12, color: context.colors.textTertiary),
-        const SizedBox(width: KolabingSpacing.xxs),
-        Text(
-          label,
-          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
-        ),
+        if (pill != null) Expanded(child: pill),
+        ...iconBtns.expand((btn) => [
+          const SizedBox(width: 9),
+          btn,
+        ]),
       ],
-    ),
-  );
+    );
+  }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.primary = false,
-    this.outlined = false,
-    this.danger = false,
-  });
+// ---------------------------------------------------------------------------
+// Private widgets
+// ---------------------------------------------------------------------------
 
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool primary;
-  final bool outlined;
-  final bool danger;
+class _KolabSquareImage extends StatelessWidget {
+  const _KolabSquareImage({required this.initials, this.imageUrl});
+
+  final String? imageUrl;
+  final String initials;
 
   @override
   Widget build(BuildContext context) {
-    final foregroundColor = primary
-        ? context.colors.onPrimary
-        : danger
-        ? context.colors.error
-        : context.colors.onSurface;
+    const size = 68.0;
+    const radius = 14.0;
 
-    if (primary) {
-      return SizedBox(
-        height: 36,
-        child: ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.primary,
-            foregroundColor: context.colors.onPrimary,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusSm,
-            ),
-          ),
-          child: _ActionButtonContent(
-            icon: icon,
-            label: label.toUpperCase(),
-            color: foregroundColor,
-          ),
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.network(
+          imageUrl!,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _placeholder(size, radius),
         ),
       );
     }
-
-    return SizedBox(
-      height: 36,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            color: danger ? context.colors.errorBg : context.colors.darkBorder,
-          ),
-          foregroundColor: foregroundColor,
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusSm,
-          ),
-        ),
-        child: _ActionButtonContent(
-          icon: icon,
-          label: label.toUpperCase(),
-          color: foregroundColor,
-        ),
-      ),
-    );
+    return _placeholder(size, radius);
   }
-}
 
-class _ActionButtonContent extends StatelessWidget {
-  const _ActionButtonContent({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Icon(icon, size: 14, color: color),
-      const SizedBox(width: KolabingSpacing.xxs),
-      Flexible(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.fade,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color, letterSpacing: 1.0),
-          ),
-        ),
+  Widget _placeholder(double size, double radius) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(radius),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFF4C2), Color(0xFFFFE28C)],
       ),
-    ],
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      initials,
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF5C4A12),
+      ),
+    ),
   );
 }

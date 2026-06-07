@@ -9,14 +9,19 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/glass_button.dart';
 import '../providers/wallet_provider.dart';
 
 /// A banner card prompting the user to reveal and share their referral code.
 ///
 /// Reads the [referralCode] from [walletProvider] and opens a bottom sheet
 /// where the user can copy or share the code.
+///
+/// When [usePastelStyle] is true, uses a pastel yellow background and border.
 class ReferralBannerCard extends ConsumerWidget {
-  const ReferralBannerCard({super.key});
+  const ReferralBannerCard({super.key, this.usePastelStyle = false});
+
+  final bool usePastelStyle;
 
   // ---------------------------------------------------------------------------
   // Build
@@ -37,8 +42,15 @@ class ReferralBannerCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceContainerLow,
+        color: usePastelStyle
+            ? const Color(0xFFFDF6DC)
+            : context.colors.surfaceContainerLow,
         borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(
+          color: usePastelStyle
+              ? const Color(0xFFF0E4A0)
+              : context.colors.hairline,
+        ),
       ),
       child: Row(
         children: [
@@ -49,7 +61,7 @@ class ReferralBannerCard extends ConsumerWidget {
               children: [
                 Text(
                   AppLocalizations.of(context).referralBannerEarnBySharing,
-                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.secondary, letterSpacing: 1.0),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
@@ -57,44 +69,22 @@ class ReferralBannerCard extends ConsumerWidget {
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
-                OutlinedButton(
+                GlassButton(
+                  label: AppLocalizations.of(context).referralBannerShareButton,
                   onPressed: () =>
                       _showReferralCodeSheet(context, referralCode),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: context.colors.onSurface,
-                    side: BorderSide(color: context.colors.onSurface),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: KolabingRadius.borderRadiusSm,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: KolabingSpacing.md,
-                      vertical: KolabingSpacing.xs,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).referralBannerShareButton,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                  ),
+                  intent: GlassButtonIntent.primary,
+                  icon: LucideIcons.share2,
                 ),
               ],
             ),
           ),
           const SizedBox(width: KolabingSpacing.md),
-          // Right icon
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: context.colors.softYellow,
-            ),
-            child: Icon(
-              LucideIcons.gift,
-              size: 28,
-              color: context.colors.onSurface,
-            ),
+          // Bare gift icon \u2014 no circle backplate
+          Icon(
+            LucideIcons.gift,
+            size: 36,
+            color: context.colors.onSurface,
           ),
         ],
       ),

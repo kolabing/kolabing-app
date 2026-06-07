@@ -14,9 +14,10 @@ import '../providers/wallet_provider.dart';
 /// Shows current level, total XP, animated progress bar, and XP to next level.
 /// Tapping navigates to the full XP hub (handled by [onTap]).
 class XpProgressCard extends ConsumerWidget {
-  const XpProgressCard({super.key, this.onTap});
+  const XpProgressCard({super.key, this.onTap, this.showNavigationCta = true});
 
   final VoidCallback? onTap;
+  final bool showNavigationCta;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,7 +60,7 @@ class XpProgressCard extends ConsumerWidget {
                 tween: Tween(begin: 0, end: progress),
                 duration: const Duration(milliseconds: 700),
                 curve: Curves.easeOut,
-                builder: (_, value, __) => LinearProgressIndicator(
+                builder: (_, value, _) => LinearProgressIndicator(
                   value: value,
                   minHeight: 8,
                   backgroundColor:
@@ -83,7 +84,7 @@ class XpProgressCard extends ConsumerWidget {
                       : '$xpToNext XP to ${level.next?.title ?? ''}',
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
                 ),
-                if (onTap != null)
+                if (onTap != null && showNavigationCta)
                   Row(
                     children: [
                       Text(
