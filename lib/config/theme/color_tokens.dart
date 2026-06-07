@@ -27,6 +27,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     required this.onPrimary,
     required this.softYellow,
     required this.softYellowBorder,
+    required this.pastelYellowBg,
+    required this.pastelYellowBorder,
     required this.navBarBackground,
     required this.charcoal,
     required this.titleInk,
@@ -108,6 +110,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   final Color onPrimary;
   final Color softYellow;
   final Color softYellowBorder;
+  final Color pastelYellowBg;
+  final Color pastelYellowBorder;
   final Color navBarBackground;
   final Color charcoal;
   final Color titleInk; // large Anton display titles only
@@ -207,6 +211,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     onPrimary: Color(0xFF78631A),
     softYellow: Color(0xFFFFF4C2),
     softYellowBorder: Color(0xFFFFE28C),
+    pastelYellowBg: Color(0xFFFDF6DC),
+    pastelYellowBorder: Color(0xFFF0E4A0),
     navBarBackground: Color(0xFFFFE28C),
     charcoal: Color(0xFF1C1C16),
     titleInk: Color(0xFF1C1C16),
@@ -293,6 +299,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     onPrimary: Color(0xFF5C4A12),
     softYellow: Color(0xFF2C2710),
     softYellowBorder: Color(0xFFFFE28C),
+    pastelYellowBg: Color(0xFF2C2710),
+    pastelYellowBorder: Color(0xFF514A36),
     navBarBackground: Color(0xFF19191C),
     charcoal: Color(0xFFF5F5F7),
     titleInk: Color(0xCCF5F5F7), // 80% opacity white
@@ -377,6 +385,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     Color? onPrimary,
     Color? softYellow,
     Color? softYellowBorder,
+    Color? pastelYellowBg,
+    Color? pastelYellowBorder,
     Color? navBarBackground,
     Color? charcoal,
     Color? titleInk,
@@ -455,6 +465,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       onPrimary: onPrimary ?? this.onPrimary,
       softYellow: softYellow ?? this.softYellow,
       softYellowBorder: softYellowBorder ?? this.softYellowBorder,
+      pastelYellowBg: pastelYellowBg ?? this.pastelYellowBg,
+      pastelYellowBorder: pastelYellowBorder ?? this.pastelYellowBorder,
       navBarBackground: navBarBackground ?? this.navBarBackground,
       charcoal: charcoal ?? this.charcoal,
       titleInk: titleInk ?? this.titleInk,
@@ -538,6 +550,8 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
       softYellow: Color.lerp(softYellow, other.softYellow, t)!,
       softYellowBorder: Color.lerp(softYellowBorder, other.softYellowBorder, t)!,
+      pastelYellowBg: Color.lerp(pastelYellowBg, other.pastelYellowBg, t)!,
+      pastelYellowBorder: Color.lerp(pastelYellowBorder, other.pastelYellowBorder, t)!,
       navBarBackground: Color.lerp(navBarBackground, other.navBarBackground, t)!,
       charcoal: Color.lerp(charcoal, other.charcoal, t)!,
       titleInk: Color.lerp(titleInk, other.titleInk, t)!,
