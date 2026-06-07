@@ -159,7 +159,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.displayName,
-        style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isActive ? context.colors.info : const Color(0xFF155724), letterSpacing: 0.5),
+        style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isActive ? context.colors.info : context.colors.activeText, letterSpacing: 0.5),
       ),
     );
   }
