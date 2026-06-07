@@ -43,12 +43,12 @@ class ReferralBannerCard extends ConsumerWidget {
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
         color: usePastelStyle
-            ? const Color(0xFFFDF6DC)
+            ? context.colors.pastelYellowBg
             : context.colors.surfaceContainerLow,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
           color: usePastelStyle
-              ? const Color(0xFFF0E4A0)
+              ? context.colors.pastelYellowBorder
               : context.colors.hairline,
         ),
       ),

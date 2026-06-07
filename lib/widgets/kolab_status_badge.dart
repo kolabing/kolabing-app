@@ -13,7 +13,7 @@ class KolabStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, label) = _resolve(status);
+    final (bg, fg, label) = _resolve(status, context.colors);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.sm,
@@ -33,72 +33,27 @@ class KolabStatusBadge extends StatelessWidget {
     );
   }
 
-  static (Color, Color, String) _resolve(String status) =>
+  static (Color, Color, String) _resolve(
+    String status,
+    KolabingColorTokens c,
+  ) =>
       switch (status.toLowerCase()) {
-        'published' => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText,
-          'PUBLISHED',
-        ),
-        'draft' => (
-          KolabingColors.completedBg,
-          KolabingColors.completedText,
-          'DRAFT',
-        ),
-        'closed' => (
-          KolabingColors.completedBg,
-          KolabingColors.completedText,
-          'CLOSED',
-        ),
-        'completed' => (
-          KolabingColors.completedBg,
-          KolabingColors.completedText,
-          'COMPLETED',
-        ),
-        'scheduled' => (
-          KolabingColors.secondaryContainer,
-          KolabingColors.secondary,
-          'SCHEDULED',
-        ),
-        'in_progress' || 'active' => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText,
-          'IN PROGRESS',
-        ),
+        'published' => (c.activeBg, c.activeText, 'PUBLISHED'),
+        'draft' => (c.completedBg, c.completedText, 'DRAFT'),
+        'closed' => (c.completedBg, c.completedText, 'CLOSED'),
+        'completed' => (c.completedBg, c.completedText, 'COMPLETED'),
+        'scheduled' => (c.secondaryContainer, c.secondary, 'SCHEDULED'),
+        'in_progress' || 'active' => (c.activeBg, c.activeText, 'IN PROGRESS'),
         'pending_confirmation' => (
-          KolabingColors.pendingBg,
-          KolabingColors.pendingText,
+          c.pendingBg,
+          c.pendingText,
           'WAITING CONFIRM',
         ),
-        'pending' => (
-          KolabingColors.pendingBg,
-          KolabingColors.pendingText,
-          'PENDING',
-        ),
-        'accepted' => (
-          KolabingColors.activeBg,
-          KolabingColors.activeText,
-          'ACCEPTED',
-        ),
-        'declined' => (
-          KolabingColors.errorBg,
-          KolabingColors.errorText,
-          'DECLINED',
-        ),
-        'withdrawn' => (
-          KolabingColors.surfaceVariant,
-          KolabingColors.textTertiary,
-          'WITHDRAWN',
-        ),
-        'cancelled' => (
-          KolabingColors.errorBg,
-          KolabingColors.errorText,
-          'CANCELLED',
-        ),
-        _ => (
-          KolabingColors.surfaceVariant,
-          KolabingColors.textTertiary,
-          status.toUpperCase(),
-        ),
+        'pending' => (c.pendingBg, c.pendingText, 'PENDING'),
+        'accepted' => (c.activeBg, c.activeText, 'ACCEPTED'),
+        'declined' => (c.errorBg, c.errorText, 'DECLINED'),
+        'withdrawn' => (c.surfaceVariant, c.textTertiary, 'WITHDRAWN'),
+        'cancelled' => (c.errorBg, c.errorText, 'CANCELLED'),
+        _ => (c.surfaceVariant, c.textTertiary, status.toUpperCase()),
       };
 }

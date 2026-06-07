@@ -1,0 +1,75 @@
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .row { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid #EAE3D4; }
+  .row:last-child { border-bottom: none; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .tag-green { background: #D4EDDA; color: #155724; }
+  .tag-amber { background: #FFDDAC; color: #D8910B; }
+  .img-box { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+  .img-box img { width: 100%; height: 100%; object-fit: cover; }
+  .fallback { background: linear-gradient(135deg, #FFF4C2, #FFE28C); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #78631A; font-weight: 700; }
+  code { background: #F1EEE5; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #4C4638; }
+</style>
+
+<h2>Square Image Source — by Card Type</h2>
+<p class="subtitle">All images come from the kolab/opportunity content submitted by the business or community. No more circular profile avatars.</p>
+
+<div class="mockup" style="max-width: 600px; margin: 16px auto;">
+  <div class="mockup-header">Image Data Mapping</div>
+  <div class="mockup-body">
+
+    <div class="row">
+      <div class="img-box"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200&q=80" /></div>
+      <div style="flex:1">
+        <div><strong>Offers — Business Kolab</strong> <span class="tag tag-green">Offers Tab</span></div>
+        <div style="font-size:12px;color:#4C4638;margin-top:3px;"><code>kolab.media.first?.url</code> — first uploaded photo from kolab creation flow</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="img-box"><img src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=200&q=80" /></div>
+      <div style="flex:1">
+        <div><strong>Offers — Community Opportunity</strong> <span class="tag tag-green">Offers Tab</span></div>
+        <div style="font-size:12px;color:#4C4638;margin-top:3px;"><code>opportunity.offerPhoto</code> — the <code>offer_photo</code> field on the opportunity</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="img-box"><img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=200&q=80" /></div>
+      <div style="flex:1">
+        <div><strong>Requests — Sent &amp; Received</strong> <span class="tag tag-amber">Requests Tab</span></div>
+        <div style="font-size:12px;color:#4C4638;margin-top:3px;"><code>application.opportunity?.offerPhoto</code> — the opportunity's cover photo (nested object)</div>
+        <div style="font-size:11px;color:#8C8A82;margin-top:2px;">Was: circular profile avatar → Now: the kolab/opportunity image</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="img-box"><img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=200&q=80" /></div>
+      <div style="flex:1">
+        <div><strong>Active &amp; Finished Collaborations</strong> <span class="tag tag-green">Active / Finished Tabs</span></div>
+        <div style="font-size:12px;color:#4C4638;margin-top:3px;"><code>collaboration.opportunity?.offerPhoto</code> — same field via nested opportunity</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="img-box fallback">S</div>
+      <div style="flex:1">
+        <div><strong>Fallback — no image available</strong></div>
+        <div style="font-size:12px;color:#4C4638;margin-top:3px;">Warm yellow-cream gradient square with first initial of the title. Never blank.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="background:#FFF4C2;border:1px solid #FFE28C;border-radius:12px;padding:14px;max-width:600px;margin:16px auto;">
+  <strong style="font-size:13px;color:#5C4A12;">✓ Design confirmed — ready to write the spec</strong>
+  <ul style="margin:8px 0 0;padding-left:18px;font-size:13px;color:#4C4638;line-height:1.8;">
+    <li>Sub-tabs: unified underline style (<code>MyKolabsSubTabs</code>)</li>
+    <li>Cards: one base layout, horizontal, square image from collab content</li>
+    <li>Chips: pastel semantic colors (<code>KolabChip</code>)</li>
+    <li>Status badges: small pill, consistent across sections (<code>KolabStatusBadge</code>)</li>
+    <li>Actions: compact 36px buttons, only on Offer cards</li>
+    <li>Image: always collab/opportunity cover photo, never profile avatar</li>
+  </ul>
+</div>

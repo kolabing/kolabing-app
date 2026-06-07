@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 
 /// A compact 4-pill horizontal stats strip for the XP-first dashboard layouts.
@@ -42,40 +43,40 @@ class _StatPill extends StatelessWidget {
   final int count;
   final String label;
 
-  static const _headingColor = Color(0xFF36322A);
-  static const _captionColor = Color(0xFF928B7C);
-
   @override
-  Widget build(BuildContext context) => Expanded(
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: const Color(0xFFE8E2D6)),
-      ),
-      child: Column(
-        children: [
-          Text(
-            '$count',
-            style: KolabingTextStyles.displaySmall.copyWith(
-              fontSize: 20,
-              color: _headingColor,
-              fontWeight: FontWeight.w400,
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: KolabingRadius.borderRadiusMd,
+          border: Border.all(color: c.hairline),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '$count',
+              style: KolabingTextStyles.displaySmall.copyWith(
+                fontSize: 20,
+                color: c.onSurface,
+                fontWeight: FontWeight.w400,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontSize: 9,
-              color: _captionColor,
-              letterSpacing: 0.5,
-              fontWeight: FontWeight.w500,
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 9,
+                color: c.textTertiary,
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

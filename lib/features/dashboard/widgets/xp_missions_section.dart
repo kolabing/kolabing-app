@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import 'earn_xp_action_card.dart';
 
@@ -13,16 +14,13 @@ import 'earn_xp_action_card.dart';
 class XpMissionsSection extends StatelessWidget {
   const XpMissionsSection({super.key});
 
-  static const _headingColor = Color(0xFF36322A);
-  static const _captionColor = Color(0xFF928B7C);
-
   // Preview data — hardcoded for local comparison.
   // isDone states simulate a user who has posted a review but not yet
   // completed a kolab, shared content, or referred anyone.
   static const _missions = [
     _MissionData(
       icon: LucideIcons.star,
-      iconBg: Color(0xFFE8F5EE),
+      iconBg: _MissionAccent.mint,
       title: 'Post a review',
       description: 'Share your last Kolab experience',
       xpReward: 20,
@@ -30,7 +28,7 @@ class XpMissionsSection extends StatelessWidget {
     ),
     _MissionData(
       icon: LucideIcons.zap,
-      iconBg: Color(0xFFFFF5CC),
+      iconBg: _MissionAccent.amber,
       title: 'Complete a Kolab',
       description: 'Finish your active collaboration',
       xpReward: 100,
@@ -38,7 +36,7 @@ class XpMissionsSection extends StatelessWidget {
     ),
     _MissionData(
       icon: LucideIcons.camera,
-      iconBg: Color(0xFFEDE8FB),
+      iconBg: _MissionAccent.lavender,
       title: 'Share content',
       description: 'Post UGC from your event',
       xpReward: 30,
@@ -46,7 +44,7 @@ class XpMissionsSection extends StatelessWidget {
     ),
     _MissionData(
       icon: LucideIcons.userPlus,
-      iconBg: Color(0xFFF5E8EE),
+      iconBg: _MissionAccent.red,
       title: 'Refer a community',
       description: 'Invite someone to join Kolabing',
       xpReward: 50,
@@ -56,6 +54,7 @@ class XpMissionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
     final doneCount = _missions.where((m) => m.isDone).length;
 
     return Column(
@@ -68,7 +67,7 @@ class XpMissionsSection extends StatelessWidget {
             Text(
               "TODAY'S XP MISSIONS",
               style: KolabingTextStyles.labelLarge.copyWith(
-                color: _headingColor,
+                color: c.onSurface,
                 letterSpacing: 1.0,
               ),
             ),
@@ -76,7 +75,7 @@ class XpMissionsSection extends StatelessWidget {
               '$doneCount of ${_missions.length} done',
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
-                color: _captionColor,
+                color: c.textTertiary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -92,7 +91,7 @@ class XpMissionsSection extends StatelessWidget {
             ),
             child: EarnXpActionCard(
               icon: m.icon,
-              iconBgColor: m.iconBg,
+              iconBgColor: m.iconBg.resolve(c),
               title: m.title,
               description: m.description,
               xpReward: m.xpReward,
@@ -109,6 +108,20 @@ class XpMissionsSection extends StatelessWidget {
 // Internal data class — preview only
 // ---------------------------------------------------------------------------
 
+enum _MissionAccent {
+  mint,
+  amber,
+  lavender,
+  red;
+
+  Color resolve(KolabingColorTokens c) => switch (this) {
+        _MissionAccent.mint => c.categoryMintBg,
+        _MissionAccent.amber => c.amberChipContainer,
+        _MissionAccent.lavender => c.categoryLavenderBg,
+        _MissionAccent.red => c.categoryRedBg,
+      };
+}
+
 class _MissionData {
   const _MissionData({
     required this.icon,
@@ -120,7 +133,7 @@ class _MissionData {
   });
 
   final IconData icon;
-  final Color iconBg;
+  final _MissionAccent iconBg;
   final String title;
   final String description;
   final int xpReward;

@@ -20,27 +20,30 @@ class MyKolabsSubTabs extends StatelessWidget {
   final List<String> labels;
 
   @override
-  Widget build(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      TabBar(
-        controller: controller,
-        labelStyle: KolabingTextStyles.button.copyWith(
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.5,
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TabBar(
+          controller: controller,
+          labelStyle: KolabingTextStyles.button.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
+          ),
+          unselectedLabelStyle: KolabingTextStyles.button.copyWith(
+            fontWeight: FontWeight.w400,
+            letterSpacing: 0.5,
+          ),
+          labelColor: c.onSurface,
+          unselectedLabelColor: c.textTertiary,
+          indicatorColor: c.primary,
+          indicatorWeight: 3,
+          dividerColor: Colors.transparent,
+          tabs: labels.map((l) => Tab(text: l)).toList(),
         ),
-        unselectedLabelStyle: KolabingTextStyles.button.copyWith(
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0.5,
-        ),
-        labelColor: KolabingColors.onSurface,
-        unselectedLabelColor: KolabingColors.textTertiary,
-        indicatorColor: KolabingColors.primary,
-        indicatorWeight: 3,
-        dividerColor: Colors.transparent,
-        tabs: labels.map((l) => Tab(text: l)).toList(),
-      ),
-      const Divider(height: 1, thickness: 1, color: KolabingColors.hairline),
-    ],
-  );
+        Divider(height: 1, thickness: 1, color: c.hairline),
+      ],
+    );
+  }
 }

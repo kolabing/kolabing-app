@@ -22,38 +22,36 @@ class GlassButton extends StatelessWidget {
   final GlassButtonIntent intent;
   final IconData? icon;
 
-  Color get _fill => switch (intent) {
-        GlassButtonIntent.primary =>
-          const Color(0xFFFFF4C2).withValues(alpha: 0.72),
+  Color _fill(KolabingColorTokens c) => switch (intent) {
+        GlassButtonIntent.primary => c.softYellow.withValues(alpha: 0.72),
         GlassButtonIntent.neutral =>
-          const Color(0xFFF5F0E8).withValues(alpha: 0.70),
+          c.surfaceContainerLow.withValues(alpha: 0.70),
         GlassButtonIntent.destructive =>
-          const Color(0xFF9B3B3B).withValues(alpha: 0.10),
+          c.glassDestructiveInk.withValues(alpha: 0.10),
       };
 
-  Color get _border => switch (intent) {
-        GlassButtonIntent.primary =>
-          const Color(0xFFD4B84A).withValues(alpha: 0.55),
-        GlassButtonIntent.neutral =>
-          const Color(0xFFCFC6B3).withValues(alpha: 0.80),
+  Color _border(KolabingColorTokens c) => switch (intent) {
+        GlassButtonIntent.primary => c.primaryDark.withValues(alpha: 0.55),
+        GlassButtonIntent.neutral => c.outlineVariant.withValues(alpha: 0.80),
         GlassButtonIntent.destructive =>
-          const Color(0xFF9B3B3B).withValues(alpha: 0.35),
+          c.glassDestructiveInk.withValues(alpha: 0.35),
       };
 
-  Color get _ink => switch (intent) {
-        GlassButtonIntent.primary || GlassButtonIntent.neutral =>
-          KolabingColors.glassInk,
-        GlassButtonIntent.destructive => KolabingColors.glassDestructiveInk,
+  Color _ink(KolabingColorTokens c) => switch (intent) {
+        GlassButtonIntent.primary || GlassButtonIntent.neutral => c.glassInk,
+        GlassButtonIntent.destructive => c.glassDestructiveInk,
       };
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
+    final ink = _ink(c);
     final content = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         if (icon != null) ...[
-          Icon(icon, size: 17, color: _ink),
+          Icon(icon, size: 17, color: ink),
           const SizedBox(width: 8),
         ],
         Flexible(
@@ -65,7 +63,7 @@ class GlassButton extends StatelessWidget {
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
               letterSpacing: 0,
-              color: _ink,
+              color: ink,
             ),
           ),
         ),
@@ -84,9 +82,9 @@ class GlassButton extends StatelessWidget {
               height: 48,
               padding: const EdgeInsets.symmetric(horizontal: 22),
               decoration: BoxDecoration(
-                color: _fill,
+                color: _fill(c),
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: _border),
+                border: Border.all(color: _border(c)),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x1A96781E),
@@ -99,7 +97,7 @@ class GlassButton extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   stops: const [0.0, 0.12],
                   colors: [
-                    Colors.white.withValues(alpha: 0.18),
+                    c.glassWhite14,
                     Colors.transparent,
                   ],
                 ),

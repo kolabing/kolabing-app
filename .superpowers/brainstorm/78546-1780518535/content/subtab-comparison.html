@@ -1,0 +1,45 @@
+<h2>Sub-Tab Style: Current vs Proposed</h2>
+<p class="subtitle">The Offers tab uses pill-style tabs. The Requests tab uses underline tabs. The goal: one unified style across all of My Kolabs.</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">❌ Current — Offers (pill style)</div>
+    <div class="mockup-body">
+      <div style="padding: 12px; background: #FDF9F0; display: flex; gap: 8px;">
+        <div style="background: #FFE28C; border: 1.5px solid #FFE28C; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 600; color: #78631A; font-family: sans-serif;">Published</div>
+        <div style="background: #FDF9F0; border: 1.5px solid #EAE3D4; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 500; color: #1C1C16; font-family: sans-serif;">Draft</div>
+      </div>
+      <div style="height: 1px; background: #EAE3D4; margin: 0 12px;"></div>
+      <div style="padding: 12px; color: #8C8A82; font-size: 13px; font-family: sans-serif; font-style: italic;">↑ Filled yellow pill = active. Different visual language from Requests.</div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">✅ Current — Requests (underline style)</div>
+    <div class="mockup-body">
+      <div style="background: #FDF9F0; display: flex;">
+        <div style="flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 700; color: #1C1C16; font-family: sans-serif; border-bottom: 3px solid #FFE28C; letter-spacing: 0.5px;">SENT</div>
+        <div style="flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 400; color: #8C8A82; font-family: sans-serif; border-bottom: 3px solid transparent; letter-spacing: 0.5px;">RECEIVED</div>
+      </div>
+      <div style="height: 1px; background: #EAE3D4;"></div>
+      <div style="padding: 12px; color: #8C8A82; font-size: 13px; font-family: sans-serif; font-style: italic;">↑ Full-width, underline indicator, dark/grey text. Clean and consistent.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>✅ Proposed: All sub-tabs use the same underline style</h3>
+  <p class="subtitle">One shared <code>MyKolabsSubTabs</code> component. Published/Draft look exactly like Sent/Received.</p>
+
+  <div class="mockup" style="max-width: 420px; margin: 0 auto;">
+    <div class="mockup-header">Unified Sub-Tab Style (all sections)</div>
+    <div class="mockup-body">
+      <div style="background: #FDF9F0; display: flex;">
+        <div style="flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 700; color: #1C1C16; font-family: sans-serif; border-bottom: 3px solid #FFE28C; letter-spacing: 0.5px;">PUBLISHED</div>
+        <div style="flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 400; color: #8C8A82; font-family: sans-serif; border-bottom: 3px solid transparent; letter-spacing: 0.5px;">DRAFT</div>
+      </div>
+      <div style="height: 1px; background: #EAE3D4;"></div>
+      <div style="padding: 12px; color: #4C4638; font-size: 13px; font-family: sans-serif;">Full-width · Yellow underline · Same component used for Sent/Received and Published/Draft</div>
+    </div>
+  </div>
+</div>

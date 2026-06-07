@@ -7,6 +7,7 @@ import '../../features/application/screens/chat_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
+import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/sign_in_screen.dart';
 import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
@@ -358,7 +359,7 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.login,
       name: 'login',
       builder: (BuildContext context, GoRouterState state) =>
-          const SignInScreen(),
+          const LoginScreen(),
     ),
 
     // Attendee registration (no onboarding steps)

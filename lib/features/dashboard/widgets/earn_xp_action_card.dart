@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 
 /// A single XP earning action row for the mission board.
@@ -27,19 +28,18 @@ class EarnXpActionCard extends StatelessWidget {
   final int xpReward;
   final bool isDone;
 
-  static const _headingColor = Color(0xFF36322A);
-  static const _captionColor = Color(0xFF928B7C);
-
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.sm,
         vertical: KolabingSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: c.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: const Color(0xFFE8E2D6)),
+        border: Border.all(color: c.hairline),
       ),
       child: Row(
         children: [
@@ -51,7 +51,7 @@ class EarnXpActionCard extends StatelessWidget {
               color: iconBgColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, size: 18, color: _headingColor),
+            child: Icon(icon, size: 18, color: c.onSurface),
           ),
           const SizedBox(width: KolabingSpacing.sm),
           // Text
@@ -64,7 +64,7 @@ class EarnXpActionCard extends StatelessWidget {
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: _headingColor,
+                    color: c.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -72,7 +72,7 @@ class EarnXpActionCard extends StatelessWidget {
                   description,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 11,
-                    color: _captionColor,
+                    color: c.textTertiary,
                   ),
                 ),
               ],
@@ -84,6 +84,7 @@ class EarnXpActionCard extends StatelessWidget {
         ],
       ),
     );
+  }
 }
 
 class _Badge extends StatelessWidget {
@@ -94,12 +95,9 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDone
-        ? const Color(0xFFE8F5EE)
-        : const Color(0xFFEDE8FB);
-    final textColor = isDone
-        ? const Color(0xFF2E7D52)
-        : const Color(0xFF7B5EA7);
+    final c = context.colors;
+    final bg = isDone ? c.xpGreenContainer : c.categoryLavenderBg;
+    final textColor = isDone ? c.xpGreenOnContainer : c.categoryLavenderText;
     final label = isDone ? '✓ Done' : '+$xpReward XP';
 
     return Container(
@@ -107,11 +105,7 @@ class _Badge extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDone
-              ? const Color(0xFF2E7D52).withValues(alpha: 0.2)
-              : const Color(0xFF7B5EA7).withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: textColor.withValues(alpha: 0.2)),
       ),
       child: Text(
         label,

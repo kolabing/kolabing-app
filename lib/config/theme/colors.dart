@@ -160,6 +160,12 @@ abstract final class KolabingColors {
   /// Soft yellow border
   static const Color softYellowBorder = Color(0xFFFFE28C);
 
+  /// Pastel yellow background — referral card alternative styling
+  static const Color pastelYellowBg = Color(0xFFFDF6DC);
+
+  /// Pastel yellow border — referral card alternative styling
+  static const Color pastelYellowBorder = Color(0xFFF0E4A0);
+
   // ---------------------------------------------------------------------------
   // Status Badge Colors
   // ---------------------------------------------------------------------------

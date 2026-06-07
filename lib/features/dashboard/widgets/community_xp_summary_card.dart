@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
@@ -14,15 +15,16 @@ import '../../rewards/providers/wallet_provider.dart';
 class CommunityXpSummaryCard extends ConsumerWidget {
   const CommunityXpSummaryCard({super.key});
 
-  static const _cardBg = Color(0xFFE8EFE0);
-  static const _inkDark = Color(0xFF2E4020);
-  static const _inkMid = Color(0xFF3D5229);
-  static const _progressFill = Color(0xFF5A7A3A);
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.colors;
     final wallet = ref.watch(walletSummaryProvider);
     if (wallet == null) return const SizedBox.shrink();
+
+    final cardBg = c.categorySageBg;
+    final inkDark = c.categorySageText;
+    final inkMid = c.categorySageText;
+    final progressFill = c.success;
 
     final level = wallet.level;
     final progress = wallet.levelProgress;
@@ -32,9 +34,9 @@ class CommunityXpSummaryCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: _cardBg,
+        color: cardBg,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: const Color(0xFF3D5229).withValues(alpha: 0.15)),
+        border: Border.all(color: inkMid.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +56,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
                       'To next level',
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 10,
-                        color: _inkMid,
+                        color: inkMid,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -62,14 +64,14 @@ class CommunityXpSummaryCard extends ConsumerWidget {
                       '$xpToNext',
                       style: KolabingTextStyles.displaySmall.copyWith(
                         fontSize: 24,
-                        color: _inkDark,
+                        color: inkDark,
                       ),
                     ),
                     Text(
                       'XP needed',
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 10,
-                        color: _inkMid,
+                        color: inkMid,
                       ),
                     ),
                   ],
@@ -83,7 +85,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
             '${wallet.totalXp}',
             style: KolabingTextStyles.displaySmall.copyWith(
               fontSize: 40,
-              color: _inkDark,
+              color: inkDark,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -93,7 +95,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.0,
-              color: _inkMid,
+              color: inkMid,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -107,8 +109,8 @@ class CommunityXpSummaryCard extends ConsumerWidget {
               builder: (_, value, _) => LinearProgressIndicator(
                 value: value,
                 minHeight: 6,
-                backgroundColor: const Color(0xFF3D5229).withValues(alpha: 0.12),
-                valueColor: const AlwaysStoppedAnimation<Color>(_progressFill),
+                backgroundColor: inkMid.withValues(alpha: 0.12),
+                valueColor: AlwaysStoppedAnimation<Color>(progressFill),
               ),
             ),
           ),
@@ -125,30 +127,33 @@ class _LevelChip extends StatelessWidget {
   final String levelTitle;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xxs,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFF2E4020),
-          borderRadius: KolabingRadius.borderRadiusRound,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(LucideIcons.shield, size: 11, color: Colors.white),
-            const SizedBox(width: 4),
-            Text(
-              'LEVEL $levelNumber',
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                letterSpacing: 0.5,
-              ),
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: c.categorySageText,
+        borderRadius: KolabingRadius.borderRadiusRound,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(LucideIcons.shield, size: 11, color: c.textOnDark),
+          const SizedBox(width: 4),
+          Text(
+            'LEVEL $levelNumber',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: c.textOnDark,
+              letterSpacing: 0.5,
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }

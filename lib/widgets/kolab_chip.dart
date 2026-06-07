@@ -30,7 +30,7 @@ class KolabChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg) = _colors(variant);
+    final (bg, fg) = _colors(variant, context.colors);
     return Container(
       height: 24,
       padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xs),
@@ -58,32 +58,15 @@ class KolabChip extends StatelessWidget {
     );
   }
 
-  static (Color, Color) _colors(KolabChipVariant v) => switch (v) {
-    KolabChipVariant.amber => (
-      KolabingColors.amberChipContainer,
-      KolabingColors.amberChipText,
-    ),
-    KolabChipVariant.sage => (
-      KolabingColors.tertiaryContainer,
-      KolabingColors.tertiary,
-    ),
-    KolabChipVariant.lavender => (
-      KolabingColors.secondaryContainer,
-      KolabingColors.secondary,
-    ),
-    KolabChipVariant.blueGrey => (
-      KolabingColors.categoryBlueGrey,
-      KolabingColors.categoryBlueGreyText,
-    ),
-    KolabChipVariant.peach => (
-      const Color(0xFFFFE9D9),
-      const Color(0xFFB05A2A),
-    ),
-    KolabChipVariant.neutral => (
-      KolabingColors.surfaceVariant,
-      KolabingColors.onSurfaceVariant,
-    ),
-  };
+  static (Color, Color) _colors(KolabChipVariant v, KolabingColorTokens c) =>
+      switch (v) {
+        KolabChipVariant.amber => (c.amberChipContainer, c.amberChipText),
+        KolabChipVariant.sage => (c.tertiaryContainer, c.tertiary),
+        KolabChipVariant.lavender => (c.secondaryContainer, c.secondary),
+        KolabChipVariant.blueGrey => (c.categoryBlueBg, c.categoryBlueText),
+        KolabChipVariant.peach => (c.accentOrange, c.accentOrangeText),
+        KolabChipVariant.neutral => (c.surfaceVariant, c.onSurfaceVariant),
+      };
 }
 
 /// Pick a [KolabChipVariant] from a raw category/tag string.

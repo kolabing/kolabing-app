@@ -1,0 +1,420 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --cream: #F7F4EE;
+    --cream-border: #E8E2D6;
+    --yellow: #FFD861;
+    --yellow-dark: #F5C800;
+    --yellow-pastel-bg: #FDF6DC;
+    --yellow-pastel-border: #F0E4A0;
+
+    /* Sage XP card (from screenshot) */
+    --sage-bg: #E8EFE0;
+    --sage-text: #3D5229;
+    --sage-dark: #2E4020;
+    --sage-border: rgba(62,82,41,0.15);
+
+    /* Warm ink scale */
+    --ink-heading: #36322A;
+    --ink-body: #5A5345;
+    --ink-caption: #928B7C;
+
+    --white: #FFFFFF;
+    --green-pastel: #E8F5EE;
+    --green-done: #2E7D52;
+    --blue-pastel: #E8EEF5;
+    --pink-pastel: #F5E8EE;
+    --yellow-icon: #FFF5CC;
+    --purple-pastel: #EDE8FB;
+    --purple-text: #7B5EA7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #ede9e1; font-family: 'Inter', sans-serif; padding: 24px 16px 40px; }
+
+  h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--ink-heading); margin-bottom: 4px; text-align: center;
+  }
+  .page-sub { color: var(--ink-caption); font-size: 0.82rem; text-align: center; margin-bottom: 28px; }
+
+  /* Phone */
+  .phone-outer {
+    width: 300px;
+    margin: 0 auto;
+  }
+  .phone {
+    width: 300px;
+    background: var(--cream);
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.18), inset 0 0 0 1.5px rgba(0,0,0,0.07);
+    position: relative;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 20px 0;
+  }
+  .status-time { font-size: 10px; font-weight: 700; color: var(--ink-heading); }
+  .status-icons { font-size: 9px; color: var(--ink-heading); }
+
+  /* Notch */
+  .notch {
+    width: 90px; height: 18px; background: #111;
+    border-radius: 0 0 14px 14px;
+    margin: 0 auto 0;
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  }
+
+  /* Scroll */
+  .phone-scroll {
+    max-height: 620px;
+    overflow-y: auto;
+    padding: 14px 16px 20px;
+    scrollbar-width: none;
+  }
+  .phone-scroll::-webkit-scrollbar { display: none; }
+
+  /* Header */
+  .phone-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .greeting-small {
+    font-size: 10px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--ink-caption); margin-bottom: 2px;
+  }
+  .greeting-name {
+    font-family: 'Anton', sans-serif;
+    font-size: 22px; letter-spacing: 0.02em; color: var(--ink-heading);
+  }
+  .notif-btn {
+    width: 36px; height: 36px;
+    background: var(--white);
+    border: 1.5px solid var(--cream-border);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; flex-shrink: 0;
+    font-size: 14px;
+  }
+  .notif-dot {
+    width: 7px; height: 7px; background: #E14D76;
+    border-radius: 50%; border: 1.5px solid var(--cream);
+    position: absolute; top: 6px; right: 7px;
+  }
+
+  /* XP Card — sage green style */
+  .xp-card {
+    background: var(--sage-bg);
+    border-radius: 20px;
+    padding: 16px 16px 14px;
+    margin-bottom: 16px;
+    border: 1px solid var(--sage-border);
+  }
+  .xp-top-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .xp-level-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--sage-dark);
+    color: white;
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .xp-right { text-align: right; }
+  .xp-to-next-label { font-size: 8px; color: var(--sage-text); font-weight: 500; margin-bottom: 1px; }
+  .xp-to-next-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 22px; letter-spacing: 0.02em; color: var(--sage-dark); line-height: 1;
+  }
+  .xp-to-next-sub { font-size: 8px; color: var(--sage-text); }
+  .xp-big-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 38px; letter-spacing: 0.01em; color: var(--sage-dark); line-height: 1;
+    margin-bottom: 2px;
+  }
+  .xp-pts-label {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--sage-text); margin-bottom: 10px;
+  }
+  .xp-track {
+    height: 6px; background: rgba(62,82,41,0.12); border-radius: 6px;
+  }
+  .xp-fill {
+    height: 100%; width: 62%; background: var(--sage-dark); border-radius: 6px;
+  }
+
+  /* Section title */
+  .section-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-heading);
+  }
+  .section-meta { font-size: 9px; color: var(--ink-caption); font-weight: 500; }
+
+  /* Mission cards */
+  .mission-card {
+    background: var(--white);
+    border: 1px solid var(--cream-border);
+    border-radius: 14px; padding: 11px 12px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mission-icon {
+    width: 36px; height: 36px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .mission-body { flex: 1; min-width: 0; }
+  .mission-title {
+    font-size: 11px; font-weight: 700; color: var(--ink-heading); margin-bottom: 1px;
+  }
+  .mission-desc { font-size: 9px; color: var(--ink-caption); }
+  .xp-badge {
+    flex-shrink: 0;
+    background: var(--purple-pastel); color: var(--purple-text);
+    font-size: 9px; font-weight: 700;
+    padding: 4px 8px; border-radius: 20px;
+    border: 1px solid rgba(123,94,167,0.2);
+    white-space: nowrap;
+  }
+  .done-badge {
+    flex-shrink: 0;
+    background: var(--green-pastel); color: var(--green-done);
+    font-size: 9px; font-weight: 700;
+    padding: 4px 8px; border-radius: 20px;
+    border: 1px solid rgba(46,125,82,0.2);
+    white-space: nowrap;
+  }
+
+  /* Stats strip */
+  .stats-strip {
+    display: flex; gap: 6px; margin-bottom: 14px;
+  }
+  .stat-pill {
+    flex: 1; background: var(--white);
+    border: 1px solid var(--cream-border);
+    border-radius: 11px; padding: 8px 4px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 18px; color: var(--ink-heading); line-height: 1;
+  }
+  .stat-label {
+    font-size: 7px; color: var(--ink-caption);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px;
+  }
+
+  /* Badges section */
+  .badges-row {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px;
+    scrollbar-width: none; margin-bottom: 14px;
+  }
+  .badges-row::-webkit-scrollbar { display: none; }
+  .badge-chip {
+    flex-shrink: 0;
+    background: var(--white);
+    border: 1px solid var(--cream-border);
+    border-radius: 10px; padding: 7px 9px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    width: 60px;
+  }
+  .badge-chip.earned { border-color: var(--yellow-dark); background: #FFFBEE; }
+  .badge-emoji { font-size: 16px; }
+  .badge-name { font-size: 6.5px; color: var(--ink-caption); text-align: center; font-weight: 500; }
+  .badge-chip.locked .badge-emoji { filter: grayscale(1) opacity(0.4); }
+
+  /* Referral card — pastel yellow rect */
+  .referral-card {
+    background: var(--yellow-pastel-bg);
+    border: 1px solid var(--yellow-pastel-border);
+    border-radius: 20px; padding: 14px 14px 12px;
+    margin-bottom: 12px;
+  }
+  .referral-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 12px; letter-spacing: 0.04em; color: var(--ink-heading); margin-bottom: 3px;
+  }
+  .referral-sub { font-size: 9px; color: var(--ink-body); margin-bottom: 10px; }
+  .referral-btn {
+    background: var(--ink-heading); color: var(--cream);
+    font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 6px 12px; border-radius: 8px; display: inline-block;
+  }
+
+  /* CTAs */
+  .cta-row { display: flex; gap: 7px; margin-bottom: 14px; }
+  .cta-btn {
+    flex: 1; background: var(--white);
+    border: 1px solid var(--cream-border);
+    border-radius: 11px; padding: 9px 6px;
+    text-align: center;
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--ink-heading);
+  }
+  .cta-btn.primary { background: var(--yellow); border-color: var(--yellow-dark); }
+
+  /* Upcoming */
+  .kolab-card {
+    background: var(--white); border: 1px solid var(--cream-border);
+    border-radius: 12px; padding: 9px 11px;
+    margin-bottom: 7px; display: flex; align-items: center; gap: 9px;
+  }
+  .kolab-avatar {
+    width: 30px; height: 30px; background: var(--yellow);
+    border-radius: 9px; flex-shrink: 0;
+  }
+  .kolab-name { font-size: 10px; font-weight: 600; color: var(--ink-heading); }
+  .kolab-date { font-size: 8px; color: var(--ink-caption); }
+
+  /* Home indicator */
+  .home-bar {
+    width: 80px; height: 4px; background: var(--ink-heading);
+    border-radius: 4px; margin: 10px auto 0; opacity: 0.15;
+  }
+</style>
+
+<h2>Updated Style — Variant B</h2>
+<p class="page-sub">Sage XP card · Pastel yellow referral · Warm ink text · Badges visible</p>
+
+<div class="phone-outer">
+  <div class="phone">
+    <div class="notch"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar" style="padding-top:20px;">
+      <div class="status-time">9:41</div>
+      <div class="status-icons">●●●● ▲ ▐▐</div>
+    </div>
+
+    <div class="phone-scroll">
+
+      <!-- Header -->
+      <div class="phone-header">
+        <div>
+          <div class="greeting-small">Good morning</div>
+          <div class="greeting-name">SOFIA M.</div>
+        </div>
+        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+      </div>
+
+      <!-- XP Card — sage green -->
+      <div class="xp-card">
+        <div class="xp-top-row">
+          <div class="xp-level-chip">🛡 Level 2</div>
+          <div class="xp-right">
+            <div class="xp-to-next-label">To next level</div>
+            <div class="xp-to-next-num">760</div>
+            <div class="xp-to-next-sub">XP needed</div>
+          </div>
+        </div>
+        <div class="xp-big-num">1,240</div>
+        <div class="xp-pts-label">XP Points</div>
+        <div class="xp-track"><div class="xp-fill"></div></div>
+      </div>
+
+      <!-- Today's XP Missions -->
+      <div class="section-row">
+        <div class="section-title">Today's XP Missions</div>
+        <div class="section-meta">2 of 4 done</div>
+      </div>
+
+      <div class="mission-card">
+        <div class="mission-icon" style="background:#E8F5EE;">⭐</div>
+        <div class="mission-body">
+          <div class="mission-title">Post a review</div>
+          <div class="mission-desc">Share your last Kolab experience</div>
+        </div>
+        <div class="done-badge">✓ Done</div>
+      </div>
+
+      <div class="mission-card">
+        <div class="mission-icon" style="background:#FFF5CC;">⚡</div>
+        <div class="mission-body">
+          <div class="mission-title">Complete a Kolab</div>
+          <div class="mission-desc">Finish your active collaboration</div>
+        </div>
+        <div class="xp-badge">+100 XP</div>
+      </div>
+
+      <div class="mission-card">
+        <div class="mission-icon" style="background:#EDE8FB;">📸</div>
+        <div class="mission-body">
+          <div class="mission-title">Share content</div>
+          <div class="mission-desc">Post UGC from your event</div>
+        </div>
+        <div class="xp-badge">+30 XP</div>
+      </div>
+
+      <div class="mission-card" style="margin-bottom:14px;">
+        <div class="mission-icon" style="background:#F5E8EE;">🤝</div>
+        <div class="mission-body">
+          <div class="mission-title">Refer a community</div>
+          <div class="mission-desc">Invite someone to join Kolabing</div>
+        </div>
+        <div class="xp-badge">+50 XP</div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="stat-pill"><div class="stat-num">3</div><div class="stat-label">Pending</div></div>
+        <div class="stat-pill"><div class="stat-num">1</div><div class="stat-label">Active</div></div>
+        <div class="stat-pill"><div class="stat-num">8</div><div class="stat-label">Done</div></div>
+        <div class="stat-pill"><div class="stat-num">2</div><div class="stat-label">Accepted</div></div>
+      </div>
+
+      <!-- Badges -->
+      <div class="section-row">
+        <div class="section-title">Badges</div>
+        <div class="section-meta">3 earned</div>
+      </div>
+      <div class="badges-row">
+        <div class="badge-chip earned"><div class="badge-emoji">🏆</div><div class="badge-name">First Kolab</div></div>
+        <div class="badge-chip earned"><div class="badge-emoji">⭐</div><div class="badge-name">Reviewer</div></div>
+        <div class="badge-chip earned"><div class="badge-emoji">🤝</div><div class="badge-name">Connector</div></div>
+        <div class="badge-chip locked"><div class="badge-emoji">🔥</div><div class="badge-name">On Fire</div></div>
+        <div class="badge-chip locked"><div class="badge-emoji">👑</div><div class="badge-name">Legend</div></div>
+      </div>
+
+      <!-- Referral card — pastel yellow -->
+      <div class="referral-card">
+        <div class="referral-title">💸 Earn with referrals</div>
+        <div class="referral-sub">Invite communities and earn cash rewards when they complete their first Kolab.</div>
+        <div class="referral-btn">Get your link</div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="cta-row">
+        <div class="cta-btn primary">Find a Kolab</div>
+        <div class="cta-btn">My Applications</div>
+      </div>
+
+      <!-- Upcoming -->
+      <div class="section-row">
+        <div class="section-title">Upcoming Kolabs</div>
+      </div>
+      <div class="kolab-card">
+        <div class="kolab-avatar"></div>
+        <div><div class="kolab-name">TechFest Valencia</div><div class="kolab-date">Jun 12 · Confirmed</div></div>
+      </div>
+      <div class="kolab-card">
+        <div class="kolab-avatar" style="background:#EDE8FB;"></div>
+        <div><div class="kolab-name">Yoga Flow BCN</div><div class="kolab-date">Jun 19 · Scheduled</div></div>
+      </div>
+
+    </div>
+    <div class="home-bar"></div>
+  </div>
+</div>

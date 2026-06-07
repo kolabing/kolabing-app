@@ -1,34 +1,27 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
-import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../widgets/auth_fade_slide.dart';
 import '../widgets/kolabing_logo.dart';
 
 // ---------------------------------------------------------------------------
-// Local theme tokens.
+// Local theme tokens — dark edition.
 // ---------------------------------------------------------------------------
 
-const Color _kBg = Color(0xFF000000);
-const Color _kMutedText = Color(0xCCFFFFFF); // ~80% white
-
-// Hero photos cycle through these in order. All sit in assets/images/.
-const List<String> _kHeroImages = <String>[
-  'assets/images/welcome_hero.png',
-  'assets/images/welcome_hero_coffee.png',
-  'assets/images/welcome_hero_yoga.png',
-  'assets/images/welcome_hero_bike.png',
-];
+const Color _kBg = Color(0xFF0A0A0A);
+const Color _kTextPrimary = Color(0xFF1C1C16);
+const Color _kTextWhite = Color(0xFFFFFFFF);
+const Color _kTextMuted = Color(0xFFAAAAAA);
+const Color _kYellow = Color(0xFFFFD861);
 
 // ---------------------------------------------------------------------------
-// WelcomeScreen — minimal, community-first layout.
+// WelcomeScreen — clean white, editorial brand layout.
 // ---------------------------------------------------------------------------
 
 class WelcomeScreen extends StatefulWidget {
@@ -42,8 +35,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     with TickerProviderStateMixin {
   late final AnimationController _entry;
 
-  // Entrance animations.
-  late final Animation<double> _heroFade;
   late final Animation<double> _logoOpacity;
   late final Animation<double> _headlineOpacity;
   late final Animation<Offset> _headlineSlide;
@@ -57,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     super.initState();
     _entry = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1100),
     );
     _initAnimations();
   }
@@ -67,7 +58,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     super.didChangeDependencies();
     final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (reduce) {
-      _entry.duration = const Duration(milliseconds: 220);
+      _entry.duration = const Duration(milliseconds: 200);
     }
     if (!_entry.isAnimating && _entry.status == AnimationStatus.dismissed) {
       _entry.forward();
@@ -94,14 +85,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       ),
     );
 
-    _heroFade = fade(0.00, 0.30);
-    _logoOpacity = fade(0.10, 0.35);
-    _headlineOpacity = fade(0.20, 0.50);
-    _headlineSlide = slide(0.20, 0.50);
-    _subtitleOpacity = fade(0.40, 0.65);
-    _subtitleSlide = slide(0.40, 0.65, from: const Offset(0, 8));
-    _ctaOpacity = fade(0.70, 0.95);
-    _loginOpacity = fade(0.80, 1.00);
+    _logoOpacity = fade(0.00, 0.28);
+    _headlineOpacity = fade(0.18, 0.50);
+    _headlineSlide = slide(0.18, 0.50);
+    _subtitleOpacity = fade(0.38, 0.62);
+    _subtitleSlide = slide(0.38, 0.62, from: const Offset(0, 8));
+    _ctaOpacity = fade(0.65, 0.90);
+    _loginOpacity = fade(0.75, 1.00);
   }
 
   @override
@@ -135,97 +125,74 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       ),
       child: Scaffold(
         backgroundColor: _kBg,
-        body: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            // Hero photo + gradient overlay.
-            _HeroBackdrop(opacity: _heroFade),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24, compact ? 12 : 20, 24, compact ? 16 : 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                SizedBox(height: compact ? 8 : 16),
 
-            // Foreground content. Scroll-safe so the fixed hero never
-            // overflows on small screens / large text scales.
-            SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
+                // Headline.
+                AuthFadeSlide(
+                  opacity: _headlineOpacity,
+                  offset: _headlineSlide,
+                  child: _Headline(compact: compact),
+                ),
+
+                SizedBox(height: compact ? 12 : 16),
+
+                // Subtitle.
+                AuthFadeSlide(
+                  opacity: _subtitleOpacity,
+                  offset: _subtitleSlide,
+                  child: const _Subtitle(),
+                ),
+
+                const Spacer(),
+
+                // Logo — centred between subtitle and CTA.
+                AuthFadeOnly(
+                  opacity: _logoOpacity,
+                  child: Center(
+                    child: KolabingLogo(
+                      width: compact ? 160.0 : 190.0,
+                      variant: KolabingLogoVariant.onDark,
                     ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          24,
-                          compact ? 12 : 18,
-                          24,
-                          compact ? 18 : 26,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            // Top bar — wordmark.
-                            AuthFadeOnly(
-                              opacity: _logoOpacity,
-                              child: const _TopBar(),
-                            ),
+                  ),
+                ),
 
-                            SizedBox(height: compact ? 26 : 40),
+                const Spacer(),
 
-                            // Headline.
-                            AuthFadeSlide(
-                              opacity: _headlineOpacity,
-                              offset: _headlineSlide,
-                              child: _Headline(compact: compact),
-                            ),
-
-                            SizedBox(height: compact ? 12 : 16),
-
-                            // Subtitle.
-                            AuthFadeSlide(
-                              opacity: _subtitleOpacity,
-                              offset: _subtitleSlide,
-                              child: const _Subtitle(),
-                            ),
-
-                            // Hero fills remaining space.
-                            const Expanded(child: SizedBox.shrink()),
-
-                            // CTA.
-                            AuthFadeOnly(
-                              opacity: _ctaOpacity,
-                              child: _PrimaryCta(onPressed: _onPrimaryCta),
-                            ),
-                            const SizedBox(height: 10),
-                            FadeTransition(
-                              opacity: _loginOpacity,
-                              child: Center(
-                                child: TextButton(
-                                  onPressed: _onLogin,
-                                  style: TextButton.styleFrom(
-                                    minimumSize: const Size(88, 48),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    AppLocalizations.of(context).welcomeLogIn,
-                                    style: KolabingTextStyles.bodySmall
-                                        .copyWith(
-                                          color: _kMutedText,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1.0,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                // CTA button.
+                AuthFadeOnly(
+                  opacity: _ctaOpacity,
+                  child: _PrimaryCta(onPressed: _onPrimaryCta),
+                ),
+                const SizedBox(height: 8),
+                FadeTransition(
+                  opacity: _loginOpacity,
+                  child: Center(
+                    child: TextButton(
+                      onPressed: _onLogin,
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size(88, 44),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context).welcomeLogIn,
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: _kTextMuted,
+                          fontWeight: FontWeight.w400,
+                          height: 1.0,
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -233,149 +200,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 }
 
 // ---------------------------------------------------------------------------
-// Hero backdrop — full-bleed photo fading into pure black.
-// ---------------------------------------------------------------------------
-
-class _HeroBackdrop extends StatefulWidget {
-  const _HeroBackdrop({required this.opacity});
-  final Animation<double> opacity;
-
-  @override
-  State<_HeroBackdrop> createState() => _HeroBackdropState();
-}
-
-class _HeroBackdropState extends State<_HeroBackdrop> {
-  int _index = 0;
-  Timer? _timer;
-  bool _precached = false;
-
-  static const Duration _interval = Duration(milliseconds: 5200);
-  static const Duration _fade = Duration(milliseconds: 1400);
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_precached) {
-      _precached = true;
-      for (final path in _kHeroImages) {
-        precacheImage(AssetImage(path), context);
-      }
-    }
-    final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (!reduce && _timer == null) {
-      _timer = Timer.periodic(_interval, (_) {
-        if (!mounted) return;
-        setState(() => _index = (_index + 1) % _kHeroImages.length);
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: IgnorePointer(
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          const ColoredBox(color: _kBg),
-          FadeTransition(
-            opacity: widget.opacity,
-            child: ShaderMask(
-              blendMode: BlendMode.dstIn,
-              shaderCallback: (Rect rect) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xCCFFFFFF),
-                  Color(0x80FFFFFF),
-                  Color(0x00FFFFFF),
-                ],
-                stops: <double>[0.0, 0.45, 0.85],
-              ).createShader(rect),
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  for (int i = 0; i < _kHeroImages.length; i++)
-                    AnimatedOpacity(
-                      duration: _fade,
-                      curve: Curves.easeInOut,
-                      opacity: i == _index ? 1.0 : 0.0,
-                      child: Image.asset(
-                        _kHeroImages[i],
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                        gaplessPlayback: true,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          // Soft warm bloom top.
-          Positioned(
-            top: -120,
-            left: -60,
-            right: -60,
-            height: 320,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0, -0.4),
-                  radius: 0.9,
-                  colors: <Color>[
-                    context.colors.primary.withValues(alpha: 0.12),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Bottom vignette for legibility.
-          const Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 240,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: <Color>[Colors.transparent, _kBg],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Top bar — tiny Kolabing wordmark, left-aligned.
-// ---------------------------------------------------------------------------
-
-class _TopBar extends StatelessWidget {
-  const _TopBar();
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: 'Kolabing',
-    child: const KolabingLogo(
-      width: 128,
-      variant: KolabingLogoVariant.yellowTransparent,
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Headline — two lines, Anton font.
+// Headline — Anton uppercase, black + yellow alternating words.
 // ---------------------------------------------------------------------------
 
 class _Headline extends StatelessWidget {
@@ -385,27 +210,59 @@ class _Headline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = compact ? 38.0 : 42.0;
-    final style = KolabingTextStyles.displayLarge.copyWith(
+    final fontSize = compact ? 34.0 : 38.0;
+    const lineHeight = 1.05;
+
+    TextStyle base(Color color) => GoogleFonts.anton(
       fontSize: fontSize,
-      letterSpacing: -0.5,
-      height: 1.02,
-      color: context.colors.textOnDark,
+      height: lineHeight,
+      letterSpacing: 0.0,
+      color: color,
     );
-    final l10n = AppLocalizations.of(context);
+
+    final black = base(_kTextWhite);
+    final yellow = base(_kYellow);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(l10n.welcomeHeadlineLine1, style: style),
-        Text(l10n.welcomeHeadlineLine2, style: style),
+        // Line 1: MAKE KOLABS.
+        RichText(
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(text: 'MAKE ', style: black),
+              TextSpan(text: 'KOLABS.', style: yellow),
+            ],
+          ),
+        ),
+        SizedBox(height: compact ? 2 : 4),
+        // Line 2: FILL YOUR BUSINESS.
+        RichText(
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(text: 'FILL YOUR ', style: black),
+              TextSpan(text: 'BUSINESS.', style: yellow),
+            ],
+          ),
+        ),
+        SizedBox(height: compact ? 2 : 4),
+        // Line 3: REWARD YOUR COMMUNITY.
+        RichText(
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(text: 'REWARD YOUR ', style: black),
+              TextSpan(text: 'COMMUNITY.', style: yellow),
+            ],
+          ),
+        ),
       ],
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subtitle — Inter, muted white.
+// Subtitle — Inter, muted dark grey.
 // ---------------------------------------------------------------------------
 
 class _Subtitle extends StatelessWidget {
@@ -413,10 +270,12 @@ class _Subtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    AppLocalizations.of(context).welcomeSubtitle,
-    style: KolabingTextStyles.captionSecondary.copyWith(
-      color: _kMutedText,
-      height: 1.45,
+    'Community-led partnerships for events, UGC, reviews and real-world growth.',
+    style: KolabingTextStyles.bodySmall.copyWith(
+      color: _kTextMuted,
+      height: 1.6,
+      fontSize: 15,
+      letterSpacing: 0.1,
     ),
   );
 }
@@ -436,12 +295,14 @@ class _PrimaryCta extends StatelessWidget {
     child: FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
-        backgroundColor: context.colors.primary,
-        foregroundColor: context.colors.onPrimary,
+        backgroundColor: _kYellow,
+        foregroundColor: _kTextPrimary,
         elevation: 0,
         shadowColor: Colors.transparent,
         minimumSize: const Size.fromHeight(54),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -455,18 +316,15 @@ class _PrimaryCta extends StatelessWidget {
                 maxLines: 1,
                 softWrap: false,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextPrimary,
                   height: 1.0,
                 ),
               ),
             ),
           ),
           const SizedBox(width: 10),
-          Icon(
-            LucideIcons.arrowRight,
-            size: 18,
-            color: context.colors.onPrimary,
-          ),
+          const Icon(LucideIcons.arrowRight, size: 18, color: _kTextPrimary),
         ],
       ),
     ),

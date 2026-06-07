@@ -33,7 +33,11 @@ class AuthService {
     FlutterSecureStorage? secureStorage,
     GoogleSignIn? googleSignIn,
     http.Client? httpClient,
-  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage(
+           iOptions: IOSOptions(
+             accessibility: KeychainAccessibility.first_unlock,
+           ),
+         ),
        _googleSignIn =
            googleSignIn ??
            GoogleSignIn(
@@ -888,7 +892,7 @@ class AuthService {
       return _cachedUser!;
     }
 
-    final userJson = await _secureStorage.read(key: _userKey);
+    final userJson = await _secureRead(_userKey);
     if (userJson != null) {
       final json = jsonDecode(userJson) as Map<String, dynamic>;
       _cachedUser = UserModel.fromJson(json);
@@ -935,7 +939,7 @@ class AuthService {
       return _cachedToken;
     }
 
-    return _cachedToken = await _secureStorage.read(key: _tokenKey);
+    return _cachedToken = await _secureRead(_tokenKey);
   }
 
   /// Get stored refresh token.
@@ -945,9 +949,7 @@ class AuthService {
       return _cachedRefreshToken;
     }
 
-    return _cachedRefreshToken = await _secureStorage.read(
-      key: _refreshTokenKey,
-    );
+    return _cachedRefreshToken = await _secureRead(_refreshTokenKey);
   }
 
   /// Check if user is authenticated
@@ -1083,17 +1085,42 @@ class AuthService {
     String? refreshToken,
   }) async {
     _cachedToken = token;
-    await _secureStorage.write(key: _tokenKey, value: token);
+    await _secureWrite(_tokenKey, token);
 
     if (refreshToken != null && refreshToken.isNotEmpty) {
       _cachedRefreshToken = refreshToken;
-      await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+      await _secureWrite(_refreshTokenKey, refreshToken);
     }
   }
 
   Future<void> _saveUser(UserModel user) async {
     _cachedUser = user;
-    await _secureStorage.write(key: _userKey, value: jsonEncode(user.toJson()));
+    await _secureWrite(_userKey, jsonEncode(user.toJson()));
+  }
+
+  Future<void> _secureWrite(String key, String value) async {
+    try {
+      await _secureStorage.write(key: key, value: value);
+    } catch (e) {
+      debugPrint('[AUTH] keychain write unavailable ($key): $e');
+    }
+  }
+
+  Future<String?> _secureRead(String key) async {
+    try {
+      return await _secureStorage.read(key: key);
+    } catch (e) {
+      debugPrint('[AUTH] keychain read unavailable ($key): $e');
+      return null;
+    }
+  }
+
+  Future<void> _secureDelete(String key) async {
+    try {
+      await _secureStorage.delete(key: key);
+    } catch (e) {
+      debugPrint('[AUTH] keychain delete unavailable ($key): $e');
+    }
   }
 
   /// Get cached user
@@ -1108,7 +1135,7 @@ class AuthService {
     if (_cachedUser != null) return _cachedUser;
 
     try {
-      final userJson = await _secureStorage.read(key: _userKey);
+      final userJson = await _secureRead(_userKey);
       if (userJson != null) {
         final json = jsonDecode(userJson) as Map<String, dynamic>;
         _cachedUser = UserModel.fromJson(json);
@@ -1142,9 +1169,9 @@ class AuthService {
 
   Future<void> _purgeSession() async {
     _invalidateSharedSession();
-    await _secureStorage.delete(key: _tokenKey);
-    await _secureStorage.delete(key: _refreshTokenKey);
-    await _secureStorage.delete(key: _userKey);
+    await _secureDelete(_tokenKey);
+    await _secureDelete(_refreshTokenKey);
+    await _secureDelete(_userKey);
     _sessionChangesController.add(AuthSessionChange.cleared);
   }
 }
