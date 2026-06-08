@@ -359,6 +359,8 @@ class EventService {
     int? capacity,
     bool clearCapacity = false,
     List<String>? tierGate,
+    String scope = 'this',
+    Map<String, dynamic>? recurrence,
   }) async {
     final payload = <String, dynamic>{
       if (name != null) 'name': name,
@@ -373,10 +375,15 @@ class EventService {
       else if (clearCapacity)
         'capacity': null,
       if (tierGate != null) 'tier_gate': tierGate,
+      // Present only when converting a one-off into a recurring series.
+      if (recurrence != null) 'recurrence': recurrence,
     };
+    final uri = Uri.parse('$_baseUrl/events/$eventId').replace(
+      queryParameters: scope == 'this' ? null : {'scope': scope},
+    );
     final response = await _sendWithRefresh(
       () async => _httpClient.put(
-        Uri.parse('$_baseUrl/events/$eventId'),
+        uri,
         headers: await _getJsonHeaders(),
         body: jsonEncode(payload),
       ),
@@ -467,6 +474,32 @@ class EventService {
       }
     } catch (_) {}
     throw Exception(message);
+  }
+
+  /// POST /api/v1/event-series/{id}/extend
+  /// Pushes a recurring series' rolling window forward (the "extend later" half
+  /// of the hybrid). Returns how many new occurrences were created.
+  Future<int> extendSeries(String seriesId) async {
+    final response = await _sendWithRefresh(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/event-series/$seriesId/extend'),
+        headers: await _getJsonHeaders(),
+      ),
+      allowRetry: true,
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return (json['occurrences_created'] as num?)?.toInt() ?? 0;
+    }
+    if (response.statusCode == 401) {
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    if (response.statusCode == 403) {
+      throw const ApiException(
+        error: ApiError(message: 'You are not authorized to manage this series.'),
+      );
+    }
+    throw _parseApiError(response);
   }
 
   /// POST /api/v1/events

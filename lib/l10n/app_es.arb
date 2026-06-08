@@ -1353,6 +1353,9 @@
   "eventHubDeleteScopeFollowing": "Este y los siguientes eventos",
   "eventHubDeleteScopeSeries": "Toda la serie",
   "eventHubDeleted": "Evento eliminado",
+  "eventHubExtendSeries": "Ampliar serie (+3 meses)",
+  "eventHubExtended": "Serie ampliada: {count} fechas nuevas",
+  "eventHubExtendedNone": "No hay fechas nuevas que añadir",
   "eventHubAddPhotos": "Añadir fotos",
 
   "eventFormNewTitle": "Nuevo evento",
@@ -1373,6 +1376,7 @@
   "eventFormRepeatChatPerEvent": "Un chat por evento",
   "eventFormRepeatChatShared": "Un chat compartido para la serie",
   "eventFormPublishSeries": "Publicar serie",
+  "eventFormApplyTo": "Aplicar los cambios a",
   "eventFormErrWeekday": "Elige al menos un día",
   "eventFormErrEndsCount": "Indica cuántos eventos",
   "eventFormErrEndsOn": "Elige una fecha posterior al inicio",

@@ -1353,6 +1353,9 @@
   "eventHubDeleteScopeFollowing": "Aquest i els esdeveniments següents",
   "eventHubDeleteScopeSeries": "Tota la sèrie",
   "eventHubDeleted": "Esdeveniment eliminat",
+  "eventHubExtendSeries": "Amplia la sèrie (+3 mesos)",
+  "eventHubExtended": "Sèrie ampliada: {count} dates noves",
+  "eventHubExtendedNone": "No hi ha dates noves per afegir",
   "eventHubAddPhotos": "Afegir fotos",
 
   "eventFormNewTitle": "Nou esdeveniment",
@@ -1373,6 +1376,7 @@
   "eventFormRepeatChatPerEvent": "Un xat per esdeveniment",
   "eventFormRepeatChatShared": "Un xat compartit per a la sèrie",
   "eventFormPublishSeries": "Publica la sèrie",
+  "eventFormApplyTo": "Aplica els canvis a",
   "eventFormErrWeekday": "Tria almenys un dia",
   "eventFormErrEndsCount": "Indica quants esdeveniments",
   "eventFormErrEndsOn": "Tria una data posterior a l'inici",

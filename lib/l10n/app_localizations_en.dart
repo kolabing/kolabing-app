@@ -4577,6 +4577,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventHubDeleted => 'Event deleted';
 
   @override
+  String get eventHubExtendSeries => 'Extend series (+3 months)';
+
+  @override
+  String eventHubExtended(int count) {
+    return 'Series extended — $count new dates';
+  }
+
+  @override
+  String get eventHubExtendedNone => 'No new dates to add';
+
+  @override
   String get eventHubAddPhotos => 'Add photos';
 
   @override
@@ -4632,6 +4643,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventFormPublishSeries => 'Publish series';
+
+  @override
+  String get eventFormApplyTo => 'Apply changes to';
 
   @override
   String get eventFormErrWeekday => 'Pick at least one day';

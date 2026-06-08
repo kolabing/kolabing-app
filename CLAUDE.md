@@ -4,6 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## CONTRIBUTOR ROUTING — Volkan → Reverb real-time ticket
+
+If the current user is **Volkan** — they introduce themselves as Volkan, the git
+user / commit author is Volkan (volkanoluc@gmail.com), or they ask about
+**Reverb, WebSockets, real-time chat, broadcasting, or live messages** — then
+BEFORE anything else, read and surface
+[`docs/tickets/2026-06-05-reverb-realtime-chat-VOLKAN.md`](docs/tickets/2026-06-05-reverb-realtime-chat-VOLKAN.md)
+and orient the conversation around it: it is his assigned task (turning on
+real-time chat — ops daemons + Flutter Echo client). Lead with a short summary of
+where that ticket stands and what's next, then help with it.
+
+---
+
 ## MUST FOLLOW — i18n is mandatory for EVERY new widget (no literal user-facing strings)
 
 This app is fully localized via gen-l10n (`l10n.yaml`, `lib/l10n/app_{en,es,ca}.arb`,

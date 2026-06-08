@@ -47,6 +47,29 @@ event via the existing `events.collaboration_id` (event detail can then show
 - Surface "Posted as Kolab" state on the event/series once linked.
 - All strings translation-ready (en/es/ca) per CLAUDE.md i18n rule.
 
+## Findings (2026-06-05, verified against kolabing-v2 code) — why this is a form, not one-tap
+- **Paywall is safe:** `OpportunityService::hasReachedFreemiumCollabLimit()` returns
+  `false` for any non-business creator, so a community posting an opportunity is
+  NOT paywalled (✓ matches ROLES). The business is gated only on *apply*. Keep the
+  community as `creator_profile_id` / `creator_profile_type`.
+- **The blocker — required fields an event doesn't have:** `CreateOpportunityRequest`
+  requires `title`, `description`, `business_offer` (array), `community_deliverables`
+  (array), `categories` (1–5), `availability_mode` (one_time|recurring|flexible),
+  `venue_mode` (business_venue|community_venue|no_venue), `preferred_city`, +
+  conditional `availability_start/end`, `selected_time`, `recurring_days`, `address`.
+  An event only supplies name/date/location. So "Post as Kolab" must open a
+  **pre-filled opportunity-create form** (event → title/availability/address) and let
+  the leader add offer + deliverables + categories + venue. Do NOT auto-invent these.
+- **Series → recurring opportunity maps cleanly:** `availability_mode='recurring'` +
+  `recurring_days` (from series.byweekday) + `selected_time` (series.time_of_day) +
+  `availability_start/end` (series.starts_on / ends_on). Single occurrence →
+  `availability_mode='one_time'` with that date.
+- **Build shape:** reuse the existing opportunity-create flow/screen, entered from
+  the event/series with fields pre-seeded; on submit it's a normal
+  `POST /opportunities` (creator = community). Add `collab_opportunities.event_id` /
+  `event_series_id` (nullable) only if you want a back-link + dedup. This is why it's
+  its own slice — it's an opportunity-create UX, not a button.
+
 ## Open questions
 - Dedup: block re-posting an already-posted event/series, or allow multiple?
 - For "each occurrence", create all opportunities up front or lazily per occurrence?
