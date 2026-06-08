@@ -5760,6 +5760,12 @@
   "eventHubDeleteScopeFollowing": "This and the following events",
   "eventHubDeleteScopeSeries": "The entire series",
   "eventHubDeleted": "Event deleted",
+  "eventHubExtendSeries": "Extend series (+3 months)",
+  "eventHubExtended": "Series extended — {count} new dates",
+  "@eventHubExtended": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "eventHubExtendedNone": "No new dates to add",
   "@eventHubEdit": { "description": "Event hub: edit the event" },
   "eventHubAddPhotos": "Add photos",
   "@eventHubAddPhotos": { "description": "Event hub: add photos to the event gallery" },

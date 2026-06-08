@@ -1353,6 +1353,9 @@
   "eventHubDeleteScopeFollowing": "Aquest i els esdeveniments següents",
   "eventHubDeleteScopeSeries": "Tota la sèrie",
   "eventHubDeleted": "Esdeveniment eliminat",
+  "eventHubExtendSeries": "Amplia la sèrie (+3 mesos)",
+  "eventHubExtended": "Sèrie ampliada: {count} dates noves",
+  "eventHubExtendedNone": "No hi ha dates noves per afegir",
   "eventHubAddPhotos": "Afegir fotos",
 
   "eventFormNewTitle": "Nou esdeveniment",

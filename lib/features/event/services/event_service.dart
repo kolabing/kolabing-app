@@ -469,6 +469,32 @@ class EventService {
     throw Exception(message);
   }
 
+  /// POST /api/v1/event-series/{id}/extend
+  /// Pushes a recurring series' rolling window forward (the "extend later" half
+  /// of the hybrid). Returns how many new occurrences were created.
+  Future<int> extendSeries(String seriesId) async {
+    final response = await _sendWithRefresh(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/event-series/$seriesId/extend'),
+        headers: await _getJsonHeaders(),
+      ),
+      allowRetry: true,
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return (json['occurrences_created'] as num?)?.toInt() ?? 0;
+    }
+    if (response.statusCode == 401) {
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    if (response.statusCode == 403) {
+      throw const ApiException(
+        error: ApiError(message: 'You are not authorized to manage this series.'),
+      );
+    }
+    throw _parseApiError(response);
+  }
+
   /// POST /api/v1/events
   /// Creates a new event with photo files via multipart/form-data.
   Future<Event> createEvent(EventCreateRequest request) async {

@@ -8216,6 +8216,24 @@ abstract class AppLocalizations {
   /// **'Event deleted'**
   String get eventHubDeleted;
 
+  /// No description provided for @eventHubExtendSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend series (+3 months)'**
+  String get eventHubExtendSeries;
+
+  /// No description provided for @eventHubExtended.
+  ///
+  /// In en, this message translates to:
+  /// **'Series extended — {count} new dates'**
+  String eventHubExtended(int count);
+
+  /// No description provided for @eventHubExtendedNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No new dates to add'**
+  String get eventHubExtendedNone;
+
   /// Event hub: add photos to the event gallery
   ///
   /// In en, this message translates to:

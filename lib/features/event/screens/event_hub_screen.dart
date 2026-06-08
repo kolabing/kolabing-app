@@ -214,6 +214,28 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     }
   }
 
+  // Leader: extend a recurring series' rolling window ------------------------
+
+  Future<void> _extend() async {
+    final seriesId = _event.seriesId;
+    if (seriesId == null) return;
+    try {
+      final created =
+          await ref.read(eventServiceProvider).extendSeries(seriesId);
+      final cid = _event.communityId;
+      if (cid != null) {
+        ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
+      }
+      if (!mounted) return;
+      _snack(created > 0
+          ? _l10n.eventHubExtended(created)
+          : _l10n.eventHubExtendedNone);
+    } catch (e) {
+      if (!mounted) return;
+      _snack(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
   void _snack(String m) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
 
@@ -234,8 +256,21 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
             PopupMenuButton<String>(
               onSelected: (v) {
                 if (v == 'delete') _delete();
+                if (v == 'extend') _extend();
               },
               itemBuilder: (context) => [
+                if (_event.isRecurring)
+                  PopupMenuItem<String>(
+                    value: 'extend',
+                    child: Row(
+                      children: [
+                        const Icon(LucideIcons.repeat,
+                            size: 18, color: KolabingColors.onSurface),
+                        const SizedBox(width: KolabingSpacing.sm),
+                        Text(_l10n.eventHubExtendSeries),
+                      ],
+                    ),
+                  ),
                 PopupMenuItem<String>(
                   value: 'delete',
                   child: Row(
