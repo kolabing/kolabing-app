@@ -4645,6 +4645,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFormPublishSeries => 'Publish series';
 
   @override
+  String get eventFormApplyTo => 'Apply changes to';
+
+  @override
   String get eventFormErrWeekday => 'Pick at least one day';
 
   @override

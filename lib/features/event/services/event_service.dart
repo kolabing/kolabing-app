@@ -359,6 +359,8 @@ class EventService {
     int? capacity,
     bool clearCapacity = false,
     List<String>? tierGate,
+    String scope = 'this',
+    Map<String, dynamic>? recurrence,
   }) async {
     final payload = <String, dynamic>{
       if (name != null) 'name': name,
@@ -373,10 +375,15 @@ class EventService {
       else if (clearCapacity)
         'capacity': null,
       if (tierGate != null) 'tier_gate': tierGate,
+      // Present only when converting a one-off into a recurring series.
+      if (recurrence != null) 'recurrence': recurrence,
     };
+    final uri = Uri.parse('$_baseUrl/events/$eventId').replace(
+      queryParameters: scope == 'this' ? null : {'scope': scope},
+    );
     final response = await _sendWithRefresh(
       () async => _httpClient.put(
-        Uri.parse('$_baseUrl/events/$eventId'),
+        uri,
         headers: await _getJsonHeaders(),
         body: jsonEncode(payload),
       ),

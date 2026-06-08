@@ -4727,6 +4727,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventFormPublishSeries => 'Publica la sèrie';
 
   @override
+  String get eventFormApplyTo => 'Aplica els canvis a';
+
+  @override
   String get eventFormErrWeekday => 'Tria almenys un dia';
 
   @override

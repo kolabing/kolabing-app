@@ -4704,6 +4704,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventFormPublishSeries => 'Publicar serie';
 
   @override
+  String get eventFormApplyTo => 'Aplicar los cambios a';
+
+  @override
   String get eventFormErrWeekday => 'Elige al menos un día';
 
   @override

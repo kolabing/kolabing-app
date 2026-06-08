@@ -67,7 +67,18 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   String _chatMode = 'per_event'; // per_event | series
 
   bool get _isEdit => widget.existing != null;
-  bool get _isRecurring => !_isEdit && _repeat != 'none';
+
+  /// The event being edited is already part of a series.
+  bool get _existingIsRecurring => widget.existing?.isRecurring ?? false;
+
+  /// Show the Repeat section: on create, or when editing a one-off (→ convert).
+  bool get _showRepeat => !_existingIsRecurring;
+
+  /// This save will produce a series (a fresh create or a one-off conversion).
+  bool get _isRecurring => _showRepeat && _repeat != 'none';
+
+  /// Scope for editing an occurrence of an existing series.
+  String _editScope = 'this';
 
   /// Dart weekday (Mon=1..Sun=7) → our 0=Sun..6=Sat.
   int get _startWeekday => ((_startsAt ?? DateTime.now()).weekday % 7);
@@ -200,6 +211,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           capacity: cap,
           clearCapacity: !_limited,
           tierGate: _tierGate() ?? const [],
+          // Editing a recurring occurrence → scope; editing a one-off with a
+          // pattern picked → recurrence (backend converts it to a series).
+          scope: _existingIsRecurring ? _editScope : 'this',
+          recurrence: recurrence,
         );
       } else {
         result = await svc.createUpcomingEvent(
@@ -321,9 +336,14 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           _label(_l10n.eventFormWhoCanJoin),
           _tierGatePicker(tiersAsync),
           const SizedBox(height: KolabingSpacing.lg),
-          if (!_isEdit) ...[
+          if (_showRepeat) ...[
             _label(_l10n.eventFormRepeatLabel),
             _repeatSection(),
+            const SizedBox(height: KolabingSpacing.lg),
+          ],
+          if (_isEdit && _existingIsRecurring) ...[
+            _label(_l10n.eventFormApplyTo),
+            _scopeSelector(),
             const SizedBox(height: KolabingSpacing.lg),
           ],
           _label(_l10n.eventFormPhotos),
@@ -405,6 +425,24 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                   ),
               ],
             ),
+          ),
+      ],
+    );
+  }
+
+  Widget _scopeSelector() {
+    return Wrap(
+      spacing: KolabingSpacing.xs,
+      children: [
+        for (final opt in [
+          ('this', _l10n.eventHubDeleteScopeThis),
+          ('following', _l10n.eventHubDeleteScopeFollowing),
+          ('series', _l10n.eventHubDeleteScopeSeries),
+        ])
+          ChoiceChip(
+            label: Text(opt.$2),
+            selected: _editScope == opt.$1,
+            onSelected: (_) => setState(() => _editScope = opt.$1),
           ),
       ],
     );

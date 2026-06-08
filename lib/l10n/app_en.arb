@@ -5791,6 +5791,7 @@
   "eventFormRepeatChatPerEvent": "One chat per event",
   "eventFormRepeatChatShared": "One shared series chat",
   "eventFormPublishSeries": "Publish series",
+  "eventFormApplyTo": "Apply changes to",
   "eventFormErrWeekday": "Pick at least one day",
   "eventFormErrEndsCount": "Enter how many events",
   "eventFormErrEndsOn": "Pick an end date after the start",

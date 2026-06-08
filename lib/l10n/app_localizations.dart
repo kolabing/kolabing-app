@@ -8348,6 +8348,12 @@ abstract class AppLocalizations {
   /// **'Publish series'**
   String get eventFormPublishSeries;
 
+  /// No description provided for @eventFormApplyTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply changes to'**
+  String get eventFormApplyTo;
+
   /// No description provided for @eventFormErrWeekday.
   ///
   /// In en, this message translates to:
