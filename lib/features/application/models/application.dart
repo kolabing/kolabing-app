@@ -66,8 +66,12 @@ class SenderProfile {
   factory SenderProfile.fromJson(Map<String, dynamic> json) {
     return SenderProfile(
       id: json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? 'Unknown',
-      profilePhoto: json['profile_photo']?.toString(),
+      // Backend `ProfileSummaryResource` exposes the name as `display_name`
+      // (and the avatar as `avatar_url`); tolerate the flat `name`/
+      // `profile_photo` shapes too. Reading only `name` showed "Unknown".
+      name: (json['display_name'] ?? json['name'])?.toString() ?? 'Unknown',
+      profilePhoto:
+          (json['avatar_url'] ?? json['profile_photo'])?.toString(),
       userType: json['user_type']?.toString(),
     );
   }
