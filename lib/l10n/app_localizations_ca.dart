@@ -5038,6 +5038,32 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityHubAccess => 'Accés';
 
   @override
+  String get chatManageRename => 'Reanomena el xat';
+
+  @override
+  String get chatManageDelete => 'Elimina el xat';
+
+  @override
+  String get chatManageAccess => 'Qui hi pot accedir';
+
+  @override
+  String get chatRenameHint => 'Nom del xat';
+
+  @override
+  String get chatRenamed => 'Xat reanomenat';
+
+  @override
+  String get chatDeleteTitle => 'Vols eliminar aquest xat?';
+
+  @override
+  String chatDeleteBody(String name) {
+    return 'S\'eliminaran tots els missatges de \"$name\".';
+  }
+
+  @override
+  String get chatDeleted => 'Xat eliminat';
+
+  @override
   String get communityHubAccessNoTiers => 'Cap nivell';
 
   @override
