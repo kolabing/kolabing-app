@@ -224,12 +224,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 child: ElevatedButton(
                   onPressed: _continue,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _yellow,
-                    foregroundColor: Colors.black,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: Text(
                     'Continue',
@@ -337,7 +332,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
-                color: _yellow,
+                color: KolabingColors.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -345,7 +340,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 style: KolabingTextStyles.button.copyWith(
                   fontSize: 12,
                   letterSpacing: 0.1,
-                  color: Colors.black,
+                  color: KolabingColors.onPrimary,
                 ),
               ),
             ),
