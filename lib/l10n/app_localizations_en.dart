@@ -4952,6 +4952,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityHubAccess => 'Access';
 
   @override
+  String get chatManageRename => 'Rename chat';
+
+  @override
+  String get chatManageDelete => 'Delete chat';
+
+  @override
+  String get chatManageAccess => 'Who can access';
+
+  @override
+  String get chatRenameHint => 'Chat name';
+
+  @override
+  String get chatRenamed => 'Chat renamed';
+
+  @override
+  String get chatDeleteTitle => 'Delete this chat?';
+
+  @override
+  String chatDeleteBody(String name) {
+    return 'All messages in \"$name\" will be removed.';
+  }
+
+  @override
+  String get chatDeleted => 'Chat deleted';
+
+  @override
   String get communityHubAccessNoTiers => 'No tiers';
 
   @override

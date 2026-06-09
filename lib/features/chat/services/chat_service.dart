@@ -126,6 +126,27 @@ class ChatService {
         return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
       }, 'createCommunityChat');
 
+  /// `PATCH /chats/{thread}` — rename a custom community chat (manager only).
+  /// Slug is preserved server-side so tier grants stay valid.
+  Future<ChatThread> renameCommunityChat(String threadId, String name) =>
+      _guard(() async {
+        final res = await _httpClient.patch(
+          Uri.parse('$_baseUrl/chats/$threadId'),
+          headers: await _headers(),
+          body: jsonEncode({'name': name}),
+        );
+        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+      }, 'renameCommunityChat');
+
+  /// `DELETE /chats/{thread}` — delete a custom community chat (manager only).
+  Future<void> deleteCommunityChat(String threadId) => _guard(() async {
+        final res = await _httpClient.delete(
+          Uri.parse('$_baseUrl/chats/$threadId'),
+          headers: await _headers(),
+        );
+        _unwrap(res);
+      }, 'deleteCommunityChat');
+
   /// `POST /events/{event}/chat` — create the event chat (signup-gated).
   Future<ChatThread> createEventChat(String eventId, {String? name}) =>
       _guard(() async {
