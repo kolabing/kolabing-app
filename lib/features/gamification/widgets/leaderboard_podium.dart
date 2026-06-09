@@ -80,8 +80,8 @@ class LeaderboardPodium extends StatelessWidget {
 
     switch (rank) {
       case 1:
-        crownColor = const Color(0xFFFFD700); // Gold
-        bgColor = const Color(0xFFFFD700).withValues(alpha: 0.2);
+        crownColor = const Color(0xFFFFE28C); // Brand yellow
+        bgColor = const Color(0xFFFFE28C).withValues(alpha: 0.2);
         break;
       case 2:
         crownColor = const Color(0xFFC0C0C0); // Silver

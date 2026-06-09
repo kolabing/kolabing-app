@@ -273,13 +273,6 @@ class RewardDetailScreen extends ConsumerWidget {
                   )
                 : const Icon(LucideIcons.qrCode),
             label: Text(state.isLoading ? 'Generating...' : 'Generate QR Code'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
           ),
         ),
         if (state.error != null) ...[

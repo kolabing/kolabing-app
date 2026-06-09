@@ -139,11 +139,8 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colors.success,
-                    foregroundColor: Colors.white,
+                    foregroundColor: KolabingColors.textOnDark,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: Text(
                     AppLocalizations.of(context).commonContinue,
@@ -202,12 +199,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                         Navigator.of(context).pop(); // Close scanner
                       },
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: context.colors.onSurfaceVariant,
-                        side: BorderSide(color: context.colors.darkBorder),
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                       ),
                       child: Text(AppLocalizations.of(context).qrScannerClose),
                     ),
@@ -217,12 +209,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                     child: ElevatedButton(
                       onPressed: _retryScanning,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: context.colors.primary,
-                        foregroundColor: context.colors.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                       ),
                       child: Text(AppLocalizations.of(context).commonTryAgain),
                     ),

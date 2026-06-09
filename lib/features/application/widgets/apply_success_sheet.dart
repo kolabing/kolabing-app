@@ -197,12 +197,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
             ),
           ),
@@ -216,9 +211,6 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
                 foregroundColor: context.colors.onSurfaceVariant,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
               child: Text(
                 'Keep exploring',

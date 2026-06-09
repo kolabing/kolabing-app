@@ -205,15 +205,6 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
               l10n.offeringAddExtraTerm,
               style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
             ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.primary,
-              side: BorderSide(
-                color: context.colors.primary.withValues(alpha: 0.5),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
           ),
         ),
 
@@ -465,11 +456,6 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
                 elevation: 0,
               ),
               child: Text(

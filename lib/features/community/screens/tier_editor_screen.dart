@@ -43,7 +43,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
 
   /// Preset swatches (hex). Null color falls back to the theme primary.
   static const _swatches = [
-    '#FFD861', '#7AE7A3', '#E14D76', '#6C8CFF', '#B388FF', '#FF9F45',
+    '#FFE28C', '#7AE7A3', '#E14D76', '#6C8CFF', '#B388FF', '#FF9F45',
   ];
 
   @override

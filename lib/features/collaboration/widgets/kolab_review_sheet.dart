@@ -255,13 +255,8 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
             child: ElevatedButton(
               onPressed: _canSubmit ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
                 disabledBackgroundColor:
                     context.colors.primary.withValues(alpha: 0.4),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
               child: _isSubmitting
                   ? SizedBox(

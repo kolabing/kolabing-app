@@ -269,11 +269,6 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
           child: ElevatedButton(
             onPressed: _isSpinning ? null : _spin,
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
               elevation: 4,
             ),
             child: _isSpinning
@@ -342,13 +337,6 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
             height: 48,
             child: ElevatedButton(
               onPressed: () => Navigator.of(context).pop(_result),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(
                 won ? 'View Reward' : 'Close',
                 style: KolabingTextStyles.bodyMedium.copyWith(

@@ -223,7 +223,7 @@ class DiscoveryQuickFilters extends StatelessWidget {
           ];
 
     return SizedBox(
-      height: 44,
+      height: 38,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
         scrollDirection: Axis.horizontal,
@@ -276,16 +276,16 @@ class _QuickChip extends StatelessWidget {
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xs,
+        horizontal: 12,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         color: data.isActive
             ? context.colors.softYellow
-            : context.colors.surface,
+            : Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: data.isActive ? context.colors.primary : context.colors.darkBorder,
+          color: data.isActive ? context.colors.softYellowBorder : context.colors.hairline,
         ),
       ),
       child: Row(

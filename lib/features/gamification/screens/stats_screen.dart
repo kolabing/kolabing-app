@@ -379,9 +379,6 @@ class StatsScreen extends ConsumerWidget {
               onPressed: () => ref.invalidate(myStatsProvider),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).gamificationTryAgain),
-              style: TextButton.styleFrom(
-                foregroundColor: context.colors.primary,
-              ),
             ),
           ],
         ),

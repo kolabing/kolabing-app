@@ -417,31 +417,26 @@ class _AttendeeRegisterScreenState
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _handleRegister,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          foregroundColor: context.colors.onPrimary,
-                          disabledBackgroundColor: context.colors.primary
+                          disabledBackgroundColor: KolabingColors.primary
                               .withValues(alpha: 0.7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
                           elevation: 0,
                         ),
                         child: _isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2.5,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    context.colors.onPrimary,
+                                    KolabingColors.onPrimary,
                                   ),
                                 ),
                               )
                             : _showSuccess
-                            ? Icon(
+                            ? const Icon(
                                 Icons.check_rounded,
                                 size: 24,
-                                color: context.colors.onPrimary,
+                                color: KolabingColors.onPrimary,
                               )
                             : Text(
                                 AppLocalizations.of(context).attendeeRegisterCreateAccount,

@@ -6,7 +6,7 @@ import '../services/theme_service.dart';
 /// Theme state
 class ThemeState {
   const ThemeState({
-    this.themeMode = ThemeMode.dark, // Night is the primary/default theme
+    this.themeMode = ThemeMode.light,
     this.isLoading = true,
   });
 

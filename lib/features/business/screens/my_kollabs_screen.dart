@@ -461,10 +461,6 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
             },
             icon: const Icon(LucideIcons.rotateCcw, size: 16),
             label: Text(AppLocalizations.of(context).myKolabsTryAgain),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-            ),
           ),
         ],
       ),

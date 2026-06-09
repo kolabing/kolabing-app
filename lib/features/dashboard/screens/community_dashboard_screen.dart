@@ -11,6 +11,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../widgets/navigation/profile_avatar_button.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
@@ -73,14 +74,13 @@ class _CommunityDashboardScreenState
     final authState = ref.watch(authProvider);
     final userName = authState.user?.displayName ??
         AppLocalizations.of(context).dashboardDefaultCommunityName;
-    final photoUrl = authState.user?.profilePhotoUrl;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         color: context.colors.primary,
-        child: _buildBody(dashboardState, userName, photoUrl, isDark),
+        child: _buildBody(dashboardState, userName, isDark),
       ),
     );
   }
@@ -88,7 +88,6 @@ class _CommunityDashboardScreenState
   Widget _buildBody(
     DashboardState dashboardState,
     String userName,
-    String? photoUrl,
     bool isDark,
   ) {
     // Loading state
@@ -111,7 +110,7 @@ class _CommunityDashboardScreenState
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
-        _buildHeader(userName, photoUrl, isDark),
+        _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
         ..._buildVariantContent(data, isDark),
         const SizedBox(height: KolabingSpacing.xl),
@@ -123,7 +122,7 @@ class _CommunityDashboardScreenState
   // Header
   // ---------------------------------------------------------------------------
 
-  Widget _buildHeader(String userName, String? photoUrl, bool isDark) {
+  Widget _buildHeader(String userName, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,23 +148,7 @@ class _CommunityDashboardScreenState
         ),
         const NotificationBell(),
         const SizedBox(width: KolabingSpacing.xs),
-        GestureDetector(
-          onTap: () => widget.onSwitchTab?.call(3),
-          child: Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: context.colors.hairline, width: 1.5),
-              color: context.colors.surfaceContainerLow,
-            ),
-            child: ClipOval(
-              child: photoUrl != null && photoUrl.isNotEmpty
-                  ? Image.network(photoUrl, fit: BoxFit.cover)
-                  : Icon(LucideIcons.user, size: 20, color: context.colors.onSurfaceVariant),
-            ),
-          ),
-        ),
+        const ProfileAvatarButton(),
       ],
     );
   }

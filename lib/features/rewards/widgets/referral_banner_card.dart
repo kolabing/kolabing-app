@@ -179,9 +179,6 @@ class _ReferralCodeSheet extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: context.colors.onSurface,
                 side: BorderSide(color: context.colors.darkBorder),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
             ),
           ),
@@ -201,9 +198,6 @@ class _ReferralCodeSheet extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
             ),
           ),

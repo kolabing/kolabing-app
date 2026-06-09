@@ -403,10 +403,6 @@ class _UploadedPhotoCard extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: isUploading ? null : onReplace,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                ),
                 child: Text(l10n.photoReplacePhotoButton),
               ),
             ),

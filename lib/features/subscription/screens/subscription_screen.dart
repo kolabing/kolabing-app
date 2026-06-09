@@ -775,12 +775,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
               ),
             ),
           ),
@@ -829,12 +824,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
               ),
             ),
           ),
@@ -870,9 +860,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: context.colors.onSurface,
                 side: BorderSide(color: context.colors.darkBorder),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
               ),
             ),
           ),
@@ -894,9 +881,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: context.colors.onSurface,
                 side: BorderSide(color: context.colors.darkBorder),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
               ),
             ),
           ),

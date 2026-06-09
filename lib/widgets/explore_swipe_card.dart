@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../config/constants/layout.dart';
 import '../config/constants/radius.dart';
@@ -39,9 +40,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     final urls = <String>[];
     final cover = _item.coverPhotoUrl;
     if (cover != null && cover.isNotEmpty) urls.add(cover);
-    // Fall back to the creator's logo/avatar only when there is no Kolab cover
-    // photo. We now keep it even when identity is hidden, because the blur (not
-    // removal) is what protects the community logo — see [_isIdentityLogo].
     if (urls.isEmpty) {
       final avatar = _item.creatorProfile.avatarUrl;
       if (avatar != null && avatar.isNotEmpty) urls.add(avatar);
@@ -49,8 +47,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     return urls;
   }
 
-  /// The community LOGO (creator avatar) used as the fallback hero image. The
-  /// Kolab cover photo is Kolab content and is NEVER blurred; only this logo is.
   bool _isIdentityLogo(String url) {
     final avatar = _item.creatorProfile.avatarUrl;
     final cover = _item.coverPhotoUrl;
@@ -81,18 +77,15 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         horizontal: KolabingSpacing.md,
         vertical: KolabingSpacing.xs,
       ),
-      // The card sits inside a full-height vertical PageView; center the
-      // compact card and let it size to its content rather than stretch.
       child: Center(
         child: SingleChildScrollView(
           child: RepaintBoundary(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                // Kolabing-yellow card surface (fixed brand color in both
-                // themes). Content below uses fixed dark ink for legibility.
-                color: KolabingColors.primary,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(KolabingRadius.lg),
-                boxShadow: const [KolabingShadows.card],
+                border: Border.all(color: KolabingColors.hairline),
+                boxShadow: [KolabingShadows.card],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(KolabingRadius.lg),
@@ -115,7 +108,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   // ---------------------------------------------------------------------------
 
   Widget _buildPhotoSection() => AspectRatio(
-    aspectRatio: 4 / 3,
+    aspectRatio: 16 / 10,
     child: Stack(
       fit: StackFit.expand,
       children: [
@@ -139,10 +132,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   Widget _buildImageArea() {
     final urls = _imageUrls;
-
-    if (urls.isEmpty) {
-      return _buildGradientFallback();
-    }
+    if (urls.isEmpty) return _buildGradientFallback();
 
     return PageView.builder(
       controller: _imagePageController,
@@ -164,8 +154,6 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
               },
         );
 
-        // Blur ONLY the community logo (avatar fallback) for a free business.
-        // Kolab cover photos stay sharp so all Kolab details remain visible.
         return BlurredIdentity(
           enabled: widget.hideCreatorIdentity && _isIdentityLogo(url),
           sigma: 18,
@@ -177,26 +165,19 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   }
 
   Widget _buildGradientFallback() => DecoratedBox(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          context.colors.primary.withValues(alpha: 0.3),
-          context.colors.surfaceVariant,
-        ],
-      ),
+    decoration: const BoxDecoration(
+      color: Color(0xFFEFEDE8),
     ),
     child: Center(
       child: Container(
-        width: 96,
-        height: 96,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: context.colors.primary.withValues(alpha: 0.15),
+          color: Colors.white.withValues(alpha: 0.7),
           border: Border.all(
-            color: context.colors.primary.withValues(alpha: 0.3),
-            width: 2,
+            color: const Color(0xFFDDD8CC),
+            width: 1.5,
           ),
         ),
         alignment: Alignment.center,
@@ -205,7 +186,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
                   _item.creatorProfile.displayName.isNotEmpty
               ? _item.creatorProfile.displayName[0].toUpperCase()
               : '?',
-          style: KolabingTextStyles.cardTitleHero.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6)),
+          style: GoogleFonts.inter(
+            fontSize: 26,
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.onSurface.withValues(alpha: 0.5),
+          ),
         ),
       ),
     ),
@@ -218,15 +203,15 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         : null;
 
     return ColoredBox(
-      color: context.colors.surfaceVariant,
+      color: KolabingColors.surfaceVariant,
       child: Center(
         child: SizedBox(
-          width: 40,
-          height: 40,
+          width: 36,
+          height: 36,
           child: CircularProgressIndicator(
             value: value,
-            strokeWidth: 2.5,
-            color: context.colors.primary,
+            strokeWidth: 2,
+            color: KolabingColors.onSurface.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -236,14 +221,19 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildMatchBadge() {
     final match = _item.match!;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: context.colors.primary,
-        borderRadius: BorderRadius.circular(KolabingRadius.sm),
+        color: const Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(KolabingRadius.round),
       ),
       child: Text(
         AppLocalizations.of(context).exploreSwipeCardMatch(match.score),
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w500, color: context.colors.onSurface),
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+          letterSpacing: 0.1,
+        ),
       ),
     );
   }
@@ -285,37 +275,28 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     final offerLine = _isBusinessExploreCommunityCard
         ? _item.communityOfferLine
         : _item.displayHeadline;
-    final pastEvents = _item.pastEventsCount;
     final chips = _item.primaryBadges;
 
     return Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildNameRow(),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           _buildMetaRow(),
           if (offerLine != null && offerLine.isNotEmpty) ...[
-            const SizedBox(height: KolabingSpacing.xs),
+            const SizedBox(height: 8),
             _buildOfferRow(offerLine),
           ],
-          if (pastEvents != null && pastEvents > 0) ...[
-            const SizedBox(height: KolabingSpacing.xxs),
-            _buildMembersRow(pastEvents),
-          ],
           if (chips.isNotEmpty) ...[
-            const SizedBox(height: KolabingSpacing.xs),
+            const SizedBox(height: 10),
             _buildTagChips(chips),
           ],
-          const SizedBox(height: KolabingSpacing.sm),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: KolabingColors.onSurface.withValues(alpha: 0.12),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
+          const SizedBox(height: 10),
+          Divider(height: 1, thickness: 1, color: KolabingColors.hairline),
+          const SizedBox(height: 10),
           _buildViewDetailsRow(),
         ],
       ),
@@ -324,29 +305,20 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   Widget _buildNameRow() {
     final isHidden = widget.hideCreatorIdentity;
-    // Per ROLES-AND-PERMISSIONS.md §2.5: do NOT hide the name behind a
-    // placeholder. Render the real community name and Gaussian-blur it so the
-    // free business sees there IS an identity to unlock by subscribing.
     final nameText = Text(
       _item.creatorProfile.displayName,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: KolabingTextStyles.cardTitleLarge.copyWith(
-        color: context.colors.onSurface,
-        letterSpacing: -0.5,
+      style: GoogleFonts.inter(
+        fontSize: 17,
+        fontWeight: FontWeight.w700,
+        color: KolabingColors.onSurface,
+        letterSpacing: -0.3,
+        height: 1.2,
       ),
     );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: BlurredIdentity(enabled: isHidden, sigma: 6, child: nameText),
-        ),
-        // Numeric rating is not yet provided by DiscoveryItem; the star slot is
-        // rendered only when a rating is available (see report — future field).
-      ],
-    );
+    return BlurredIdentity(enabled: isHidden, sigma: 6, child: nameText);
   }
 
   Widget _buildMetaRow() {
@@ -356,54 +328,28 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
               ? AppLocalizations.of(context).exploreSwipeCardBusinessOffer
               : AppLocalizations.of(context).exploreSwipeCardCommunityRequest);
     final city = _item.locationLabel;
-    final pastEvents = _item.pastEventsCount;
 
     return Row(
       children: [
-        Expanded(
-          child: Row(
-            children: [
-              if (city.isNotEmpty) ...[
-                Flexible(
-                  child: Text(
-                    category,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: _secondaryStyle,
-                  ),
-                ),
-                Text(' · ', style: _secondaryStyle),
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 13,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
-                const SizedBox(width: 2),
-                Flexible(
-                  child: Text(
-                    city,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: _secondaryStyle,
-                  ),
-                ),
-              ] else
-                Flexible(
-                  child: Text(
-                    category,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: _secondaryStyle,
-                  ),
-                ),
-            ],
+        Flexible(
+          child: Text(
+            category,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: _secondaryStyle,
           ),
         ),
-        if (pastEvents != null && pastEvents > 0) ...[
-          const SizedBox(width: KolabingSpacing.xs),
-          Text(
-            AppLocalizations.of(context).exploreSwipeCardKolabsCount(pastEvents),
-            style: _secondaryStyle,
+        if (city.isNotEmpty) ...[
+          Text(' · ', style: _secondaryStyle),
+          Icon(Icons.location_on_outlined, size: 12, color: KolabingColors.textTertiary),
+          const SizedBox(width: 2),
+          Flexible(
+            child: Text(
+              city,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: _secondaryStyle,
+            ),
           ),
         ],
       ],
@@ -414,66 +360,39 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
-        padding: EdgeInsets.only(top: 1),
-        child: Icon(
-          Icons.local_offer_outlined,
-          size: 14,
-          color: KolabingColors.onSurface,
-        ),
+        padding: const EdgeInsets.only(top: 1),
+        child: Icon(Icons.local_offer_outlined, size: 13, color: KolabingColors.onSurface),
       ),
-      const SizedBox(width: 6),
+      const SizedBox(width: 5),
       Expanded(
         child: Text(
           offerLine,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.25),
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.onSurface,
+            height: 1.3,
+          ),
         ),
       ),
     ],
   );
 
-  Widget _buildMembersRow(int pastEvents) => Row(
-    children: [
-      Icon(
-        Icons.people_alt_outlined,
-        size: 14,
-        color: KolabingColors.onSurfaceVariant,
-      ),
-      const SizedBox(width: 6),
-      Expanded(
-        child: Text(
-          AppLocalizations.of(context).exploreSwipeCardPreviousKolabs(pastEvents),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: _secondaryStyle,
-        ),
-      ),
-    ],
+  Widget _buildTagChips(List<String> chips) => Wrap(
+    spacing: 6,
+    runSpacing: 6,
+    children: [for (final chip in chips) _buildChip(chip)],
   );
 
-  Widget _buildTagChips(List<String> chips) {
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: [
-        for (final chip in chips) _buildChip(chip),
-      ],
-    );
-  }
-
-  /// Maps a category label to a semantic (fill, text) pair.
-  ///
-  /// Matching is case-insensitive substring — lavender for sport/running,
-  /// yellow for food/drink, sage for wellness/nature, blue-grey for arts/music,
-  /// neutral fallback for everything else.
   (Color fill, Color text) _chipColors(String label) {
     final l = label.toLowerCase();
     if (_matchesAny(l, ['run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike'])) {
       return (KolabingColors.secondaryContainer, KolabingColors.secondary);
     }
     if (_matchesAny(l, ['food', 'coffee', 'drink', 'restaurant', 'bar', 'gastro', 'cook'])) {
-      return (KolabingColors.softYellow, KolabingColors.onSurface);
+      return (const Color(0xFFFFF4C2), KolabingColors.onSurface);
     }
     if (_matchesAny(l, ['wellness', 'nature', 'eco', 'health', 'organic', 'mindful', 'spa'])) {
       return (KolabingColors.tertiaryContainer, KolabingColors.tertiary);
@@ -490,20 +409,21 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildChip(String label) {
     final (fill, textColor) = _chipColors(label);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
         color: fill,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(KolabingRadius.round),
+        border: Border.all(color: KolabingColors.hairline),
       ),
       child: Text(
         label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: KolabingTextStyles.labelSmall.copyWith(
+        style: GoogleFonts.inter(
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: textColor,
-          letterSpacing: 0.3,
+          letterSpacing: 0.1,
         ),
       ),
     );
@@ -513,18 +433,19 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     children: [
       Text(
         AppLocalizations.of(context).exploreSwipeCardViewDetails,
-        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+        style: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.onSurface,
+        ),
       ),
       const Spacer(),
-      Icon(
-        Icons.chevron_right_rounded,
-        size: 18,
-        color: KolabingColors.onSurface,
-      ),
+      Icon(Icons.chevron_right_rounded, size: 18, color: KolabingColors.onSurface),
     ],
   );
 
   TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(
+    fontSize: 12,
     fontWeight: FontWeight.w400,
     color: KolabingColors.textTertiary,
   );

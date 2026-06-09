@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
 import '../../auth/models/auth_response.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/collaboration.dart';
 import 'collaboration_detail_provider.dart';
@@ -25,12 +26,18 @@ import 'collaboration_detail_provider.dart';
 /// completed/cancelled).
 Future<List<Collaboration>> _fetchCollaborations({
   required bool allowRetry,
+  required AuthService authService,
   int perPage = 100,
 }) async {
-  final authService = AuthService();
-  final token = await authService.getToken();
+  String? token = await authService.getToken();
   if (token == null || token.isEmpty) {
-    throw const AuthException('Session expired. Please sign in again.');
+    // Token missing — attempt a silent refresh before giving up. This handles
+    // the case where secure-storage hasn't been read yet on first mount.
+    try {
+      token = await authService.refreshSession();
+    } on Exception {
+      throw const AuthException('Session expired. Please sign in again.');
+    }
   }
 
   final uri = Uri.parse(
@@ -70,7 +77,7 @@ Future<List<Collaboration>> _fetchCollaborations({
 
   if (response.statusCode == 401 && allowRetry) {
     await authService.refreshSession();
-    return _fetchCollaborations(allowRetry: false, perPage: perPage);
+    return _fetchCollaborations(allowRetry: false, authService: authService, perPage: perPage);
   }
 
   final body = response.body.isEmpty
@@ -87,7 +94,10 @@ Future<List<Collaboration>> _fetchCollaborations({
 /// stale session-cached snapshot is never shown — e.g. an empty Active tab
 /// after new collaborations were formed. Pull-to-refresh also forces a refetch.
 final collaborationsListProvider = FutureProvider<List<Collaboration>>(
-  (ref) => _fetchCollaborations(allowRetry: true),
+  (ref) => _fetchCollaborations(
+    allowRetry: true,
+    authService: ref.read(authServiceProvider),
+  ),
 );
 
 /// Active = ongoing work: a collaboration exists and has not yet ended.

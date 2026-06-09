@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
@@ -29,6 +28,13 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   bool _isRequestingLocation = false;
   bool _isRequestingNotification = false;
 
+  static const _cream = Color(0xFFFAF9F6);
+  static const _charcoal = Color(0xFF232323);
+  static const _softGray = Color(0xFF9CA3AF);
+  static const _yellow = Color(0xFFFFD861);
+  static const _divider = Color(0xFFEEECE8);
+  static const _green = Color(0xFF4CAF50);
+
   @override
   void initState() {
     super.initState();
@@ -38,10 +44,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: KolabingColors.background,
+        systemNavigationBarColor: _cream,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -139,158 +145,143 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   Widget build(BuildContext context) => PopScope(
     canPop: false,
     child: Scaffold(
-      backgroundColor: context.colors.background,
+      backgroundColor: _cream,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.lg),
-          children: [
-            const SizedBox(height: 60),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Spacer(flex: 3),
 
-            // Shield icon
-            Center(
-              child: Container(
-                width: 80,
-                height: 80,
+              // Small icon
+              Container(
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFD861).withValues(alpha: 0.15),
+                  color: _yellow.withValues(alpha: 0.18),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  LucideIcons.shield,
-                  size: 40,
-                  color: Color(0xFFFFD861),
+                  LucideIcons.sparkles,
+                  size: 20,
+                  color: Color(0xFFB89000),
                 ),
               ),
-            ),
-            const SizedBox(height: KolabingSpacing.lg),
+              const SizedBox(height: 24),
 
-            // Title
-            Text(
-              'ENABLE PERMISSIONS',
-              style: KolabingTextStyles.bodyLarge.copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF232323),
-                letterSpacing: 1.0,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
-
-            // Subtitle
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-              ),
-              child: Text(
-                'To get the best experience, Kolabing needs a few permissions.',
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF6B7280),
+              // Title
+              Text(
+                'Allow Kolabing to work better',
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: _charcoal,
+                  height: 1.25,
                 ),
                 textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: KolabingSpacing.xl),
+              const SizedBox(height: 10),
 
-            // Location Permission Card
-            _buildPermissionCard(
-              icon: LucideIcons.mapPin,
-              iconColor: const Color(0xFF4CAF50),
-              title: 'Location',
-              description:
-                  'Find nearby kolab opportunities and connect with local businesses and communities.',
-              isGranted: _locationGranted,
-              isLoading: _isRequestingLocation,
-              onRequest: _requestLocation,
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-
-            // Notification Permission Card
-            _buildPermissionCard(
-              icon: LucideIcons.bell,
-              iconColor: const Color(0xFFFF9800),
-              title: 'Notifications',
-              description:
-                  'Get notified about new applications, messages, and kolab updates.',
-              isGranted: _notificationGranted,
-              isLoading: _isRequestingNotification,
-              onRequest: _requestNotification,
-            ),
-            const SizedBox(height: 48),
-
-            // Continue button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: _continue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              // Subtitle
+              Text(
+                'Location helps us show nearby kolabs.\nNotifications keep you updated.',
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 14,
+                  color: _softGray,
+                  height: 1.5,
                 ),
-                child: Text(
-                  'CONTINUE',
-                  style: KolabingTextStyles.button.copyWith(
-                    fontSize: 16,
-                    letterSpacing: 1.0,
+                textAlign: TextAlign.center,
+              ),
+
+              const Spacer(flex: 2),
+
+              // Permission rows
+              _buildPermissionRow(
+                icon: LucideIcons.mapPin,
+                title: 'Location',
+                subtitle: 'Nearby kolabs',
+                isGranted: _locationGranted,
+                isLoading: _isRequestingLocation,
+                onRequest: _requestLocation,
+              ),
+              Container(height: 1, color: _divider),
+              _buildPermissionRow(
+                icon: LucideIcons.bell,
+                title: 'Notifications',
+                subtitle: 'Messages & updates',
+                isGranted: _notificationGranted,
+                isLoading: _isRequestingNotification,
+                onRequest: _requestNotification,
+              ),
+
+              const Spacer(flex: 3),
+
+              // Continue button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _continue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _yellow,
+                    foregroundColor: Colors.black,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: KolabingTextStyles.button.copyWith(
+                      fontSize: 15,
+                      letterSpacing: 0.2,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
+              const SizedBox(height: 14),
 
-            // Help text
-            Text(
-              'You can change these later in your device settings.',
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 12,
-                color: const Color(0xFF9CA3AF),
+              // Helper text
+              Text(
+                'You can change this later in settings.',
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: _softGray,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: KolabingSpacing.lg),
-          ],
+
+              const Spacer(flex: 1),
+            ],
+          ),
         ),
       ),
     ),
   );
 
-  Widget _buildPermissionCard({
+  Widget _buildPermissionRow({
     required IconData icon,
-    required Color iconColor,
     required String title,
-    required String description,
+    required String subtitle,
     required bool isGranted,
     required bool isLoading,
     required VoidCallback onRequest,
-  }) => Container(
-    padding: const EdgeInsets.all(KolabingSpacing.md),
-    decoration: BoxDecoration(
-      color: context.colors.surfaceContainer,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: isGranted
-            ? const Color(0xFF4CAF50).withValues(alpha: 0.4)
-            : const Color(0xFFE5E7EB),
-      ),
-    ),
+  }) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 16),
     child: Row(
       children: [
         // Icon
         Container(
-          width: 48,
-          height: 48,
+          width: 38,
+          height: 38,
           decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(12),
+            color: const Color(0xFFEEECE8),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, size: 24, color: iconColor),
+          child: Icon(icon, size: 18, color: _charcoal),
         ),
-        const SizedBox(width: KolabingSpacing.sm),
+        const SizedBox(width: 14),
 
         // Text
         Expanded(
@@ -302,64 +293,60 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF232323),
+                  color: _charcoal,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                description,
+                subtitle,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
-                  color: const Color(0xFF6B7280),
-                  height: 1.3,
+                  color: _softGray,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(width: KolabingSpacing.sm),
 
-        // Action button / check
+        // Action
         if (isGranted)
           Container(
-            width: 36,
-            height: 36,
+            width: 28,
+            height: 28,
             decoration: const BoxDecoration(
-              color: Color(0xFF4CAF50),
+              color: _green,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check, size: 18, color: Colors.white),
+            child: const Icon(Icons.check, size: 15, color: Colors.white),
           )
         else if (isLoading)
           const SizedBox(
-            width: 36,
-            height: 36,
+            width: 28,
+            height: 28,
             child: Padding(
-              padding: EdgeInsets.all(6),
+              padding: EdgeInsets.all(5),
               child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFD861)),
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(_yellow),
               ),
             ),
           )
         else
-          SizedBox(
-            width: 72,
-            height: 36,
-            child: ElevatedButton(
-              onPressed: onRequest,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFD861),
-                foregroundColor: Colors.black,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+          GestureDetector(
+            onTap: onRequest,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                color: _yellow,
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 'Allow',
-                style: KolabingTextStyles.button.copyWith(fontSize: 13),
+                style: KolabingTextStyles.button.copyWith(
+                  fontSize: 12,
+                  letterSpacing: 0.1,
+                  color: Colors.black,
+                ),
               ),
             ),
           ),

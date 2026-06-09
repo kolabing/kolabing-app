@@ -814,11 +814,8 @@ class _CommunityOfferDetailScreenState
         child: ElevatedButton(
           onPressed: null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.surfaceVariant,
+            disabledBackgroundColor: context.colors.surfaceVariant,
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -846,11 +843,8 @@ class _CommunityOfferDetailScreenState
         child: ElevatedButton(
           onPressed: null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.surfaceVariant,
+            disabledBackgroundColor: context.colors.surfaceVariant,
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
           ),
           child: Text(
             AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
@@ -869,12 +863,7 @@ class _CommunityOfferDetailScreenState
       child: ElevatedButton(
         onPressed: () => _handleApply(opportunity),
         style: ElevatedButton.styleFrom(
-          backgroundColor: context.colors.primary,
-          foregroundColor: context.colors.onPrimary,
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1015,10 +1004,6 @@ class _CommunityOfferDetailScreenState
               },
               icon: const Icon(LucideIcons.rotateCcw, size: 16),
               label: Text(AppLocalizations.of(context).commonRetry),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-              ),
             ),
           ],
         ),

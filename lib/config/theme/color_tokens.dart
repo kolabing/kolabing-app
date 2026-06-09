@@ -213,7 +213,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     softYellowBorder: Color(0xFFFFE28C),
     pastelYellowBg: Color(0xFFFDF6DC),
     pastelYellowBorder: Color(0xFFF0E4A0),
-    navBarBackground: Color(0xFFFFE28C),
+    navBarBackground: Color(0xFFFFFFFF),
     charcoal: Color(0xFF1C1C16),
     titleInk: Color(0xFF1C1C16),
     error: Color(0xFFBA1A1A),

@@ -116,11 +116,8 @@ class _InitiateChallengeScreenState
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colors.success,
-                    foregroundColor: Colors.white,
+                    foregroundColor: KolabingColors.textOnDark,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: Text(
                     AppLocalizations.of(context).commonDone,
@@ -374,13 +371,8 @@ class _InitiateChallengeScreenState
                   child: ElevatedButton(
                     onPressed: initiateState.isLoading ? null : _handleInitiate,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
                       disabledBackgroundColor: context.colors.primary
                           .withValues(alpha: 0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
                     child: initiateState.isLoading
                         ? SizedBox(

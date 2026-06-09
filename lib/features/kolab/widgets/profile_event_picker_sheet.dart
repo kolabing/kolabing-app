@@ -167,10 +167,6 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                           onPressed: selectedEvents.isEmpty
                               ? null
                               : () => Navigator.of(context).pop(selectedEvents),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            foregroundColor: context.colors.onPrimary,
-                          ),
                           child: Text(l10n.profileEventPickerImport),
                         ),
                       ),

@@ -35,7 +35,7 @@ enum XpLevel {
     title: 'Local Legend',
     minXp: 1000,
     maxXp: null,
-    color: Color(0xFFFFD861),
+    color: Color(0xFFFFE28C),
   );
 
   const XpLevel({

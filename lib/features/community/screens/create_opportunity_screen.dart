@@ -1254,9 +1254,6 @@ class _CreateOpportunityScreenState
                 foregroundColor: context.colors.onSurface,
                 side: BorderSide(color: context.colors.darkBorder),
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
               child: Text(
                 l10n.createOpportunityBackButton,
@@ -1273,15 +1270,10 @@ class _CreateOpportunityScreenState
           child: ElevatedButton(
             onPressed: isBusy ? null : _handleNext,
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
               disabledBackgroundColor: context.colors.primary.withValues(
                 alpha: 0.7,
               ),
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
             ),
             child: Text(
               l10n.createOpportunityContinueButton,
@@ -1306,15 +1298,10 @@ class _CreateOpportunityScreenState
           child: ElevatedButton(
             onPressed: isBusy ? null : _handlePublish,
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
               disabledBackgroundColor: context.colors.primary.withValues(
                 alpha: 0.7,
               ),
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
             ),
             child: formState.isPublishing
                 ? SizedBox(

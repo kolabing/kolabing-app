@@ -20,8 +20,14 @@ abstract final class KolabingColors {
   /// Darker yellow for pressed states
   static const Color primaryDark = Color(0xFFF5D070);
 
-  /// On-primary-container — warm dark amber (text on yellow)
-  static const Color onPrimary = Color(0xFF78631A);
+  /// On-primary-container — grey ink (text/icons on yellow)
+  static const Color onPrimary = Color(0xFF4C4A44);
+
+  /// Secondary button fill — Warm Mist
+  static const Color buttonSecondary = Color(0xFFF0EBE1);
+
+  /// Text/icons on secondary buttons
+  static const Color onButtonSecondary = Color(0xFF1C1C16);
 
   // ---------------------------------------------------------------------------
   // Surface Hierarchy (M3-aligned)
@@ -213,7 +219,7 @@ abstract final class KolabingColors {
   // ---------------------------------------------------------------------------
 
   /// Nav bar background — warm yellow (both top and bottom bars)
-  static const Color navBarBackground = Color(0xFFFFE28C);
+  static const Color navBarBackground = Color(0xFFFFFFFF);
 
   /// Ink black — text and icons on yellow bars
   static const Color charcoal = Color(0xFF1C1C16);

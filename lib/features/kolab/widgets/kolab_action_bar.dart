@@ -137,14 +137,9 @@ class _PrimaryActionButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.primary,
-            foregroundColor: context.colors.onPrimary,
             disabledBackgroundColor:
                 context.colors.primary.withValues(alpha: 0.5),
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
           ),
           child: isLoading
               ? SizedBox(
@@ -157,7 +152,7 @@ class _PrimaryActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                  style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
                 ),
         ),
       );
@@ -187,9 +182,6 @@ class _OutlinedActionButton extends StatelessWidget {
             foregroundColor: context.colors.onSurface,
             side: BorderSide(color: context.colors.darkBorder),
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
           ),
           child: isLoading
               ? SizedBox(
@@ -202,7 +194,7 @@ class _OutlinedActionButton extends StatelessWidget {
                 )
               : Text(
                   label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                  style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
                 ),
         ),
       );

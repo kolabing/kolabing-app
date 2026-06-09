@@ -187,7 +187,7 @@ class CommunityTier {
   /// Ascending = higher standing. Used to pick the highest satisfied tier.
   final int rank;
 
-  /// Hex string (e.g. `#FFD861`); null falls back to a theme default.
+  /// Hex string (e.g. `#FFE28C`); null falls back to a theme default.
   final String? color;
   final TierAssignmentRule assignmentRule;
 

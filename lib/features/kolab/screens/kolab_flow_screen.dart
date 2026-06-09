@@ -339,13 +339,6 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                 if (context.canPop()) context.pop();
                 if (context.canPop()) context.pop();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(
                 l10n.commonDone,
                 style: KolabingTextStyles.button.copyWith(fontSize: 16, fontWeight: FontWeight.w700),

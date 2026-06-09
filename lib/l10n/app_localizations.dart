@@ -184,6 +184,120 @@ abstract class AppLocalizations {
   /// **'Get started'**
   String get welcomeGetStarted;
 
+  /// Welcome screen primary CTA — redesigned version.
+  ///
+  /// In en, this message translates to:
+  /// **'Start kolabing'**
+  String get welcomeStartKolabing;
+
+  /// Hero sentence part 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get welcomeHeroWhere;
+
+  /// Hero sentence part 2.
+  ///
+  /// In en, this message translates to:
+  /// **'businesses'**
+  String get welcomeHeroBusinesses;
+
+  /// Hero sentence part 3.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get welcomeHeroAnd;
+
+  /// Hero sentence part 4.
+  ///
+  /// In en, this message translates to:
+  /// **'communities'**
+  String get welcomeHeroCommunities;
+
+  /// Hero sentence part 5.
+  ///
+  /// In en, this message translates to:
+  /// **'grow'**
+  String get welcomeHeroGrow;
+
+  /// Hero sentence part 6.
+  ///
+  /// In en, this message translates to:
+  /// **'together'**
+  String get welcomeHeroTogether;
+
+  /// Tagline first word.
+  ///
+  /// In en, this message translates to:
+  /// **'MATCH'**
+  String get welcomeTaglineMatch;
+
+  /// Tagline separator dot.
+  ///
+  /// In en, this message translates to:
+  /// **'·'**
+  String get welcomeTaglineDot;
+
+  /// Tagline middle word — highlighted in yellow.
+  ///
+  /// In en, this message translates to:
+  /// **'KOLAB'**
+  String get welcomeTaglineKolab;
+
+  /// Tagline last word.
+  ///
+  /// In en, this message translates to:
+  /// **'GROW'**
+  String get welcomeTaglineGrow;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'events'**
+  String get welcomeFloatingEvents;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'UGC'**
+  String get welcomeFloatingUgc;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'reviews'**
+  String get welcomeFloatingReviews;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'growth'**
+  String get welcomeFloatingGrowth;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'community'**
+  String get welcomeFloatingCommunity;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'brands'**
+  String get welcomeFloatingBrands;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'people'**
+  String get welcomeFloatingPeople;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'connection'**
+  String get welcomeFloatingConnection;
+
   /// Settings/profile row label that opens the language picker.
   ///
   /// In en, this message translates to:

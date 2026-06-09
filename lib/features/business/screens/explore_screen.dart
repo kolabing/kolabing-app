@@ -252,12 +252,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           height: 44,
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
           decoration: BoxDecoration(
-            color: context.colors.surface,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(KolabingRadius.round),
             border: Border.all(
               color: hasFilters
                   ? context.colors.primary
-                  : context.colors.darkBorder,
+                  : context.colors.hairline,
             ),
           ),
           child: Row(
@@ -523,9 +523,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                 },
                 icon: const Icon(LucideIcons.rotateCcw, size: 16),
                 label: Text(AppLocalizations.of(context).exploreClearFilters),
-                style: TextButton.styleFrom(
-                  foregroundColor: context.colors.primary,
-                ),
               ),
             ],
           ],
@@ -591,11 +588,11 @@ class _FeedToggle extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
     child: Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: Border.all(color: context.colors.darkBorder),
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Row(
         children: [
@@ -635,17 +632,24 @@ class _FeedSegment extends StatelessWidget {
     onTap: onTap,
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 7),
       decoration: BoxDecoration(
-        color: isSelected ? context.colors.primary : Colors.transparent,
+        color: isSelected ? const Color(0xFFFFF4C2) : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
+        border: isSelected
+            ? Border.all(color: const Color(0xFFFFE28C))
+            : null,
       ),
       alignment: Alignment.center,
       child: Text(
         label,
-        style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: isSelected
-              ? context.colors.onPrimary
-              : context.colors.onSurfaceVariant),
+        style: KolabingTextStyles.button.copyWith(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: isSelected
+              ? KolabingColors.onSurface
+              : context.colors.onSurfaceVariant,
+        ),
       ),
     ),
   );

@@ -372,15 +372,10 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       ? null
                       : _handleSubscribe,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
                     disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: isLoading
                       ? SizedBox(

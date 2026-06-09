@@ -142,14 +142,10 @@ class ReferralScreen extends ConsumerWidget {
             icon: const Icon(LucideIcons.copy, size: 18),
             label: Text(
               AppLocalizations.of(context).referralScreenCopyCode,
-              style: KolabingTextStyles.buttonSmall,
+              style: KolabingTextStyles.button,
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.onSurface,
               side: BorderSide(color: context.colors.darkBorder),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
             ),
           ),
         ),
@@ -170,14 +166,7 @@ class ReferralScreen extends ConsumerWidget {
             icon: const Icon(LucideIcons.share2, size: 18),
             label: Text(
               AppLocalizations.of(context).referralScreenShareCode,
-              style: KolabingTextStyles.buttonSmall,
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
+              style: KolabingTextStyles.button,
             ),
           ),
         ),

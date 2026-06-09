@@ -207,9 +207,6 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   foregroundColor: context.colors.error,
                   side: BorderSide(color: context.colors.error),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                 ),
               ),
             ),

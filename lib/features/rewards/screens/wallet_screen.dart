@@ -521,13 +521,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       AppLocalizations.of(context).walletScreenShareLink,
                       style: KolabingTextStyles.button,
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: KolabingRadius.borderRadiusMd,
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -539,15 +532,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     child: OutlinedButton(
                       onPressed: () =>
                           context.push(KolabingRoutes.communityWalletWithdraw),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: context.colors.onSurface,
-                        side: BorderSide(
-                          color: context.colors.onSurface,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: KolabingRadius.borderRadiusMd,
-                        ),
-                      ),
                       child: Text(
                         AppLocalizations.of(context).walletScreenRequestCash,
                         style: KolabingTextStyles.button,
@@ -616,13 +600,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.colors.onSurfaceVariant,
                   side: BorderSide(color: context.colors.darkBorder),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: KolabingRadius.borderRadiusMd,
-                  ),
                 ),
                 child: Text(
                   AppLocalizations.of(context).walletScreenLoadMore,
-                  style: KolabingTextStyles.buttonSmall.copyWith(
+                  style: KolabingTextStyles.button.copyWith(
                     color: context.colors.onSurfaceVariant,
                   ),
                 ),

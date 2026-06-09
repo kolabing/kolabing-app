@@ -13,7 +13,7 @@ import '../widgets/kolabing_logo.dart';
 
 const String _kLoginRoute = '/auth/login';
 const Color _kForgotBg = Color(0xFF000000);
-const Color _kForgotAccent = Color(0xFFFFD861);
+const Color _kForgotAccent = Color(0xFFFFE28C);
 const Color _kForgotPanel = Color(0xCC121212);
 const Color _kForgotPanelBorder = Color(0x26FFFFFF);
 const Color _kForgotFieldFill = Color(0x14FFFFFF);
@@ -428,34 +428,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _handleSendResetLink,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _kForgotAccent,
-                  foregroundColor: context.colors.onPrimary,
-                  disabledBackgroundColor: _kForgotAccent.withValues(
+                  disabledBackgroundColor: KolabingColors.primary.withValues(
                     alpha: 0.70,
                   ),
                   elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
                 ),
                 child: _isLoading
-                    ? SizedBox(
+                    ? const SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            context.colors.onPrimary,
+                            KolabingColors.onPrimary,
                           ),
                         ),
                       )
                     : Text(
                         AppLocalizations.of(context).forgotPasswordSendButton,
-                        style: KolabingTextStyles.bodyMedium.copyWith(
+                        style: KolabingTextStyles.button.copyWith(
                           fontSize: compact ? 15 : 16,
-                          fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
-                          color: context.colors.onPrimary,
                         ),
                       ),
               ),
@@ -547,20 +540,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             child: ElevatedButton(
               onPressed: () => context.go(_kLoginRoute),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _kForgotAccent,
-                foregroundColor: context.colors.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
               ),
               child: Text(
                 AppLocalizations.of(context).forgotPasswordBackToSignIn,
-                style: KolabingTextStyles.bodyMedium.copyWith(
+                style: KolabingTextStyles.button.copyWith(
                   fontSize: compact ? 15 : 16,
-                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.0,
-                  color: context.colors.onPrimary,
+                  color: KolabingColors.onPrimary,
                 ),
               ),
             ),
@@ -576,7 +563,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     setState(() => _emailSent = false);
                   },
             style: TextButton.styleFrom(
-              foregroundColor: _kForgotAccent,
+              foregroundColor: KolabingColors.primary,
               minimumSize: const Size(0, 32),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               padding: EdgeInsets.zero,
@@ -586,7 +573,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: _kForgotAccent,
+                color: KolabingColors.primary,
               ),
             ),
           ),

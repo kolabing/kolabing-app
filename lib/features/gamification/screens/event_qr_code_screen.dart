@@ -149,12 +149,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                   icon: const Icon(LucideIcons.users, size: 18),
                   label: Text(AppLocalizations.of(context).eventQrViewCheckins),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: context.colors.primary,
-                    side: BorderSide(color: context.colors.primary),
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                 ),
               ),
@@ -214,9 +209,6 @@ class EventQRCodeScreen extends ConsumerWidget {
               onPressed: () => ref.invalidate(qrTokenProvider(eventId)),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).commonTryAgain),
-              style: TextButton.styleFrom(
-                foregroundColor: context.colors.primary,
-              ),
             ),
           ],
         ),
@@ -257,9 +249,6 @@ class EventQRCodeScreen extends ConsumerWidget {
           onPressed: () => _copyToken(context, token),
           icon: const Icon(LucideIcons.copy, size: 16),
           label: Text(AppLocalizations.of(context).eventQrCopyToken),
-          style: TextButton.styleFrom(
-            foregroundColor: context.colors.onSurfaceVariant,
-          ),
         ),
       ],
     );

@@ -9,7 +9,9 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/navigation/profile_avatar_button.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../notification/widgets/notification_bell.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
 import '../widgets/stat_card.dart';
@@ -141,6 +143,13 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                               user?.displayName ?? l10n.attendeeRoleLabel,
                               style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: textColor),
                             ),
+                          ],
+                        ),
+                        const Row(
+                          children: [
+                            NotificationBell(),
+                            SizedBox(width: KolabingSpacing.xs),
+                            ProfileAvatarButton(),
                           ],
                         ),
                       ],
@@ -344,9 +353,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                       },
                       icon: const Icon(LucideIcons.chevronDown, size: 16),
                       label: Text(AppLocalizations.of(context).attendeeHomeLoadMore),
-                      style: TextButton.styleFrom(
-                        foregroundColor: context.colors.primary,
-                      ),
                     ),
             ),
           ),
@@ -414,13 +420,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             onPressed: _initLocation,
             icon: const Icon(LucideIcons.refreshCw, size: 16),
             label: Text(AppLocalizations.of(context).attendeeHomeTryAgain),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           TextButton(
@@ -458,13 +457,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             onPressed: () => _showRadiusFilter(context),
             icon: const Icon(LucideIcons.sliders, size: 16),
             label: Text(AppLocalizations.of(context).attendeeHomeAdjustRadius),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.primary,
-              side: BorderSide(color: context.colors.primary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
           ),
         ],
       ),
@@ -497,9 +489,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             onPressed: _initLocation,
             icon: const Icon(LucideIcons.refreshCw, size: 16),
             label: Text(AppLocalizations.of(context).attendeeHomeTryAgain),
-            style: TextButton.styleFrom(
-              foregroundColor: context.colors.primary,
-            ),
           ),
         ],
       ),
@@ -608,13 +597,6 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             height: 52,
             child: ElevatedButton(
               onPressed: () => widget.onRadiusChanged(_radius),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(AppLocalizations.of(context).attendeeHomeApply),
             ),
           ),

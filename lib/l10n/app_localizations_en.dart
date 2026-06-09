@@ -52,6 +52,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeGetStarted => 'Get started';
 
   @override
+  String get welcomeStartKolabing => 'Start kolabing';
+
+  @override
+  String get welcomeHeroWhere => 'Where';
+
+  @override
+  String get welcomeHeroBusinesses => 'businesses';
+
+  @override
+  String get welcomeHeroAnd => 'and';
+
+  @override
+  String get welcomeHeroCommunities => 'communities';
+
+  @override
+  String get welcomeHeroGrow => 'grow';
+
+  @override
+  String get welcomeHeroTogether => 'together';
+
+  @override
+  String get welcomeTaglineMatch => 'MATCH';
+
+  @override
+  String get welcomeTaglineDot => '·';
+
+  @override
+  String get welcomeTaglineKolab => 'KOLAB';
+
+  @override
+  String get welcomeTaglineGrow => 'GROW';
+
+  @override
+  String get welcomeFloatingEvents => 'events';
+
+  @override
+  String get welcomeFloatingUgc => 'UGC';
+
+  @override
+  String get welcomeFloatingReviews => 'reviews';
+
+  @override
+  String get welcomeFloatingGrowth => 'growth';
+
+  @override
+  String get welcomeFloatingCommunity => 'community';
+
+  @override
+  String get welcomeFloatingBrands => 'brands';
+
+  @override
+  String get welcomeFloatingPeople => 'people';
+
+  @override
+  String get welcomeFloatingConnection => 'connection';
+
+  @override
   String get settingsLanguage => 'Language';
 
   @override

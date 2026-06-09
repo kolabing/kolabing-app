@@ -469,13 +469,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
             child: ElevatedButton(
               onPressed: _isLoading ? null : _handleResetPassword,
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                disabledBackgroundColor: context.colors.primary.withValues(
+                disabledBackgroundColor: KolabingColors.primary.withValues(
                   alpha: 0.7,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
@@ -486,7 +481,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          context.colors.onPrimary,
+                          KolabingColors.onPrimary,
                         ),
                       ),
                     )
@@ -564,11 +559,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         child: ElevatedButton(
           onPressed: () => context.go('/auth/login'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.primary,
-            foregroundColor: context.colors.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
             elevation: 0,
           ),
           child: Text(

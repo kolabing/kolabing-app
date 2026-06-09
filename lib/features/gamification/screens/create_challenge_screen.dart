@@ -256,13 +256,8 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleCreate,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
                       disabledBackgroundColor: context.colors.primary
                           .withValues(alpha: 0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
                     child: _isLoading
                         ? SizedBox(

@@ -173,11 +173,6 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                     child: ElevatedButton(
                       onPressed: widget.onDismiss,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: context.colors.primary,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: KolabingRadius.borderRadiusMd,
-                        ),
                         elevation: 0,
                       ),
                       child: Text(

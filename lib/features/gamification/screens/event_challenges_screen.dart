@@ -422,13 +422,6 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                       l10n.eventChallengesStartChallenge,
                       style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
                   ),
                 ),
 

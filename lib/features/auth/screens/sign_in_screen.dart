@@ -406,17 +406,10 @@ class _UserTypeMismatchDialog extends StatelessWidget {
             height: 48,
             child: ElevatedButton(
               onPressed: onGotIt,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(
                 AppLocalizations.of(context).commonGotIt,
                 style: KolabingTextStyles.button.copyWith(
-                  color: context.colors.onPrimary,
+                  color: KolabingColors.onPrimary,
                 ),
               ),
             ),

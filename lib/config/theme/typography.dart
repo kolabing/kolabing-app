@@ -150,10 +150,10 @@ abstract final class KolabingTextStyles {
         letterSpacing: 0.02 * 26,
       );
 
-  /// Button label — Hanken Grotesk 14px SemiBold, spaced.
+  /// Button label — Hanken Grotesk 14px Bold, spaced.
   static TextStyle get button => GoogleFonts.hankenGrotesk(
         fontSize: 14,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0.05 * 14,
       );
 

@@ -223,7 +223,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       margin: const EdgeInsets.only(top: 60),
       decoration: BoxDecoration(
         color: context.colors.darkSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -349,7 +349,7 @@ class _StepConfirm extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: context.colors.errorBg,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: KolabingRadius.borderRadiusMd,
             ),
             child: Text(
               error!,
@@ -649,15 +649,15 @@ class _XpPreviewBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: context.colors.primary,
-        borderRadius: BorderRadius.circular(50),
+      decoration: const ShapeDecoration(
+        color: KolabingColors.primary,
+        shape: StadiumBorder(),
       ),
       child: Text(
         AppLocalizations.of(context).kolabCompletionXpEarned(baseXp),
         style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w700,
-          color: context.colors.onSurface,
+          color: KolabingColors.onPrimary,
         ),
       ),
     );
@@ -711,7 +711,7 @@ class _StepDone extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: KolabingRadius.borderRadiusXl,
           ),
           child: Column(
             children: [
@@ -761,27 +761,23 @@ class _PrimaryButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 52,
-        decoration: BoxDecoration(
-          color: onTap != null ? context.colors.primary : context.colors.darkBorder,
-          borderRadius: BorderRadius.circular(14),
-        ),
         alignment: Alignment.center,
+        decoration: ShapeDecoration(
+          color: onTap != null
+              ? KolabingColors.primary
+              : context.colors.outlineVariant,
+          shape: const StadiumBorder(),
+        ),
         child: isLoading
-            ? SizedBox(
+            ? const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: context.colors.onSurface,
+                  color: KolabingColors.onPrimary,
                 ),
               )
-            : Text(
-                label,
-                style: KolabingTextStyles.button.copyWith(
-                  fontSize: 16,
-                  color: context.colors.onSurface,
-                ),
-              ),
+            : Text(label, style: KolabingTextStyles.button),
       ),
     );
   }
@@ -801,11 +797,14 @@ class _SecondaryButton extends StatelessWidget {
         width: double.infinity,
         height: 48,
         alignment: Alignment.center,
+        decoration: const ShapeDecoration(
+          color: KolabingColors.buttonSecondary,
+          shape: StadiumBorder(),
+        ),
         child: Text(
           label,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            fontSize: 15,
-            color: context.colors.onSurfaceVariant,
+          style: KolabingTextStyles.button.copyWith(
+            color: KolabingColors.onButtonSecondary,
           ),
         ),
       ),

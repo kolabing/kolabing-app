@@ -386,7 +386,6 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         icon: _busy
             ? const SizedBox(

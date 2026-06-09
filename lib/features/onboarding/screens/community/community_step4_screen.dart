@@ -309,11 +309,6 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                   child: ElevatedButton(
                     onPressed: _handleContinue,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                       elevation: 0,
                     ),
                     child: Text(

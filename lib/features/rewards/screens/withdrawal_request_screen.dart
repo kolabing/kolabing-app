@@ -175,9 +175,6 @@ class _WithdrawalRequestScreenState
             style: OutlinedButton.styleFrom(
               foregroundColor: context.colors.onSurface,
               side: BorderSide(color: context.colors.darkBorder),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
             ),
             child: Text(
               AppLocalizations.of(context).withdrawalBackToWallet,
@@ -361,9 +358,6 @@ class _WithdrawalRequestScreenState
               ),
               disabledForegroundColor: context.colors.onPrimary.withValues(
                 alpha: 0.5,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
               ),
             ),
             child: state.isWithdrawing

@@ -95,16 +95,9 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
                   : l10n.pastEventsSelectFromProfile,
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.primary,
-              side: BorderSide(
-                color: context.colors.primary.withValues(alpha: 0.5),
-              ),
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.md,
                 vertical: 12,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.sm),
               ),
             ),
           ),

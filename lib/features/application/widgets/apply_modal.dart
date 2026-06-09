@@ -426,14 +426,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          foregroundColor: context.colors.onPrimary,
                           disabledBackgroundColor: context.colors.primary
                               .withValues(alpha: 0.6),
                           elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: KolabingRadius.borderRadiusMd,
-                          ),
                         ),
                       ),
                     ),

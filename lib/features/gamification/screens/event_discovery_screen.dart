@@ -234,9 +234,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                           },
                           icon: const Icon(LucideIcons.chevronDown),
                           label: Text(AppLocalizations.of(context).eventDiscoveryLoadMore),
-                          style: TextButton.styleFrom(
-                            foregroundColor: context.colors.primary,
-                          ),
                         ),
                 ),
               ),
@@ -279,13 +276,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               onPressed: _initLocation,
               icon: const Icon(LucideIcons.refreshCw),
               label: Text(AppLocalizations.of(context).commonTryAgain),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             TextButton(
@@ -326,13 +316,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               onPressed: () => _showRadiusFilter(context),
               icon: const Icon(LucideIcons.sliders),
               label: Text(AppLocalizations.of(context).eventDiscoveryAdjustRadius),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: context.colors.primary,
-                side: BorderSide(color: context.colors.primary),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
             ),
           ],
         ),
@@ -370,9 +353,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).commonTryAgain),
-              style: TextButton.styleFrom(
-                foregroundColor: context.colors.primary,
-              ),
             ),
           ],
         ),
@@ -486,13 +466,6 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             height: 52,
             child: ElevatedButton(
               onPressed: () => widget.onRadiusChanged(_radius),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(AppLocalizations.of(context).eventDiscoveryApply),
             ),
           ),

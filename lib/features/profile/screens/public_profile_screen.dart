@@ -721,11 +721,6 @@ class _SendKolabBottomBar extends ConsumerWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(KolabingRadius.md),
-                  ),
                   elevation: 0,
                 ),
                 icon: const Icon(LucideIcons.send, size: 18),

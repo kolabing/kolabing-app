@@ -22,11 +22,10 @@ const Color _kCard = Color(0xFF161616);
 const Color _kCardBorder = Color(0xFF272727);
 const Color _kFieldFill = Color(0xFF1F1F1F);
 const Color _kFieldBorder = Color(0xFF2E2E2E);
-const Color _kYellow = Color(0xFFFFD861);
+const Color _kYellow = Color(0xFFFFE28C);
 const Color _kTextWhite = Color(0xFFFFFFFF);
 const Color _kTextSoft = Color(0xFFB0AFA8);
 const Color _kTextMuted = Color(0xFF6B6A65);
-const Color _kTextDark = Color(0xFF1C1C16);
 
 const String _kWelcomeRoute = '/auth/welcome';
 const String _kUserTypeSelectionRoute = '/auth/user-type';
@@ -629,32 +628,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 child: ElevatedButton(
                   onPressed: _anyLoading ? null : _handleEmailLogin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _kYellow,
-                    foregroundColor: _kTextDark,
-                    disabledBackgroundColor: _kYellow.withValues(alpha: 0.60),
+                    disabledBackgroundColor:
+                        KolabingColors.primary.withValues(alpha: 0.60),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: _isLoading
-                      ? SizedBox(
+                      ? const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(_kTextDark),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                KolabingColors.onPrimary),
                           ),
                         )
                       : _showSuccess
-                      ? const Icon(Icons.check_rounded, size: 22, color: _kTextDark)
+                      ? const Icon(Icons.check_rounded, size: 22)
                       : Text(
                           AppLocalizations.of(context).loginSignInButton,
-                          style: KolabingTextStyles.bodyMedium.copyWith(
+                          style: KolabingTextStyles.button.copyWith(
                             fontSize: compact ? 15 : 15.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.1,
-                            color: _kTextDark,
                           ),
                         ),
                 ),
@@ -674,7 +667,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       ? null
                       : () => context.push(_kForgotPasswordRoute),
                   style: TextButton.styleFrom(
-                    foregroundColor: _kYellow,
+                    foregroundColor: KolabingColors.primary,
                     minimumSize: const Size(0, 32),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     padding: EdgeInsets.zero,
@@ -684,7 +677,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     style: KolabingTextStyles.bodySmall.copyWith(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: _kYellow,
+                      color: KolabingColors.primary,
                     ),
                   ),
                 ),
@@ -983,16 +976,9 @@ class _UserNotFoundDialog extends StatelessWidget {
             height: 48,
             child: ElevatedButton(
               onPressed: onCreateAccount,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _kYellow,
-                foregroundColor: _kTextDark,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(
                 AppLocalizations.of(context).loginCreateAccountButton,
-                style: KolabingTextStyles.button.copyWith(color: _kTextDark),
+                style: KolabingTextStyles.button,
               ),
             ),
           ),

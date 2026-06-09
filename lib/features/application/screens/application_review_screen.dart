@@ -479,11 +479,6 @@ class _ApplicationReviewScreenState
             onPressed: () =>
                 context.push('/application/${application.id}/chat'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               elevation: 0,
             ),
             icon: const Icon(LucideIcons.messageCircle, size: 18),
@@ -522,9 +517,6 @@ class _ApplicationReviewScreenState
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.colors.error,
                   side: BorderSide(color: context.colors.error),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                 ),
                 icon: _isDeclining
                     ? SizedBox(
@@ -558,11 +550,6 @@ class _ApplicationReviewScreenState
                         ? null
                         : () => _handleAccept(application),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: context.colors.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   elevation: 0,
                 ),
                 icon: _isAccepting
@@ -692,9 +679,7 @@ class _ApplicationReviewScreenState
             onPressed: () => Navigator.of(ctx).pop(true),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colors.error,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              foregroundColor: KolabingColors.textOnDark,
               elevation: 0,
             ),
             child: Text(
@@ -959,13 +944,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 child: ElevatedButton.icon(
                   onPressed: _isValid && !_isSubmitting ? _submit : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
                     disabledBackgroundColor:
                         context.colors.primary.withValues(alpha: 0.4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     elevation: 0,
                   ),
                   icon: _isSubmitting

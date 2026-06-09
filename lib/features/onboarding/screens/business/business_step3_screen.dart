@@ -165,16 +165,11 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                 child: ElevatedButton(
                   onPressed: photos.isNotEmpty ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
                     disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
                     disabledForegroundColor: context.colors.onPrimary
                         .withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     elevation: 0,
                   ),
                   child: Text(

@@ -200,7 +200,7 @@ class _UserTypeSelectionScreenState
                     ),
                   ),
 
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 36),
 
                   // Business Card
                   _AnimatedElement(
@@ -213,7 +213,7 @@ class _UserTypeSelectionScreenState
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
 
                   // Community Card
                   _AnimatedElement(
@@ -226,7 +226,7 @@ class _UserTypeSelectionScreenState
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
 
                   // Attendee Card
                   _AnimatedElement(
@@ -242,7 +242,7 @@ class _UserTypeSelectionScreenState
                     ),
                   ),
 
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 36),
 
                   // Bottom link
                   _AnimatedElement(

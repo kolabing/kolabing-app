@@ -52,6 +52,63 @@ class AppLocalizationsEs extends AppLocalizations {
   String get welcomeGetStarted => 'Empezar';
 
   @override
+  String get welcomeStartKolabing => 'Empieza a kolabing';
+
+  @override
+  String get welcomeHeroWhere => 'Donde';
+
+  @override
+  String get welcomeHeroBusinesses => 'empresas';
+
+  @override
+  String get welcomeHeroAnd => 'y';
+
+  @override
+  String get welcomeHeroCommunities => 'comunidades';
+
+  @override
+  String get welcomeHeroGrow => 'crecen';
+
+  @override
+  String get welcomeHeroTogether => 'juntas';
+
+  @override
+  String get welcomeTaglineMatch => 'ENCUENTRA';
+
+  @override
+  String get welcomeTaglineDot => '·';
+
+  @override
+  String get welcomeTaglineKolab => 'KOLAB';
+
+  @override
+  String get welcomeTaglineGrow => 'CRECE';
+
+  @override
+  String get welcomeFloatingEvents => 'eventos';
+
+  @override
+  String get welcomeFloatingUgc => 'UGC';
+
+  @override
+  String get welcomeFloatingReviews => 'reseñas';
+
+  @override
+  String get welcomeFloatingGrowth => 'crecimiento';
+
+  @override
+  String get welcomeFloatingCommunity => 'comunidad';
+
+  @override
+  String get welcomeFloatingBrands => 'marcas';
+
+  @override
+  String get welcomeFloatingPeople => 'personas';
+
+  @override
+  String get welcomeFloatingConnection => 'conexión';
+
+  @override
   String get settingsLanguage => 'Idioma';
 
   @override

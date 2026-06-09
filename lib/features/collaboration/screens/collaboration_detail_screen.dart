@@ -471,7 +471,6 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
                 : TextButton.icon(
                     onPressed: _editSchedule,
                     style: TextButton.styleFrom(
-                      foregroundColor: context.colors.primary,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       minimumSize: const Size(0, 32),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1211,15 +1210,6 @@ class _ChallengesSection extends ConsumerWidget {
                 ),
               );
             },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.primary,
-              side: BorderSide(
-                color: context.colors.primary.withValues(alpha: 0.5),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.md),
-              ),
-            ),
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
               l10n.collaborationDetailAddCustomChallenge,
@@ -1553,11 +1543,6 @@ class _QRCodeSection extends StatelessWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(KolabingRadius.md),
-                    ),
                     elevation: 0,
                   ),
                   icon: const Icon(LucideIcons.qrCode, size: 18),
@@ -1759,11 +1744,6 @@ class _ResubscribePrompt extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: () => context.push(KolabingRoutes.businessPlans),
               style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(KolabingRadius.md),
-                ),
                 elevation: 0,
               ),
               icon: const Icon(LucideIcons.creditCard, size: 18),
@@ -2104,11 +2084,6 @@ class _PostCompletionReviewSection extends ConsumerWidget {
             }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.primary,
-            foregroundColor: context.colors.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
             elevation: 0,
           ),
           child: Text(

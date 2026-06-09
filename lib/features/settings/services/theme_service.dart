@@ -14,16 +14,7 @@ class ThemeService {
     final prefs = await SharedPreferences.getInstance();
     final value = prefs.getString(_themeModeKey);
 
-    switch (value) {
-      case 'light':
-        return ThemeMode.light;
-      case 'system':
-        return ThemeMode.system;
-      case 'dark':
-      default:
-        // First launch / no saved preference → Night is the default theme.
-        return ThemeMode.dark;
-    }
+    return ThemeMode.light;
   }
 
   /// Save theme mode to SharedPreferences

@@ -75,7 +75,9 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     // As a nav tab the role shell already provides the app bar; render the body
     // only. As a pushed screen, wrap with our own Scaffold + "Chats" app bar.
     if (widget.embedded) {
-      return Container(color: context.colors.background, child: body);
+      return SafeArea(
+        child: Container(color: context.colors.background, child: body),
+      );
     }
     return Scaffold(
       backgroundColor: context.colors.background,

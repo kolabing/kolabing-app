@@ -56,6 +56,82 @@
   "@welcomeGetStarted": {
     "description": "Welcome screen primary call-to-action button."
   },
+  "welcomeStartKolabing": "Start kolabing",
+  "@welcomeStartKolabing": {
+    "description": "Welcome screen primary CTA — redesigned version."
+  },
+  "welcomeHeroWhere": "Where",
+  "@welcomeHeroWhere": {
+    "description": "Hero sentence part 1."
+  },
+  "welcomeHeroBusinesses": "businesses",
+  "@welcomeHeroBusinesses": {
+    "description": "Hero sentence part 2."
+  },
+  "welcomeHeroAnd": "and",
+  "@welcomeHeroAnd": {
+    "description": "Hero sentence part 3."
+  },
+  "welcomeHeroCommunities": "communities",
+  "@welcomeHeroCommunities": {
+    "description": "Hero sentence part 4."
+  },
+  "welcomeHeroGrow": "grow",
+  "@welcomeHeroGrow": {
+    "description": "Hero sentence part 5."
+  },
+  "welcomeHeroTogether": "together",
+  "@welcomeHeroTogether": {
+    "description": "Hero sentence part 6."
+  },
+  "welcomeTaglineMatch": "MATCH",
+  "@welcomeTaglineMatch": {
+    "description": "Tagline first word."
+  },
+  "welcomeTaglineDot": "·",
+  "@welcomeTaglineDot": {
+    "description": "Tagline separator dot."
+  },
+  "welcomeTaglineKolab": "KOLAB",
+  "@welcomeTaglineKolab": {
+    "description": "Tagline middle word — highlighted in yellow."
+  },
+  "welcomeTaglineGrow": "GROW",
+  "@welcomeTaglineGrow": {
+    "description": "Tagline last word."
+  },
+  "welcomeFloatingEvents": "events",
+  "@welcomeFloatingEvents": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingUgc": "UGC",
+  "@welcomeFloatingUgc": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingReviews": "reviews",
+  "@welcomeFloatingReviews": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingGrowth": "growth",
+  "@welcomeFloatingGrowth": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingCommunity": "community",
+  "@welcomeFloatingCommunity": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingBrands": "brands",
+  "@welcomeFloatingBrands": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingPeople": "people",
+  "@welcomeFloatingPeople": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingConnection": "connection",
+  "@welcomeFloatingConnection": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
   "settingsLanguage": "Language",
   "@settingsLanguage": {
     "description": "Settings/profile row label that opens the language picker."

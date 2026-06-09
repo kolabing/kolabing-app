@@ -84,11 +84,25 @@ abstract final class KolabingTheme {
           margin: EdgeInsets.zero,
         ),
 
-        // Elevated Button (Primary) — pill shape, yellow, charcoal text
+        // Elevated Button (Primary) — pill shape, yellow, grey ink text
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.navBarBackground,
-            foregroundColor: KolabingColors.charcoal,
+            backgroundColor: KolabingColors.primary,
+            foregroundColor: KolabingColors.onPrimary,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            shape: const StadiumBorder(),
+            textStyle: KolabingTextStyles.button,
+          ),
+        ),
+
+        // Filled Button (Secondary) — pill shape, warm mist fill
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: KolabingColors.buttonSecondary,
+            foregroundColor: KolabingColors.onButtonSecondary,
             elevation: 0,
             shadowColor: Colors.transparent,
             minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
@@ -259,7 +273,7 @@ abstract final class KolabingTheme {
       // Color scheme — night palette
       colorScheme: const ColorScheme.dark(
         primary: Color(0xFFFFE28C),
-        onPrimary: Color(0xFF5C4A12),
+        onPrimary: KolabingColors.onPrimary,
         primaryContainer: Color(0xFF2C2710),
         onPrimaryContainer: Color(0xFFF5F5F7),
         secondary: Color(0xFFD4C6FF),
@@ -323,6 +337,20 @@ abstract final class KolabingTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: n.primary,
           foregroundColor: n.onPrimary,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: const StadiumBorder(),
+          textStyle: KolabingTextStyles.button,
+        ),
+      ),
+
+      // Filled Button (Secondary) — pill, warm mist fill
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: KolabingColors.buttonSecondary,
+          foregroundColor: KolabingColors.onButtonSecondary,
           elevation: 0,
           shadowColor: Colors.transparent,
           minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),

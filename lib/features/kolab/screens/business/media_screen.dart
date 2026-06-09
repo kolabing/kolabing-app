@@ -227,9 +227,6 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
               side: BorderSide(
                 color: context.colors.primary.withValues(alpha: 0.5),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.sm),
-              ),
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.md,
                 vertical: 10,

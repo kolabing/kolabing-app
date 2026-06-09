@@ -136,10 +136,6 @@ class _ExistingPhotoPickerSheetState
                           onPressed: selectedPhotos.isEmpty
                               ? null
                               : () => Navigator.of(context).pop(selectedPhotos),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            foregroundColor: context.colors.onPrimary,
-                          ),
                           child: Text(widget.confirmLabel),
                         ),
                       ),

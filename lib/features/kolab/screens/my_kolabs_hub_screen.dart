@@ -94,12 +94,8 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 KolabingSpacing.xs,
               ),
               child: Text(
-                l10n.myKolabsHubTitle,
-                style: KolabingTextStyles.bodyLarge.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                  // titleInk = 80% white in night, ink in light (spec rule #2).
+                l10n.myKolabsHubTitle.toUpperCase(),
+                style: KolabingTextStyles.headlineLarge.copyWith(
                   color: context.colors.titleInk,
                 ),
               ),
@@ -109,7 +105,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               labelStyle: KolabingTextStyles.labelLarge,
               labelColor: context.colors.charcoal,
               unselectedLabelColor: context.colors.navInactive,
-              indicatorColor: context.colors.navBarBackground,
+              indicatorColor: context.colors.charcoal,
               indicatorWeight: 3,
               tabs: [
                 Tab(text: l10n.myKolabsHubTabOffers),

@@ -11,6 +11,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../widgets/navigation/profile_avatar_button.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
@@ -146,6 +147,8 @@ class _BusinessDashboardScreenState
         ),
       ),
       const NotificationBell(),
+      const SizedBox(width: KolabingSpacing.xs),
+      const ProfileAvatarButton(),
     ],
   );
 
