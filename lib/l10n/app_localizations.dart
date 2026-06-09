@@ -9350,6 +9350,12 @@ abstract class AppLocalizations {
   /// **'Member'**
   String get rosterMemberFallback;
 
+  /// No description provided for @rosterViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View profile'**
+  String get rosterViewProfile;
+
   /// Empty state title for the roster.
   ///
   /// In en, this message translates to:

@@ -6201,6 +6201,7 @@
   "rosterNoAccountForEmail": "No Kolabing account found for that email",
   "@rosterNoAccountForEmail": { "description": "Error when no account matches the invited email." },
   "rosterMemberFallback": "Member",
+  "rosterViewProfile": "View profile",
   "@rosterMemberFallback": { "description": "Fallback name for a member without a display name." },
   "rosterEmptyTitle": "No members yet",
   "@rosterEmptyTitle": { "description": "Empty state title for the roster." },

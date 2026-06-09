@@ -5263,6 +5263,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rosterMemberFallback => 'Miembro';
 
   @override
+  String get rosterViewProfile => 'Ver perfil';
+
+  @override
   String get rosterEmptyTitle => 'Aún no hay miembros';
 
   @override

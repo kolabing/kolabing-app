@@ -1551,6 +1551,7 @@
   "rosterMemberAdded": "Miembro añadido",
   "rosterNoAccountForEmail": "No se encontró ninguna cuenta de Kolabing con ese correo",
   "rosterMemberFallback": "Miembro",
+  "rosterViewProfile": "Ver perfil",
   "rosterEmptyTitle": "Aún no hay miembros",
   "rosterInviteMember": "Invitar a un miembro",
   "rosterRemoveTitle": "¿Eliminar miembro?",
