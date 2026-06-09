@@ -18,6 +18,7 @@ import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
 /// Community profile screen
@@ -224,6 +225,14 @@ class _CommunityProfileScreenState
       final success = await ref
           .read(profileProvider.notifier)
           .updateProfilePhoto(pickedFile.path);
+
+      if (success) {
+        // Same image: the backend mirrored the photo to communities.avatar_url,
+        // so reload the community providers and the hub/detail/my-communities
+        // avatars match immediately.
+        ref.read(communityManageProvider.notifier).reloadCommunities();
+        ref.read(myMembershipsProvider.notifier).reload();
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
