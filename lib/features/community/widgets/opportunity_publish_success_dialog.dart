@@ -82,9 +82,6 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
               backgroundColor: context.colors.primary,
               foregroundColor: context.colors.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
             ),
             child: Text(
               l10n.opportunityPublishSuccessViewOpportunities,

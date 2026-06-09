@@ -1334,9 +1334,6 @@ class _CreateOpportunityScreenState
                   foregroundColor: context.colors.onSurface,
                   side: BorderSide(color: context.colors.darkBorder),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: KolabingRadius.borderRadiusMd,
-                  ),
                 ),
                 child: Text(
                   l10n.createOpportunityBackButton,
@@ -1354,9 +1351,6 @@ class _CreateOpportunityScreenState
                   foregroundColor: context.colors.onSurface,
                   side: BorderSide(color: context.colors.darkBorder),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: KolabingRadius.borderRadiusMd,
-                  ),
                 ),
                 child: formState.isSubmitting
                     ? SizedBox(
