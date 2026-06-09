@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/services/profile_service.dart';
@@ -175,6 +176,16 @@ class IAPService {
         try {
           final subscription = await _verifyWithBackend(purchase);
           _pendingReferralCode = null;
+          // Revenue KPI: only a genuine new purchase counts as a conversion;
+          // `restored` is a re-entitlement on a fresh install, not a start.
+          if (purchase.status == PurchaseStatus.purchased) {
+            unawaited(
+              AnalyticsService.instance.capture(
+                AnalyticsEvents.subscriptionStarted,
+                properties: {'product_id': purchase.productID},
+              ),
+            );
+          }
           onPurchaseVerified(subscription);
         } on ApiException catch (e) {
           debugPrint('IAP: Backend verification failed: $e');

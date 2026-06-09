@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/event_checkin.dart';
 import '../../../config/constants/api.dart';
@@ -96,6 +98,9 @@ class CheckinService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
+        unawaited(
+          AnalyticsService.instance.capture(AnalyticsEvents.eventCheckedIn),
+        );
         return EventCheckin.fromJson(data);
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;

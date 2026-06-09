@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
@@ -192,6 +194,15 @@ class ChatService {
           headers: await _headers(),
           body: jsonEncode({'content': content}),
         );
-        return ChatMessage.fromJson(_unwrap(res) as Map<String, dynamic>);
+        final message = ChatMessage.fromJson(
+          _unwrap(res) as Map<String, dynamic>,
+        );
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.messageSent,
+            properties: {'context': 'thread'},
+          ),
+        );
+        return message;
       }, 'sendMessage');
 }

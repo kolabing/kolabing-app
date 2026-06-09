@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../../gamification/models/challenge.dart';
@@ -110,6 +112,12 @@ Future<Collaboration> _markCompleted(
     final raw = data is Map<String, dynamic>
         ? (data['collaboration'] as Map<String, dynamic>? ?? data)
         : json;
+    unawaited(
+      AnalyticsService.instance.capture(
+        AnalyticsEvents.collaborationCompleted,
+        properties: {'collaboration_id': id},
+      ),
+    );
     return Collaboration.fromJson(normalizeCollaborationResponse(raw));
   }
 
