@@ -357,8 +357,6 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
               ),
               icon: _busy
                   ? const SizedBox(

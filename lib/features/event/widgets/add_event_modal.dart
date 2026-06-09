@@ -320,9 +320,6 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                         padding: const EdgeInsets.symmetric(
                           vertical: KolabingSpacing.md,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: KolabingRadius.borderRadiusMd,
-                        ),
                       ),
                       child: _isLoading
                           ? SizedBox(
@@ -603,9 +600,6 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
               foregroundColor: context.colors.onSurface,
               side: BorderSide(color: context.colors.darkBorder),
               minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-              ),
             ),
           )
         else
