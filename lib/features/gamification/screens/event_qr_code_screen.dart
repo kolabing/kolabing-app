@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -261,7 +262,7 @@ class EventQRCodeScreen extends ConsumerWidget {
         content: Text(AppLocalizations.of(context).eventQrTokenCopied),
         backgroundColor: context.colors.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
         duration: const Duration(seconds: 2),
       ),
     );
