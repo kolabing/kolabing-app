@@ -254,9 +254,6 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         context.colors.primary.withValues(alpha: 0.5),
                     disabledForegroundColor:
                         context.colors.onPrimary.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     elevation: 0,
                   ),
                   child: Text(

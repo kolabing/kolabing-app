@@ -546,9 +546,6 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             foregroundColor: context.colors.onPrimary,
                             disabledBackgroundColor: context.colors.primary
                                 .withValues(alpha: 0.7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
                             elevation: 0,
                           ),
                           child: _isLoading

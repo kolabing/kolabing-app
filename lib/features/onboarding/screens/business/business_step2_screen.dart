@@ -609,9 +609,6 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     ),
                     disabledForegroundColor: context.colors.onPrimary
                         .withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     elevation: 0,
                   ),
                   child: Text(

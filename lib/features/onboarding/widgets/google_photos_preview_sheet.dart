@@ -168,9 +168,6 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: context.colors.primary,
                         foregroundColor: context.colors.onPrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                         elevation: 0,
                       ),
                       child: Text(

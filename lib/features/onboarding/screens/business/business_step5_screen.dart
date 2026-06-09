@@ -401,9 +401,6 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                               .withValues(alpha: 0.5),
                           disabledForegroundColor: context.colors.onPrimary
                               .withValues(alpha: 0.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
                           elevation: 0,
                         ),
                         child: Text(
@@ -557,9 +554,6 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                     ),
                     disabledForegroundColor: context.colors.onPrimary
                         .withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     elevation: 0,
                   ),
                   child: Text(
