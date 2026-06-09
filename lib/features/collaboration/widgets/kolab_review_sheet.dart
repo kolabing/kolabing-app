@@ -144,7 +144,7 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
       ),
       padding: EdgeInsets.fromLTRB(
         KolabingSpacing.lg,

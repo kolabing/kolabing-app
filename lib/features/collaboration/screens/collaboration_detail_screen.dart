@@ -1953,7 +1953,7 @@ class _CompleteKolabSection extends ConsumerWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: context.colors.primary,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(KolabingRadius.md),
               ),
               alignment: Alignment.center,
               child: Text(
