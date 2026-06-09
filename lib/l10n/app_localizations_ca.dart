@@ -4716,6 +4716,17 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventHubDeleted => 'Esdeveniment eliminat';
 
   @override
+  String get eventHubExtendSeries => 'Amplia la sèrie (+3 mesos)';
+
+  @override
+  String eventHubExtended(int count) {
+    return 'Sèrie ampliada: $count dates noves';
+  }
+
+  @override
+  String get eventHubExtendedNone => 'No hi ha dates noves per afegir';
+
+  @override
   String get eventHubAddPhotos => 'Afegir fotos';
 
   @override
@@ -4771,6 +4782,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventFormPublishSeries => 'Publica la sèrie';
+
+  @override
+  String get eventFormApplyTo => 'Aplica els canvis a';
 
   @override
   String get eventFormErrWeekday => 'Tria almenys un dia';
