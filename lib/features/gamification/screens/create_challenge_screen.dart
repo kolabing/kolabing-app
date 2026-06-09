@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -82,7 +83,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
           ),
         ),
       );
@@ -95,7 +96,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
           ),
         ),
       );
@@ -436,10 +437,10 @@ class _DifficultyOption extends StatelessWidget {
 
     return Material(
       color: bgColor,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(KolabingRadius.md),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(KolabingRadius.md),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(

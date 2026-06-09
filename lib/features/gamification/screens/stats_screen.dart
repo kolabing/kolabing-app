@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -312,7 +313,7 @@ class StatsScreen extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(KolabingRadius.md),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
         decoration: BoxDecoration(
@@ -346,7 +347,7 @@ class StatsScreen extends ConsumerWidget {
         content: Text(AppLocalizations.of(context).statsScreenShareComingSoon),
         backgroundColor: context.colors.info,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
       ),
     );
   }
