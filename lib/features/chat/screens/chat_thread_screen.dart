@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -6,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../community/models/community_tier.dart';
 import '../../community/providers/community_providers.dart';
 import '../../community/services/community_service.dart';
@@ -13,6 +16,7 @@ import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import '../services/chat_service.dart';
+import '../services/realtime_chat_service.dart';
 
 /// A single conversation: message list + composer. Messages are held in local
 /// state (the screen is ephemeral) — no provider needed.
@@ -32,6 +36,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   bool _loading = true;
   bool _sending = false;
   String? _error;
+  RealtimeThreadSubscription? _realtimeSub;
 
   /// Local copy so a rename updates the title without leaving the screen.
   late ChatThread _thread = widget.thread;
@@ -42,18 +47,40 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   void initState() {
     super.initState();
     _load();
-    // TODO(NF-16 B4): Reverb/Echo client — ops-gated on PR #21
-    // (/broadcasting/auth) + Reverb server. Subscribe
-    // `private-chat.thread.{widget.thread.id}` here and append the
-    // `message.sent` payload to `_messages` without a refetch. Until Reverb is
-    // up, the poll-on-open in `_load()` keeps the thread current.
+    // NF-16 B4 — live updates via Laravel Reverb. Subscribes to
+    // `private-chat.thread.{id}` and appends inbound messages without a
+    // refetch. No-op until Reverb is configured (RealtimeConfig.appKey); the
+    // poll-on-open in `_load()` is the fallback / reconnect baseline.
+    unawaited(_subscribeRealtime());
   }
 
   @override
   void dispose() {
+    unawaited(_realtimeSub?.cancel());
     _composer.dispose();
     _scroll.dispose();
     super.dispose();
+  }
+
+  Future<void> _subscribeRealtime() async {
+    if (!RealtimeChatService.instance.isEnabled) return;
+    final token = await ref.read(authServiceProvider).getToken();
+    if (!mounted) return;
+    _realtimeSub = await RealtimeChatService.instance.subscribeToThread(
+      widget.thread.id,
+      token: token,
+      onMessage: _onRealtimeMessage,
+    );
+  }
+
+  /// Append a live message, ignoring ones we already have (our own sends are
+  /// appended optimistically in [_send] and echo back over the socket).
+  void _onRealtimeMessage(ChatMessage message) {
+    if (!mounted) return;
+    if (_messages.any((m) => m.id == message.id)) return;
+    setState(() => _messages = [..._messages, message]);
+    _jumpToBottom();
+    _markRead();
   }
 
   Future<void> _load() async {
