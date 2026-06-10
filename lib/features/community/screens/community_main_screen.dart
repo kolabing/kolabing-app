@@ -19,7 +19,6 @@ import '../../kolab/screens/my_kolabs_hub_screen.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
-import '../../subscription/widgets/subscription_paywall.dart';
 import 'community_hub_screen.dart';
 import 'my_opportunities_screen.dart';
 
@@ -64,11 +63,8 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   }
 
   Future<void> _onFabPressed() async {
-    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
-    if (!allowed || !mounted) {
-      return;
-    }
-
+    // Communities are never paywalled (the paywall is Business-only). Creating an
+    // opportunity is always allowed here — no subscription gate.
     await context.push(KolabingRoutes.communityOpportunitiesNew);
     if (mounted) {
       await Future<void>.delayed(const Duration(milliseconds: 300));

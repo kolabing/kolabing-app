@@ -1452,6 +1452,7 @@
   "communityDetailTierFallback": "Membre",
   "communityDetailGalleryLabel": "Galeria i esdeveniments passats",
   "communityDetailGalleryBody": "Les fotos i els esdeveniments passats seran aquí quan es llanci el cicle de vida d'esdeveniments (Fase 3).",
+  "communityDetailGalleryEmpty": "Encara no hi ha esdeveniments passats per mostrar.",
 
   "myCommunitiesNoTier": "Encara sense nivell",
   "myCommunitiesAdminBadge": "ADMIN",

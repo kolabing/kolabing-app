@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
@@ -119,10 +120,6 @@ class _UserTypeSelectionScreenState
   }
 
   void _handleCardTap(SelectionUserType type) {
-    if (type == SelectionUserType.attendee) {
-      return;
-    }
-
     setState(() => _selectedType = type);
 
     // Brief delay to show selection, then navigate
@@ -138,7 +135,7 @@ class _UserTypeSelectionScreenState
                 .initialize(UserType.community);
             context.push('/onboarding/community/step1');
           case SelectionUserType.attendee:
-            return;
+            context.push(KolabingRoutes.attendeeRegister);
         }
       }
     });
@@ -234,10 +231,7 @@ class _UserTypeSelectionScreenState
                     slideAnimation: _attendeeCardSlideAnimation,
                     child: SelectionCard(
                       userType: SelectionUserType.attendee,
-                      isEnabled: false,
-                      badgeLabel: 'COMING SOON',
-                      descriptionOverride:
-                          'Event discovery, check-ins, and challenges are coming soon',
+                      isSelected: _selectedType == SelectionUserType.attendee,
                       onTap: () => _handleCardTap(SelectionUserType.attendee),
                     ),
                   ),

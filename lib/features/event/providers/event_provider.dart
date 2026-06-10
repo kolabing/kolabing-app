@@ -325,6 +325,37 @@ final communityUpcomingEventsProvider = NotifierProvider.family<
   CommunityUpcomingEventsNotifier.new,
 );
 
+/// A community's PAST events (`GET /events?community_id&time=past`), used by the
+/// community Details tab to show the gallery + past-events showcase. Mirrors
+/// [CommunityUpcomingEventsNotifier]; returns [] gracefully if empty/undeployed.
+class CommunityPastEventsNotifier extends Notifier<AsyncValue<List<Event>>> {
+  CommunityPastEventsNotifier(this.communityId);
+
+  final String communityId;
+
+  @override
+  AsyncValue<List<Event>> build() {
+    Future.microtask(reload);
+    return const AsyncValue.loading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final result = await ref.read(eventServiceProvider).getEvents(
+            communityId: communityId,
+            time: 'past',
+          );
+      return result.events;
+    });
+  }
+}
+
+final communityPastEventsProvider = NotifierProvider.family<
+    CommunityPastEventsNotifier, AsyncValue<List<Event>>, String>(
+  CommunityPastEventsNotifier.new,
+);
+
 /// An event's attendee roster (`GET /events/{id}/signups`, leader-scoped).
 ///
 /// Notifier (not FutureProvider) so `reload()` sets state directly — the NF-6

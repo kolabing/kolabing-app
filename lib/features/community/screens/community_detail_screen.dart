@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -48,6 +49,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
       if (!mounted) return;
       ref.read(chatThreadsProvider.notifier).reload();
       ref.read(communityUpcomingEventsProvider(_community.id).notifier).reload();
+      ref.read(communityPastEventsProvider(_community.id).notifier).reload();
     });
   }
 
@@ -417,14 +419,78 @@ class _DetailsTab extends StatelessWidget {
           _Row(l10n.communityDetailRowRole, l10n.communityDetailRoleCanManage),
         const SizedBox(height: KolabingSpacing.lg),
         _Label(l10n.communityDetailGalleryLabel),
-        Text(
-          l10n.communityDetailGalleryBody,
-          style: KolabingTextStyles.bodySmall
-              .copyWith(color: KolabingColors.onSurfaceVariant),
-        ),
+        _GallerySection(communityId: c.id),
       ],
     );
   }
+}
+
+/// Live gallery + past-events showcase for the Details tab
+/// (`GET /events?community_id&time=past`). Photos from every past event are laid
+/// out in a horizontal strip, followed by the past events themselves. A backend
+/// that hasn't deployed the `time=past` filter errors here — treated as empty,
+/// not a scary error (same pattern as [_EventsTab]).
+class _GallerySection extends ConsumerWidget {
+  const _GallerySection({required this.communityId});
+
+  final String communityId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final async = ref.watch(communityPastEventsProvider(communityId));
+    return async.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => _empty(l10n),
+      data: (events) {
+        if (events.isEmpty) return _empty(l10n);
+        final photos = [for (final e in events) ...e.photos];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (photos.isNotEmpty) ...[
+              SizedBox(
+                height: 96,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: photos.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(width: KolabingSpacing.sm),
+                  itemBuilder: (_, i) => ClipRRect(
+                    borderRadius: BorderRadius.circular(KolabingRadius.md),
+                    child: Image.network(
+                      photos[i].thumbnailUrl ?? photos[i].url,
+                      width: 96,
+                      height: 96,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 96,
+                        height: 96,
+                        color: KolabingColors.onSurfaceVariant
+                            .withValues(alpha: 0.1),
+                        child: const Icon(LucideIcons.imageOff, size: 20),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+            for (final e in events) _EventTile(event: e),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _empty(AppLocalizations l10n) => Text(
+        l10n.communityDetailGalleryEmpty,
+        style: KolabingTextStyles.bodySmall
+            .copyWith(color: KolabingColors.onSurfaceVariant),
+      );
 }
 
 class _Label extends StatelessWidget {

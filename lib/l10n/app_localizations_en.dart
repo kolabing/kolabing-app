@@ -4881,6 +4881,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Photos and past events will live here once the events lifecycle ships (Phase 3).';
 
   @override
+  String get communityDetailGalleryEmpty => 'No past events to show yet.';
+
+  @override
   String get myCommunitiesNoTier => 'No tier yet';
 
   @override

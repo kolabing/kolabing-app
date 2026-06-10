@@ -5948,6 +5948,8 @@
   "@communityDetailGalleryLabel": { "description": "Section label for the gallery and past events." },
   "communityDetailGalleryBody": "Photos and past events will live here once the events lifecycle ships (Phase 3).",
   "@communityDetailGalleryBody": { "description": "Placeholder body for the gallery section." },
+  "communityDetailGalleryEmpty": "No past events to show yet.",
+  "@communityDetailGalleryEmpty": { "description": "Empty state for the gallery and past events section when the community has no past events." },
 
   "myCommunitiesNoTier": "No tier yet",
   "@myCommunitiesNoTier": { "description": "Shown on a membership card when the member has no tier." },

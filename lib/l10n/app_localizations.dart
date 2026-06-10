@@ -8786,6 +8786,12 @@ abstract class AppLocalizations {
   /// **'Photos and past events will live here once the events lifecycle ships (Phase 3).'**
   String get communityDetailGalleryBody;
 
+  /// Empty state for the gallery and past events section when the community has no past events.
+  ///
+  /// In en, this message translates to:
+  /// **'No past events to show yet.'**
+  String get communityDetailGalleryEmpty;
+
   /// Shown on a membership card when the member has no tier.
   ///
   /// In en, this message translates to:

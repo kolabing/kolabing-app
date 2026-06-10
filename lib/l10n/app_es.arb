@@ -1452,6 +1452,7 @@
   "communityDetailTierFallback": "Miembro",
   "communityDetailGalleryLabel": "Galería y eventos pasados",
   "communityDetailGalleryBody": "Las fotos y los eventos pasados estarán aquí cuando se lance el ciclo de vida de eventos (Fase 3).",
+  "communityDetailGalleryEmpty": "Aún no hay eventos pasados que mostrar.",
 
   "myCommunitiesNoTier": "Sin nivel todavía",
   "myCommunitiesAdminBadge": "ADMIN",

@@ -184,6 +184,8 @@ Fixed since the last revision:
 - [x] Collaboration cancellation now persists `cancellation_reason`, `cancelled_at`, and `cancelled_by_profile_id` (§10).
 - [x] **Feedback gate on `/complete` shipped** with admin force-complete, auto-timeout scheduler, and a `/review`→`/feedback` mirror for legacy clients (§3, §9, §10). XP moved from `/complete` to `/feedback` per Q7. PR #9, 2026-06-01.
 - [x] **NF-6 community members + tiers, Phase 1 shipped** (2026-06-03): `communities` / `community_tiers` / `community_members` tables, `events.community_id`, `CommunityPolicy`, the cap gate (NOT the paywall), the auto-assignment command + on-check-in hook, and the chapter-scoped leaderboard. See §12.
+- [x] **Paywall helper must role-gate; never call it from a community/attendee path** (2026-06-10, FX-11). `SubscriptionPaywall.checkAndShow` was invoked unconditionally from `community_main_screen._onFabPressed`, paywalling non-subscribed communities (golden-rule violation). The helper now role-gates (business-only); the community FAB no longer calls it at all. **Rule:** the paywall is Business-only on exactly two actions — any new "can I do X?" gate on a community/attendee path must NOT route through the paywall helper, and the helper itself must short-circuit to "allowed" for non-business.
+- [x] **Community create must not blank the leader's picture** (2026-06-10, FX-13). `CommunityService::create` set `avatar_url = null` when the client sent none, so the community-profile surface read a blank primary community. Now inherits `owner->communityProfile->profile_photo` (mirrors `update()`'s same-image sync). **Rule:** a create path must never null an image the user already has — inherit it.
 
 Still open:
 
