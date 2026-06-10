@@ -2119,6 +2119,74 @@ class AppLocalizationsCa extends AppLocalizations {
       'Segur que vols tancar la sessió?';
 
   @override
+  String get attendeeProfileStatFriends => 'Amics';
+
+  @override
+  String get attendeeProfileStatEvents => 'Esdeveniments';
+
+  @override
+  String get attendeeProfileStatChats => 'Xats';
+
+  @override
+  String get attendeeProfileStatPoints => 'Punts';
+
+  @override
+  String get attendeeProfileMyCommunities => 'LES MEVES COMUNITATS';
+
+  @override
+  String get attendeeProfileNoCommunities =>
+      'Encara no t\'has unit a cap comunitat.';
+
+  @override
+  String get attendeeProfileFriends => 'AMICS';
+
+  @override
+  String get attendeeProfileSeeAll => 'Mostra-ho tot';
+
+  @override
+  String get editProfileTitle => 'Edita el perfil';
+
+  @override
+  String get editProfileChangePhoto => 'Canvia la foto';
+
+  @override
+  String get editProfileNameLabel => 'Nom';
+
+  @override
+  String get editProfileNameHint => 'El teu nom';
+
+  @override
+  String get editProfileNameRequired => 'Introdueix el teu nom.';
+
+  @override
+  String get editProfileCityLabel => 'Ciutat';
+
+  @override
+  String get editProfileCityHint => 'Selecciona la teva ciutat';
+
+  @override
+  String get editProfileCitySearchHint => 'Cerca ciutats';
+
+  @override
+  String get editProfileNoCitiesFound => 'No s\'ha trobat cap ciutat';
+
+  @override
+  String get editProfileCityLoadError => 'No s\'han pogut carregar les ciutats';
+
+  @override
+  String get editProfileSave => 'Desa';
+
+  @override
+  String get editProfileSaved => 'Perfil actualitzat';
+
+  @override
+  String get editProfileSaveError =>
+      'No s\'ha pogut desar el teu perfil. Torna-ho a provar.';
+
+  @override
+  String get memberProfileFriends => 'Amics';
+
+  @override
   String get badgesScreenTitle => 'Insígnies';
 
   @override

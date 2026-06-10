@@ -537,9 +537,28 @@ class _MemberProfileContent extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final gameCardAsync = ref.watch(gameCardProvider(profile.id));
 
+    // Flank the avatar with the game-card stats (null while loading/on error,
+    // rendered as "--" — never faked).
+    final stats = gameCardAsync.maybeWhen(
+      data: (card) => (
+        points: card.stats.totalPoints as int?,
+        events: card.stats.totalEventsAttended as int?,
+        badges: card.stats.badgesCount as int?,
+      ),
+      orElse: () => (points: null, events: null, badges: null),
+    );
+
     return CustomScrollView(
       slivers: [
-        _ProfileSliverHeader(profile: profile),
+        // Flaire-style member hero: gradient cover + centred circular avatar
+        // flanked by friends/events | points/badges stats.
+        _MemberHeroHeader(
+          profile: profile,
+          friends: profile.supportsFriends ? profile.friendsCount : null,
+          events: stats.events,
+          points: stats.points,
+          badges: stats.badges,
+        ),
         SliverPadding(
           padding: const EdgeInsets.all(KolabingSpacing.md),
           sliver: SliverList(
@@ -555,24 +574,14 @@ class _MemberProfileContent extends ConsumerWidget {
                 ),
                 const SizedBox(height: KolabingSpacing.md),
               ],
-              // Stat row + badges grid. Degrades gracefully on error/empty:
-              // we never crash and never show fake data.
+              // Badges grid. Degrades gracefully on error/empty: we never crash
+              // and never show fake data.
               gameCardAsync.when(
                 loading: () => const _MemberStatsShimmer(),
-                error: (error, stack) => const _MemberStatRow(
-                  points: null,
-                  eventsAttended: null,
-                  badges: null,
-                ),
+                error: (error, stack) => const _MemberBadgesEmpty(),
                 data: (card) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _MemberStatRow(
-                      points: card.stats.totalPoints,
-                      eventsAttended: card.stats.totalEventsAttended,
-                      badges: card.stats.badgesCount,
-                    ),
-                    const SizedBox(height: KolabingSpacing.md),
                     if (card.recentBadges.isNotEmpty)
                       _SectionCard(
                         icon: LucideIcons.award,
@@ -670,96 +679,164 @@ class _MemberFriendCta extends StatelessWidget {
   }
 }
 
-/// Points · Events attended · Badges. Null values render as "--" (graceful
-/// degrade when the game-card fetch fails) without inventing data.
-class _MemberStatRow extends StatelessWidget {
-  const _MemberStatRow({
+/// Flaire-style member hero: a gradient cover with a centred circular avatar
+/// overlapping its bottom edge, flanked by the member's stats (Friends / Events
+/// on the left, Points / Badges on the right). Null stats render as "--"
+/// (graceful degrade) without inventing data; Friends is null (hidden) until the
+/// friend graph deploys. Name + city sit centred below the avatar.
+class _MemberHeroHeader extends StatelessWidget {
+  const _MemberHeroHeader({
+    required this.profile,
+    required this.friends,
+    required this.events,
     required this.points,
-    required this.eventsAttended,
     required this.badges,
   });
 
+  final PublicProfile profile;
+  final int? friends;
+  final int? events;
   final int? points;
-  final int? eventsAttended;
   final int? badges;
+
+  static const double _coverHeight = 150;
+  static const double _avatarSize = 92;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: KolabingSpacing.md,
-        horizontal: KolabingSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
+    final hasCity = profile.cityName != null && profile.cityName!.isNotEmpty;
+
+    return SliverToBoxAdapter(
+      child: Column(
         children: [
-          Expanded(
-            child: _MemberStat(
-              icon: LucideIcons.star,
-              value: points,
-              label: l10n.memberProfilePoints,
+          SizedBox(
+            height: _coverHeight + _avatarSize / 2 + 6,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                // Gradient cover band.
+                Container(
+                  height: _coverHeight,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        KolabingColors.primary,
+                        KolabingColors.surfaceVariant,
+                      ],
+                    ),
+                  ),
+                ),
+                // Back button.
+                const Positioned(top: 8, left: 8, child: _BackButton()),
+                // Flanking stats.
+                Positioned(
+                  left: KolabingSpacing.md,
+                  right: KolabingSpacing.md,
+                  top: _coverHeight - 64,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _MemberFlankStat(
+                              value: friends,
+                              label: l10n.memberProfileFriends,
+                            ),
+                            _MemberFlankStat(
+                              value: events,
+                              label: l10n.memberProfileEventsAttended,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: _avatarSize),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _MemberFlankStat(
+                              value: points,
+                              label: l10n.memberProfilePoints,
+                            ),
+                            _MemberFlankStat(
+                              value: badges,
+                              label: l10n.memberProfileBadges,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Centred avatar overlapping the cover bottom.
+                Positioned(
+                  top: _coverHeight - _avatarSize / 2,
+                  child: _MemberHeroAvatar(
+                    avatarUrl: profile.avatarUrl,
+                    initial: profile.initial,
+                    size: _avatarSize,
+                  ),
+                ),
+              ],
             ),
           ),
-          _statDivider(),
-          Expanded(
-            child: _MemberStat(
-              icon: LucideIcons.calendarCheck,
-              value: eventsAttended,
-              label: l10n.memberProfileEventsAttended,
+          const SizedBox(height: KolabingSpacing.sm),
+          Text(
+            profile.displayName,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.onSurface,
             ),
           ),
-          _statDivider(),
-          Expanded(
-            child: _MemberStat(
-              icon: LucideIcons.award,
-              value: badges,
-              label: l10n.memberProfileBadges,
+          if (hasCity) ...[
+            const SizedBox(height: 2),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  LucideIcons.mapPin,
+                  size: 14,
+                  color: KolabingColors.onSurfaceVariant,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  profile.cityName!,
+                  style: KolabingTextStyles.bodySmall
+                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                ),
+              ],
             ),
-          ),
+          ],
+          const SizedBox(height: KolabingSpacing.sm),
         ],
       ),
     );
   }
-
-  Widget _statDivider() => Container(
-        width: 1,
-        height: 36,
-        color: KolabingColors.darkBorder.withValues(alpha: 0.5),
-      );
 }
 
-class _MemberStat extends StatelessWidget {
-  const _MemberStat({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
+/// A single flanking stat (big number + small label). Null → "--".
+class _MemberFlankStat extends StatelessWidget {
+  const _MemberFlankStat({required this.value, required this.label});
 
-  final IconData icon;
   final int? value;
   final String label;
 
   @override
   Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: KolabingColors.primary),
-          const SizedBox(height: KolabingSpacing.xs),
           Text(
             value != null ? '$value' : '--',
             style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
               color: KolabingColors.onSurface,
             ),
           ),
@@ -767,11 +844,67 @@ class _MemberStat extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: KolabingTextStyles.captionSecondary.copyWith(
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
               color: KolabingColors.onSurfaceVariant,
             ),
           ),
         ],
+      );
+}
+
+/// Member hero avatar: photo or initial circle, ringed in surface so it reads
+/// cleanly over the gradient cover.
+class _MemberHeroAvatar extends StatelessWidget {
+  const _MemberHeroAvatar({
+    required this.initial,
+    required this.size,
+    this.avatarUrl,
+  });
+
+  final String? avatarUrl;
+  final String initial;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final border = Border.all(color: KolabingColors.surface, width: 4);
+    if (avatarUrl != null && avatarUrl!.isNotEmpty) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, border: border),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: avatarUrl!,
+            fit: BoxFit.cover,
+            errorWidget: (_, _, _) => _initialCircle(border),
+          ),
+        ),
+      );
+    }
+    return _initialCircle(border);
+  }
+
+  Widget _initialCircle(BoxBorder border) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: KolabingColors.primary.withValues(alpha: 0.25),
+          border: border,
+        ),
+        child: Center(
+          child: Text(
+            initial,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.onPrimary,
+            ),
+          ),
+        ),
       );
 }
 

@@ -3826,6 +3826,138 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to sign out?'**
   String get attendeeProfileSignOutConfirm;
 
+  /// Attendee profile stat label: friends count
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get attendeeProfileStatFriends;
+
+  /// Attendee profile stat label: events attended count
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get attendeeProfileStatEvents;
+
+  /// Attendee profile stat label: chat threads count
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get attendeeProfileStatChats;
+
+  /// Attendee profile stat label: total points
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get attendeeProfileStatPoints;
+
+  /// Attendee profile section header for the communities the user belongs to
+  ///
+  /// In en, this message translates to:
+  /// **'MY COMMUNITIES'**
+  String get attendeeProfileMyCommunities;
+
+  /// Attendee profile empty state for the communities section
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t joined any communities yet.'**
+  String get attendeeProfileNoCommunities;
+
+  /// Attendee profile section header for the friends preview
+  ///
+  /// In en, this message translates to:
+  /// **'FRIENDS'**
+  String get attendeeProfileFriends;
+
+  /// Link to open the full friends list from the attendee profile
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get attendeeProfileSeeAll;
+
+  /// Title of the edit-profile screen
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfileTitle;
+
+  /// Button to pick a new profile photo
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get editProfileChangePhoto;
+
+  /// Field label for the user's display name
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get editProfileNameLabel;
+
+  /// Placeholder for the name field
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get editProfileNameHint;
+
+  /// Validation error when the name field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name.'**
+  String get editProfileNameRequired;
+
+  /// Field label for the user's city
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get editProfileCityLabel;
+
+  /// Placeholder for the city picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select your city'**
+  String get editProfileCityHint;
+
+  /// Placeholder for the city search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search cities'**
+  String get editProfileCitySearchHint;
+
+  /// Empty state when the city search returns nothing
+  ///
+  /// In en, this message translates to:
+  /// **'No cities found'**
+  String get editProfileNoCitiesFound;
+
+  /// Error message when the cities list fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load cities'**
+  String get editProfileCityLoadError;
+
+  /// Save button on the edit-profile screen
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get editProfileSave;
+
+  /// Success message after saving the profile
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get editProfileSaved;
+
+  /// Generic error message when saving the profile fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your profile. Please try again.'**
+  String get editProfileSaveError;
+
+  /// Member public profile stat label: friends count
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get memberProfileFriends;
+
   /// Badges screen app bar title
   ///
   /// In en, this message translates to:

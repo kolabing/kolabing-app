@@ -2091,6 +2091,74 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to sign out?';
 
   @override
+  String get attendeeProfileStatFriends => 'Friends';
+
+  @override
+  String get attendeeProfileStatEvents => 'Events';
+
+  @override
+  String get attendeeProfileStatChats => 'Chats';
+
+  @override
+  String get attendeeProfileStatPoints => 'Points';
+
+  @override
+  String get attendeeProfileMyCommunities => 'MY COMMUNITIES';
+
+  @override
+  String get attendeeProfileNoCommunities =>
+      'You haven\'t joined any communities yet.';
+
+  @override
+  String get attendeeProfileFriends => 'FRIENDS';
+
+  @override
+  String get attendeeProfileSeeAll => 'See all';
+
+  @override
+  String get editProfileTitle => 'Edit profile';
+
+  @override
+  String get editProfileChangePhoto => 'Change photo';
+
+  @override
+  String get editProfileNameLabel => 'Name';
+
+  @override
+  String get editProfileNameHint => 'Your name';
+
+  @override
+  String get editProfileNameRequired => 'Please enter your name.';
+
+  @override
+  String get editProfileCityLabel => 'City';
+
+  @override
+  String get editProfileCityHint => 'Select your city';
+
+  @override
+  String get editProfileCitySearchHint => 'Search cities';
+
+  @override
+  String get editProfileNoCitiesFound => 'No cities found';
+
+  @override
+  String get editProfileCityLoadError => 'Couldn\'t load cities';
+
+  @override
+  String get editProfileSave => 'Save';
+
+  @override
+  String get editProfileSaved => 'Profile updated';
+
+  @override
+  String get editProfileSaveError =>
+      'Couldn\'t save your profile. Please try again.';
+
+  @override
+  String get memberProfileFriends => 'Friends';
+
+  @override
   String get badgesScreenTitle => 'Badges';
 
   @override

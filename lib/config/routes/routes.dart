@@ -37,6 +37,7 @@ import '../../features/onboarding/screens/community/community_step4_screen.dart'
 import '../../features/opportunity/models/opportunity.dart';
 import '../../features/opportunity/providers/opportunity_provider.dart';
 import '../../features/permission/screens/permission_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/profile_reviews_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/rewards/screens/referral_screen.dart';
@@ -222,6 +223,9 @@ abstract final class KolabingRoutes {
 
   /// Friends list (self) — NF-17 friend graph
   static const String friends = '/me/friends';
+
+  /// Edit own profile (name, city, photo)
+  static const String editProfile = '/profile/edit';
 
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
@@ -732,6 +736,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'friends',
       builder: (BuildContext context, GoRouterState state) =>
           const FriendsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.editProfile,
+      name: 'editProfile',
+      builder: (BuildContext context, GoRouterState state) =>
+          const EditProfileScreen(),
     ),
     GoRoute(
       path: '/profile/:id',

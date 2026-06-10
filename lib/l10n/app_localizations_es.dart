@@ -2111,6 +2111,74 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Seguro que quieres cerrar sesión?';
 
   @override
+  String get attendeeProfileStatFriends => 'Amigos';
+
+  @override
+  String get attendeeProfileStatEvents => 'Eventos';
+
+  @override
+  String get attendeeProfileStatChats => 'Chats';
+
+  @override
+  String get attendeeProfileStatPoints => 'Puntos';
+
+  @override
+  String get attendeeProfileMyCommunities => 'MIS COMUNIDADES';
+
+  @override
+  String get attendeeProfileNoCommunities =>
+      'Todavía no te has unido a ninguna comunidad.';
+
+  @override
+  String get attendeeProfileFriends => 'AMIGOS';
+
+  @override
+  String get attendeeProfileSeeAll => 'Ver todos';
+
+  @override
+  String get editProfileTitle => 'Editar perfil';
+
+  @override
+  String get editProfileChangePhoto => 'Cambiar foto';
+
+  @override
+  String get editProfileNameLabel => 'Nombre';
+
+  @override
+  String get editProfileNameHint => 'Tu nombre';
+
+  @override
+  String get editProfileNameRequired => 'Introduce tu nombre.';
+
+  @override
+  String get editProfileCityLabel => 'Ciudad';
+
+  @override
+  String get editProfileCityHint => 'Selecciona tu ciudad';
+
+  @override
+  String get editProfileCitySearchHint => 'Buscar ciudades';
+
+  @override
+  String get editProfileNoCitiesFound => 'No se han encontrado ciudades';
+
+  @override
+  String get editProfileCityLoadError => 'No se han podido cargar las ciudades';
+
+  @override
+  String get editProfileSave => 'Guardar';
+
+  @override
+  String get editProfileSaved => 'Perfil actualizado';
+
+  @override
+  String get editProfileSaveError =>
+      'No se ha podido guardar tu perfil. Inténtalo de nuevo.';
+
+  @override
+  String get memberProfileFriends => 'Amigos';
+
+  @override
   String get badgesScreenTitle => 'Insignias';
 
   @override
