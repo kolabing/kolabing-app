@@ -29,7 +29,8 @@
 | 5 | **Creating a community from a community profile wipes the profile picture** | ❌ pending | `create_community_screen.dart` `createCommunity(...)` passes **no avatar**, and may overwrite the `community_profiles` photo. Trace `CommunityService.createCommunity` + the backend `POST /communities` — it should **inherit** the community profile's existing picture, not null it. |
 | 6 | **Profile sections entirely broken** | ❌ pending (severe) | Likely a **Wave-1 merge regression** in the attendee profile (this branch is off latest master which merged community-social Wave 1/2). Start at `lib/features/gamification/screens/attendee_profile_screen.dart` (renders from `authProvider.user`); check what each section reads + whether a provider/endpoint errors. Reproduce on sim as daniel → Profile (via app-bar avatar). |
 | 7 | **New logo not showing** | ❌ pending — reconcile | `feat/new-logos` (+1 ahead, **unmerged**) holds `assets/brand/kolabing-*` wordmarks + app icon. Also the home app bar uses the **"KOLABING" text** wordmark (`KolabingAppBar`), not an image. **Task:** merge `feat/new-logos` → master (assets-only, low conflict), then (if intended) wire the image wordmark into `KolabingAppBar`. |
-| 8 | **Add backlog items for community attendees** | ❌ pending | Add NF/IF entries to `BACKLOG.md` for the community-attendee features (attendee onboarding wiring — register screen exists but role-select card is gated "COMING SOON" + `_handleCardTap` returns early; friends; social-hub profile NF-13; DMs NF-14; languages NF-9). |
+| 8 | **Add backlog items for community attendees** | ❌ pending | Add NF/IF entries to `BACKLOG.md` for the community-attendee features (friends; social-hub profile NF-13; DMs NF-14; languages NF-9). |
+| 9 | **Attendee sign-up / onboarding not reachable** | ❌ pending (fix) | Everything exists but isn't wired: `AttendeeRegisterScreen` (`lib/features/auth/screens/attendee_register_screen.dart`), route `KolabingRoutes.attendeeRegister` = `/auth/register/attendee`, and backend `POST /auth/register/attendee` (`AuthService.registerAttendee`, verified **201** on local). The blocker is `lib/features/auth/screens/user_type_selection_screen.dart`: the Attendee `SelectionCard` is hard-gated `isEnabled: false` + `badgeLabel: 'COMING SOON'` (~L235-243), **and** `_handleCardTap` **returns early for attendee** (L122-124) + its `switch` case returns (L140-141). So tapping does nothing. **Fix:** (a) remove `isEnabled:false` + `badgeLabel` + `descriptionOverride` from the Attendee card (make it a normal enabled card with `isSelected:`); (b) in `_handleCardTap`, route attendee → `context.push(KolabingRoutes.attendeeRegister)` (drop the early `return` + the empty switch case). Then verify on sim: Sign up → Attendee → register screen → creates account. ⚠️ The richer attendee onboarding also lives on `feat/nf16-events-attendee-app`; coordinate so this wiring doesn't diverge from that branch's version. |
 
 ## Preventive-measures framework (user-requested: "never make the same mistake twice")
 For **every** bug: root cause → fix → **one durable entry** in the right doc:
@@ -45,7 +46,7 @@ For **every** bug: root cause → fix → **one durable entry** in the right doc
 ## Resume checklist (fresh conversation)
 1. `git checkout fixes-attendee` (it's pushed? if not, `git push -u origin fixes-attendee`).
 2. Verify #2 on sim (downscaled screenshots only), then do optional cleanup.
-3. Work #3→#6 (each: root cause → fix → preventive doc entry → BACKLOG Fixes).
+3. Work #3→#6 + **#9 (attendee sign-up/onboarding wiring)** (each: root cause → fix → preventive doc entry → BACKLOG Fixes).
 4. #7: merge `feat/new-logos` → master.
 5. #8: backlog entries.
 6. Hand the #1 backend ticket to the `kolabing-v2` agent to apply + deploy.
