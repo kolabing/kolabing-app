@@ -42,6 +42,13 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
   void initState() {
     super.initState();
     _tabs = TabController(length: 4, vsync: this);
+    // Refresh chats/events on open so a newly-granted tier chat (or new event)
+    // appears without a manual pull-to-refresh.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(chatThreadsProvider.notifier).reload();
+      ref.read(communityUpcomingEventsProvider(_community.id).notifier).reload();
+    });
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/collaboration.dart';
 import '../services/collaboration_completion_service.dart';
@@ -182,6 +184,15 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.feedbackSubmitted,
+            properties: {
+              'collaboration_id': widget.collaborationId,
+              'rating': rating,
+            },
+          ),
+        );
         setState(() {
           _isSubmittingFeedback = false;
           _step = 2; // celebration

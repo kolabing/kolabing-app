@@ -192,6 +192,11 @@ PODS:
     - Flutter
   - permission_handler_apple (9.3.0):
     - Flutter
+  - PostHog (3.59.3)
+  - posthog_flutter (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - PostHog (< 4.0.0, >= 3.59.3)
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -225,6 +230,7 @@ DEPENDENCIES:
   - OneSignalXCFramework/OneSignalExtension (= 5.5.1)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - posthog_flutter (from `.symlinks/plugins/posthog_flutter/darwin`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -251,6 +257,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - OneSignalXCFramework
+    - PostHog
     - PromisesObjC
     - PromisesSwift
 
@@ -285,6 +292,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  posthog_flutter:
+    :path: ".symlinks/plugins/posthog_flutter/darwin"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -330,6 +339,8 @@ SPEC CHECKSUMS:
   OneSignalXCFramework: 2b46c36b38528b65dce33ed9d83375f8c98bf40c
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  PostHog: 6c74cc84f3872f4335108ff363aecdeb7c278052
+  posthog_flutter: 343db84a70d44b12fa0fe2fc35bbb58098074bd4
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a

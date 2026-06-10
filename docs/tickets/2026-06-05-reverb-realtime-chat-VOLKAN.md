@@ -5,6 +5,16 @@
 > **Status:** the message-broadcast CODE exists; this is a wiring/ops job + a
 > Flutter client. Today chat messages only appear on manual refresh because
 > nothing is delivering them live.
+>
+> **UPDATE 2026-06-09 — PART B (Flutter client) is DONE** on branch
+> `feat/realtime-chat-reverb-client` (`dart_pusher_channels`, self-hosted Reverb).
+> `RealtimeChatService` + `RealtimeConfig` + wired into `ChatThreadScreen` (live
+> append + dedup + cancel-on-dispose, poll-on-open kept as fallback). Ships
+> **dormant** until `REVERB_APP_KEY` is set (no reconnect storms pre-deploy).
+> **PART A (ops) remains** — moved to a dedicated, contract-accurate ticket in the
+> backend repo: `kolabing-v2/docs/tickets/2026-06-09-reverb-realtime-chat-PART-A-ops.md`
+> (note: `NewChatMessage`, `channels.php` auth, and `/broadcasting/auth` ALREADY
+> exist — Part A is now purely env + 2 daemons + nginx/TLS).
 
 ## Why
 Community / event / kolab chats work, but a new message doesn't show until the

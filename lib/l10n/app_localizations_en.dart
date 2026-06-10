@@ -5009,6 +5009,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityHubAccess => 'Access';
 
   @override
+  String get chatManageRename => 'Rename chat';
+
+  @override
+  String get chatManageDelete => 'Delete chat';
+
+  @override
+  String get chatManageAccess => 'Who can access';
+
+  @override
+  String get chatManageMembers => 'Members';
+
+  @override
+  String get chatBlock => 'Block';
+
+  @override
+  String get chatUnblock => 'Unblock';
+
+  @override
+  String get chatBlockedTag => 'Blocked';
+
+  @override
+  String get chatMembersEmpty => 'No members have access yet.';
+
+  @override
+  String get chatRenameHint => 'Chat name';
+
+  @override
+  String get chatRenamed => 'Chat renamed';
+
+  @override
+  String get chatDeleteTitle => 'Delete this chat?';
+
+  @override
+  String chatDeleteBody(String name) {
+    return 'All messages in \"$name\" will be removed.';
+  }
+
+  @override
+  String get chatDeleted => 'Chat deleted';
+
+  @override
   String get communityHubAccessNoTiers => 'No tiers';
 
   @override
@@ -5230,6 +5271,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rosterMemberFallback => 'Member';
+
+  @override
+  String get rosterViewProfile => 'View profile';
 
   @override
   String get rosterEmptyTitle => 'No members yet';

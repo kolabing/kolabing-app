@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
@@ -126,6 +128,63 @@ class ChatService {
         return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
       }, 'createCommunityChat');
 
+  /// `PATCH /chats/{thread}` — rename a custom community chat (manager only).
+  /// Slug is preserved server-side so tier grants stay valid.
+  Future<ChatThread> renameCommunityChat(String threadId, String name) =>
+      _guard(() async {
+        final res = await _httpClient.patch(
+          Uri.parse('$_baseUrl/chats/$threadId'),
+          headers: await _headers(),
+          body: jsonEncode({'name': name}),
+        );
+        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+      }, 'renameCommunityChat');
+
+  /// `DELETE /chats/{thread}` — delete a custom community chat (manager only).
+  Future<void> deleteCommunityChat(String threadId) => _guard(() async {
+        final res = await _httpClient.delete(
+          Uri.parse('$_baseUrl/chats/$threadId'),
+          headers: await _headers(),
+        );
+        _unwrap(res);
+      }, 'deleteCommunityChat');
+
+  /// `GET /chats/{thread}/bans` — profile ids blocked from this chat (manager).
+  Future<List<String>> getChatBans(String threadId) => _guard(() async {
+        final res = await _httpClient.get(
+          Uri.parse('$_baseUrl/chats/$threadId/bans'),
+          headers: await _headers(),
+        );
+        return _bannedIds(_unwrap(res));
+      }, 'getChatBans');
+
+  /// `POST /chats/{thread}/bans` — block a member (manager). Returns banned ids.
+  Future<List<String>> blockChatMember(String threadId, String profileId) =>
+      _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/chats/$threadId/bans'),
+          headers: await _headers(),
+          body: jsonEncode({'profile_id': profileId}),
+        );
+        return _bannedIds(_unwrap(res));
+      }, 'blockChatMember');
+
+  /// `DELETE /chats/{thread}/bans/{profile}` — unblock (manager). Banned ids.
+  Future<List<String>> unblockChatMember(String threadId, String profileId) =>
+      _guard(() async {
+        final res = await _httpClient.delete(
+          Uri.parse('$_baseUrl/chats/$threadId/bans/$profileId'),
+          headers: await _headers(),
+        );
+        return _bannedIds(_unwrap(res));
+      }, 'unblockChatMember');
+
+  List<String> _bannedIds(dynamic data) =>
+      ((data is Map ? data['banned_profile_ids'] : null) as List<dynamic>? ??
+              const [])
+          .map((e) => e.toString())
+          .toList();
+
   /// `POST /events/{event}/chat` — create the event chat (signup-gated).
   Future<ChatThread> createEventChat(String eventId, {String? name}) =>
       _guard(() async {
@@ -171,6 +230,15 @@ class ChatService {
           headers: await _headers(),
           body: jsonEncode({'content': content}),
         );
-        return ChatMessage.fromJson(_unwrap(res) as Map<String, dynamic>);
+        final message = ChatMessage.fromJson(
+          _unwrap(res) as Map<String, dynamic>,
+        );
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.messageSent,
+            properties: {'context': 'thread'},
+          ),
+        );
+        return message;
       }, 'sendMessage');
 }

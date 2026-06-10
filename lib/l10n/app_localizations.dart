@@ -9026,6 +9026,84 @@ abstract class AppLocalizations {
   /// **'Access'**
   String get communityHubAccess;
 
+  /// No description provided for @chatManageRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename chat'**
+  String get chatManageRename;
+
+  /// No description provided for @chatManageDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete chat'**
+  String get chatManageDelete;
+
+  /// No description provided for @chatManageAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can access'**
+  String get chatManageAccess;
+
+  /// No description provided for @chatManageMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get chatManageMembers;
+
+  /// No description provided for @chatBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get chatBlock;
+
+  /// No description provided for @chatUnblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get chatUnblock;
+
+  /// No description provided for @chatBlockedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get chatBlockedTag;
+
+  /// No description provided for @chatMembersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No members have access yet.'**
+  String get chatMembersEmpty;
+
+  /// No description provided for @chatRenameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat name'**
+  String get chatRenameHint;
+
+  /// No description provided for @chatRenamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat renamed'**
+  String get chatRenamed;
+
+  /// No description provided for @chatDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get chatDeleteTitle;
+
+  /// No description provided for @chatDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All messages in \"{name}\" will be removed.'**
+  String chatDeleteBody(String name);
+
+  /// No description provided for @chatDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat deleted'**
+  String get chatDeleted;
+
   /// Access label when no tier can open the chat.
   ///
   /// In en, this message translates to:
@@ -9415,6 +9493,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Member'**
   String get rosterMemberFallback;
+
+  /// No description provided for @rosterViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View profile'**
+  String get rosterViewProfile;
 
   /// Empty state title for the roster.
   ///

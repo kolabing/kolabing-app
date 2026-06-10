@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -84,6 +86,12 @@ class ApplicationService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>?;
         if (data != null) {
+          unawaited(
+            AnalyticsService.instance.capture(
+              AnalyticsEvents.applicationSubmitted,
+              properties: {'opportunity_id': opportunityId},
+            ),
+          );
           return Application.fromJson(data);
         }
         throw const NetworkException('Invalid response format');
@@ -331,11 +339,17 @@ class ApplicationService {
         if (data is Map<String, dynamic>) {
           // Response nests under data.application
           final appJson = data['application'];
-          if (appJson is Map<String, dynamic>) {
-            return Application.fromJson(appJson);
-          }
-          // Fallback: data itself is the application
-          return Application.fromJson(data);
+          final accepted = appJson is Map<String, dynamic>
+              ? Application.fromJson(appJson)
+              // Fallback: data itself is the application
+              : Application.fromJson(data);
+          unawaited(
+            AnalyticsService.instance.capture(
+              AnalyticsEvents.applicationAccepted,
+              properties: {'application_id': id},
+            ),
+          );
+          return accepted;
         }
         throw const NetworkException('Invalid response format');
       } else if (response.statusCode == 401) {
@@ -391,6 +405,12 @@ class ApplicationService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>?;
         if (data != null) {
+          unawaited(
+            AnalyticsService.instance.capture(
+              AnalyticsEvents.applicationDeclined,
+              properties: {'application_id': id},
+            ),
+          );
           return Application.fromJson(data);
         }
         throw const NetworkException('Invalid response format');
@@ -561,6 +581,12 @@ class ApplicationService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>?;
         if (data != null) {
+          unawaited(
+            AnalyticsService.instance.capture(
+              AnalyticsEvents.messageSent,
+              properties: {'context': 'application'},
+            ),
+          );
           return ChatMessage.fromJson(data);
         }
         throw const NetworkException('Invalid response format');

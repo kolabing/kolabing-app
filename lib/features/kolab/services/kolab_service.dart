@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../config/constants/api.dart';
+import '../../../services/analytics/analytics_service.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
@@ -60,7 +62,14 @@ class KolabService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
-        return Kolab.fromJson(data);
+        final created = Kolab.fromJson(data);
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.kolabCreated,
+            properties: {'kolab_id': created.id ?? ''},
+          ),
+        );
+        return created;
       } else if (response.statusCode == 401) {
         if (allowRetry) {
           await _authService.refreshSession();
@@ -180,7 +189,18 @@ class KolabService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
-        return Kolab.fromJson(data);
+        final published = Kolab.fromJson(data);
+        unawaited(
+          AnalyticsService.instance.capture(
+            AnalyticsEvents.kolabPublished,
+            properties: {
+              'kolab_id': published.id ?? '',
+              'is_direct': recipientCommunityId != null &&
+                  recipientCommunityId.isNotEmpty,
+            },
+          ),
+        );
+        return published;
       } else if (response.statusCode == 401) {
         if (allowRetry) {
           await _authService.refreshSession();

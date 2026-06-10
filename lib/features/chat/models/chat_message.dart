@@ -9,8 +9,10 @@ class ChatSender {
   factory ChatSender.fromJson(Map<String, dynamic> json) => ChatSender(
         // Tolerate ProfileSummaryResource (`id`) and a flat `profile_id`.
         profileId: (json['profile_id'] ?? json['id']) as String? ?? '',
-        name: json['name'] as String? ?? '',
-        avatarUrl: json['avatar_url'] as String?,
+        // ProfileSummaryResource exposes the name as `display_name`; tolerate a
+        // flat `name` too. Reading only `name` left the sender label blank.
+        name: (json['display_name'] ?? json['name'])?.toString() ?? '',
+        avatarUrl: (json['avatar_url'] ?? json['profile_photo'])?.toString(),
       );
 
   final String profileId;

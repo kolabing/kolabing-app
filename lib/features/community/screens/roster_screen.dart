@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
@@ -347,7 +348,19 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
           Text(widget.member.memberName ?? l10n.rosterMemberFallback,
               style: KolabingTextStyles.bodyLarge
                   .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
-          const SizedBox(height: KolabingSpacing.lg),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.push('/profile/${widget.member.profileId}');
+              },
+              icon: const Icon(LucideIcons.user, size: 16),
+              label: Text(l10n.rosterViewProfile),
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
 
           // Tier
           Text(l10n.rosterTierLabel,

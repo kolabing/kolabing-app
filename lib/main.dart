@@ -13,6 +13,7 @@ import 'features/auth/providers/auth_provider.dart';
 import 'features/settings/providers/locale_provider.dart';
 import 'features/settings/services/locale_service.dart';
 import 'l10n/app_localizations.dart';
+import 'services/analytics/analytics_service.dart';
 import 'services/global_network_banner_service.dart';
 import 'services/notification_service.dart';
 import 'services/one_signal_service.dart';
@@ -36,6 +37,10 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Initialize PostHog product analytics (curated events only — no autocapture
+  // or session replay). Fail-safe: an init fault never blocks app launch.
+  await AnalyticsService.instance.init();
 
   // Initialize push notifications
   await NotificationService.instance.initialize();

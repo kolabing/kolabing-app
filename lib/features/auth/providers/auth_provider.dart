@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../services/analytics/analytics_service.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/one_signal_service.dart';
 import '../models/auth_response.dart';
@@ -127,6 +128,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
     state = const AuthState(status: AuthStatus.unauthenticated);
     _scheduleUserScopedInvalidation();
+    unawaited(AnalyticsService.instance.reset());
     unawaited(OneSignalService.instance.logout());
   }
 
@@ -175,6 +177,12 @@ class AuthNotifier extends Notifier<AuthState> {
       _invalidateAfterSignIn();
 
       unawaited(_syncPushIdentity(response.user));
+      unawaited(
+        AnalyticsService.instance.capture(
+          AnalyticsEvents.userLoggedIn,
+          properties: {'method': 'email'},
+        ),
+      );
 
       return AuthResult(success: true, isNewUser: false, user: response.user);
     } on ApiException catch (e) {
@@ -219,6 +227,12 @@ class AuthNotifier extends Notifier<AuthState> {
       _invalidateAfterSignIn();
 
       unawaited(_syncPushIdentity(response.user));
+      unawaited(
+        AnalyticsService.instance.capture(
+          AnalyticsEvents.userLoggedIn,
+          properties: {'method': 'google'},
+        ),
+      );
 
       return AuthResult(success: true, isNewUser: false, user: response.user);
     } on AuthCancelledException {
@@ -285,6 +299,15 @@ class AuthNotifier extends Notifier<AuthState> {
   /// (business/community) and attendee register.
   Future<void> onRegistered() async {
     await checkAuthStatus();
+    final user = state.user;
+    if (user != null) {
+      unawaited(
+        AnalyticsService.instance.capture(
+          AnalyticsEvents.userSignedUp,
+          properties: {'user_type': user.userType.toApiValue()},
+        ),
+      );
+    }
     unawaited(_registerFcmToken());
   }
 
@@ -302,6 +325,7 @@ class AuthNotifier extends Notifier<AuthState> {
       // Delete FCM token so this device stops receiving notifications
       await NotificationService.instance.deleteToken();
       await OneSignalService.instance.logout();
+      unawaited(AnalyticsService.instance.reset());
       await _authService.logout();
     } on Exception catch (e) {
       debugPrint('Logout error: $e');
@@ -361,6 +385,9 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> _syncPushIdentity(UserModel user) async {
+    // Identify the user in analytics (idempotent; also covers session restore).
+    unawaited(AnalyticsService.instance.identify(user));
+
     try {
       await OneSignalService.instance.loginUser(user);
     } on Exception catch (e) {
@@ -406,6 +433,12 @@ class AuthNotifier extends Notifier<AuthState> {
       _invalidateAfterSignIn();
 
       unawaited(_syncPushIdentity(response.user));
+      unawaited(
+        AnalyticsService.instance.capture(
+          AnalyticsEvents.userLoggedIn,
+          properties: {'method': 'apple'},
+        ),
+      );
 
       return AuthResult(
         success: true,
