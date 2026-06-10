@@ -9625,6 +9625,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SAVE'**
   String get rosterSave;
+
+  /// Title of the friends list screen / friends section.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendsTitle;
+
+  /// Title of the incoming friend requests section.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get friendRequestsTitle;
+
+  /// CTA to send a friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Add friend'**
+  String get friendAdd;
+
+  /// Label when an outgoing friend request is awaiting response (tap to cancel).
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get friendPending;
+
+  /// Accept an incoming friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get friendAccept;
+
+  /// Decline an incoming friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get friendDecline;
+
+  /// Label when the viewer is already friends (tap to remove).
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendFriends;
+
+  /// Confirmation title before removing a friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this friend?'**
+  String get friendRemoveTitle;
+
+  /// Confirm button to remove a friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove friend'**
+  String get friendRemoveConfirm;
+
+  /// Generic error when a friend action fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get friendActionFailed;
+
+  /// Empty state for the friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet'**
+  String get friendsEmpty;
+
+  /// Error state for the friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load friends'**
+  String get friendsLoadError;
+
+  /// Fallback name for a friend without a name.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get friendUnknownName;
+
+  /// Friends count label, singular.
+  ///
+  /// In en, this message translates to:
+  /// **'1 friend'**
+  String get friendCountOne;
+
+  /// Friends count label, plural.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} friends'**
+  String friendCountOther(int count);
 }
 
 class _AppLocalizationsDelegate

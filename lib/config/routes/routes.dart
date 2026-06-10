@@ -19,6 +19,7 @@ import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
 import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
@@ -218,6 +219,9 @@ abstract final class KolabingRoutes {
 
   /// Notification preferences (message/application/collaboration/marketing)
   static const String notificationSettings = '/settings/notifications';
+
+  /// Friends list (self) — NF-17 friend graph
+  static const String friends = '/me/friends';
 
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
@@ -722,6 +726,12 @@ final GoRouter kolabingRouter = GoRouter(
         final profileName = state.extra as String?;
         return ProfileReviewsScreen(profileId: id, profileName: profileName);
       },
+    ),
+    GoRoute(
+      path: KolabingRoutes.friends,
+      name: 'friends',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FriendsScreen(),
     ),
     GoRoute(
       path: '/profile/:id',

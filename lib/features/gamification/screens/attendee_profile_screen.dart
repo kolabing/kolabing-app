@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../friends/providers/friends_provider.dart';
 import '../widgets/stat_card.dart';
 
 /// Attendee profile screen
@@ -192,6 +194,44 @@ class AttendeeProfileScreen extends ConsumerWidget {
               title: Text(AppLocalizations.of(context).notifSettingsTitle),
               trailing: const Icon(LucideIcons.chevronRight, size: 18),
               onTap: () => context.push(KolabingRoutes.notificationSettings),
+            ),
+
+            // Friends (NF-17) — self-gates: the count is 0 when the backend
+            // doesn't expose the friend graph, so no badge shows.
+            Consumer(
+              builder: (context, ref, _) {
+                final pending = ref.watch(friendRequestCountProvider);
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(LucideIcons.users, size: 20),
+                  title: Text(AppLocalizations.of(context).friendsTitle),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (pending > 0)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: KolabingColors.primary,
+                            borderRadius:
+                                BorderRadius.circular(KolabingRadius.round),
+                          ),
+                          child: Text(
+                            '$pending',
+                            style: KolabingTextStyles.labelSmall.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: KolabingColors.onPrimary,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(width: KolabingSpacing.xs),
+                      const Icon(LucideIcons.chevronRight, size: 18),
+                    ],
+                  ),
+                  onTap: () => context.push(KolabingRoutes.friends),
+                );
+              },
             ),
 
             const SizedBox(height: KolabingSpacing.sm),

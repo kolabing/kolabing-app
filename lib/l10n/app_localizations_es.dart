@@ -5416,4 +5416,51 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rosterSave => 'GUARDAR';
+
+  @override
+  String get friendsTitle => 'Amigos';
+
+  @override
+  String get friendRequestsTitle => 'Solicitudes';
+
+  @override
+  String get friendAdd => 'Agregar amigo';
+
+  @override
+  String get friendPending => 'Pendiente';
+
+  @override
+  String get friendAccept => 'Aceptar';
+
+  @override
+  String get friendDecline => 'Rechazar';
+
+  @override
+  String get friendFriends => 'Amigos';
+
+  @override
+  String get friendRemoveTitle => '¿Eliminar a este amigo?';
+
+  @override
+  String get friendRemoveConfirm => 'Eliminar amigo';
+
+  @override
+  String get friendActionFailed => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get friendsEmpty => 'Aún no tienes amigos';
+
+  @override
+  String get friendsLoadError => 'No se pudieron cargar los amigos';
+
+  @override
+  String get friendUnknownName => 'Miembro';
+
+  @override
+  String get friendCountOne => '1 amigo';
+
+  @override
+  String friendCountOther(int count) {
+    return '$count amigos';
+  }
 }

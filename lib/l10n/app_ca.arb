@@ -1597,5 +1597,20 @@
   "rosterCanManageTitle": "Pot gestionar aquesta comunitat",
   "rosterCanManageSubtitle": "Capacitat d'administració — independent del nivell",
   "rosterStatusLabel": "Estat",
-  "rosterSave": "DESA"
+  "rosterSave": "DESA",
+  "friendsTitle": "Amics",
+  "friendRequestsTitle": "Sol·licituds",
+  "friendAdd": "Afegir amic",
+  "friendPending": "Pendent",
+  "friendAccept": "Accepta",
+  "friendDecline": "Rebutja",
+  "friendFriends": "Amics",
+  "friendRemoveTitle": "Vols eliminar aquest amic?",
+  "friendRemoveConfirm": "Elimina l'amic",
+  "friendActionFailed": "Alguna cosa ha anat malament. Torna-ho a provar.",
+  "friendsEmpty": "Encara no tens amics",
+  "friendsLoadError": "No s'han pogut carregar els amics",
+  "friendUnknownName": "Membre",
+  "friendCountOne": "1 amic",
+  "friendCountOther": "{count} amics"
 }

@@ -15,6 +15,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../../friends/models/friendship.dart';
+import '../../friends/widgets/friend_cta_button.dart';
 import '../../gamification/providers/stats_provider.dart';
 import '../../gamification/widgets/badge_card.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -542,6 +544,17 @@ class _MemberProfileContent extends ConsumerWidget {
           padding: const EdgeInsets.all(KolabingSpacing.md),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
+              // NF-17 friend CTA. Self-gated: shown only when the backend
+              // reported a friend_status (and it isn't `self`). Hidden entirely
+              // until the friend graph deploys, so the profile still works.
+              if (profile.supportsFriends && profile.friendStatus != null) ...[
+                _MemberFriendCta(
+                  profileId: profile.id,
+                  status: profile.friendStatus!,
+                  friendsCount: profile.friendsCount,
+                ),
+                const SizedBox(height: KolabingSpacing.md),
+              ],
               // Stat row + badges grid. Degrades gracefully on error/empty:
               // we never crash and never show fake data.
               gameCardAsync.when(
@@ -597,6 +610,62 @@ class _MemberProfileContent extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// NF-17 friend CTA row on a member profile header. A pill button driven by
+/// `friend_status` plus the friends count. Only rendered when the backend
+/// supports the friend graph (`profile.supportsFriends`).
+class _MemberFriendCta extends StatelessWidget {
+  const _MemberFriendCta({
+    required this.profileId,
+    required this.status,
+    required this.friendsCount,
+  });
+
+  final String profileId;
+  final FriendStatus status;
+  final int friendsCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            LucideIcons.users,
+            size: 18,
+            color: KolabingColors.primary,
+          ),
+          const SizedBox(width: KolabingSpacing.xs),
+          Expanded(
+            child: Text(
+              friendsCount == 1
+                  ? l10n.friendCountOne
+                  : l10n.friendCountOther(friendsCount),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.onSurface,
+              ),
+            ),
+          ),
+          FriendCtaButton(profileId: profileId, status: status),
+        ],
+      ),
     );
   }
 }

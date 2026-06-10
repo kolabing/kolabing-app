@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../utils/profile_type_formatter.dart';
+import '../../friends/models/friendship.dart';
 import '../providers/gallery_provider.dart';
 
 // =============================================================================
@@ -145,6 +146,8 @@ class PublicProfile {
     this.pastCollaborations = const [],
     this.completedKolabsCount,
     this.recentReviews = const [],
+    this.friendStatus,
+    this.friendsCount = 0,
   });
 
   factory PublicProfile.fromJson(Map<String, dynamic> json) => PublicProfile(
@@ -186,6 +189,14 @@ class PublicProfile {
             .map(PublicProfileReview.fromJson)
             .toList() ??
         const [],
+    // NF-17: present only once the backend deploys the friend graph. When the
+    // key is ABSENT we keep [friendStatus] null so the friend CTA self-gates
+    // (hidden). When present but unknown, `FriendStatus.fromApi` defaults to
+    // `none`.
+    friendStatus: json.containsKey('friend_status')
+        ? FriendStatus.fromApi(json['friend_status'] as String?)
+        : null,
+    friendsCount: (json['friends_count'] as num?)?.toInt() ?? 0,
   );
 
   final String id;
@@ -210,11 +221,25 @@ class PublicProfile {
   final int? completedKolabsCount;
   final List<PublicProfileReview> recentReviews;
 
+  /// NF-17 friend relationship to the viewer. Null when the backend hasn't
+  /// shipped the friend graph yet (older/undeployed payload), in which case
+  /// the friend CTA is hidden ([supportsFriends] is false).
+  final FriendStatus? friendStatus;
+
+  /// Accepted-friends count for this profile (0 on older payloads).
+  final int friendsCount;
+
   String get initial =>
       displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
 
   bool get isBusiness => userType == 'business';
   bool get isCommunity => userType == 'community';
+
+  /// Whether the backend reported a [friendStatus] for this profile. When false
+  /// the friend graph is undeployed for this payload and every friend surface
+  /// (CTA, count) must stay hidden. Self for your own profile also has no CTA.
+  bool get supportsFriends =>
+      friendStatus != null && friendStatus != FriendStatus.self;
 
   /// A member (community attendee). Member profiles are a social hub, not a
   /// collaboration resume, so [PublicProfileScreen] renders a dedicated layout.
@@ -256,6 +281,8 @@ class PublicProfile {
     List<PastCollaboration>? pastCollaborations,
     int? completedKolabsCount,
     List<PublicProfileReview>? recentReviews,
+    FriendStatus? friendStatus,
+    int? friendsCount,
   }) => PublicProfile(
     id: id,
     userType: userType ?? this.userType,
@@ -272,6 +299,8 @@ class PublicProfile {
     pastCollaborations: pastCollaborations ?? this.pastCollaborations,
     completedKolabsCount: completedKolabsCount ?? this.completedKolabsCount,
     recentReviews: recentReviews ?? this.recentReviews,
+    friendStatus: friendStatus ?? this.friendStatus,
+    friendsCount: friendsCount ?? this.friendsCount,
   );
 }
 

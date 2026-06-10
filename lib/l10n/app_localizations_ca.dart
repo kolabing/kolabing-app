@@ -5442,4 +5442,52 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get rosterSave => 'DESA';
+
+  @override
+  String get friendsTitle => 'Amics';
+
+  @override
+  String get friendRequestsTitle => 'Sol·licituds';
+
+  @override
+  String get friendAdd => 'Afegir amic';
+
+  @override
+  String get friendPending => 'Pendent';
+
+  @override
+  String get friendAccept => 'Accepta';
+
+  @override
+  String get friendDecline => 'Rebutja';
+
+  @override
+  String get friendFriends => 'Amics';
+
+  @override
+  String get friendRemoveTitle => 'Vols eliminar aquest amic?';
+
+  @override
+  String get friendRemoveConfirm => 'Elimina l\'amic';
+
+  @override
+  String get friendActionFailed =>
+      'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get friendsEmpty => 'Encara no tens amics';
+
+  @override
+  String get friendsLoadError => 'No s\'han pogut carregar els amics';
+
+  @override
+  String get friendUnknownName => 'Membre';
+
+  @override
+  String get friendCountOne => '1 amic';
+
+  @override
+  String friendCountOther(int count) {
+    return '$count amics';
+  }
 }

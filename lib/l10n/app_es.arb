@@ -1597,5 +1597,20 @@
   "rosterCanManageTitle": "Puede gestionar esta comunidad",
   "rosterCanManageSubtitle": "Capacidad de administración — independiente del nivel",
   "rosterStatusLabel": "Estado",
-  "rosterSave": "GUARDAR"
+  "rosterSave": "GUARDAR",
+  "friendsTitle": "Amigos",
+  "friendRequestsTitle": "Solicitudes",
+  "friendAdd": "Agregar amigo",
+  "friendPending": "Pendiente",
+  "friendAccept": "Aceptar",
+  "friendDecline": "Rechazar",
+  "friendFriends": "Amigos",
+  "friendRemoveTitle": "¿Eliminar a este amigo?",
+  "friendRemoveConfirm": "Eliminar amigo",
+  "friendActionFailed": "Algo salió mal. Inténtalo de nuevo.",
+  "friendsEmpty": "Aún no tienes amigos",
+  "friendsLoadError": "No se pudieron cargar los amigos",
+  "friendUnknownName": "Miembro",
+  "friendCountOne": "1 amigo",
+  "friendCountOther": "{count} amigos"
 }
