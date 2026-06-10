@@ -4796,6 +4796,22 @@
   "@publicProfileViewMore": {
     "description": "Button to open the full reviews list from the recent reviews section"
   },
+  "memberProfilePoints": "Points",
+  "@memberProfilePoints": {
+    "description": "Stat label for total points on a member (attendee) public profile"
+  },
+  "memberProfileEventsAttended": "Events attended",
+  "@memberProfileEventsAttended": {
+    "description": "Stat label for the number of events a member has attended on their public profile"
+  },
+  "memberProfileBadges": "Badges",
+  "@memberProfileBadges": {
+    "description": "Stat label and section title for a member's earned badges on their public profile"
+  },
+  "memberProfileNoBadges": "No badges yet",
+  "@memberProfileNoBadges": {
+    "description": "Empty state shown in the badges section of a member public profile when they have not earned any badges"
+  },
   "referralCodeCopied": "Referral code copied",
   "@referralCodeCopied": {
     "description": "Snackbar shown after the referral code is copied to the clipboard"

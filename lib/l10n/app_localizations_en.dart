@@ -3740,6 +3740,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get publicProfileViewMore => 'View more';
 
   @override
+  String get memberProfilePoints => 'Points';
+
+  @override
+  String get memberProfileEventsAttended => 'Events attended';
+
+  @override
+  String get memberProfileBadges => 'Badges';
+
+  @override
+  String get memberProfileNoBadges => 'No badges yet';
+
+  @override
   String get referralCodeCopied => 'Referral code copied';
 
   @override

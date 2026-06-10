@@ -216,6 +216,15 @@ class PublicProfile {
   bool get isBusiness => userType == 'business';
   bool get isCommunity => userType == 'community';
 
+  /// A member (community attendee). Member profiles are a social hub, not a
+  /// collaboration resume, so [PublicProfileScreen] renders a dedicated layout.
+  bool get isAttendee => userType == 'attendee';
+
+  /// Whether the loaded display name is missing or the model's "Unknown"
+  /// placeholder. Used to fall back to an optimistic name from the caller.
+  bool get hasRealDisplayName =>
+      displayName.trim().isNotEmpty && displayName != 'Unknown';
+
   bool get hasAbout => about != null && about!.isNotEmpty;
   bool get hasGallery => gallery.isNotEmpty;
   int get kolabsCount => completedKolabsCount ?? pastCollaborations.length;
@@ -240,15 +249,18 @@ class PublicProfile {
   }
 
   PublicProfile copyWith({
+    String? userType,
+    String? displayName,
+    String? avatarUrl,
     List<GalleryPhoto>? gallery,
     List<PastCollaboration>? pastCollaborations,
     int? completedKolabsCount,
     List<PublicProfileReview>? recentReviews,
   }) => PublicProfile(
     id: id,
-    userType: userType,
-    displayName: displayName,
-    avatarUrl: avatarUrl,
+    userType: userType ?? this.userType,
+    displayName: displayName ?? this.displayName,
+    avatarUrl: avatarUrl ?? this.avatarUrl,
     about: about,
     type: type,
     serverTypeLabel: serverTypeLabel,

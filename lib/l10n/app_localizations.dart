@@ -6766,6 +6766,30 @@ abstract class AppLocalizations {
   /// **'View more'**
   String get publicProfileViewMore;
 
+  /// Stat label for total points on a member (attendee) public profile
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get memberProfilePoints;
+
+  /// Stat label for the number of events a member has attended on their public profile
+  ///
+  /// In en, this message translates to:
+  /// **'Events attended'**
+  String get memberProfileEventsAttended;
+
+  /// Stat label and section title for a member's earned badges on their public profile
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get memberProfileBadges;
+
+  /// Empty state shown in the badges section of a member public profile when they have not earned any badges
+  ///
+  /// In en, this message translates to:
+  /// **'No badges yet'**
+  String get memberProfileNoBadges;
+
   /// Snackbar shown after the referral code is copied to the clipboard
   ///
   /// In en, this message translates to:

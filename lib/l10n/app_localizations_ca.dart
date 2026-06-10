@@ -3809,6 +3809,18 @@ class AppLocalizationsCa extends AppLocalizations {
   String get publicProfileViewMore => 'Veure\'n més';
 
   @override
+  String get memberProfilePoints => 'Punts';
+
+  @override
+  String get memberProfileEventsAttended => 'Esdeveniments assistits';
+
+  @override
+  String get memberProfileBadges => 'Insígnies';
+
+  @override
+  String get memberProfileNoBadges => 'Encara no hi ha insígnies';
+
+  @override
   String get referralCodeCopied => 'Codi de convidança copiat';
 
   @override

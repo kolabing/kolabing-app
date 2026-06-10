@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../opportunity/models/opportunity.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
@@ -354,7 +355,20 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
               onPressed: () {
                 Navigator.of(context).pop();
-                context.push('/profile/${widget.member.profileId}');
+                // Pass an optimistic CreatorProfile so the public-profile header
+                // shows the real name + avatar instantly (no "Unknown" flash) and
+                // so PublicProfileScreen can branch to the member (attendee)
+                // layout before the network fetch returns. The member is an
+                // attendee, not a business/community.
+                context.push(
+                  '/profile/${widget.member.profileId}',
+                  extra: CreatorProfile(
+                    id: widget.member.profileId,
+                    userType: 'attendee',
+                    displayNameValue: widget.member.memberName,
+                    avatarUrl: widget.member.memberAvatarUrl,
+                  ),
+                );
               },
               icon: const Icon(LucideIcons.user, size: 16),
               label: Text(l10n.rosterViewProfile),
