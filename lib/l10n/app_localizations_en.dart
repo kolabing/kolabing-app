@@ -2110,6 +2110,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You haven\'t joined any communities yet.';
 
   @override
+  String get attendeeProfileFindFriends => 'Find friends';
+
+  @override
   String get attendeeProfileFriends => 'FRIENDS';
 
   @override

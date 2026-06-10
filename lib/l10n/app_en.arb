@@ -2717,6 +2717,7 @@
   "@attendeeProfileMyCommunities": { "description": "Attendee profile section header for the communities the user belongs to" },
   "attendeeProfileNoCommunities": "You haven't joined any communities yet.",
   "@attendeeProfileNoCommunities": { "description": "Attendee profile empty state for the communities section" },
+  "attendeeProfileFindFriends": "Find friends",
   "attendeeProfileFriends": "FRIENDS",
   "@attendeeProfileFriends": { "description": "Attendee profile section header for the friends preview" },
   "attendeeProfileSeeAll": "See all",

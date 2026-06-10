@@ -2130,6 +2130,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Todavía no te has unido a ninguna comunidad.';
 
   @override
+  String get attendeeProfileFindFriends => 'Buscar amigos';
+
+  @override
   String get attendeeProfileFriends => 'AMIGOS';
 
   @override

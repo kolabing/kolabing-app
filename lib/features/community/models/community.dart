@@ -98,12 +98,15 @@ class Community {
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
+    // Tolerant of slim payloads (e.g. the `/communities/discover` card resource,
+    // which omits owner/slug/timestamps) — default the fields a full community
+    // row carries but a discovery card doesn't, so parsing never throws.
     return Community(
       id: json['id'] as String,
-      ownerProfileId: json['owner_profile_id'] as String,
+      ownerProfileId: json['owner_profile_id'] as String? ?? '',
       communityProfileId: json['community_profile_id'] as String?,
       name: json['name'] as String,
-      slug: json['slug'] as String,
+      slug: json['slug'] as String? ?? '',
       type: CommunityType.fromString(json['type'] as String? ?? 'other'),
       description: json['description'] as String?,
       avatarUrl: json['avatar_url'] as String?,
@@ -111,8 +114,12 @@ class Community {
       joinPolicy:
           CommunityJoinPolicy.fromString(json['join_policy'] as String? ?? 'open'),
       memberCount: json['member_count'] as int?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.fromMillisecondsSinceEpoch(0),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 

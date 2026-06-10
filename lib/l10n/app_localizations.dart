@@ -3862,6 +3862,12 @@ abstract class AppLocalizations {
   /// **'You haven\'t joined any communities yet.'**
   String get attendeeProfileNoCommunities;
 
+  /// No description provided for @attendeeProfileFindFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Find friends'**
+  String get attendeeProfileFindFriends;
+
   /// Attendee profile section header for the friends preview
   ///
   /// In en, this message translates to:

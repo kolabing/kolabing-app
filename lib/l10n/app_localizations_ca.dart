@@ -2138,6 +2138,9 @@ class AppLocalizationsCa extends AppLocalizations {
       'Encara no t\'has unit a cap comunitat.';
 
   @override
+  String get attendeeProfileFindFriends => 'Cerca amics';
+
+  @override
   String get attendeeProfileFriends => 'AMICS';
 
   @override

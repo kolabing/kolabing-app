@@ -565,8 +565,36 @@ class _FriendsPreviewSection extends ConsumerWidget {
           orElse: () => const <FriendSummary>[],
         );
 
-    // Friends feature off / empty → hide the section entirely.
-    if (friends.isEmpty) return const SizedBox.shrink();
+    // Always show the Friends widget. When empty, invite the user to find
+    // friends instead of hiding the section.
+    if (friends.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.attendeeProfileFriends,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+                color: KolabingColors.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => context.push(KolabingRoutes.friends),
+                icon: const Icon(LucideIcons.userPlus, size: 18),
+                label: Text(l10n.attendeeProfileFindFriends),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     final preview = friends.take(_maxPreview).toList();
     final remaining = friends.length - preview.length;
