@@ -104,6 +104,32 @@ rewards_count}, recent_badges[].
 
 ---
 
+## @handle (universal user identifier) + add-by-identifier — Phase 2b
+
+**`@handle` is for EVERY user, not just attendees** — attendees, community leaders,
+and businesses all get one. It is a **unique username** chosen at **onboarding**
+(and editable in Edit Profile). Stored on **`profiles.handle`** (unique, indexed;
+validate format + uniqueness server-side, suggest from name on collision).
+
+**One lookup endpoint, reused by two surfaces** — resolve an email **or** `@handle`
+to a profile:
+- `GET /profiles/lookup?q=<email-or-handle>` (or `POST /friends/by-identifier`) →
+  the matched profile + its `friend_status`. Never leak more than the public card.
+
+Reused by:
+1. **Friends (attendee):** "Add friend" search by email/@handle → send request
+   (`POST /friends/{profile}`). Surfaced from the profile Friends widget + the
+   Friends list.
+2. **Community member-add (leader):** a leader adds/invites a member to *their*
+   community by email **or** @handle — **extends the existing invite-by-email**
+   (`docs/tickets/2026-06-04-community-invite-by-email-backend.md`); add handle
+   resolution to that path, don't build a parallel one.
+
+**Profile Friends widget:** always visible (even with 0 friends — show a "Find
+friends" CTA), with entry to the add-by-identifier search.
+
+---
+
 ## Suggested sequencing
 
 1. **Phase 0** now (small; fixes the visible bug). Backend `display_name`
