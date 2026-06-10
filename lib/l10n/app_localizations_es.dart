@@ -4861,6 +4861,97 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatThreadEmptyMessage => 'Aún no hay mensajes. Saluda 👋';
 
   @override
+  String get chatManageNewChatTitle => 'Nuevo chat';
+
+  @override
+  String get chatManageRenameTitle => 'Renombrar chat';
+
+  @override
+  String get chatManageNameLabel => 'Nombre del chat';
+
+  @override
+  String get chatManageNameHint => 'p. ej. Directivos, Sociales, Filantropía';
+
+  @override
+  String get chatManageCreate => 'Crear';
+
+  @override
+  String get chatManageRename => 'Renombrar';
+
+  @override
+  String get chatManageDelete => 'Eliminar';
+
+  @override
+  String get chatManageCreateChat => 'Crear chat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'Se creó \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'Chat renombrado';
+
+  @override
+  String get chatManageChatDeleted => 'Chat eliminado';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'Llegaste al límite de $count chats personalizados.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => '¿Eliminar este chat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Los miembros perderán acceso a \"$name\". Puedes recuperarlo después si cambias de opinión.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => '¿Cuál comunidad?';
+
+  @override
+  String get chatJoinSectionTitle => 'Chats a los que te puedes unir';
+
+  @override
+  String get chatJoinAction => 'Unirme';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'Te uniste a \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Abrir evento';
+
+  @override
+  String get chatMembersTitle => 'Miembros';
+
+  @override
+  String get chatMembersEmpty => 'Aún no hay miembros para administrar.';
+
+  @override
+  String get chatMemberRemove => 'Quitar';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return '¿Quitar a $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'Perderá acceso a este chat y no podrá volver a unirse.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return 'Se quitó a $name';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Administrar miembros';
+
+  @override
   String get communityDetailTabChats => 'Chats';
 
   @override
@@ -5017,12 +5108,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityHubAccess => 'Acceso';
 
   @override
-  String get chatManageRename => 'Renombrar chat';
-
-  @override
-  String get chatManageDelete => 'Eliminar chat';
-
-  @override
   String get chatManageAccess => 'Quién puede acceder';
 
   @override
@@ -5036,9 +5121,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatBlockedTag => 'Bloqueado';
-
-  @override
-  String get chatMembersEmpty => 'Aún no hay miembros con acceso.';
 
   @override
   String get chatRenameHint => 'Nombre del chat';

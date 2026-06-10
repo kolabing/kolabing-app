@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -144,14 +146,33 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     });
   }
 
+  void _openEvent() {
+    final eventId = widget.thread.event?.id ?? widget.thread.eventId;
+    if (eventId == null) return;
+    context.push(KolabingRoutes.buildEventDetailPath(eventId));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isEvent = widget.thread.type == ChatThreadType.event;
     return Scaffold(
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
         title: Text(_thread.name ?? l10n.chatThreadFallbackTitle),
-        actions: [_manageMenu(l10n)],
+        actions: [
+          // (7) Event chats: jump to the event detail page.
+          if (isEvent &&
+              (widget.thread.event?.id ?? widget.thread.eventId) != null)
+            IconButton(
+              tooltip: l10n.chatThreadOpenEvent,
+              icon: const Icon(LucideIcons.info),
+              onPressed: _openEvent,
+            ),
+          // (1,3,4,5) Custom-chat admin: rename / members(block+profile) /
+          // access(tier gating) / delete.
+          _manageMenu(l10n),
+        ],
       ),
       body: Column(
         children: [

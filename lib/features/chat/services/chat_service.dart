@@ -196,6 +196,50 @@ class ChatService {
         return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
       }, 'createEventChat');
 
+  /// `PATCH /chats/{thread}` `{name}` — rename a custom community chat
+  /// (owner / can_manage; custom type only).
+  Future<ChatThread> renameThread(String threadId, String name) =>
+      _guard(() async {
+        final res = await _httpClient.patch(
+          Uri.parse('$_baseUrl/chats/$threadId'),
+          headers: await _headers(),
+          body: jsonEncode({'name': name}),
+        );
+        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+      }, 'renameThread');
+
+  /// `DELETE /chats/{thread}` — soft-delete a custom or event chat
+  /// (owner / can_manage). Recoverable; collaboration / main chats can't be
+  /// deleted (`cannot_delete_thread_type`).
+  Future<void> deleteThread(String threadId) => _guard(() async {
+        final res = await _httpClient.delete(
+          Uri.parse('$_baseUrl/chats/$threadId'),
+          headers: await _headers(),
+        );
+        _unwrap(res);
+      }, 'deleteThread');
+
+  /// `POST /chats/{thread}/join` — self-join an open chat (active member, not
+  /// banned). Returns the refreshed thread.
+  Future<ChatThread> joinThread(String threadId) => _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/chats/$threadId/join'),
+          headers: await _headers(),
+        );
+        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+      }, 'joinThread');
+
+  /// `POST /chats/{thread}/members/{profile}/remove` — ban a member from a chat
+  /// (owner / can_manage). Removes access and blocks re-join.
+  Future<void> removeMember(String threadId, String profileId) =>
+      _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/chats/$threadId/members/$profileId/remove'),
+          headers: await _headers(),
+        );
+        _unwrap(res);
+      }, 'removeMember');
+
   /// `POST /chats/{thread}/read` — mark the viewer's read pointer.
   Future<void> markRead(String threadId) => _guard(() async {
         final res = await _httpClient.post(
