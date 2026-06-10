@@ -9847,6 +9847,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} friends'**
   String friendCountOther(int count);
+
+  /// App bar title for the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover communities'**
+  String get discoverCommunitiesTitle;
+
+  /// Call to action to open the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover communities'**
+  String get discoverCommunitiesCta;
+
+  /// Button to join a community from a discovery card.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get discoverCommunitiesJoin;
+
+  /// Label shown on a community card after the user has joined it.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get discoverCommunitiesJoined;
+
+  /// Snackbar confirming the user joined a community.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined {name}'**
+  String discoverCommunitiesJoinedToast(String name);
+
+  /// Badge/message shown when a community is invite-only and cannot be self-joined.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite only'**
+  String get discoverCommunitiesInviteOnly;
+
+  /// Snackbar shown when trying to join an invite-only community.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is invite only. Ask a member to add you.'**
+  String discoverCommunitiesInviteOnlyMessage(String name);
+
+  /// Snackbar shown when joining a community fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t join right now. Please try again.'**
+  String get discoverCommunitiesJoinError;
+
+  /// Member count label on a discovery card.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 member} other{{count} members}}'**
+  String discoverCommunitiesMembers(int count);
+
+  /// Empty/coming-soon title on the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to discover yet'**
+  String get discoverCommunitiesEmptyTitle;
+
+  /// Empty/coming-soon body on the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Community discovery is coming soon. Check back to find and join communities near you.'**
+  String get discoverCommunitiesEmptyBody;
+
+  /// Error state on the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load communities. Please try again.'**
+  String get discoverCommunitiesError;
 }
 
 class _AppLocalizationsDelegate

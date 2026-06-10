@@ -117,6 +117,21 @@ class CommunityService {
         return _asList(_unwrap(res)).map(CommunityMembership.fromJson).toList();
       }, 'getMyMemberships');
 
+  /// `GET /communities/discover` — public discovery feed of joinable
+  /// communities (featured-first, backend-ordered). Optional [type] filters by
+  /// [CommunityType] wire value. Returns an empty list when the endpoint is not
+  /// deployed yet (404), so the discovery surface self-gates instead of
+  /// crashing.
+  Future<List<Community>> getDiscoverCommunities({String? type}) =>
+      _guard(() async {
+        final uri = Uri.parse('$_baseUrl/communities/discover').replace(
+          queryParameters: type != null ? {'type': type} : null,
+        );
+        final res = await _httpClient.get(uri, headers: await _headers());
+        if (res.statusCode == 404) return const <Community>[];
+        return _asList(_unwrap(res)).map(Community.fromJson).toList();
+      }, 'getDiscoverCommunities');
+
   /// `GET /communities/{id}`.
   Future<Community> getCommunity(String id) => _guard(() async {
         final res = await _httpClient.get(

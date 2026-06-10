@@ -6399,5 +6399,39 @@
   "@friendCountOther": {
     "description": "Friends count label, plural.",
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+
+  "discoverCommunitiesTitle": "Discover communities",
+  "@discoverCommunitiesTitle": { "description": "App bar title for the community discovery screen." },
+  "discoverCommunitiesCta": "Discover communities",
+  "@discoverCommunitiesCta": { "description": "Call to action to open the community discovery screen." },
+  "discoverCommunitiesJoin": "Join",
+  "@discoverCommunitiesJoin": { "description": "Button to join a community from a discovery card." },
+  "discoverCommunitiesJoined": "Joined",
+  "@discoverCommunitiesJoined": { "description": "Label shown on a community card after the user has joined it." },
+  "discoverCommunitiesJoinedToast": "You joined {name}",
+  "@discoverCommunitiesJoinedToast": {
+    "description": "Snackbar confirming the user joined a community.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "discoverCommunitiesInviteOnly": "Invite only",
+  "@discoverCommunitiesInviteOnly": { "description": "Badge/message shown when a community is invite-only and cannot be self-joined." },
+  "discoverCommunitiesInviteOnlyMessage": "{name} is invite only. Ask a member to add you.",
+  "@discoverCommunitiesInviteOnlyMessage": {
+    "description": "Snackbar shown when trying to join an invite-only community.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "discoverCommunitiesJoinError": "Couldn't join right now. Please try again.",
+  "@discoverCommunitiesJoinError": { "description": "Snackbar shown when joining a community fails." },
+  "discoverCommunitiesMembers": "{count, plural, =1{1 member} other{{count} members}}",
+  "@discoverCommunitiesMembers": {
+    "description": "Member count label on a discovery card.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "discoverCommunitiesEmptyTitle": "Nothing to discover yet",
+  "@discoverCommunitiesEmptyTitle": { "description": "Empty/coming-soon title on the community discovery screen." },
+  "discoverCommunitiesEmptyBody": "Community discovery is coming soon. Check back to find and join communities near you.",
+  "@discoverCommunitiesEmptyBody": { "description": "Empty/coming-soon body on the community discovery screen." },
+  "discoverCommunitiesError": "Couldn't load communities. Please try again.",
+  "@discoverCommunitiesError": { "description": "Error state on the community discovery screen." }
 }

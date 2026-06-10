@@ -1634,5 +1634,18 @@
   "friendsLoadError": "No se pudieron cargar los amigos",
   "friendUnknownName": "Miembro",
   "friendCountOne": "1 amigo",
-  "friendCountOther": "{count} amigos"
+  "friendCountOther": "{count} amigos",
+
+  "discoverCommunitiesTitle": "Descubre comunidades",
+  "discoverCommunitiesCta": "Descubre comunidades",
+  "discoverCommunitiesJoin": "Unirse",
+  "discoverCommunitiesJoined": "Te has unido",
+  "discoverCommunitiesJoinedToast": "Te has unido a {name}",
+  "discoverCommunitiesInviteOnly": "Solo con invitación",
+  "discoverCommunitiesInviteOnlyMessage": "{name} es solo con invitación. Pide a un miembro que te añada.",
+  "discoverCommunitiesJoinError": "No se pudo unir ahora mismo. Inténtalo de nuevo.",
+  "discoverCommunitiesMembers": "{count, plural, =1{1 miembro} other{{count} miembros}}",
+  "discoverCommunitiesEmptyTitle": "Aún no hay nada que descubrir",
+  "discoverCommunitiesEmptyBody": "El descubrimiento de comunidades llegará pronto. Vuelve para encontrar y unirte a comunidades cerca de ti.",
+  "discoverCommunitiesError": "No se pudieron cargar las comunidades. Inténtalo de nuevo."
 }

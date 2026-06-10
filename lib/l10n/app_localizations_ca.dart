@@ -5558,4 +5558,56 @@ class AppLocalizationsCa extends AppLocalizations {
   String friendCountOther(int count) {
     return '$count amics';
   }
+
+  @override
+  String get discoverCommunitiesTitle => 'Descobreix comunitats';
+
+  @override
+  String get discoverCommunitiesCta => 'Descobreix comunitats';
+
+  @override
+  String get discoverCommunitiesJoin => 'Uneix-te';
+
+  @override
+  String get discoverCommunitiesJoined => 'T\'hi has unit';
+
+  @override
+  String discoverCommunitiesJoinedToast(String name) {
+    return 'T\'has unit a $name';
+  }
+
+  @override
+  String get discoverCommunitiesInviteOnly => 'Només amb invitació';
+
+  @override
+  String discoverCommunitiesInviteOnlyMessage(String name) {
+    return '$name és només amb invitació. Demana a un membre que t\'afegeixi.';
+  }
+
+  @override
+  String get discoverCommunitiesJoinError =>
+      'No s\'ha pogut unir ara mateix. Torna-ho a provar.';
+
+  @override
+  String discoverCommunitiesMembers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '1 membre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get discoverCommunitiesEmptyTitle =>
+      'Encara no hi ha res per descobrir';
+
+  @override
+  String get discoverCommunitiesEmptyBody =>
+      'El descobriment de comunitats arribarà aviat. Torna per trobar i unir-te a comunitats a prop teu.';
+
+  @override
+  String get discoverCommunitiesError =>
+      'No s\'han pogut carregar les comunitats. Torna-ho a provar.';
 }

@@ -5531,4 +5531,55 @@ class AppLocalizationsEs extends AppLocalizations {
   String friendCountOther(int count) {
     return '$count amigos';
   }
+
+  @override
+  String get discoverCommunitiesTitle => 'Descubre comunidades';
+
+  @override
+  String get discoverCommunitiesCta => 'Descubre comunidades';
+
+  @override
+  String get discoverCommunitiesJoin => 'Unirse';
+
+  @override
+  String get discoverCommunitiesJoined => 'Te has unido';
+
+  @override
+  String discoverCommunitiesJoinedToast(String name) {
+    return 'Te has unido a $name';
+  }
+
+  @override
+  String get discoverCommunitiesInviteOnly => 'Solo con invitación';
+
+  @override
+  String discoverCommunitiesInviteOnlyMessage(String name) {
+    return '$name es solo con invitación. Pide a un miembro que te añada.';
+  }
+
+  @override
+  String get discoverCommunitiesJoinError =>
+      'No se pudo unir ahora mismo. Inténtalo de nuevo.';
+
+  @override
+  String discoverCommunitiesMembers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '1 miembro',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get discoverCommunitiesEmptyTitle => 'Aún no hay nada que descubrir';
+
+  @override
+  String get discoverCommunitiesEmptyBody =>
+      'El descubrimiento de comunidades llegará pronto. Vuelve para encontrar y unirte a comunidades cerca de ti.';
+
+  @override
+  String get discoverCommunitiesError =>
+      'No se pudieron cargar las comunidades. Inténtalo de nuevo.';
 }

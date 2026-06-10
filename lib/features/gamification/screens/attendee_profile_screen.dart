@@ -386,9 +386,10 @@ class _MyCommunitiesSection extends ConsumerWidget {
               ),
               const Spacer(),
               GestureDetector(
-                // Joining/creating a community is a community-leader action; the
-                // unified create flow is the entry point we have today.
-                onTap: () => context.push(KolabingRoutes.kolabNew),
+                // Attendees DISCOVER and join communities — open the discovery
+                // surface (NOT the leader collab-create flow).
+                onTap: () =>
+                    context.push(KolabingRoutes.discoverCommunities),
                 child: Container(
                   padding: const EdgeInsets.all(KolabingSpacing.xxs),
                   decoration: BoxDecoration(
@@ -511,19 +512,34 @@ class _MyCommunitiesEmpty extends StatelessWidget {
             borderRadius: BorderRadius.circular(KolabingRadius.lg),
             border: Border.all(color: KolabingColors.outlineVariant),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                LucideIcons.users,
-                size: 22,
-                color: KolabingColors.onSurfaceVariant,
+              Row(
+                children: [
+                  const Icon(
+                    LucideIcons.users,
+                    size: 22,
+                    color: KolabingColors.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: KolabingSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      l10n.attendeeProfileNoCommunities,
+                      style: KolabingTextStyles.bodySmall
+                          .copyWith(color: KolabingColors.onSurfaceVariant),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: Text(
-                  l10n.attendeeProfileNoCommunities,
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant),
+              const SizedBox(height: KolabingSpacing.sm),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () =>
+                      context.push(KolabingRoutes.discoverCommunities),
+                  icon: const Icon(LucideIcons.compass, size: 18),
+                  label: Text(l10n.discoverCommunitiesCta),
                 ),
               ),
             ],

@@ -1634,5 +1634,18 @@
   "friendsLoadError": "No s'han pogut carregar els amics",
   "friendUnknownName": "Membre",
   "friendCountOne": "1 amic",
-  "friendCountOther": "{count} amics"
+  "friendCountOther": "{count} amics",
+
+  "discoverCommunitiesTitle": "Descobreix comunitats",
+  "discoverCommunitiesCta": "Descobreix comunitats",
+  "discoverCommunitiesJoin": "Uneix-te",
+  "discoverCommunitiesJoined": "T'hi has unit",
+  "discoverCommunitiesJoinedToast": "T'has unit a {name}",
+  "discoverCommunitiesInviteOnly": "Només amb invitació",
+  "discoverCommunitiesInviteOnlyMessage": "{name} és només amb invitació. Demana a un membre que t'afegeixi.",
+  "discoverCommunitiesJoinError": "No s'ha pogut unir ara mateix. Torna-ho a provar.",
+  "discoverCommunitiesMembers": "{count, plural, =1{1 membre} other{{count} membres}}",
+  "discoverCommunitiesEmptyTitle": "Encara no hi ha res per descobrir",
+  "discoverCommunitiesEmptyBody": "El descobriment de comunitats arribarà aviat. Torna per trobar i unir-te a comunitats a prop teu.",
+  "discoverCommunitiesError": "No s'han pogut carregar les comunitats. Torna-ho a provar."
 }

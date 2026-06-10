@@ -18,6 +18,7 @@ import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/community/screens/discover_communities_screen.dart';
 import '../../features/event/screens/event_detail_screen.dart';
 import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
@@ -192,6 +193,9 @@ abstract final class KolabingRoutes {
 
   /// Community withdrawal request
   static const String communityWalletWithdraw = '/community/wallet/withdraw';
+
+  /// Discover joinable communities (attendee discovery surface)
+  static const String discoverCommunities = '/communities/discover';
 
   /// Business referrals
   static const String businessReferrals = '/business/referrals';
@@ -736,6 +740,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'friends',
       builder: (BuildContext context, GoRouterState state) =>
           const FriendsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.discoverCommunities,
+      name: 'discoverCommunities',
+      builder: (BuildContext context, GoRouterState state) =>
+          const DiscoverCommunitiesScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.editProfile,

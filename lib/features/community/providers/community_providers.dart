@@ -146,6 +146,15 @@ class MyMembershipsNotifier extends Notifier<AsyncValue<List<CommunityMembership
 final myMembershipsProvider = NotifierProvider<MyMembershipsNotifier,
     AsyncValue<List<CommunityMembership>>>(MyMembershipsNotifier.new);
 
+/// Discoverable communities the current attendee can join
+/// (`GET /communities/discover`), optionally filtered by [CommunityType] wire
+/// value. Featured-first ordering comes from the backend. Resolves to an empty
+/// list when the endpoint is not deployed yet (404), so the discovery surface
+/// shows a friendly "coming soon" state rather than crashing.
+final discoverCommunitiesProvider =
+    FutureProvider.family<List<Community>, String?>((ref, type) =>
+        ref.read(communityServiceProvider).getDiscoverCommunities(type: type));
+
 /// A specific community's tiers (`GET /communities/{id}/tiers`), keyed by id.
 /// Used by surfaces that need tiers for a community other than the leader's
 /// primary (e.g. the event create/edit tier-gate picker). Highest rank first.
