@@ -4961,6 +4961,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatManageAccess => 'Who can access';
 
   @override
+  String get chatManageMembers => 'Members';
+
+  @override
+  String get chatBlock => 'Block';
+
+  @override
+  String get chatUnblock => 'Unblock';
+
+  @override
+  String get chatBlockedTag => 'Blocked';
+
+  @override
+  String get chatMembersEmpty => 'No members have access yet.';
+
+  @override
   String get chatRenameHint => 'Chat name';
 
   @override

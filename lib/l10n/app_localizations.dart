@@ -8930,6 +8930,36 @@ abstract class AppLocalizations {
   /// **'Who can access'**
   String get chatManageAccess;
 
+  /// No description provided for @chatManageMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get chatManageMembers;
+
+  /// No description provided for @chatBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get chatBlock;
+
+  /// No description provided for @chatUnblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get chatUnblock;
+
+  /// No description provided for @chatBlockedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get chatBlockedTag;
+
+  /// No description provided for @chatMembersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No members have access yet.'**
+  String get chatMembersEmpty;
+
   /// No description provided for @chatRenameHint.
   ///
   /// In en, this message translates to:

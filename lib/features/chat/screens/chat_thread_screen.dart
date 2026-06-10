@@ -182,12 +182,16 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       onSelected: (v) {
         if (v == 'rename') _rename(l10n);
         if (v == 'access') _manageAccess(l10n, tiers);
+        if (v == 'members') _manageMembers(l10n, tiers);
         if (v == 'delete') _delete(l10n);
       },
       itemBuilder: (_) => [
         PopupMenuItem<String>(
             value: 'rename',
             child: _menuRow(LucideIcons.pencil, l10n.chatManageRename)),
+        PopupMenuItem<String>(
+            value: 'members',
+            child: _menuRow(LucideIcons.users, l10n.chatManageMembers)),
         PopupMenuItem<String>(
             value: 'access',
             child: _menuRow(LucideIcons.lock, l10n.chatManageAccess)),
@@ -341,6 +345,122 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     } on CommunityException catch (e) {
       if (mounted) _snack(e.message);
     }
+  }
+
+  /// Roster of members who can access this custom chat (tier-granted + managers),
+  /// with per-member block/unblock (overrides tier).
+  Future<void> _manageMembers(
+      AppLocalizations l10n, List<CommunityTier> tiers) async {
+    final slug = _thread.slug;
+    if (slug == null) return;
+    final members =
+        ref.read(communityManageProvider).members.asData?.value ?? const [];
+    final roster = members
+        .where((m) =>
+            m.canManage ||
+            tiers.any((t) =>
+                t.id == m.tierId &&
+                t.permissions.chatChannels.contains(slug)))
+        .toList();
+
+    List<String> banned;
+    try {
+      banned = await _svc.getChatBans(_thread.id);
+    } on ChatException catch (e) {
+      if (mounted) _snack(e.message);
+      return;
+    }
+    if (!mounted) return;
+    final bannedSet = {...banned};
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: KolabingColors.surface,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (sheetCtx, setSheet) => Padding(
+          padding: EdgeInsets.only(
+            left: KolabingSpacing.md,
+            right: KolabingSpacing.md,
+            top: KolabingSpacing.md,
+            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + KolabingSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.chatManageMembers,
+                  style: KolabingTextStyles.bodyLarge
+                      .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
+              const SizedBox(height: KolabingSpacing.md),
+              if (roster.isEmpty)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+                  child: Text(l10n.chatMembersEmpty,
+                      style: KolabingTextStyles.bodySmall
+                          .copyWith(color: KolabingColors.onSurfaceVariant)),
+                )
+              else
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (final m in roster)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                KolabingColors.primary.withValues(alpha: 0.2),
+                            backgroundImage: m.memberAvatarUrl != null
+                                ? NetworkImage(m.memberAvatarUrl!)
+                                : null,
+                            child: m.memberAvatarUrl == null
+                                ? const Icon(LucideIcons.user, size: 16)
+                                : null,
+                          ),
+                          title: Text(m.memberName ?? l10n.chatThreadFallbackTitle,
+                              maxLines: 1, overflow: TextOverflow.ellipsis),
+                          subtitle: bannedSet.contains(m.profileId)
+                              ? Text(l10n.chatBlockedTag,
+                                  style: KolabingTextStyles.bodySmall
+                                      .copyWith(color: KolabingColors.error))
+                              : null,
+                          trailing: m.canManage
+                              ? null
+                              : TextButton(
+                                  onPressed: () async {
+                                    try {
+                                      final wasBanned =
+                                          bannedSet.contains(m.profileId);
+                                      final updated = wasBanned
+                                          ? await _svc.unblockChatMember(
+                                              _thread.id, m.profileId)
+                                          : await _svc.blockChatMember(
+                                              _thread.id, m.profileId);
+                                      setSheet(() {
+                                        bannedSet
+                                          ..clear()
+                                          ..addAll(updated);
+                                      });
+                                    } on ChatException catch (e) {
+                                      if (mounted) _snack(e.message);
+                                    }
+                                  },
+                                  child: Text(bannedSet.contains(m.profileId)
+                                      ? l10n.chatUnblock
+                                      : l10n.chatBlock),
+                                ),
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    ref.read(chatThreadsProvider.notifier).reload();
   }
 
   void _snack(String m) =>

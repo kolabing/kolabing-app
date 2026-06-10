@@ -5047,6 +5047,21 @@ class AppLocalizationsCa extends AppLocalizations {
   String get chatManageAccess => 'Qui hi pot accedir';
 
   @override
+  String get chatManageMembers => 'Membres';
+
+  @override
+  String get chatBlock => 'Bloqueja';
+
+  @override
+  String get chatUnblock => 'Desbloqueja';
+
+  @override
+  String get chatBlockedTag => 'Bloquejat';
+
+  @override
+  String get chatMembersEmpty => 'Encara no hi ha membres amb accés.';
+
+  @override
   String get chatRenameHint => 'Nom del xat';
 
   @override

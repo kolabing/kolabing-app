@@ -149,6 +149,42 @@ class ChatService {
         _unwrap(res);
       }, 'deleteCommunityChat');
 
+  /// `GET /chats/{thread}/bans` — profile ids blocked from this chat (manager).
+  Future<List<String>> getChatBans(String threadId) => _guard(() async {
+        final res = await _httpClient.get(
+          Uri.parse('$_baseUrl/chats/$threadId/bans'),
+          headers: await _headers(),
+        );
+        return _bannedIds(_unwrap(res));
+      }, 'getChatBans');
+
+  /// `POST /chats/{thread}/bans` — block a member (manager). Returns banned ids.
+  Future<List<String>> blockChatMember(String threadId, String profileId) =>
+      _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/chats/$threadId/bans'),
+          headers: await _headers(),
+          body: jsonEncode({'profile_id': profileId}),
+        );
+        return _bannedIds(_unwrap(res));
+      }, 'blockChatMember');
+
+  /// `DELETE /chats/{thread}/bans/{profile}` — unblock (manager). Banned ids.
+  Future<List<String>> unblockChatMember(String threadId, String profileId) =>
+      _guard(() async {
+        final res = await _httpClient.delete(
+          Uri.parse('$_baseUrl/chats/$threadId/bans/$profileId'),
+          headers: await _headers(),
+        );
+        return _bannedIds(_unwrap(res));
+      }, 'unblockChatMember');
+
+  List<String> _bannedIds(dynamic data) =>
+      ((data is Map ? data['banned_profile_ids'] : null) as List<dynamic>? ??
+              const [])
+          .map((e) => e.toString())
+          .toList();
+
   /// `POST /events/{event}/chat` — create the event chat (signup-gated).
   Future<ChatThread> createEventChat(String eventId, {String? name}) =>
       _guard(() async {
