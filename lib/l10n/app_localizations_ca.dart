@@ -4871,6 +4871,97 @@ class AppLocalizationsCa extends AppLocalizations {
   String get chatThreadEmptyMessage => 'Encara no hi ha missatges. Saluda 👋';
 
   @override
+  String get chatManageNewChatTitle => 'Nou xat';
+
+  @override
+  String get chatManageRenameTitle => 'Reanomena el xat';
+
+  @override
+  String get chatManageNameLabel => 'Nom del xat';
+
+  @override
+  String get chatManageNameHint => 'p. ex. Directius, Socials, Filantropia';
+
+  @override
+  String get chatManageCreate => 'Crea';
+
+  @override
+  String get chatManageRename => 'Reanomena';
+
+  @override
+  String get chatManageDelete => 'Elimina';
+
+  @override
+  String get chatManageCreateChat => 'Crea un xat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'S\'ha creat \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'S\'ha reanomenat el xat';
+
+  @override
+  String get chatManageChatDeleted => 'S\'ha eliminat el xat';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'Has arribat al límit de $count xats personalitzats.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => 'Vols eliminar aquest xat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Els membres perdran l\'accés a \"$name\". El pots recuperar més tard si canvies d\'opinió.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => 'Quina comunitat?';
+
+  @override
+  String get chatJoinSectionTitle => 'Xats als quals et pots unir';
+
+  @override
+  String get chatJoinAction => 'Uneix-t\'hi';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'T\'has unit a \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Obre l\'esdeveniment';
+
+  @override
+  String get chatMembersTitle => 'Membres';
+
+  @override
+  String get chatMembersEmpty => 'Encara no hi ha membres per administrar.';
+
+  @override
+  String get chatMemberRemove => 'Treu';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return 'Vols treure $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'Perdrà l\'accés a aquest xat i no s\'hi podrà tornar a unir.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return 'S\'ha tret $name';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Administra els membres';
+
+  @override
   String get communityDetailTabChats => 'Xats';
 
   @override

@@ -8618,6 +8618,162 @@ abstract class AppLocalizations {
   /// **'No messages yet. Say hi 👋'**
   String get chatThreadEmptyMessage;
 
+  /// Title of the create-chat dialog in the Chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get chatManageNewChatTitle;
+
+  /// Title of the rename-chat dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename chat'**
+  String get chatManageRenameTitle;
+
+  /// Label for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat name'**
+  String get chatManageNameLabel;
+
+  /// Hint for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Exec, Socials, Philanthropy'**
+  String get chatManageNameHint;
+
+  /// Create button in the new-chat dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get chatManageCreate;
+
+  /// Rename action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get chatManageRename;
+
+  /// Delete action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatManageDelete;
+
+  /// Label on the create-chat button in the Chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Create chat'**
+  String get chatManageCreateChat;
+
+  /// Snackbar after a chat is created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created \"{name}\"'**
+  String chatManageChatCreated(String name);
+
+  /// Snackbar after a chat is renamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat renamed'**
+  String get chatManageChatRenamed;
+
+  /// Snackbar after a chat is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat deleted'**
+  String get chatManageChatDeleted;
+
+  /// Snackbar when the custom chat cap is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the limit of {count} custom chats.'**
+  String chatManageChatLimit(int count);
+
+  /// Confirm dialog title for deleting a chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get chatManageDeleteTitle;
+
+  /// Confirm dialog body for deleting a chat (notes it is recoverable).
+  ///
+  /// In en, this message translates to:
+  /// **'Members will lose access to \"{name}\". You can recover it later if you change your mind.'**
+  String chatManageDeleteBody(String name);
+
+  /// Title of the community picker shown before creating a chat when the viewer manages more than one community.
+  ///
+  /// In en, this message translates to:
+  /// **'Which community?'**
+  String get chatManageWhichCommunity;
+
+  /// Section label for open chats the viewer can join.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats you can join'**
+  String get chatJoinSectionTitle;
+
+  /// Join button label for an open chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get chatJoinAction;
+
+  /// Snackbar after joining an open chat.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined \"{name}\"'**
+  String chatJoinedSnack(String name);
+
+  /// Tooltip on the info icon in an event chat header that opens the event detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Open event'**
+  String get chatThreadOpenEvent;
+
+  /// Title of the thread members / participants sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get chatMembersTitle;
+
+  /// Empty state in the members sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'No members to manage yet.'**
+  String get chatMembersEmpty;
+
+  /// Remove (ban) action label for a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get chatMemberRemove;
+
+  /// Confirm dialog title for banning a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String chatMemberRemoveTitle(String name);
+
+  /// Confirm dialog body for banning a member.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll lose access to this chat and won\'t be able to rejoin.'**
+  String get chatMemberRemoveBody;
+
+  /// Snackbar after a member is banned.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was removed'**
+  String chatMemberRemoved(String name);
+
+  /// Tooltip on the manage-members icon in the thread header.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage members'**
+  String get chatThreadManageMembers;
+
   /// Community detail tab: chats.
   ///
   /// In en, this message translates to:

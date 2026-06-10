@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -10,6 +12,7 @@ import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import '../services/chat_service.dart';
+import '../widgets/chat_management.dart';
 
 /// A single conversation: message list + composer. Messages are held in local
 /// state (the screen is ephemeral) — no provider needed.
@@ -111,13 +114,65 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     });
   }
 
+  /// Distinct non-self members seen in this thread's messages — each carries a
+  /// profile id, which is what the ban action targets. The backend exposes no
+  /// thread-members listing, so the message senders are our source of truth.
+  List<ChatParticipant> get _knownMembers {
+    final byId = <String, ChatParticipant>{};
+    for (final m in _messages) {
+      if (m.isMine || m.sender.profileId.isEmpty) continue;
+      byId.putIfAbsent(
+        m.sender.profileId,
+        () => ChatParticipant(
+          name: m.sender.name,
+          profileId: m.sender.profileId,
+          avatarUrl: m.sender.avatarUrl,
+        ),
+      );
+    }
+    return byId.values.toList();
+  }
+
+  void _openEvent() {
+    final eventId = widget.thread.event?.id ?? widget.thread.eventId;
+    if (eventId == null) return;
+    context.push(KolabingRoutes.buildEventDetailPath(eventId));
+  }
+
+  Future<void> _manageMembers() async {
+    await ChatMembersSheet.show(
+      context,
+      thread: widget.thread,
+      members: _knownMembers,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isEvent = widget.thread.type == ChatThreadType.event;
+    final canManageMembers =
+        widget.thread.canManage && widget.thread.type.isCommunity;
     return Scaffold(
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
-          title: Text(widget.thread.name ?? l10n.chatThreadFallbackTitle)),
+        title: Text(widget.thread.name ?? l10n.chatThreadFallbackTitle),
+        actions: [
+          if (canManageMembers)
+            IconButton(
+              tooltip: l10n.chatThreadManageMembers,
+              icon: const Icon(LucideIcons.users),
+              onPressed: _manageMembers,
+            ),
+          if (isEvent &&
+              (widget.thread.event?.id ?? widget.thread.eventId) != null)
+            IconButton(
+              tooltip: l10n.chatThreadOpenEvent,
+              icon: const Icon(LucideIcons.info),
+              onPressed: _openEvent,
+            ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(child: _body(l10n)),

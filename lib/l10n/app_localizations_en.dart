@@ -4786,6 +4786,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatThreadEmptyMessage => 'No messages yet. Say hi 👋';
 
   @override
+  String get chatManageNewChatTitle => 'New chat';
+
+  @override
+  String get chatManageRenameTitle => 'Rename chat';
+
+  @override
+  String get chatManageNameLabel => 'Chat name';
+
+  @override
+  String get chatManageNameHint => 'e.g. Exec, Socials, Philanthropy';
+
+  @override
+  String get chatManageCreate => 'Create';
+
+  @override
+  String get chatManageRename => 'Rename';
+
+  @override
+  String get chatManageDelete => 'Delete';
+
+  @override
+  String get chatManageCreateChat => 'Create chat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'Created \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'Chat renamed';
+
+  @override
+  String get chatManageChatDeleted => 'Chat deleted';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'You\'ve reached the limit of $count custom chats.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => 'Delete this chat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Members will lose access to \"$name\". You can recover it later if you change your mind.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => 'Which community?';
+
+  @override
+  String get chatJoinSectionTitle => 'Chats you can join';
+
+  @override
+  String get chatJoinAction => 'Join';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'You joined \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Open event';
+
+  @override
+  String get chatMembersTitle => 'Members';
+
+  @override
+  String get chatMembersEmpty => 'No members to manage yet.';
+
+  @override
+  String get chatMemberRemove => 'Remove';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'They\'ll lose access to this chat and won\'t be able to rejoin.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return '$name was removed';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Manage members';
+
+  @override
   String get communityDetailTabChats => 'Chats';
 
   @override
