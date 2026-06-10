@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme/colors.dart';
-import '../../config/theme/typography.dart';
 import 'profile_avatar_button.dart';
 
 /// Kolabing standard app bar — yellow background, charcoal text/icons.
@@ -32,12 +31,10 @@ class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () => Navigator.of(context).pop(),
             )
           : null,
-      title: Text(
-        'KOLABING',
-        style: KolabingTextStyles.headlineMedium.copyWith(
-          color: KolabingColors.charcoal,
-          letterSpacing: 2.0,
-        ),
+      title: Image.asset(
+        'assets/brand/kolabing-wordmark-dark.png',
+        height: 34,
+        fit: BoxFit.contain,
       ),
       centerTitle: true,
       // Chat moved to the bottom-nav (NF-12); the avatar opens the now-hidden
