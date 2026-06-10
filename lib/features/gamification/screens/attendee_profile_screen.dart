@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
@@ -10,12 +11,15 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../business/services/profile_service.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../community/models/community_membership.dart';
 import '../../community/providers/community_providers.dart';
 import '../../friends/models/friendship.dart';
 import '../../friends/providers/friends_provider.dart';
+import '../../identity/widgets/handle_field.dart';
 
 /// Attendee profile — a Flaire-style social hub.
 ///
@@ -23,14 +27,124 @@ import '../../friends/providers/friends_provider.dart';
 /// bottom edge, flanked by four stats (Friends / Events | Chats / Points);
 /// name + city centred below; then the user's communities (horizontal cards),
 /// a friends preview row, and a compact settings list.
-class AttendeeProfileScreen extends ConsumerWidget {
+class AttendeeProfileScreen extends ConsumerStatefulWidget {
   const AttendeeProfileScreen({super.key});
 
+  @override
+  ConsumerState<AttendeeProfileScreen> createState() =>
+      _AttendeeProfileScreenState();
+}
+
+class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
   static const double _coverHeight = 132;
   static const double _avatarSize = 96;
 
+  final ProfileService _profileService = ProfileService();
+  final ImagePicker _imagePicker = ImagePicker();
+  bool _uploadingPhoto = false;
+
+  // ---- Inline name + @handle editing ----------------------------------------
+  bool _editingIdentity = false;
+  bool _savingIdentity = false;
+  final _nameController = TextEditingController();
+  final _handleController = TextEditingController();
+  String? _initialHandle;
+  String _handle = '';
+  bool _handleOk = true;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    _nameController.dispose();
+    _handleController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _changePhoto() async {
+    final l10n = AppLocalizations.of(context);
+    final picked = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 85,
+    );
+    if (picked == null) return;
+
+    setState(() => _uploadingPhoto = true);
+    try {
+      await _profileService.updateProfilePhotoFile(filePath: picked.path);
+      await ref.read(authProvider.notifier).checkAuthStatus();
+    } on ApiException catch (e) {
+      _showError(e.error.message);
+    } on Exception {
+      _showError(l10n.editProfileSaveError);
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
+  }
+
+  void _startEditingIdentity() {
+    final user = ref.read(authProvider).user;
+    _nameController.text = user?.displayName ?? '';
+    _initialHandle = user?.handle?.toLowerCase();
+    _handle = _initialHandle ?? '';
+    _handleOk = true;
+    _handleController.text = _initialHandle ?? '';
+    setState(() => _editingIdentity = true);
+  }
+
+  void _cancelEditingIdentity() {
+    setState(() => _editingIdentity = false);
+  }
+
+  Future<void> _saveIdentity() async {
+    final l10n = AppLocalizations.of(context);
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      _showError(l10n.editProfileNameRequired);
+      return;
+    }
+    if (_handle.isNotEmpty && !_handleOk) {
+      _showError(l10n.handleFieldFormatError);
+      return;
+    }
+
+    setState(() => _savingIdentity = true);
+    try {
+      final handleChanged =
+          _handle.isNotEmpty && _handle != (_initialHandle ?? '');
+      await _profileService.updateProfile({
+        'name': name,
+        if (handleChanged) 'handle': _handle,
+      });
+      await ref.read(authProvider.notifier).checkAuthStatus();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.editProfileSaved),
+          backgroundColor: KolabingColors.success,
+        ),
+      );
+      setState(() => _editingIdentity = false);
+    } on ApiException catch (e) {
+      _showError(e.error.message);
+    } on NetworkException catch (e) {
+      _showError(e.message);
+    } on Exception {
+      _showError(l10n.editProfileSaveError);
+    } finally {
+      if (mounted) setState(() => _savingIdentity = false);
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: KolabingColors.error),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final attendeeProfile = user?.attendeeProfile;
     final l10n = AppLocalizations.of(context);
@@ -118,12 +232,59 @@ class AttendeeProfileScreen extends ConsumerWidget {
                   ),
 
                   // Centred circular avatar overlapping the cover bottom edge.
+                  // Tap → change photo (NF-18).
                   Positioned(
                     top: _coverHeight - _avatarSize / 2,
-                    child: _ProfileAvatar(
-                      size: _avatarSize,
-                      photoUrl: user?.profilePhotoUrl,
-                      initial: _getInitials(user?.displayName ?? 'A'),
+                    child: GestureDetector(
+                      onTap: _uploadingPhoto ? null : _changePhoto,
+                      child: Stack(
+                        children: [
+                          _ProfileAvatar(
+                            size: _avatarSize,
+                            photoUrl: user?.profilePhotoUrl,
+                            initial: _getInitials(user?.displayName ?? 'A'),
+                          ),
+                          if (_uploadingPhoto)
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black.withValues(alpha: 0.4),
+                                ),
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: KolabingColors.onPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(KolabingSpacing.xxs),
+                              decoration: BoxDecoration(
+                                color: KolabingColors.primary,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: KolabingColors.surface,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Icon(
+                                LucideIcons.camera,
+                                size: 14,
+                                color: KolabingColors.onPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -132,35 +293,12 @@ class AttendeeProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: KolabingSpacing.sm),
 
-            // ---- Name + city -------------------------------------------------
-            Text(
-              user?.displayName ?? l10n.attendeeRoleLabel,
-              textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyLarge.copyWith(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurface,
-              ),
-            ),
-            if (cityName != null && cityName.isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    LucideIcons.mapPin,
-                    size: 14,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    cityName,
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant),
-                  ),
-                ],
-              ),
-            ],
+            // ---- Name + @handle (inline editable, NF-18) ---------------------
+            if (_editingIdentity)
+              _buildIdentityEditor(l10n)
+            else
+              _buildIdentityDisplay(user?.displayName, user?.handle, cityName,
+                  l10n),
 
             const SizedBox(height: KolabingSpacing.lg),
 
@@ -180,11 +318,6 @@ class AttendeeProfileScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   const Divider(height: 1, color: KolabingColors.outlineVariant),
-                  _SettingsRow(
-                    icon: LucideIcons.edit3,
-                    label: l10n.attendeeProfileEditProfile,
-                    onTap: () => context.push(KolabingRoutes.editProfile),
-                  ),
                   _SettingsRow(
                     icon: LucideIcons.bell,
                     label: l10n.notifSettingsTitle,
@@ -223,6 +356,162 @@ class AttendeeProfileScreen extends ConsumerWidget {
       ),
     );
   }
+
+  /// Read-only name + @handle + city, with a tap target to begin editing.
+  Widget _buildIdentityDisplay(
+    String? displayName,
+    String? handle,
+    String? cityName,
+    AppLocalizations l10n,
+  ) =>
+      GestureDetector(
+        onTap: _startEditingIdentity,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    displayName ?? l10n.attendeeRoleLabel,
+                    textAlign: TextAlign.center,
+                    style: KolabingTextStyles.bodyLarge.copyWith(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: KolabingColors.onSurface,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+                const Icon(
+                  LucideIcons.edit3,
+                  size: 16,
+                  color: KolabingColors.onSurfaceVariant,
+                ),
+              ],
+            ),
+            if (handle != null && handle.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                '@$handle',
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+            if (cityName != null && cityName.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    LucideIcons.mapPin,
+                    size: 14,
+                    color: KolabingColors.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    cityName,
+                    style: KolabingTextStyles.bodySmall
+                        .copyWith(color: KolabingColors.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      );
+
+  /// Inline name + @handle editor shown in place of the display block.
+  Widget _buildIdentityEditor(AppLocalizations l10n) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _nameController,
+              enabled: !_savingIdentity,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: KolabingColors.onSurface,
+              ),
+              decoration: InputDecoration(
+                hintText: l10n.editProfileNameHint,
+                filled: true,
+                fillColor: KolabingColors.surfaceVariant,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(KolabingRadius.sm),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                  vertical: KolabingSpacing.sm + 2,
+                ),
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            HandleField(
+              controller: _handleController,
+              initialHandle: _initialHandle,
+              enabled: !_savingIdentity,
+              onChanged: (handle, ok) {
+                _handle = handle;
+                if (ok != _handleOk && mounted) {
+                  setState(() => _handleOk = ok);
+                } else {
+                  _handleOk = ok;
+                }
+              },
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _savingIdentity ? null : _cancelEditingIdentity,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: KolabingColors.onSurface,
+                      side:
+                          const BorderSide(color: KolabingColors.outlineVariant),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(KolabingRadius.md),
+                      ),
+                    ),
+                    child: Text(l10n.commonCancel),
+                  ),
+                ),
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _savingIdentity ? null : _saveIdentity,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: KolabingColors.primary,
+                      foregroundColor: KolabingColors.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(KolabingRadius.md),
+                      ),
+                    ),
+                    child: _savingIdentity
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: KolabingColors.onPrimary,
+                            ),
+                          )
+                        : Text(l10n.commonSave),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
 
   String _getInitials(String name) {
     final parts = name.trim().split(' ');

@@ -1691,5 +1691,21 @@
   "rosterInviteIdentifierLabel": "Correo o @nombre",
   "rosterInviteIdentifierHint": "nombre@ejemplo.com o @nombre",
   "rosterInviteInvalidIdentifier": "Introduce un correo o @nombre válido.",
-  "rosterNoAccountForIdentifier": "Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario."
+  "rosterNoAccountForIdentifier": "Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario.",
+
+  "attendeeHomeEventsTitle": "EVENTOS",
+  "attendeeHomeChooseCity": "Elegir ciudad",
+  "attendeeHomeFilterToday": "Hoy",
+  "attendeeHomeFilterType": "Tipo",
+  "attendeeHomeFilterTypeAll": "Todos los tipos",
+  "attendeeHomeExploreCommunities": "Explorar comunidades",
+  "attendeeHomePickCityTitle": "Elige una ciudad",
+  "attendeeHomePickCityHint": "Elige una ciudad para descubrir eventos cerca de ti.",
+  "attendeeHomeNoEventsCity": "No hay eventos en esta ciudad",
+  "attendeeHomeNoEventsCityHint": "Prueba otra ciudad o borra los filtros.",
+  "eventPartnerBusiness": "Negocio",
+  "eventPartnerCommunity": "Comunidad",
+  "eventDateToday": "Hoy",
+  "eventDateTomorrow": "Mañana",
+  "eventDateInDays": "En {days} días"
 }

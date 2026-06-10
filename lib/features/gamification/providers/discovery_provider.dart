@@ -15,70 +15,24 @@ final discoveryServiceProvider = Provider<DiscoveryService>((ref) {
 // Discovery Parameters
 // =============================================================================
 
-/// Parameters for event discovery
-class DiscoveryParams {
-  const DiscoveryParams({
-    required this.latitude,
-    required this.longitude,
-    this.radiusKm = 10.0,
-    this.page = 1,
-    this.limit = 10,
-  });
-
-  final double latitude;
-  final double longitude;
-  final double radiusKm;
-  final int page;
-  final int limit;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DiscoveryParams &&
-          runtimeType == other.runtimeType &&
-          latitude == other.latitude &&
-          longitude == other.longitude &&
-          radiusKm == other.radiusKm &&
-          page == other.page &&
-          limit == other.limit;
-
-  @override
-  int get hashCode =>
-      latitude.hashCode ^
-      longitude.hashCode ^
-      radiusKm.hashCode ^
-      page.hashCode ^
-      limit.hashCode;
-}
-
 // =============================================================================
-// Discover Events Provider
+// Discovery State Provider (city-based + optional geo)
 // =============================================================================
 
-/// Provider for discovering nearby events
-final discoverEventsProvider =
-    FutureProvider.family<DiscoveredEventsResponse, DiscoveryParams>(
-        (ref, params) async {
-  final service = ref.watch(discoveryServiceProvider);
-  return service.discoverEvents(
-    latitude: params.latitude,
-    longitude: params.longitude,
-    radiusKm: params.radiusKm,
-    page: params.page,
-    limit: params.limit,
-  );
-});
-
-// =============================================================================
-// Discovery State Provider (with location management)
-// =============================================================================
-
-/// State for discovery with cached location
+/// State for event discovery. Discovery is **city-based** (NF-19): a city is
+/// selected (defaulting to the attendee's own) and the list re-queries on city,
+/// `Today` toggle, and `community_type` filter changes. Geo (lat/lng) is kept
+/// as an optional alternative the home screen can supply.
 class DiscoveryState {
   const DiscoveryState({
     this.latitude,
     this.longitude,
     this.radiusKm = 10.0,
+    this.cityId,
+    this.cityName,
+    this.todayOnly = false,
+    this.typeSlug,
+    this.typeName,
     this.events = const [],
     this.isLoading = false,
     this.error,
@@ -89,6 +43,11 @@ class DiscoveryState {
   final double? latitude;
   final double? longitude;
   final double radiusKm;
+  final String? cityId;
+  final String? cityName;
+  final bool todayOnly;
+  final String? typeSlug;
+  final String? typeName;
   final List<DiscoveredEvent> events;
   final bool isLoading;
   final String? error;
@@ -96,11 +55,21 @@ class DiscoveryState {
   final bool hasMore;
 
   bool get hasLocation => latitude != null && longitude != null;
+  bool get hasCity => cityId != null && cityId!.isNotEmpty;
+
+  /// Whether the notifier has enough context to query (a city or a geo fix).
+  bool get canQuery => hasCity || hasLocation;
 
   DiscoveryState copyWith({
     double? latitude,
     double? longitude,
     double? radiusKm,
+    String? cityId,
+    String? cityName,
+    bool? todayOnly,
+    String? typeSlug,
+    String? typeName,
+    bool clearType = false,
     List<DiscoveredEvent>? events,
     bool? isLoading,
     String? error,
@@ -111,6 +80,11 @@ class DiscoveryState {
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
         radiusKm: radiusKm ?? this.radiusKm,
+        cityId: cityId ?? this.cityId,
+        cityName: cityName ?? this.cityName,
+        todayOnly: todayOnly ?? this.todayOnly,
+        typeSlug: clearType ? null : (typeSlug ?? this.typeSlug),
+        typeName: clearType ? null : (typeName ?? this.typeName),
         events: events ?? this.events,
         isLoading: isLoading ?? this.isLoading,
         error: error,
@@ -149,9 +123,82 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
   }
 
   Future<void> _reloadWithCurrentLocation() async {
-    if (!state.hasLocation) {
+    if (!state.canQuery) {
       return;
     }
+
+    await _fetchEvents();
+  }
+
+  // ---------------------------------------------------------------------------
+  // City-based discovery (NF-19)
+  // ---------------------------------------------------------------------------
+
+  /// Select the city to discover events in (defaults to the attendee's own at
+  /// home init) and (re)fetch the first page.
+  Future<void> setCityAndDiscover(String cityId, String cityName) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+
+    state = state.copyWith(
+      cityId: cityId,
+      cityName: cityName,
+      isLoading: true,
+      error: null,
+      events: [],
+      currentPage: 1,
+      hasMore: true,
+    );
+
+    await _fetchEvents();
+  }
+
+  /// Toggle the `Today` filter.
+  Future<void> setTodayOnly(bool todayOnly) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+    if (!state.canQuery) return;
+
+    state = state.copyWith(
+      todayOnly: todayOnly,
+      isLoading: true,
+      error: null,
+      events: [],
+      currentPage: 1,
+      hasMore: true,
+    );
+
+    await _fetchEvents();
+  }
+
+  /// Set (or clear, when [typeSlug] is null) the community-type filter.
+  Future<void> setTypeFilter({String? typeSlug, String? typeName}) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+    if (!state.canQuery) return;
+
+    state = state.copyWith(
+      typeSlug: typeSlug,
+      typeName: typeName,
+      clearType: typeSlug == null,
+      isLoading: true,
+      error: null,
+      events: [],
+      currentPage: 1,
+      hasMore: true,
+    );
 
     await _fetchEvents();
   }
@@ -210,7 +257,7 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     )) {
       return;
     }
-    if (!state.hasLocation || state.isLoading || !state.hasMore) return;
+    if (!state.canQuery || state.isLoading || !state.hasMore) return;
 
     state = state.copyWith(
       isLoading: true,
@@ -228,7 +275,7 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     )) {
       return;
     }
-    if (!state.hasLocation) return;
+    if (!state.canQuery) return;
 
     state = state.copyWith(
       isLoading: true,
@@ -245,10 +292,16 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     final sessionVersion = activeAuthSessionVersion;
 
     try {
+      // City mode takes precedence (NF-19); geo is used only when no city is
+      // selected. Self-gated filter params (date/type) are passed through.
+      final useCity = state.hasCity;
       final response = await _service.discoverEvents(
-        latitude: state.latitude!,
-        longitude: state.longitude!,
+        latitude: useCity ? null : state.latitude,
+        longitude: useCity ? null : state.longitude,
         radiusKm: state.radiusKm,
+        cityId: useCity ? state.cityId : null,
+        date: state.todayOnly ? 'today' : null,
+        typeSlug: state.typeSlug,
         page: state.currentPage,
       );
 

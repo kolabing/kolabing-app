@@ -14,26 +14,35 @@ class DiscoveredEvent {
     required this.distanceKm,
     required this.createdAt,
     required this.updatedAt,
+    this.communityName,
+    this.communityType,
   });
 
   factory DiscoveredEvent.fromJson(Map<String, dynamic> json) {
+    // The host community's display name + 17-slug community_type (NF-19). The
+    // backend exposes these on the event card; fall back to the legacy
+    // partner_* fields when the new keys are absent (self-gate).
+    final communityName = json['community_name'] as String?;
+    final communityType = json['community_type'] as String?;
     return DiscoveredEvent(
       id: json['id'] as String,
       name: json['name'] as String,
-      partnerName: json['partner_name'] as String,
-      partnerType: json['partner_type'] as String,
+      partnerName: (json['partner_name'] ?? communityName) as String? ?? '',
+      partnerType: (json['partner_type'] as String?) ?? 'community',
       date: json['date'] as String,
-      attendeeCount: json['attendee_count'] as int,
-      locationLat: (json['location_lat'] as num).toDouble(),
-      locationLng: (json['location_lng'] as num).toDouble(),
+      attendeeCount: (json['attendee_count'] as int?) ?? 0,
+      locationLat: (json['location_lat'] as num?)?.toDouble() ?? 0,
+      locationLng: (json['location_lng'] as num?)?.toDouble() ?? 0,
       address: json['address'] as String?,
       photos: (json['photos'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      distanceKm: (json['distance_km'] as num).toDouble(),
+      distanceKm: (json['distance_km'] as num?)?.toDouble() ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      communityName: communityName,
+      communityType: communityType,
     );
   }
 
@@ -50,6 +59,19 @@ class DiscoveredEvent {
   final double distanceKm;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  /// Host community's display name (NF-19). Falls back to [partnerName].
+  final String? communityName;
+
+  /// Host community's `community_type` slug (the unified 17-slug). May be null
+  /// if the backend has not yet been deployed.
+  final String? communityType;
+
+  /// The host name to render on the card.
+  String get hostName =>
+      (communityName != null && communityName!.isNotEmpty)
+          ? communityName!
+          : partnerName;
 
   /// Check if organized by a business
   bool get isBusiness => partnerType == 'business';
@@ -82,6 +104,8 @@ class DiscoveredEvent {
         'distance_km': distanceKm,
         'created_at': createdAt.toIso8601String(),
         'updated_at': updatedAt.toIso8601String(),
+        if (communityName != null) 'community_name': communityName,
+        if (communityType != null) 'community_type': communityType,
       };
 }
 

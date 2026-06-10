@@ -1691,5 +1691,21 @@
   "rosterInviteIdentifierLabel": "Correu o @nom",
   "rosterInviteIdentifierHint": "nom@exemple.com o @nom",
   "rosterInviteInvalidIdentifier": "Introdueix un correu o @nom vàlid.",
-  "rosterNoAccountForIdentifier": "Cap compte de Kolabing coincideix amb aquest correu o nom d'usuari."
+  "rosterNoAccountForIdentifier": "Cap compte de Kolabing coincideix amb aquest correu o nom d'usuari.",
+
+  "attendeeHomeEventsTitle": "ESDEVENIMENTS",
+  "attendeeHomeChooseCity": "Tria ciutat",
+  "attendeeHomeFilterToday": "Avui",
+  "attendeeHomeFilterType": "Tipus",
+  "attendeeHomeFilterTypeAll": "Tots els tipus",
+  "attendeeHomeExploreCommunities": "Explora comunitats",
+  "attendeeHomePickCityTitle": "Tria una ciutat",
+  "attendeeHomePickCityHint": "Tria una ciutat per descobrir esdeveniments a prop teu.",
+  "attendeeHomeNoEventsCity": "No hi ha esdeveniments en aquesta ciutat",
+  "attendeeHomeNoEventsCityHint": "Prova una altra ciutat o esborra els filtres.",
+  "eventPartnerBusiness": "Negoci",
+  "eventPartnerCommunity": "Comunitat",
+  "eventDateToday": "Avui",
+  "eventDateTomorrow": "Demà",
+  "eventDateInDays": "D'aquí a {days} dies"
 }

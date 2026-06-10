@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/discovered_event.dart';
 
 /// Card displaying a discovered event
@@ -19,6 +20,7 @@ class DiscoveredEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -79,7 +81,9 @@ class DiscoveredEventCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      event.isBusiness ? 'Business' : 'Community',
+                      event.isBusiness
+                          ? l10n.eventPartnerBusiness
+                          : l10n.eventPartnerCommunity,
                       style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: event.isBusiness
                             ? KolabingColors.info
                             : KolabingColors.success),
@@ -95,9 +99,9 @@ class DiscoveredEventCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
 
-                  // Partner name
+                  // Host community name · type
                   Text(
-                    'by ${event.partnerName}',
+                    _hostLine(),
                     style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -114,7 +118,7 @@ class DiscoveredEventCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _formatDate(event.eventDate),
+                        _formatDate(context, event.eventDate),
                         style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
@@ -166,16 +170,33 @@ class DiscoveredEventCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  /// "Real Run Club · Running" — host community name + humanized
+  /// community_type. Falls back to the host name alone when the type is absent.
+  String _hostLine() {
+    final type = event.communityType;
+    if (type != null && type.isNotEmpty) {
+      return '${event.hostName} · ${_humanizeSlug(type)}';
+    }
+    return event.hostName;
+  }
+
+  String _humanizeSlug(String slug) => slug
+      .split(RegExp('[_-]'))
+      .where((p) => p.isNotEmpty)
+      .map((p) => '${p[0].toUpperCase()}${p.substring(1)}')
+      .join(' ');
+
+  String _formatDate(BuildContext context, DateTime date) {
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final diff = date.difference(now);
 
     if (diff.inDays == 0) {
-      return 'Today';
+      return l10n.eventDateToday;
     } else if (diff.inDays == 1) {
-      return 'Tomorrow';
+      return l10n.eventDateTomorrow;
     } else if (diff.inDays < 7 && diff.inDays > 0) {
-      return 'In ${diff.inDays} days';
+      return l10n.eventDateInDays(diff.inDays);
     } else {
       return '${date.day}/${date.month}';
     }

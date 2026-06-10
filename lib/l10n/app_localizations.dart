@@ -10147,6 +10147,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Kolabing account matches that email or handle.'**
   String get rosterNoAccountForIdentifier;
+
+  /// Attendee home events section header.
+  ///
+  /// In en, this message translates to:
+  /// **'EVENTS'**
+  String get attendeeHomeEventsTitle;
+
+  /// City picker button label when no city is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose city'**
+  String get attendeeHomeChooseCity;
+
+  /// Events filter chip: show only today's events.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get attendeeHomeFilterToday;
+
+  /// Events filter chip / sheet title: filter by community type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get attendeeHomeFilterType;
+
+  /// Type filter option that clears the community-type filter.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get attendeeHomeFilterTypeAll;
+
+  /// Persistent CTA on the attendee home that opens community discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore communities'**
+  String get attendeeHomeExploreCommunities;
+
+  /// Empty-state title when no city is selected for events.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a city'**
+  String get attendeeHomePickCityTitle;
+
+  /// Empty-state hint inviting the user to pick a city.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a city to discover events near you.'**
+  String get attendeeHomePickCityHint;
+
+  /// Empty-state title when a city has no events for the current filters.
+  ///
+  /// In en, this message translates to:
+  /// **'No events in this city'**
+  String get attendeeHomeNoEventsCity;
+
+  /// Empty-state hint when no events match in the selected city.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another city or clear your filters.'**
+  String get attendeeHomeNoEventsCityHint;
+
+  /// Event card badge for a business-hosted event.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get eventPartnerBusiness;
+
+  /// Event card badge for a community-hosted event.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get eventPartnerCommunity;
+
+  /// Event card relative date: today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get eventDateToday;
+
+  /// Event card relative date: tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get eventDateTomorrow;
+
+  /// Event card relative date: N days away.
+  ///
+  /// In en, this message translates to:
+  /// **'In {days} days'**
+  String eventDateInDays(int days);
 }
 
 class _AppLocalizationsDelegate

@@ -5711,4 +5711,53 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get rosterNoAccountForIdentifier =>
       'Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario.';
+
+  @override
+  String get attendeeHomeEventsTitle => 'EVENTOS';
+
+  @override
+  String get attendeeHomeChooseCity => 'Elegir ciudad';
+
+  @override
+  String get attendeeHomeFilterToday => 'Hoy';
+
+  @override
+  String get attendeeHomeFilterType => 'Tipo';
+
+  @override
+  String get attendeeHomeFilterTypeAll => 'Todos los tipos';
+
+  @override
+  String get attendeeHomeExploreCommunities => 'Explorar comunidades';
+
+  @override
+  String get attendeeHomePickCityTitle => 'Elige una ciudad';
+
+  @override
+  String get attendeeHomePickCityHint =>
+      'Elige una ciudad para descubrir eventos cerca de ti.';
+
+  @override
+  String get attendeeHomeNoEventsCity => 'No hay eventos en esta ciudad';
+
+  @override
+  String get attendeeHomeNoEventsCityHint =>
+      'Prueba otra ciudad o borra los filtros.';
+
+  @override
+  String get eventPartnerBusiness => 'Negocio';
+
+  @override
+  String get eventPartnerCommunity => 'Comunidad';
+
+  @override
+  String get eventDateToday => 'Hoy';
+
+  @override
+  String get eventDateTomorrow => 'Mañana';
+
+  @override
+  String eventDateInDays(int days) {
+    return 'En $days días';
+  }
 }

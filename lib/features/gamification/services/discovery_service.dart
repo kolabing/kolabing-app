@@ -21,13 +21,24 @@ class DiscoveryService {
   final AuthService _authService;
   final http.Client _httpClient;
 
-  /// Discover nearby events based on GPS location
+  /// Discover events.
   ///
-  /// GET /api/v1/events/discover?lat={lat}&lng={lng}&radius_km={radius}&page={page}&limit={limit}
+  /// Supports two complementary modes (the backend accepts either; the app
+  /// self-gates new params, so an undeployed backend simply ignores them and
+  /// still returns a list):
+  /// - Geo: `lat` + `lng` (+ `radius_km`).
+  /// - City: `city_id` (the attendee's / a browsed city).
+  /// Plus optional filters: `date` (`today` | `upcoming`) and `type` (a host
+  /// community_type slug).
+  ///
+  /// GET /api/v1/events/discover?lat&lng&radius_km&city_id&date&type&page&limit
   Future<DiscoveredEventsResponse> discoverEvents({
-    required double latitude,
-    required double longitude,
+    double? latitude,
+    double? longitude,
     double radiusKm = 10.0,
+    String? cityId,
+    String? date,
+    String? typeSlug,
     int page = 1,
     int limit = 10,
   }) async {
@@ -36,10 +47,14 @@ class DiscoveryService {
       throw const DiscoveryException('Not authenticated');
     }
 
-    final queryParams = {
-      'lat': latitude.toString(),
-      'lng': longitude.toString(),
-      'radius_km': radiusKm.toString(),
+    final queryParams = <String, String>{
+      if (latitude != null) 'lat': latitude.toString(),
+      if (longitude != null) 'lng': longitude.toString(),
+      if (latitude != null && longitude != null)
+        'radius_km': radiusKm.toString(),
+      if (cityId != null && cityId.isNotEmpty) 'city_id': cityId,
+      if (date != null && date.isNotEmpty) 'date': date,
+      if (typeSlug != null && typeSlug.isNotEmpty) 'type': typeSlug,
       'page': page.toString(),
       'limit': limit.toString(),
     };
