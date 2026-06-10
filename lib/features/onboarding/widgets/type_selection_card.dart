@@ -15,12 +15,16 @@ class TypeSelectionCard extends StatefulWidget {
     required this.onTap,
     super.key,
     this.icon,
+    this.iconUrl,
     this.isSelected = false,
   });
 
   final String id;
   final String name;
   final String? icon;
+
+  /// Admin-uploaded SVG URL (rendered over the bundled asset when present).
+  final String? iconUrl;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -99,7 +103,7 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Category illustration
-                  CategoryIcon(name: widget.name, size: 40),
+                  CategoryIcon(name: widget.name, iconUrl: widget.iconUrl, size: 40),
                   const SizedBox(height: 6),
                   // Name — full text, up to 2 lines, centred
                   Text(

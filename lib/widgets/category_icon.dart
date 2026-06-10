@@ -162,14 +162,18 @@ String categoryIconAsset(String name) {
 
 /// Renders a category icon as an SVG at the given [size].
 ///
-/// Falls back to [category-default.svg] for unrecognised names.
-/// Pass an explicit [assetPath] to bypass keyword matching.
+/// Resolution order:
+/// 1. [iconUrl] — an admin-uploaded SVG (network), used for types that have no
+///    bundled asset. Falls back to the bundled asset if the network load fails.
+/// 2. [assetPath] — an explicit bundled asset path (bypasses keyword matching).
+/// 3. keyword match on [name] → bundled asset (else `category-default.svg`).
 class CategoryIcon extends StatelessWidget {
   const CategoryIcon({
     required this.name,
     super.key,
     this.size = 32,
     this.assetPath,
+    this.iconUrl,
   });
 
   final String name;
@@ -178,9 +182,29 @@ class CategoryIcon extends StatelessWidget {
   /// Override the auto-resolved asset path.
   final String? assetPath;
 
+  /// Admin-uploaded SVG URL (from the type tables' `icon_url`). Takes priority.
+  final String? iconUrl;
+
   @override
   Widget build(BuildContext context) {
     final path = assetPath ?? categoryIconAsset(name);
+
+    final url = iconUrl;
+    if (url != null && url.startsWith('http')) {
+      return SvgPicture.network(
+        url,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        placeholderBuilder: (_) => SvgPicture.asset(
+          path,
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+
     return SvgPicture.asset(
       path,
       width: size,

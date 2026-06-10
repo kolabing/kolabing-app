@@ -395,6 +395,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                             id: type.id,
                             name: type.name,
                             icon: type.icon,
+                            iconUrl: type.iconUrl,
                             isSelected: selectedTypeIds.contains(type.id),
                             onTap: () => notifier.toggleBusinessType(type),
                           );

@@ -129,6 +129,7 @@ class _CommunityStep2ScreenState extends ConsumerState<CommunityStep2Screen> {
                             id: type.id,
                             name: type.name,
                             icon: type.icon,
+                            iconUrl: type.iconUrl,
                             isSelected: data?.type == type.id,
                             onTap: () =>
                                 _handleTypeSelected(type.id, type.slug, type.name),
