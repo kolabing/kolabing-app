@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../identity/services/identity_service.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
@@ -90,7 +91,7 @@ class RosterScreen extends ConsumerWidget {
   Future<void> _invite(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
-    final email = await showDialog<String>(
+    final identifier = await showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(l10n.rosterInviteTitle),
@@ -105,9 +106,10 @@ class RosterScreen extends ConsumerWidget {
               autofocus: true,
               keyboardType: TextInputType.emailAddress,
               autocorrect: false,
+              enableSuggestions: false,
               decoration: InputDecoration(
-                labelText: l10n.rosterInviteEmailLabel,
-                hintText: l10n.rosterInviteEmailHint,
+                labelText: l10n.rosterInviteIdentifierLabel,
+                hintText: l10n.rosterInviteIdentifierHint,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -125,18 +127,27 @@ class RosterScreen extends ConsumerWidget {
         ],
       ),
     );
-    if (email == null || email.isEmpty) return;
-    if (!email.contains('@') || !email.contains('.')) {
+    if (identifier == null || identifier.isEmpty) return;
+
+    // Branch on the identifier shape: an "@" with a "." is an email; otherwise
+    // treat it as a @handle (the backend resolves either — contract §6).
+    final isEmail = identifier.contains('@') && identifier.contains('.');
+    final handle = identifier.startsWith('@')
+        ? identifier.substring(1)
+        : identifier;
+    if (!isEmail && !IdentityService.isValidHandleFormat(handle)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.rosterInviteInvalidEmail)));
+            SnackBar(content: Text(l10n.rosterInviteInvalidIdentifier)));
       }
       return;
     }
     try {
-      await ref
-          .read(communityServiceProvider)
-          .addMember(communityId, email: email);
+      await ref.read(communityServiceProvider).addMember(
+            communityId,
+            email: isEmail ? identifier : null,
+            handle: isEmail ? null : handle,
+          );
       ref.read(communityManageProvider.notifier).reloadMembers();
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -146,7 +157,7 @@ class RosterScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(e.isProfileNotFound
-                ? l10n.rosterNoAccountForEmail
+                ? l10n.rosterNoAccountForIdentifier
                 : e.message)));
       }
     }

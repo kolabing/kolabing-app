@@ -5522,4 +5522,124 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get discoverCommunitiesError =>
       'Couldn\'t load communities. Please try again.';
+
+  @override
+  String get commonSkip => 'Skip';
+
+  @override
+  String get handleFieldPlaceholder => 'yourhandle';
+
+  @override
+  String get handleFieldHint =>
+      '3-20 characters: lowercase letters, numbers, underscores.';
+
+  @override
+  String get handleFieldFormatError =>
+      'Use 3-20 lowercase letters, numbers or underscores.';
+
+  @override
+  String get handleFieldChecking => 'Checking availability…';
+
+  @override
+  String get handleFieldAvailable => 'Available';
+
+  @override
+  String get handleFieldTaken => 'That handle is taken.';
+
+  @override
+  String handleFieldTakenWithSuggestion(String suggestion) {
+    return 'Taken. Try @$suggestion';
+  }
+
+  @override
+  String get handleFieldYours => 'This is your current handle.';
+
+  @override
+  String attendeeOnboardingStepCounter(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get attendeeOnboardingStep1Title => 'Let\'s set you up';
+
+  @override
+  String get attendeeOnboardingStep1Subtitle =>
+      'Add your name, pick a handle, and a photo if you like.';
+
+  @override
+  String get attendeeOnboardingNameLabel => 'Your name';
+
+  @override
+  String get attendeeOnboardingNameHint => 'How should we call you?';
+
+  @override
+  String get attendeeOnboardingHandleLabel => 'Your handle';
+
+  @override
+  String get attendeeOnboardingStep2Title => 'Where are you?';
+
+  @override
+  String get attendeeOnboardingStep2Subtitle =>
+      'Pick your city to discover communities near you.';
+
+  @override
+  String get attendeeOnboardingStep3Title => 'What are you into?';
+
+  @override
+  String get attendeeOnboardingStep3Subtitle =>
+      'Pick a few interests so we can suggest the right communities.';
+
+  @override
+  String get attendeeOnboardingStep4Title => 'Join your first communities';
+
+  @override
+  String get attendeeOnboardingStep4Subtitle =>
+      'Tap to join the ones you like. You can always join more later.';
+
+  @override
+  String get attendeeOnboardingFinish => 'Finish';
+
+  @override
+  String get attendeeOnboardingForYou => 'For you';
+
+  @override
+  String get editProfileHandleLabel => 'Handle';
+
+  @override
+  String get addFriendTitle => 'Add a friend';
+
+  @override
+  String get addFriendSubtitle => 'Find someone by their email or @handle.';
+
+  @override
+  String get addFriendInputHint => 'Email or @handle';
+
+  @override
+  String get addFriendSearch => 'Search';
+
+  @override
+  String get addFriendNoMatch => 'No one matches that email or handle.';
+
+  @override
+  String get addFriendUnavailable =>
+      'Adding friends isn\'t available right now.';
+
+  @override
+  String get addFriendError => 'Something went wrong. Please try again.';
+
+  @override
+  String get addFriendSelf => 'That\'s you';
+
+  @override
+  String get rosterInviteIdentifierLabel => 'Email or @handle';
+
+  @override
+  String get rosterInviteIdentifierHint => 'name@example.com or @handle';
+
+  @override
+  String get rosterInviteInvalidIdentifier => 'Enter a valid email or @handle.';
+
+  @override
+  String get rosterNoAccountForIdentifier =>
+      'No Kolabing account matches that email or handle.';
 }

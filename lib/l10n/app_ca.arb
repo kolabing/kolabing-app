@@ -1648,5 +1648,47 @@
   "discoverCommunitiesMembers": "{count, plural, =1{1 membre} other{{count} membres}}",
   "discoverCommunitiesEmptyTitle": "Encara no hi ha res per descobrir",
   "discoverCommunitiesEmptyBody": "El descobriment de comunitats arribarà aviat. Torna per trobar i unir-te a comunitats a prop teu.",
-  "discoverCommunitiesError": "No s'han pogut carregar les comunitats. Torna-ho a provar."
+  "discoverCommunitiesError": "No s'han pogut carregar les comunitats. Torna-ho a provar.",
+
+  "commonSkip": "Omet",
+
+  "handleFieldPlaceholder": "elteunom",
+  "handleFieldHint": "3-20 caràcters: minúscules, números i guions baixos.",
+  "handleFieldFormatError": "Fes servir 3-20 minúscules, números o guions baixos.",
+  "handleFieldChecking": "Comprovant disponibilitat…",
+  "handleFieldAvailable": "Disponible",
+  "handleFieldTaken": "Aquest nom d'usuari no està disponible.",
+  "handleFieldTakenWithSuggestion": "No disponible. Prova @{suggestion}",
+  "handleFieldYours": "Aquest és el teu nom d'usuari actual.",
+
+  "attendeeOnboardingStepCounter": "Pas {step} de {total}",
+  "attendeeOnboardingStep1Title": "Et configurem",
+  "attendeeOnboardingStep1Subtitle": "Afegeix el teu nom, tria un nom d'usuari i una foto si vols.",
+  "attendeeOnboardingNameLabel": "El teu nom",
+  "attendeeOnboardingNameHint": "Com vols que et diguem?",
+  "attendeeOnboardingHandleLabel": "El teu nom d'usuari",
+  "attendeeOnboardingStep2Title": "On ets?",
+  "attendeeOnboardingStep2Subtitle": "Tria la teva ciutat per descobrir comunitats a prop teu.",
+  "attendeeOnboardingStep3Title": "Què t'interessa?",
+  "attendeeOnboardingStep3Subtitle": "Tria alguns interessos perquè et puguem suggerir les comunitats adequades.",
+  "attendeeOnboardingStep4Title": "Uneix-te a les teves primeres comunitats",
+  "attendeeOnboardingStep4Subtitle": "Toca per unir-te a les que t'agradin. Sempre te'n pots unir a més després.",
+  "attendeeOnboardingFinish": "Finalitza",
+  "attendeeOnboardingForYou": "Per a tu",
+
+  "editProfileHandleLabel": "Nom d'usuari",
+
+  "addFriendTitle": "Afegeix un amic",
+  "addFriendSubtitle": "Troba algú pel seu correu o el seu @nom.",
+  "addFriendInputHint": "Correu o @nom",
+  "addFriendSearch": "Cerca",
+  "addFriendNoMatch": "Ningú coincideix amb aquest correu o nom d'usuari.",
+  "addFriendUnavailable": "Afegir amics no està disponible ara mateix.",
+  "addFriendError": "Alguna cosa ha anat malament. Torna-ho a provar.",
+  "addFriendSelf": "Ets tu",
+
+  "rosterInviteIdentifierLabel": "Correu o @nom",
+  "rosterInviteIdentifierHint": "nom@exemple.com o @nom",
+  "rosterInviteInvalidIdentifier": "Introdueix un correu o @nom vàlid.",
+  "rosterNoAccountForIdentifier": "Cap compte de Kolabing coincideix amb aquest correu o nom d'usuari."
 }

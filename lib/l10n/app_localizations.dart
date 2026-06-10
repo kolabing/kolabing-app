@@ -9925,6 +9925,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load communities. Please try again.'**
   String get discoverCommunitiesError;
+
+  /// Generic Skip button label.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get commonSkip;
+
+  /// Placeholder text inside the @handle input.
+  ///
+  /// In en, this message translates to:
+  /// **'yourhandle'**
+  String get handleFieldPlaceholder;
+
+  /// Format hint shown under the handle field.
+  ///
+  /// In en, this message translates to:
+  /// **'3-20 characters: lowercase letters, numbers, underscores.'**
+  String get handleFieldHint;
+
+  /// Shown when the entered handle is malformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 3-20 lowercase letters, numbers or underscores.'**
+  String get handleFieldFormatError;
+
+  /// Shown while the handle availability check is running.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking availability…'**
+  String get handleFieldChecking;
+
+  /// Shown when the handle is available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get handleFieldAvailable;
+
+  /// Shown when the handle is already in use.
+  ///
+  /// In en, this message translates to:
+  /// **'That handle is taken.'**
+  String get handleFieldTaken;
+
+  /// Shown when the handle is taken, offering a suggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken. Try @{suggestion}'**
+  String handleFieldTakenWithSuggestion(String suggestion);
+
+  /// Shown when the handle equals the user's existing handle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your current handle.'**
+  String get handleFieldYours;
+
+  /// Step counter in the attendee onboarding header.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String attendeeOnboardingStepCounter(int step, int total);
+
+  /// Attendee onboarding step 1 title (You).
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s set you up'**
+  String get attendeeOnboardingStep1Title;
+
+  /// Attendee onboarding step 1 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your name, pick a handle, and a photo if you like.'**
+  String get attendeeOnboardingStep1Subtitle;
+
+  /// Label for the attendee name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get attendeeOnboardingNameLabel;
+
+  /// Hint for the attendee name field.
+  ///
+  /// In en, this message translates to:
+  /// **'How should we call you?'**
+  String get attendeeOnboardingNameHint;
+
+  /// Label for the attendee @handle field.
+  ///
+  /// In en, this message translates to:
+  /// **'Your handle'**
+  String get attendeeOnboardingHandleLabel;
+
+  /// Attendee onboarding step 2 title (City).
+  ///
+  /// In en, this message translates to:
+  /// **'Where are you?'**
+  String get attendeeOnboardingStep2Title;
+
+  /// Attendee onboarding step 2 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your city to discover communities near you.'**
+  String get attendeeOnboardingStep2Subtitle;
+
+  /// Attendee onboarding step 3 title (Interests).
+  ///
+  /// In en, this message translates to:
+  /// **'What are you into?'**
+  String get attendeeOnboardingStep3Title;
+
+  /// Attendee onboarding step 3 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a few interests so we can suggest the right communities.'**
+  String get attendeeOnboardingStep3Subtitle;
+
+  /// Attendee onboarding step 4 title (Join).
+  ///
+  /// In en, this message translates to:
+  /// **'Join your first communities'**
+  String get attendeeOnboardingStep4Title;
+
+  /// Attendee onboarding step 4 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to join the ones you like. You can always join more later.'**
+  String get attendeeOnboardingStep4Subtitle;
+
+  /// Finish button on the last attendee onboarding step.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get attendeeOnboardingFinish;
+
+  /// Badge marking a community that matches the attendee's interests.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get attendeeOnboardingForYou;
+
+  /// Label for the @handle field in Edit Profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Handle'**
+  String get editProfileHandleLabel;
+
+  /// Title of the add-friend-by-identifier screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a friend'**
+  String get addFriendTitle;
+
+  /// Subtitle on the add-friend screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Find someone by their email or @handle.'**
+  String get addFriendSubtitle;
+
+  /// Hint for the add-friend search input.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or @handle'**
+  String get addFriendInputHint;
+
+  /// Search button on the add-friend screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get addFriendSearch;
+
+  /// Shown when the lookup returns no match.
+  ///
+  /// In en, this message translates to:
+  /// **'No one matches that email or handle.'**
+  String get addFriendNoMatch;
+
+  /// Shown when the lookup endpoint is not deployed (self-gated).
+  ///
+  /// In en, this message translates to:
+  /// **'Adding friends isn\'t available right now.'**
+  String get addFriendUnavailable;
+
+  /// Generic error on the add-friend screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get addFriendError;
+
+  /// CTA state when the matched profile is the viewer.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s you'**
+  String get addFriendSelf;
+
+  /// Label for the roster invite identifier field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or @handle'**
+  String get rosterInviteIdentifierLabel;
+
+  /// Hint for the roster invite identifier field.
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com or @handle'**
+  String get rosterInviteIdentifierHint;
+
+  /// Validation error for the roster invite identifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email or @handle.'**
+  String get rosterInviteInvalidIdentifier;
+
+  /// Shown when the invited identifier matches no account.
+  ///
+  /// In en, this message translates to:
+  /// **'No Kolabing account matches that email or handle.'**
+  String get rosterNoAccountForIdentifier;
 }
 
 class _AppLocalizationsDelegate

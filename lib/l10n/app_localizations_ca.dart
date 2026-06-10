@@ -5613,4 +5613,128 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get discoverCommunitiesError =>
       'No s\'han pogut carregar les comunitats. Torna-ho a provar.';
+
+  @override
+  String get commonSkip => 'Omet';
+
+  @override
+  String get handleFieldPlaceholder => 'elteunom';
+
+  @override
+  String get handleFieldHint =>
+      '3-20 caràcters: minúscules, números i guions baixos.';
+
+  @override
+  String get handleFieldFormatError =>
+      'Fes servir 3-20 minúscules, números o guions baixos.';
+
+  @override
+  String get handleFieldChecking => 'Comprovant disponibilitat…';
+
+  @override
+  String get handleFieldAvailable => 'Disponible';
+
+  @override
+  String get handleFieldTaken => 'Aquest nom d\'usuari no està disponible.';
+
+  @override
+  String handleFieldTakenWithSuggestion(String suggestion) {
+    return 'No disponible. Prova @$suggestion';
+  }
+
+  @override
+  String get handleFieldYours => 'Aquest és el teu nom d\'usuari actual.';
+
+  @override
+  String attendeeOnboardingStepCounter(int step, int total) {
+    return 'Pas $step de $total';
+  }
+
+  @override
+  String get attendeeOnboardingStep1Title => 'Et configurem';
+
+  @override
+  String get attendeeOnboardingStep1Subtitle =>
+      'Afegeix el teu nom, tria un nom d\'usuari i una foto si vols.';
+
+  @override
+  String get attendeeOnboardingNameLabel => 'El teu nom';
+
+  @override
+  String get attendeeOnboardingNameHint => 'Com vols que et diguem?';
+
+  @override
+  String get attendeeOnboardingHandleLabel => 'El teu nom d\'usuari';
+
+  @override
+  String get attendeeOnboardingStep2Title => 'On ets?';
+
+  @override
+  String get attendeeOnboardingStep2Subtitle =>
+      'Tria la teva ciutat per descobrir comunitats a prop teu.';
+
+  @override
+  String get attendeeOnboardingStep3Title => 'Què t\'interessa?';
+
+  @override
+  String get attendeeOnboardingStep3Subtitle =>
+      'Tria alguns interessos perquè et puguem suggerir les comunitats adequades.';
+
+  @override
+  String get attendeeOnboardingStep4Title =>
+      'Uneix-te a les teves primeres comunitats';
+
+  @override
+  String get attendeeOnboardingStep4Subtitle =>
+      'Toca per unir-te a les que t\'agradin. Sempre te\'n pots unir a més després.';
+
+  @override
+  String get attendeeOnboardingFinish => 'Finalitza';
+
+  @override
+  String get attendeeOnboardingForYou => 'Per a tu';
+
+  @override
+  String get editProfileHandleLabel => 'Nom d\'usuari';
+
+  @override
+  String get addFriendTitle => 'Afegeix un amic';
+
+  @override
+  String get addFriendSubtitle => 'Troba algú pel seu correu o el seu @nom.';
+
+  @override
+  String get addFriendInputHint => 'Correu o @nom';
+
+  @override
+  String get addFriendSearch => 'Cerca';
+
+  @override
+  String get addFriendNoMatch =>
+      'Ningú coincideix amb aquest correu o nom d\'usuari.';
+
+  @override
+  String get addFriendUnavailable =>
+      'Afegir amics no està disponible ara mateix.';
+
+  @override
+  String get addFriendError =>
+      'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get addFriendSelf => 'Ets tu';
+
+  @override
+  String get rosterInviteIdentifierLabel => 'Correu o @nom';
+
+  @override
+  String get rosterInviteIdentifierHint => 'nom@exemple.com o @nom';
+
+  @override
+  String get rosterInviteInvalidIdentifier =>
+      'Introdueix un correu o @nom vàlid.';
+
+  @override
+  String get rosterNoAccountForIdentifier =>
+      'Cap compte de Kolabing coincideix amb aquest correu o nom d\'usuari.';
 }

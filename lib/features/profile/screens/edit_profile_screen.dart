@@ -14,6 +14,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/services/profile_service.dart';
+import '../../identity/widgets/handle_field.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../../onboarding/widgets/city_list_item.dart';
 
@@ -33,6 +34,7 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _nameController = TextEditingController();
+  final _handleController = TextEditingController();
   final _imagePicker = ImagePicker();
   final ProfileService _profileService = ProfileService();
 
@@ -40,6 +42,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   String? _selectedCityName;
   String? _pickedPhotoPath;
   bool _saving = false;
+
+  /// The user's existing handle (lowercased) — lets [HandleField] treat the
+  /// unchanged value as "yours" without flagging it as taken.
+  String? _initialHandle;
+  String _handle = '';
+  bool _handleOk = true;
 
   @override
   void initState() {
@@ -49,11 +57,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final city = user?.communityProfile?.city ?? user?.businessProfile?.city;
     _selectedCityId = city?.id;
     _selectedCityName = city?.name;
+    _initialHandle = user?.handle?.toLowerCase();
+    _handle = _initialHandle ?? '';
+    if (_initialHandle != null) {
+      _handleController.text = _initialHandle!;
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _handleController.dispose();
     super.dispose();
   }
 
@@ -93,13 +107,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       _showError(l10n.editProfileNameRequired);
       return;
     }
+    // Block save on a malformed/taken handle (empty handle is allowed — it
+    // simply isn't sent, leaving the existing value untouched).
+    if (_handle.isNotEmpty && !_handleOk) {
+      _showError(l10n.handleFieldFormatError);
+      return;
+    }
 
     setState(() => _saving = true);
     try {
-      // 1. Name + city via JSON PUT.
+      // 1. Name + city + handle via JSON PUT.
+      final handleChanged =
+          _handle.isNotEmpty && _handle != (_initialHandle ?? '');
       await _profileService.updateProfile({
         'name': name,
         if (_selectedCityId != null) 'city_id': _selectedCityId,
+        if (handleChanged) 'handle': _handle,
       });
 
       // 2. Photo (if changed) as multipart.
@@ -226,6 +249,31 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     vertical: KolabingSpacing.sm + 2,
                   ),
                 ),
+              ),
+
+              const SizedBox(height: KolabingSpacing.lg),
+
+              // Handle field (@handle with live availability)
+              Text(
+                l10n.editProfileHandleLabel,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              HandleField(
+                controller: _handleController,
+                initialHandle: _initialHandle,
+                enabled: !_saving,
+                onChanged: (handle, ok) {
+                  _handle = handle;
+                  if (ok != _handleOk && mounted) {
+                    setState(() => _handleOk = ok);
+                  } else {
+                    _handleOk = ok;
+                  }
+                },
               ),
 
               const SizedBox(height: KolabingSpacing.lg),

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/permission_service.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../models/auth_response.dart';
 import '../providers/auth_provider.dart';
@@ -124,17 +123,10 @@ class _AttendeeRegisterScreenState
       await Future<void>.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
 
-      final hasShownPermissions = await PermissionService.instance
-          .hasShownPermissionScreen();
-      if (!mounted) return;
-
-      if (!hasShownPermissions) {
-        context.go(
-          '/permissions?destination=${Uri.encodeComponent('/attendee')}',
-        );
-      } else {
-        context.go('/attendee');
-      }
+      // After register, run the attendee onboarding flow (You · City ·
+      // Interests · Join) before the dashboard. Permissions are requested at
+      // the end of onboarding (the Join step routes through /permissions).
+      context.go('/onboarding/attendee/step1');
     } on ApiException catch (e) {
       if (!mounted) return;
       final apiError = e.error;

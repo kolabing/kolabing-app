@@ -586,7 +586,7 @@ class _FriendsPreviewSection extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => context.push(KolabingRoutes.friends),
+                onPressed: () => context.push(KolabingRoutes.addFriend),
                 icon: const Icon(LucideIcons.userPlus, size: 18),
                 label: Text(l10n.attendeeProfileFindFriends),
               ),

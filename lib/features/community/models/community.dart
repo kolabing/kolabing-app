@@ -95,6 +95,8 @@ class Community {
     this.memberCount,
     required this.createdAt,
     required this.updatedAt,
+    this.typeSlug,
+    this.matched = false,
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
@@ -108,6 +110,13 @@ class Community {
       name: json['name'] as String,
       slug: json['slug'] as String? ?? '',
       type: CommunityType.fromString(json['type'] as String? ?? 'other'),
+      // Raw backend type slug, preserved losslessly for interest matching /
+      // the discover "For You" hint (the enum above collapses unknown slugs to
+      // `other`, so never branch interest logic on it — see CANONICAL-LISTS).
+      typeSlug: (json['type'] ?? json['community_type'])?.toString(),
+      // Optional server hint that this row matched a viewer interest
+      // (`GET /communities/discover` interest ranking, contract §7).
+      matched: json['matched'] as bool? ?? false,
       description: json['description'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       isPrimary: json['is_primary'] as bool? ?? true,
@@ -142,6 +151,14 @@ class Community {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// Raw backend community-type slug (lossless; the [type] enum collapses
+  /// unknown slugs to `other`). Use this for interest matching, never [type].
+  final String? typeSlug;
+
+  /// Server hint that this discover row matched one of the viewer's interests
+  /// (contract §7). Drives the interest badge + the "For You" section.
+  final bool matched;
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'owner_profile_id': ownerProfileId,
@@ -173,6 +190,8 @@ class Community {
     int? memberCount,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? typeSlug,
+    bool? matched,
   }) =>
       Community(
         id: id ?? this.id,
@@ -188,5 +207,7 @@ class Community {
         memberCount: memberCount ?? this.memberCount,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        typeSlug: typeSlug ?? this.typeSlug,
+        matched: matched ?? this.matched,
       );
 }

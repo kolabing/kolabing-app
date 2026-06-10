@@ -1648,5 +1648,47 @@
   "discoverCommunitiesMembers": "{count, plural, =1{1 miembro} other{{count} miembros}}",
   "discoverCommunitiesEmptyTitle": "Aún no hay nada que descubrir",
   "discoverCommunitiesEmptyBody": "El descubrimiento de comunidades llegará pronto. Vuelve para encontrar y unirte a comunidades cerca de ti.",
-  "discoverCommunitiesError": "No se pudieron cargar las comunidades. Inténtalo de nuevo."
+  "discoverCommunitiesError": "No se pudieron cargar las comunidades. Inténtalo de nuevo.",
+
+  "commonSkip": "Omitir",
+
+  "handleFieldPlaceholder": "tunombre",
+  "handleFieldHint": "3-20 caracteres: minúsculas, números y guiones bajos.",
+  "handleFieldFormatError": "Usa 3-20 minúsculas, números o guiones bajos.",
+  "handleFieldChecking": "Comprobando disponibilidad…",
+  "handleFieldAvailable": "Disponible",
+  "handleFieldTaken": "Ese nombre de usuario no está disponible.",
+  "handleFieldTakenWithSuggestion": "No disponible. Prueba @{suggestion}",
+  "handleFieldYours": "Este es tu nombre de usuario actual.",
+
+  "attendeeOnboardingStepCounter": "Paso {step} de {total}",
+  "attendeeOnboardingStep1Title": "Vamos a configurarte",
+  "attendeeOnboardingStep1Subtitle": "Añade tu nombre, elige un nombre de usuario y una foto si quieres.",
+  "attendeeOnboardingNameLabel": "Tu nombre",
+  "attendeeOnboardingNameHint": "¿Cómo quieres que te llamemos?",
+  "attendeeOnboardingHandleLabel": "Tu nombre de usuario",
+  "attendeeOnboardingStep2Title": "¿Dónde estás?",
+  "attendeeOnboardingStep2Subtitle": "Elige tu ciudad para descubrir comunidades cerca de ti.",
+  "attendeeOnboardingStep3Title": "¿Qué te interesa?",
+  "attendeeOnboardingStep3Subtitle": "Elige algunos intereses para sugerirte las comunidades adecuadas.",
+  "attendeeOnboardingStep4Title": "Únete a tus primeras comunidades",
+  "attendeeOnboardingStep4Subtitle": "Toca para unirte a las que te gusten. Siempre puedes unirte a más después.",
+  "attendeeOnboardingFinish": "Finalizar",
+  "attendeeOnboardingForYou": "Para ti",
+
+  "editProfileHandleLabel": "Nombre de usuario",
+
+  "addFriendTitle": "Añadir un amigo",
+  "addFriendSubtitle": "Encuentra a alguien por su correo o su @nombre.",
+  "addFriendInputHint": "Correo o @nombre",
+  "addFriendSearch": "Buscar",
+  "addFriendNoMatch": "Nadie coincide con ese correo o nombre de usuario.",
+  "addFriendUnavailable": "Añadir amigos no está disponible ahora mismo.",
+  "addFriendError": "Algo salió mal. Inténtalo de nuevo.",
+  "addFriendSelf": "Eres tú",
+
+  "rosterInviteIdentifierLabel": "Correo o @nombre",
+  "rosterInviteIdentifierHint": "nombre@ejemplo.com o @nombre",
+  "rosterInviteInvalidIdentifier": "Introduce un correo o @nombre válido.",
+  "rosterNoAccountForIdentifier": "Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario."
 }

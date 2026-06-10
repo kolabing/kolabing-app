@@ -17,13 +17,41 @@
 | **Cities** | `GET /cities` | `citiesProvider` (`onboarding_provider.dart:41` and `opportunity_provider.dart:28`) | `OnboardingCity` (`lib/features/onboarding/models/city.dart`) | — |
 | **Categories** | API-driven (verify the exact endpoint before relying on it) | — | — | — |
 
-## ⚠️ The `CommunityType` trap (two symbols, same name)
+## ⚠️ The `CommunityType` trap — placeholders on BOTH sides
 
-There are **two** things called `CommunityType`:
-1. ✅ **`onboarding/models/community_type.dart`** — a **class** (`id/name/slug`) populated from `GET /community-types`. This is what a community actually picks at sign-up (`community_step2_screen`). **Use this for any type logic.**
-2. ❌ **`community/models/community.dart`** — an **enum** `{greek, fitness, running, business, other}`. A launch-era placeholder. `Community.type` parses the backend slug into it and **maps every unrecognized slug to `other`** — so filtering/matching/ranking on this enum is lossy and wrong.
+The REAL community-type vocabulary is the **17 underscore slugs** (`run_club`,
+`fitness_community`, `wellness_community`, … `other`) — what a community **picks at
+sign-up**. Always fetch it from `GET /lookup/community-types`. Decided 2026-06-10
+(Daniel): *unify on it, never use a placeholder again.*
 
-**Rule:** never branch on the placeholder enum's values, never present them as "the community types", and never hardcode a type/interest list from them. For interest matching, discovery ranking, filters, or pickers, read `/community-types`.
+**Source of truth = the DB TABLES** `community_types` / `business_types` (so admins
+can add/edit/deactivate types + upload SVG icons at runtime), served by
+`/lookup/community-types` + `/lookup/business-types`. The PHP constants
+`CommunityOnboardingRequest::COMMUNITY_TYPES` / `BUSINESS_TYPES` are **`@deprecated`**
+(seeded into the tables with identical slugs; kept, never deleted). Backend
+validation reads `exists:*_types,slug`. See
+`kolabing-v2/docs/plans/2026-06-10-type-source-of-truth-DECISION.md`. **App: always
+fetch via the endpoint/provider — never the const, never the enum.**
+
+Two **placeholder** `CommunityType` definitions exist — never use either for
+validation / matching / ranking / interests:
+- ❌ **app** `community/models/community.dart` — `enum {greek,fitness,running,business,other}`. `Community.type` collapses unknown slugs to `other`. (Use the raw `Community.typeSlug` for any logic; the enum is display-fallback only and should be retired.)
+- ❌ **backend** `App\Enums\CommunityType` `{greek,fitness,running,business,other}` — was the cast on `communities.type`. As of 2026-06-10 `communities.type` is unified onto the 17-slug list; a community group inherits its type from the owner's `community_profiles.community_type`.
+
+✅ The DYNAMIC ones to use:
+- app: `onboarding/models/community_type.dart` (class `{id,name,slug}`) via `communityTypesProvider`.
+- backend: validate against `COMMUNITY_TYPES`; `communities.type` now stores those slugs.
+
+### Two "community type" fields (historically diverged, now unified)
+- `community_profiles.community_type` — the **marketplace identity** a community
+  picks at sign-up (17-slug). The source of truth.
+- `communities.type` — the **joinable NF-6 group**. Was a 5-value placeholder;
+  **unified onto the 17-slug** vocabulary (inherits from the community profile),
+  so discover interest-matching (`interests ∩ communities.type`) is meaningful.
+
+**Rule:** never branch on either placeholder enum, never present its 5 values as
+"the community types", never hardcode a type/interest list. Interests, discovery
+ranking, filters, pickers → the 17-slug `/community-types`.
 
 ## General rule (mirrors CLAUDE.md "Do NOT hardcode")
 

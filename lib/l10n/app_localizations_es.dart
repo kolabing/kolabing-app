@@ -5585,4 +5585,127 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get discoverCommunitiesError =>
       'No se pudieron cargar las comunidades. Inténtalo de nuevo.';
+
+  @override
+  String get commonSkip => 'Omitir';
+
+  @override
+  String get handleFieldPlaceholder => 'tunombre';
+
+  @override
+  String get handleFieldHint =>
+      '3-20 caracteres: minúsculas, números y guiones bajos.';
+
+  @override
+  String get handleFieldFormatError =>
+      'Usa 3-20 minúsculas, números o guiones bajos.';
+
+  @override
+  String get handleFieldChecking => 'Comprobando disponibilidad…';
+
+  @override
+  String get handleFieldAvailable => 'Disponible';
+
+  @override
+  String get handleFieldTaken => 'Ese nombre de usuario no está disponible.';
+
+  @override
+  String handleFieldTakenWithSuggestion(String suggestion) {
+    return 'No disponible. Prueba @$suggestion';
+  }
+
+  @override
+  String get handleFieldYours => 'Este es tu nombre de usuario actual.';
+
+  @override
+  String attendeeOnboardingStepCounter(int step, int total) {
+    return 'Paso $step de $total';
+  }
+
+  @override
+  String get attendeeOnboardingStep1Title => 'Vamos a configurarte';
+
+  @override
+  String get attendeeOnboardingStep1Subtitle =>
+      'Añade tu nombre, elige un nombre de usuario y una foto si quieres.';
+
+  @override
+  String get attendeeOnboardingNameLabel => 'Tu nombre';
+
+  @override
+  String get attendeeOnboardingNameHint => '¿Cómo quieres que te llamemos?';
+
+  @override
+  String get attendeeOnboardingHandleLabel => 'Tu nombre de usuario';
+
+  @override
+  String get attendeeOnboardingStep2Title => '¿Dónde estás?';
+
+  @override
+  String get attendeeOnboardingStep2Subtitle =>
+      'Elige tu ciudad para descubrir comunidades cerca de ti.';
+
+  @override
+  String get attendeeOnboardingStep3Title => '¿Qué te interesa?';
+
+  @override
+  String get attendeeOnboardingStep3Subtitle =>
+      'Elige algunos intereses para sugerirte las comunidades adecuadas.';
+
+  @override
+  String get attendeeOnboardingStep4Title => 'Únete a tus primeras comunidades';
+
+  @override
+  String get attendeeOnboardingStep4Subtitle =>
+      'Toca para unirte a las que te gusten. Siempre puedes unirte a más después.';
+
+  @override
+  String get attendeeOnboardingFinish => 'Finalizar';
+
+  @override
+  String get attendeeOnboardingForYou => 'Para ti';
+
+  @override
+  String get editProfileHandleLabel => 'Nombre de usuario';
+
+  @override
+  String get addFriendTitle => 'Añadir un amigo';
+
+  @override
+  String get addFriendSubtitle =>
+      'Encuentra a alguien por su correo o su @nombre.';
+
+  @override
+  String get addFriendInputHint => 'Correo o @nombre';
+
+  @override
+  String get addFriendSearch => 'Buscar';
+
+  @override
+  String get addFriendNoMatch =>
+      'Nadie coincide con ese correo o nombre de usuario.';
+
+  @override
+  String get addFriendUnavailable =>
+      'Añadir amigos no está disponible ahora mismo.';
+
+  @override
+  String get addFriendError => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get addFriendSelf => 'Eres tú';
+
+  @override
+  String get rosterInviteIdentifierLabel => 'Correo o @nombre';
+
+  @override
+  String get rosterInviteIdentifierHint => 'nombre@ejemplo.com o @nombre';
+
+  @override
+  String get rosterInviteInvalidIdentifier =>
+      'Introduce un correo o @nombre válido.';
+
+  @override
+  String get rosterNoAccountForIdentifier =>
+      'Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario.';
 }

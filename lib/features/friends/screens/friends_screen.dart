@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -39,6 +40,13 @@ class FriendsScreen extends ConsumerWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(LucideIcons.userPlus),
+            tooltip: l10n.addFriendTitle,
+            onPressed: () => context.push(KolabingRoutes.addFriend),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
