@@ -41,12 +41,13 @@ void main() {
         'created_at': '2026-06-01T10:00:00Z',
       };
 
-  test('renameThread PATCHes /chats/{id} with the new name', () async {
+  test('renameCommunityChat PATCHes /chats/{id} with the new name', () async {
     final client = _CaptureClient(
       jsonEncode(<String, dynamic>{'data': threadJson()}),
     );
 
-    final thread = await serviceWith(client).renameThread('thread-1', 'Renamed');
+    final thread =
+        await serviceWith(client).renameCommunityChat('thread-1', 'Renamed');
 
     expect(client.lastMethod, 'PATCH');
     expect(client.lastUrl, contains('/chats/thread-1'));
@@ -54,12 +55,12 @@ void main() {
     expect(thread.name, 'Renamed');
   });
 
-  test('deleteThread DELETEs /chats/{id}', () async {
+  test('deleteCommunityChat DELETEs /chats/{id}', () async {
     final client = _CaptureClient(
       jsonEncode(<String, dynamic>{'data': null}),
     );
 
-    await serviceWith(client).deleteThread('thread-1');
+    await serviceWith(client).deleteCommunityChat('thread-1');
 
     expect(client.lastMethod, 'DELETE');
     expect(client.lastUrl, contains('/chats/thread-1'));
@@ -79,17 +80,6 @@ void main() {
     expect(thread.isParticipant, isTrue);
   });
 
-  test('removeMember POSTs /chats/{id}/members/{profile}/remove', () async {
-    final client = _CaptureClient(
-      jsonEncode(<String, dynamic>{'data': null}),
-    );
-
-    await serviceWith(client).removeMember('thread-1', 'profile-9');
-
-    expect(client.lastMethod, 'POST');
-    expect(client.lastUrl, endsWith('/chats/thread-1/members/profile-9/remove'));
-  });
-
   test('rename surfaces a backend ChatException', () async {
     final client = _CaptureClient(
       jsonEncode(<String, dynamic>{
@@ -100,7 +90,7 @@ void main() {
     );
 
     expect(
-      () => serviceWith(client).renameThread('thread-1', 'X'),
+      () => serviceWith(client).renameCommunityChat('thread-1', 'X'),
       throwsA(
         isA<ChatException>()
             .having((e) => e.code, 'code', 'cannot_rename_thread_type'),

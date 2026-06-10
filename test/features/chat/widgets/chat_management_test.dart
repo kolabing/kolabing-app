@@ -168,33 +168,6 @@ void main() {
     expect(client.lastMethod, 'POST');
     expect(client.lastUrl, endsWith('/chats/thread-1/join'));
   });
-
-  testWidgets('removeMember confirms then bans the member', (tester) async {
-    final client = _CaptureClient(
-      jsonEncode(<String, dynamic>{'data': null}),
-    );
-    const participant = ChatParticipant(name: 'Lucia', profileId: 'profile-9');
-    await _pump(
-      tester,
-      client: client,
-      onTap: (context, ref) => ChatManagement.removeMember(
-        context,
-        ref,
-        _thread(),
-        participant,
-      ),
-    );
-
-    await tester.tap(find.text('go'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Remove Lucia?'), findsOneWidget);
-    await tester.tap(find.widgetWithText(TextButton, 'Remove'));
-    await tester.pumpAndSettle();
-
-    expect(client.lastMethod, 'POST');
-    expect(client.lastUrl, endsWith('/chats/thread-1/members/profile-9/remove'));
-  });
 }
 
 Map<String, dynamic> _threadJson({required String name}) => <String, dynamic>{

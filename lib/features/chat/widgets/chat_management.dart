@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../models/chat_thread.dart';
@@ -67,7 +66,7 @@ class ChatManagement {
     );
     if (name == null || name.isEmpty) return;
     try {
-      await ref.read(chatServiceProvider).renameThread(thread.id, name);
+      await ref.read(chatServiceProvider).renameCommunityChat(thread.id, name);
       ref.read(chatThreadsProvider.notifier).reload();
       if (context.mounted) {
         _snack(context, l10n.chatManageChatRenamed);
@@ -105,7 +104,7 @@ class ChatManagement {
     );
     if (confirmed != true) return false;
     try {
-      await ref.read(chatServiceProvider).deleteThread(thread.id);
+      await ref.read(chatServiceProvider).deleteCommunityChat(thread.id);
       ref.read(chatThreadsProvider.notifier).reload();
       ref.read(chatUnreadProvider.notifier).refresh();
       if (context.mounted) _snack(context, l10n.chatManageChatDeleted);
@@ -135,48 +134,6 @@ class ChatManagement {
       }
     } on ChatException catch (e) {
       if (context.mounted) _snack(context, e.message);
-    }
-  }
-
-  /// Confirm then ban [participant] from [thread]. Returns true if removed.
-  static Future<bool> removeMember(
-    BuildContext context,
-    WidgetRef ref,
-    ChatThread thread,
-    ChatParticipant participant,
-  ) async {
-    final l10n = AppLocalizations.of(context);
-    final profileId = participant.profileId;
-    if (profileId == null) return false;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.chatMemberRemoveTitle(participant.name)),
-        content: Text(l10n.chatMemberRemoveBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
-            child: Text(l10n.chatMemberRemove),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return false;
-    try {
-      await ref.read(chatServiceProvider).removeMember(thread.id, profileId);
-      ref.read(chatThreadsProvider.notifier).reload();
-      if (context.mounted) {
-        _snack(context, l10n.chatMemberRemoved(participant.name));
-      }
-      return true;
-    } on ChatException catch (e) {
-      if (context.mounted) _snack(context, e.message);
-      return false;
     }
   }
 
@@ -220,111 +177,5 @@ class ChatManagement {
   static void _snack(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
-  }
-}
-
-/// A bottom sheet listing a thread's known members (derived from message
-/// senders, which carry a profile id) so a manager can ban any of them.
-///
-/// The backend exposes no thread-members listing, so the caller passes the
-/// participants it already knows about (distinct, non-self senders gathered
-/// while the thread was open).
-class ChatMembersSheet extends ConsumerWidget {
-  const ChatMembersSheet({
-    super.key,
-    required this.thread,
-    required this.members,
-  });
-
-  final ChatThread thread;
-  final List<ChatParticipant> members;
-
-  static Future<void> show(
-    BuildContext context, {
-    required ChatThread thread,
-    required List<ChatParticipant> members,
-  }) {
-    return showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: KolabingColors.surface,
-      showDragHandle: true,
-      builder: (_) => ChatMembersSheet(thread: thread, members: members),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final manageable =
-        members.where((m) => m.profileId != null).toList(growable: false);
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          KolabingSpacing.md,
-          0,
-          KolabingSpacing.md,
-          KolabingSpacing.md,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: KolabingSpacing.sm,
-              ),
-              child: Text(
-                l10n.chatMembersTitle,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            if (manageable.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.lg,
-                ),
-                child: Text(
-                  l10n.chatMembersEmpty,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: KolabingColors.onSurfaceVariant,
-                      ),
-                ),
-              )
-            else
-              ...manageable.map(
-                (m) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: CircleAvatar(
-                    backgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.2),
-                    child: Text(
-                      m.name.isNotEmpty ? m.name[0].toUpperCase() : '?',
-                      style: const TextStyle(color: KolabingColors.onSurface),
-                    ),
-                  ),
-                  title: Text(m.name),
-                  trailing: TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: KolabingColors.error,
-                    ),
-                    onPressed: () async {
-                      final removed = await ChatManagement.removeMember(
-                        context,
-                        ref,
-                        thread,
-                        m,
-                      );
-                      if (removed && context.mounted) {
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Text(l10n.chatMemberRemove),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
   }
 }
