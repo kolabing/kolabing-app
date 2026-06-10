@@ -170,6 +170,7 @@ class CategoryIcon extends StatelessWidget {
     super.key,
     this.size = 32,
     this.assetPath,
+    this.color,
   });
 
   final String name;
@@ -177,6 +178,9 @@ class CategoryIcon extends StatelessWidget {
 
   /// Override the auto-resolved asset path.
   final String? assetPath;
+
+  /// Optional tint color applied to the SVG via [ColorFilter.mode].
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +190,9 @@ class CategoryIcon extends StatelessWidget {
       width: size,
       height: size,
       fit: BoxFit.contain,
+      colorFilter: color != null
+          ? ColorFilter.mode(color!, BlendMode.srcIn)
+          : null,
     );
   }
 }

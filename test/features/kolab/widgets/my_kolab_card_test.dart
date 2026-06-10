@@ -37,11 +37,11 @@ void main() {
       ),
     );
 
-    for (final label in ['VIEW', 'EDIT', 'CLOSE']) {
-      final text = tester.widget<Text>(find.text(label));
-      expect(text.maxLines, 1);
-      expect(text.softWrap, isFalse);
-      expect(text.overflow, TextOverflow.fade);
-    }
+    // For a published kolab, only VIEW is rendered as a text button.
+    // EDIT and CLOSE are secondary icon-only buttons (no text label).
+    final text = tester.widget<Text>(find.text('VIEW'));
+    expect(text.maxLines, 1);
+    expect(text.softWrap, isFalse);
+    expect(text.overflow, TextOverflow.fade);
   });
 }

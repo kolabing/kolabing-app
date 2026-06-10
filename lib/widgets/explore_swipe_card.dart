@@ -388,15 +388,17 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   (Color fill, Color text) _chipColors(String label) {
     final l = label.toLowerCase();
-    if (_matchesAny(l, ['run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike'])) {
-      return (KolabingColors.secondaryContainer, KolabingColors.secondary);
+    // Category / offer type → peach/apricot
+    if (_matchesAny(l, ['run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike',
+      'food', 'coffee', 'drink', 'restaurant', 'bar', 'gastro', 'cook', 'cafe',
+      'discount', 'promo', 'wellness', 'health', 'organic', 'mindful', 'spa'])) {
+      return (KolabingColors.accentOrange, KolabingColors.accentOrangeText);
     }
-    if (_matchesAny(l, ['food', 'coffee', 'drink', 'restaurant', 'bar', 'gastro', 'cook'])) {
-      return (const Color(0xFFFFF4C2), KolabingColors.onSurface);
-    }
-    if (_matchesAny(l, ['wellness', 'nature', 'eco', 'health', 'organic', 'mindful', 'spa'])) {
+    // Nature / eco → sage green
+    if (_matchesAny(l, ['nature', 'eco', 'garden', 'outdoor', 'green'])) {
       return (KolabingColors.tertiaryContainer, KolabingColors.tertiary);
     }
+    // Creative / cultural → sky blue
     if (_matchesAny(l, ['music', 'art', 'culture', 'film', 'photo', 'design', 'theatre', 'dance'])) {
       return (KolabingColors.categoryBlueGrey, KolabingColors.categoryBlueGreyText);
     }

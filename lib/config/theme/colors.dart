@@ -154,11 +154,11 @@ abstract final class KolabingColors {
   // Accent / Badge backgrounds
   // ---------------------------------------------------------------------------
 
-  /// Orange badge background
-  static const Color accentOrange = Color(0xFFFFDDAC);
+  /// Peach/apricot chip background — category / offer type
+  static const Color accentOrange = Color(0xFFF6DDCF);
 
-  /// Orange badge text
-  static const Color accentOrangeText = Color(0xFFD8910B);
+  /// Peach chip text
+  static const Color accentOrangeText = Color(0xFF9A4A20);
 
   /// Soft yellow — selected card fills, soft chips
   static const Color softYellow = Color(0xFFFFF4C2);
@@ -248,11 +248,11 @@ abstract final class KolabingColors {
   // Amber chip palette
   // ---------------------------------------------------------------------------
 
-  /// Amber chip container fill
-  static const Color amberChipContainer = Color(0xFFFFF0C2);
+  /// Amber chip container fill — warm sand (location / venue)
+  static const Color amberChipContainer = Color(0xFFF5E8B8);
 
   /// Amber chip text/icon
-  static const Color amberChipText = Color(0xFFA07010);
+  static const Color amberChipText = Color(0xFF7A5C1A);
 
   // ---------------------------------------------------------------------------
   // Deprecated tokens — kept until widget files are migrated
@@ -293,11 +293,11 @@ abstract final class KolabingColors {
   // Category chip palette — Explore card semantic chip colors
   // ---------------------------------------------------------------------------
 
-  /// Soft blue-grey fill — Music / Art / Culture / Film / Photo chips
-  static const Color categoryBlueGrey = Color(0xFFDDE3EC);
+  /// Soft sky blue fill — Music / Art / Culture / Film / Photo chips; selected states
+  static const Color categoryBlueGrey = Color(0xFFDCEBFA);
 
-  /// Text on blue-grey chip fill
-  static const Color categoryBlueGreyText = Color(0xFF3D4A5C);
+  /// Text on sky-blue chip fill
+  static const Color categoryBlueGreyText = Color(0xFF1A5EA8);
 
   // ---------------------------------------------------------------------------
   // Gradient

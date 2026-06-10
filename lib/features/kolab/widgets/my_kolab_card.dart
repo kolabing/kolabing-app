@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/glass_icon_button.dart';
+import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../enums/intent_type.dart';
@@ -64,87 +64,57 @@ class MyKolabCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final actions = _buildActions(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: context.colors.hairline, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
+    return KolabCardShell(
+      imageUrl: _imageUrl,
+      initials: _initials,
+      footer: actions,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KolabStatusBadge(status: kolab.status),
+          const SizedBox(height: 7),
+          Text(
+            kolab.title.isNotEmpty ? kolab.title : l10n.myKolabCardUntitled,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+              height: 1.25,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: KolabingRadius.borderRadiusLg,
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          const SizedBox(height: 9),
+          Wrap(
+            spacing: KolabingSpacing.xs,
+            runSpacing: KolabingSpacing.xs,
             children: [
-              // ── Left content ──────────────────────────────────────────────
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      KolabStatusBadge(status: kolab.status),
-                      const SizedBox(height: 7),
-                      Text(
-                        kolab.title.isNotEmpty
-                            ? kolab.title
-                            : l10n.myKolabCardUntitled,
-                        style: KolabingTextStyles.bodyLarge.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: context.colors.onSurface,
-                          height: 1.25,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 9),
-                      Wrap(
-                        spacing: KolabingSpacing.xs,
-                        runSpacing: KolabingSpacing.xs,
-                        children: [
-                          if (_availabilityLabel.isNotEmpty)
-                            KolabChip(
-                              label: _availabilityLabel,
-                              variant: KolabChipVariant.sage,
-                              icon: LucideIcons.calendar,
-                            ),
-                          if (kolab.preferredCity.isNotEmpty)
-                            KolabChip(
-                              label: kolab.preferredCity,
-                              variant: KolabChipVariant.amber,
-                              icon: LucideIcons.mapPin,
-                            ),
-                          if (_secondaryLabel.isNotEmpty)
-                            KolabChip(
-                              label: _secondaryLabel,
-                              variant: KolabChipVariant.lavender,
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _buildActions(context),
-                    ],
-                  ),
+              if (_availabilityLabel.isNotEmpty)
+                KolabChip(
+                  label: _availabilityLabel,
+                  variant: KolabChipVariant.sage,
+                  icon: LucideIcons.calendar,
                 ),
-              ),
-              // ── Right image with fade ─────────────────────────────────────
-              _KolabFadeImage(imageUrl: _imageUrl, initials: _initials),
+              if (kolab.preferredCity.isNotEmpty)
+                KolabChip(
+                  label: kolab.preferredCity,
+                  variant: KolabChipVariant.amber,
+                  icon: LucideIcons.mapPin,
+                ),
+              if (_secondaryLabel.isNotEmpty)
+                KolabChip(
+                  label: _secondaryLabel,
+                  variant: KolabChipVariant.lavender,
+                ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildActions(BuildContext context) {
+  Widget? _buildActions(BuildContext context) {
     _ActionSpec? primary;
     final secondaryIcons = <Widget>[];
 
@@ -215,26 +185,17 @@ class MyKolabCard extends StatelessWidget {
       }
     }
 
-    if (primary == null && secondaryIcons.isEmpty) return const SizedBox.shrink();
+    if (primary == null && secondaryIcons.isEmpty) return null;
 
     return Row(
       children: [
         if (primary != null)
-          Expanded(
-            child: _PrimaryActionButton(spec: primary),
-          ),
-        if (primary != null && secondaryIcons.isNotEmpty)
-          const SizedBox(width: 8),
-        ...secondaryIcons.expand((btn) => [btn, const SizedBox(width: 6)]).toList()
-          ..removeLast(),
+          Expanded(child: _PrimaryActionButton(spec: primary)),
+        ...secondaryIcons.expand((btn) => [const SizedBox(width: 8), btn]),
       ],
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Supporting types & private widgets
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _ActionSpec {
   const _ActionSpec({
@@ -269,7 +230,7 @@ class _PrimaryActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: spec.onPressed,
       child: Container(
-        height: 44,
+        height: 48,
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(12),
@@ -280,14 +241,17 @@ class _PrimaryActionButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(spec.icon, size: 16, color: ink),
+            Icon(spec.icon, size: 17, color: ink),
             const SizedBox(width: 7),
             Text(
               spec.label,
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.fade,
               style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
                 color: ink,
               ),
             ),
@@ -296,75 +260,4 @@ class _PrimaryActionButton extends StatelessWidget {
       ),
     );
   }
-}
-
-class _KolabFadeImage extends StatelessWidget {
-  const _KolabFadeImage({required this.initials, this.imageUrl});
-
-  final String? imageUrl;
-  final String initials;
-
-  @override
-  Widget build(BuildContext context) {
-    const width = 90.0;
-
-    Widget imageWidget;
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      imageWidget = Image.network(
-        imageUrl!,
-        width: width,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _placeholder(width),
-      );
-    } else {
-      imageWidget = _placeholder(width);
-    }
-
-    return SizedBox(
-      width: width,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          imageWidget,
-          // Left-to-right fade: white → transparent, so content blends in
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: const [0.0, 0.45, 1.0],
-                  colors: [
-                    Colors.white,
-                    Colors.white.withValues(alpha: 0.0),
-                    Colors.white.withValues(alpha: 0.0),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _placeholder(double width) => Container(
-        width: width,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF9E6), Color(0xFFFFE28C)],
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          initials,
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF5C4A12),
-          ),
-        ),
-      );
 }

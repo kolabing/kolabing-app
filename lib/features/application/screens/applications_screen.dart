@@ -9,6 +9,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
@@ -381,155 +382,85 @@ class _ApplicationCard extends StatelessWidget {
   final bool isDark;
 
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    borderRadius: KolabingRadius.borderRadiusMd,
-    child: Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isDark ? context.colors.darkSurface : context.colors.surface,
-        borderRadius: KolabingRadius.borderRadiusMd,
-        border: isDark
-            ? null
-            : Border.all(color: context.colors.hairline),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                KolabStatusBadge(status: application.status.name),
-                const SizedBox(height: 6),
-                Text(
-                  application.opportunityTitle,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDark
-                        ? context.colors.textOnDark
-                        : context.colors.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  isReceived
-                      ? AppLocalizations.of(context)
-                          .applicationCardFrom(application.applicantName)
-                      : AppLocalizations.of(context)
-                          .applicationCardTo(application.recipientName),
-                  style: KolabingTextStyles.captionSecondary.copyWith(
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: KolabingSpacing.xs),
-                Text(
-                  application.message,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: KolabingSpacing.xs),
-                Row(
-                  children: [
-                    Icon(
-                      LucideIcons.clock,
-                      size: 12,
-                      color: context.colors.textTertiary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      application.createdAtDisplay,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        fontSize: 12,
-                        color: context.colors.textTertiary,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (application.unreadCount > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.colors.error,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          '${application.unreadCount}',
-                          style: KolabingTextStyles.labelSmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: context.colors.textOnDark,
-                          ),
-                        ),
-                      )
-                    else
-                      Icon(
-                        LucideIcons.chevronRight,
-                        size: 18,
-                        color: context.colors.textTertiary,
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          _buildSquareImage(),
-        ],
-      ),
-    ),
-  );
-
-  Widget _buildSquareImage() {
-    const size = 68.0;
-    const radius = 14.0;
-
+  Widget build(BuildContext context) {
     final imageUrl = application.opportunity?.offerPhoto;
     final initials = application.opportunityTitle.isNotEmpty
         ? application.opportunityTitle[0].toUpperCase()
         : 'K';
 
-    if (imageUrl != null && imageUrl.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: Image.network(
-          imageUrl,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _imagePlaceholder(size, radius, initials),
-        ),
-      );
-    }
-    return _imagePlaceholder(size, radius, initials);
+    return KolabCardShell(
+      imageUrl: imageUrl,
+      initials: initials,
+      onTap: onTap,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KolabStatusBadge(status: application.status.name),
+          const SizedBox(height: 6),
+          Text(
+            application.opportunityTitle,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+              height: 1.25,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            isReceived
+                ? AppLocalizations.of(context)
+                    .applicationCardFrom(application.applicantName)
+                : AppLocalizations.of(context)
+                    .applicationCardTo(application.recipientName),
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            application.message,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Row(
+            children: [
+              Icon(LucideIcons.clock, size: 12, color: context.colors.textTertiary),
+              const SizedBox(width: 4),
+              Text(
+                application.createdAtDisplay,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: context.colors.textTertiary,
+                ),
+              ),
+              const Spacer(),
+              if (application.unreadCount > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: context.colors.error,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '${application.unreadCount}',
+                    style: KolabingTextStyles.labelSmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textOnDark,
+                    ),
+                  ),
+                )
+              else
+                Icon(LucideIcons.chevronRight, size: 18, color: context.colors.textTertiary),
+            ],
+          ),
+        ],
+      ),
+    );
   }
-
-  Widget _imagePlaceholder(double size, double radius, String initials) =>
-      Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(radius),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF4C2), Color(0xFFFFE28C)],
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          initials,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF5C4A12),
-          ),
-        ),
-      );
 }

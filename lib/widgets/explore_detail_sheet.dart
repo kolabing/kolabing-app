@@ -276,14 +276,14 @@ class ExploreDetailSheet extends ConsumerWidget {
         vertical: KolabingSpacing.xxxs,
       ),
       decoration: BoxDecoration(
-        color: context.colors.activeBg,
+        color: context.colors.categoryOrangeBg,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
       ),
       child: Text(
         label,
         style: KolabingTextStyles.labelSmall.copyWith(
           fontWeight: FontWeight.w600,
-          color: context.colors.activeText,
+          color: context.colors.categoryOrangeText,
         ),
       ),
     );
@@ -482,18 +482,25 @@ class ExploreDetailSheet extends ConsumerWidget {
 
     final items = <_DetailItem>[
       if (locationLabel.isNotEmpty)
-        _DetailItem(icon: LucideIcons.mapPin, label: locationLabel),
+        _DetailItem(
+          icon: LucideIcons.mapPin,
+          label: locationLabel,
+          kind: _DetailPillKind.sand,
+        ),
       _DetailItem(
         icon: LucideIcons.building2,
         label: opportunity.venueMode.displayName,
+        kind: _DetailPillKind.sand,
       ),
       _DetailItem(
         icon: LucideIcons.calendar,
         label: '$startFormatted - $endFormatted',
+        kind: _DetailPillKind.sage,
       ),
       _DetailItem(
         icon: LucideIcons.clock,
         label: opportunity.availabilityMode.displayName,
+        kind: _DetailPillKind.sage,
       ),
     ];
 
@@ -506,33 +513,43 @@ class ExploreDetailSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailPill(BuildContext context, _DetailItem item) => Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: KolabingSpacing.sm,
-      vertical: KolabingSpacing.xs,
-    ),
-    decoration: BoxDecoration(
-      color: context.colors.surfaceVariant,
-      borderRadius: BorderRadius.circular(KolabingRadius.round),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(item.icon, size: 14, color: context.colors.onSurfaceVariant),
-        const SizedBox(width: KolabingSpacing.xxs),
-        Flexible(
-          child: Text(
-            item.label,
-            style: KolabingTextStyles.labelMedium.copyWith(
-              color: context.colors.onSurfaceVariant,
+  Widget _buildDetailPill(BuildContext context, _DetailItem item) {
+    final (bg, fg) = switch (item.kind) {
+      _DetailPillKind.sand => (
+        context.colors.amberChipContainer,
+        context.colors.amberChipText,
+      ),
+      _DetailPillKind.sage => (
+        context.colors.categorySageBg,
+        context.colors.categorySageText,
+      ),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(KolabingRadius.round),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(item.icon, size: 14, color: fg),
+          const SizedBox(width: KolabingSpacing.xxs),
+          Flexible(
+            child: Text(
+              item.label,
+              style: KolabingTextStyles.labelMedium.copyWith(color: fg),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Availability Days (Recurring Mode)
@@ -562,8 +579,8 @@ class ExploreDetailSheet extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: isAvailable
-                    ? context.colors.info
-                    : context.colors.surfaceVariant,
+                    ? context.colors.categoryBlueBg
+                    : context.colors.surfaceContainerLow,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -572,7 +589,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 style: KolabingTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isAvailable
-                      ? context.colors.textOnDark
+                      ? context.colors.categoryBlueText
                       : context.colors.textTertiary,
                 ),
               ),
@@ -598,19 +615,23 @@ class ExploreDetailSheet extends ConsumerWidget {
               vertical: KolabingSpacing.xxs,
             ),
             decoration: BoxDecoration(
-              color: context.colors.primary.withValues(alpha: 0.1),
+              color: context.colors.accentOrange,
               borderRadius: BorderRadius.circular(KolabingRadius.round),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CategoryIcon(name: category, size: 16),
+                CategoryIcon(
+                  name: category,
+                  size: 14,
+                  color: context.colors.accentOrangeText,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   category,
                   style: KolabingTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: context.colors.onSurface,
+                    color: context.colors.accentOrangeText,
                   ),
                 ),
               ],
@@ -701,12 +722,19 @@ class ExploreDetailSheet extends ConsumerWidget {
   }
 }
 
+enum _DetailPillKind { sand, sage }
+
 /// Internal helper for detail pill items.
 class _DetailItem {
-  const _DetailItem({required this.icon, required this.label});
+  const _DetailItem({
+    required this.icon,
+    required this.label,
+    this.kind = _DetailPillKind.sand,
+  });
 
   final IconData icon;
   final String label;
+  final _DetailPillKind kind;
 }
 
 class _PastEventPhotosSection extends StatefulWidget {

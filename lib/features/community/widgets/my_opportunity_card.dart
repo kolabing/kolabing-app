@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/glass_icon_button.dart';
+import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -52,100 +52,83 @@ class MyOpportunityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: context.colors.hairline),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      KolabStatusBadge(status: opportunity.status.name),
-                      if (opportunity.applicationsCount != null &&
-                          opportunity.applicationsCount! > 0) ...[
-                        const Spacer(),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              LucideIcons.users,
-                              size: 12,
-                              color: context.colors.textTertiary,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              l10n.myOpportunityCardApplicationsCount(
-                                opportunity.applicationsCount!,
-                              ),
-                              style: KolabingTextStyles.labelSmall.copyWith(
-                                color: context.colors.textTertiary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    opportunity.title.isNotEmpty
-                        ? opportunity.title
-                        : l10n.myOpportunityCardUntitled,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: context.colors.onSurface,
-                      height: 1.3,
+    final actions = _buildActions(l10n);
+
+    return KolabCardShell(
+      imageUrl: _imageUrl,
+      initials: _initials,
+      footer: actions,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              KolabStatusBadge(status: opportunity.status.name),
+              if (opportunity.applicationsCount != null &&
+                  opportunity.applicationsCount! > 0) ...[
+                const Spacer(),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      LucideIcons.users,
+                      size: 12,
+                      color: context.colors.textTertiary,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 7),
-                  Wrap(
-                    spacing: KolabingSpacing.xs,
-                    runSpacing: KolabingSpacing.xs,
-                    children: [
-                      KolabChip(
-                        label: _dateLabel,
-                        variant: KolabChipVariant.sage,
-                        icon: LucideIcons.calendar,
+                    const SizedBox(width: 3),
+                    Text(
+                      l10n.myOpportunityCardApplicationsCount(
+                        opportunity.applicationsCount!,
                       ),
-                      if (opportunity.preferredCity.isNotEmpty)
-                        KolabChip(
-                          label: opportunity.preferredCity,
-                          variant: KolabChipVariant.amber,
-                          icon: LucideIcons.mapPin,
-                        ),
-                      ...opportunity.categories.take(2).map(
-                        (c) => KolabChip(
-                          label: c,
-                          variant: kolabChipVariantFor(c),
-                        ),
+                      style: KolabingTextStyles.labelSmall.copyWith(
+                        color: context.colors.textTertiary,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  _buildActions(l10n),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 7),
+          Text(
+            opportunity.title.isNotEmpty
+                ? opportunity.title
+                : l10n.myOpportunityCardUntitled,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+              height: 1.25,
             ),
-            const SizedBox(width: KolabingSpacing.sm),
-            _KolabSquareImage(imageUrl: _imageUrl, initials: _initials),
-          ],
-        ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 9),
+          Wrap(
+            spacing: KolabingSpacing.xs,
+            runSpacing: KolabingSpacing.xs,
+            children: [
+              KolabChip(
+                label: _dateLabel,
+                variant: KolabChipVariant.sage,
+                icon: LucideIcons.calendar,
+              ),
+              if (opportunity.preferredCity.isNotEmpty)
+                KolabChip(
+                  label: opportunity.preferredCity,
+                  variant: KolabChipVariant.amber,
+                  icon: LucideIcons.mapPin,
+                ),
+              ...opportunity.categories.take(2).map(
+                (c) => KolabChip(label: c, variant: kolabChipVariantFor(c)),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildActions(AppLocalizations l10n) {
+  Widget? _buildActions(AppLocalizations l10n) {
     final status = opportunity.status;
     Widget? pill;
     final iconBtns = <Widget>[];
@@ -226,69 +209,13 @@ class MyOpportunityCard extends StatelessWidget {
       }
     }
 
-    if (pill == null && iconBtns.isEmpty) return const SizedBox.shrink();
+    if (pill == null && iconBtns.isEmpty) return null;
 
     return Row(
       children: [
         if (pill != null) Expanded(child: pill),
-        ...iconBtns.expand((btn) => [
-          const SizedBox(width: 9),
-          btn,
-        ]),
+        ...iconBtns.expand((btn) => [const SizedBox(width: 8), btn]),
       ],
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Private widgets
-// ---------------------------------------------------------------------------
-
-class _KolabSquareImage extends StatelessWidget {
-  const _KolabSquareImage({required this.initials, this.imageUrl});
-
-  final String? imageUrl;
-  final String initials;
-
-  @override
-  Widget build(BuildContext context) {
-    const size = 68.0;
-    const radius = 14.0;
-
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: Image.network(
-          imageUrl!,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _placeholder(size, radius),
-        ),
-      );
-    }
-    return _placeholder(size, radius);
-  }
-
-  Widget _placeholder(double size, double radius) => Container(
-    width: size,
-    height: size,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(radius),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFFFFF4C2), Color(0xFFFFE28C)],
-      ),
-    ),
-    alignment: Alignment.center,
-    child: Text(
-      initials,
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        color: Color(0xFF5C4A12),
-      ),
-    ),
-  );
 }

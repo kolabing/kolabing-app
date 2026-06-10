@@ -374,7 +374,13 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
     if (selectedIndex >= 0 &&
         _statusTabController.index != selectedIndex &&
         !_statusTabController.indexIsChanging) {
-      _statusTabController.index = selectedIndex;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted &&
+            _statusTabController.index != selectedIndex &&
+            !_statusTabController.indexIsChanging) {
+          _statusTabController.index = selectedIndex;
+        }
+      });
     }
 
     return MyKolabsSubTabs(

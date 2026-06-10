@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -76,12 +78,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool _showSuccess = false;
   bool _obscurePassword = true;
 
+  static const _brandPhrases = [
+    'brand love',
+    'word of mouth',
+    'local growth',
+    'experiences',
+    'new customers',
+    'authentic content',
+    'community',
+    'real engagement',
+    'partnerships',
+    'ugc',
+    'visibility',
+  ];
+  int _phraseIndex = 0;
+  double _phraseOpacity = 1.0;
+  Timer? _phraseTimer;
+
   @override
   void initState() {
     super.initState();
     _configureSystemUI();
     _initializeAnimations();
     _startEntryAnimation();
+    _startPhraseRotation();
+  }
+
+  void _startPhraseRotation() {
+    _phraseTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      setState(() => _phraseOpacity = 0.0);
+      Future<void>.delayed(const Duration(milliseconds: 180), () {
+        if (!mounted) return;
+        setState(() {
+          _phraseIndex = (_phraseIndex + 1) % _brandPhrases.length;
+          _phraseOpacity = 1.0;
+        });
+      });
+    });
   }
 
   void _configureSystemUI() {
@@ -155,6 +188,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _passwordFocusNode.dispose();
     _entryController.dispose();
     _exitController.dispose();
+    _phraseTimer?.cancel();
     super.dispose();
   }
 
@@ -476,10 +510,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                       ),
 
-                      // Flexible space pushes title + card toward bottom.
-                      const Expanded(child: SizedBox.shrink()),
+                      // Flexible space with rotating brand phrase in upper-right.
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: AnimatedOpacity(
+                              opacity: _phraseOpacity * 0.36,
+                              duration: const Duration(milliseconds: 180),
+                              curve: Curves.easeInOut,
+                              child: Text(
+                                _brandPhrases[_phraseIndex],
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xFFD4C9A8),
+                                  letterSpacing: 0.3,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
 
-                      // "WELCOME BACK." — compact Anton title above card.
+                      // WELCOME BACK. headline above card.
                       _AnimatedElement(
                         opacityAnimation: _headlineAnimation,
                         slideAnimation: _headlineSlideAnimation,
@@ -489,10 +545,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           ),
                           child: Text(
                             'WELCOME BACK.',
-                            style: GoogleFonts.anton(
-                              fontSize: ultraCompact ? 26.0 : (compact ? 30.0 : 34.0),
-                              height: 1.0,
-                              letterSpacing: 0.2,
+                            style: KolabingTextStyles.displayLarge.copyWith(
                               color: _kTextWhite,
                             ),
                           ),
@@ -931,8 +984,13 @@ class _SignUpLinkState extends State<_SignUpLink> {
 }
 
 // ---------------------------------------------------------------------------
+// Staggered brand hero for login screen.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 // "User not found" dialog — unchanged logic, updated palette.
 // ---------------------------------------------------------------------------
+
 
 class _UserNotFoundDialog extends StatelessWidget {
   const _UserNotFoundDialog({

@@ -137,7 +137,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   ),
                   child: KolabingLogo(
                     width: compact ? 172.0 : 200.0,
-                    variant: KolabingLogoVariant.onDark,
+                    variant: KolabingLogoVariant.yellowTransparent,
                   ),
                 ),
 
@@ -153,7 +153,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       child: child,
                     ),
                   ),
-                  child: _BrandStatement(l10n: l10n, compact: compact),
+                  child: Opacity(
+                    opacity: 0.82,
+                    child: _BrandHeroText(compact: compact),
+                  ),
                 ),
 
                 SizedBox(height: compact ? 24 : 32),
@@ -214,45 +217,76 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 }
 
 // ---------------------------------------------------------------------------
-// Brand statement
+// Brand statement — staggered typographic layout
 // ---------------------------------------------------------------------------
 
-class _BrandStatement extends StatelessWidget {
-  const _BrandStatement({required this.l10n, required this.compact});
+class _BrandHeroText extends StatelessWidget {
+  const _BrandHeroText({required this.compact});
 
-  final AppLocalizations l10n;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = compact ? 26.0 : 30.0;
-    const lineHeight = 1.55;
+    final bigSize = compact ? 32.0 : 36.0;
 
-    TextStyle plain() => GoogleFonts.rubik(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          color: _kTextCream,
-          height: lineHeight,
-          letterSpacing: -0.2,
-        );
+    final bigStyle = GoogleFonts.archivoBlack(
+      fontSize: bigSize,
+      color: _kTextCream,
+      height: 0.95,
+      letterSpacing: -1.2,
+    );
+    final smallStyle = GoogleFonts.rubik(
+      fontSize: compact ? 13.0 : 15.0,
+      fontWeight: FontWeight.w600,
+      color: _kTextCream,
+      height: 1.2,
+    );
+    final ampStyle = GoogleFonts.rubik(
+      fontSize: compact ? 20.0 : 24.0,
+      fontWeight: FontWeight.w700,
+      color: _kTextCream,
+      height: 1,
+    );
 
-    TextStyle accent() => GoogleFonts.rubik(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w600,
-          color: _kYellow,
-          height: lineHeight,
-          letterSpacing: -0.2,
-        );
-
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        children: <InlineSpan>[
-          TextSpan(text: '${l10n.welcomeHeroWhere} ', style: plain()),
-          TextSpan(text: l10n.welcomeHeroBusinesses, style: accent()),
-          TextSpan(text: '\n& ', style: plain()),
-          TextSpan(text: l10n.welcomeHeroCommunities, style: accent()),
-          TextSpan(text: '\n${l10n.welcomeHeroGrow} ${l10n.welcomeHeroTogether}', style: plain()),
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 28),
+            child: Text('where', style: smallStyle),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 40),
+            child: Text('businesses', style: bigStyle, overflow: TextOverflow.visible, softWrap: false),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 4, right: 5),
+                child: Text('&', style: ampStyle),
+              ),
+              Text('communities', style: bigStyle, overflow: TextOverflow.visible, softWrap: false),
+            ],
+          ),
+          Transform.translate(
+            offset: const Offset(0, -6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 28, right: 6),
+                  child: Text('grow', style: smallStyle.copyWith(fontSize: compact ? 15.0 : 17.0)),
+                ),
+                Text('together', style: bigStyle, overflow: TextOverflow.visible, softWrap: false),
+              ],
+            ),
+          ),
         ],
       ),
     );

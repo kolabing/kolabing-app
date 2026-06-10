@@ -541,9 +541,9 @@ class _CommunityOfferDetailScreenState
     margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: context.colors.success.withValues(alpha: 0.05),
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: context.colors.success.withValues(alpha: 0.2)),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

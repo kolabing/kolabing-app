@@ -76,8 +76,9 @@ class DashboardStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: context.colors.surfaceContainer,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusXl,
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

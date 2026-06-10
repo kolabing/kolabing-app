@@ -36,24 +36,21 @@ class ThemeNotifier extends Notifier<ThemeState> {
   }
 
   Future<void> _loadTheme() async {
-    final savedMode = await _service.getThemeMode();
+    // Dark mode is temporarily disabled — always force light mode.
     state = state.copyWith(
-      themeMode: savedMode,
+      themeMode: ThemeMode.light,
       isLoading: false,
     );
   }
 
-  /// Set theme mode and persist
+  /// Set theme mode and persist (dark mode temporarily disabled)
   Future<void> setThemeMode(ThemeMode mode) async {
-    state = state.copyWith(themeMode: mode);
-    await _service.setThemeMode(mode);
+    // No-op until dark mode is re-enabled.
   }
 
-  /// Toggle between light and dark (ignoring system)
+  /// Toggle between light and dark (dark mode temporarily disabled)
   Future<void> toggleTheme() async {
-    final newMode =
-        state.themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-    await setThemeMode(newMode);
+    // No-op until dark mode is re-enabled.
   }
 }
 
