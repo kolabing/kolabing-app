@@ -71,6 +71,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
           controller: _tabs,
           isScrollable: true,
           tabAlignment: TabAlignment.start,
+          // App bar is yellow; force dark labels/indicator so the SELECTED tab
+          // isn't yellow-on-yellow (brand rule: black text on yellow).
+          labelColor: KolabingColors.onSurface,
+          unselectedLabelColor:
+              KolabingColors.onSurface.withValues(alpha: 0.6),
+          indicatorColor: KolabingColors.onSurface,
           tabs: [
             Tab(text: l10n.communityDetailTabChats),
             Tab(text: l10n.communityDetailTabEvents),
