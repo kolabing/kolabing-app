@@ -5630,6 +5630,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Añade tu nombre, elige un nombre de usuario y una foto si quieres.';
 
   @override
+  String get attendeeOnboardingAddPhoto => 'Añadir una foto';
+
+  @override
   String get attendeeOnboardingNameLabel => 'Tu nombre';
 
   @override

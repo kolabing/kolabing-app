@@ -350,6 +350,8 @@ class UserModel {
     this.name,
     this.handle,
     this.interests = const [],
+    this.cityId,
+    this.cityName,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -391,6 +393,10 @@ class UserModel {
             ?.map((e) => e.toString())
             .toList() ??
         const [],
+    // Top-level city on `profiles` (attendees have no business/community
+    // profile to carry it). Returned by /me/profile once the backend deploys.
+    cityId: json['city_id'] as String?,
+    cityName: json['city_name'] as String?,
   );
 
   final String id;
@@ -408,6 +414,11 @@ class UserModel {
   /// Top-level display name on `profiles` (used by attendees, who have no
   /// business/community profile). Null on older payloads.
   final String? name;
+
+  /// Top-level city on `profiles` (attendees). Null on older payloads / roles
+  /// that carry city on their extended profile.
+  final String? cityId;
+  final String? cityName;
 
   /// Universal `@handle` (lowercase, `^[a-z0-9_]{3,20}$`). Null until set.
   final String? handle;
@@ -481,6 +492,8 @@ class UserModel {
     String? name,
     String? handle,
     List<String>? interests,
+    String? cityId,
+    String? cityName,
   }) => UserModel(
     id: id ?? this.id,
     email: email ?? this.email,
@@ -496,5 +509,7 @@ class UserModel {
     name: name ?? this.name,
     handle: handle ?? this.handle,
     interests: interests ?? this.interests,
+    cityId: cityId ?? this.cityId,
+    cityName: cityName ?? this.cityName,
   );
 }

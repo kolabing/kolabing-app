@@ -114,6 +114,19 @@ class _AttendeeStep1ScreenState extends ConsumerState<AttendeeStep1Screen> {
               ),
             ),
           ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Center(
+            child: GestureDetector(
+              onTap: _pickPhoto,
+              child: Text(
+                l10n.attendeeOnboardingAddPhoto,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: KolabingColors.primaryDark,
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: KolabingSpacing.lg),
 
           // Name

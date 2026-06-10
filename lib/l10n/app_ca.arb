@@ -1664,6 +1664,7 @@
   "attendeeOnboardingStepCounter": "Pas {step} de {total}",
   "attendeeOnboardingStep1Title": "Et configurem",
   "attendeeOnboardingStep1Subtitle": "Afegeix el teu nom, tria un nom d'usuari i una foto si vols.",
+  "attendeeOnboardingAddPhoto": "Afegeix una foto",
   "attendeeOnboardingNameLabel": "El teu nom",
   "attendeeOnboardingNameHint": "Com vols que et diguem?",
   "attendeeOnboardingHandleLabel": "El teu nom d'usuari",

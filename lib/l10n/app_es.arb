@@ -1664,6 +1664,7 @@
   "attendeeOnboardingStepCounter": "Paso {step} de {total}",
   "attendeeOnboardingStep1Title": "Vamos a configurarte",
   "attendeeOnboardingStep1Subtitle": "Añade tu nombre, elige un nombre de usuario y una foto si quieres.",
+  "attendeeOnboardingAddPhoto": "Añadir una foto",
   "attendeeOnboardingNameLabel": "Tu nombre",
   "attendeeOnboardingNameHint": "¿Cómo quieres que te llamemos?",
   "attendeeOnboardingHandleLabel": "Tu nombre de usuario",

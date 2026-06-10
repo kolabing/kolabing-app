@@ -9998,6 +9998,12 @@ abstract class AppLocalizations {
   /// **'Add your name, pick a handle, and a photo if you like.'**
   String get attendeeOnboardingStep1Subtitle;
 
+  /// No description provided for @attendeeOnboardingAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get attendeeOnboardingAddPhoto;
+
   /// Label for the attendee name field.
   ///
   /// In en, this message translates to:

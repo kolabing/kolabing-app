@@ -43,7 +43,8 @@ class AttendeeProfileScreen extends ConsumerWidget {
     final pointsCount = attendeeProfile?.totalPoints ?? 0;
 
     final cityName = user?.communityProfile?.city?.name ??
-        user?.businessProfile?.city?.name;
+        user?.businessProfile?.city?.name ??
+        user?.cityName;
 
     return SafeArea(
       bottom: false,

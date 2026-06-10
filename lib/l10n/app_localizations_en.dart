@@ -5567,6 +5567,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add your name, pick a handle, and a photo if you like.';
 
   @override
+  String get attendeeOnboardingAddPhoto => 'Add a photo';
+
+  @override
   String get attendeeOnboardingNameLabel => 'Your name';
 
   @override

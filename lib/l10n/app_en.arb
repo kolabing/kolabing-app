@@ -6468,6 +6468,7 @@
   "@attendeeOnboardingStep1Title": { "description": "Attendee onboarding step 1 title (You)." },
   "attendeeOnboardingStep1Subtitle": "Add your name, pick a handle, and a photo if you like.",
   "@attendeeOnboardingStep1Subtitle": { "description": "Attendee onboarding step 1 subtitle." },
+  "attendeeOnboardingAddPhoto": "Add a photo",
   "attendeeOnboardingNameLabel": "Your name",
   "@attendeeOnboardingNameLabel": { "description": "Label for the attendee name field." },
   "attendeeOnboardingNameHint": "How should we call you?",

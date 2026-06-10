@@ -54,9 +54,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.initState();
     final user = ref.read(authProvider).user;
     _nameController.text = user?.displayName ?? '';
+    // Attendees carry city on the top-level `profiles` record (user.cityId/
+    // cityName); business/community carry it on their extended profile.
     final city = user?.communityProfile?.city ?? user?.businessProfile?.city;
-    _selectedCityId = city?.id;
-    _selectedCityName = city?.name;
+    _selectedCityId = city?.id ?? user?.cityId;
+    _selectedCityName = city?.name ?? user?.cityName;
     _initialHandle = user?.handle?.toLowerCase();
     _handle = _initialHandle ?? '';
     if (_initialHandle != null) {

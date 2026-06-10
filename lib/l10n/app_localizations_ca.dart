@@ -5658,6 +5658,9 @@ class AppLocalizationsCa extends AppLocalizations {
       'Afegeix el teu nom, tria un nom d\'usuari i una foto si vols.';
 
   @override
+  String get attendeeOnboardingAddPhoto => 'Afegeix una foto';
+
+  @override
   String get attendeeOnboardingNameLabel => 'El teu nom';
 
   @override
