@@ -15,6 +15,10 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../../friends/models/friendship.dart';
+import '../../friends/widgets/friend_cta_button.dart';
+import '../../gamification/providers/stats_provider.dart';
+import '../../gamification/widgets/badge_card.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/public_profile.dart';
@@ -56,7 +60,21 @@ class PublicProfileScreen extends ConsumerWidget {
           context,
           body: _buildErrorBody(context, ref, error.toString()),
         ),
-        data: (profile) => _buildProfileContent(context, profile),
+        data: (profile) {
+          // Never show "Unknown": fall back to the optimistic name/avatar passed
+          // by the caller (e.g. the roster) when the loaded payload lacks them.
+          // This is especially important for members (attendees), whose name
+          // lives on the base profiles table the public-profile resource may
+          // not surface yet.
+          final resolved = _withOptimisticFallback(profile);
+          if (resolved.isAttendee) {
+            return _MemberProfileContent(
+              profile: resolved,
+              creatorProfile: creatorProfile,
+            );
+          }
+          return _buildProfileContent(context, resolved);
+        },
       ),
       // C9: business viewing a community → primary CTA to send a Kolab proposal.
       // Until then the user could only "Not right now" out of this screen.
@@ -69,6 +87,32 @@ class PublicProfileScreen extends ConsumerWidget {
         },
         orElse: () => const SizedBox.shrink(),
       ),
+    );
+  }
+
+  /// Returns [profile] with the loaded name/avatar, but falls back to the
+  /// optimistic [creatorProfile] (passed by the caller) whenever the backend
+  /// payload is missing them — so the header never shows "Unknown" or a blank
+  /// avatar. Also infers the member (attendee) userType from the optimistic
+  /// profile when the backend omits it.
+  PublicProfile _withOptimisticFallback(PublicProfile profile) {
+    final cp = creatorProfile;
+    if (cp == null) {
+      return profile;
+    }
+    final needsName = !profile.hasRealDisplayName && cp.displayName.isNotEmpty;
+    final needsAvatar = (profile.avatarUrl == null ||
+            profile.avatarUrl!.trim().isEmpty) &&
+        (cp.avatarUrl != null && cp.avatarUrl!.trim().isNotEmpty);
+    final needsType =
+        profile.userType.trim().isEmpty && cp.userType.trim().isNotEmpty;
+    if (!needsName && !needsAvatar && !needsType) {
+      return profile;
+    }
+    return profile.copyWith(
+      userType: needsType ? cp.userType : null,
+      displayName: needsName ? cp.displayName : null,
+      avatarUrl: needsAvatar ? cp.avatarUrl : null,
     );
   }
 
@@ -459,6 +503,460 @@ class _ProfileSliverHeader extends StatelessWidget {
       ),
     ),
   );
+}
+
+// =============================================================================
+// Member (attendee) social-hub layout — NF-13 Phase 1
+// =============================================================================
+
+/// Member profile = a social hub, NOT a collaboration resume. We reuse the
+/// shared sliver header (avatar + name + city) and then render only what the
+/// existing backend supports today: a Points / Events attended / Badges stat
+/// row and a badges grid, both sourced from `GET /profiles/{id}/game-card`
+/// (`gameCardProvider`). The business/community-only sections (about, gallery,
+/// past collaborations, reviews, social links) are intentionally hidden.
+///
+/// Once the backend ships the member public-profile payload, add the uploadable
+/// cover, an events-attended LIST, public communities/tier, and (NF-17) the
+/// friends preview + Add-friend CTA. There is no list endpoint for those yet,
+/// only counts, so they are omitted here (not faked). See
+/// docs/tickets/2026-06-10-member-profile-hub-and-friends.md.
+// TODO(kolabing): member public-profile payload (cover, events-attended list,
+// public communities, friends) — docs/tickets/2026-06-10-member-profile-hub-and-friends.md
+class _MemberProfileContent extends ConsumerWidget {
+  const _MemberProfileContent({
+    required this.profile,
+    required this.creatorProfile,
+  });
+
+  final PublicProfile profile;
+  final CreatorProfile? creatorProfile;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final gameCardAsync = ref.watch(gameCardProvider(profile.id));
+
+    // Flank the avatar with the game-card stats (null while loading/on error,
+    // rendered as "--" — never faked).
+    final stats = gameCardAsync.maybeWhen(
+      data: (card) => (
+        points: card.stats.totalPoints as int?,
+        events: card.stats.totalEventsAttended as int?,
+        badges: card.stats.badgesCount as int?,
+      ),
+      orElse: () => (points: null, events: null, badges: null),
+    );
+
+    return CustomScrollView(
+      slivers: [
+        // Flaire-style member hero: gradient cover + centred circular avatar
+        // flanked by friends/events | points/badges stats.
+        _MemberHeroHeader(
+          profile: profile,
+          friends: profile.supportsFriends ? profile.friendsCount : null,
+          events: stats.events,
+          points: stats.points,
+          badges: stats.badges,
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              // NF-17 friend CTA. Self-gated: shown only when the backend
+              // reported a friend_status (and it isn't `self`). Hidden entirely
+              // until the friend graph deploys, so the profile still works.
+              if (profile.supportsFriends && profile.friendStatus != null) ...[
+                _MemberFriendCta(
+                  profileId: profile.id,
+                  status: profile.friendStatus!,
+                  friendsCount: profile.friendsCount,
+                ),
+                const SizedBox(height: KolabingSpacing.md),
+              ],
+              // Badges grid. Degrades gracefully on error/empty: we never crash
+              // and never show fake data.
+              gameCardAsync.when(
+                loading: () => const _MemberStatsShimmer(),
+                error: (error, stack) => const _MemberBadgesEmpty(),
+                data: (card) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (card.recentBadges.isNotEmpty)
+                      _SectionCard(
+                        icon: LucideIcons.award,
+                        title: l10n.memberProfileBadges,
+                        count: card.stats.badgesCount,
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: KolabingSpacing.sm,
+                            crossAxisSpacing: KolabingSpacing.sm,
+                            childAspectRatio: 0.82,
+                          ),
+                          itemCount: card.recentBadges.length,
+                          itemBuilder: (context, index) {
+                            final award = card.recentBadges[index];
+                            return BadgeCard(
+                              badge: award.badge,
+                              isEarned: true,
+                              earnedAt: award.awardedAt,
+                            );
+                          },
+                        ),
+                      )
+                    else
+                      const _MemberBadgesEmpty(),
+                  ],
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xl),
+            ]),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// NF-17 friend CTA row on a member profile header. A pill button driven by
+/// `friend_status` plus the friends count. Only rendered when the backend
+/// supports the friend graph (`profile.supportsFriends`).
+class _MemberFriendCta extends StatelessWidget {
+  const _MemberFriendCta({
+    required this.profileId,
+    required this.status,
+    required this.friendsCount,
+  });
+
+  final String profileId;
+  final FriendStatus status;
+  final int friendsCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            LucideIcons.users,
+            size: 18,
+            color: KolabingColors.primary,
+          ),
+          const SizedBox(width: KolabingSpacing.xs),
+          Expanded(
+            child: Text(
+              friendsCount == 1
+                  ? l10n.friendCountOne
+                  : l10n.friendCountOther(friendsCount),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.onSurface,
+              ),
+            ),
+          ),
+          FriendCtaButton(profileId: profileId, status: status),
+        ],
+      ),
+    );
+  }
+}
+
+/// Flaire-style member hero: a gradient cover with a centred circular avatar
+/// overlapping its bottom edge, flanked by the member's stats (Friends / Events
+/// on the left, Points / Badges on the right). Null stats render as "--"
+/// (graceful degrade) without inventing data; Friends is null (hidden) until the
+/// friend graph deploys. Name + city sit centred below the avatar.
+class _MemberHeroHeader extends StatelessWidget {
+  const _MemberHeroHeader({
+    required this.profile,
+    required this.friends,
+    required this.events,
+    required this.points,
+    required this.badges,
+  });
+
+  final PublicProfile profile;
+  final int? friends;
+  final int? events;
+  final int? points;
+  final int? badges;
+
+  static const double _coverHeight = 150;
+  static const double _avatarSize = 92;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final hasCity = profile.cityName != null && profile.cityName!.isNotEmpty;
+
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          SizedBox(
+            height: _coverHeight + _avatarSize / 2 + 6,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                // Gradient cover band.
+                Container(
+                  height: _coverHeight,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        KolabingColors.primary,
+                        KolabingColors.surfaceVariant,
+                      ],
+                    ),
+                  ),
+                ),
+                // Back button.
+                const Positioned(top: 8, left: 8, child: _BackButton()),
+                // Flanking stats.
+                Positioned(
+                  left: KolabingSpacing.md,
+                  right: KolabingSpacing.md,
+                  top: _coverHeight - 64,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _MemberFlankStat(
+                              value: friends,
+                              label: l10n.memberProfileFriends,
+                            ),
+                            _MemberFlankStat(
+                              value: events,
+                              label: l10n.memberProfileEventsAttended,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: _avatarSize),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _MemberFlankStat(
+                              value: points,
+                              label: l10n.memberProfilePoints,
+                            ),
+                            _MemberFlankStat(
+                              value: badges,
+                              label: l10n.memberProfileBadges,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Centred avatar overlapping the cover bottom.
+                Positioned(
+                  top: _coverHeight - _avatarSize / 2,
+                  child: _MemberHeroAvatar(
+                    avatarUrl: profile.avatarUrl,
+                    initial: profile.initial,
+                    size: _avatarSize,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          Text(
+            profile.displayName,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.onSurface,
+            ),
+          ),
+          if (hasCity) ...[
+            const SizedBox(height: 2),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  LucideIcons.mapPin,
+                  size: 14,
+                  color: KolabingColors.onSurfaceVariant,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  profile.cityName!,
+                  style: KolabingTextStyles.bodySmall
+                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: KolabingSpacing.sm),
+        ],
+      ),
+    );
+  }
+}
+
+/// A single flanking stat (big number + small label). Null → "--".
+class _MemberFlankStat extends StatelessWidget {
+  const _MemberFlankStat({required this.value, required this.label});
+
+  final int? value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            value != null ? '$value' : '--',
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: KolabingColors.onSurface,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      );
+}
+
+/// Member hero avatar: photo or initial circle, ringed in surface so it reads
+/// cleanly over the gradient cover.
+class _MemberHeroAvatar extends StatelessWidget {
+  const _MemberHeroAvatar({
+    required this.initial,
+    required this.size,
+    this.avatarUrl,
+  });
+
+  final String? avatarUrl;
+  final String initial;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final border = Border.all(color: KolabingColors.surface, width: 4);
+    if (avatarUrl != null && avatarUrl!.isNotEmpty) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, border: border),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: avatarUrl!,
+            fit: BoxFit.cover,
+            errorWidget: (_, _, _) => _initialCircle(border),
+          ),
+        ),
+      );
+    }
+    return _initialCircle(border);
+  }
+
+  Widget _initialCircle(BoxBorder border) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: KolabingColors.primary.withValues(alpha: 0.25),
+          border: border,
+        ),
+        child: Center(
+          child: Text(
+            initial,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.onPrimary,
+            ),
+          ),
+        ),
+      );
+}
+
+class _MemberStatsShimmer extends StatelessWidget {
+  const _MemberStatsShimmer();
+
+  @override
+  Widget build(BuildContext context) => Shimmer.fromColors(
+        baseColor: KolabingColors.surfaceVariant,
+        highlightColor: KolabingColors.surface,
+        child: Container(
+          height: 88,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: KolabingRadius.borderRadiusLg,
+          ),
+        ),
+      );
+}
+
+class _MemberBadgesEmpty extends StatelessWidget {
+  const _MemberBadgesEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return _SectionCard(
+      icon: LucideIcons.award,
+      title: l10n.memberProfileBadges,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+        child: Center(
+          child: Column(
+            children: [
+              const Icon(
+                LucideIcons.award,
+                size: 32,
+                color: KolabingColors.textTertiary,
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                l10n.memberProfileNoBadges,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  color: KolabingColors.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // =============================================================================
