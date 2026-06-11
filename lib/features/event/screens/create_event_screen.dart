@@ -7,8 +7,11 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../community/models/community_tier.dart';
 import '../../community/providers/community_providers.dart';
+import '../../onboarding/models/place_suggestion.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -50,10 +53,25 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   bool _limited = false;
   bool _busy = false;
 
-  /// Tier-gate: empty list (+ [_allMembers] true) = open to all. When
-  /// [_allMembers] is false, the selected tier ids become `tier_gate`.
-  bool _allMembers = true;
+  /// Visibility (#1): 'public' | 'members' | 'tier'. `public` surfaces the
+  /// event in city discovery; `tier` gates it to [_selectedTierIds]
+  /// (sent as `tier_gate`). Defaults to `members` (backend-safe default).
+  String _visibility = 'members';
   final Set<String> _selectedTierIds = {};
+
+  /// Event location city (Fix: events.city_id). Defaults to the user's city;
+  /// sent as `city_id` only when set (self-gated — backend FK ships in
+  /// parallel). On create/edit it is auto-derived from the Google Places venue
+  /// the leader picks (NF-20) — see [_handlePlaceSelected].
+  String? _cityId;
+  String? _cityName;
+
+  /// Places autocomplete (NF-20): the live query string driving
+  /// [placeSuggestionsProvider], whether a place was explicitly picked, and
+  /// whether we are resolving the picked place's details.
+  String _placeQuery = '';
+  bool _placeSelected = false;
+  bool _resolvingPlace = false;
 
   /// Newly picked photos (paths) to upload (edit mode uploads after save).
   final List<XFile> _pickedPhotos = [];
@@ -90,9 +108,28 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     if (e != null) {
       _name.text = e.name;
       _location.text = e.location ?? '';
+      _placeQuery = _location.text;
+      // Treat a seeded location as an already-chosen place so the suggestions
+      // list stays collapsed until the leader actively edits the field.
+      _placeSelected = _location.text.trim().isNotEmpty;
       _startsAt = e.startsAt ?? e.date;
       _limited = e.capacity != null;
       if (e.capacity != null) _capacity.text = e.capacity.toString();
+      // Seed visibility from the existing event (#1). Older events without a
+      // value default to members.
+      _visibility = (e.visibility == 'public' ||
+              e.visibility == 'members' ||
+              e.visibility == 'tier')
+          ? e.visibility!
+          : 'members';
+    }
+    // Default the event city to the user's city (the community's city falls back
+    // server-side). The user's city is on UserModel; degrade gracefully when
+    // absent.
+    final user = ref.read(authProvider).user;
+    if (user?.cityId != null && user!.cityId!.isNotEmpty) {
+      _cityId = user.cityId;
+      _cityName = user.cityName;
     }
   }
 
@@ -125,6 +162,49 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
+  /// The leader picked a place from the autocomplete (NF-20). Set the location
+  /// text to the formatted address and auto-derive the event city from the
+  /// place details (`PlaceDetailsImport.cityId` / `cityName`). A place with no
+  /// resolvable city leaves the city unset — the event simply won't be
+  /// city-discoverable; we never block on it.
+  Future<void> _handlePlaceSelected(PlaceSuggestion place) async {
+    if (_resolvingPlace) return;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _placeSelected = true;
+      _resolvingPlace = true;
+      _location.text = place.formattedAddress;
+      _placeQuery = place.formattedAddress;
+      // Optimistic city from the suggestion (details refine it below).
+      if (place.cityId != null && place.cityId!.isNotEmpty) {
+        _cityId = place.cityId;
+        _cityName = place.city.isNotEmpty ? place.city : _cityName;
+      }
+    });
+
+    try {
+      final details = await ref
+          .read(onboardingServiceProvider)
+          .getPlaceDetails(place.placeId);
+      if (!mounted) return;
+      setState(() {
+        _location.text = details.primaryVenue.formattedAddress.isNotEmpty
+            ? details.primaryVenue.formattedAddress
+            : place.formattedAddress;
+        _placeQuery = _location.text;
+        if (details.cityId != null && details.cityId!.isNotEmpty) {
+          _cityId = details.cityId;
+          _cityName = details.cityName ?? details.primaryVenue.city;
+        }
+      });
+    } on Object {
+      // Details lookup failed — keep the suggestion's address + optimistic city.
+      // Don't surface an error; the location text is already usable.
+    } finally {
+      if (mounted) setState(() => _resolvingPlace = false);
+    }
+  }
+
   Future<void> _pickPhotos() async {
     final picked = await ImagePicker().pickMultiImage();
     if (picked.isEmpty || !mounted) return;
@@ -132,7 +212,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   List<String>? _tierGate() {
-    if (_allMembers || _selectedTierIds.isEmpty) return null;
+    if (_visibility != 'tier' || _selectedTierIds.isEmpty) return null;
     return _selectedTierIds.toList();
   }
 
@@ -161,6 +241,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         _snack(_l10n.eventFormErrCapacity);
         return;
       }
+    }
+    if (_visibility == 'tier' && _selectedTierIds.isEmpty) {
+      _snack(_l10n.eventFormErrTier);
+      return;
     }
 
     Map<String, dynamic>? recurrence;
@@ -211,6 +295,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           capacity: cap,
           clearCapacity: !_limited,
           tierGate: _tierGate() ?? const [],
+          visibility: _visibility,
+          cityId: _cityId,
           // Editing a recurring occurrence → scope; editing a one-off with a
           // pattern picked → recurrence (backend converts it to a series).
           scope: _existingIsRecurring ? _editScope : 'this',
@@ -225,6 +311,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           location: _location.text.trim(),
           capacity: cap,
           tierGate: _tierGate(),
+          visibility: _visibility,
+          cityId: _cityId,
           recurrence: recurrence,
         );
       }
@@ -308,9 +396,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           _label(_l10n.eventFormLocationLabel),
-          TextField(
-              controller: _location,
-              decoration: _dec(_l10n.eventFormLocationHint)),
+          _locationField(),
           const SizedBox(height: KolabingSpacing.lg),
           Row(
             children: [
@@ -333,8 +419,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 style: KolabingTextStyles.bodySmall
                     .copyWith(color: context.colors.onSurfaceVariant)),
           const SizedBox(height: KolabingSpacing.lg),
-          _label(_l10n.eventFormWhoCanJoin),
-          _tierGatePicker(tiersAsync),
+          _label(_l10n.eventFormVisibilityLabel),
+          _visibilityPicker(tiersAsync),
           const SizedBox(height: KolabingSpacing.lg),
           if (_showRepeat) ...[
             _label(_l10n.eventFormRepeatLabel),
@@ -380,25 +466,41 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     );
   }
 
-  Widget _tierGatePicker(AsyncValue<List<CommunityTier>> tiersAsync) {
+  Widget _visibilityPicker(AsyncValue<List<CommunityTier>> tiersAsync) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RadioListTile<bool>(
+        RadioListTile<String>(
           contentPadding: EdgeInsets.zero,
-          value: true,
-          groupValue: _allMembers,
-          onChanged: (v) => setState(() => _allMembers = v ?? true),
-          title: Text(_l10n.eventFormAllMembers),
+          value: 'public',
+          groupValue: _visibility,
+          onChanged: (v) => setState(() => _visibility = v ?? 'members'),
+          title: Text(_l10n.eventFormVisibilityPublic),
+          subtitle: Text(_l10n.eventFormVisibilityPublicHint,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant)),
         ),
-        RadioListTile<bool>(
+        RadioListTile<String>(
           contentPadding: EdgeInsets.zero,
-          value: false,
-          groupValue: _allMembers,
-          onChanged: (v) => setState(() => _allMembers = v ?? false),
-          title: Text(_l10n.eventFormSelectedTiers),
+          value: 'members',
+          groupValue: _visibility,
+          onChanged: (v) => setState(() => _visibility = v ?? 'members'),
+          title: Text(_l10n.eventFormVisibilityMembers),
+          subtitle: Text(_l10n.eventFormVisibilityMembersHint,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant)),
         ),
-        if (!_allMembers)
+        RadioListTile<String>(
+          contentPadding: EdgeInsets.zero,
+          value: 'tier',
+          groupValue: _visibility,
+          onChanged: (v) => setState(() => _visibility = v ?? 'members'),
+          title: Text(_l10n.eventFormVisibilityTier),
+          subtitle: Text(_l10n.eventFormVisibilityTierHint,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+        ),
+        if (_visibility == 'tier')
           tiersAsync.when(
             loading: () => const Padding(
               padding: EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
@@ -629,6 +731,120 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       ],
     );
   }
+
+  /// Google Places autocomplete location field (NF-20). Mirrors the business
+  /// onboarding step-5 UX: type → suggestions → tap. On select the city is
+  /// auto-derived and shown read-only beneath the field. No API key is needed —
+  /// suggestions/details are backend-proxied via `placeSuggestionsProvider` /
+  /// `OnboardingService.getPlaceDetails`.
+  Widget _locationField() {
+    // Only query for suggestions while the leader is actively typing (i.e. has
+    // not just picked a place). This keeps the list collapsed on edit-seed.
+    final suggestions = ref.watch(
+      placeSuggestionsProvider(_placeSelected ? '' : _placeQuery.trim()),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _location,
+          decoration: _dec(_l10n.eventFormLocationSearchHint).copyWith(
+            prefixIcon: const Icon(LucideIcons.mapPin, size: 18),
+            suffixIcon: _resolvingPlace
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                : (_location.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(LucideIcons.x, size: 16),
+                        onPressed: () => setState(() {
+                          _location.clear();
+                          _placeQuery = '';
+                          _placeSelected = false;
+                          _cityId = null;
+                          _cityName = null;
+                        }),
+                      )
+                    : null),
+          ),
+          onChanged: (v) => setState(() {
+            _placeQuery = v;
+            // Re-opening the suggestions: the text no longer reflects a picked
+            // place, and the derived city is stale until a new pick.
+            _placeSelected = false;
+            _cityId = null;
+            _cityName = null;
+          }),
+        ),
+        // Derived-city hint (read-only) so the leader sees what was detected.
+        if (_placeSelected) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            _cityName != null && _cityName!.isNotEmpty
+                ? _l10n.eventFormCityDetected(_cityName!)
+                : _l10n.eventFormCityNotDetected,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: _cityName != null && _cityName!.isNotEmpty
+                  ? KolabingColors.onSurfaceVariant
+                  : KolabingColors.error,
+            ),
+          ),
+        ],
+        // Suggestions list — shown only while actively typing a query.
+        if (!_placeSelected && _placeQuery.trim().isNotEmpty) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          suggestions.when(
+            data: (items) {
+              if (_placeQuery.trim().length < 2) {
+                return _placeHint(_l10n.eventFormLocationStartTyping);
+              }
+              if (items.isEmpty) {
+                return _placeHint(_l10n.eventFormLocationNoMatches);
+              }
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  color: KolabingColors.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    for (final place in items)
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(LucideIcons.mapPin, size: 18),
+                        title: Text(place.title,
+                            style: KolabingTextStyles.bodyMedium),
+                        subtitle: Text(place.displaySubtitle,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                                color: KolabingColors.onSurfaceVariant)),
+                        onTap: () => _handlePlaceSelected(place),
+                      ),
+                  ],
+                ),
+              );
+            },
+            loading: () => const Padding(
+              padding: EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+              child: LinearProgressIndicator(),
+            ),
+            error: (_, __) => _placeHint(_l10n.eventFormLocationError),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _placeHint(String message) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+        child: Text(message,
+            style: KolabingTextStyles.bodySmall
+                .copyWith(color: KolabingColors.onSurfaceVariant)),
+      );
 
   Widget _label(String t) => Padding(
         padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),

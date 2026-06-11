@@ -4769,6 +4769,9 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'Veure comunitat';
+
+  @override
   String get eventHubEdit => 'Edita';
 
   @override
@@ -4903,6 +4906,36 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventFormLocationHint => 'Parc de la Ciutadella';
 
   @override
+  String get eventFormCityLabel => 'Ciutat (opcional)';
+
+  @override
+  String get eventFormCityHint => 'Selecciona una ciutat';
+
+  @override
+  String get eventFormLocationSearchHint => 'Cerca el local o l\'adreça';
+
+  @override
+  String get eventFormLocationStartTyping =>
+      'Comença a escriure el local o l\'adreça per veure suggeriments.';
+
+  @override
+  String get eventFormLocationNoMatches =>
+      'Encara no hi ha coincidències. Prova d\'afegir la ciutat a l\'adreça.';
+
+  @override
+  String get eventFormLocationError =>
+      'Ara mateix no hem pogut carregar els suggeriments d\'ubicació.';
+
+  @override
+  String eventFormCityDetected(String city) {
+    return 'Ciutat: $city';
+  }
+
+  @override
+  String get eventFormCityNotDetected =>
+      'No s\'ha detectat cap ciutat per a aquest lloc. L\'esdeveniment no apareixerà al descobriment per ciutat.';
+
+  @override
   String get eventFormCapacityLabel => 'Aforament (opcional)';
 
   @override
@@ -4916,6 +4949,30 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventFormSelectedTiers => 'Nivells seleccionats';
+
+  @override
+  String get eventFormVisibilityLabel => 'Visibilitat';
+
+  @override
+  String get eventFormVisibilityPublic => 'Pública';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Apareix al descobriment de la ciutat: qualsevol la pot trobar.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Membres';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Només els membres de la teva comunitat la poden veure.';
+
+  @override
+  String get eventFormVisibilityTier => 'Nivell específic';
+
+  @override
+  String get eventFormVisibilityTierHint =>
+      'Només els membres dels nivells seleccionats la poden veure.';
 
   @override
   String get eventFormPhotos => 'Fotos';
@@ -4944,6 +5001,10 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get eventFormErrCapacity =>
       'Introdueix un aforament vàlid o desactiva el límit.';
+
+  @override
+  String get eventFormErrTier =>
+      'Selecciona almenys un nivell per a aquest esdeveniment.';
 
   @override
   String get eventFormPhotosUploaded => 'Fotos pujades.';
@@ -4992,6 +5053,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get chatThreadFallbackTitle => 'Xat';
+
+  @override
+  String get chatSenderFallback => 'Membre';
 
   @override
   String get chatThreadTapToOpen => 'Toca per obrir';
@@ -5806,6 +5870,21 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeHomeFilterToday => 'Avui';
+
+  @override
+  String get attendeeHomeFilterDate => 'Quan';
+
+  @override
+  String get attendeeHomeFilterUpcoming => 'Propers';
+
+  @override
+  String get attendeeHomeFilterThisWeek => 'Aquesta setmana';
+
+  @override
+  String get attendeeHomeFilterThisWeekend => 'Aquest cap de setmana';
+
+  @override
+  String get attendeeHomeFilterThisMonth => 'Aquest mes';
 
   @override
   String get attendeeHomeFilterType => 'Tipus';

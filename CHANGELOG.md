@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.5.0+16 — 2026-06-11
+
+Attendee + community release. New attendee experience, friends, city-based event
+discovery, a profile redesign, event visibility controls, and refreshed branding.
+Backend deployed in lockstep (kolabing-v2 master).
+
+### New features
+
+- **Attendee onboarding** — a guided 4-step flow (name + unique **@handle** + photo
+  → city → interests → join featured communities), interest-ranked.
+- **Universal @handle identity** — every profile gets a `@handle`. Add **friends**
+  (and community **members**, for leaders) by **email or @handle**; live handle
+  availability.
+- **Friends graph** — send / accept / decline / remove; a Friends list + "Find
+  friends" on the profile.
+- **City-based event discovery** — the attendee home shows real events in a chosen
+  city (persisted to your profile), with a **date dropdown** (Today / This week /
+  This weekend / This month / Upcoming) and a **type** filter.
+- **Event visibility** — when creating an event, choose **Public / Members / Specific
+  tier** (one-off and recurring series). Public events appear in their city's
+  discovery. Event **location via Google Places** auto-detects the city.
+- **Profile redesign** — a social-hub profile with a brand cover, large avatar,
+  Friends / Events / Chats / Points stats; **inline editing** (tap the avatar to
+  change your photo, edit name + @handle in place — no separate edit screen).
+- **Explore communities** — an always-visible entry to browse and join more.
+
+### Fixes & polish
+
+- Event sign-up 500 (Postgres lock) fixed; communities are never paywalled
+  (business-only gate).
+- Chat shows the **sender's name** on others' messages; new ungated chats are
+  visible to all members by default.
+- Member "View profile" no longer shows "Unknown".
+- Community type taxonomy unified on the real 17-slug vocabulary (no placeholders).
+- New **cloud branding** — readable "KOLABING" app icon, in-app wordmark, and web
+  favicon (cache-busted).
+
 ## 1.3.0+10 — 2026-05-21
 
 Barcelona launch readiness release. 32 bug reports closed, 5 new features

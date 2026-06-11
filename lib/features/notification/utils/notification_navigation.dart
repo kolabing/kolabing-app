@@ -4,7 +4,18 @@ String resolveNotificationRoute({
   String? type,
   String? id,
   String? deeplink,
+  String? targetType,
 }) {
+  // Community / group / event chat messages carry targetType 'chat_thread' and a
+  // THREAD id (not an application id). There is no path route to a specific thread
+  // (they open ChatThreadScreen with the loaded object), and the backend deeplink
+  // wrongly points at /application/{threadId}/chat — so send these to the chats
+  // list, where tapping the thread opens it. Handled before the deeplink/type
+  // branches to override that bad deeplink.
+  if (targetType == 'chat_thread') {
+    return KolabingRoutes.chats;
+  }
+
   final normalizedDeeplink = normalizeNotificationDeeplink(deeplink);
   if (normalizedDeeplink != null) {
     return normalizedDeeplink;

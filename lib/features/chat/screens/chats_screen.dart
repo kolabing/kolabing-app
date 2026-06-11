@@ -72,11 +72,13 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
             children: [
-              ..._sections(l10n, threads).expand((s) => [
-                    _SectionLabel(s.title),
-                    ...s.threads.map((t) => _ThreadTile(thread: t)),
-                    const SizedBox(height: KolabingSpacing.sm),
-                  ]),
+              ..._sections(l10n, threads).expand(
+                (s) => [
+                  _SectionLabel(s.title),
+                  ...s.threads.map((t) => _ThreadTile(thread: t)),
+                  const SizedBox(height: KolabingSpacing.sm),
+                ],
+              ),
               if (joinable.isNotEmpty) ...[
                 _SectionLabel(l10n.chatJoinSectionTitle),
                 ...joinable.map((t) => _JoinableTile(thread: t)),
@@ -153,8 +155,11 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         communityId = chosen;
       }
       if (!mounted) return;
-      await ChatManagement.createCustomChat(context, ref,
-          communityId: communityId);
+      await ChatManagement.createCustomChat(
+        context,
+        ref,
+        communityId: communityId,
+      );
     };
   }
 
@@ -170,10 +175,16 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(KolabingSpacing.md, 0,
-                  KolabingSpacing.md, KolabingSpacing.sm),
-              child: Text(l10n.chatManageWhichCommunity,
-                  style: Theme.of(sheetContext).textTheme.titleMedium),
+              padding: const EdgeInsets.fromLTRB(
+                KolabingSpacing.md,
+                0,
+                KolabingSpacing.md,
+                KolabingSpacing.sm,
+              ),
+              child: Text(
+                l10n.chatManageWhichCommunity,
+                style: Theme.of(sheetContext).textTheme.titleMedium,
+              ),
             ),
             for (final c in manageable)
               ListTile(
@@ -194,7 +205,9 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     final groups = <_Section>[
       _Section(l10n.chatSectionMain, of(ChatThreadType.communityMain)),
       _Section(
-          l10n.chatSectionCommunityChats, of(ChatThreadType.communityCustom)),
+        l10n.chatSectionCommunityChats,
+        of(ChatThreadType.communityCustom),
+      ),
       _Section(l10n.chatSectionEvents, of(ChatThreadType.event)),
       _Section(l10n.chatSectionKolabs, of(ChatThreadType.collaboration)),
     ];
@@ -241,7 +254,8 @@ class _ThreadTile extends ConsumerWidget {
           } else {
             await Navigator.of(context).push<void>(
               MaterialPageRoute<void>(
-                  builder: (_) => ChatThreadScreen(thread: thread)),
+                builder: (_) => ChatThreadScreen(thread: thread),
+              ),
             );
           }
           // Refresh the inbox + badge after returning (read state may have moved).
@@ -255,26 +269,29 @@ class _ThreadTile extends ConsumerWidget {
               thread.type == ChatThreadType.event
                   ? LucideIcons.calendar
                   : thread.type == ChatThreadType.collaboration
-                      ? LucideIcons.briefcase
-                      : LucideIcons.messageCircle,
+                  ? LucideIcons.briefcase
+                  : LucideIcons.messageCircle,
               size: 18,
               color: context.colors.onSurface,
             ),
           ),
-          title: Text(_titleFor(l10n),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight:
-                      thread.hasUnread ? FontWeight.w700 : FontWeight.w600)),
+          title: Text(
+            _titleFor(l10n),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontWeight: thread.hasUnread ? FontWeight.w700 : FontWeight.w600,
+            ),
+          ),
           subtitle: Text(
             thread.hasMessages
                 ? l10n.chatThreadTapToOpen
                 : l10n.chatThreadNoMessagesYet,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           trailing: _trailing(context, ref, l10n),
         ),
@@ -283,7 +300,10 @@ class _ThreadTile extends ConsumerWidget {
   }
 
   Widget? _trailing(
-      BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     final badge = thread.hasUnread
         ? Container(
             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
@@ -291,21 +311,28 @@ class _ThreadTile extends ConsumerWidget {
               color: KolabingColors.primary,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text('${thread.unreadCount}',
-                style: KolabingTextStyles.bodySmall.copyWith(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onPrimary)),
+            child: Text(
+              '${thread.unreadCount}',
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: KolabingColors.onPrimary,
+              ),
+            ),
           )
         : null;
 
     // Managers get inline rename / delete on custom + event chats.
-    final canManage = thread.canManage && (thread.isRenamable || thread.isDeletable);
+    final canManage =
+        thread.canManage && (thread.isRenamable || thread.isDeletable);
     if (!canManage) return badge;
 
     final menu = PopupMenuButton<String>(
-      icon: const Icon(LucideIcons.moreVertical,
-          size: 18, color: KolabingColors.onSurfaceVariant),
+      icon: const Icon(
+        LucideIcons.moreVertical,
+        size: 18,
+        color: KolabingColors.onSurfaceVariant,
+      ),
       onSelected: (value) {
         switch (value) {
           case 'rename':
@@ -318,31 +345,37 @@ class _ThreadTile extends ConsumerWidget {
         if (thread.isRenamable)
           PopupMenuItem<String>(
             value: 'rename',
-            child: Row(children: [
-              const Icon(LucideIcons.pencil, size: 16),
-              const SizedBox(width: KolabingSpacing.sm),
-              Text(l10n.chatManageRename),
-            ]),
+            child: Row(
+              children: [
+                const Icon(LucideIcons.pencil, size: 16),
+                const SizedBox(width: KolabingSpacing.sm),
+                Text(l10n.chatManageRename),
+              ],
+            ),
           ),
         if (thread.isDeletable)
           PopupMenuItem<String>(
             value: 'delete',
-            child: Row(children: [
-              const Icon(LucideIcons.trash2,
-                  size: 16, color: KolabingColors.error),
-              const SizedBox(width: KolabingSpacing.sm),
-              Text(l10n.chatManageDelete,
-                  style: const TextStyle(color: KolabingColors.error)),
-            ]),
+            child: Row(
+              children: [
+                const Icon(
+                  LucideIcons.trash2,
+                  size: 16,
+                  color: KolabingColors.error,
+                ),
+                const SizedBox(width: KolabingSpacing.sm),
+                Text(
+                  l10n.chatManageDelete,
+                  style: const TextStyle(color: KolabingColors.error),
+                ),
+              ],
+            ),
           ),
       ],
     );
 
     if (badge == null) return menu;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [badge, menu],
-    );
+    return Row(mainAxisSize: MainAxisSize.min, children: [badge, menu]);
   }
 }
 
@@ -372,14 +405,20 @@ class _JoinableTile extends ConsumerWidget {
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
-            child: const Icon(LucideIcons.messageCircle,
-                size: 18, color: KolabingColors.onSurface),
+            child: const Icon(
+              LucideIcons.messageCircle,
+              size: 18,
+              color: KolabingColors.onSurface,
+            ),
           ),
-          title: Text(thread.name ?? l10n.chatThreadFallbackTitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.bodyMedium
-                  .copyWith(fontWeight: FontWeight.w600)),
+          title: Text(
+            thread.name ?? l10n.chatThreadFallbackTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           trailing: OutlinedButton(
             onPressed: () => ChatManagement.joinChat(context, ref, thread),
             child: Text(l10n.chatJoinAction),
@@ -396,15 +435,22 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(KolabingSpacing.md,
-            KolabingSpacing.md, KolabingSpacing.md, KolabingSpacing.xs),
-        child: Text(text.toUpperCase(),
-            style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: context.colors.onSurfaceVariant)),
-      );
+    padding: const EdgeInsets.fromLTRB(
+      KolabingSpacing.md,
+      KolabingSpacing.md,
+      KolabingSpacing.md,
+      KolabingSpacing.xs,
+    ),
+    child: Text(
+      text.toUpperCase(),
+      style: KolabingTextStyles.bodySmall.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.2,
+        color: context.colors.onSurfaceVariant,
+      ),
+    ),
+  );
 }
 
 class _EmptyChats extends StatelessWidget {
@@ -443,24 +489,27 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(LucideIcons.alertCircle,
-                  size: 32, color: context.colors.error),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(message,
-                  textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: context.colors.onSurfaceVariant)),
-              const SizedBox(height: KolabingSpacing.lg),
-              OutlinedButton(
-                  onPressed: onRetry,
-                  child: Text(AppLocalizations.of(context).commonRetry)),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(LucideIcons.alertCircle, size: 32, color: context.colors.error),
+          const SizedBox(height: KolabingSpacing.md),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          OutlinedButton(
+            onPressed: onRetry,
+            child: Text(AppLocalizations.of(context).commonRetry),
+          ),
+        ],
+      ),
+    ),
+  );
 }

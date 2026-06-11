@@ -493,8 +493,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       // Top nav — Back + Sign up.
                       AnimatedBuilder(
                         animation: _logoAnimation,
-                        builder: (context, child) =>
-                            Opacity(opacity: _logoAnimation.value, child: child),
+                        builder: (context, child) => Opacity(
+                          opacity: _logoAnimation.value,
+                          child: child,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -574,227 +576,226 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     ),
   );
 
-  Widget _buildAuthPanel({
-    required bool compact,
-    required bool ultraCompact,
-  }) => ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: 560),
-    child: Container(
-      padding: EdgeInsets.all(ultraCompact ? 16 : (compact ? 18 : 20)),
-      decoration: BoxDecoration(
-        color: _kCard,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _kCardBorder),
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Card header.
-            Text(
-              AppLocalizations.of(context).loginPanelTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: _kTextWhite,
-                fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              AppLocalizations.of(context).loginPanelSubtitle,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: _kTextSoft,
-                fontSize: ultraCompact ? 12 : 13,
-                fontWeight: FontWeight.w400,
-                height: 1.35,
-              ),
-            ),
-            SizedBox(height: ultraCompact ? 14 : 16),
-
-            // Email field.
-            TextFormField(
-              controller: _emailController,
-              focusNode: _emailFocusNode,
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              enableSuggestions: false,
-              autofillHints: const [AutofillHints.email],
-              enabled: !_anyLoading,
-              validator: _validateEmail,
-              textInputAction: TextInputAction.next,
-              onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: _kTextWhite,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              cursorColor: _kYellow,
-              decoration: _inputDecoration(
-                hint: AppLocalizations.of(context).authEmailLabel,
-                prefixIcon: Icons.alternate_email_rounded,
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Password field.
-            TextFormField(
-              controller: _passwordController,
-              focusNode: _passwordFocusNode,
-              obscureText: _obscurePassword,
-              enabled: !_anyLoading,
-              validator: _validatePassword,
-              autofillHints: const [AutofillHints.password],
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) => _handleEmailLogin(),
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: _kTextWhite,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              cursorColor: _kYellow,
-              decoration: _inputDecoration(
-                hint: AppLocalizations.of(context).authPasswordLabel,
-                prefixIcon: Icons.lock_outline_rounded,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: _kTextMuted,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    setState(() => _obscurePassword = !_obscurePassword);
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: ultraCompact ? 12 : 14),
-
-            // Sign in button.
-            _AnimatedElement(
-              opacityAnimation: _buttonAnimation,
-              slideAnimation: _buttonSlideAnimation,
-              child: SizedBox(
-                width: double.infinity,
-                height: ultraCompact ? 44 : (compact ? 46 : 50),
-                child: ElevatedButton(
-                  onPressed: _anyLoading ? null : _handleEmailLogin,
-                  style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.60),
-                    elevation: 0,
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                KolabingColors.onPrimary),
-                          ),
-                        )
-                      : _showSuccess
-                      ? const Icon(Icons.check_rounded, size: 22)
-                      : Text(
-                          AppLocalizations.of(context).loginSignInButton,
-                          style: KolabingTextStyles.button.copyWith(
-                            fontSize: compact ? 15 : 15.5,
-                          ),
-                        ),
-                ),
-              ),
-            ),
-
-            // Forgot password.
-            const SizedBox(height: 2),
-            AnimatedBuilder(
-              animation: _dividerAnimation,
-              builder: (context, child) =>
-                  Opacity(opacity: _dividerAnimation.value, child: child),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _anyLoading || _showSuccess
-                      ? null
-                      : () => context.push(_kForgotPasswordRoute),
-                  style: TextButton.styleFrom(
-                    foregroundColor: KolabingColors.primary,
-                    minimumSize: const Size(0, 32),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).loginForgotPassword,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: KolabingColors.primary,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Divider.
-            SizedBox(height: ultraCompact ? 10 : 12),
-            Row(
+  Widget _buildAuthPanel({required bool compact, required bool ultraCompact}) =>
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560),
+        child: Container(
+          padding: EdgeInsets.all(ultraCompact ? 16 : (compact ? 18 : 20)),
+          decoration: BoxDecoration(
+            color: _kCard,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: _kCardBorder),
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(child: Divider(color: _kCardBorder, thickness: 1)),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    'or',
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: _kTextMuted,
-                      fontSize: 12,
+                // Card header.
+                Text(
+                  AppLocalizations.of(context).loginPanelTitle,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: _kTextWhite,
+                    fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  AppLocalizations.of(context).loginPanelSubtitle,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: _kTextSoft,
+                    fontSize: ultraCompact ? 12 : 13,
+                    fontWeight: FontWeight.w400,
+                    height: 1.35,
+                  ),
+                ),
+                SizedBox(height: ultraCompact ? 14 : 16),
+
+                // Email field.
+                TextFormField(
+                  controller: _emailController,
+                  focusNode: _emailFocusNode,
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  autofillHints: const [AutofillHints.email],
+                  enabled: !_anyLoading,
+                  validator: _validateEmail,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: _kTextWhite,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  cursorColor: _kYellow,
+                  decoration: _inputDecoration(
+                    hint: AppLocalizations.of(context).authEmailLabel,
+                    prefixIcon: Icons.alternate_email_rounded,
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Password field.
+                TextFormField(
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
+                  obscureText: _obscurePassword,
+                  enabled: !_anyLoading,
+                  validator: _validatePassword,
+                  autofillHints: const [AutofillHints.password],
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _handleEmailLogin(),
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: _kTextWhite,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  cursorColor: _kYellow,
+                  decoration: _inputDecoration(
+                    hint: AppLocalizations.of(context).authPasswordLabel,
+                    prefixIcon: Icons.lock_outline_rounded,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: _kTextMuted,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() => _obscurePassword = !_obscurePassword);
+                      },
                     ),
                   ),
                 ),
-                Expanded(child: Divider(color: _kCardBorder, thickness: 1)),
+                SizedBox(height: ultraCompact ? 12 : 14),
+
+                // Sign in button.
+                _AnimatedElement(
+                  opacityAnimation: _buttonAnimation,
+                  slideAnimation: _buttonSlideAnimation,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: ultraCompact ? 44 : (compact ? 46 : 50),
+                    child: ElevatedButton(
+                      onPressed: _anyLoading ? null : _handleEmailLogin,
+                      style: ElevatedButton.styleFrom(
+                        disabledBackgroundColor: KolabingColors.primary
+                            .withValues(alpha: 0.60),
+                        elevation: 0,
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  KolabingColors.onPrimary,
+                                ),
+                              ),
+                            )
+                          : _showSuccess
+                          ? const Icon(Icons.check_rounded, size: 22)
+                          : Text(
+                              AppLocalizations.of(context).loginSignInButton,
+                              style: KolabingTextStyles.button.copyWith(
+                                fontSize: compact ? 15 : 15.5,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+
+                // Forgot password.
+                const SizedBox(height: 2),
+                AnimatedBuilder(
+                  animation: _dividerAnimation,
+                  builder: (context, child) =>
+                      Opacity(opacity: _dividerAnimation.value, child: child),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _anyLoading || _showSuccess
+                          ? null
+                          : () => context.push(_kForgotPasswordRoute),
+                      style: TextButton.styleFrom(
+                        foregroundColor: KolabingColors.primary,
+                        minimumSize: const Size(0, 32),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context).loginForgotPassword,
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: KolabingColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Divider.
+                SizedBox(height: ultraCompact ? 10 : 12),
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: _kCardBorder, thickness: 1)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'or',
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: _kTextMuted,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: _kCardBorder, thickness: 1)),
+                  ],
+                ),
+                SizedBox(height: ultraCompact ? 10 : 12),
+
+                // Social buttons.
+                AnimatedBuilder(
+                  animation: _googleAnimation,
+                  builder: (context, child) =>
+                      Opacity(opacity: _googleAnimation.value, child: child),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GoogleSignInButton(
+                          onPressed: _handleGoogleSignIn,
+                          buttonText: 'Google',
+                          isLoading: _isGoogleLoading,
+                          showSuccess: _showSuccess,
+                          isEnabled: !_anyLoading && !_showSuccess,
+                          height: ultraCompact ? 42 : 44,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: AppleSignInButton(
+                          onPressed: _handleAppleSignIn,
+                          buttonText: 'Apple',
+                          isLoading: _isAppleLoading,
+                          showSuccess: _showSuccess,
+                          isEnabled: !_anyLoading && !_showSuccess,
+                          height: ultraCompact ? 42 : 44,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: ultraCompact ? 10 : 12),
-
-            // Social buttons.
-            AnimatedBuilder(
-              animation: _googleAnimation,
-              builder: (context, child) =>
-                  Opacity(opacity: _googleAnimation.value, child: child),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GoogleSignInButton(
-                      onPressed: _handleGoogleSignIn,
-                      buttonText: 'Google',
-                      isLoading: _isGoogleLoading,
-                      showSuccess: _showSuccess,
-                      isEnabled: !_anyLoading && !_showSuccess,
-                      height: ultraCompact ? 42 : 44,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: AppleSignInButton(
-                      onPressed: _handleAppleSignIn,
-                      buttonText: 'Apple',
-                      isLoading: _isAppleLoading,
-                      showSuccess: _showSuccess,
-                      isEnabled: !_anyLoading && !_showSuccess,
-                      height: ultraCompact ? 42 : 44,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   InputDecoration _inputDecoration({
     required String hint,
@@ -993,7 +994,6 @@ class _SignUpLinkState extends State<_SignUpLink> {
 // "User not found" dialog — unchanged logic, updated palette.
 // ---------------------------------------------------------------------------
 
-
 class _UserNotFoundDialog extends StatelessWidget {
   const _UserNotFoundDialog({
     required this.onCreateAccount,
@@ -1047,9 +1047,7 @@ class _UserNotFoundDialog extends StatelessWidget {
             onPressed: onGotIt,
             child: Text(
               AppLocalizations.of(context).commonCancel,
-              style: KolabingTextStyles.labelLarge.copyWith(
-                color: _kTextMuted,
-              ),
+              style: KolabingTextStyles.labelLarge.copyWith(color: _kTextMuted),
             ),
           ),
         ],

@@ -142,6 +142,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       type: notification.rawType,
       id: notification.targetId,
       deeplink: notification.deeplink,
+      targetType: notification.targetType,
     );
 
     if (route != KolabingRoutes.notifications) {

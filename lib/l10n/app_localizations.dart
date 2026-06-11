@@ -8438,6 +8438,12 @@ abstract class AppLocalizations {
   /// **'You\'re #{position} on the waitlist'**
   String eventHubWaitlistPosition(num position);
 
+  /// Event detail: tap the host community to open its public profile
+  ///
+  /// In en, this message translates to:
+  /// **'View community'**
+  String get eventDetailViewCommunity;
+
   /// Event hub: edit the event
   ///
   /// In en, this message translates to:
@@ -8696,6 +8702,54 @@ abstract class AppLocalizations {
   /// **'Ciutadella Park'**
   String get eventFormLocationHint;
 
+  /// Event form: city label (the event's location city)
+  ///
+  /// In en, this message translates to:
+  /// **'City (optional)'**
+  String get eventFormCityLabel;
+
+  /// Event form: city picker placeholder when no city is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'Select a city'**
+  String get eventFormCityHint;
+
+  /// Event form: Google Places location search placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search venue or address'**
+  String get eventFormLocationSearchHint;
+
+  /// Event form: location autocomplete empty-query hint
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing the venue or address to see suggestions.'**
+  String get eventFormLocationStartTyping;
+
+  /// Event form: location autocomplete no-results hint
+  ///
+  /// In en, this message translates to:
+  /// **'No matches yet. Try adding the city to the address.'**
+  String get eventFormLocationNoMatches;
+
+  /// Event form: location autocomplete error message
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load location suggestions right now.'**
+  String get eventFormLocationError;
+
+  /// Event form: read-only hint showing the city derived from the picked place
+  ///
+  /// In en, this message translates to:
+  /// **'City: {city}'**
+  String eventFormCityDetected(String city);
+
+  /// Event form: hint when the picked place has no resolvable city
+  ///
+  /// In en, this message translates to:
+  /// **'No city detected for this place. The event won\'t appear in city discovery.'**
+  String get eventFormCityNotDetected;
+
   /// Event form: capacity label
   ///
   /// In en, this message translates to:
@@ -8725,6 +8779,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Selected tiers'**
   String get eventFormSelectedTiers;
+
+  /// Event form: section label for who can see the event.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get eventFormVisibilityLabel;
+
+  /// Event visibility option: anyone can see it in city discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get eventFormVisibilityPublic;
+
+  /// Helper text for the Public visibility option.
+  ///
+  /// In en, this message translates to:
+  /// **'Appears in city discovery — anyone can find it.'**
+  String get eventFormVisibilityPublicHint;
+
+  /// Event visibility option: visible to community members only.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get eventFormVisibilityMembers;
+
+  /// Helper text for the Members visibility option.
+  ///
+  /// In en, this message translates to:
+  /// **'Only your community members can see it.'**
+  String get eventFormVisibilityMembersHint;
+
+  /// Event visibility option: visible to selected membership tiers only.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific tier'**
+  String get eventFormVisibilityTier;
+
+  /// Helper text for the Specific tier visibility option.
+  ///
+  /// In en, this message translates to:
+  /// **'Only members on the selected tiers can see it.'**
+  String get eventFormVisibilityTierHint;
 
   /// Event form: photos section label
   ///
@@ -8773,6 +8869,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid capacity, or turn off the limit.'**
   String get eventFormErrCapacity;
+
+  /// Event form: error when 'Specific tier' visibility is chosen but no tier is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one tier for this event.'**
+  String get eventFormErrTier;
 
   /// Event form: photos uploaded confirmation
   ///
@@ -8857,6 +8959,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chat'**
   String get chatThreadFallbackTitle;
+
+  /// Fallback label above an incoming chat bubble when the sender's name is unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get chatSenderFallback;
 
   /// Subtitle for a chat thread that has messages.
   ///
@@ -10279,6 +10387,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get attendeeHomeFilterToday;
+
+  /// Date-range dropdown chip / sheet title for the events feed.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get attendeeHomeFilterDate;
+
+  /// Events date filter chip: all future events (default).
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get attendeeHomeFilterUpcoming;
+
+  /// Events date filter chip: events within the current week.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get attendeeHomeFilterThisWeek;
+
+  /// Events date filter chip: events this weekend (Sat-Sun).
+  ///
+  /// In en, this message translates to:
+  /// **'This weekend'**
+  String get attendeeHomeFilterThisWeekend;
+
+  /// Events date filter chip: events within the current calendar month.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get attendeeHomeFilterThisMonth;
 
   /// Events filter chip / sheet title: filter by community type.
   ///

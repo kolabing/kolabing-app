@@ -31,6 +31,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   final PageController _pageController = PageController();
   int _currentPhotoIndex = 0;
 
+  /// Local mutable copy of the event so RSVP toggles reflect immediately. Seeded
+  /// from whichever source first resolves (cached list or the detail fetch); the
+  /// fetch is authoritative for signup state (`my_signup`, counts).
+  Event? _event;
+  bool _rsvpBusy = false;
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -45,15 +51,46 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     }
   }
 
+  AppLocalizations get _l10n => AppLocalizations.of(context);
+
+  void _snack(String message) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(message)));
+
+  // RSVP / sign-up (attendee / public viewer) --------------------------------
+
+  Future<void> _toggleRsvp(Event event) async {
+    if (_rsvpBusy) return;
+    setState(() => _rsvpBusy = true);
+    final svc = ref.read(eventServiceProvider);
+    final wasIn = event.isGoing || event.isWaitlisted;
+    try {
+      final updated = wasIn
+          ? await svc.cancelSignup(event.id)
+          : await svc.signup(event.id);
+      if (!mounted) return;
+      setState(() {
+        _event = updated;
+        _rsvpBusy = false;
+      });
+      final cid = updated.communityId;
+      if (cid != null) {
+        ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _rsvpBusy = false);
+      _snack(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
   Future<void> _handleDelete(Event event) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.eventDetailDeleteTitle),
-        content: Text(
-          l10n.eventDetailDeleteConfirm(event.name),
-        ),
+        content: Text(l10n.eventDetailDeleteConfirm(event.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -86,22 +123,35 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(eventsProvider);
-    final cachedEvent = _getEvent(state);
     final canDelete = !widget.isReadOnly;
 
-    if (cachedEvent != null) {
-      return _buildContent(cachedEvent, canDelete: canDelete);
+    // A local RSVP toggle already produced an updated event — render it.
+    if (_event != null) {
+      return _buildContent(_event!, canDelete: canDelete);
     }
 
+    // Always fetch detail for authoritative signup state (my_signup + counts).
+    // The cached list event is only a fallback while the fetch is in flight.
     final asyncEvent = ref.watch(eventDetailProvider(widget.eventId));
 
     return asyncEvent.when(
-      loading: _buildLoadingState,
-      error: (error, _) => _buildMissingState(
-        title: AppLocalizations.of(context).eventDetailNotFound,
-        message: error.toString(),
-      ),
+      loading: () {
+        final cached = _getEvent(ref.watch(eventsProvider));
+        if (cached != null) {
+          return _buildContent(cached, canDelete: canDelete);
+        }
+        return _buildLoadingState();
+      },
+      error: (error, _) {
+        final cached = _getEvent(ref.watch(eventsProvider));
+        if (cached != null) {
+          return _buildContent(cached, canDelete: canDelete);
+        }
+        return _buildMissingState(
+          title: AppLocalizations.of(context).eventDetailNotFound,
+          message: error.toString(),
+        );
+      },
       data: (event) => _buildContent(event, canDelete: canDelete),
     );
   }
@@ -124,56 +174,53 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     );
   }
 
-  Widget _buildMissingState({
-    required String title,
-    String? message,
-  }) {
+  Widget _buildMissingState({required String title, String? message}) {
     return Scaffold(
-        backgroundColor: context.colors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(LucideIcons.arrowLeft),
-            color: context.colors.onSurface,
-          ),
+      backgroundColor: context.colors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(LucideIcons.arrowLeft),
+          color: context.colors.onSurface,
         ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                LucideIcons.calendarX,
-                size: 48,
-                color: context.colors.textTertiary,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              LucideIcons.calendarX,
+              size: 48,
+              color: context.colors.textTertiary,
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(
+              title,
+              style: KolabingTextStyles.titleMedium.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(
-                title,
-                style: KolabingTextStyles.titleMedium.copyWith(
-                  color: context.colors.onSurfaceVariant,
+            ),
+            if (message != null) ...[
+              const SizedBox(height: KolabingSpacing.xs),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.lg,
+                ),
+                child: Text(
+                  message,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.textTertiary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              if (message != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.lg,
-                  ),
-                  child: Text(
-                    message,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: context.colors.textTertiary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
             ],
-          ),
+          ],
         ),
-      );
+      ),
+    );
   }
 
   Widget _buildContent(Event event, {required bool canDelete}) {
@@ -203,6 +250,26 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
                   // Info Cards
                   _buildInfoCard(event),
+
+                  // RSVP / sign-up for upcoming, signup-able events.
+                  if (event.isUpcoming) ...[
+                    const SizedBox(height: KolabingSpacing.lg),
+                    _buildRsvpButton(event),
+                    if (event.isWaitlisted &&
+                        event.waitlistPosition != null) ...[
+                      const SizedBox(height: KolabingSpacing.sm),
+                      Center(
+                        child: Text(
+                          _l10n.eventHubWaitlistPosition(
+                            event.waitlistPosition!,
+                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: KolabingColors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
 
                   const SizedBox(height: KolabingSpacing.lg),
 
@@ -236,7 +303,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     OutlinedButton.icon(
                       onPressed: () => _handleDelete(event),
                       icon: const Icon(LucideIcons.trash2, size: 18),
-                      label: Text(AppLocalizations.of(context).eventDetailDeleteButton),
+                      label: Text(
+                        AppLocalizations.of(context).eventDetailDeleteButton,
+                      ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: context.colors.error,
                         side: BorderSide(color: context.colors.error),
@@ -253,6 +322,64 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// RSVP button mirroring `event_hub_screen._rsvpButton`: going (mint
+  /// active-state tokens) / waitlisted / join-waitlist (full) / I'm going.
+  Widget _buildRsvpButton(Event event) {
+    final (String label, IconData icon, Color bg, Color fg) = switch (event) {
+      _ when event.isGoing => (
+        _l10n.eventHubGoingTapToLeave,
+        LucideIcons.check,
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+      ),
+      _ when event.isWaitlisted => (
+        _l10n.eventHubOnWaitlistTapToLeave,
+        LucideIcons.clock,
+        KolabingColors.surfaceContainerHigh,
+        KolabingColors.onSurface,
+      ),
+      _ when event.isFull => (
+        _l10n.eventHubJoinWaitlist,
+        LucideIcons.userPlus,
+        KolabingColors.surfaceContainerHigh,
+        KolabingColors.onSurface,
+      ),
+      _ => (
+        _l10n.eventHubImGoing,
+        LucideIcons.check,
+        KolabingColors.primary,
+        KolabingColors.onPrimary,
+      ),
+    };
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: FilledButton.icon(
+        onPressed: _rsvpBusy ? null : () => _toggleRsvp(event),
+        style: FilledButton.styleFrom(
+          backgroundColor: bg,
+          foregroundColor: fg,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: _rsvpBusy
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Icon(icon, size: 18),
+        label: Text(
+          label,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }
@@ -370,74 +497,14 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       ),
       child: Column(
         children: [
-          // Partner
+          // Partner / host community (tappable → public profile when known).
           _buildInfoRow(
             icon: LucideIcons.users,
             label: AppLocalizations.of(context).eventDetailKolabWithLabel,
-            child: Row(
-              children: [
-                // Partner avatar
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: context.colors.darkBorder, width: 1),
-                  ),
-                  child: ClipOval(
-                    child: event.partner.profilePhoto != null
-                        ? Image.network(
-                            event.partner.profilePhoto!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                _buildPartnerPlaceholder(event.partner.name),
-                          )
-                        : _buildPartnerPlaceholder(event.partner.name),
-                  ),
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.partner.name,
-                        style: KolabingTextStyles.titleSmall.copyWith(
-                          color: context.colors.onSurface,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: KolabingSpacing.xs,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: event.partner.type == PartnerType.business
-                              ? context.colors.softYellow
-                              : context.colors.info.withValues(alpha: 0.1),
-                          borderRadius: KolabingRadius.borderRadiusSm,
-                        ),
-                        child: Text(
-                          event.partner.type.name.toUpperCase(),
-                          style: KolabingTextStyles.labelSmall.copyWith(
-                            color: event.partner.type == PartnerType.business
-                                ? context.colors.accentOrangeText
-                                : context.colors.info,
-                            fontSize: 9,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: _buildPartnerChild(event),
           ),
 
-          Divider(
-            height: KolabingSpacing.lg,
-            color: context.colors.darkBorder,
-          ),
+          Divider(height: KolabingSpacing.lg, color: context.colors.darkBorder),
 
           // Date
           _buildInfoRow(
@@ -446,18 +513,105 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             value: event.formattedDate,
           ),
 
-          Divider(
-            height: KolabingSpacing.lg,
-            color: context.colors.darkBorder,
-          ),
+          Divider(height: KolabingSpacing.lg, color: context.colors.darkBorder),
 
           // Attendees
           _buildInfoRow(
             icon: LucideIcons.userCheck,
             label: AppLocalizations.of(context).eventDetailAttendeesLabel,
-            value: AppLocalizations.of(context).eventDetailAttendeesCount(event.attendeeCount),
+            value: AppLocalizations.of(
+              context,
+            ).eventDetailAttendeesCount(event.attendeeCount),
           ),
         ],
+      ),
+    );
+  }
+
+  /// The host partner block. When the event carries a `communityId`, the whole
+  /// row becomes tappable and opens the community's public profile
+  /// (`/profile/:id`); otherwise it renders inert.
+  Widget _buildPartnerChild(Event event) {
+    final communityId = event.communityId;
+    final tappable = communityId != null && communityId.isNotEmpty;
+
+    final row = Row(
+      children: [
+        // Partner avatar
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: KolabingColors.darkBorder, width: 1),
+          ),
+          child: ClipOval(
+            child: event.partner.profilePhoto != null
+                ? Image.network(
+                    event.partner.profilePhoto!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        _buildPartnerPlaceholder(event.partner.name),
+                  )
+                : _buildPartnerPlaceholder(event.partner.name),
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                event.partner.name,
+                style: KolabingTextStyles.titleSmall.copyWith(
+                  color: KolabingColors.onSurface,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.xs,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: event.partner.type == PartnerType.business
+                      ? KolabingColors.softYellow
+                      : KolabingColors.info.withValues(alpha: 0.1),
+                  borderRadius: KolabingRadius.borderRadiusSm,
+                ),
+                child: Text(
+                  event.partner.type.name.toUpperCase(),
+                  style: KolabingTextStyles.labelSmall.copyWith(
+                    color: event.partner.type == PartnerType.business
+                        ? KolabingColors.accentOrangeText
+                        : KolabingColors.info,
+                    fontSize: 9,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (tappable)
+          Padding(
+            padding: const EdgeInsets.only(left: KolabingSpacing.xs),
+            child: Icon(
+              LucideIcons.chevronRight,
+              size: 18,
+              color: KolabingColors.textTertiary,
+              semanticLabel: _l10n.eventDetailViewCommunity,
+            ),
+          ),
+      ],
+    );
+
+    if (!tappable) return row;
+
+    return InkWell(
+      onTap: () => context.push('/profile/$communityId'),
+      borderRadius: KolabingRadius.borderRadiusMd,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: row,
       ),
     );
   }
@@ -508,14 +662,18 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context).eventDetailRecapVideoTitle(index + 1),
+                          AppLocalizations.of(
+                            context,
+                          ).eventDetailRecapVideoTitle(index + 1),
                           style: KolabingTextStyles.titleSmall.copyWith(
                             color: context.colors.onSurface,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          AppLocalizations.of(context).eventDetailRecapVideoSubtitle,
+                          AppLocalizations.of(
+                            context,
+                          ).eventDetailRecapVideoSubtitle,
                           style: KolabingTextStyles.bodySmall.copyWith(
                             color: context.colors.onSurfaceVariant,
                           ),

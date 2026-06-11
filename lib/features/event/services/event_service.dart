@@ -370,6 +370,8 @@ class EventService {
     int? capacity,
     bool clearCapacity = false,
     List<String>? tierGate,
+    String? visibility,
+    String? cityId,
     String scope = 'this',
     Map<String, dynamic>? recurrence,
   }) async {
@@ -386,6 +388,10 @@ class EventService {
       else if (clearCapacity)
         'capacity': null,
       if (tierGate != null) 'tier_gate': tierGate,
+      // Self-gated (#1): only sent when the form supplies it.
+      if (visibility != null) 'visibility': visibility,
+      // Self-gated event city (events.city_id ships in parallel).
+      if (cityId != null && cityId.isNotEmpty) 'city_id': cityId,
       // Present only when converting a one-off into a recurring series.
       if (recurrence != null) 'recurrence': recurrence,
     };
@@ -439,6 +445,8 @@ class EventService {
     String? location,
     int? capacity,
     List<String>? tierGate,
+    String? visibility,
+    String? cityId,
     Map<String, dynamic>? recurrence,
   }) async {
     final payload = <String, dynamic>{
@@ -449,6 +457,10 @@ class EventService {
       if (location != null && location.isNotEmpty) 'location': location,
       if (capacity != null) 'capacity': capacity,
       if (tierGate != null && tierGate.isNotEmpty) 'tier_gate': tierGate,
+      // Self-gated (#1): only sent when the form supplies it.
+      if (visibility != null) 'visibility': visibility,
+      // Self-gated event city (events.city_id ships in parallel).
+      if (cityId != null && cityId.isNotEmpty) 'city_id': cityId,
       // Recurring → backend builds an event_series and returns the first
       // occurrence (carrying series_id). See EventSeriesService.
       if (recurrence != null) 'recurrence': recurrence,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
+import '../../features/chat/screens/chats_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
@@ -226,6 +227,9 @@ abstract final class KolabingRoutes {
 
   /// Application chat screen
   static const String applicationChat = '/application/:id/chat';
+
+  /// Standalone chats list (e.g. opened from a community/group chat notification).
+  static const String chats = '/chats';
 
   /// Notifications screen
   static const String notifications = '/notifications';
@@ -744,6 +748,11 @@ final GoRouter kolabingRouter = GoRouter(
         final id = state.pathParameters['id'] ?? '';
         return ChatScreen(applicationId: id);
       },
+    ),
+    GoRoute(
+      path: KolabingRoutes.chats,
+      name: 'chats',
+      builder: (BuildContext context, GoRouterState state) => const ChatsScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.notifications,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../business/providers/profile_provider.dart';
 import '../../onboarding/models/city.dart';
 import '../../onboarding/models/community_type.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
@@ -74,8 +77,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       isScrollControlled: true,
       backgroundColor: KolabingColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
       ),
       builder: (_) => _CityPickerSheet(selectedCityId: state.cityId),
     );
@@ -84,6 +88,62 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       await ref
           .read(discoveryProvider.notifier)
           .setCityAndDiscover(result.id, result.name);
+      // (#3) Persist the chosen city to the profile so it is remembered across
+      // logins (no more re-asking). Best-effort: never block discovery on it.
+      unawaited(_persistCity(result.id));
+    }
+  }
+
+  /// Save the picked city to the user's profile (`PUT /me/profile {city_id}`)
+  /// and reflect the fresh user in auth state. Failures are silent — discovery
+  /// already ran with the chosen city.
+  Future<void> _persistCity(String cityId) async {
+    final user = ref.read(authProvider).user;
+    if (user == null || user.cityId == cityId) return;
+    try {
+      final updated = await ref.read(profileServiceProvider).updateProfile({
+        'city_id': cityId,
+      });
+      await ref.read(authProvider.notifier).syncUser(updated);
+    } catch (_) {
+      // Non-critical: the city is still applied locally for this session.
+    }
+  }
+
+  /// Human label for the current [DiscoveryDateRange] (chip + sheet rows).
+  String _dateRangeLabel(String range, AppLocalizations l10n) {
+    switch (range) {
+      case DiscoveryDateRange.today:
+        return l10n.attendeeHomeFilterToday;
+      case DiscoveryDateRange.week:
+        return l10n.attendeeHomeFilterThisWeek;
+      case DiscoveryDateRange.weekend:
+        return l10n.attendeeHomeFilterThisWeekend;
+      case DiscoveryDateRange.month:
+        return l10n.attendeeHomeFilterThisMonth;
+      case DiscoveryDateRange.upcoming:
+      default:
+        return l10n.attendeeHomeFilterUpcoming;
+    }
+  }
+
+  /// Date range selector (#5) — ONE dropdown chip (styled like the city chip).
+  /// Opens a sheet to pick: Upcoming (default) / Today / This week / This
+  /// weekend / This month. Wires to `discovery_provider.setDateRange`.
+  Future<void> _pickDateRange() async {
+    final state = ref.read(discoveryProvider);
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: KolabingColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
+      ),
+      builder: (_) => _DateRangeSheet(selected: state.dateRange),
+    );
+    if (result != null) {
+      await ref.read(discoveryProvider.notifier).setDateRange(result);
     }
   }
 
@@ -94,16 +154,16 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       isScrollControlled: true,
       backgroundColor: KolabingColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
       ),
       builder: (_) => _TypeFilterSheet(selectedSlug: state.typeSlug),
     );
     if (result != null) {
-      await ref.read(discoveryProvider.notifier).setTypeFilter(
-            typeSlug: result.slug,
-            typeName: result.name,
-          );
+      await ref
+          .read(discoveryProvider.notifier)
+          .setTypeFilter(typeSlug: result.slug, typeName: result.name);
     }
   }
 
@@ -114,10 +174,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     final state = ref.watch(discoveryProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
-    final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+    final textColor = isDark
+        ? KolabingColors.textOnDark
+        : KolabingColors.onSurface;
+    final secondaryTextColor = isDark
+        ? KolabingColors.textTertiary
+        : KolabingColors.onSurfaceVariant;
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -135,8 +197,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   children: [
                     Text(
                       l10n.attendeeHomeWelcomeBack,
-                      style: KolabingTextStyles.bodySmall
-                          .copyWith(color: secondaryTextColor),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: secondaryTextColor,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -166,7 +229,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   0,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       l10n.attendeeHomeEventsTitle,
@@ -187,27 +249,27 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               ),
             ),
 
-            // Filter chips: Today + Type (FX-21)
+            // Filter chips: date dropdown (#5) + Type (FX-21). The date filter is
+            // ONE dropdown chip styled exactly like the city chip (same
+            // shape/InkWell/chevron) — not a row of separate chips.
             SliverToBoxAdapter(
-              child: Padding(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
                   horizontal: KolabingSpacing.md,
                   vertical: KolabingSpacing.sm,
                 ),
                 child: Row(
                   children: [
-                    _FilterChip(
-                      label: l10n.attendeeHomeFilterToday,
-                      selected: state.todayOnly,
-                      onTap: () => ref
-                          .read(discoveryProvider.notifier)
-                          .setTodayOnly(!state.todayOnly),
+                    _DropdownChip(
+                      icon: LucideIcons.calendar,
+                      label: _dateRangeLabel(state.dateRange, l10n),
+                      onTap: _pickDateRange,
                     ),
                     const SizedBox(width: KolabingSpacing.sm),
-                    _FilterChip(
+                    _DropdownChip(
+                      icon: LucideIcons.tag,
                       label: state.typeName ?? l10n.attendeeHomeFilterType,
-                      selected: state.typeSlug != null,
-                      trailingIcon: LucideIcons.chevronDown,
                       onTap: _pickType,
                     ),
                   ],
@@ -227,7 +289,10 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     );
   }
 
-  List<Widget> _buildEventsContent(DiscoveryState state, AppLocalizations l10n) {
+  List<Widget> _buildEventsContent(
+    DiscoveryState state,
+    AppLocalizations l10n,
+  ) {
     // No city selected yet — invite the user to pick one.
     if (!state.canQuery && !state.isLoading) {
       return [SliverToBoxAdapter(child: _buildPickCityPrompt(l10n))];
@@ -243,7 +308,8 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               child: Column(
                 children: [
                   const CircularProgressIndicator(
-                      color: KolabingColors.primary),
+                    color: KolabingColors.primary,
+                  ),
                   const SizedBox(height: KolabingSpacing.md),
                   Text(l10n.attendeeHomeSearchingEvents),
                 ],
@@ -256,7 +322,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
 
     // Error
     if (state.error != null && state.events.isEmpty) {
-      return [SliverToBoxAdapter(child: _buildDiscoveryError(state.error!, l10n))];
+      return [
+        SliverToBoxAdapter(child: _buildDiscoveryError(state.error!, l10n)),
+      ];
     }
 
     // Empty
@@ -267,24 +335,20 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     // Event list
     return [
       SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final event = state.events[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-                vertical: KolabingSpacing.xs,
-              ),
-              child: DiscoveredEventCard(
-                event: event,
-                onTap: () => context.push(
-                  KolabingRoutes.buildEventDetailPath(event.id),
-                ),
-              ),
-            );
-          },
-          childCount: state.events.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final event = state.events[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.md,
+              vertical: KolabingSpacing.xs,
+            ),
+            child: DiscoveredEventCard(
+              event: event,
+              onTap: () =>
+                  context.push(KolabingRoutes.buildEventDetailPath(event.id)),
+            ),
+          );
+        }, childCount: state.events.length),
       ),
       if (state.hasMore)
         SliverToBoxAdapter(
@@ -370,8 +434,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.attendeeHomePickCityHint,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -415,8 +480,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.attendeeHomeNoEventsCityHint,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.textTertiary),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.textTertiary,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -458,8 +524,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -488,21 +555,21 @@ class _ExploreCommunitiesCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: () => context.push(KolabingRoutes.discoverCommunities),
-          icon: const Icon(LucideIcons.compass, size: 18),
-          label: Text(l10n.attendeeHomeExploreCommunities),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.onSurface,
-            side: const BorderSide(color: KolabingColors.outlineVariant),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(KolabingRadius.md),
-            ),
-          ),
+    width: double.infinity,
+    child: OutlinedButton.icon(
+      onPressed: () => context.push(KolabingRoutes.discoverCommunities),
+      icon: const Icon(LucideIcons.compass, size: 18),
+      label: Text(l10n.attendeeHomeExploreCommunities),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: KolabingColors.onSurface,
+        side: const BorderSide(color: KolabingColors.outlineVariant),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -521,97 +588,121 @@ class _CityPickerButton extends StatelessWidget {
   final AppLocalizations l10n;
 
   @override
+  Widget build(BuildContext context) => _DropdownChip(
+    icon: LucideIcons.mapPin,
+    label: cityName ?? l10n.attendeeHomeChooseCity,
+    onTap: onTap,
+  );
+}
+
+// =============================================================================
+// Dropdown chip — shared pill (leading icon · label · chevron) used by BOTH
+// the city picker and the date/type filters so they match exactly.
+// =============================================================================
+
+class _DropdownChip extends StatelessWidget {
+  const _DropdownChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
   Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(KolabingRadius.round),
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.surfaceVariant,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.sm,
-            vertical: KolabingSpacing.xs,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: KolabingColors.onSurface),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.onSurface,
+            ),
           ),
-          decoration: BoxDecoration(
-            color: KolabingColors.surfaceVariant,
-            borderRadius: BorderRadius.circular(KolabingRadius.round),
+          const SizedBox(width: 2),
+          const Icon(
+            LucideIcons.chevronDown,
+            size: 14,
+            color: KolabingColors.onSurface,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.mapPin,
-                size: 14,
-                color: KolabingColors.onSurface,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                cityName ?? l10n.attendeeHomeChooseCity,
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 13,
+        ],
+      ),
+    ),
+  );
+}
+
+// =============================================================================
+// Date range sheet (#5) — pick one of upcoming/today/week/weekend/month.
+// =============================================================================
+
+class _DateRangeSheet extends StatelessWidget {
+  const _DateRangeSheet({required this.selected});
+
+  final String selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final options = <(String, String)>[
+      (DiscoveryDateRange.upcoming, l10n.attendeeHomeFilterUpcoming),
+      (DiscoveryDateRange.today, l10n.attendeeHomeFilterToday),
+      (DiscoveryDateRange.week, l10n.attendeeHomeFilterThisWeek),
+      (DiscoveryDateRange.weekend, l10n.attendeeHomeFilterThisWeekend),
+      (DiscoveryDateRange.month, l10n.attendeeHomeFilterThisMonth),
+    ];
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: KolabingSpacing.sm),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: KolabingColors.outlineVariant,
+              borderRadius: BorderRadius.circular(KolabingRadius.round),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                l10n.attendeeHomeFilterDate,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: KolabingColors.onSurface,
                 ),
               ),
-              const SizedBox(width: 2),
-              const Icon(
-                LucideIcons.chevronDown,
-                size: 14,
-                color: KolabingColors.onSurface,
-              ),
-            ],
-          ),
-        ),
-      );
-}
-
-// =============================================================================
-// Filter chip (FX-21) — readable dark text, not yellow-on-light
-// =============================================================================
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.trailingIcon,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final IconData? trailingIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = selected ? KolabingColors.primary : KolabingColors.surfaceVariant;
-    final fg = KolabingColors.onSurface;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(KolabingRadius.round),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.xs + 2,
-        ),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(KolabingRadius.round),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: fg,
-              ),
             ),
-            if (trailingIcon != null) ...[
-              const SizedBox(width: 4),
-              Icon(trailingIcon, size: 14, color: fg),
-            ],
-          ],
-        ),
+          ),
+          for (final opt in options)
+            _TypeRow(
+              label: opt.$2,
+              selected: selected == opt.$1,
+              onTap: () => Navigator.of(context).pop(opt.$1),
+            ),
+          const SizedBox(height: KolabingSpacing.sm),
+        ],
       ),
     );
   }
@@ -646,7 +737,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
     final filtered = ref.watch(filteredCitiesProvider(_query));
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.75,
         child: Column(
@@ -665,8 +758,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (v) => setState(() => _query = v),
-                style: KolabingTextStyles.bodyMedium
-                    .copyWith(color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  color: KolabingColors.onSurface,
+                ),
                 decoration: InputDecoration(
                   hintText: l10n.editProfileCitySearchHint,
                   prefixIcon: const Icon(LucideIcons.search, size: 20),
@@ -690,8 +784,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
                     return Center(
                       child: Text(
                         l10n.editProfileNoCitiesFound,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
                       ),
                     );
                   }
@@ -711,8 +806,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
                   );
                 },
                 loading: () => const Center(
-                  child:
-                      CircularProgressIndicator(color: KolabingColors.primary),
+                  child: CircularProgressIndicator(
+                    color: KolabingColors.primary,
+                  ),
                 ),
                 error: (_, _) => Center(
                   child: Column(
@@ -726,8 +822,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         l10n.editProfileCityLoadError,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       TextButton(
@@ -799,21 +896,23 @@ class _TypeFilterSheet extends ConsumerWidget {
                     _TypeRow(
                       label: l10n.attendeeHomeFilterTypeAll,
                       selected: selectedSlug == null,
-                      onTap: () => Navigator.of(context)
-                          .pop(const _TypeSelection()),
+                      onTap: () =>
+                          Navigator.of(context).pop(const _TypeSelection()),
                     ),
                     for (final CommunityType t in types)
                       _TypeRow(
                         label: t.name,
                         selected: selectedSlug == t.slug,
-                        onTap: () => Navigator.of(context)
-                            .pop(_TypeSelection(slug: t.slug, name: t.name)),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pop(_TypeSelection(slug: t.slug, name: t.name)),
                       ),
                   ],
                 ),
                 loading: () => const Center(
-                  child:
-                      CircularProgressIndicator(color: KolabingColors.primary),
+                  child: CircularProgressIndicator(
+                    color: KolabingColors.primary,
+                  ),
                 ),
                 error: (_, _) => Center(
                   child: Column(
@@ -827,8 +926,9 @@ class _TypeFilterSheet extends ConsumerWidget {
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         l10n.attendeeHomeFailedToLoadEvents,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       TextButton(
@@ -860,31 +960,31 @@ class _TypeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.md,
-            vertical: KolabingSpacing.sm + 4,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                    color: KolabingColors.onSurface,
-                  ),
-                ),
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.md,
+        vertical: KolabingSpacing.sm + 4,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: KolabingColors.onSurface,
               ),
-              if (selected)
-                const Icon(
-                  LucideIcons.check,
-                  size: 18,
-                  color: KolabingColors.primaryDark,
-                ),
-            ],
+            ),
           ),
-        ),
-      );
+          if (selected)
+            const Icon(
+              LucideIcons.check,
+              size: 18,
+              color: KolabingColors.primaryDark,
+            ),
+        ],
+      ),
+    ),
+  );
 }

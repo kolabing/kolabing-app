@@ -4747,6 +4747,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'Ver comunidad';
+
+  @override
   String get eventHubEdit => 'Editar';
 
   @override
@@ -4880,6 +4883,36 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventFormLocationHint => 'Parque de la Ciudadela';
 
   @override
+  String get eventFormCityLabel => 'Ciudad (opcional)';
+
+  @override
+  String get eventFormCityHint => 'Selecciona una ciudad';
+
+  @override
+  String get eventFormLocationSearchHint => 'Busca el local o la dirección';
+
+  @override
+  String get eventFormLocationStartTyping =>
+      'Empieza a escribir el local o la dirección para ver sugerencias.';
+
+  @override
+  String get eventFormLocationNoMatches =>
+      'Aún no hay coincidencias. Prueba a añadir la ciudad a la dirección.';
+
+  @override
+  String get eventFormLocationError =>
+      'No pudimos cargar las sugerencias de ubicación ahora mismo.';
+
+  @override
+  String eventFormCityDetected(String city) {
+    return 'Ciudad: $city';
+  }
+
+  @override
+  String get eventFormCityNotDetected =>
+      'No se detectó ninguna ciudad para este lugar. El evento no aparecerá en el descubrimiento por ciudad.';
+
+  @override
   String get eventFormCapacityLabel => 'Aforo (opcional)';
 
   @override
@@ -4893,6 +4926,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eventFormSelectedTiers => 'Niveles seleccionados';
+
+  @override
+  String get eventFormVisibilityLabel => 'Visibilidad';
+
+  @override
+  String get eventFormVisibilityPublic => 'Pública';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Aparece en el descubrimiento de la ciudad: cualquiera puede encontrarla.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Miembros';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Solo los miembros de tu comunidad pueden verla.';
+
+  @override
+  String get eventFormVisibilityTier => 'Nivel específico';
+
+  @override
+  String get eventFormVisibilityTierHint =>
+      'Solo los miembros de los niveles seleccionados pueden verla.';
 
   @override
   String get eventFormPhotos => 'Fotos';
@@ -4921,6 +4978,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get eventFormErrCapacity =>
       'Introduce un aforo válido o desactiva el límite.';
+
+  @override
+  String get eventFormErrTier =>
+      'Selecciona al menos un nivel para este evento.';
 
   @override
   String get eventFormPhotosUploaded => 'Fotos subidas.';
@@ -4968,6 +5029,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatThreadFallbackTitle => 'Chat';
+
+  @override
+  String get chatSenderFallback => 'Miembro';
 
   @override
   String get chatThreadTapToOpen => 'Toca para abrir';
@@ -5777,6 +5841,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attendeeHomeFilterToday => 'Hoy';
+
+  @override
+  String get attendeeHomeFilterDate => 'Cuándo';
+
+  @override
+  String get attendeeHomeFilterUpcoming => 'Próximos';
+
+  @override
+  String get attendeeHomeFilterThisWeek => 'Esta semana';
+
+  @override
+  String get attendeeHomeFilterThisWeekend => 'Este fin de semana';
+
+  @override
+  String get attendeeHomeFilterThisMonth => 'Este mes';
 
   @override
   String get attendeeHomeFilterType => 'Tipo';

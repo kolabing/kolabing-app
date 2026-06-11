@@ -43,10 +43,13 @@ class RosterScreen extends ConsumerWidget {
         error: (e, _) => Center(
           child: Padding(
             padding: const EdgeInsets.all(KolabingSpacing.xl),
-            child: Text(e.toString(),
-                textAlign: TextAlign.center,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(color: context.colors.onSurfaceVariant)),
+            child: Text(
+              e.toString(),
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
           ),
         ),
         data: (members) {
@@ -118,8 +121,9 @@ class RosterScreen extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.commonCancel)),
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.commonCancel),
+          ),
           TextButton(
             onPressed: () =>
                 Navigator.of(context).pop(controller.text.trim().toLowerCase()),
@@ -139,27 +143,36 @@ class RosterScreen extends ConsumerWidget {
     if (!isEmail && !IdentityService.isValidHandleFormat(handle)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.rosterInviteInvalidIdentifier)));
+          SnackBar(content: Text(l10n.rosterInviteInvalidIdentifier)),
+        );
       }
       return;
     }
     try {
-      await ref.read(communityServiceProvider).addMember(
+      await ref
+          .read(communityServiceProvider)
+          .addMember(
             communityId,
             email: isEmail ? identifier : null,
             handle: isEmail ? null : handle,
           );
       ref.read(communityManageProvider.notifier).reloadMembers();
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(l10n.rosterMemberAdded)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.rosterMemberAdded)));
       }
     } on CommunityException catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.isProfileNotFound
-                ? l10n.rosterNoAccountForIdentifier
-                : e.message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.isProfileNotFound
+                  ? l10n.rosterNoAccountForIdentifier
+                  : e.message,
+            ),
+          ),
+        );
       }
     }
   }
@@ -176,43 +189,54 @@ class _MemberTile extends StatelessWidget {
     return CompactListCard(
       onTap: onTap,
       child: Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: context.colors.surfaceContainerHigh,
-                backgroundImage: member.memberAvatarUrl != null
-                    ? NetworkImage(member.memberAvatarUrl!)
-                    : null,
-                child: member.memberAvatarUrl == null
-                    ? const Icon(LucideIcons.user, size: 18)
-                    : null,
-              ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        member.memberName ??
-                            AppLocalizations.of(context).rosterMemberFallback,
-                        style: KolabingTextStyles.bodyMedium
-                            .copyWith(fontWeight: FontWeight.w600)),
-                    if (!member.isActive)
-                      Text(member.status.displayName,
-                          style: KolabingTextStyles.bodySmall.copyWith(
-                              fontSize: 12,
-                              color: context.colors.onSurfaceVariant)),
-                  ],
-                ),
-              ),
-              if (member.canManage)
-                Icon(LucideIcons.shield,
-                    size: 16, color: context.colors.onSurfaceVariant),
-              const SizedBox(width: KolabingSpacing.xs),
-              Icon(LucideIcons.chevronRight,
-                  size: 16, color: context.colors.onSurfaceVariant),
-            ],
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: context.colors.surfaceContainerHigh,
+            backgroundImage: member.memberAvatarUrl != null
+                ? NetworkImage(member.memberAvatarUrl!)
+                : null,
+            child: member.memberAvatarUrl == null
+                ? const Icon(LucideIcons.user, size: 18)
+                : null,
           ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  member.memberName ??
+                      AppLocalizations.of(context).rosterMemberFallback,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (!member.isActive)
+                  Text(
+                    member.status.displayName,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (member.canManage)
+            Icon(
+              LucideIcons.shield,
+              size: 16,
+              color: context.colors.onSurfaceVariant,
+            ),
+          const SizedBox(width: KolabingSpacing.xs),
+          Icon(
+            LucideIcons.chevronRight,
+            size: 16,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -266,7 +290,9 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
   Future<void> _save() async {
     setState(() => _busy = true);
     try {
-      await ref.read(communityServiceProvider).updateMember(
+      await ref
+          .read(communityServiceProvider)
+          .updateMember(
             widget.communityId,
             widget.member.id,
             tierId: _tierId,
@@ -277,8 +303,9 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -291,15 +318,20 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(l10n.rosterRemoveTitle),
-        content: Text(l10n.rosterRemoveBody(
-            widget.member.memberName ?? l10n.rosterRemoveBodyFallback)),
+        content: Text(
+          l10n.rosterRemoveBody(
+            widget.member.memberName ?? l10n.rosterRemoveBodyFallback,
+          ),
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.commonCancel)),
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.rosterRemove)),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.rosterRemove),
+          ),
         ],
       ),
     );
@@ -313,8 +345,9 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -336,9 +369,13 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.member.memberName ?? l10n.rosterMemberFallback,
-              style: KolabingTextStyles.bodyLarge
-                  .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
+          Text(
+            widget.member.memberName ?? l10n.rosterMemberFallback,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
@@ -367,23 +404,30 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Tier
-          Text(l10n.rosterTierLabel,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(fontWeight: FontWeight.w700)),
+          Text(
+            l10n.rosterTierLabel,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           const SizedBox(height: KolabingSpacing.xs),
           tiersAsync.when(
             loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text(e.toString(),
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(color: context.colors.error)),
+            error: (e, _) => Text(
+              e.toString(),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.error,
+              ),
+            ),
             data: (tiers) => DropdownButtonFormField<String?>(
-              initialValue:
-                  tiers.any((t) => t.id == _tierId) ? _tierId : null,
+              initialValue: tiers.any((t) => t.id == _tierId) ? _tierId : null,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: <DropdownMenuItem<String?>>[
                 DropdownMenuItem(value: null, child: Text(l10n.rosterNoTier)),
-                ...tiers.map((CommunityTier t) =>
-                    DropdownMenuItem(value: t.id, child: Text(t.name))),
+                ...tiers.map(
+                  (CommunityTier t) =>
+                      DropdownMenuItem(value: t.id, child: Text(t.name)),
+                ),
               ],
               onChanged: (v) => setState(() => _tierId = v),
             ),
@@ -402,17 +446,21 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
           const SizedBox(height: KolabingSpacing.xs),
 
           // Status
-          Text(l10n.rosterStatusLabel,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(fontWeight: FontWeight.w700)),
+          Text(
+            l10n.rosterStatusLabel,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           const SizedBox(height: KolabingSpacing.xs),
           DropdownButtonFormField<MembershipStatus>(
             initialValue: _status,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: MembershipStatus.values
                 .where((s) => s != MembershipStatus.removed)
-                .map((s) =>
-                    DropdownMenuItem(value: s, child: Text(s.displayName)))
+                .map(
+                  (s) => DropdownMenuItem(value: s, child: Text(s.displayName)),
+                )
                 .toList(),
             onChanged: (v) => setState(() => _status = v ?? _status),
           ),
@@ -445,8 +493,10 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: context.colors.onSurface))
+                            strokeWidth: 2,
+                            color: context.colors.onSurface,
+                          ),
+                        )
                       : Text(l10n.rosterSave),
                 ),
               ),
