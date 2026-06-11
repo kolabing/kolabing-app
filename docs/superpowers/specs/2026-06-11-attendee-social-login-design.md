@@ -23,12 +23,19 @@ Join) with their name **prefilled** from the provider; they still choose a uniqu
 1. **New social attendee → attendee onboarding** (4-step), name prefilled from the provider,
    `@handle` still required. (Not "step 1 only", not "skip onboarding".)
 2. **Google now, Apple flag-gated.** Ship Google attendee immediately. Implement Apple
-   client-side but gate the Apple button on the attendee surface behind
-   `attendeeAppleSignupEnabled` (default **false**); flip on once the backend deploys. File a
-   backend ticket for the `/auth/apple` `user_type` change.
-3. **Placement: attendee register screen.** Add Google + Apple buttons below the
-   email/password form on `attendee_register_screen.dart` (mirroring `login_screen`).
-   Returning attendees already sign in via the shared `login_screen`.
+   client-side behind `attendeeAppleSignupEnabled`. File a backend ticket for the
+   `/auth/apple` `user_type` change.
+   - **Update 2026-06-11:** the flag was flipped **on** (`attendeeAppleSignupEnabled = true`).
+     App Store Guideline 4.8 requires offering Sign in with Apple wherever Google sign-in is
+     offered, so Apple must ship alongside Google. The backend `/auth/apple` `user_type` change
+     (kolabing-v2 PR #24) is therefore a **hard pre-merge dependency**: until it deploys, a
+     brand-new Apple attendee is created with the backend's default role. The flag remains as
+     the documented kill-switch.
+3. **Placement: attendee register screen.** Google + Apple on `attendee_register_screen.dart`.
+   - **Update 2026-06-11:** the screen was redesigned to fit the viewport with **no scroll** —
+     Google + Apple render **side-by-side in one row** (compact brand labels, mirroring
+     `login_screen`), with tightened spacing and a smaller header. The `SingleChildScrollView`
+     remains only as a keyboard / very-small-screen safety net.
 
 ## Current state (from research, cite-checked)
 

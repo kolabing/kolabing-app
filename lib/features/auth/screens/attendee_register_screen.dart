@@ -379,11 +379,11 @@ class _AttendeeRegisterScreenState
                     key: _formKey,
                     child: Column(
                       children: [
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 12),
 
                         // Icon
-                        const Text('\u{1F3AF}', style: TextStyle(fontSize: 56)),
-                        const SizedBox(height: 16),
+                        const Text('\u{1F3AF}', style: TextStyle(fontSize: 44)),
+                        const SizedBox(height: 10),
 
                         // Title
                         Text(
@@ -395,7 +395,7 @@ class _AttendeeRegisterScreenState
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
 
                         // Subtitle
                         Text(
@@ -405,7 +405,7 @@ class _AttendeeRegisterScreenState
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
 
                         // Email field
                         TextFormField(
@@ -479,7 +479,7 @@ class _AttendeeRegisterScreenState
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 18),
 
                         // Divider above social sign-in
                         Row(
@@ -499,34 +499,40 @@ class _AttendeeRegisterScreenState
                             const Expanded(child: Divider()),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
-                        // Google (always available)
-                        GoogleSignInButton(
-                          onPressed: _handleGoogleSignUp,
-                          buttonText: AppLocalizations.of(
-                            context,
-                          ).signInWithGoogle,
-                          isLoading: _isGoogleLoading,
-                          showSuccess: _showSuccess,
-                          isEnabled: !_anyLoading && !_showSuccess,
+                        // Social sign-in side by side so the page fits the
+                        // viewport without scrolling (Apple gated to iOS+flag;
+                        // brand-name labels are i18n-exempt).
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GoogleSignInButton(
+                                onPressed: _handleGoogleSignUp,
+                                buttonText: 'Google',
+                                isLoading: _isGoogleLoading,
+                                showSuccess: _showSuccess,
+                                isEnabled: !_anyLoading && !_showSuccess,
+                                height: 48,
+                              ),
+                            ),
+                            if (Platform.isIOS &&
+                                FeatureFlags.attendeeAppleSignupEnabled) ...[
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: AppleSignInButton(
+                                  onPressed: _handleAppleSignUp,
+                                  buttonText: 'Apple',
+                                  isLoading: _isAppleLoading,
+                                  showSuccess: _showSuccess,
+                                  isEnabled: !_anyLoading && !_showSuccess,
+                                  height: 48,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-
-                        // Apple (iOS only, gated until backend honors user_type)
-                        if (Platform.isIOS &&
-                            FeatureFlags.attendeeAppleSignupEnabled) ...[
-                          const SizedBox(height: 12),
-                          AppleSignInButton(
-                            onPressed: _handleAppleSignUp,
-                            buttonText: AppLocalizations.of(
-                              context,
-                            ).signInWithApple,
-                            isLoading: _isAppleLoading,
-                            showSuccess: _showSuccess,
-                            isEnabled: !_anyLoading && !_showSuccess,
-                          ),
-                        ],
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ),
@@ -535,7 +541,7 @@ class _AttendeeRegisterScreenState
 
               // Bottom section
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
                 child: Column(
                   children: [
                     SizedBox(
