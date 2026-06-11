@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -34,9 +35,10 @@ class KolabReviewCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: context.colors.darkBorder),
+        border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
       child: Column(children: _buildSections(l10n)),
     );

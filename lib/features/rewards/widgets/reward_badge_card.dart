@@ -48,7 +48,7 @@ class RewardBadgeCard extends StatelessWidget {
         height: 180,
         padding: const EdgeInsets.all(KolabingSpacing.sm),
         decoration: BoxDecoration(
-          color: isUnlocked ? context.colors.surface : context.colors.surfaceVariant,
+          color: isUnlocked ? Colors.white : context.colors.surfaceVariant,
           borderRadius: KolabingRadius.borderRadiusLg,
           border: Border.all(
             color: isUnlocked

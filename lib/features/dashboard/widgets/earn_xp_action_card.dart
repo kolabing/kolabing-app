@@ -37,7 +37,7 @@ class EarnXpActionCard extends StatelessWidget {
         vertical: KolabingSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: c.surface,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(color: c.hairline),
       ),

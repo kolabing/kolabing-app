@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -76,9 +77,10 @@ class DashboardStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusXl,
         border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

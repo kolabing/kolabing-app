@@ -4,6 +4,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/cards/kolabing_cards.dart';
 import '../models/dashboard_model.dart';
 
 /// A card widget displaying an upcoming collaboration item.
@@ -23,18 +24,30 @@ class UpcomingCollaborationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: isDark ? context.colors.darkSurface : context.colors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+    if (isDark) {
+      return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          decoration: BoxDecoration(
+            color: context.colors.darkSurface,
+            borderRadius: KolabingRadius.borderRadiusMd,
+            border: Border.all(color: context.colors.darkBorder),
           ),
+          child: _content(context, isDark),
         ),
-        child: Row(
+      );
+    }
+
+    return CompactListCard(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      onTap: onTap,
+      child: _content(context, isDark),
+    );
+  }
+
+  Widget _content(BuildContext context, bool isDark) {
+    return Row(
           children: [
             // Partner avatar
             _PartnerAvatar(partner: collaboration.partner),
@@ -78,9 +91,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
             // Status badge
             _StatusBadge(status: collaboration.status),
           ],
-        ),
-      ),
-    );
+        );
   }
 }
 

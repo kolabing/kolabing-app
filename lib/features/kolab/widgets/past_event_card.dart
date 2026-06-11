@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -40,36 +41,36 @@ class PastEventCard extends StatelessWidget {
 
   Widget _buildAddCard(BuildContext context) => GestureDetector(
     onTap: onAdd,
-    child: CustomPaint(
-      painter: _DashedBorderPainter(
-        color: context.colors.darkBorder,
-        radius: KolabingRadius.md,
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.lg),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: context.colors.background,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                LucideIcons.plus,
-                size: 20,
-                color: context.colors.textTertiary,
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Text(
-              'Add a past event',
-              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
+            child: Icon(
+              LucideIcons.plus,
+              size: 20,
+              color: context.colors.onSurface,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            'Add a past event',
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
+          ),
+        ],
       ),
     ),
   );
@@ -85,9 +86,10 @@ class PastEventCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: context.colors.darkBorder),
+        border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,49 +229,4 @@ class PastEventCard extends StatelessWidget {
       ),
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Dashed border painter
-// ---------------------------------------------------------------------------
-
-class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({required this.color, required this.radius});
-
-  final Color color;
-  final double radius;
-
-  static const double _strokeWidth = 1.5;
-  static const double _dashLength = 6;
-  static const double _gapLength = 4;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = _strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final rrect = RRect.fromRectAndRadius(
-      Offset.zero & size,
-      Radius.circular(radius),
-    );
-
-    final path = Path()..addRRect(rrect);
-    final metrics = path.computeMetrics();
-
-    for (final metric in metrics) {
-      double distance = 0;
-      while (distance < metric.length) {
-        final end = (distance + _dashLength).clamp(0.0, metric.length);
-        final segment = metric.extractPath(distance, end);
-        canvas.drawPath(segment, paint);
-        distance += _dashLength + _gapLength;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) =>
-      color != oldDelegate.color || radius != oldDelegate.radius;
 }

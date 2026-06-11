@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -47,15 +48,14 @@ class IntentCard extends StatelessWidget {
           curve: Curves.easeInOut,
           padding: const EdgeInsets.all(KolabingSpacing.lg - 4), // 20dp
           decoration: BoxDecoration(
-            color: isSelected
-                ? context.colors.softYellow
-                : context.colors.surface,
+            color: isSelected ? context.colors.softYellow : Colors.white,
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
               color:
-                  isSelected ? context.colors.primary : context.colors.darkBorder,
+                  isSelected ? context.colors.primary : context.colors.hairline,
               width: isSelected ? 2 : 1,
             ),
+            boxShadow: isSelected ? null : [KolabingShadows.card],
           ),
           child: Row(
             children: [

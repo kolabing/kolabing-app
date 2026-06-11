@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -23,9 +24,10 @@ class PastCollaborationCard extends StatelessWidget {
       width: 240,
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: context.colors.darkBorder, width: 1),
+        border: Border.all(color: context.colors.hairline, width: 1),
+        boxShadow: [KolabingShadows.card],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
