@@ -100,9 +100,12 @@ Join) with their name **prefilled** from the provider; they still choose a uniqu
 ### 7. i18n — `lib/l10n/app_{en,es,ca}.arb` + `flutter gen-l10n`
 - Add `signInWithApple` — en "Sign in with Apple" / es "Iniciar sesión con Apple" /
   ca "Inicia sessió amb Apple".
-- Add a divider key (e.g. `authOrDivider`) — en "or" / es "o" / ca "o" — if not present.
-- In passing (per the mandatory-i18n rule): replace the hardcoded `'Google'` / `'Apple'`
-  `buttonText` literals on `login_screen.dart` with `signInWithGoogle` / `signInWithApple`.
+- Add divider key `authOrContinueWith` — en "or continue with" / es "o continúa con" /
+  ca "o continua amb". (Shipped key/value; supersedes the earlier `authOrDivider`/"or" idea.)
+- `login_screen.dart`'s `'Google'` / `'Apple'` `buttonText` literals are **left as-is**:
+  they are brand names (i18n-rule exempt) and changing them would churn the existing
+  `login_screen_test` (`find.text('Google'|'Apple')`). The attendee screen uses the localized
+  full phrases (`signInWithGoogle` / `signInWithApple`).
 
 ### 8. Backend ticket — `kolabing-v2`
 - File `/Users/volkanoluc/Projects/kolabing-v2/docs/tickets/2026-06-11-attendee-apple-social-usertype.md`:

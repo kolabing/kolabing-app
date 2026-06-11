@@ -220,11 +220,17 @@ class AuthNotifier extends Notifier<AuthState> {
         userType: userTypeHint?.toApiValue(),
       );
 
+      // Only a signup surface (which passes a userTypeHint, e.g. the attendee
+      // register screen) acts on is_new_user → onboarding. The login / sign-in
+      // screens pass no hint and stay "existing users only", preserving the
+      // pre-existing isNewUser:false behavior for Google.
+      final isNewUser = userTypeHint != null && response.isNewUser;
+
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
         token: response.token,
-        isNewUser: response.isNewUser,
+        isNewUser: isNewUser,
       );
       _invalidateAfterSignIn();
 
@@ -238,7 +244,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
       return AuthResult(
         success: true,
-        isNewUser: response.isNewUser,
+        isNewUser: isNewUser,
         user: response.user,
       );
     } on AuthCancelledException {
@@ -280,10 +286,15 @@ class AuthNotifier extends Notifier<AuthState> {
         final token = await _authService.getToken();
         final user = await _authService.restoreSessionUser();
         if (user != null) {
+          // A restored / refreshed session is never a brand-new signup, so
+          // clear the in-session is_new_user flag (gates onboarding routing in
+          // resolveAuthDestination). Attendee onboarding's submit() calls
+          // checkAuthStatus(), so this also self-clears after onboarding.
           state = state.copyWith(
             status: AuthStatus.authenticated,
             user: user,
             token: token,
+            isNewUser: false,
           );
           unawaited(_syncPushIdentity(user));
         } else {

@@ -62,6 +62,28 @@ void main() {
     expect(result.user?.isAttendee, isTrue);
   });
 
+  test(
+    'signInWithGoogle WITHOUT a hint keeps isNewUser false (login screens '
+    'stay existing-users-only even if backend returns is_new_user:true)',
+    () async {
+      final service = _RecordingAuthService();
+      final container = ProviderContainer(
+        overrides: [authServiceProvider.overrideWith((ref) => service)],
+      );
+      addTearDown(container.dispose);
+
+      final result =
+          await container.read(authProvider.notifier).signInWithGoogle();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(service.googleUserType, isNull);
+      expect(result.success, isTrue);
+      // Backend mock returns is_new_user:true, but with no signup hint the
+      // provider must NOT route into onboarding.
+      expect(result.isNewUser, isFalse);
+    },
+  );
+
   test('signInWithApple forwards attendee hint', () async {
     final service = _RecordingAuthService();
     final container = ProviderContainer(
