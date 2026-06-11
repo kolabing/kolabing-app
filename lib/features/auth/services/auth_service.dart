@@ -1096,6 +1096,11 @@ class AuthService {
     await _secureStorage.write(key: _userKey, value: jsonEncode(user.toJson()));
   }
 
+  /// Persist a freshly-fetched user into the in-memory + secure-storage cache.
+  /// Used when a flow (e.g. picking a city on home) already holds the updated
+  /// [UserModel] and wants it reflected without a full re-fetch.
+  Future<void> cacheUser(UserModel user) => _saveUser(user);
+
   /// Get cached user
   UserModel? get cachedUser {
     _syncLocalCachesWithSharedSession();

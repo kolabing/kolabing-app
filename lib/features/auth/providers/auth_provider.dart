@@ -340,6 +340,15 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// Sync a freshly-updated [UserModel] into auth state and the session cache,
+  /// without a full re-auth. Used when a flow already holds the updated user
+  /// (e.g. persisting the home city via `PUT /me/profile`).
+  Future<void> syncUser(UserModel user) async {
+    if (!state.isAuthenticated) return;
+    await _authService.cacheUser(user);
+    state = state.copyWith(user: user);
+  }
+
   /// Clear any error state
   void clearError() {
     if (state.hasError) {

@@ -4861,6 +4861,30 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventFormSelectedTiers => 'Nivells seleccionats';
 
   @override
+  String get eventFormVisibilityLabel => 'Visibilitat';
+
+  @override
+  String get eventFormVisibilityPublic => 'Pública';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Apareix al descobriment de la ciutat: qualsevol la pot trobar.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Membres';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Només els membres de la teva comunitat la poden veure.';
+
+  @override
+  String get eventFormVisibilityTier => 'Nivell específic';
+
+  @override
+  String get eventFormVisibilityTierHint =>
+      'Només els membres dels nivells seleccionats la poden veure.';
+
+  @override
   String get eventFormPhotos => 'Fotos';
 
   @override
@@ -4887,6 +4911,10 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get eventFormErrCapacity =>
       'Introdueix un aforament vàlid o desactiva el límit.';
+
+  @override
+  String get eventFormErrTier =>
+      'Selecciona almenys un nivell per a aquest esdeveniment.';
 
   @override
   String get eventFormPhotosUploaded => 'Fotos pujades.';
@@ -4935,6 +4963,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get chatThreadFallbackTitle => 'Xat';
+
+  @override
+  String get chatSenderFallback => 'Membre';
 
   @override
   String get chatThreadTapToOpen => 'Toca per obrir';
@@ -5749,6 +5780,18 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeHomeFilterToday => 'Avui';
+
+  @override
+  String get attendeeHomeFilterUpcoming => 'Propers';
+
+  @override
+  String get attendeeHomeFilterThisWeek => 'Aquesta setmana';
+
+  @override
+  String get attendeeHomeFilterThisWeekend => 'Aquest cap de setmana';
+
+  @override
+  String get attendeeHomeFilterThisMonth => 'Aquest mes';
 
   @override
   String get attendeeHomeFilterType => 'Tipus';

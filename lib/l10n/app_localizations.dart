@@ -8612,6 +8612,48 @@ abstract class AppLocalizations {
   /// **'Selected tiers'**
   String get eventFormSelectedTiers;
 
+  /// Event form: section label for who can see the event.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get eventFormVisibilityLabel;
+
+  /// Event visibility option: anyone can see it in city discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get eventFormVisibilityPublic;
+
+  /// Helper text for the Public visibility option.
+  ///
+  /// In en, this message translates to:
+  /// **'Appears in city discovery — anyone can find it.'**
+  String get eventFormVisibilityPublicHint;
+
+  /// Event visibility option: visible to community members only.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get eventFormVisibilityMembers;
+
+  /// Helper text for the Members visibility option.
+  ///
+  /// In en, this message translates to:
+  /// **'Only your community members can see it.'**
+  String get eventFormVisibilityMembersHint;
+
+  /// Event visibility option: visible to selected membership tiers only.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific tier'**
+  String get eventFormVisibilityTier;
+
+  /// Helper text for the Specific tier visibility option.
+  ///
+  /// In en, this message translates to:
+  /// **'Only members on the selected tiers can see it.'**
+  String get eventFormVisibilityTierHint;
+
   /// Event form: photos section label
   ///
   /// In en, this message translates to:
@@ -8659,6 +8701,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid capacity, or turn off the limit.'**
   String get eventFormErrCapacity;
+
+  /// Event form: error when 'Specific tier' visibility is chosen but no tier is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one tier for this event.'**
+  String get eventFormErrTier;
 
   /// Event form: photos uploaded confirmation
   ///
@@ -8743,6 +8791,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chat'**
   String get chatThreadFallbackTitle;
+
+  /// Fallback label above an incoming chat bubble when the sender's name is unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get chatSenderFallback;
 
   /// Subtitle for a chat thread that has messages.
   ///
@@ -10165,6 +10219,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get attendeeHomeFilterToday;
+
+  /// Events date filter chip: all future events (default).
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get attendeeHomeFilterUpcoming;
+
+  /// Events date filter chip: events within the current week.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get attendeeHomeFilterThisWeek;
+
+  /// Events date filter chip: events this weekend (Sat-Sun).
+  ///
+  /// In en, this message translates to:
+  /// **'This weekend'**
+  String get attendeeHomeFilterThisWeekend;
+
+  /// Events date filter chip: events within the current calendar month.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get attendeeHomeFilterThisMonth;
 
   /// Events filter chip / sheet title: filter by community type.
   ///

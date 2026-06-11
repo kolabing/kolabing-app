@@ -19,9 +19,20 @@ final discoveryServiceProvider = Provider<DiscoveryService>((ref) {
 // Discovery State Provider (city-based + optional geo)
 // =============================================================================
 
+/// Allowed values for the discover `date` range filter (#5). `upcoming` (the
+/// default) maps to no `date` param — all future events.
+class DiscoveryDateRange {
+  DiscoveryDateRange._();
+  static const String upcoming = 'upcoming';
+  static const String today = 'today';
+  static const String week = 'week';
+  static const String weekend = 'weekend';
+  static const String month = 'month';
+}
+
 /// State for event discovery. Discovery is **city-based** (NF-19): a city is
 /// selected (defaulting to the attendee's own) and the list re-queries on city,
-/// `Today` toggle, and `community_type` filter changes. Geo (lat/lng) is kept
+/// the `date` range, and `community_type` filter changes. Geo (lat/lng) is kept
 /// as an optional alternative the home screen can supply.
 class DiscoveryState {
   const DiscoveryState({
@@ -30,7 +41,7 @@ class DiscoveryState {
     this.radiusKm = 10.0,
     this.cityId,
     this.cityName,
-    this.todayOnly = false,
+    this.dateRange = DiscoveryDateRange.upcoming,
     this.typeSlug,
     this.typeName,
     this.events = const [],
@@ -45,7 +56,9 @@ class DiscoveryState {
   final double radiusKm;
   final String? cityId;
   final String? cityName;
-  final bool todayOnly;
+
+  /// One of [DiscoveryDateRange]. `upcoming` = no `date` param (all future).
+  final String dateRange;
   final String? typeSlug;
   final String? typeName;
   final List<DiscoveredEvent> events;
@@ -66,7 +79,7 @@ class DiscoveryState {
     double? radiusKm,
     String? cityId,
     String? cityName,
-    bool? todayOnly,
+    String? dateRange,
     String? typeSlug,
     String? typeName,
     bool clearType = false,
@@ -82,7 +95,7 @@ class DiscoveryState {
         radiusKm: radiusKm ?? this.radiusKm,
         cityId: cityId ?? this.cityId,
         cityName: cityName ?? this.cityName,
-        todayOnly: todayOnly ?? this.todayOnly,
+        dateRange: dateRange ?? this.dateRange,
         typeSlug: clearType ? null : (typeSlug ?? this.typeSlug),
         typeName: clearType ? null : (typeName ?? this.typeName),
         events: events ?? this.events,
@@ -157,8 +170,8 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     await _fetchEvents();
   }
 
-  /// Toggle the `Today` filter.
-  Future<void> setTodayOnly(bool todayOnly) async {
+  /// Set the `date` range filter (#5). One of [DiscoveryDateRange].
+  Future<void> setDateRange(String dateRange) async {
     if (!ensureAuthenticatedUser(
       clearSignedOutState: _clearSignedOutState,
       onUnauthenticated: _invalidateActiveRequests,
@@ -166,9 +179,10 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
       return;
     }
     if (!state.canQuery) return;
+    if (state.dateRange == dateRange) return;
 
     state = state.copyWith(
-      todayOnly: todayOnly,
+      dateRange: dateRange,
       isLoading: true,
       error: null,
       events: [],
@@ -300,7 +314,10 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
         longitude: useCity ? null : state.longitude,
         radiusKm: state.radiusKm,
         cityId: useCity ? state.cityId : null,
-        date: state.todayOnly ? 'today' : null,
+        // `upcoming` is the default (no `date` param → all future events).
+        date: state.dateRange == DiscoveryDateRange.upcoming
+            ? null
+            : state.dateRange,
         typeSlug: state.typeSlug,
         page: state.currentPage,
       );

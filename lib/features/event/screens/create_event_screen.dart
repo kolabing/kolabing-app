@@ -50,9 +50,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   bool _limited = false;
   bool _busy = false;
 
-  /// Tier-gate: empty list (+ [_allMembers] true) = open to all. When
-  /// [_allMembers] is false, the selected tier ids become `tier_gate`.
-  bool _allMembers = true;
+  /// Visibility (#1): 'public' | 'members' | 'tier'. `public` surfaces the
+  /// event in city discovery; `tier` gates it to [_selectedTierIds]
+  /// (sent as `tier_gate`). Defaults to `members` (backend-safe default).
+  String _visibility = 'members';
   final Set<String> _selectedTierIds = {};
 
   /// Newly picked photos (paths) to upload (edit mode uploads after save).
@@ -93,6 +94,13 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       _startsAt = e.startsAt ?? e.date;
       _limited = e.capacity != null;
       if (e.capacity != null) _capacity.text = e.capacity.toString();
+      // Seed visibility from the existing event (#1). Older events without a
+      // value default to members.
+      _visibility = (e.visibility == 'public' ||
+              e.visibility == 'members' ||
+              e.visibility == 'tier')
+          ? e.visibility!
+          : 'members';
     }
   }
 
@@ -132,7 +140,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   List<String>? _tierGate() {
-    if (_allMembers || _selectedTierIds.isEmpty) return null;
+    if (_visibility != 'tier' || _selectedTierIds.isEmpty) return null;
     return _selectedTierIds.toList();
   }
 
@@ -161,6 +169,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         _snack(_l10n.eventFormErrCapacity);
         return;
       }
+    }
+    if (_visibility == 'tier' && _selectedTierIds.isEmpty) {
+      _snack(_l10n.eventFormErrTier);
+      return;
     }
 
     Map<String, dynamic>? recurrence;
@@ -211,6 +223,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           capacity: cap,
           clearCapacity: !_limited,
           tierGate: _tierGate() ?? const [],
+          visibility: _visibility,
           // Editing a recurring occurrence → scope; editing a one-off with a
           // pattern picked → recurrence (backend converts it to a series).
           scope: _existingIsRecurring ? _editScope : 'this',
@@ -225,6 +238,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           location: _location.text.trim(),
           capacity: cap,
           tierGate: _tierGate(),
+          visibility: _visibility,
           recurrence: recurrence,
         );
       }
@@ -333,8 +347,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 style: KolabingTextStyles.bodySmall
                     .copyWith(color: KolabingColors.onSurfaceVariant)),
           const SizedBox(height: KolabingSpacing.lg),
-          _label(_l10n.eventFormWhoCanJoin),
-          _tierGatePicker(tiersAsync),
+          _label(_l10n.eventFormVisibilityLabel),
+          _visibilityPicker(tiersAsync),
           const SizedBox(height: KolabingSpacing.lg),
           if (_showRepeat) ...[
             _label(_l10n.eventFormRepeatLabel),
@@ -382,25 +396,41 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     );
   }
 
-  Widget _tierGatePicker(AsyncValue<List<CommunityTier>> tiersAsync) {
+  Widget _visibilityPicker(AsyncValue<List<CommunityTier>> tiersAsync) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RadioListTile<bool>(
+        RadioListTile<String>(
           contentPadding: EdgeInsets.zero,
-          value: true,
-          groupValue: _allMembers,
-          onChanged: (v) => setState(() => _allMembers = v ?? true),
-          title: Text(_l10n.eventFormAllMembers),
+          value: 'public',
+          groupValue: _visibility,
+          onChanged: (v) => setState(() => _visibility = v ?? 'members'),
+          title: Text(_l10n.eventFormVisibilityPublic),
+          subtitle: Text(_l10n.eventFormVisibilityPublicHint,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant)),
         ),
-        RadioListTile<bool>(
+        RadioListTile<String>(
           contentPadding: EdgeInsets.zero,
-          value: false,
-          groupValue: _allMembers,
-          onChanged: (v) => setState(() => _allMembers = v ?? false),
-          title: Text(_l10n.eventFormSelectedTiers),
+          value: 'members',
+          groupValue: _visibility,
+          onChanged: (v) => setState(() => _visibility = v ?? 'members'),
+          title: Text(_l10n.eventFormVisibilityMembers),
+          subtitle: Text(_l10n.eventFormVisibilityMembersHint,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant)),
         ),
-        if (!_allMembers)
+        RadioListTile<String>(
+          contentPadding: EdgeInsets.zero,
+          value: 'tier',
+          groupValue: _visibility,
+          onChanged: (v) => setState(() => _visibility = v ?? 'members'),
+          title: Text(_l10n.eventFormVisibilityTier),
+          subtitle: Text(_l10n.eventFormVisibilityTierHint,
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+        ),
+        if (_visibility == 'tier')
           tiersAsync.when(
             loading: () => const Padding(
               padding: EdgeInsets.symmetric(vertical: KolabingSpacing.sm),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../business/providers/profile_provider.dart';
 import '../../onboarding/models/city.dart';
 import '../../onboarding/models/community_type.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
@@ -84,6 +87,25 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       await ref
           .read(discoveryProvider.notifier)
           .setCityAndDiscover(result.id, result.name);
+      // (#3) Persist the chosen city to the profile so it is remembered across
+      // logins (no more re-asking). Best-effort: never block discovery on it.
+      unawaited(_persistCity(result.id));
+    }
+  }
+
+  /// Save the picked city to the user's profile (`PUT /me/profile {city_id}`)
+  /// and reflect the fresh user in auth state. Failures are silent — discovery
+  /// already ran with the chosen city.
+  Future<void> _persistCity(String cityId) async {
+    final user = ref.read(authProvider).user;
+    if (user == null || user.cityId == cityId) return;
+    try {
+      final updated = await ref
+          .read(profileServiceProvider)
+          .updateProfile({'city_id': cityId});
+      await ref.read(authProvider.notifier).syncUser(updated);
+    } catch (_) {
+      // Non-critical: the city is still applied locally for this session.
     }
   }
 
@@ -187,23 +209,40 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               ),
             ),
 
-            // Filter chips: Today + Type (FX-21)
+            // Filter chips: date selector (#5) + Type (FX-21)
             SliverToBoxAdapter(
-              child: Padding(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
                   horizontal: KolabingSpacing.md,
                   vertical: KolabingSpacing.sm,
                 ),
                 child: Row(
                   children: [
-                    _FilterChip(
-                      label: l10n.attendeeHomeFilterToday,
-                      selected: state.todayOnly,
-                      onTap: () => ref
-                          .read(discoveryProvider.notifier)
-                          .setTodayOnly(!state.todayOnly),
-                    ),
-                    const SizedBox(width: KolabingSpacing.sm),
+                    for (final opt in [
+                      (DiscoveryDateRange.today, l10n.attendeeHomeFilterToday),
+                      (DiscoveryDateRange.week, l10n.attendeeHomeFilterThisWeek),
+                      (
+                        DiscoveryDateRange.weekend,
+                        l10n.attendeeHomeFilterThisWeekend
+                      ),
+                      (
+                        DiscoveryDateRange.month,
+                        l10n.attendeeHomeFilterThisMonth
+                      ),
+                    ]) ...[
+                      _FilterChip(
+                        label: opt.$2,
+                        selected: state.dateRange == opt.$1,
+                        onTap: () => ref
+                            .read(discoveryProvider.notifier)
+                            // Tapping the active range clears it back to upcoming.
+                            .setDateRange(state.dateRange == opt.$1
+                                ? DiscoveryDateRange.upcoming
+                                : opt.$1),
+                      ),
+                      const SizedBox(width: KolabingSpacing.sm),
+                    ],
                     _FilterChip(
                       label: state.typeName ?? l10n.attendeeHomeFilterType,
                       selected: state.typeSlug != null,

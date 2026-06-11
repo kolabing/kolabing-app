@@ -28,8 +28,8 @@ class DiscoveryService {
   /// still returns a list):
   /// - Geo: `lat` + `lng` (+ `radius_km`).
   /// - City: `city_id` (the attendee's / a browsed city).
-  /// Plus optional filters: `date` (`today` | `upcoming`) and `type` (a host
-  /// community_type slug).
+  /// Plus optional filters: `date` (`today` | `week` | `weekend` | `month`;
+  /// omit for `upcoming` = all future) and `type` (a host community_type slug).
   ///
   /// GET /api/v1/events/discover?lat&lng&radius_km&city_id&date&type&page&limit
   Future<DiscoveredEventsResponse> discoverEvents({

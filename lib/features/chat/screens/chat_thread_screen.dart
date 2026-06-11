@@ -509,19 +509,56 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
                 .copyWith(color: KolabingColors.onSurfaceVariant)),
       );
     }
+    // (#4) Show the sender name above incoming bubbles only in multi-party
+    // chats (community / event / custom). In a collaboration (1:1) thread the
+    // sender is obvious, so we omit it.
+    final showSenderNames = _thread.type != ChatThreadType.collaboration;
     return ListView.builder(
       controller: _scroll,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       itemCount: _messages.length,
-      itemBuilder: (_, i) => _MessageBubble(message: _messages[i]),
+      itemBuilder: (_, i) => _MessageBubble(
+        message: _messages[i],
+        showSenderName: showSenderNames,
+        senderLabel: showSenderNames
+            ? _senderLabel(_messages[i], l10n)
+            : null,
+      ),
     );
+  }
+
+  /// A non-empty display label for an incoming message's sender. Prefers the
+  /// sender's own name, then a matching participant's name/handle, and finally a
+  /// generic localized fallback — never blank, never "Unknown".
+  String _senderLabel(ChatMessage message, AppLocalizations l10n) {
+    final name = message.sender.name.trim();
+    if (name.isNotEmpty) return name;
+    final pid = message.sender.profileId;
+    if (pid.isNotEmpty) {
+      for (final p in _thread.participants) {
+        if (p.profileId == pid && p.name.trim().isNotEmpty) {
+          return p.name.trim();
+        }
+      }
+    }
+    return l10n.chatSenderFallback;
   }
 }
 
 class _MessageBubble extends StatelessWidget {
-  const _MessageBubble({required this.message});
+  const _MessageBubble({
+    required this.message,
+    required this.showSenderName,
+    this.senderLabel,
+  });
 
   final ChatMessage message;
+
+  /// Whether to render the sender name above an incoming bubble (group chats).
+  final bool showSenderName;
+
+  /// Resolved, guaranteed non-empty sender label (only used for incoming).
+  final String? senderLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -545,8 +582,8 @@ class _MessageBubble extends StatelessWidget {
           crossAxisAlignment:
               mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            if (!mine)
-              Text(message.sender.name,
+            if (!mine && showSenderName && senderLabel != null)
+              Text(senderLabel!,
                   style: KolabingTextStyles.bodySmall.copyWith(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,

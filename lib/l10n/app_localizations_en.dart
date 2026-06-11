@@ -4779,6 +4779,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFormSelectedTiers => 'Selected tiers';
 
   @override
+  String get eventFormVisibilityLabel => 'Visibility';
+
+  @override
+  String get eventFormVisibilityPublic => 'Public';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Appears in city discovery — anyone can find it.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Members';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Only your community members can see it.';
+
+  @override
+  String get eventFormVisibilityTier => 'Specific tier';
+
+  @override
+  String get eventFormVisibilityTierHint =>
+      'Only members on the selected tiers can see it.';
+
+  @override
   String get eventFormPhotos => 'Photos';
 
   @override
@@ -4803,6 +4827,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get eventFormErrCapacity =>
       'Enter a valid capacity, or turn off the limit.';
+
+  @override
+  String get eventFormErrTier => 'Select at least one tier for this event.';
 
   @override
   String get eventFormPhotosUploaded => 'Photos uploaded.';
@@ -4850,6 +4877,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatThreadFallbackTitle => 'Chat';
+
+  @override
+  String get chatSenderFallback => 'Member';
 
   @override
   String get chatThreadTapToOpen => 'Tap to open';
@@ -5654,6 +5684,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeHomeFilterToday => 'Today';
+
+  @override
+  String get attendeeHomeFilterUpcoming => 'Upcoming';
+
+  @override
+  String get attendeeHomeFilterThisWeek => 'This week';
+
+  @override
+  String get attendeeHomeFilterThisWeekend => 'This weekend';
+
+  @override
+  String get attendeeHomeFilterThisMonth => 'This month';
 
   @override
   String get attendeeHomeFilterType => 'Type';
