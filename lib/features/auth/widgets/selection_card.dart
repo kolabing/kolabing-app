@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -103,21 +104,49 @@ class _SelectionCardState extends State<SelectionCard> {
     final isActive = widget.isSelected;
     final isDisabled = !widget.isEnabled;
 
-    // Selected: very soft yellow tint + slightly stronger border
-    final bgColor = isActive
-        ? const Color(0xFFFFF8DC) // warm cream-yellow, lighter than #FFE28C
-        : context.colors.surface;
+    // White surface for every state, in line with the Explore / My Kolabs
+    // card shells — selection and disabled states are conveyed through
+    // the border + shadow, not by tinting the whole card.
+    const bgColor = Colors.white;
     final borderColor = isActive
-        ? const Color(0xFFFFE28C)
-        : isDisabled
-        ? context.colors.darkBorder.withValues(alpha: 0.5)
-        : context.colors.darkBorder;
+        ? context.colors.softYellowBorder
+        : const Color(0xFFEAE6DE);
     final borderWidth = isActive ? 1.5 : 1.0;
-    final shadowOpacity = isActive
-        ? 0.12
-        : _isPressed
-        ? 0.08
-        : 0.05;
+    final boxShadow = isActive
+        ? [
+            BoxShadow(
+              color: context.colors.softYellowBorder.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 3),
+            ),
+          ]
+        : isDisabled
+        ? [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ]
+        : [
+            BoxShadow(
+              color: Colors.black.withValues(
+                alpha: _isPressed ? 0.08 : 0.06,
+              ),
+              blurRadius: 16,
+              offset: const Offset(0, 3),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ];
 
     return Semantics(
       button: true,
@@ -138,42 +167,36 @@ class _SelectionCardState extends State<SelectionCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             curve: Curves.easeOut,
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
             decoration: BoxDecoration(
               color: bgColor,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: KolabingRadius.borderRadiusLg,
               border: Border.all(color: borderColor, width: borderWidth),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: shadowOpacity),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: boxShadow,
             ),
             child: Row(
               children: [
                 // Left icon container
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  width: 40,
-                  height: 40,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: isActive
-                        ? const Color(0xFFFFE28C).withValues(alpha: 0.55)
-                        : context.colors.background,
-                    borderRadius: BorderRadius.circular(10),
+                    color: isDisabled
+                        ? context.colors.softYellow.withValues(alpha: 0.5)
+                        : context.colors.softYellow,
+                    borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Icon(
                     _icon,
-                    size: 18,
+                    size: 20,
                     color: isDisabled
                         ? context.colors.onSurfaceVariant.withValues(alpha: 0.5)
                         : context.colors.onSurface,
                   ),
                 ),
 
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
 
                 // Title + description
                 Expanded(
@@ -183,25 +206,30 @@ class _SelectionCardState extends State<SelectionCard> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            _title(context),
-                            style: KolabingTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: isDisabled
-                                  ? context.colors.onSurfaceVariant
-                                  : context.colors.onSurface,
+                          Flexible(
+                            child: Text(
+                              _title(context),
+                              style: KolabingTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: isDisabled
+                                    ? context.colors.onSurfaceVariant
+                                    : context.colors.onSurface,
+                              ),
                             ),
                           ),
                           if (hasBadge) ...[
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 2,
+                                horizontal: 8,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
                                 color: context.colors.softYellow,
                                 borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: context.colors.softYellowBorder,
+                                ),
                               ),
                               child: Text(
                                 widget.badgeLabel!,
@@ -217,7 +245,7 @@ class _SelectionCardState extends State<SelectionCard> {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
                         _description(context),
                         style: KolabingTextStyles.bodySmall.copyWith(
@@ -226,7 +254,7 @@ class _SelectionCardState extends State<SelectionCard> {
                               ? context.colors.onSurfaceVariant
                                   .withValues(alpha: 0.5)
                               : context.colors.onSurfaceVariant,
-                          height: 1.3,
+                          height: 1.35,
                         ),
                       ),
                     ],
@@ -243,7 +271,7 @@ class _SelectionCardState extends State<SelectionCard> {
                     width: 22,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFE28C),
+                      color: context.colors.softYellowBorder,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
