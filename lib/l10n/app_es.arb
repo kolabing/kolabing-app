@@ -164,6 +164,8 @@
   "signInTitle": "BIENVENIDO DE NUEVO",
   "signInSubtitle": "Inicia sesión para continuar",
   "signInWithGoogle": "Iniciar sesión con Google",
+  "signInWithApple": "Iniciar sesión con Apple",
+  "authOrContinueWith": "o continúa con",
   "signInNoAccount": "¿No tienes una cuenta?",
   "signInSignUp": "Registrarse",
   "signInTypeMismatchTitle": "Tipo de cuenta incorrecto",

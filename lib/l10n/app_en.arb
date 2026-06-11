@@ -676,6 +676,14 @@
   "@signInWithGoogle": {
     "description": "Google sign-in button label on the sign-in screen."
   },
+  "signInWithApple": "Sign in with Apple",
+  "@signInWithApple": {
+    "description": "Apple social sign-in button label on auth screens."
+  },
+  "authOrContinueWith": "or continue with",
+  "@authOrContinueWith": {
+    "description": "Divider label above the social sign-in buttons."
+  },
   "signInNoAccount": "Don't have an account?",
   "@signInNoAccount": {
     "description": "Leading text of the sign-up footer link on the sign-in screen."

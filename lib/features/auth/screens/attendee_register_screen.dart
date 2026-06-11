@@ -1,13 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../config/constants/feature_flags.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../onboarding/providers/attendee_onboarding_provider.dart';
 import '../models/auth_response.dart';
+import '../models/user_model.dart';
 import '../providers/auth_provider.dart';
+import '../utils/auth_navigation.dart';
+import '../widgets/apple_sign_in_button.dart';
+import '../widgets/google_sign_in_button.dart';
 
 /// Attendee Registration Screen
 ///
@@ -29,12 +37,16 @@ class _AttendeeRegisterScreenState
   final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+  bool _isAppleLoading = false;
   bool _showSuccess = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
   String? _emailApiError;
   String? _passwordApiError;
+
+  bool get _anyLoading => _isLoading || _isGoogleLoading || _isAppleLoading;
 
   @override
   void initState() {
@@ -145,9 +157,86 @@ class _AttendeeRegisterScreenState
       if (!mounted) return;
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();
-    } catch (e) {
+    } on Object catch (e) {
       if (!mounted) return;
+      debugPrint('[attendee register] $e');
       setState(() => _isLoading = false);
+      _showErrorSnackBar(AppLocalizations.of(context).authUnexpectedError);
+    }
+  }
+
+  Future<void> _handleGoogleSignUp() async {
+    if (_anyLoading || _showSuccess) return;
+    setState(() => _isGoogleLoading = true);
+    await _runSocial(
+      () => ref
+          .read(authProvider.notifier)
+          .signInWithGoogle(userTypeHint: UserType.attendee),
+      onCancelOrError: () {
+        if (mounted) setState(() => _isGoogleLoading = false);
+      },
+    );
+  }
+
+  Future<void> _handleAppleSignUp() async {
+    if (_anyLoading || _showSuccess) return;
+    setState(() => _isAppleLoading = true);
+    await _runSocial(
+      () => ref
+          .read(authProvider.notifier)
+          .signInWithApple(userTypeHint: UserType.attendee),
+      onCancelOrError: () {
+        if (mounted) setState(() => _isAppleLoading = false);
+      },
+    );
+  }
+
+  /// Shared driver for the Google/Apple sign-up buttons: on success seeds the
+  /// onboarding name (new attendee, best-effort) and routes via
+  /// [resolveAuthDestination]; otherwise surfaces cancel/network/error.
+  Future<void> _runSocial(
+    Future<AuthResult> Function() action, {
+    required VoidCallback onCancelOrError,
+  }) async {
+    try {
+      final result = await action();
+      if (!mounted) return;
+
+      if (result.success && result.user != null) {
+        final user = result.user!;
+        if (result.isNewUser &&
+            user.isAttendee &&
+            (user.name?.trim().isNotEmpty ?? false)) {
+          ref
+              .read(attendeeOnboardingProvider.notifier)
+              .updateName(user.name!.trim());
+        }
+        setState(() {
+          _isGoogleLoading = false;
+          _isAppleLoading = false;
+          _showSuccess = true;
+        });
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+        if (!mounted) return;
+        context.go(resolveAuthDestination(user, isNewUser: result.isNewUser));
+        return;
+      }
+
+      onCancelOrError();
+      if (result.cancelled) return;
+      if (result.isNetworkError) {
+        _showNetworkErrorSnackBar();
+      } else {
+        _showErrorSnackBar(
+          result.displayError.isNotEmpty
+              ? result.displayError
+              : AppLocalizations.of(context).authUnexpectedError,
+        );
+      }
+    } on Object catch (e) {
+      debugPrint('[attendee social] $e');
+      if (!mounted) return;
+      onCancelOrError();
       _showErrorSnackBar(AppLocalizations.of(context).authUnexpectedError);
     }
   }
@@ -239,7 +328,7 @@ class _AttendeeRegisterScreenState
 
   @override
   Widget build(BuildContext context) => PopScope(
-    canPop: !_isLoading,
+    canPop: !_anyLoading,
     child: Scaffold(
       backgroundColor: KolabingColors.background,
       resizeToAvoidBottomInset: false,
@@ -253,7 +342,7 @@ class _AttendeeRegisterScreenState
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: _isLoading ? null : _handleBack,
+                      onTap: _anyLoading ? null : _handleBack,
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: Row(
@@ -290,11 +379,11 @@ class _AttendeeRegisterScreenState
                     key: _formKey,
                     child: Column(
                       children: [
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 12),
 
                         // Icon
-                        const Text('\u{1F3AF}', style: TextStyle(fontSize: 56)),
-                        const SizedBox(height: 16),
+                        const Text('\u{1F3AF}', style: TextStyle(fontSize: 44)),
+                        const SizedBox(height: 10),
 
                         // Title
                         Text(
@@ -306,7 +395,7 @@ class _AttendeeRegisterScreenState
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
 
                         // Subtitle
                         Text(
@@ -316,7 +405,7 @@ class _AttendeeRegisterScreenState
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
 
                         // Email field
                         TextFormField(
@@ -390,7 +479,60 @@ class _AttendeeRegisterScreenState
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 18),
+
+                        // Divider above social sign-in
+                        Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context).authOrContinueWith,
+                                style: KolabingTextStyles.bodySmall.copyWith(
+                                  color: KolabingColors.textTertiary,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Social sign-in side by side so the page fits the
+                        // viewport without scrolling (Apple gated to iOS+flag;
+                        // brand-name labels are i18n-exempt).
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GoogleSignInButton(
+                                onPressed: _handleGoogleSignUp,
+                                buttonText: 'Google',
+                                isLoading: _isGoogleLoading,
+                                showSuccess: _showSuccess,
+                                isEnabled: !_anyLoading && !_showSuccess,
+                                height: 48,
+                              ),
+                            ),
+                            if (Platform.isIOS &&
+                                FeatureFlags.attendeeAppleSignupEnabled) ...[
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: AppleSignInButton(
+                                  onPressed: _handleAppleSignUp,
+                                  buttonText: 'Apple',
+                                  isLoading: _isAppleLoading,
+                                  showSuccess: _showSuccess,
+                                  isEnabled: !_anyLoading && !_showSuccess,
+                                  height: 48,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ),
@@ -399,14 +541,14 @@ class _AttendeeRegisterScreenState
 
               // Bottom section
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
                 child: Column(
                   children: [
                     SizedBox(
                       width: double.infinity,
                       height: 52,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleRegister,
+                        onPressed: _anyLoading ? null : _handleRegister,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: KolabingColors.primary,
                           foregroundColor: KolabingColors.onPrimary,

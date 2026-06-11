@@ -755,15 +755,19 @@ class AuthService {
     }
   }
 
-  /// Login with Apple.
+  /// Login / sign up with Apple.
   ///
   /// POST /api/v1/auth/apple
-  Future<AuthResponse> loginWithApple() async {
+  ///
+  /// [userType] (api value e.g. `'attendee'`) is forwarded so the backend can
+  /// create a new account with the requested role. Harmless for existing users.
+  Future<AuthResponse> loginWithApple({String? userType}) async {
     try {
       final credential = await getAppleCredential();
-      return await _authenticateWithApple(
+      return await authenticateWithApple(
         credential.identityToken,
         credential.fullName,
+        userType: userType,
       );
     } on AuthCancelledException {
       rethrow;
@@ -776,10 +780,12 @@ class AuthService {
     }
   }
 
-  Future<AuthResponse> _authenticateWithApple(
+  @visibleForTesting
+  Future<AuthResponse> authenticateWithApple(
     String identityToken,
-    String? fullName,
-  ) async {
+    String? fullName, {
+    String? userType,
+  }) async {
     final url = '$_baseUrl/auth/apple';
     debugPrint('[Apple] Login: POST $url');
 
@@ -790,9 +796,10 @@ class AuthService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
+        body: jsonEncode(<String, dynamic>{
           'identity_token': identityToken,
           if (fullName != null) 'name': fullName,
+          if (userType != null) 'user_type': userType,
         }),
       );
 
