@@ -112,12 +112,20 @@ prose and code disagree, the **code wins** — and fix the prose.
       `lib/features/collaboration/providers/collaboration_detail_provider.dart` —
       never extend the mock pattern; fetch from the API.)
 - [ ] No hardcoded city/category/business-type/community-type lists — fetch from
-      `/cities`, `/business-types`, etc. `_mock*` fallbacks stay behind an
+      `/cities`, `/business-types`, `/community-types`, etc. **See
+      [`docs/CANONICAL-LISTS.md`](docs/CANONICAL-LISTS.md)** for the authoritative
+      endpoint+provider per taxonomy. `_mock*` fallbacks stay behind an
       off-by-default flag and must never shadow a successful API call.
+      ⚠️ **`enum CommunityType {greek,fitness,running,business,other}` in
+      `community/models/community.dart` is a PLACEHOLDER** — it does NOT match the
+      real `/community-types` and collapses unknowns to `other`. Never use it for
+      filtering/matching/ranking/interests; use the dynamic `communityTypesProvider`
+      (`onboarding/models/community_type.dart`, a different `CommunityType`).
 - [ ] No invented role logic — role rules come ONLY from the two ROLES docs.
 - [ ] No magic status/type strings — reuse the enums (`ApplicationStatus`,
       `CollaborationStatus`, `UserType`) and their `fromString`/`toApiValue` mappers;
-      match the backend's snake_case wire values exactly.
+      match the backend's snake_case wire values exactly. (Status/role enums are
+      stable wire contracts; user-pickable TAXONOMIES are not — see canonical lists.)
 - [ ] Design tokens come from `lib/config/theme/` + `lib/config/constants/` — never
       raw hex or magic numbers.
 

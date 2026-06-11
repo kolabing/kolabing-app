@@ -37,6 +37,18 @@
    `business_subscriptions` row gets `403 "An active subscription is required to
    apply to this opportunity."` Communities are never paywalled. Never bypass it
    from the client.
+7. **Postgres ≠ SQLite — green tests are NOT proof.** Production is **Postgres**;
+   tests + local run **SQLite** (`phpunit.xml` / `.env`: `sqlite :memory:`). Behaviours
+   diverge, so a query can pass 100% of tests and 500 on every prod request. **Never
+   `lockForUpdate()` on an aggregate** (`->count()`/`->max()`/`->sum()`): Postgres
+   forbids `SELECT … FOR UPDATE` with aggregates, SQLite allows it — this exact bug
+   took down **all** event sign-ups (2026-06-10; ticket
+   `docs/tickets/2026-06-10-backend-signup-500-postgres-lock.md`). To serialize a
+   transaction, lock a single **row** (`Model::whereKey($id)->lockForUpdate()->first()`)
+   then aggregate **without** a lock. Before merging, grep new code for
+   `lockForUpdate()->(count|max|sum|avg)`, and validate anything touching locks, JSON
+   operators, `ILIKE`, `RETURNING`, or transactions against **Postgres**, not just
+   green SQLite tests. (Ideally add a Postgres CI lane.)
 
 ---
 
