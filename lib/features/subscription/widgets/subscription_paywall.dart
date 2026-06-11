@@ -12,6 +12,8 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
+import '../../auth/models/user_model.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
 
@@ -29,6 +31,12 @@ class SubscriptionPaywall extends ConsumerStatefulWidget {
   /// Check subscription status and show paywall if not active.
   /// Returns true if user has an active subscription and can publish.
   static Future<bool> checkAndShow(BuildContext context, WidgetRef ref) async {
+    // BUSINESS-ONLY gate (golden rule: communities & attendees are NEVER
+    // paywalled). No-op/allow for any non-business viewer so an accidental call
+    // from a community/attendee path can never block them or demand premium.
+    final userType = ref.read(authProvider).user?.userType;
+    if (userType != UserType.business) return true;
+
     final profileState = ref.read(profileProvider);
     if (profileState.isSubscribed) return true;
 

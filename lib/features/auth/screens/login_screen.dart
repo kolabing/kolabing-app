@@ -545,7 +545,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           ),
                           child: Text(
                             'WELCOME BACK.',
-                            style: KolabingTextStyles.displayLarge.copyWith(
+                            textAlign: TextAlign.left,
+                            maxLines: 1,
+                            style: KolabingTextStyles.displaySmall.copyWith(
                               color: _kTextWhite,
                             ),
                           ),

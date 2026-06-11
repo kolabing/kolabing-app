@@ -277,17 +277,17 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                     )
                                   : null,
                               filled: true,
-                              fillColor: context.colors.surfaceVariant,
+                              fillColor: context.colors.surfaceContainerLow,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: context.colors.darkBorder,
+                                  color: context.colors.outlineVariant,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: context.colors.darkBorder,
+                                  color: context.colors.outlineVariant,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -308,7 +308,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Powered by Google',
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w500, color: context.colors.textTertiary),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -456,11 +456,12 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
     );
   }
 
-  Widget _buildHint(String message) => Center(
+  Widget _buildHint(String message) => Padding(
+    padding: const EdgeInsets.only(top: 12),
     child: Text(
       message,
       style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-      textAlign: TextAlign.center,
+      textAlign: TextAlign.start,
     ),
   );
 

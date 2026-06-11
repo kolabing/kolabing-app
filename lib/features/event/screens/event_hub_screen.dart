@@ -391,8 +391,10 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
       _ when e.isGoing => (
           _l10n.eventHubGoingTapToLeave,
           LucideIcons.check,
-          context.colors.success,
-          context.colors.onSurface,
+          // Active/confirmed state — light mint bg + dark green text (readable).
+          // `success` (deprecated dark olive) made the dark label unreadable.
+          KolabingColors.activeBg,
+          KolabingColors.activeText,
         ),
       _ when e.isWaitlisted => (
           _l10n.eventHubOnWaitlistTapToLeave,

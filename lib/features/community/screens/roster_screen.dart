@@ -7,6 +7,9 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/cards/kolabing_cards.dart';
+import '../../identity/services/identity_service.dart';
+import '../../opportunity/models/opportunity.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
@@ -89,7 +92,7 @@ class RosterScreen extends ConsumerWidget {
   Future<void> _invite(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
-    final email = await showDialog<String>(
+    final identifier = await showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(l10n.rosterInviteTitle),
@@ -104,9 +107,10 @@ class RosterScreen extends ConsumerWidget {
               autofocus: true,
               keyboardType: TextInputType.emailAddress,
               autocorrect: false,
+              enableSuggestions: false,
               decoration: InputDecoration(
-                labelText: l10n.rosterInviteEmailLabel,
-                hintText: l10n.rosterInviteEmailHint,
+                labelText: l10n.rosterInviteIdentifierLabel,
+                hintText: l10n.rosterInviteIdentifierHint,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -124,18 +128,27 @@ class RosterScreen extends ConsumerWidget {
         ],
       ),
     );
-    if (email == null || email.isEmpty) return;
-    if (!email.contains('@') || !email.contains('.')) {
+    if (identifier == null || identifier.isEmpty) return;
+
+    // Branch on the identifier shape: an "@" with a "." is an email; otherwise
+    // treat it as a @handle (the backend resolves either — contract §6).
+    final isEmail = identifier.contains('@') && identifier.contains('.');
+    final handle = identifier.startsWith('@')
+        ? identifier.substring(1)
+        : identifier;
+    if (!isEmail && !IdentityService.isValidHandleFormat(handle)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.rosterInviteInvalidEmail)));
+            SnackBar(content: Text(l10n.rosterInviteInvalidIdentifier)));
       }
       return;
     }
     try {
-      await ref
-          .read(communityServiceProvider)
-          .addMember(communityId, email: email);
+      await ref.read(communityServiceProvider).addMember(
+            communityId,
+            email: isEmail ? identifier : null,
+            handle: isEmail ? null : handle,
+          );
       ref.read(communityManageProvider.notifier).reloadMembers();
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -145,7 +158,7 @@ class RosterScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(e.isProfileNotFound
-                ? l10n.rosterNoAccountForEmail
+                ? l10n.rosterNoAccountForIdentifier
                 : e.message)));
       }
     }
@@ -160,19 +173,9 @@ class _MemberTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(KolabingSpacing.sm),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: context.colors.outlineVariant),
-          ),
-          child: Row(
+    return CompactListCard(
+      onTap: onTap,
+      child: Row(
             children: [
               CircleAvatar(
                 radius: 18,
@@ -210,8 +213,6 @@ class _MemberTile extends StatelessWidget {
                   size: 16, color: context.colors.onSurfaceVariant),
             ],
           ),
-        ),
-      ),
     );
   }
 }
@@ -223,29 +224,19 @@ class _EmptyRoster extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(KolabingSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(LucideIcons.users,
-                size: 32, color: context.colors.onSurfaceVariant),
-            const SizedBox(height: KolabingSpacing.md),
-            Text(l10n.rosterEmptyTitle,
-                style: KolabingTextStyles.bodyLarge
-                    .copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: KolabingSpacing.lg),
-            FilledButton.icon(
-              onPressed: onInvite,
-              icon: const Icon(LucideIcons.userPlus, size: 18),
-              label: Text(l10n.rosterInviteMember),
-              style: FilledButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-              ),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      child: EmptyStateCard(
+        icon: LucideIcons.users,
+        title: l10n.rosterEmptyTitle,
+        action: FilledButton.icon(
+          onPressed: onInvite,
+          icon: const Icon(LucideIcons.userPlus, size: 18),
+          label: Text(l10n.rosterInviteMember),
+          style: FilledButton.styleFrom(
+            backgroundColor: context.colors.primary,
+            foregroundColor: context.colors.onPrimary,
+          ),
         ),
       ),
     );
@@ -354,7 +345,20 @@ class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
               onPressed: () {
                 Navigator.of(context).pop();
-                context.push('/profile/${widget.member.profileId}');
+                // Pass an optimistic CreatorProfile so the public-profile header
+                // shows the real name + avatar instantly (no "Unknown" flash) and
+                // so PublicProfileScreen can branch to the member (attendee)
+                // layout before the network fetch returns. The member is an
+                // attendee, not a business/community.
+                context.push(
+                  '/profile/${widget.member.profileId}',
+                  extra: CreatorProfile(
+                    id: widget.member.profileId,
+                    userType: 'attendee',
+                    displayNameValue: widget.member.memberName,
+                    avatarUrl: widget.member.memberAvatarUrl,
+                  ),
+                );
               },
               icon: const Icon(LucideIcons.user, size: 16),
               label: Text(l10n.rosterViewProfile),

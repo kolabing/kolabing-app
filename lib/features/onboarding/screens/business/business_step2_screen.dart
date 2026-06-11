@@ -396,6 +396,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                             id: type.id,
                             name: type.name,
                             icon: type.icon,
+                            iconUrl: type.iconUrl,
                             isSelected: selectedTypeIds.contains(type.id),
                             onTap: () => notifier.toggleBusinessType(type),
                           );
@@ -766,14 +767,14 @@ InputDecoration _inputDecoration(
     color: context.colors.error,
   ),
   filled: true,
-  fillColor: context.colors.surfaceVariant,
+  fillColor: context.colors.surfaceContainerLow,
   border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide(color: context.colors.darkBorder),
+    borderSide: BorderSide(color: context.colors.outlineVariant),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide(color: context.colors.darkBorder),
+    borderSide: BorderSide(color: context.colors.outlineVariant),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),

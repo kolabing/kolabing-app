@@ -150,10 +150,10 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                                   )
                                 : null,
                             filled: true,
-                            fillColor: context.colors.surfaceVariant,
+                            fillColor: context.colors.surfaceContainerLow,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
+                              borderSide: BorderSide(color: context.colors.outlineVariant),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,

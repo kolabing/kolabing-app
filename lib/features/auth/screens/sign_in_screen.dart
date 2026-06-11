@@ -294,8 +294,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
           children: [
             // Rotating brand phrase — upper-right atmospheric layer
             Positioned(
-              top: 48,
-              right: 24,
+              top: 300,
+              right: 90,
               child: AnimatedOpacity(
                 opacity: _phraseOpacity * 0.38,
                 duration: const Duration(milliseconds: 180),

@@ -159,10 +159,10 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: context.colors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.all(16),
                           counterStyle: KolabingTextStyles.bodySmall.copyWith(
@@ -202,10 +202,10 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: context.colors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -244,10 +244,10 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: context.colors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -283,10 +283,10 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                             color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: context.colors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,

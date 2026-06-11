@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -32,17 +33,10 @@ class OpportunityCard extends StatelessWidget {
 
     return DecoratedBox(
         decoration: BoxDecoration(
-          color: isDark ? context.colors.darkSurface : context.colors.surface,
+          color: isDark ? context.colors.darkSurface : Colors.white,
           borderRadius: KolabingRadius.borderRadiusLg,
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          border: isDark ? null : Border.all(color: context.colors.hairline),
+          boxShadow: isDark ? null : [KolabingShadows.card],
         ),
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.md),

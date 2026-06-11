@@ -16,7 +16,6 @@ import '../widgets/kolabing_logo.dart';
 const Color _kBg = Color(0xFF0A0A0A);
 const Color _kTextMuted = Color(0xFFAAAAAA);
 const Color _kYellow = Color(0xFFFFE28C);
-const Color _kTextCream = Color(0xFFEEEEEE);
 
 // ---------------------------------------------------------------------------
 // WelcomeScreen
@@ -131,13 +130,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   builder: (context, child) => Opacity(
                     opacity: _logoOpacity.value,
                     child: Transform.translate(
-                      offset: Offset(0, _logoSlideY.value),
+                      offset: Offset(0, _logoSlideY.value + 12),
                       child: child,
                     ),
                   ),
                   child: KolabingLogo(
                     width: compact ? 172.0 : 200.0,
-                    variant: KolabingLogoVariant.yellowTransparent,
+                    variant: KolabingLogoVariant.lightTransparent,
                   ),
                 ),
 
@@ -153,10 +152,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       child: child,
                     ),
                   ),
-                  child: Opacity(
-                    opacity: 0.82,
-                    child: _BrandHeroText(compact: compact),
-                  ),
+                  child: _BrandHeroText(compact: compact),
                 ),
 
                 SizedBox(height: compact ? 24 : 32),
@@ -231,30 +227,31 @@ class _BrandHeroText extends StatelessWidget {
 
     final bigStyle = GoogleFonts.archivoBlack(
       fontSize: bigSize,
-      color: _kTextCream,
+      color: _kYellow.withValues(alpha: 0.92),
       height: 0.95,
       letterSpacing: -1.2,
     );
     final smallStyle = GoogleFonts.rubik(
       fontSize: compact ? 13.0 : 15.0,
       fontWeight: FontWeight.w600,
-      color: _kTextCream,
+      color: _kYellow.withValues(alpha: 0.65),
       height: 1.2,
     );
     final ampStyle = GoogleFonts.rubik(
       fontSize: compact ? 20.0 : 24.0,
       fontWeight: FontWeight.w700,
-      color: _kTextCream,
+      color: _kYellow.withValues(alpha: 0.65),
       height: 1,
     );
 
-    return SizedBox(
-      width: double.infinity,
+    return Align(
+      alignment: const Alignment(0.3, 0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 28),
+            padding: const EdgeInsets.only(left: 4),
             child: Text('where', style: smallStyle),
           ),
           Padding(
@@ -283,7 +280,7 @@ class _BrandHeroText extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 28, right: 6),
                   child: Text('grow', style: smallStyle.copyWith(fontSize: compact ? 15.0 : 17.0)),
                 ),
-                Text('together', style: bigStyle, overflow: TextOverflow.visible, softWrap: false),
+                Text('together', style: bigStyle.copyWith(color: _kYellow.withValues(alpha: 0.65)), overflow: TextOverflow.visible, softWrap: false),
               ],
             ),
           ),

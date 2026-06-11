@@ -165,14 +165,14 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                         hintText: l10n.communityStep1NameHint,
                         hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
                         filled: true,
-                        fillColor: context.colors.surfaceVariant,
+                        fillColor: context.colors.surfaceContainerLow,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
