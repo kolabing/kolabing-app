@@ -196,6 +196,16 @@ class ChatService {
         return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
       }, 'createEventChat');
 
+  /// `POST /chats/{thread}/join` — self-join an open chat (active member, not
+  /// banned). Returns the refreshed thread.
+  Future<ChatThread> joinThread(String threadId) => _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/chats/$threadId/join'),
+          headers: await _headers(),
+        );
+        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+      }, 'joinThread');
+
   /// `POST /chats/{thread}/read` — mark the viewer's read pointer.
   Future<void> markRead(String threadId) => _guard(() async {
         final res = await _httpClient.post(
