@@ -4764,6 +4764,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFormLocationHint => 'Ciutadella Park';
 
   @override
+  String get eventFormCityLabel => 'City (optional)';
+
+  @override
+  String get eventFormCityHint => 'Select a city';
+
+  @override
   String get eventFormCapacityLabel => 'Capacity (optional)';
 
   @override
@@ -5684,6 +5690,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeHomeFilterToday => 'Today';
+
+  @override
+  String get attendeeHomeFilterDate => 'When';
 
   @override
   String get attendeeHomeFilterUpcoming => 'Upcoming';

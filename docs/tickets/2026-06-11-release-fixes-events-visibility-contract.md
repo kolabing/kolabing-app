@@ -44,3 +44,34 @@
 ## Rules
 - i18n en/es/ca for new strings; design tokens only; self-gate new endpoint params.
   0 analyze errors; backend filtered tests green (full suite OOMs at 128MB).
+
+---
+
+## ADDENDUM (2026-06-11) — why discover is still empty + the real mechanism
+
+Two blockers found via the prod API (events are public but discover returns 0):
+1. **`is_active` gate**: community upcoming events are created `is_active=false`
+   (`EventService::buildUpcoming` never sets it), but discover requires
+   `is_active=true` → **no upcoming event is ever discoverable**. The gate suited the
+   old geo "active now" path, not "upcoming events in my city".
+2. **No event city**: events have no `city_id`; city is derived ONLY from the host
+   community's `community_profiles.city_id`, but leader-created communities (e.g. Real
+   Run Club, `type=other`) have `community_profile_id=null` → no city → never matched.
+
+### Fix (backend)
+- Add **`events.city_id`** (nullable FK `cities`) + **`event_series.city_id`**. This
+  is the EVENT's city (where it happens), picked at creation. Series propagates to
+  occurrences.
+- Discover city filter = **event's effective city**: `events.city_id` if set, else
+  fall back to the host community's `community_profiles.city_id`. Expose
+  **`city_name`** on the event resource.
+- **Relax the `is_active` gate** for the public/city discover path: show **upcoming
+  (date ≥ today) PUBLIC events** regardless of `is_active`. (Keep `is_active` for the
+  geo "active now" path if it matters there.)
+- Create/update event + series accept `city_id`.
+
+### Fix (app)
+- Create/edit event form: a **city picker** for the event's city (reuse
+  `citiesProvider`), sent as `city_id`. Default to the community's / user's city.
+- **Date filter UI: ONE dropdown chip** (tap → menu: Today / This week / This
+  weekend / This month / Upcoming), styled like the city chip — NOT separate chips.

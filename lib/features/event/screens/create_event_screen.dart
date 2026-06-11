@@ -3,12 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../community/models/community_tier.dart';
 import '../../community/providers/community_providers.dart';
+import '../../onboarding/models/city.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
+import '../../onboarding/widgets/city_list_item.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -56,6 +61,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   String _visibility = 'members';
   final Set<String> _selectedTierIds = {};
 
+  /// Event location city (Fix: events.city_id). Defaults to the user's city;
+  /// sent as `city_id` only when set (self-gated — backend FK ships in
+  /// parallel). The leader can change it via the city picker.
+  String? _cityId;
+  String? _cityName;
+
   /// Newly picked photos (paths) to upload (edit mode uploads after save).
   final List<XFile> _pickedPhotos = [];
 
@@ -102,6 +113,14 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ? e.visibility!
           : 'members';
     }
+    // Default the event city to the user's city (the community's city falls back
+    // server-side). The user's city is on UserModel; degrade gracefully when
+    // absent.
+    final user = ref.read(authProvider).user;
+    if (user?.cityId != null && user!.cityId!.isNotEmpty) {
+      _cityId = user.cityId;
+      _cityName = user.cityName;
+    }
   }
 
   @override
@@ -131,6 +150,25 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     );
     if (time == null) return null;
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  Future<void> _pickCity() async {
+    final result = await showModalBottomSheet<OnboardingCity>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: KolabingColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+      ),
+      builder: (_) => _CityPickerSheet(selectedCityId: _cityId),
+    );
+    if (result != null) {
+      setState(() {
+        _cityId = result.id;
+        _cityName = result.name;
+      });
+    }
   }
 
   Future<void> _pickPhotos() async {
@@ -224,6 +262,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           clearCapacity: !_limited,
           tierGate: _tierGate() ?? const [],
           visibility: _visibility,
+          cityId: _cityId,
           // Editing a recurring occurrence → scope; editing a one-off with a
           // pattern picked → recurrence (backend converts it to a series).
           scope: _existingIsRecurring ? _editScope : 'this',
@@ -239,6 +278,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           capacity: cap,
           tierGate: _tierGate(),
           visibility: _visibility,
+          cityId: _cityId,
           recurrence: recurrence,
         );
       }
@@ -325,6 +365,13 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           TextField(
               controller: _location,
               decoration: _dec(_l10n.eventFormLocationHint)),
+          const SizedBox(height: KolabingSpacing.lg),
+          _label(_l10n.eventFormCityLabel),
+          _CityField(
+            cityName: _cityName,
+            hint: _l10n.eventFormCityHint,
+            onTap: _pickCity,
+          ),
           const SizedBox(height: KolabingSpacing.lg),
           Row(
             children: [
@@ -732,5 +779,173 @@ class _DateField extends StatelessWidget {
     final h = d.hour.toString().padLeft(2, '0');
     final m = d.minute.toString().padLeft(2, '0');
     return '${months[d.month - 1]} ${d.day}, ${d.year} · $h:$m';
+  }
+}
+
+/// Tappable field that shows the chosen event city (or a hint) and opens the
+/// city picker. Mirrors [_DateField]'s styling.
+class _CityField extends StatelessWidget {
+  const _CityField({
+    required this.cityName,
+    required this.hint,
+    required this.onTap,
+  });
+
+  final String? cityName;
+  final String hint;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: KolabingColors.surfaceContainerLow,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          prefixIcon: const Icon(LucideIcons.mapPin, size: 18),
+        ),
+        child: Text(
+          cityName ?? hint,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            color: cityName != null
+                ? KolabingColors.onSurface
+                : KolabingColors.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// City picker sheet — reuses `citiesProvider` / `filteredCitiesProvider` and
+/// the shared [CityListItem], matching the home / edit-profile pattern.
+class _CityPickerSheet extends ConsumerStatefulWidget {
+  const _CityPickerSheet({this.selectedCityId});
+
+  final String? selectedCityId;
+
+  @override
+  ConsumerState<_CityPickerSheet> createState() => _CityPickerSheetState();
+}
+
+class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final filtered = ref.watch(filteredCitiesProvider(_query));
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: Column(
+          children: [
+            const SizedBox(height: KolabingSpacing.sm),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: KolabingColors.outlineVariant,
+                borderRadius: BorderRadius.circular(KolabingRadius.round),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(KolabingSpacing.md),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (v) => setState(() => _query = v),
+                style: KolabingTextStyles.bodyMedium
+                    .copyWith(color: KolabingColors.onSurface),
+                decoration: InputDecoration(
+                  hintText: l10n.editProfileCitySearchHint,
+                  prefixIcon: const Icon(LucideIcons.search, size: 20),
+                  filled: true,
+                  fillColor: KolabingColors.surfaceVariant,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(KolabingRadius.sm),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.md,
+                    vertical: KolabingSpacing.sm,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: filtered.when(
+                data: (cities) {
+                  if (cities.isEmpty) {
+                    return Center(
+                      child: Text(
+                        l10n.editProfileNoCitiesFound,
+                        style: KolabingTextStyles.bodySmall
+                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: cities.length,
+                    itemBuilder: (_, i) {
+                      final city = cities[i];
+                      return CityListItem(
+                        id: city.id,
+                        name: city.name,
+                        country: city.country,
+                        isSelected: widget.selectedCityId == city.id,
+                        onTap: () => Navigator.of(context).pop(city),
+                      );
+                    },
+                  );
+                },
+                loading: () => const Center(
+                  child:
+                      CircularProgressIndicator(color: KolabingColors.primary),
+                ),
+                error: (_, _) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        LucideIcons.alertCircle,
+                        color: KolabingColors.error,
+                        size: 40,
+                      ),
+                      const SizedBox(height: KolabingSpacing.sm),
+                      Text(
+                        l10n.editProfileCityLoadError,
+                        style: KolabingTextStyles.bodySmall
+                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                      ),
+                      const SizedBox(height: KolabingSpacing.md),
+                      TextButton(
+                        onPressed: () => ref.invalidate(citiesProvider),
+                        child: Text(l10n.commonRetry),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

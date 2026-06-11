@@ -109,6 +109,42 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     }
   }
 
+  /// Human label for the current [DiscoveryDateRange] (chip + sheet rows).
+  String _dateRangeLabel(String range, AppLocalizations l10n) {
+    switch (range) {
+      case DiscoveryDateRange.today:
+        return l10n.attendeeHomeFilterToday;
+      case DiscoveryDateRange.week:
+        return l10n.attendeeHomeFilterThisWeek;
+      case DiscoveryDateRange.weekend:
+        return l10n.attendeeHomeFilterThisWeekend;
+      case DiscoveryDateRange.month:
+        return l10n.attendeeHomeFilterThisMonth;
+      case DiscoveryDateRange.upcoming:
+      default:
+        return l10n.attendeeHomeFilterUpcoming;
+    }
+  }
+
+  /// Date range selector (#5) — ONE dropdown chip (styled like the city chip).
+  /// Opens a sheet to pick: Upcoming (default) / Today / This week / This
+  /// weekend / This month. Wires to `discovery_provider.setDateRange`.
+  Future<void> _pickDateRange() async {
+    final state = ref.read(discoveryProvider);
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: KolabingColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+      ),
+      builder: (_) => _DateRangeSheet(selected: state.dateRange),
+    );
+    if (result != null) {
+      await ref.read(discoveryProvider.notifier).setDateRange(result);
+    }
+  }
+
   Future<void> _pickType() async {
     final state = ref.read(discoveryProvider);
     final result = await showModalBottomSheet<_TypeSelection>(
@@ -209,7 +245,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               ),
             ),
 
-            // Filter chips: date selector (#5) + Type (FX-21)
+            // Filter chips: date dropdown (#5) + Type (FX-21). The date filter is
+            // ONE dropdown chip styled exactly like the city chip (same
+            // shape/InkWell/chevron) — not a row of separate chips.
             SliverToBoxAdapter(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -219,34 +257,15 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                 ),
                 child: Row(
                   children: [
-                    for (final opt in [
-                      (DiscoveryDateRange.today, l10n.attendeeHomeFilterToday),
-                      (DiscoveryDateRange.week, l10n.attendeeHomeFilterThisWeek),
-                      (
-                        DiscoveryDateRange.weekend,
-                        l10n.attendeeHomeFilterThisWeekend
-                      ),
-                      (
-                        DiscoveryDateRange.month,
-                        l10n.attendeeHomeFilterThisMonth
-                      ),
-                    ]) ...[
-                      _FilterChip(
-                        label: opt.$2,
-                        selected: state.dateRange == opt.$1,
-                        onTap: () => ref
-                            .read(discoveryProvider.notifier)
-                            // Tapping the active range clears it back to upcoming.
-                            .setDateRange(state.dateRange == opt.$1
-                                ? DiscoveryDateRange.upcoming
-                                : opt.$1),
-                      ),
-                      const SizedBox(width: KolabingSpacing.sm),
-                    ],
-                    _FilterChip(
+                    _DropdownChip(
+                      icon: LucideIcons.calendar,
+                      label: _dateRangeLabel(state.dateRange, l10n),
+                      onTap: _pickDateRange,
+                    ),
+                    const SizedBox(width: KolabingSpacing.sm),
+                    _DropdownChip(
+                      icon: LucideIcons.tag,
                       label: state.typeName ?? l10n.attendeeHomeFilterType,
-                      selected: state.typeSlug != null,
-                      trailingIcon: LucideIcons.chevronDown,
                       onTap: _pickType,
                     ),
                   ],
@@ -560,6 +579,30 @@ class _CityPickerButton extends StatelessWidget {
   final AppLocalizations l10n;
 
   @override
+  Widget build(BuildContext context) => _DropdownChip(
+        icon: LucideIcons.mapPin,
+        label: cityName ?? l10n.attendeeHomeChooseCity,
+        onTap: onTap,
+      );
+}
+
+// =============================================================================
+// Dropdown chip — shared pill (leading icon · label · chevron) used by BOTH
+// the city picker and the date/type filters so they match exactly.
+// =============================================================================
+
+class _DropdownChip extends StatelessWidget {
+  const _DropdownChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
   Widget build(BuildContext context) => InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
@@ -575,14 +618,14 @@ class _CityPickerButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                LucideIcons.mapPin,
+              Icon(
+                icon,
                 size: 14,
                 color: KolabingColors.onSurface,
               ),
               const SizedBox(width: 4),
               Text(
-                cityName ?? l10n.attendeeHomeChooseCity,
+                label,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -602,55 +645,59 @@ class _CityPickerButton extends StatelessWidget {
 }
 
 // =============================================================================
-// Filter chip (FX-21) — readable dark text, not yellow-on-light
+// Date range sheet (#5) — pick one of upcoming/today/week/weekend/month.
 // =============================================================================
 
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.trailingIcon,
-  });
+class _DateRangeSheet extends StatelessWidget {
+  const _DateRangeSheet({required this.selected});
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final IconData? trailingIcon;
+  final String selected;
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? KolabingColors.primary : KolabingColors.surfaceVariant;
-    final fg = KolabingColors.onSurface;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(KolabingRadius.round),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.xs + 2,
-        ),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(KolabingRadius.round),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: fg,
+    final l10n = AppLocalizations.of(context);
+    final options = <(String, String)>[
+      (DiscoveryDateRange.upcoming, l10n.attendeeHomeFilterUpcoming),
+      (DiscoveryDateRange.today, l10n.attendeeHomeFilterToday),
+      (DiscoveryDateRange.week, l10n.attendeeHomeFilterThisWeek),
+      (DiscoveryDateRange.weekend, l10n.attendeeHomeFilterThisWeekend),
+      (DiscoveryDateRange.month, l10n.attendeeHomeFilterThisMonth),
+    ];
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: KolabingSpacing.sm),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: KolabingColors.outlineVariant,
+              borderRadius: BorderRadius.circular(KolabingRadius.round),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                l10n.attendeeHomeFilterDate,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.onSurface,
+                ),
               ),
             ),
-            if (trailingIcon != null) ...[
-              const SizedBox(width: 4),
-              Icon(trailingIcon, size: 14, color: fg),
-            ],
-          ],
-        ),
+          ),
+          for (final opt in options)
+            _TypeRow(
+              label: opt.$2,
+              selected: selected == opt.$1,
+              onTap: () => Navigator.of(context).pop(opt.$1),
+            ),
+          const SizedBox(height: KolabingSpacing.sm),
+        ],
       ),
     );
   }

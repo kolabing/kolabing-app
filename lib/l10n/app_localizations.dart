@@ -8582,6 +8582,18 @@ abstract class AppLocalizations {
   /// **'Ciutadella Park'**
   String get eventFormLocationHint;
 
+  /// Event form: city label (the event's location city)
+  ///
+  /// In en, this message translates to:
+  /// **'City (optional)'**
+  String get eventFormCityLabel;
+
+  /// Event form: city picker placeholder when no city is chosen
+  ///
+  /// In en, this message translates to:
+  /// **'Select a city'**
+  String get eventFormCityHint;
+
   /// Event form: capacity label
   ///
   /// In en, this message translates to:
@@ -10219,6 +10231,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get attendeeHomeFilterToday;
+
+  /// Date-range dropdown chip / sheet title for the events feed.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get attendeeHomeFilterDate;
 
   /// Events date filter chip: all future events (default).
   ///
