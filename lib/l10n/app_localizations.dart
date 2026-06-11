@@ -8594,6 +8594,42 @@ abstract class AppLocalizations {
   /// **'Select a city'**
   String get eventFormCityHint;
 
+  /// Event form: Google Places location search placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search venue or address'**
+  String get eventFormLocationSearchHint;
+
+  /// Event form: location autocomplete empty-query hint
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing the venue or address to see suggestions.'**
+  String get eventFormLocationStartTyping;
+
+  /// Event form: location autocomplete no-results hint
+  ///
+  /// In en, this message translates to:
+  /// **'No matches yet. Try adding the city to the address.'**
+  String get eventFormLocationNoMatches;
+
+  /// Event form: location autocomplete error message
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load location suggestions right now.'**
+  String get eventFormLocationError;
+
+  /// Event form: read-only hint showing the city derived from the picked place
+  ///
+  /// In en, this message translates to:
+  /// **'City: {city}'**
+  String eventFormCityDetected(String city);
+
+  /// Event form: hint when the picked place has no resolvable city
+  ///
+  /// In en, this message translates to:
+  /// **'No city detected for this place. The event won\'t appear in city discovery.'**
+  String get eventFormCityNotDetected;
+
   /// Event form: capacity label
   ///
   /// In en, this message translates to:

@@ -4852,6 +4852,30 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventFormCityHint => 'Selecciona una ciutat';
 
   @override
+  String get eventFormLocationSearchHint => 'Cerca el local o l\'adreça';
+
+  @override
+  String get eventFormLocationStartTyping =>
+      'Comença a escriure el local o l\'adreça per veure suggeriments.';
+
+  @override
+  String get eventFormLocationNoMatches =>
+      'Encara no hi ha coincidències. Prova d\'afegir la ciutat a l\'adreça.';
+
+  @override
+  String get eventFormLocationError =>
+      'Ara mateix no hem pogut carregar els suggeriments d\'ubicació.';
+
+  @override
+  String eventFormCityDetected(String city) {
+    return 'Ciutat: $city';
+  }
+
+  @override
+  String get eventFormCityNotDetected =>
+      'No s\'ha detectat cap ciutat per a aquest lloc. L\'esdeveniment no apareixerà al descobriment per ciutat.';
+
+  @override
   String get eventFormCapacityLabel => 'Aforament (opcional)';
 
   @override

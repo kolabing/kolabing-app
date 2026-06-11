@@ -4829,6 +4829,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventFormCityHint => 'Selecciona una ciudad';
 
   @override
+  String get eventFormLocationSearchHint => 'Busca el local o la dirección';
+
+  @override
+  String get eventFormLocationStartTyping =>
+      'Empieza a escribir el local o la dirección para ver sugerencias.';
+
+  @override
+  String get eventFormLocationNoMatches =>
+      'Aún no hay coincidencias. Prueba a añadir la ciudad a la dirección.';
+
+  @override
+  String get eventFormLocationError =>
+      'No pudimos cargar las sugerencias de ubicación ahora mismo.';
+
+  @override
+  String eventFormCityDetected(String city) {
+    return 'Ciudad: $city';
+  }
+
+  @override
+  String get eventFormCityNotDetected =>
+      'No se detectó ninguna ciudad para este lugar. El evento no aparecerá en el descubrimiento por ciudad.';
+
+  @override
   String get eventFormCapacityLabel => 'Aforo (opcional)';
 
   @override

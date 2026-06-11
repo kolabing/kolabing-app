@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -11,9 +10,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../community/models/community_tier.dart';
 import '../../community/providers/community_providers.dart';
-import '../../onboarding/models/city.dart';
+import '../../onboarding/models/place_suggestion.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
-import '../../onboarding/widgets/city_list_item.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -63,9 +61,17 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
 
   /// Event location city (Fix: events.city_id). Defaults to the user's city;
   /// sent as `city_id` only when set (self-gated — backend FK ships in
-  /// parallel). The leader can change it via the city picker.
+  /// parallel). On create/edit it is auto-derived from the Google Places venue
+  /// the leader picks (NF-20) — see [_handlePlaceSelected].
   String? _cityId;
   String? _cityName;
+
+  /// Places autocomplete (NF-20): the live query string driving
+  /// [placeSuggestionsProvider], whether a place was explicitly picked, and
+  /// whether we are resolving the picked place's details.
+  String _placeQuery = '';
+  bool _placeSelected = false;
+  bool _resolvingPlace = false;
 
   /// Newly picked photos (paths) to upload (edit mode uploads after save).
   final List<XFile> _pickedPhotos = [];
@@ -102,6 +108,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     if (e != null) {
       _name.text = e.name;
       _location.text = e.location ?? '';
+      _placeQuery = _location.text;
+      // Treat a seeded location as an already-chosen place so the suggestions
+      // list stays collapsed until the leader actively edits the field.
+      _placeSelected = _location.text.trim().isNotEmpty;
       _startsAt = e.startsAt ?? e.date;
       _limited = e.capacity != null;
       if (e.capacity != null) _capacity.text = e.capacity.toString();
@@ -152,22 +162,46 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
-  Future<void> _pickCity() async {
-    final result = await showModalBottomSheet<OnboardingCity>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: KolabingColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
-      ),
-      builder: (_) => _CityPickerSheet(selectedCityId: _cityId),
-    );
-    if (result != null) {
+  /// The leader picked a place from the autocomplete (NF-20). Set the location
+  /// text to the formatted address and auto-derive the event city from the
+  /// place details (`PlaceDetailsImport.cityId` / `cityName`). A place with no
+  /// resolvable city leaves the city unset — the event simply won't be
+  /// city-discoverable; we never block on it.
+  Future<void> _handlePlaceSelected(PlaceSuggestion place) async {
+    if (_resolvingPlace) return;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _placeSelected = true;
+      _resolvingPlace = true;
+      _location.text = place.formattedAddress;
+      _placeQuery = place.formattedAddress;
+      // Optimistic city from the suggestion (details refine it below).
+      if (place.cityId != null && place.cityId!.isNotEmpty) {
+        _cityId = place.cityId;
+        _cityName = place.city.isNotEmpty ? place.city : _cityName;
+      }
+    });
+
+    try {
+      final details = await ref
+          .read(onboardingServiceProvider)
+          .getPlaceDetails(place.placeId);
+      if (!mounted) return;
       setState(() {
-        _cityId = result.id;
-        _cityName = result.name;
+        _location.text = details.primaryVenue.formattedAddress.isNotEmpty
+            ? details.primaryVenue.formattedAddress
+            : place.formattedAddress;
+        _placeQuery = _location.text;
+        if (details.cityId != null && details.cityId!.isNotEmpty) {
+          _cityId = details.cityId;
+          _cityName = details.cityName ?? details.primaryVenue.city;
+        }
       });
+    } on Object {
+      // Details lookup failed — keep the suggestion's address + optimistic city.
+      // Don't surface an error; the location text is already usable.
+    } finally {
+      if (mounted) setState(() => _resolvingPlace = false);
     }
   }
 
@@ -362,16 +396,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           _label(_l10n.eventFormLocationLabel),
-          TextField(
-              controller: _location,
-              decoration: _dec(_l10n.eventFormLocationHint)),
-          const SizedBox(height: KolabingSpacing.lg),
-          _label(_l10n.eventFormCityLabel),
-          _CityField(
-            cityName: _cityName,
-            hint: _l10n.eventFormCityHint,
-            onTap: _pickCity,
-          ),
+          _locationField(),
           const SizedBox(height: KolabingSpacing.lg),
           Row(
             children: [
@@ -709,6 +734,120 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     );
   }
 
+  /// Google Places autocomplete location field (NF-20). Mirrors the business
+  /// onboarding step-5 UX: type → suggestions → tap. On select the city is
+  /// auto-derived and shown read-only beneath the field. No API key is needed —
+  /// suggestions/details are backend-proxied via `placeSuggestionsProvider` /
+  /// `OnboardingService.getPlaceDetails`.
+  Widget _locationField() {
+    // Only query for suggestions while the leader is actively typing (i.e. has
+    // not just picked a place). This keeps the list collapsed on edit-seed.
+    final suggestions = ref.watch(
+      placeSuggestionsProvider(_placeSelected ? '' : _placeQuery.trim()),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _location,
+          decoration: _dec(_l10n.eventFormLocationSearchHint).copyWith(
+            prefixIcon: const Icon(LucideIcons.mapPin, size: 18),
+            suffixIcon: _resolvingPlace
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                : (_location.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(LucideIcons.x, size: 16),
+                        onPressed: () => setState(() {
+                          _location.clear();
+                          _placeQuery = '';
+                          _placeSelected = false;
+                          _cityId = null;
+                          _cityName = null;
+                        }),
+                      )
+                    : null),
+          ),
+          onChanged: (v) => setState(() {
+            _placeQuery = v;
+            // Re-opening the suggestions: the text no longer reflects a picked
+            // place, and the derived city is stale until a new pick.
+            _placeSelected = false;
+            _cityId = null;
+            _cityName = null;
+          }),
+        ),
+        // Derived-city hint (read-only) so the leader sees what was detected.
+        if (_placeSelected) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            _cityName != null && _cityName!.isNotEmpty
+                ? _l10n.eventFormCityDetected(_cityName!)
+                : _l10n.eventFormCityNotDetected,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: _cityName != null && _cityName!.isNotEmpty
+                  ? KolabingColors.onSurfaceVariant
+                  : KolabingColors.error,
+            ),
+          ),
+        ],
+        // Suggestions list — shown only while actively typing a query.
+        if (!_placeSelected && _placeQuery.trim().isNotEmpty) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          suggestions.when(
+            data: (items) {
+              if (_placeQuery.trim().length < 2) {
+                return _placeHint(_l10n.eventFormLocationStartTyping);
+              }
+              if (items.isEmpty) {
+                return _placeHint(_l10n.eventFormLocationNoMatches);
+              }
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  color: KolabingColors.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    for (final place in items)
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(LucideIcons.mapPin, size: 18),
+                        title: Text(place.title,
+                            style: KolabingTextStyles.bodyMedium),
+                        subtitle: Text(place.displaySubtitle,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                                color: KolabingColors.onSurfaceVariant)),
+                        onTap: () => _handlePlaceSelected(place),
+                      ),
+                  ],
+                ),
+              );
+            },
+            loading: () => const Padding(
+              padding: EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+              child: LinearProgressIndicator(),
+            ),
+            error: (_, __) => _placeHint(_l10n.eventFormLocationError),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _placeHint(String message) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+        child: Text(message,
+            style: KolabingTextStyles.bodySmall
+                .copyWith(color: KolabingColors.onSurfaceVariant)),
+      );
+
   Widget _label(String t) => Padding(
         padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
         child: Text(t,
@@ -779,173 +918,5 @@ class _DateField extends StatelessWidget {
     final h = d.hour.toString().padLeft(2, '0');
     final m = d.minute.toString().padLeft(2, '0');
     return '${months[d.month - 1]} ${d.day}, ${d.year} · $h:$m';
-  }
-}
-
-/// Tappable field that shows the chosen event city (or a hint) and opens the
-/// city picker. Mirrors [_DateField]'s styling.
-class _CityField extends StatelessWidget {
-  const _CityField({
-    required this.cityName,
-    required this.hint,
-    required this.onTap,
-  });
-
-  final String? cityName;
-  final String hint;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: KolabingColors.surfaceContainerLow,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          prefixIcon: const Icon(LucideIcons.mapPin, size: 18),
-        ),
-        child: Text(
-          cityName ?? hint,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            color: cityName != null
-                ? KolabingColors.onSurface
-                : KolabingColors.onSurfaceVariant,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// City picker sheet — reuses `citiesProvider` / `filteredCitiesProvider` and
-/// the shared [CityListItem], matching the home / edit-profile pattern.
-class _CityPickerSheet extends ConsumerStatefulWidget {
-  const _CityPickerSheet({this.selectedCityId});
-
-  final String? selectedCityId;
-
-  @override
-  ConsumerState<_CityPickerSheet> createState() => _CityPickerSheetState();
-}
-
-class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
-  final _searchController = TextEditingController();
-  String _query = '';
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final filtered = ref.watch(filteredCitiesProvider(_query));
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
-        child: Column(
-          children: [
-            const SizedBox(height: KolabingSpacing.sm),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: KolabingColors.outlineVariant,
-                borderRadius: BorderRadius.circular(KolabingRadius.round),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(KolabingSpacing.md),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (v) => setState(() => _query = v),
-                style: KolabingTextStyles.bodyMedium
-                    .copyWith(color: KolabingColors.onSurface),
-                decoration: InputDecoration(
-                  hintText: l10n.editProfileCitySearchHint,
-                  prefixIcon: const Icon(LucideIcons.search, size: 20),
-                  filled: true,
-                  fillColor: KolabingColors.surfaceVariant,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(KolabingRadius.sm),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.md,
-                    vertical: KolabingSpacing.sm,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: filtered.when(
-                data: (cities) {
-                  if (cities.isEmpty) {
-                    return Center(
-                      child: Text(
-                        l10n.editProfileNoCitiesFound,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: cities.length,
-                    itemBuilder: (_, i) {
-                      final city = cities[i];
-                      return CityListItem(
-                        id: city.id,
-                        name: city.name,
-                        country: city.country,
-                        isSelected: widget.selectedCityId == city.id,
-                        onTap: () => Navigator.of(context).pop(city),
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(
-                  child:
-                      CircularProgressIndicator(color: KolabingColors.primary),
-                ),
-                error: (_, _) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        LucideIcons.alertCircle,
-                        color: KolabingColors.error,
-                        size: 40,
-                      ),
-                      const SizedBox(height: KolabingSpacing.sm),
-                      Text(
-                        l10n.editProfileCityLoadError,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
-                      ),
-                      const SizedBox(height: KolabingSpacing.md),
-                      TextButton(
-                        onPressed: () => ref.invalidate(citiesProvider),
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
