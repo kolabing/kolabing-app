@@ -64,12 +64,13 @@ class MyKolabCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final actions = _buildActions(context);
+    final (primaryAction, secondaryActions) = _buildActions(context);
 
     return KolabCardShell(
       imageUrl: _imageUrl,
       initials: _initials,
-      footer: actions,
+      primaryAction: primaryAction,
+      secondaryActions: secondaryActions,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -114,7 +115,7 @@ class MyKolabCard extends StatelessWidget {
     );
   }
 
-  Widget? _buildActions(BuildContext context) {
+  (Widget?, List<Widget>) _buildActions(BuildContext context) {
     _ActionSpec? primary;
     final secondaryIcons = <Widget>[];
 
@@ -128,18 +129,24 @@ class MyKolabCard extends StatelessWidget {
         );
       }
       if (kolab.canEdit && onEdit != null) {
-        secondaryIcons.add(GlassIconButton(
-          icon: LucideIcons.edit,
-          onPressed: onEdit,
-          tooltip: 'Edit',
-        ));
+        secondaryIcons.add(
+          GlassIconButton(
+            icon: LucideIcons.edit,
+            onPressed: onEdit,
+            tooltip: 'Edit',
+            size: 48,
+          ),
+        );
       }
       if (kolab.canClose && onClose != null) {
-        secondaryIcons.add(GlassIconButton(
-          icon: LucideIcons.xCircle,
-          onPressed: onClose,
-          tooltip: 'Close',
-        ));
+        secondaryIcons.add(
+          GlassIconButton(
+            icon: LucideIcons.xCircle,
+            onPressed: onClose,
+            tooltip: 'Close',
+            size: 48,
+          ),
+        );
       }
     } else if (kolab.canEdit) {
       if (onEdit != null) {
@@ -151,11 +158,14 @@ class MyKolabCard extends StatelessWidget {
         );
       }
       if (kolab.canPublish && onPublish != null) {
-        secondaryIcons.add(GlassIconButton(
-          icon: LucideIcons.upload,
-          onPressed: onPublish,
-          tooltip: 'Publish',
-        ));
+        secondaryIcons.add(
+          GlassIconButton(
+            icon: LucideIcons.upload,
+            onPressed: onPublish,
+            tooltip: 'Publish',
+            size: 48,
+          ),
+        );
       }
     } else if (kolab.canPublish) {
       if (onPublish != null) {
@@ -177,23 +187,21 @@ class MyKolabCard extends StatelessWidget {
           isPrimary: false,
         );
       } else {
-        secondaryIcons.add(GlassIconButton(
-          icon: LucideIcons.trash2,
-          onPressed: onDelete,
-          tooltip: 'Delete',
-        ));
+        secondaryIcons.add(
+          GlassIconButton(
+            icon: LucideIcons.trash2,
+            onPressed: onDelete,
+            tooltip: 'Delete',
+            size: 48,
+          ),
+        );
       }
     }
 
-    if (primary == null && secondaryIcons.isEmpty) return null;
-
-    return Row(
-      children: [
-        if (primary != null)
-          Expanded(child: _PrimaryActionButton(spec: primary)),
-        ...secondaryIcons.expand((btn) => [const SizedBox(width: 8), btn]),
-      ],
-    );
+    final primaryWidget = primary != null
+        ? _PrimaryActionButton(spec: primary)
+        : null;
+    return (primaryWidget, secondaryIcons);
   }
 }
 
@@ -230,6 +238,7 @@ class _PrimaryActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: spec.onPressed,
       child: Container(
+        width: double.infinity,
         height: 48,
         decoration: BoxDecoration(
           color: bg,

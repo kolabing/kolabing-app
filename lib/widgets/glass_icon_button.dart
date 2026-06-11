@@ -10,12 +10,16 @@ class GlassIconButton extends StatelessWidget {
     required this.tooltip,
     super.key,
     this.semanticsLabel,
+    this.size = 44,
   });
 
   final IconData icon;
   final VoidCallback? onPressed;
   final String tooltip;
   final String? semanticsLabel;
+
+  /// Diameter of the circular button. Defaults to 44 (touch-target size).
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -30,20 +34,14 @@ class GlassIconButton extends StatelessWidget {
           child: Opacity(
             opacity: onPressed == null ? 0.45 : 1.0,
             child: Container(
-              width: 44,
-              height: 44,
+              width: size,
+              height: size,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
-                border: Border.all(
-                  color: c.hairline,
-                ),
+                border: Border.all(color: c.hairline),
               ),
-              child: Icon(
-                icon,
-                size: 18,
-                color: c.glassInk,
-              ),
+              child: Icon(icon, size: size * 0.41, color: c.glassInk),
             ),
           ),
         ),

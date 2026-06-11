@@ -52,12 +52,13 @@ class MyOpportunityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final actions = _buildActions(l10n);
+    final (primaryAction, secondaryActions) = _buildActions(l10n);
 
     return KolabCardShell(
       imageUrl: _imageUrl,
       initials: _initials,
-      footer: actions,
+      primaryAction: primaryAction,
+      secondaryActions: secondaryActions,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -118,9 +119,11 @@ class MyOpportunityCard extends StatelessWidget {
                   variant: KolabChipVariant.amber,
                   icon: LucideIcons.mapPin,
                 ),
-              ...opportunity.categories.take(2).map(
-                (c) => KolabChip(label: c, variant: kolabChipVariantFor(c)),
-              ),
+              ...opportunity.categories
+                  .take(2)
+                  .map(
+                    (c) => KolabChip(label: c, variant: kolabChipVariantFor(c)),
+                  ),
             ],
           ),
         ],
@@ -128,7 +131,7 @@ class MyOpportunityCard extends StatelessWidget {
     );
   }
 
-  Widget? _buildActions(AppLocalizations l10n) {
+  (Widget?, List<Widget>) _buildActions(AppLocalizations l10n) {
     final status = opportunity.status;
     Widget? pill;
     final iconBtns = <Widget>[];
@@ -143,25 +146,34 @@ class MyOpportunityCard extends StatelessWidget {
         );
       }
       if (status.canEdit && onEdit != null) {
-        iconBtns.add(GlassIconButton(
-          icon: LucideIcons.edit,
-          onPressed: onEdit,
-          tooltip: l10n.myOpportunityCardActionEdit,
-        ));
+        iconBtns.add(
+          GlassIconButton(
+            icon: LucideIcons.edit,
+            onPressed: onEdit,
+            tooltip: l10n.myOpportunityCardActionEdit,
+            size: 36,
+          ),
+        );
       }
       if (onShare != null) {
-        iconBtns.add(GlassIconButton(
-          icon: LucideIcons.share2,
-          onPressed: onShare,
-          tooltip: l10n.myOpportunityCardActionShare,
-        ));
+        iconBtns.add(
+          GlassIconButton(
+            icon: LucideIcons.share2,
+            onPressed: onShare,
+            tooltip: l10n.myOpportunityCardActionShare,
+            size: 36,
+          ),
+        );
       }
       if (status.canClose && onClose != null) {
-        iconBtns.add(GlassIconButton(
-          icon: LucideIcons.xCircle,
-          onPressed: onClose,
-          tooltip: l10n.myOpportunityCardActionClose,
-        ));
+        iconBtns.add(
+          GlassIconButton(
+            icon: LucideIcons.xCircle,
+            onPressed: onClose,
+            tooltip: l10n.myOpportunityCardActionClose,
+            size: 36,
+          ),
+        );
       }
     } else if (status.canEdit) {
       if (onEdit != null) {
@@ -173,11 +185,14 @@ class MyOpportunityCard extends StatelessWidget {
         );
       }
       if (status.canPublish && onPublish != null) {
-        iconBtns.add(GlassIconButton(
-          icon: LucideIcons.upload,
-          onPressed: onPublish,
-          tooltip: l10n.myOpportunityCardActionPublish,
-        ));
+        iconBtns.add(
+          GlassIconButton(
+            icon: LucideIcons.upload,
+            onPressed: onPublish,
+            tooltip: l10n.myOpportunityCardActionPublish,
+            size: 36,
+          ),
+        );
       }
     } else if (status.canPublish) {
       if (onPublish != null) {
@@ -201,21 +216,20 @@ class MyOpportunityCard extends StatelessWidget {
           icon: LucideIcons.trash2,
         );
       } else {
-        iconBtns.add(GlassIconButton(
-          icon: LucideIcons.trash2,
-          onPressed: onDelete,
-          tooltip: l10n.myOpportunityCardActionDelete,
-        ));
+        iconBtns.add(
+          GlassIconButton(
+            icon: LucideIcons.trash2,
+            onPressed: onDelete,
+            tooltip: l10n.myOpportunityCardActionDelete,
+            size: 36,
+          ),
+        );
       }
     }
 
-    if (pill == null && iconBtns.isEmpty) return null;
-
-    return Row(
-      children: [
-        if (pill != null) Expanded(child: pill),
-        ...iconBtns.expand((btn) => [const SizedBox(width: 8), btn]),
-      ],
-    );
+    final primary = pill != null
+        ? SizedBox(width: double.infinity, child: pill)
+        : null;
+    return (primary, iconBtns);
   }
 }

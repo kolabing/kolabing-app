@@ -2,10 +2,8 @@
 //
 // Shared card shell used by every "My Kolabs" list card:
 //   - White surface, subtle border + two-layer shadow
-//   - Right-side image that fades into the card (full card height)
-//   - Body content is inset so text never overlaps the image
-//   - Optional footer (action buttons) spans the FULL card width,
-//     sitting on top of the image with no clipping
+//   - Two-column layout: left column for body content + primary action,
+//     right column for an image thumbnail + small secondary actions
 import 'package:flutter/material.dart';
 
 import '../config/constants/radius.dart';
@@ -15,7 +13,8 @@ class KolabCardShell extends StatelessWidget {
     required this.body,
     required this.initials,
     super.key,
-    this.footer,
+    this.primaryAction,
+    this.secondaryActions = const [],
     this.imageUrl,
     this.onTap,
   });
@@ -23,10 +22,14 @@ class KolabCardShell extends StatelessWidget {
   /// Main card content (status badge, title, chips, etc.).
   final Widget body;
 
-  /// Optional row of buttons shown at the bottom, spanning the full card width.
-  final Widget? footer;
+  /// Optional primary action button (e.g. VIEW/EDIT/PUBLISH), placed at the
+  /// bottom of the left column.
+  final Widget? primaryAction;
 
-  /// Network image URL for the right-side visual.
+  /// Optional small icon buttons placed under the image thumbnail.
+  final List<Widget> secondaryActions;
+
+  /// Network image URL for the thumbnail.
   final String? imageUrl;
 
   /// Fallback initials shown in the placeholder when there is no image.
@@ -36,49 +39,43 @@ class KolabCardShell extends StatelessWidget {
   final VoidCallback? onTap;
 
   static const double _imageWidth = 108.0;
-  static const double _imageGap = 8.0;
+  static const double _imageHeight = 98.0;
 
   @override
   Widget build(BuildContext context) {
-    Widget shell = ClipRRect(
-      borderRadius: KolabingRadius.borderRadiusLg,
-      child: Stack(
+    Widget shell = Padding(
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Content column (defines card height) ──────────────────────
-          Column(
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                // Reserve space on the right for the image so body text
-                // never overlaps it; footer ignores this padding.
-                padding: const EdgeInsets.fromLTRB(
-                  16,
-                  15,
-                  _imageWidth + _imageGap,
-                  10,
-                ),
-                child: body,
+              // ── Left column: body content ───────────────────────────────
+              Expanded(child: body),
+              const SizedBox(width: 12),
+              // ── Right column: image thumbnail ───────────────────────────
+              _CardThumbnail(
+                imageUrl: imageUrl,
+                initials: initials,
+                width: _imageWidth,
+                height: _imageHeight,
               ),
-              if (footer != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                  child: footer,
-                )
-              else
-                const SizedBox(height: 14),
             ],
           ),
-          // ── Right image – stretches full card height via Positioned ────
-          Positioned(
-            top: 0,
-            right: 0,
-            bottom: 0,
-            child: _CardFadeImage(
-              imageUrl: imageUrl,
-              initials: initials,
-              width: _imageWidth,
+          // ── Bottom row: primary action + secondary icon buttons ────────
+          if (primaryAction != null || secondaryActions.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                if (primaryAction != null) Expanded(child: primaryAction!),
+                for (final action in secondaryActions) ...[
+                  const SizedBox(width: 8),
+                  action,
+                ],
+              ],
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -113,25 +110,32 @@ class KolabCardShell extends StatelessWidget {
           ),
         ],
       ),
-      child: shell,
+      child: ClipRRect(
+        borderRadius: KolabingRadius.borderRadiusLg,
+        child: shell,
+      ),
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// Internal fade image — NOT exported; use KolabCardShell instead.
+// Internal thumbnail — NOT exported; use KolabCardShell instead.
 // ---------------------------------------------------------------------------
 
-class _CardFadeImage extends StatelessWidget {
-  const _CardFadeImage({
+class _CardThumbnail extends StatelessWidget {
+  const _CardThumbnail({
     required this.initials,
     required this.width,
+    required this.height,
     this.imageUrl,
   });
 
   final String? imageUrl;
   final String initials;
   final double width;
+  final double height;
+
+  static const _borderRadius = BorderRadius.all(Radius.circular(20));
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +144,7 @@ class _CardFadeImage extends StatelessWidget {
       imageWidget = Image.network(
         imageUrl!,
         width: width,
+        height: height,
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => _placeholder(),
       );
@@ -147,51 +152,40 @@ class _CardFadeImage extends StatelessWidget {
       imageWidget = _placeholder();
     }
 
-    return SizedBox(
+    return Container(
       width: width,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          imageWidget,
-          // Left-to-right white fade — blends image into card
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: const [0.0, 0.40, 0.75, 1.0],
-                  colors: [
-                    Colors.white,
-                    Colors.white.withValues(alpha: 0.55),
-                    Colors.white.withValues(alpha: 0.0),
-                    Colors.white.withValues(alpha: 0.0),
-                  ],
-                ),
-              ),
-            ),
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: _borderRadius,
+        border: Border.all(color: const Color(0xFFEAE6DE), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
+      child: ClipRRect(borderRadius: _borderRadius, child: imageWidget),
     );
   }
 
   Widget _placeholder() => Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF9E6), Color(0xFFFFE28C)],
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          initials,
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF5C4A12),
-          ),
-        ),
-      );
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFF9E6), Color(0xFFFFE28C)],
+      ),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      initials,
+      style: const TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF5C4A12),
+      ),
+    ),
+  );
 }

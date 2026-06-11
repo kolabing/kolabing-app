@@ -7,12 +7,12 @@ import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
 
 enum KolabChipVariant {
-  neutral,   // surfaceVariant — unselected / inactive
-  amber,     // amberChipContainer — warm sand: location, venue, city
-  sage,      // tertiaryContainer — sage green: date ranges, recurrence, time
-  lavender,  // categoryOrangeBg — orange accent: role (Business, Community) & status
-  blueGrey,  // categoryBlueBg — sky blue: music, art, culture, selected states
-  peach,     // accentOrange — peach/apricot: categories, food & drink, sports, offers
+  neutral, // surfaceVariant — unselected / inactive
+  amber, // amberChipContainer — warm sand: location, venue, city
+  sage, // tertiaryContainer — sage green: date ranges, recurrence, time
+  lavender, // categoryOrangeBg — orange accent: role (Business, Community) & status
+  blueGrey, // categoryBlueBg — sky blue: music, art, culture, selected states
+  peach, // accentOrange — peach/apricot: categories, food & drink, sports, offers
 }
 
 /// Shared pastel tag chip used in Explore cards and all My Kolabs cards.
@@ -45,12 +45,16 @@ class KolabChip extends StatelessWidget {
             Icon(icon, size: 11, color: fg),
             const SizedBox(width: 3),
           ],
-          Text(
-            label,
-            style: KolabingTextStyles.labelSmall.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: fg,
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: KolabingTextStyles.labelSmall.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: fg,
+              ),
             ),
           ),
         ],
