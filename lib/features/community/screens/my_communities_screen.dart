@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -220,6 +222,13 @@ class _Empty extends StatelessWidget {
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            ElevatedButton.icon(
+              onPressed: () =>
+                  context.push(KolabingRoutes.discoverCommunities),
+              icon: const Icon(LucideIcons.compass, size: 18),
+              label: Text(l10n.discoverCommunitiesCta),
             ),
           ],
         ),

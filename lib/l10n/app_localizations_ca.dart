@@ -628,13 +628,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get kolabingLogoSemanticLabel => 'Logotip de Kolabing';
 
   @override
-  String get selectionCardBusinessTitle => 'SÓC UN NEGOCI';
+  String get selectionCardBusinessTitle => 'Sóc un negoci';
 
   @override
-  String get selectionCardCommunityTitle => 'SÓC UNA COMUNITAT';
+  String get selectionCardCommunityTitle => 'Sóc una comunitat';
 
   @override
-  String get selectionCardAttendeeTitle => 'SÓC UN ASSISTENT';
+  String get selectionCardAttendeeTitle => 'Sóc un assistent';
 
   @override
   String get selectionCardBusinessDescription =>
@@ -2176,6 +2176,77 @@ class AppLocalizationsCa extends AppLocalizations {
       'Segur que vols tancar la sessió?';
 
   @override
+  String get attendeeProfileStatFriends => 'Amics';
+
+  @override
+  String get attendeeProfileStatEvents => 'Esdeveniments';
+
+  @override
+  String get attendeeProfileStatChats => 'Xats';
+
+  @override
+  String get attendeeProfileStatPoints => 'Punts';
+
+  @override
+  String get attendeeProfileMyCommunities => 'LES MEVES COMUNITATS';
+
+  @override
+  String get attendeeProfileNoCommunities =>
+      'Encara no t\'has unit a cap comunitat.';
+
+  @override
+  String get attendeeProfileFindFriends => 'Cerca amics';
+
+  @override
+  String get attendeeProfileFriends => 'AMICS';
+
+  @override
+  String get attendeeProfileSeeAll => 'Mostra-ho tot';
+
+  @override
+  String get editProfileTitle => 'Edita el perfil';
+
+  @override
+  String get editProfileChangePhoto => 'Canvia la foto';
+
+  @override
+  String get editProfileNameLabel => 'Nom';
+
+  @override
+  String get editProfileNameHint => 'El teu nom';
+
+  @override
+  String get editProfileNameRequired => 'Introdueix el teu nom.';
+
+  @override
+  String get editProfileCityLabel => 'Ciutat';
+
+  @override
+  String get editProfileCityHint => 'Selecciona la teva ciutat';
+
+  @override
+  String get editProfileCitySearchHint => 'Cerca ciutats';
+
+  @override
+  String get editProfileNoCitiesFound => 'No s\'ha trobat cap ciutat';
+
+  @override
+  String get editProfileCityLoadError => 'No s\'han pogut carregar les ciutats';
+
+  @override
+  String get editProfileSave => 'Desa';
+
+  @override
+  String get editProfileSaved => 'Perfil actualitzat';
+
+  @override
+  String get editProfileSaveError =>
+      'No s\'ha pogut desar el teu perfil. Torna-ho a provar.';
+
+  @override
+  String get memberProfileFriends => 'Amics';
+
+  @override
   String get badgesScreenTitle => 'Insígnies';
 
   @override
@@ -3391,10 +3462,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get businessFinalTitleAuthenticated =>
-      'FINALITZA L\'ALTA DEL TEU NEGOCI';
+      'Finalitza l\'alta del teu negoci';
 
   @override
-  String get businessFinalTitleNewAccount => 'CREA EL TEU COMPTE';
+  String get businessFinalTitleNewAccount => 'Crea el teu compte';
 
   @override
   String get businessFinalSubtitleAuthenticated =>
@@ -3472,7 +3543,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get businessStep2PhoneTooLong => 'El número de telèfon és massa llarg';
 
   @override
-  String get businessStep2Title => 'REVISA LES DADES DEL TEU NEGOCI';
+  String get businessStep2Title => 'Revisa les dades del teu negoci';
 
   @override
   String get businessStep2Subtitle =>
@@ -3553,7 +3624,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Afegeix com a mínim una foto del local per continuar';
 
   @override
-  String get businessStep3Title => 'AFEGEIX FOTOS DEL LOCAL';
+  String get businessStep3Title => 'Afegeix fotos del local';
 
   @override
   String get businessStep3Subtitle =>
@@ -3571,7 +3642,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'No hem pogut importar des de Google, omple-ho manualment.';
 
   @override
-  String get businessStep5Title => 'TRIA EL TEU LOCAL';
+  String get businessStep5Title => 'Tria el teu local';
 
   @override
   String get businessStep5Subtitle =>
@@ -3597,7 +3668,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Important la informació del teu negoci des de Google';
 
   @override
-  String get businessStep5PreviewTitle => 'FOTOS DE GOOGLE';
+  String get businessStep5PreviewTitle => 'Fotos de Google';
 
   @override
   String get businessStep5PreviewSubtitle =>
@@ -3611,7 +3682,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get businessStep5SelectedAddress => 'Adreça seleccionada';
 
   @override
-  String get communityFinalTitle => 'CREA EL TEU COMPTE';
+  String get communityFinalTitle => 'Crea el teu compte';
 
   @override
   String get communityFinalSubtitle =>
@@ -3674,7 +3745,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'En crear un compte, acceptes els nostres Termes del servei i la Política de privadesa';
 
   @override
-  String get communityStep1Title => 'EXPLICA\'NS SOBRE TU';
+  String get communityStep1Title => 'Explica\'ns sobre tu';
 
   @override
   String get communityStep1Subtitle => 'Creem el teu perfil';
@@ -3703,7 +3774,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'han pogut carregar els tipus de comunitat';
 
   @override
-  String get communityStep3Title => 'ON ET TROBES?';
+  String get communityStep3Title => 'On et trobes?';
 
   @override
   String get communityStep3Subtitle => 'Troba oportunitats a la teva zona';
@@ -3724,7 +3795,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityStep3CityRequired => 'Selecciona una ciutat';
 
   @override
-  String get communityStep4Title => 'COMPLETA EL TEU PERFIL';
+  String get communityStep4Title => 'Completa el teu perfil';
 
   @override
   String get communityStep4Subtitle =>
@@ -3864,6 +3935,18 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get publicProfileViewMore => 'Veure\'n més';
+
+  @override
+  String get memberProfilePoints => 'Punts';
+
+  @override
+  String get memberProfileEventsAttended => 'Esdeveniments assistits';
+
+  @override
+  String get memberProfileBadges => 'Insígnies';
+
+  @override
+  String get memberProfileNoBadges => 'Encara no hi ha insígnies';
 
   @override
   String get referralCodeCopied => 'Codi de convidança copiat';
@@ -4942,6 +5025,97 @@ class AppLocalizationsCa extends AppLocalizations {
   String get chatThreadEmptyMessage => 'Encara no hi ha missatges. Saluda 👋';
 
   @override
+  String get chatManageNewChatTitle => 'Nou xat';
+
+  @override
+  String get chatManageRenameTitle => 'Reanomena el xat';
+
+  @override
+  String get chatManageNameLabel => 'Nom del xat';
+
+  @override
+  String get chatManageNameHint => 'p. ex. Directius, Socials, Filantropia';
+
+  @override
+  String get chatManageCreate => 'Crea';
+
+  @override
+  String get chatManageRename => 'Reanomena';
+
+  @override
+  String get chatManageDelete => 'Elimina';
+
+  @override
+  String get chatManageCreateChat => 'Crea un xat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'S\'ha creat \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'S\'ha reanomenat el xat';
+
+  @override
+  String get chatManageChatDeleted => 'S\'ha eliminat el xat';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'Has arribat al límit de $count xats personalitzats.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => 'Vols eliminar aquest xat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Els membres perdran l\'accés a \"$name\". El pots recuperar més tard si canvies d\'opinió.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => 'Quina comunitat?';
+
+  @override
+  String get chatJoinSectionTitle => 'Xats als quals et pots unir';
+
+  @override
+  String get chatJoinAction => 'Uneix-t\'hi';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'T\'has unit a \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Obre l\'esdeveniment';
+
+  @override
+  String get chatMembersTitle => 'Membres';
+
+  @override
+  String get chatMembersEmpty => 'Encara no hi ha membres per administrar.';
+
+  @override
+  String get chatMemberRemove => 'Treu';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return 'Vols treure $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'Perdrà l\'accés a aquest xat i no s\'hi podrà tornar a unir.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return 'S\'ha tret $name';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Administra els membres';
+
+  @override
   String get communityDetailTabChats => 'Xats';
 
   @override
@@ -5024,6 +5198,10 @@ class AppLocalizationsCa extends AppLocalizations {
       'Les fotos i els esdeveniments passats seran aquí quan es llanci el cicle de vida d\'esdeveniments (Fase 3).';
 
   @override
+  String get communityDetailGalleryEmpty =>
+      'Encara no hi ha esdeveniments passats per mostrar.';
+
+  @override
   String get myCommunitiesNoTier => 'Encara sense nivell';
 
   @override
@@ -5095,12 +5273,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityHubAccess => 'Accés';
 
   @override
-  String get chatManageRename => 'Reanomena el xat';
-
-  @override
-  String get chatManageDelete => 'Elimina el xat';
-
-  @override
   String get chatManageAccess => 'Qui hi pot accedir';
 
   @override
@@ -5114,9 +5286,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get chatBlockedTag => 'Bloquejat';
-
-  @override
-  String get chatMembersEmpty => 'Encara no hi ha membres amb accés.';
 
   @override
   String get chatRenameHint => 'Nom del xat';
@@ -5401,4 +5570,281 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get rosterSave => 'DESA';
+
+  @override
+  String get friendsTitle => 'Amics';
+
+  @override
+  String get friendRequestsTitle => 'Sol·licituds';
+
+  @override
+  String get friendAdd => 'Afegir amic';
+
+  @override
+  String get friendPending => 'Pendent';
+
+  @override
+  String get friendAccept => 'Accepta';
+
+  @override
+  String get friendDecline => 'Rebutja';
+
+  @override
+  String get friendFriends => 'Amics';
+
+  @override
+  String get friendRemoveTitle => 'Vols eliminar aquest amic?';
+
+  @override
+  String get friendRemoveConfirm => 'Elimina l\'amic';
+
+  @override
+  String get friendActionFailed =>
+      'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get friendsEmpty => 'Encara no tens amics';
+
+  @override
+  String get friendsLoadError => 'No s\'han pogut carregar els amics';
+
+  @override
+  String get friendUnknownName => 'Membre';
+
+  @override
+  String get friendCountOne => '1 amic';
+
+  @override
+  String friendCountOther(int count) {
+    return '$count amics';
+  }
+
+  @override
+  String get discoverCommunitiesTitle => 'Descobreix comunitats';
+
+  @override
+  String get discoverCommunitiesCta => 'Descobreix comunitats';
+
+  @override
+  String get discoverCommunitiesJoin => 'Uneix-te';
+
+  @override
+  String get discoverCommunitiesJoined => 'T\'hi has unit';
+
+  @override
+  String discoverCommunitiesJoinedToast(String name) {
+    return 'T\'has unit a $name';
+  }
+
+  @override
+  String get discoverCommunitiesInviteOnly => 'Només amb invitació';
+
+  @override
+  String discoverCommunitiesInviteOnlyMessage(String name) {
+    return '$name és només amb invitació. Demana a un membre que t\'afegeixi.';
+  }
+
+  @override
+  String get discoverCommunitiesJoinError =>
+      'No s\'ha pogut unir ara mateix. Torna-ho a provar.';
+
+  @override
+  String discoverCommunitiesMembers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '1 membre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get discoverCommunitiesEmptyTitle =>
+      'Encara no hi ha res per descobrir';
+
+  @override
+  String get discoverCommunitiesEmptyBody =>
+      'El descobriment de comunitats arribarà aviat. Torna per trobar i unir-te a comunitats a prop teu.';
+
+  @override
+  String get discoverCommunitiesError =>
+      'No s\'han pogut carregar les comunitats. Torna-ho a provar.';
+
+  @override
+  String get commonSkip => 'Omet';
+
+  @override
+  String get handleFieldPlaceholder => 'elteunom';
+
+  @override
+  String get handleFieldHint =>
+      '3-20 caràcters: minúscules, números i guions baixos.';
+
+  @override
+  String get handleFieldFormatError =>
+      'Fes servir 3-20 minúscules, números o guions baixos.';
+
+  @override
+  String get handleFieldChecking => 'Comprovant disponibilitat…';
+
+  @override
+  String get handleFieldAvailable => 'Disponible';
+
+  @override
+  String get handleFieldTaken => 'Aquest nom d\'usuari no està disponible.';
+
+  @override
+  String handleFieldTakenWithSuggestion(String suggestion) {
+    return 'No disponible. Prova @$suggestion';
+  }
+
+  @override
+  String get handleFieldYours => 'Aquest és el teu nom d\'usuari actual.';
+
+  @override
+  String attendeeOnboardingStepCounter(int step, int total) {
+    return 'Pas $step de $total';
+  }
+
+  @override
+  String get attendeeOnboardingStep1Title => 'Et configurem';
+
+  @override
+  String get attendeeOnboardingStep1Subtitle =>
+      'Afegeix el teu nom, tria un nom d\'usuari i una foto si vols.';
+
+  @override
+  String get attendeeOnboardingAddPhoto => 'Afegeix una foto';
+
+  @override
+  String get attendeeOnboardingNameLabel => 'El teu nom';
+
+  @override
+  String get attendeeOnboardingNameHint => 'Com vols que et diguem?';
+
+  @override
+  String get attendeeOnboardingHandleLabel => 'El teu nom d\'usuari';
+
+  @override
+  String get attendeeOnboardingStep2Title => 'On ets?';
+
+  @override
+  String get attendeeOnboardingStep2Subtitle =>
+      'Tria la teva ciutat per descobrir comunitats a prop teu.';
+
+  @override
+  String get attendeeOnboardingStep3Title => 'Què t\'interessa?';
+
+  @override
+  String get attendeeOnboardingStep3Subtitle =>
+      'Tria alguns interessos perquè et puguem suggerir les comunitats adequades.';
+
+  @override
+  String get attendeeOnboardingStep4Title =>
+      'Uneix-te a les teves primeres comunitats';
+
+  @override
+  String get attendeeOnboardingStep4Subtitle =>
+      'Toca per unir-te a les que t\'agradin. Sempre te\'n pots unir a més després.';
+
+  @override
+  String get attendeeOnboardingFinish => 'Finalitza';
+
+  @override
+  String get attendeeOnboardingForYou => 'Per a tu';
+
+  @override
+  String get editProfileHandleLabel => 'Nom d\'usuari';
+
+  @override
+  String get addFriendTitle => 'Afegeix un amic';
+
+  @override
+  String get addFriendSubtitle => 'Troba algú pel seu correu o el seu @nom.';
+
+  @override
+  String get addFriendInputHint => 'Correu o @nom';
+
+  @override
+  String get addFriendSearch => 'Cerca';
+
+  @override
+  String get addFriendNoMatch =>
+      'Ningú coincideix amb aquest correu o nom d\'usuari.';
+
+  @override
+  String get addFriendUnavailable =>
+      'Afegir amics no està disponible ara mateix.';
+
+  @override
+  String get addFriendError =>
+      'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get addFriendSelf => 'Ets tu';
+
+  @override
+  String get rosterInviteIdentifierLabel => 'Correu o @nom';
+
+  @override
+  String get rosterInviteIdentifierHint => 'nom@exemple.com o @nom';
+
+  @override
+  String get rosterInviteInvalidIdentifier =>
+      'Introdueix un correu o @nom vàlid.';
+
+  @override
+  String get rosterNoAccountForIdentifier =>
+      'Cap compte de Kolabing coincideix amb aquest correu o nom d\'usuari.';
+
+  @override
+  String get attendeeHomeEventsTitle => 'ESDEVENIMENTS';
+
+  @override
+  String get attendeeHomeChooseCity => 'Tria ciutat';
+
+  @override
+  String get attendeeHomeFilterToday => 'Avui';
+
+  @override
+  String get attendeeHomeFilterType => 'Tipus';
+
+  @override
+  String get attendeeHomeFilterTypeAll => 'Tots els tipus';
+
+  @override
+  String get attendeeHomeExploreCommunities => 'Explora comunitats';
+
+  @override
+  String get attendeeHomePickCityTitle => 'Tria una ciutat';
+
+  @override
+  String get attendeeHomePickCityHint =>
+      'Tria una ciutat per descobrir esdeveniments a prop teu.';
+
+  @override
+  String get attendeeHomeNoEventsCity =>
+      'No hi ha esdeveniments en aquesta ciutat';
+
+  @override
+  String get attendeeHomeNoEventsCityHint =>
+      'Prova una altra ciutat o esborra els filtres.';
+
+  @override
+  String get eventPartnerBusiness => 'Negoci';
+
+  @override
+  String get eventPartnerCommunity => 'Comunitat';
+
+  @override
+  String get eventDateToday => 'Avui';
+
+  @override
+  String get eventDateTomorrow => 'Demà';
+
+  @override
+  String eventDateInDays(int days) {
+    return 'D\'aquí a $days dies';
+  }
 }

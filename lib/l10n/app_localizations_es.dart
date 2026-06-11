@@ -623,13 +623,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get kolabingLogoSemanticLabel => 'Logotipo de Kolabing';
 
   @override
-  String get selectionCardBusinessTitle => 'SOY UN NEGOCIO';
+  String get selectionCardBusinessTitle => 'Soy un negocio';
 
   @override
-  String get selectionCardCommunityTitle => 'SOY UNA COMUNIDAD';
+  String get selectionCardCommunityTitle => 'Soy una comunidad';
 
   @override
-  String get selectionCardAttendeeTitle => 'SOY UN ASISTENTE';
+  String get selectionCardAttendeeTitle => 'Soy un asistente';
 
   @override
   String get selectionCardBusinessDescription =>
@@ -2168,6 +2168,77 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Seguro que quieres cerrar sesión?';
 
   @override
+  String get attendeeProfileStatFriends => 'Amigos';
+
+  @override
+  String get attendeeProfileStatEvents => 'Eventos';
+
+  @override
+  String get attendeeProfileStatChats => 'Chats';
+
+  @override
+  String get attendeeProfileStatPoints => 'Puntos';
+
+  @override
+  String get attendeeProfileMyCommunities => 'MIS COMUNIDADES';
+
+  @override
+  String get attendeeProfileNoCommunities =>
+      'Todavía no te has unido a ninguna comunidad.';
+
+  @override
+  String get attendeeProfileFindFriends => 'Buscar amigos';
+
+  @override
+  String get attendeeProfileFriends => 'AMIGOS';
+
+  @override
+  String get attendeeProfileSeeAll => 'Ver todos';
+
+  @override
+  String get editProfileTitle => 'Editar perfil';
+
+  @override
+  String get editProfileChangePhoto => 'Cambiar foto';
+
+  @override
+  String get editProfileNameLabel => 'Nombre';
+
+  @override
+  String get editProfileNameHint => 'Tu nombre';
+
+  @override
+  String get editProfileNameRequired => 'Introduce tu nombre.';
+
+  @override
+  String get editProfileCityLabel => 'Ciudad';
+
+  @override
+  String get editProfileCityHint => 'Selecciona tu ciudad';
+
+  @override
+  String get editProfileCitySearchHint => 'Buscar ciudades';
+
+  @override
+  String get editProfileNoCitiesFound => 'No se han encontrado ciudades';
+
+  @override
+  String get editProfileCityLoadError => 'No se han podido cargar las ciudades';
+
+  @override
+  String get editProfileSave => 'Guardar';
+
+  @override
+  String get editProfileSaved => 'Perfil actualizado';
+
+  @override
+  String get editProfileSaveError =>
+      'No se ha podido guardar tu perfil. Inténtalo de nuevo.';
+
+  @override
+  String get memberProfileFriends => 'Amigos';
+
+  @override
   String get badgesScreenTitle => 'Insignias';
 
   @override
@@ -3374,10 +3445,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get businessFinalTitleAuthenticated =>
-      'FINALIZA EL ALTA DE TU NEGOCIO';
+      'Finaliza el alta de tu negocio';
 
   @override
-  String get businessFinalTitleNewAccount => 'CREA TU CUENTA';
+  String get businessFinalTitleNewAccount => 'Crea tu cuenta';
 
   @override
   String get businessFinalSubtitleAuthenticated =>
@@ -3456,7 +3527,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'El número de teléfono es demasiado largo';
 
   @override
-  String get businessStep2Title => 'REVISA LOS DATOS DE TU NEGOCIO';
+  String get businessStep2Title => 'Revisa los datos de tu negocio';
 
   @override
   String get businessStep2Subtitle =>
@@ -3537,7 +3608,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Añade al menos una foto del local para continuar';
 
   @override
-  String get businessStep3Title => 'AÑADE FOTOS DEL LOCAL';
+  String get businessStep3Title => 'Añade fotos del local';
 
   @override
   String get businessStep3Subtitle =>
@@ -3555,7 +3626,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'No pudimos importar desde Google, rellénalo manualmente.';
 
   @override
-  String get businessStep5Title => 'ELIGE TU LOCAL';
+  String get businessStep5Title => 'Elige tu local';
 
   @override
   String get businessStep5Subtitle =>
@@ -3581,7 +3652,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Importando la información de tu negocio desde Google';
 
   @override
-  String get businessStep5PreviewTitle => 'FOTOS DE GOOGLE';
+  String get businessStep5PreviewTitle => 'Fotos de Google';
 
   @override
   String get businessStep5PreviewSubtitle =>
@@ -3595,7 +3666,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get businessStep5SelectedAddress => 'Dirección seleccionada';
 
   @override
-  String get communityFinalTitle => 'CREA TU CUENTA';
+  String get communityFinalTitle => 'Crea tu cuenta';
 
   @override
   String get communityFinalSubtitle =>
@@ -3656,7 +3727,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Al crear una cuenta, aceptas nuestros Términos de servicio y Política de privacidad';
 
   @override
-  String get communityStep1Title => 'CUÉNTANOS SOBRE TI';
+  String get communityStep1Title => 'Cuéntanos sobre ti';
 
   @override
   String get communityStep1Subtitle => 'Vamos a crear tu perfil';
@@ -3685,7 +3756,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudieron cargar los tipos de comunidad';
 
   @override
-  String get communityStep3Title => '¿DÓNDE TE ENCUENTRAS?';
+  String get communityStep3Title => '¿Dónde te encuentras?';
 
   @override
   String get communityStep3Subtitle => 'Encuentra oportunidades en tu zona';
@@ -3706,7 +3777,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityStep3CityRequired => 'Selecciona una ciudad';
 
   @override
-  String get communityStep4Title => 'COMPLETA TU PERFIL';
+  String get communityStep4Title => 'Completa tu perfil';
 
   @override
   String get communityStep4Subtitle =>
@@ -3845,6 +3916,18 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get publicProfileViewMore => 'Ver más';
+
+  @override
+  String get memberProfilePoints => 'Puntos';
+
+  @override
+  String get memberProfileEventsAttended => 'Eventos asistidos';
+
+  @override
+  String get memberProfileBadges => 'Insignias';
+
+  @override
+  String get memberProfileNoBadges => 'Aún no hay insignias';
 
   @override
   String get referralCodeCopied => 'Código de invitación copiado';
@@ -4918,6 +5001,97 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatThreadEmptyMessage => 'Aún no hay mensajes. Saluda 👋';
 
   @override
+  String get chatManageNewChatTitle => 'Nuevo chat';
+
+  @override
+  String get chatManageRenameTitle => 'Renombrar chat';
+
+  @override
+  String get chatManageNameLabel => 'Nombre del chat';
+
+  @override
+  String get chatManageNameHint => 'p. ej. Directivos, Sociales, Filantropía';
+
+  @override
+  String get chatManageCreate => 'Crear';
+
+  @override
+  String get chatManageRename => 'Renombrar';
+
+  @override
+  String get chatManageDelete => 'Eliminar';
+
+  @override
+  String get chatManageCreateChat => 'Crear chat';
+
+  @override
+  String chatManageChatCreated(String name) {
+    return 'Se creó \"$name\"';
+  }
+
+  @override
+  String get chatManageChatRenamed => 'Chat renombrado';
+
+  @override
+  String get chatManageChatDeleted => 'Chat eliminado';
+
+  @override
+  String chatManageChatLimit(int count) {
+    return 'Llegaste al límite de $count chats personalizados.';
+  }
+
+  @override
+  String get chatManageDeleteTitle => '¿Eliminar este chat?';
+
+  @override
+  String chatManageDeleteBody(String name) {
+    return 'Los miembros perderán acceso a \"$name\". Puedes recuperarlo después si cambias de opinión.';
+  }
+
+  @override
+  String get chatManageWhichCommunity => '¿Cuál comunidad?';
+
+  @override
+  String get chatJoinSectionTitle => 'Chats a los que te puedes unir';
+
+  @override
+  String get chatJoinAction => 'Unirme';
+
+  @override
+  String chatJoinedSnack(String name) {
+    return 'Te uniste a \"$name\"';
+  }
+
+  @override
+  String get chatThreadOpenEvent => 'Abrir evento';
+
+  @override
+  String get chatMembersTitle => 'Miembros';
+
+  @override
+  String get chatMembersEmpty => 'Aún no hay miembros para administrar.';
+
+  @override
+  String get chatMemberRemove => 'Quitar';
+
+  @override
+  String chatMemberRemoveTitle(String name) {
+    return '¿Quitar a $name?';
+  }
+
+  @override
+  String get chatMemberRemoveBody =>
+      'Perderá acceso a este chat y no podrá volver a unirse.';
+
+  @override
+  String chatMemberRemoved(String name) {
+    return 'Se quitó a $name';
+  }
+
+  @override
+  String get chatThreadManageMembers => 'Administrar miembros';
+
+  @override
   String get communityDetailTabChats => 'Chats';
 
   @override
@@ -4999,6 +5173,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Las fotos y los eventos pasados estarán aquí cuando se lance el ciclo de vida de eventos (Fase 3).';
 
   @override
+  String get communityDetailGalleryEmpty =>
+      'Aún no hay eventos pasados que mostrar.';
+
+  @override
   String get myCommunitiesNoTier => 'Sin nivel todavía';
 
   @override
@@ -5070,12 +5248,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityHubAccess => 'Acceso';
 
   @override
-  String get chatManageRename => 'Renombrar chat';
-
-  @override
-  String get chatManageDelete => 'Eliminar chat';
-
-  @override
   String get chatManageAccess => 'Quién puede acceder';
 
   @override
@@ -5089,9 +5261,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatBlockedTag => 'Bloqueado';
-
-  @override
-  String get chatMembersEmpty => 'Aún no hay miembros con acceso.';
 
   @override
   String get chatRenameHint => 'Nombre del chat';
@@ -5375,4 +5544,277 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rosterSave => 'GUARDAR';
+
+  @override
+  String get friendsTitle => 'Amigos';
+
+  @override
+  String get friendRequestsTitle => 'Solicitudes';
+
+  @override
+  String get friendAdd => 'Agregar amigo';
+
+  @override
+  String get friendPending => 'Pendiente';
+
+  @override
+  String get friendAccept => 'Aceptar';
+
+  @override
+  String get friendDecline => 'Rechazar';
+
+  @override
+  String get friendFriends => 'Amigos';
+
+  @override
+  String get friendRemoveTitle => '¿Eliminar a este amigo?';
+
+  @override
+  String get friendRemoveConfirm => 'Eliminar amigo';
+
+  @override
+  String get friendActionFailed => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get friendsEmpty => 'Aún no tienes amigos';
+
+  @override
+  String get friendsLoadError => 'No se pudieron cargar los amigos';
+
+  @override
+  String get friendUnknownName => 'Miembro';
+
+  @override
+  String get friendCountOne => '1 amigo';
+
+  @override
+  String friendCountOther(int count) {
+    return '$count amigos';
+  }
+
+  @override
+  String get discoverCommunitiesTitle => 'Descubre comunidades';
+
+  @override
+  String get discoverCommunitiesCta => 'Descubre comunidades';
+
+  @override
+  String get discoverCommunitiesJoin => 'Unirse';
+
+  @override
+  String get discoverCommunitiesJoined => 'Te has unido';
+
+  @override
+  String discoverCommunitiesJoinedToast(String name) {
+    return 'Te has unido a $name';
+  }
+
+  @override
+  String get discoverCommunitiesInviteOnly => 'Solo con invitación';
+
+  @override
+  String discoverCommunitiesInviteOnlyMessage(String name) {
+    return '$name es solo con invitación. Pide a un miembro que te añada.';
+  }
+
+  @override
+  String get discoverCommunitiesJoinError =>
+      'No se pudo unir ahora mismo. Inténtalo de nuevo.';
+
+  @override
+  String discoverCommunitiesMembers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '1 miembro',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get discoverCommunitiesEmptyTitle => 'Aún no hay nada que descubrir';
+
+  @override
+  String get discoverCommunitiesEmptyBody =>
+      'El descubrimiento de comunidades llegará pronto. Vuelve para encontrar y unirte a comunidades cerca de ti.';
+
+  @override
+  String get discoverCommunitiesError =>
+      'No se pudieron cargar las comunidades. Inténtalo de nuevo.';
+
+  @override
+  String get commonSkip => 'Omitir';
+
+  @override
+  String get handleFieldPlaceholder => 'tunombre';
+
+  @override
+  String get handleFieldHint =>
+      '3-20 caracteres: minúsculas, números y guiones bajos.';
+
+  @override
+  String get handleFieldFormatError =>
+      'Usa 3-20 minúsculas, números o guiones bajos.';
+
+  @override
+  String get handleFieldChecking => 'Comprobando disponibilidad…';
+
+  @override
+  String get handleFieldAvailable => 'Disponible';
+
+  @override
+  String get handleFieldTaken => 'Ese nombre de usuario no está disponible.';
+
+  @override
+  String handleFieldTakenWithSuggestion(String suggestion) {
+    return 'No disponible. Prueba @$suggestion';
+  }
+
+  @override
+  String get handleFieldYours => 'Este es tu nombre de usuario actual.';
+
+  @override
+  String attendeeOnboardingStepCounter(int step, int total) {
+    return 'Paso $step de $total';
+  }
+
+  @override
+  String get attendeeOnboardingStep1Title => 'Vamos a configurarte';
+
+  @override
+  String get attendeeOnboardingStep1Subtitle =>
+      'Añade tu nombre, elige un nombre de usuario y una foto si quieres.';
+
+  @override
+  String get attendeeOnboardingAddPhoto => 'Añadir una foto';
+
+  @override
+  String get attendeeOnboardingNameLabel => 'Tu nombre';
+
+  @override
+  String get attendeeOnboardingNameHint => '¿Cómo quieres que te llamemos?';
+
+  @override
+  String get attendeeOnboardingHandleLabel => 'Tu nombre de usuario';
+
+  @override
+  String get attendeeOnboardingStep2Title => '¿Dónde estás?';
+
+  @override
+  String get attendeeOnboardingStep2Subtitle =>
+      'Elige tu ciudad para descubrir comunidades cerca de ti.';
+
+  @override
+  String get attendeeOnboardingStep3Title => '¿Qué te interesa?';
+
+  @override
+  String get attendeeOnboardingStep3Subtitle =>
+      'Elige algunos intereses para sugerirte las comunidades adecuadas.';
+
+  @override
+  String get attendeeOnboardingStep4Title => 'Únete a tus primeras comunidades';
+
+  @override
+  String get attendeeOnboardingStep4Subtitle =>
+      'Toca para unirte a las que te gusten. Siempre puedes unirte a más después.';
+
+  @override
+  String get attendeeOnboardingFinish => 'Finalizar';
+
+  @override
+  String get attendeeOnboardingForYou => 'Para ti';
+
+  @override
+  String get editProfileHandleLabel => 'Nombre de usuario';
+
+  @override
+  String get addFriendTitle => 'Añadir un amigo';
+
+  @override
+  String get addFriendSubtitle =>
+      'Encuentra a alguien por su correo o su @nombre.';
+
+  @override
+  String get addFriendInputHint => 'Correo o @nombre';
+
+  @override
+  String get addFriendSearch => 'Buscar';
+
+  @override
+  String get addFriendNoMatch =>
+      'Nadie coincide con ese correo o nombre de usuario.';
+
+  @override
+  String get addFriendUnavailable =>
+      'Añadir amigos no está disponible ahora mismo.';
+
+  @override
+  String get addFriendError => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get addFriendSelf => 'Eres tú';
+
+  @override
+  String get rosterInviteIdentifierLabel => 'Correo o @nombre';
+
+  @override
+  String get rosterInviteIdentifierHint => 'nombre@ejemplo.com o @nombre';
+
+  @override
+  String get rosterInviteInvalidIdentifier =>
+      'Introduce un correo o @nombre válido.';
+
+  @override
+  String get rosterNoAccountForIdentifier =>
+      'Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario.';
+
+  @override
+  String get attendeeHomeEventsTitle => 'EVENTOS';
+
+  @override
+  String get attendeeHomeChooseCity => 'Elegir ciudad';
+
+  @override
+  String get attendeeHomeFilterToday => 'Hoy';
+
+  @override
+  String get attendeeHomeFilterType => 'Tipo';
+
+  @override
+  String get attendeeHomeFilterTypeAll => 'Todos los tipos';
+
+  @override
+  String get attendeeHomeExploreCommunities => 'Explorar comunidades';
+
+  @override
+  String get attendeeHomePickCityTitle => 'Elige una ciudad';
+
+  @override
+  String get attendeeHomePickCityHint =>
+      'Elige una ciudad para descubrir eventos cerca de ti.';
+
+  @override
+  String get attendeeHomeNoEventsCity => 'No hay eventos en esta ciudad';
+
+  @override
+  String get attendeeHomeNoEventsCityHint =>
+      'Prueba otra ciudad o borra los filtros.';
+
+  @override
+  String get eventPartnerBusiness => 'Negocio';
+
+  @override
+  String get eventPartnerCommunity => 'Comunidad';
+
+  @override
+  String get eventDateToday => 'Hoy';
+
+  @override
+  String get eventDateTomorrow => 'Mañana';
+
+  @override
+  String eventDateInDays(int days) {
+    return 'En $days días';
+  }
 }

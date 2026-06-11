@@ -130,9 +130,12 @@ class _ScriptedDiscoveryService extends DiscoveryService {
 
   @override
   Future<DiscoveredEventsResponse> discoverEvents({
-    required double latitude,
-    required double longitude,
+    double? latitude,
+    double? longitude,
     double radiusKm = 10.0,
+    String? cityId,
+    String? date,
+    String? typeSlug,
     int page = 1,
     int limit = 10,
   }) async {

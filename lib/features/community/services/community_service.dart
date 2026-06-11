@@ -117,6 +117,21 @@ class CommunityService {
         return _asList(_unwrap(res)).map(CommunityMembership.fromJson).toList();
       }, 'getMyMemberships');
 
+  /// `GET /communities/discover` — public discovery feed of joinable
+  /// communities (featured-first, backend-ordered). Optional [type] filters by
+  /// [CommunityType] wire value. Returns an empty list when the endpoint is not
+  /// deployed yet (404), so the discovery surface self-gates instead of
+  /// crashing.
+  Future<List<Community>> getDiscoverCommunities({String? type}) =>
+      _guard(() async {
+        final uri = Uri.parse('$_baseUrl/communities/discover').replace(
+          queryParameters: type != null ? {'type': type} : null,
+        );
+        final res = await _httpClient.get(uri, headers: await _headers());
+        if (res.statusCode == 404) return const <Community>[];
+        return _asList(_unwrap(res)).map(Community.fromJson).toList();
+      }, 'getDiscoverCommunities');
+
   /// `GET /communities/{id}`.
   Future<Community> getCommunity(String id) => _guard(() async {
         final res = await _httpClient.get(
@@ -311,20 +326,28 @@ class CommunityService {
             .toList();
       }, 'getMembers');
 
-  /// `POST /communities/{id}/members` — invite/add a member by the email on
-  /// their Kolabing account. (Backend resolves email → profile; throws with
-  /// `isProfileNotFound` when no account matches.)
+  /// `POST /communities/{id}/members` — invite/add a member by the **email OR
+  /// `@handle`** on their Kolabing account (identity contract §6: one endpoint
+  /// resolves either). Pass exactly one of [email]/[handle]; the backend
+  /// resolves the identifier → profile and throws with `isProfileNotFound`
+  /// when no account matches.
   Future<CommunityMember> addMember(
     String communityId, {
-    required String email,
+    String? email,
+    String? handle,
     String? tierId,
   }) =>
       _guard(() async {
+        assert(
+          (email != null) ^ (handle != null),
+          'Provide exactly one of email or handle',
+        );
         final res = await _httpClient.post(
           Uri.parse('$_baseUrl/communities/$communityId/members'),
           headers: await _headers(),
           body: jsonEncode({
-            'email': email,
+            if (email != null) 'email': email,
+            if (handle != null) 'handle': handle,
             if (tierId != null) 'tier_id': tierId,
           }),
         );

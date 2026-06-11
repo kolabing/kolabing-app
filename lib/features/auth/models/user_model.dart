@@ -347,6 +347,11 @@ class UserModel {
     this.attendeeProfile,
     this.subscription,
     this.createdAt,
+    this.name,
+    this.handle,
+    this.interests = const [],
+    this.cityId,
+    this.cityName,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -379,6 +384,19 @@ class UserModel {
     createdAt: json['created_at'] != null
         ? DateTime.parse(json['created_at'] as String)
         : null,
+    // Universal identity fields on `profiles` (identity contract §1/§2). Present
+    // once the backend deploys; null/empty on older payloads.
+    name: json['name'] as String?,
+    handle: json['handle'] as String?,
+    interests:
+        (json['interests'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    // Top-level city on `profiles` (attendees have no business/community
+    // profile to carry it). Returned by /me/profile once the backend deploys.
+    cityId: json['city_id'] as String?,
+    cityName: json['city_name'] as String?,
   );
 
   final String id;
@@ -392,6 +410,21 @@ class UserModel {
   final AttendeeProfileData? attendeeProfile;
   final UserSubscription? subscription;
   final DateTime? createdAt;
+
+  /// Top-level display name on `profiles` (used by attendees, who have no
+  /// business/community profile). Null on older payloads.
+  final String? name;
+
+  /// Top-level city on `profiles` (attendees). Null on older payloads / roles
+  /// that carry city on their extended profile.
+  final String? cityId;
+  final String? cityName;
+
+  /// Universal `@handle` (lowercase, `^[a-z0-9_]{3,20}$`). Null until set.
+  final String? handle;
+
+  /// Community-type interest SLUGS chosen at onboarding (identity contract §2).
+  final List<String> interests;
 
   /// Check if user is business type
   bool get isBusiness => userType == UserType.business;
@@ -408,6 +441,10 @@ class UserModel {
       return businessProfile!.name;
     } else if (isCommunity && communityProfile != null) {
       return communityProfile!.name;
+    }
+    // Attendees carry their name at the top level (`profiles.name`).
+    if (name != null && name!.trim().isNotEmpty) {
+      return name!.trim();
     }
     return email.split('@').first;
   }
@@ -435,6 +472,9 @@ class UserModel {
     if (attendeeProfile != null) 'attendee_profile': attendeeProfile!.toJson(),
     if (subscription != null) 'subscription': subscription!.toJson(),
     if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
+    if (name != null) 'name': name,
+    if (handle != null) 'handle': handle,
+    if (interests.isNotEmpty) 'interests': interests,
   };
 
   UserModel copyWith({
@@ -449,6 +489,11 @@ class UserModel {
     AttendeeProfileData? attendeeProfile,
     UserSubscription? subscription,
     DateTime? createdAt,
+    String? name,
+    String? handle,
+    List<String>? interests,
+    String? cityId,
+    String? cityName,
   }) => UserModel(
     id: id ?? this.id,
     email: email ?? this.email,
@@ -461,5 +506,10 @@ class UserModel {
     attendeeProfile: attendeeProfile ?? this.attendeeProfile,
     subscription: subscription ?? this.subscription,
     createdAt: createdAt ?? this.createdAt,
+    name: name ?? this.name,
+    handle: handle ?? this.handle,
+    interests: interests ?? this.interests,
+    cityId: cityId ?? this.cityId,
+    cityName: cityName ?? this.cityName,
   );
 }

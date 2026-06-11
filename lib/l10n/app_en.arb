@@ -797,15 +797,15 @@
   "@kolabingLogoSemanticLabel": {
     "description": "Accessibility label for the Kolabing logo image."
   },
-  "selectionCardBusinessTitle": "I'M A BUSINESS",
+  "selectionCardBusinessTitle": "I'm a business",
   "@selectionCardBusinessTitle": {
     "description": "User-type selection card title for the Business option."
   },
-  "selectionCardCommunityTitle": "I'M A COMMUNITY",
+  "selectionCardCommunityTitle": "I'm a community",
   "@selectionCardCommunityTitle": {
     "description": "User-type selection card title for the Community option."
   },
-  "selectionCardAttendeeTitle": "I'M AN ATTENDEE",
+  "selectionCardAttendeeTitle": "I'm an attendee",
   "@selectionCardAttendeeTitle": {
     "description": "User-type selection card title for the Attendee option."
   },
@@ -2781,6 +2781,51 @@
   "@attendeeProfileSignOutConfirm": {
     "description": "Confirmation message in the sign out dialog"
   },
+  "attendeeProfileStatFriends": "Friends",
+  "@attendeeProfileStatFriends": { "description": "Attendee profile stat label: friends count" },
+  "attendeeProfileStatEvents": "Events",
+  "@attendeeProfileStatEvents": { "description": "Attendee profile stat label: events attended count" },
+  "attendeeProfileStatChats": "Chats",
+  "@attendeeProfileStatChats": { "description": "Attendee profile stat label: chat threads count" },
+  "attendeeProfileStatPoints": "Points",
+  "@attendeeProfileStatPoints": { "description": "Attendee profile stat label: total points" },
+  "attendeeProfileMyCommunities": "MY COMMUNITIES",
+  "@attendeeProfileMyCommunities": { "description": "Attendee profile section header for the communities the user belongs to" },
+  "attendeeProfileNoCommunities": "You haven't joined any communities yet.",
+  "@attendeeProfileNoCommunities": { "description": "Attendee profile empty state for the communities section" },
+  "attendeeProfileFindFriends": "Find friends",
+  "attendeeProfileFriends": "FRIENDS",
+  "@attendeeProfileFriends": { "description": "Attendee profile section header for the friends preview" },
+  "attendeeProfileSeeAll": "See all",
+  "@attendeeProfileSeeAll": { "description": "Link to open the full friends list from the attendee profile" },
+  "editProfileTitle": "Edit profile",
+  "@editProfileTitle": { "description": "Title of the edit-profile screen" },
+  "editProfileChangePhoto": "Change photo",
+  "@editProfileChangePhoto": { "description": "Button to pick a new profile photo" },
+  "editProfileNameLabel": "Name",
+  "@editProfileNameLabel": { "description": "Field label for the user's display name" },
+  "editProfileNameHint": "Your name",
+  "@editProfileNameHint": { "description": "Placeholder for the name field" },
+  "editProfileNameRequired": "Please enter your name.",
+  "@editProfileNameRequired": { "description": "Validation error when the name field is empty" },
+  "editProfileCityLabel": "City",
+  "@editProfileCityLabel": { "description": "Field label for the user's city" },
+  "editProfileCityHint": "Select your city",
+  "@editProfileCityHint": { "description": "Placeholder for the city picker" },
+  "editProfileCitySearchHint": "Search cities",
+  "@editProfileCitySearchHint": { "description": "Placeholder for the city search field" },
+  "editProfileNoCitiesFound": "No cities found",
+  "@editProfileNoCitiesFound": { "description": "Empty state when the city search returns nothing" },
+  "editProfileCityLoadError": "Couldn't load cities",
+  "@editProfileCityLoadError": { "description": "Error message when the cities list fails to load" },
+  "editProfileSave": "Save",
+  "@editProfileSave": { "description": "Save button on the edit-profile screen" },
+  "editProfileSaved": "Profile updated",
+  "@editProfileSaved": { "description": "Success message after saving the profile" },
+  "editProfileSaveError": "Couldn't save your profile. Please try again.",
+  "@editProfileSaveError": { "description": "Generic error message when saving the profile fails" },
+  "memberProfileFriends": "Friends",
+  "@memberProfileFriends": { "description": "Member public profile stat label: friends count" },
   "badgesScreenTitle": "Badges",
   "@badgesScreenTitle": {
     "description": "Badges screen app bar title"
@@ -4295,11 +4340,11 @@
   "@businessFinalCopyDetails": {
     "description": "Business onboarding final: copy error details button"
   },
-  "businessFinalTitleAuthenticated": "FINISH BUSINESS ONBOARDING",
+  "businessFinalTitleAuthenticated": "Finish business onboarding",
   "@businessFinalTitleAuthenticated": {
     "description": "Business onboarding final: title when user is already authenticated"
   },
-  "businessFinalTitleNewAccount": "CREATE YOUR ACCOUNT",
+  "businessFinalTitleNewAccount": "Create your account",
   "@businessFinalTitleNewAccount": {
     "description": "Business onboarding final: title for new account creation"
   },
@@ -4387,7 +4432,7 @@
   "@businessStep2PhoneTooLong": {
     "description": "Business onboarding step 2: phone too long error"
   },
-  "businessStep2Title": "REVIEW YOUR BUSINESS DETAILS",
+  "businessStep2Title": "Review your business details",
   "@businessStep2Title": {
     "description": "Business onboarding step 2: screen title"
   },
@@ -4483,7 +4528,7 @@
   "@businessStep3NoPhotosError": {
     "description": "Business onboarding step 3: no photos added error"
   },
-  "businessStep3Title": "ADD VENUE PHOTOS",
+  "businessStep3Title": "Add venue photos",
   "@businessStep3Title": {
     "description": "Business onboarding step 3: screen title"
   },
@@ -4503,7 +4548,7 @@
   "@businessStep5ImportFallback": {
     "description": "Business onboarding step 5: Google import fallback message"
   },
-  "businessStep5Title": "CHOOSE YOUR VENUE",
+  "businessStep5Title": "Choose your venue",
   "@businessStep5Title": {
     "description": "Business onboarding step 5: screen title"
   },
@@ -4531,7 +4576,7 @@
   "@businessStep5Importing": {
     "description": "Business onboarding step 5: importing overlay message"
   },
-  "businessStep5PreviewTitle": "PHOTOS FROM GOOGLE",
+  "businessStep5PreviewTitle": "Photos from Google",
   "@businessStep5PreviewTitle": {
     "description": "Business onboarding step 5: imported photos preview title"
   },
@@ -4547,7 +4592,7 @@
   "@businessStep5SelectedAddress": {
     "description": "Business onboarding step 5: selected address card heading"
   },
-  "communityFinalTitle": "CREATE YOUR ACCOUNT",
+  "communityFinalTitle": "Create your account",
   "@communityFinalTitle": {
     "description": "Community onboarding final screen title"
   },
@@ -4619,7 +4664,7 @@
   "@communityFinalTermsNotice": {
     "description": "Terms and privacy notice below register button"
   },
-  "communityStep1Title": "TELL US ABOUT YOU",
+  "communityStep1Title": "Tell us about you",
   "@communityStep1Title": {
     "description": "Community onboarding step 1 title"
   },
@@ -4655,7 +4700,7 @@
   "@communityStep2LoadError": {
     "description": "Error message when community types fail to load"
   },
-  "communityStep3Title": "WHERE ARE YOU LOCATED?",
+  "communityStep3Title": "Where are you located?",
   "@communityStep3Title": {
     "description": "Community onboarding step 3 title"
   },
@@ -4683,7 +4728,7 @@
   "@communityStep3CityRequired": {
     "description": "Validation snackbar when city not selected"
   },
-  "communityStep4Title": "COMPLETE YOUR PROFILE",
+  "communityStep4Title": "Complete your profile",
   "@communityStep4Title": {
     "description": "Community onboarding step 4 title"
   },
@@ -4871,6 +4916,22 @@
   "publicProfileViewMore": "View more",
   "@publicProfileViewMore": {
     "description": "Button to open the full reviews list from the recent reviews section"
+  },
+  "memberProfilePoints": "Points",
+  "@memberProfilePoints": {
+    "description": "Stat label for total points on a member (attendee) public profile"
+  },
+  "memberProfileEventsAttended": "Events attended",
+  "@memberProfileEventsAttended": {
+    "description": "Stat label for the number of events a member has attended on their public profile"
+  },
+  "memberProfileBadges": "Badges",
+  "@memberProfileBadges": {
+    "description": "Stat label and section title for a member's earned badges on their public profile"
+  },
+  "memberProfileNoBadges": "No badges yet",
+  "@memberProfileNoBadges": {
+    "description": "Empty state shown in the badges section of a member public profile when they have not earned any badges"
   },
   "referralCodeCopied": "Referral code copied",
   "@referralCodeCopied": {
@@ -5965,6 +6026,77 @@
   "chatThreadEmptyMessage": "No messages yet. Say hi 👋",
   "@chatThreadEmptyMessage": { "description": "Empty state inside an open chat thread with no messages." },
 
+  "chatManageNewChatTitle": "New chat",
+  "@chatManageNewChatTitle": { "description": "Title of the create-chat dialog in the Chats tab." },
+  "chatManageRenameTitle": "Rename chat",
+  "@chatManageRenameTitle": { "description": "Title of the rename-chat dialog." },
+  "chatManageNameLabel": "Chat name",
+  "@chatManageNameLabel": { "description": "Label for the chat name field." },
+  "chatManageNameHint": "e.g. Exec, Socials, Philanthropy",
+  "@chatManageNameHint": { "description": "Hint for the chat name field." },
+  "chatManageCreate": "Create",
+  "@chatManageCreate": { "description": "Create button in the new-chat dialog." },
+  "chatManageRename": "Rename",
+  "@chatManageRename": { "description": "Rename action label." },
+  "chatManageDelete": "Delete",
+  "@chatManageDelete": { "description": "Delete action label." },
+  "chatManageCreateChat": "Create chat",
+  "@chatManageCreateChat": { "description": "Label on the create-chat button in the Chats tab." },
+  "chatManageChatCreated": "Created \"{name}\"",
+  "@chatManageChatCreated": {
+    "description": "Snackbar after a chat is created.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "chatManageChatRenamed": "Chat renamed",
+  "@chatManageChatRenamed": { "description": "Snackbar after a chat is renamed." },
+  "chatManageChatDeleted": "Chat deleted",
+  "@chatManageChatDeleted": { "description": "Snackbar after a chat is deleted." },
+  "chatManageChatLimit": "You've reached the limit of {count} custom chats.",
+  "@chatManageChatLimit": {
+    "description": "Snackbar when the custom chat cap is reached.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "chatManageDeleteTitle": "Delete this chat?",
+  "@chatManageDeleteTitle": { "description": "Confirm dialog title for deleting a chat." },
+  "chatManageDeleteBody": "Members will lose access to \"{name}\". You can recover it later if you change your mind.",
+  "@chatManageDeleteBody": {
+    "description": "Confirm dialog body for deleting a chat (notes it is recoverable).",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "chatManageWhichCommunity": "Which community?",
+  "@chatManageWhichCommunity": { "description": "Title of the community picker shown before creating a chat when the viewer manages more than one community." },
+  "chatJoinSectionTitle": "Chats you can join",
+  "@chatJoinSectionTitle": { "description": "Section label for open chats the viewer can join." },
+  "chatJoinAction": "Join",
+  "@chatJoinAction": { "description": "Join button label for an open chat." },
+  "chatJoinedSnack": "You joined \"{name}\"",
+  "@chatJoinedSnack": {
+    "description": "Snackbar after joining an open chat.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "chatThreadOpenEvent": "Open event",
+  "@chatThreadOpenEvent": { "description": "Tooltip on the info icon in an event chat header that opens the event detail." },
+  "chatMembersTitle": "Members",
+  "@chatMembersTitle": { "description": "Title of the thread members / participants sheet." },
+  "chatMembersEmpty": "No members to manage yet.",
+  "@chatMembersEmpty": { "description": "Empty state in the members sheet." },
+  "chatMemberRemove": "Remove",
+  "@chatMemberRemove": { "description": "Remove (ban) action label for a member." },
+  "chatMemberRemoveTitle": "Remove {name}?",
+  "@chatMemberRemoveTitle": {
+    "description": "Confirm dialog title for banning a member.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "chatMemberRemoveBody": "They'll lose access to this chat and won't be able to rejoin.",
+  "@chatMemberRemoveBody": { "description": "Confirm dialog body for banning a member." },
+  "chatMemberRemoved": "{name} was removed",
+  "@chatMemberRemoved": {
+    "description": "Snackbar after a member is banned.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "chatThreadManageMembers": "Manage members",
+  "@chatThreadManageMembers": { "description": "Tooltip on the manage-members icon in the thread header." },
+
   "communityDetailTabChats": "Chats",
   "@communityDetailTabChats": { "description": "Community detail tab: chats." },
   "communityDetailTabEvents": "Events",
@@ -6024,6 +6156,8 @@
   "@communityDetailGalleryLabel": { "description": "Section label for the gallery and past events." },
   "communityDetailGalleryBody": "Photos and past events will live here once the events lifecycle ships (Phase 3).",
   "@communityDetailGalleryBody": { "description": "Placeholder body for the gallery section." },
+  "communityDetailGalleryEmpty": "No past events to show yet.",
+  "@communityDetailGalleryEmpty": { "description": "Empty state for the gallery and past events section when the community has no past events." },
 
   "myCommunitiesNoTier": "No tier yet",
   "@myCommunitiesNoTier": { "description": "Shown on a membership card when the member has no tier." },
@@ -6084,14 +6218,11 @@
   },
   "communityHubAccess": "Access",
   "@communityHubAccess": { "description": "Default label on the per-chat access picker." },
-  "chatManageRename": "Rename chat",
-  "chatManageDelete": "Delete chat",
   "chatManageAccess": "Who can access",
   "chatManageMembers": "Members",
   "chatBlock": "Block",
   "chatUnblock": "Unblock",
   "chatBlockedTag": "Blocked",
-  "chatMembersEmpty": "No members have access yet.",
   "chatRenameHint": "Chat name",
   "chatRenamed": "Chat renamed",
   "chatDeleteTitle": "Delete this chat?",
@@ -6312,5 +6443,188 @@
   "rosterStatusLabel": "Status",
   "@rosterStatusLabel": { "description": "Label for the membership status selector." },
   "rosterSave": "SAVE",
-  "@rosterSave": { "description": "Save button in the member edit sheet." }
+  "@rosterSave": { "description": "Save button in the member edit sheet." },
+  "friendsTitle": "Friends",
+  "@friendsTitle": { "description": "Title of the friends list screen / friends section." },
+  "friendRequestsTitle": "Requests",
+  "@friendRequestsTitle": { "description": "Title of the incoming friend requests section." },
+  "friendAdd": "Add friend",
+  "@friendAdd": { "description": "CTA to send a friend request." },
+  "friendPending": "Pending",
+  "@friendPending": { "description": "Label when an outgoing friend request is awaiting response (tap to cancel)." },
+  "friendAccept": "Accept",
+  "@friendAccept": { "description": "Accept an incoming friend request." },
+  "friendDecline": "Decline",
+  "@friendDecline": { "description": "Decline an incoming friend request." },
+  "friendFriends": "Friends",
+  "@friendFriends": { "description": "Label when the viewer is already friends (tap to remove)." },
+  "friendRemoveTitle": "Remove this friend?",
+  "@friendRemoveTitle": { "description": "Confirmation title before removing a friend." },
+  "friendRemoveConfirm": "Remove friend",
+  "@friendRemoveConfirm": { "description": "Confirm button to remove a friend." },
+  "friendActionFailed": "Something went wrong. Please try again.",
+  "@friendActionFailed": { "description": "Generic error when a friend action fails." },
+  "friendsEmpty": "No friends yet",
+  "@friendsEmpty": { "description": "Empty state for the friends list." },
+  "friendsLoadError": "Couldn't load friends",
+  "@friendsLoadError": { "description": "Error state for the friends list." },
+  "friendUnknownName": "Member",
+  "@friendUnknownName": { "description": "Fallback name for a friend without a name." },
+  "friendCountOne": "1 friend",
+  "@friendCountOne": { "description": "Friends count label, singular." },
+  "friendCountOther": "{count} friends",
+  "@friendCountOther": {
+    "description": "Friends count label, plural.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "discoverCommunitiesTitle": "Discover communities",
+  "@discoverCommunitiesTitle": { "description": "App bar title for the community discovery screen." },
+  "discoverCommunitiesCta": "Discover communities",
+  "@discoverCommunitiesCta": { "description": "Call to action to open the community discovery screen." },
+  "discoverCommunitiesJoin": "Join",
+  "@discoverCommunitiesJoin": { "description": "Button to join a community from a discovery card." },
+  "discoverCommunitiesJoined": "Joined",
+  "@discoverCommunitiesJoined": { "description": "Label shown on a community card after the user has joined it." },
+  "discoverCommunitiesJoinedToast": "You joined {name}",
+  "@discoverCommunitiesJoinedToast": {
+    "description": "Snackbar confirming the user joined a community.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "discoverCommunitiesInviteOnly": "Invite only",
+  "@discoverCommunitiesInviteOnly": { "description": "Badge/message shown when a community is invite-only and cannot be self-joined." },
+  "discoverCommunitiesInviteOnlyMessage": "{name} is invite only. Ask a member to add you.",
+  "@discoverCommunitiesInviteOnlyMessage": {
+    "description": "Snackbar shown when trying to join an invite-only community.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "discoverCommunitiesJoinError": "Couldn't join right now. Please try again.",
+  "@discoverCommunitiesJoinError": { "description": "Snackbar shown when joining a community fails." },
+  "discoverCommunitiesMembers": "{count, plural, =1{1 member} other{{count} members}}",
+  "@discoverCommunitiesMembers": {
+    "description": "Member count label on a discovery card.",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "discoverCommunitiesEmptyTitle": "Nothing to discover yet",
+  "@discoverCommunitiesEmptyTitle": { "description": "Empty/coming-soon title on the community discovery screen." },
+  "discoverCommunitiesEmptyBody": "Community discovery is coming soon. Check back to find and join communities near you.",
+  "@discoverCommunitiesEmptyBody": { "description": "Empty/coming-soon body on the community discovery screen." },
+  "discoverCommunitiesError": "Couldn't load communities. Please try again.",
+  "@discoverCommunitiesError": { "description": "Error state on the community discovery screen." },
+
+  "commonSkip": "Skip",
+  "@commonSkip": { "description": "Generic Skip button label." },
+
+  "handleFieldPlaceholder": "yourhandle",
+  "@handleFieldPlaceholder": { "description": "Placeholder text inside the @handle input." },
+  "handleFieldHint": "3-20 characters: lowercase letters, numbers, underscores.",
+  "@handleFieldHint": { "description": "Format hint shown under the handle field." },
+  "handleFieldFormatError": "Use 3-20 lowercase letters, numbers or underscores.",
+  "@handleFieldFormatError": { "description": "Shown when the entered handle is malformed." },
+  "handleFieldChecking": "Checking availability…",
+  "@handleFieldChecking": { "description": "Shown while the handle availability check is running." },
+  "handleFieldAvailable": "Available",
+  "@handleFieldAvailable": { "description": "Shown when the handle is available." },
+  "handleFieldTaken": "That handle is taken.",
+  "@handleFieldTaken": { "description": "Shown when the handle is already in use." },
+  "handleFieldTakenWithSuggestion": "Taken. Try @{suggestion}",
+  "@handleFieldTakenWithSuggestion": {
+    "description": "Shown when the handle is taken, offering a suggestion.",
+    "placeholders": { "suggestion": { "type": "String" } }
+  },
+  "handleFieldYours": "This is your current handle.",
+  "@handleFieldYours": { "description": "Shown when the handle equals the user's existing handle." },
+
+  "attendeeOnboardingStepCounter": "Step {step} of {total}",
+  "@attendeeOnboardingStepCounter": {
+    "description": "Step counter in the attendee onboarding header.",
+    "placeholders": { "step": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "attendeeOnboardingStep1Title": "Let's set you up",
+  "@attendeeOnboardingStep1Title": { "description": "Attendee onboarding step 1 title (You)." },
+  "attendeeOnboardingStep1Subtitle": "Add your name, pick a handle, and a photo if you like.",
+  "@attendeeOnboardingStep1Subtitle": { "description": "Attendee onboarding step 1 subtitle." },
+  "attendeeOnboardingAddPhoto": "Add a photo",
+  "attendeeOnboardingNameLabel": "Your name",
+  "@attendeeOnboardingNameLabel": { "description": "Label for the attendee name field." },
+  "attendeeOnboardingNameHint": "How should we call you?",
+  "@attendeeOnboardingNameHint": { "description": "Hint for the attendee name field." },
+  "attendeeOnboardingHandleLabel": "Your handle",
+  "@attendeeOnboardingHandleLabel": { "description": "Label for the attendee @handle field." },
+  "attendeeOnboardingStep2Title": "Where are you?",
+  "@attendeeOnboardingStep2Title": { "description": "Attendee onboarding step 2 title (City)." },
+  "attendeeOnboardingStep2Subtitle": "Pick your city to discover communities near you.",
+  "@attendeeOnboardingStep2Subtitle": { "description": "Attendee onboarding step 2 subtitle." },
+  "attendeeOnboardingStep3Title": "What are you into?",
+  "@attendeeOnboardingStep3Title": { "description": "Attendee onboarding step 3 title (Interests)." },
+  "attendeeOnboardingStep3Subtitle": "Pick a few interests so we can suggest the right communities.",
+  "@attendeeOnboardingStep3Subtitle": { "description": "Attendee onboarding step 3 subtitle." },
+  "attendeeOnboardingStep4Title": "Join your first communities",
+  "@attendeeOnboardingStep4Title": { "description": "Attendee onboarding step 4 title (Join)." },
+  "attendeeOnboardingStep4Subtitle": "Tap to join the ones you like. You can always join more later.",
+  "@attendeeOnboardingStep4Subtitle": { "description": "Attendee onboarding step 4 subtitle." },
+  "attendeeOnboardingFinish": "Finish",
+  "@attendeeOnboardingFinish": { "description": "Finish button on the last attendee onboarding step." },
+  "attendeeOnboardingForYou": "For you",
+  "@attendeeOnboardingForYou": { "description": "Badge marking a community that matches the attendee's interests." },
+
+  "editProfileHandleLabel": "Handle",
+  "@editProfileHandleLabel": { "description": "Label for the @handle field in Edit Profile." },
+
+  "addFriendTitle": "Add a friend",
+  "@addFriendTitle": { "description": "Title of the add-friend-by-identifier screen." },
+  "addFriendSubtitle": "Find someone by their email or @handle.",
+  "@addFriendSubtitle": { "description": "Subtitle on the add-friend screen." },
+  "addFriendInputHint": "Email or @handle",
+  "@addFriendInputHint": { "description": "Hint for the add-friend search input." },
+  "addFriendSearch": "Search",
+  "@addFriendSearch": { "description": "Search button on the add-friend screen." },
+  "addFriendNoMatch": "No one matches that email or handle.",
+  "@addFriendNoMatch": { "description": "Shown when the lookup returns no match." },
+  "addFriendUnavailable": "Adding friends isn't available right now.",
+  "@addFriendUnavailable": { "description": "Shown when the lookup endpoint is not deployed (self-gated)." },
+  "addFriendError": "Something went wrong. Please try again.",
+  "@addFriendError": { "description": "Generic error on the add-friend screen." },
+  "addFriendSelf": "That's you",
+  "@addFriendSelf": { "description": "CTA state when the matched profile is the viewer." },
+
+  "rosterInviteIdentifierLabel": "Email or @handle",
+  "@rosterInviteIdentifierLabel": { "description": "Label for the roster invite identifier field." },
+  "rosterInviteIdentifierHint": "name@example.com or @handle",
+  "@rosterInviteIdentifierHint": { "description": "Hint for the roster invite identifier field." },
+  "rosterInviteInvalidIdentifier": "Enter a valid email or @handle.",
+  "@rosterInviteInvalidIdentifier": { "description": "Validation error for the roster invite identifier." },
+  "rosterNoAccountForIdentifier": "No Kolabing account matches that email or handle.",
+  "@rosterNoAccountForIdentifier": { "description": "Shown when the invited identifier matches no account." },
+
+  "attendeeHomeEventsTitle": "EVENTS",
+  "@attendeeHomeEventsTitle": { "description": "Attendee home events section header." },
+  "attendeeHomeChooseCity": "Choose city",
+  "@attendeeHomeChooseCity": { "description": "City picker button label when no city is selected." },
+  "attendeeHomeFilterToday": "Today",
+  "@attendeeHomeFilterToday": { "description": "Events filter chip: show only today's events." },
+  "attendeeHomeFilterType": "Type",
+  "@attendeeHomeFilterType": { "description": "Events filter chip / sheet title: filter by community type." },
+  "attendeeHomeFilterTypeAll": "All types",
+  "@attendeeHomeFilterTypeAll": { "description": "Type filter option that clears the community-type filter." },
+  "attendeeHomeExploreCommunities": "Explore communities",
+  "@attendeeHomeExploreCommunities": { "description": "Persistent CTA on the attendee home that opens community discovery." },
+  "attendeeHomePickCityTitle": "Pick a city",
+  "@attendeeHomePickCityTitle": { "description": "Empty-state title when no city is selected for events." },
+  "attendeeHomePickCityHint": "Choose a city to discover events near you.",
+  "@attendeeHomePickCityHint": { "description": "Empty-state hint inviting the user to pick a city." },
+  "attendeeHomeNoEventsCity": "No events in this city",
+  "@attendeeHomeNoEventsCity": { "description": "Empty-state title when a city has no events for the current filters." },
+  "attendeeHomeNoEventsCityHint": "Try another city or clear your filters.",
+  "@attendeeHomeNoEventsCityHint": { "description": "Empty-state hint when no events match in the selected city." },
+  "eventPartnerBusiness": "Business",
+  "@eventPartnerBusiness": { "description": "Event card badge for a business-hosted event." },
+  "eventPartnerCommunity": "Community",
+  "@eventPartnerCommunity": { "description": "Event card badge for a community-hosted event." },
+  "eventDateToday": "Today",
+  "@eventDateToday": { "description": "Event card relative date: today." },
+  "eventDateTomorrow": "Tomorrow",
+  "@eventDateTomorrow": { "description": "Event card relative date: tomorrow." },
+  "eventDateInDays": "In {days} days",
+  "@eventDateInDays": { "description": "Event card relative date: N days away.", "placeholders": { "days": { "type": "int" } } }
 }

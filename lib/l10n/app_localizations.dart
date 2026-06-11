@@ -1249,19 +1249,19 @@ abstract class AppLocalizations {
   /// User-type selection card title for the Business option.
   ///
   /// In en, this message translates to:
-  /// **'I\'M A BUSINESS'**
+  /// **'I\'m a business'**
   String get selectionCardBusinessTitle;
 
   /// User-type selection card title for the Community option.
   ///
   /// In en, this message translates to:
-  /// **'I\'M A COMMUNITY'**
+  /// **'I\'m a community'**
   String get selectionCardCommunityTitle;
 
   /// User-type selection card title for the Attendee option.
   ///
   /// In en, this message translates to:
-  /// **'I\'M AN ATTENDEE'**
+  /// **'I\'m an attendee'**
   String get selectionCardAttendeeTitle;
 
   /// User-type selection card description for the Business option.
@@ -3940,6 +3940,144 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to sign out?'**
   String get attendeeProfileSignOutConfirm;
 
+  /// Attendee profile stat label: friends count
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get attendeeProfileStatFriends;
+
+  /// Attendee profile stat label: events attended count
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get attendeeProfileStatEvents;
+
+  /// Attendee profile stat label: chat threads count
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get attendeeProfileStatChats;
+
+  /// Attendee profile stat label: total points
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get attendeeProfileStatPoints;
+
+  /// Attendee profile section header for the communities the user belongs to
+  ///
+  /// In en, this message translates to:
+  /// **'MY COMMUNITIES'**
+  String get attendeeProfileMyCommunities;
+
+  /// Attendee profile empty state for the communities section
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t joined any communities yet.'**
+  String get attendeeProfileNoCommunities;
+
+  /// No description provided for @attendeeProfileFindFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Find friends'**
+  String get attendeeProfileFindFriends;
+
+  /// Attendee profile section header for the friends preview
+  ///
+  /// In en, this message translates to:
+  /// **'FRIENDS'**
+  String get attendeeProfileFriends;
+
+  /// Link to open the full friends list from the attendee profile
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get attendeeProfileSeeAll;
+
+  /// Title of the edit-profile screen
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfileTitle;
+
+  /// Button to pick a new profile photo
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get editProfileChangePhoto;
+
+  /// Field label for the user's display name
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get editProfileNameLabel;
+
+  /// Placeholder for the name field
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get editProfileNameHint;
+
+  /// Validation error when the name field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name.'**
+  String get editProfileNameRequired;
+
+  /// Field label for the user's city
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get editProfileCityLabel;
+
+  /// Placeholder for the city picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select your city'**
+  String get editProfileCityHint;
+
+  /// Placeholder for the city search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search cities'**
+  String get editProfileCitySearchHint;
+
+  /// Empty state when the city search returns nothing
+  ///
+  /// In en, this message translates to:
+  /// **'No cities found'**
+  String get editProfileNoCitiesFound;
+
+  /// Error message when the cities list fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load cities'**
+  String get editProfileCityLoadError;
+
+  /// Save button on the edit-profile screen
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get editProfileSave;
+
+  /// Success message after saving the profile
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get editProfileSaved;
+
+  /// Generic error message when saving the profile fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your profile. Please try again.'**
+  String get editProfileSaveError;
+
+  /// Member public profile stat label: friends count
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get memberProfileFriends;
+
   /// Badges screen app bar title
   ///
   /// In en, this message translates to:
@@ -6037,13 +6175,13 @@ abstract class AppLocalizations {
   /// Business onboarding final: title when user is already authenticated
   ///
   /// In en, this message translates to:
-  /// **'FINISH BUSINESS ONBOARDING'**
+  /// **'Finish business onboarding'**
   String get businessFinalTitleAuthenticated;
 
   /// Business onboarding final: title for new account creation
   ///
   /// In en, this message translates to:
-  /// **'CREATE YOUR ACCOUNT'**
+  /// **'Create your account'**
   String get businessFinalTitleNewAccount;
 
   /// Business onboarding final: subtitle when authenticated
@@ -6175,7 +6313,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 2: screen title
   ///
   /// In en, this message translates to:
-  /// **'REVIEW YOUR BUSINESS DETAILS'**
+  /// **'Review your business details'**
   String get businessStep2Title;
 
   /// Business onboarding step 2: screen subtitle
@@ -6319,7 +6457,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 3: screen title
   ///
   /// In en, this message translates to:
-  /// **'ADD VENUE PHOTOS'**
+  /// **'Add venue photos'**
   String get businessStep3Title;
 
   /// Business onboarding step 3: screen subtitle (Kolab is a brand term, untranslated)
@@ -6349,7 +6487,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 5: screen title
   ///
   /// In en, this message translates to:
-  /// **'CHOOSE YOUR VENUE'**
+  /// **'Choose your venue'**
   String get businessStep5Title;
 
   /// Business onboarding step 5: screen subtitle
@@ -6391,7 +6529,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 5: imported photos preview title
   ///
   /// In en, this message translates to:
-  /// **'PHOTOS FROM GOOGLE'**
+  /// **'Photos from Google'**
   String get businessStep5PreviewTitle;
 
   /// Business onboarding step 5: imported photos preview subtitle
@@ -6415,7 +6553,7 @@ abstract class AppLocalizations {
   /// Community onboarding final screen title
   ///
   /// In en, this message translates to:
-  /// **'CREATE YOUR ACCOUNT'**
+  /// **'Create your account'**
   String get communityFinalTitle;
 
   /// Community onboarding final screen subtitle
@@ -6523,7 +6661,7 @@ abstract class AppLocalizations {
   /// Community onboarding step 1 title
   ///
   /// In en, this message translates to:
-  /// **'TELL US ABOUT YOU'**
+  /// **'Tell us about you'**
   String get communityStep1Title;
 
   /// Community onboarding step 1 subtitle
@@ -6577,7 +6715,7 @@ abstract class AppLocalizations {
   /// Community onboarding step 3 title
   ///
   /// In en, this message translates to:
-  /// **'WHERE ARE YOU LOCATED?'**
+  /// **'Where are you located?'**
   String get communityStep3Title;
 
   /// Community onboarding step 3 subtitle
@@ -6619,7 +6757,7 @@ abstract class AppLocalizations {
   /// Community onboarding step 4 title
   ///
   /// In en, this message translates to:
-  /// **'COMPLETE YOUR PROFILE'**
+  /// **'Complete your profile'**
   String get communityStep4Title;
 
   /// Community onboarding step 4 subtitle
@@ -6879,6 +7017,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View more'**
   String get publicProfileViewMore;
+
+  /// Stat label for total points on a member (attendee) public profile
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get memberProfilePoints;
+
+  /// Stat label for the number of events a member has attended on their public profile
+  ///
+  /// In en, this message translates to:
+  /// **'Events attended'**
+  String get memberProfileEventsAttended;
+
+  /// Stat label and section title for a member's earned badges on their public profile
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get memberProfileBadges;
+
+  /// Empty state shown in the badges section of a member public profile when they have not earned any badges
+  ///
+  /// In en, this message translates to:
+  /// **'No badges yet'**
+  String get memberProfileNoBadges;
 
   /// Snackbar shown after the referral code is copied to the clipboard
   ///
@@ -8756,6 +8918,162 @@ abstract class AppLocalizations {
   /// **'No messages yet. Say hi 👋'**
   String get chatThreadEmptyMessage;
 
+  /// Title of the create-chat dialog in the Chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get chatManageNewChatTitle;
+
+  /// Title of the rename-chat dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename chat'**
+  String get chatManageRenameTitle;
+
+  /// Label for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat name'**
+  String get chatManageNameLabel;
+
+  /// Hint for the chat name field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Exec, Socials, Philanthropy'**
+  String get chatManageNameHint;
+
+  /// Create button in the new-chat dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get chatManageCreate;
+
+  /// Rename action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get chatManageRename;
+
+  /// Delete action label.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatManageDelete;
+
+  /// Label on the create-chat button in the Chats tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Create chat'**
+  String get chatManageCreateChat;
+
+  /// Snackbar after a chat is created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created \"{name}\"'**
+  String chatManageChatCreated(String name);
+
+  /// Snackbar after a chat is renamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat renamed'**
+  String get chatManageChatRenamed;
+
+  /// Snackbar after a chat is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat deleted'**
+  String get chatManageChatDeleted;
+
+  /// Snackbar when the custom chat cap is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the limit of {count} custom chats.'**
+  String chatManageChatLimit(int count);
+
+  /// Confirm dialog title for deleting a chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get chatManageDeleteTitle;
+
+  /// Confirm dialog body for deleting a chat (notes it is recoverable).
+  ///
+  /// In en, this message translates to:
+  /// **'Members will lose access to \"{name}\". You can recover it later if you change your mind.'**
+  String chatManageDeleteBody(String name);
+
+  /// Title of the community picker shown before creating a chat when the viewer manages more than one community.
+  ///
+  /// In en, this message translates to:
+  /// **'Which community?'**
+  String get chatManageWhichCommunity;
+
+  /// Section label for open chats the viewer can join.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats you can join'**
+  String get chatJoinSectionTitle;
+
+  /// Join button label for an open chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get chatJoinAction;
+
+  /// Snackbar after joining an open chat.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined \"{name}\"'**
+  String chatJoinedSnack(String name);
+
+  /// Tooltip on the info icon in an event chat header that opens the event detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Open event'**
+  String get chatThreadOpenEvent;
+
+  /// Title of the thread members / participants sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get chatMembersTitle;
+
+  /// Empty state in the members sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'No members to manage yet.'**
+  String get chatMembersEmpty;
+
+  /// Remove (ban) action label for a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get chatMemberRemove;
+
+  /// Confirm dialog title for banning a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String chatMemberRemoveTitle(String name);
+
+  /// Confirm dialog body for banning a member.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll lose access to this chat and won\'t be able to rejoin.'**
+  String get chatMemberRemoveBody;
+
+  /// Snackbar after a member is banned.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was removed'**
+  String chatMemberRemoved(String name);
+
+  /// Tooltip on the manage-members icon in the thread header.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage members'**
+  String get chatThreadManageMembers;
+
   /// Community detail tab: chats.
   ///
   /// In en, this message translates to:
@@ -8900,6 +9218,12 @@ abstract class AppLocalizations {
   /// **'Photos and past events will live here once the events lifecycle ships (Phase 3).'**
   String get communityDetailGalleryBody;
 
+  /// Empty state for the gallery and past events section when the community has no past events.
+  ///
+  /// In en, this message translates to:
+  /// **'No past events to show yet.'**
+  String get communityDetailGalleryEmpty;
+
   /// Shown on a membership card when the member has no tier.
   ///
   /// In en, this message translates to:
@@ -9026,18 +9350,6 @@ abstract class AppLocalizations {
   /// **'Access'**
   String get communityHubAccess;
 
-  /// No description provided for @chatManageRename.
-  ///
-  /// In en, this message translates to:
-  /// **'Rename chat'**
-  String get chatManageRename;
-
-  /// No description provided for @chatManageDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete chat'**
-  String get chatManageDelete;
-
   /// No description provided for @chatManageAccess.
   ///
   /// In en, this message translates to:
@@ -9067,12 +9379,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blocked'**
   String get chatBlockedTag;
-
-  /// No description provided for @chatMembersEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No members have access yet.'**
-  String get chatMembersEmpty;
 
   /// No description provided for @chatRenameHint.
   ///
@@ -9571,6 +9877,480 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SAVE'**
   String get rosterSave;
+
+  /// Title of the friends list screen / friends section.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendsTitle;
+
+  /// Title of the incoming friend requests section.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get friendRequestsTitle;
+
+  /// CTA to send a friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Add friend'**
+  String get friendAdd;
+
+  /// Label when an outgoing friend request is awaiting response (tap to cancel).
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get friendPending;
+
+  /// Accept an incoming friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get friendAccept;
+
+  /// Decline an incoming friend request.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get friendDecline;
+
+  /// Label when the viewer is already friends (tap to remove).
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendFriends;
+
+  /// Confirmation title before removing a friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this friend?'**
+  String get friendRemoveTitle;
+
+  /// Confirm button to remove a friend.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove friend'**
+  String get friendRemoveConfirm;
+
+  /// Generic error when a friend action fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get friendActionFailed;
+
+  /// Empty state for the friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet'**
+  String get friendsEmpty;
+
+  /// Error state for the friends list.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load friends'**
+  String get friendsLoadError;
+
+  /// Fallback name for a friend without a name.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get friendUnknownName;
+
+  /// Friends count label, singular.
+  ///
+  /// In en, this message translates to:
+  /// **'1 friend'**
+  String get friendCountOne;
+
+  /// Friends count label, plural.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} friends'**
+  String friendCountOther(int count);
+
+  /// App bar title for the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover communities'**
+  String get discoverCommunitiesTitle;
+
+  /// Call to action to open the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover communities'**
+  String get discoverCommunitiesCta;
+
+  /// Button to join a community from a discovery card.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get discoverCommunitiesJoin;
+
+  /// Label shown on a community card after the user has joined it.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get discoverCommunitiesJoined;
+
+  /// Snackbar confirming the user joined a community.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined {name}'**
+  String discoverCommunitiesJoinedToast(String name);
+
+  /// Badge/message shown when a community is invite-only and cannot be self-joined.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite only'**
+  String get discoverCommunitiesInviteOnly;
+
+  /// Snackbar shown when trying to join an invite-only community.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is invite only. Ask a member to add you.'**
+  String discoverCommunitiesInviteOnlyMessage(String name);
+
+  /// Snackbar shown when joining a community fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t join right now. Please try again.'**
+  String get discoverCommunitiesJoinError;
+
+  /// Member count label on a discovery card.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 member} other{{count} members}}'**
+  String discoverCommunitiesMembers(int count);
+
+  /// Empty/coming-soon title on the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to discover yet'**
+  String get discoverCommunitiesEmptyTitle;
+
+  /// Empty/coming-soon body on the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Community discovery is coming soon. Check back to find and join communities near you.'**
+  String get discoverCommunitiesEmptyBody;
+
+  /// Error state on the community discovery screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load communities. Please try again.'**
+  String get discoverCommunitiesError;
+
+  /// Generic Skip button label.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get commonSkip;
+
+  /// Placeholder text inside the @handle input.
+  ///
+  /// In en, this message translates to:
+  /// **'yourhandle'**
+  String get handleFieldPlaceholder;
+
+  /// Format hint shown under the handle field.
+  ///
+  /// In en, this message translates to:
+  /// **'3-20 characters: lowercase letters, numbers, underscores.'**
+  String get handleFieldHint;
+
+  /// Shown when the entered handle is malformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 3-20 lowercase letters, numbers or underscores.'**
+  String get handleFieldFormatError;
+
+  /// Shown while the handle availability check is running.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking availability…'**
+  String get handleFieldChecking;
+
+  /// Shown when the handle is available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get handleFieldAvailable;
+
+  /// Shown when the handle is already in use.
+  ///
+  /// In en, this message translates to:
+  /// **'That handle is taken.'**
+  String get handleFieldTaken;
+
+  /// Shown when the handle is taken, offering a suggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken. Try @{suggestion}'**
+  String handleFieldTakenWithSuggestion(String suggestion);
+
+  /// Shown when the handle equals the user's existing handle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your current handle.'**
+  String get handleFieldYours;
+
+  /// Step counter in the attendee onboarding header.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String attendeeOnboardingStepCounter(int step, int total);
+
+  /// Attendee onboarding step 1 title (You).
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s set you up'**
+  String get attendeeOnboardingStep1Title;
+
+  /// Attendee onboarding step 1 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your name, pick a handle, and a photo if you like.'**
+  String get attendeeOnboardingStep1Subtitle;
+
+  /// No description provided for @attendeeOnboardingAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get attendeeOnboardingAddPhoto;
+
+  /// Label for the attendee name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get attendeeOnboardingNameLabel;
+
+  /// Hint for the attendee name field.
+  ///
+  /// In en, this message translates to:
+  /// **'How should we call you?'**
+  String get attendeeOnboardingNameHint;
+
+  /// Label for the attendee @handle field.
+  ///
+  /// In en, this message translates to:
+  /// **'Your handle'**
+  String get attendeeOnboardingHandleLabel;
+
+  /// Attendee onboarding step 2 title (City).
+  ///
+  /// In en, this message translates to:
+  /// **'Where are you?'**
+  String get attendeeOnboardingStep2Title;
+
+  /// Attendee onboarding step 2 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your city to discover communities near you.'**
+  String get attendeeOnboardingStep2Subtitle;
+
+  /// Attendee onboarding step 3 title (Interests).
+  ///
+  /// In en, this message translates to:
+  /// **'What are you into?'**
+  String get attendeeOnboardingStep3Title;
+
+  /// Attendee onboarding step 3 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a few interests so we can suggest the right communities.'**
+  String get attendeeOnboardingStep3Subtitle;
+
+  /// Attendee onboarding step 4 title (Join).
+  ///
+  /// In en, this message translates to:
+  /// **'Join your first communities'**
+  String get attendeeOnboardingStep4Title;
+
+  /// Attendee onboarding step 4 subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to join the ones you like. You can always join more later.'**
+  String get attendeeOnboardingStep4Subtitle;
+
+  /// Finish button on the last attendee onboarding step.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get attendeeOnboardingFinish;
+
+  /// Badge marking a community that matches the attendee's interests.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get attendeeOnboardingForYou;
+
+  /// Label for the @handle field in Edit Profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Handle'**
+  String get editProfileHandleLabel;
+
+  /// Title of the add-friend-by-identifier screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a friend'**
+  String get addFriendTitle;
+
+  /// Subtitle on the add-friend screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Find someone by their email or @handle.'**
+  String get addFriendSubtitle;
+
+  /// Hint for the add-friend search input.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or @handle'**
+  String get addFriendInputHint;
+
+  /// Search button on the add-friend screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get addFriendSearch;
+
+  /// Shown when the lookup returns no match.
+  ///
+  /// In en, this message translates to:
+  /// **'No one matches that email or handle.'**
+  String get addFriendNoMatch;
+
+  /// Shown when the lookup endpoint is not deployed (self-gated).
+  ///
+  /// In en, this message translates to:
+  /// **'Adding friends isn\'t available right now.'**
+  String get addFriendUnavailable;
+
+  /// Generic error on the add-friend screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get addFriendError;
+
+  /// CTA state when the matched profile is the viewer.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s you'**
+  String get addFriendSelf;
+
+  /// Label for the roster invite identifier field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or @handle'**
+  String get rosterInviteIdentifierLabel;
+
+  /// Hint for the roster invite identifier field.
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com or @handle'**
+  String get rosterInviteIdentifierHint;
+
+  /// Validation error for the roster invite identifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email or @handle.'**
+  String get rosterInviteInvalidIdentifier;
+
+  /// Shown when the invited identifier matches no account.
+  ///
+  /// In en, this message translates to:
+  /// **'No Kolabing account matches that email or handle.'**
+  String get rosterNoAccountForIdentifier;
+
+  /// Attendee home events section header.
+  ///
+  /// In en, this message translates to:
+  /// **'EVENTS'**
+  String get attendeeHomeEventsTitle;
+
+  /// City picker button label when no city is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose city'**
+  String get attendeeHomeChooseCity;
+
+  /// Events filter chip: show only today's events.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get attendeeHomeFilterToday;
+
+  /// Events filter chip / sheet title: filter by community type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get attendeeHomeFilterType;
+
+  /// Type filter option that clears the community-type filter.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get attendeeHomeFilterTypeAll;
+
+  /// Persistent CTA on the attendee home that opens community discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore communities'**
+  String get attendeeHomeExploreCommunities;
+
+  /// Empty-state title when no city is selected for events.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a city'**
+  String get attendeeHomePickCityTitle;
+
+  /// Empty-state hint inviting the user to pick a city.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a city to discover events near you.'**
+  String get attendeeHomePickCityHint;
+
+  /// Empty-state title when a city has no events for the current filters.
+  ///
+  /// In en, this message translates to:
+  /// **'No events in this city'**
+  String get attendeeHomeNoEventsCity;
+
+  /// Empty-state hint when no events match in the selected city.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another city or clear your filters.'**
+  String get attendeeHomeNoEventsCityHint;
+
+  /// Event card badge for a business-hosted event.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get eventPartnerBusiness;
+
+  /// Event card badge for a community-hosted event.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get eventPartnerCommunity;
+
+  /// Event card relative date: today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get eventDateToday;
+
+  /// Event card relative date: tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get eventDateTomorrow;
+
+  /// Event card relative date: N days away.
+  ///
+  /// In en, this message translates to:
+  /// **'In {days} days'**
+  String eventDateInDays(int days);
 }
 
 class _AppLocalizationsDelegate

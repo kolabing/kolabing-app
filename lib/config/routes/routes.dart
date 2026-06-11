@@ -19,13 +19,20 @@ import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/collaboration/screens/collaboration_detail_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
+import '../../features/community/screens/discover_communities_screen.dart';
 import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/friends/screens/add_friend_screen.dart';
+import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
 import '../../features/notification/utils/notification_navigation.dart';
+import '../../features/onboarding/screens/attendee/attendee_step1_screen.dart';
+import '../../features/onboarding/screens/attendee/attendee_step2_screen.dart';
+import '../../features/onboarding/screens/attendee/attendee_step3_screen.dart';
+import '../../features/onboarding/screens/attendee/attendee_step4_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
@@ -88,6 +95,12 @@ abstract final class KolabingRoutes {
 
   /// Attendee registration (no onboarding)
   static const String attendeeRegister = '/auth/register/attendee';
+
+  /// Attendee onboarding routes (You · City · Interests · Join)
+  static const String attendeeOnboardingStep1 = '/onboarding/attendee/step1';
+  static const String attendeeOnboardingStep2 = '/onboarding/attendee/step2';
+  static const String attendeeOnboardingStep3 = '/onboarding/attendee/step3';
+  static const String attendeeOnboardingStep4 = '/onboarding/attendee/step4';
 
   /// Legacy sign in (redirect to login)
   static const String signIn = '/auth/sign-in';
@@ -192,6 +205,9 @@ abstract final class KolabingRoutes {
   /// Community withdrawal request
   static const String communityWalletWithdraw = '/community/wallet/withdraw';
 
+  /// Discover joinable communities (attendee discovery surface)
+  static const String discoverCommunities = '/communities/discover';
+
   /// Business referrals
   static const String businessReferrals = '/business/referrals';
 
@@ -219,6 +235,12 @@ abstract final class KolabingRoutes {
 
   /// Notification preferences (message/application/collaboration/marketing)
   static const String notificationSettings = '/settings/notifications';
+
+  /// Friends list (self) — NF-17 friend graph
+  static const String friends = '/me/friends';
+
+  /// Add a friend by email or @handle (identity contract §5)
+  static const String addFriend = '/me/friends/add';
 
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
@@ -451,6 +473,32 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'communityOnboardingFinal',
       builder: (BuildContext context, GoRouterState state) =>
           const CommunityFinalScreen(),
+    ),
+
+    // Attendee Onboarding (You · City · Interests · Join)
+    GoRoute(
+      path: KolabingRoutes.attendeeOnboardingStep1,
+      name: 'attendeeOnboardingStep1',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AttendeeStep1Screen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.attendeeOnboardingStep2,
+      name: 'attendeeOnboardingStep2',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AttendeeStep2Screen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.attendeeOnboardingStep3,
+      name: 'attendeeOnboardingStep3',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AttendeeStep3Screen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.attendeeOnboardingStep4,
+      name: 'attendeeOnboardingStep4',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AttendeeStep4Screen(),
     ),
 
     // Legacy routes - redirect to new routes
@@ -723,6 +771,24 @@ final GoRouter kolabingRouter = GoRouter(
         final profileName = state.extra as String?;
         return ProfileReviewsScreen(profileId: id, profileName: profileName);
       },
+    ),
+    GoRoute(
+      path: KolabingRoutes.friends,
+      name: 'friends',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FriendsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.addFriend,
+      name: 'addFriend',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AddFriendScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.discoverCommunities,
+      name: 'discoverCommunities',
+      builder: (BuildContext context, GoRouterState state) =>
+          const DiscoverCommunitiesScreen(),
     ),
     GoRoute(
       path: '/profile/:id',
