@@ -212,17 +212,19 @@ class AuthNotifier extends Notifier<AuthState> {
   /// Sign in with Google (existing users only)
   ///
   /// Returns AuthResult with success/failure information
-  Future<AuthResult> signInWithGoogle() async {
+  Future<AuthResult> signInWithGoogle({UserType? userTypeHint}) async {
     state = state.copyWith(status: AuthStatus.loading, error: null);
 
     try {
-      final response = await _authService.loginWithGoogle();
+      final response = await _authService.loginWithGoogle(
+        userType: userTypeHint?.toApiValue(),
+      );
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: response.user,
         token: response.token,
-        isNewUser: false,
+        isNewUser: response.isNewUser,
       );
       _invalidateAfterSignIn();
 
@@ -234,7 +236,11 @@ class AuthNotifier extends Notifier<AuthState> {
         ),
       );
 
-      return AuthResult(success: true, isNewUser: false, user: response.user);
+      return AuthResult(
+        success: true,
+        isNewUser: response.isNewUser,
+        user: response.user,
+      );
     } on AuthCancelledException {
       // User cancelled, return to previous state
       state = state.copyWith(status: AuthStatus.unauthenticated);
@@ -427,11 +433,13 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Sign in with Apple (existing users only)
-  Future<AuthResult> signInWithApple() async {
+  Future<AuthResult> signInWithApple({UserType? userTypeHint}) async {
     state = state.copyWith(status: AuthStatus.loading, error: null);
 
     try {
-      final response = await _authService.loginWithApple();
+      final response = await _authService.loginWithApple(
+        userType: userTypeHint?.toApiValue(),
+      );
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
