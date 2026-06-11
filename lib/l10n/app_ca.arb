@@ -164,6 +164,8 @@
   "signInTitle": "BENVINGUT DE NOU",
   "signInSubtitle": "Inicia la sessió per continuar",
   "signInWithGoogle": "Iniciar sessió amb Google",
+  "signInWithApple": "Iniciar sessió amb Apple",
+  "authOrContinueWith": "o continua amb",
   "signInNoAccount": "No tens un compte?",
   "signInSignUp": "Registrar-se",
   "signInTypeMismatchTitle": "Tipus de compte incorrecte",

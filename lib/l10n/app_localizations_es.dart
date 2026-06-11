@@ -538,6 +538,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get signInWithGoogle => 'Iniciar sesión con Google';
 
   @override
+  String get signInWithApple => 'Iniciar sesión con Apple';
+
+  @override
+  String get authOrContinueWith => 'o continúa con';
+
+  @override
   String get signInNoAccount => '¿No tienes una cuenta?';
 
   @override

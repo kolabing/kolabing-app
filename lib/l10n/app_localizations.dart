@@ -1084,6 +1084,18 @@ abstract class AppLocalizations {
   /// **'Sign in with Google'**
   String get signInWithGoogle;
 
+  /// Apple social sign-in button label on auth screens.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Apple'**
+  String get signInWithApple;
+
+  /// Divider label above the social sign-in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get authOrContinueWith;
+
   /// Leading text of the sign-up footer link on the sign-in screen.
   ///
   /// In en, this message translates to:
