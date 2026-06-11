@@ -17,6 +17,7 @@ import '../../features/auth/utils/auth_navigation.dart';
 import '../../features/business/screens/business_main_screen.dart';
 import '../../features/business/screens/community_offer_detail_screen.dart';
 import '../../features/collaboration/screens/collaboration_detail_screen.dart';
+import '../../features/community/screens/attendee_community_profile_screen.dart';
 import '../../features/community/screens/community_main_screen.dart';
 import '../../features/community/screens/create_opportunity_screen.dart';
 import '../../features/community/screens/discover_communities_screen.dart';
@@ -247,6 +248,14 @@ abstract final class KolabingRoutes {
 
   /// Public profile preview
   static const String publicProfile = '/profile/:id';
+
+  /// Attendee-facing community profile, keyed by COMMUNITY id (events + join).
+  /// Distinct from [publicProfile] which is profile-id-keyed (business view).
+  static const String communityProfileById = '/community/:id/profile';
+
+  /// Build the community-profile route for a given community id.
+  static String buildCommunityProfilePath(String communityId) =>
+      '/community/$communityId/profile';
 
   /// Public profile reviews list
   static const String publicProfileReviews = '/profile/:id/reviews';
@@ -808,6 +817,14 @@ final GoRouter kolabingRouter = GoRouter(
           profileId: id,
           creatorProfile: creatorProfile,
         );
+      },
+    ),
+    GoRoute(
+      path: KolabingRoutes.communityProfileById,
+      name: 'communityProfileById',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        return AttendeeCommunityProfileScreen(communityId: id);
       },
     ),
     GoRoute(

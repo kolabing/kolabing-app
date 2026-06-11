@@ -5772,4 +5772,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String eventDateInDays(int days) {
     return 'In $days days';
   }
+
+  @override
+  String get attendeeCommunityProfileErrorTitle => 'Couldn\'t load community';
+
+  @override
+  String get attendeeCommunityProfileTypeFallback => 'Community';
+
+  @override
+  String attendeeCommunityProfileMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+      zero: 'No members yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendeeCommunityProfileAboutTitle => 'About';
+
+  @override
+  String get attendeeCommunityProfileUpcomingEventsTitle => 'Upcoming events';
+
+  @override
+  String get attendeeCommunityProfileSeeAll => 'See all →';
+
+  @override
+  String get attendeeCommunityProfileNoUpcomingEvents =>
+      'No upcoming events yet.';
+
+  @override
+  String get attendeeCommunityProfileJoin => 'Join community';
+
+  @override
+  String get attendeeCommunityProfileJoinedSnack => 'Joined ✓';
+
+  @override
+  String get attendeeCommunityProfileRequestToJoin => 'Request to join';
+
+  @override
+  String get attendeeCommunityProfileRequested => 'Requested';
+
+  @override
+  String get attendeeCommunityProfileRequestedSnack => 'Request sent';
+
+  @override
+  String get attendeeCommunityProfileRequestUnavailable =>
+      'Requests aren\'t available yet. Try again later.';
+
+  @override
+  String get attendeeCommunityProfileOpenCommunity => 'Open community';
 }
