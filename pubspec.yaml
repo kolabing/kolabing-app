@@ -2,7 +2,7 @@ name: kolabing_app
 description: "Kolabing - Collaboration marketplace connecting businesses and communities"
 publish_to: 'none'
 
-version: 1.4.0+13
+version: 1.5.0+14
 
 environment:
   sdk: ^3.10.7
@@ -96,7 +96,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/app_icon.png"
+  image_path: "assets/brand/kolabing-wordmark-yellow-bg.png"
   min_sdk_android: 21
   remove_alpha_ios: true
   background_color_ios: "#FFD861"
@@ -109,6 +109,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/brand/
     - assets/icons/
     - assets/icons/categories/
     - assets/icons/ui/a/
