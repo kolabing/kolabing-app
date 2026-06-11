@@ -5,6 +5,7 @@ class BusinessType {
     required this.name,
     required this.slug,
     this.icon,
+    this.iconUrl,
   });
 
   factory BusinessType.fromJson(Map<String, dynamic> json) {
@@ -19,6 +20,7 @@ class BusinessType {
       name: name,
       slug: slug,
       icon: json['icon']?.toString(),
+      iconUrl: json['icon_url']?.toString(),
     );
   }
 
@@ -27,11 +29,15 @@ class BusinessType {
   final String slug;
   final String? icon;
 
+  /// Admin-uploaded SVG URL (for types with no bundled asset).
+  final String? iconUrl;
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'slug': slug,
         if (icon != null) 'icon': icon,
+        if (iconUrl != null) 'icon_url': iconUrl,
       };
 
   @override
