@@ -34,8 +34,14 @@ class DiscoveredEvent {
       locationLat: (json['location_lat'] as num?)?.toDouble() ?? 0,
       locationLng: (json['location_lng'] as num?)?.toDouble() ?? 0,
       address: json['address'] as String?,
+      // Photos may be plain URL strings or photo objects ({id, url}). Handle both.
       photos: (json['photos'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e is String
+                  ? e
+                  : (e is Map<String, dynamic>
+                      ? (e['url'] ?? e['photo_url'] ?? '').toString()
+                      : ''))
+              .where((u) => u.isNotEmpty)
               .toList() ??
           [],
       distanceKm: (json['distance_km'] as num?)?.toDouble() ?? 0,

@@ -839,20 +839,11 @@ class _HeroLogo extends StatelessWidget {
   final KolabingLogoVariant variant;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: width,
-    height: width * 0.34,
-    child: ClipRect(
-      child: OverflowBox(
-        maxWidth: width * 1.9,
-        maxHeight: width * 1.9,
-        alignment: Alignment.bottomLeft,
-        child: Transform.translate(
-          offset: Offset(-width * 0.05, 0),
-          child: KolabingLogo(width: width * 1.9, variant: variant),
-        ),
-      ),
-    ),
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    // Show the full cloud wordmark. (The previous ClipRect/OverflowBox crop was
+    // tuned to the old asset and chopped the top off the new full-cloud logo.)
+    child: KolabingLogo(width: width * 1.3, variant: variant),
   );
 }
 

@@ -24,9 +24,17 @@ import '../models/community_membership.dart';
 /// until the Phase-3 events lifecycle ships (NF-11, backend `events` filters +
 /// RSVP). See docs/tickets/2026-06-04-chat-phase3-events-rsvp-realtime-backend.md.
 class CommunityDetailScreen extends ConsumerStatefulWidget {
-  const CommunityDetailScreen({super.key, required this.membership});
+  const CommunityDetailScreen({
+    super.key,
+    required this.membership,
+    this.initialTabIndex = 0,
+  });
 
   final CommunityMembership membership;
+
+  /// Which sub-tab to open on (0 Chats · 1 Events · 2 Members · 3 Details).
+  /// The attendee community profile's "See all →" routes here with index 1.
+  final int initialTabIndex;
 
   @override
   ConsumerState<CommunityDetailScreen> createState() =>
@@ -42,7 +50,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 4, vsync: this);
+    _tabs = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: widget.initialTabIndex.clamp(0, 3),
+    );
     // Refresh chats/events on open so a newly-granted tier chat (or new event)
     // appears without a manual pull-to-refresh.
     WidgetsBinding.instance.addPostFrameCallback((_) {

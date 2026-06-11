@@ -218,6 +218,26 @@ class CommunityService {
         return member;
       }, 'joinCommunity');
 
+  /// `POST /communities/{id}/join-requests` — an attendee asks to join an
+  /// `invite_only` community (the leader approves later). Self-gated: this
+  /// endpoint is being built in parallel, so a 404/405 (route not deployed)
+  /// surfaces as a typed `request_unavailable` exception the caller can ignore
+  /// gracefully rather than crashing. A 409/422 `already_open` means the
+  /// community is open — the caller should fall back to [joinCommunity].
+  Future<void> requestToJoin(String communityId) => _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/communities/$communityId/join-requests'),
+          headers: await _headers(),
+        );
+        if (res.statusCode == 404 || res.statusCode == 405) {
+          throw const CommunityException(
+            'Join requests are not available yet',
+            code: 'request_unavailable',
+          );
+        }
+        _unwrap(res);
+      }, 'requestToJoin');
+
   // ---------------------------------------------------------------------------
   // Tiers
   // ---------------------------------------------------------------------------

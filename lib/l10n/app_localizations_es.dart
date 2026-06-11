@@ -4696,6 +4696,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'Ver comunidad';
+
+  @override
   String get eventHubEdit => 'Editar';
 
   @override
@@ -5842,4 +5845,58 @@ class AppLocalizationsEs extends AppLocalizations {
   String eventDateInDays(int days) {
     return 'En $days días';
   }
+
+  @override
+  String get attendeeCommunityProfileErrorTitle =>
+      'No se pudo cargar la comunidad';
+
+  @override
+  String get attendeeCommunityProfileTypeFallback => 'Comunidad';
+
+  @override
+  String attendeeCommunityProfileMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '$count miembro',
+      zero: 'Aún sin miembros',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendeeCommunityProfileAboutTitle => 'Acerca de';
+
+  @override
+  String get attendeeCommunityProfileUpcomingEventsTitle => 'Próximos eventos';
+
+  @override
+  String get attendeeCommunityProfileSeeAll => 'Ver todo →';
+
+  @override
+  String get attendeeCommunityProfileNoUpcomingEvents =>
+      'Aún no hay próximos eventos.';
+
+  @override
+  String get attendeeCommunityProfileJoin => 'Unirse a la comunidad';
+
+  @override
+  String get attendeeCommunityProfileJoinedSnack => 'Te has unido ✓';
+
+  @override
+  String get attendeeCommunityProfileRequestToJoin => 'Solicitar unirse';
+
+  @override
+  String get attendeeCommunityProfileRequested => 'Solicitado';
+
+  @override
+  String get attendeeCommunityProfileRequestedSnack => 'Solicitud enviada';
+
+  @override
+  String get attendeeCommunityProfileRequestUnavailable =>
+      'Las solicitudes aún no están disponibles. Inténtalo más tarde.';
+
+  @override
+  String get attendeeCommunityProfileOpenCommunity => 'Abrir comunidad';
 }

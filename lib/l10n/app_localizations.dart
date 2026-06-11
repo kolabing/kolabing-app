@@ -8336,6 +8336,12 @@ abstract class AppLocalizations {
   /// **'You\'re #{position} on the waitlist'**
   String eventHubWaitlistPosition(num position);
 
+  /// Event detail: tap the host community to open its public profile
+  ///
+  /// In en, this message translates to:
+  /// **'View community'**
+  String get eventDetailViewCommunity;
+
   /// Event hub: edit the event
   ///
   /// In en, this message translates to:
@@ -10381,6 +10387,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'In {days} days'**
   String eventDateInDays(int days);
+
+  /// Error title on the attendee community profile screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load community'**
+  String get attendeeCommunityProfileErrorTitle;
+
+  /// Fallback label when a community's type slug can't be resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get attendeeCommunityProfileTypeFallback;
+
+  /// Member count under the community header.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No members yet} one{{count} member} other{{count} members}}'**
+  String attendeeCommunityProfileMemberCount(int count);
+
+  /// About section title on the attendee community profile.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get attendeeCommunityProfileAboutTitle;
+
+  /// Upcoming events section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming events'**
+  String get attendeeCommunityProfileUpcomingEventsTitle;
+
+  /// Action that opens the community detail on its Events tab.
+  ///
+  /// In en, this message translates to:
+  /// **'See all →'**
+  String get attendeeCommunityProfileSeeAll;
+
+  /// Empty state for the upcoming events section.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events yet.'**
+  String get attendeeCommunityProfileNoUpcomingEvents;
+
+  /// CTA to join an open community.
+  ///
+  /// In en, this message translates to:
+  /// **'Join community'**
+  String get attendeeCommunityProfileJoin;
+
+  /// Snackbar after a successful join.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined ✓'**
+  String get attendeeCommunityProfileJoinedSnack;
+
+  /// CTA to request joining an invite-only community.
+  ///
+  /// In en, this message translates to:
+  /// **'Request to join'**
+  String get attendeeCommunityProfileRequestToJoin;
+
+  /// Disabled CTA label when a join request is pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get attendeeCommunityProfileRequested;
+
+  /// Snackbar after a join request is sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get attendeeCommunityProfileRequestedSnack;
+
+  /// Notice when the join-request endpoint isn't deployed yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests aren\'t available yet. Try again later.'**
+  String get attendeeCommunityProfileRequestUnavailable;
+
+  /// CTA for an existing member to open the community detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Open community'**
+  String get attendeeCommunityProfileOpenCommunity;
 }
 
 class _AppLocalizationsDelegate

@@ -1373,6 +1373,7 @@
   "eventHubJoinWaitlist": "Unir-se a la llista d'espera",
   "eventHubOnWaitlistTapToLeave": "A la llista d'espera  ·  toca per sortir",
   "eventHubWaitlistPosition": "Ets el número {position} a la llista d'espera",
+  "eventDetailViewCommunity": "Veure comunitat",
   "eventHubEdit": "Edita",
   "commonDelete": "Elimina",
   "eventHubDelete": "Elimina l'esdeveniment",
@@ -1731,5 +1732,20 @@
   "eventPartnerCommunity": "Comunitat",
   "eventDateToday": "Avui",
   "eventDateTomorrow": "Demà",
-  "eventDateInDays": "D'aquí a {days} dies"
+  "eventDateInDays": "D'aquí a {days} dies",
+
+  "attendeeCommunityProfileErrorTitle": "No s'ha pogut carregar la comunitat",
+  "attendeeCommunityProfileTypeFallback": "Comunitat",
+  "attendeeCommunityProfileMemberCount": "{count, plural, =0{Encara sense membres} one{{count} membre} other{{count} membres}}",
+  "attendeeCommunityProfileAboutTitle": "Quant a",
+  "attendeeCommunityProfileUpcomingEventsTitle": "Propers esdeveniments",
+  "attendeeCommunityProfileSeeAll": "Veure-ho tot →",
+  "attendeeCommunityProfileNoUpcomingEvents": "Encara no hi ha propers esdeveniments.",
+  "attendeeCommunityProfileJoin": "Uneix-te a la comunitat",
+  "attendeeCommunityProfileJoinedSnack": "T'has unit ✓",
+  "attendeeCommunityProfileRequestToJoin": "Sol·licitar unir-se",
+  "attendeeCommunityProfileRequested": "Sol·licitat",
+  "attendeeCommunityProfileRequestedSnack": "Sol·licitud enviada",
+  "attendeeCommunityProfileRequestUnavailable": "Les sol·licituds encara no estan disponibles. Torna-ho a provar més tard.",
+  "attendeeCommunityProfileOpenCommunity": "Obrir comunitat"
 }

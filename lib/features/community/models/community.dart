@@ -97,6 +97,8 @@ class Community {
     required this.updatedAt,
     this.typeSlug,
     this.matched = false,
+    this.isMember,
+    this.myJoinRequestStatus,
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
@@ -123,6 +125,11 @@ class Community {
       joinPolicy:
           CommunityJoinPolicy.fromString(json['join_policy'] as String? ?? 'open'),
       memberCount: json['member_count'] as int?,
+      // Viewer-scoped fields exposed by `GET /communities/{id}` (attendee
+      // community-profile contract). Self-gated: null when the backend hasn't
+      // deployed them yet, so the CTA degrades gracefully instead of crashing.
+      isMember: json['is_member'] as bool?,
+      myJoinRequestStatus: json['my_join_request_status'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -159,6 +166,17 @@ class Community {
   /// (contract §7). Drives the interest badge + the "For You" section.
   final bool matched;
 
+  /// Whether the viewer is already a member (`GET /communities/{id}`). Null when
+  /// the backend hasn't exposed it yet (self-gated; treat null as "unknown").
+  final bool? isMember;
+
+  /// The viewer's join-request state for an `invite_only` community: one of
+  /// `pending` | `approved` | `declined`, or null (no request / not deployed).
+  final String? myJoinRequestStatus;
+
+  /// Convenience: a pending join request is outstanding for the viewer.
+  bool get hasPendingJoinRequest => myJoinRequestStatus == 'pending';
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'owner_profile_id': ownerProfileId,
@@ -172,6 +190,9 @@ class Community {
         'is_primary': isPrimary,
         'join_policy': joinPolicy.toApiValue(),
         if (memberCount != null) 'member_count': memberCount,
+        if (isMember != null) 'is_member': isMember,
+        if (myJoinRequestStatus != null)
+          'my_join_request_status': myJoinRequestStatus,
         'created_at': createdAt.toIso8601String(),
         'updated_at': updatedAt.toIso8601String(),
       };
@@ -192,6 +213,8 @@ class Community {
     DateTime? updatedAt,
     String? typeSlug,
     bool? matched,
+    bool? isMember,
+    String? myJoinRequestStatus,
   }) =>
       Community(
         id: id ?? this.id,
@@ -209,5 +232,7 @@ class Community {
         updatedAt: updatedAt ?? this.updatedAt,
         typeSlug: typeSlug ?? this.typeSlug,
         matched: matched ?? this.matched,
+        isMember: isMember ?? this.isMember,
+        myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
       );
 }

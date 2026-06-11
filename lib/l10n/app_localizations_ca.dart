@@ -4718,6 +4718,9 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'Veure comunitat';
+
+  @override
   String get eventHubEdit => 'Edita';
 
   @override
@@ -5872,4 +5875,59 @@ class AppLocalizationsCa extends AppLocalizations {
   String eventDateInDays(int days) {
     return 'D\'aquí a $days dies';
   }
+
+  @override
+  String get attendeeCommunityProfileErrorTitle =>
+      'No s\'ha pogut carregar la comunitat';
+
+  @override
+  String get attendeeCommunityProfileTypeFallback => 'Comunitat';
+
+  @override
+  String attendeeCommunityProfileMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '$count membre',
+      zero: 'Encara sense membres',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendeeCommunityProfileAboutTitle => 'Quant a';
+
+  @override
+  String get attendeeCommunityProfileUpcomingEventsTitle =>
+      'Propers esdeveniments';
+
+  @override
+  String get attendeeCommunityProfileSeeAll => 'Veure-ho tot →';
+
+  @override
+  String get attendeeCommunityProfileNoUpcomingEvents =>
+      'Encara no hi ha propers esdeveniments.';
+
+  @override
+  String get attendeeCommunityProfileJoin => 'Uneix-te a la comunitat';
+
+  @override
+  String get attendeeCommunityProfileJoinedSnack => 'T\'has unit ✓';
+
+  @override
+  String get attendeeCommunityProfileRequestToJoin => 'Sol·licitar unir-se';
+
+  @override
+  String get attendeeCommunityProfileRequested => 'Sol·licitat';
+
+  @override
+  String get attendeeCommunityProfileRequestedSnack => 'Sol·licitud enviada';
+
+  @override
+  String get attendeeCommunityProfileRequestUnavailable =>
+      'Les sol·licituds encara no estan disponibles. Torna-ho a provar més tard.';
+
+  @override
+  String get attendeeCommunityProfileOpenCommunity => 'Obrir comunitat';
 }

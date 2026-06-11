@@ -1373,6 +1373,7 @@
   "eventHubJoinWaitlist": "Unirse a la lista de espera",
   "eventHubOnWaitlistTapToLeave": "En lista de espera  ·  toca para salir",
   "eventHubWaitlistPosition": "Eres el número {position} en la lista de espera",
+  "eventDetailViewCommunity": "Ver comunidad",
   "eventHubEdit": "Editar",
   "commonDelete": "Eliminar",
   "eventHubDelete": "Eliminar evento",
@@ -1731,5 +1732,20 @@
   "eventPartnerCommunity": "Comunidad",
   "eventDateToday": "Hoy",
   "eventDateTomorrow": "Mañana",
-  "eventDateInDays": "En {days} días"
+  "eventDateInDays": "En {days} días",
+
+  "attendeeCommunityProfileErrorTitle": "No se pudo cargar la comunidad",
+  "attendeeCommunityProfileTypeFallback": "Comunidad",
+  "attendeeCommunityProfileMemberCount": "{count, plural, =0{Aún sin miembros} one{{count} miembro} other{{count} miembros}}",
+  "attendeeCommunityProfileAboutTitle": "Acerca de",
+  "attendeeCommunityProfileUpcomingEventsTitle": "Próximos eventos",
+  "attendeeCommunityProfileSeeAll": "Ver todo →",
+  "attendeeCommunityProfileNoUpcomingEvents": "Aún no hay próximos eventos.",
+  "attendeeCommunityProfileJoin": "Unirse a la comunidad",
+  "attendeeCommunityProfileJoinedSnack": "Te has unido ✓",
+  "attendeeCommunityProfileRequestToJoin": "Solicitar unirse",
+  "attendeeCommunityProfileRequested": "Solicitado",
+  "attendeeCommunityProfileRequestedSnack": "Solicitud enviada",
+  "attendeeCommunityProfileRequestUnavailable": "Las solicitudes aún no están disponibles. Inténtalo más tarde.",
+  "attendeeCommunityProfileOpenCommunity": "Abrir comunidad"
 }
