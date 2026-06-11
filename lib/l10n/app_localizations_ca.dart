@@ -4712,6 +4712,9 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'Veure comunitat';
+
+  @override
   String get eventHubEdit => 'Edita';
 
   @override

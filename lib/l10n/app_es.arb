@@ -1371,6 +1371,7 @@
   "eventHubJoinWaitlist": "Unirse a la lista de espera",
   "eventHubOnWaitlistTapToLeave": "En lista de espera  ·  toca para salir",
   "eventHubWaitlistPosition": "Eres el número {position} en la lista de espera",
+  "eventDetailViewCommunity": "Ver comunidad",
   "eventHubEdit": "Editar",
   "commonDelete": "Eliminar",
   "eventHubDelete": "Eliminar evento",

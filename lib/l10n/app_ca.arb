@@ -1371,6 +1371,7 @@
   "eventHubJoinWaitlist": "Unir-se a la llista d'espera",
   "eventHubOnWaitlistTapToLeave": "A la llista d'espera  ·  toca per sortir",
   "eventHubWaitlistPosition": "Ets el número {position} a la llista d'espera",
+  "eventDetailViewCommunity": "Veure comunitat",
   "eventHubEdit": "Edita",
   "commonDelete": "Elimina",
   "eventHubDelete": "Elimina l'esdeveniment",

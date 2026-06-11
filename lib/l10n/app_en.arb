@@ -5809,6 +5809,8 @@
   "@eventHubOnWaitlistTapToLeave": { "description": "RSVP button: currently waitlisted, tap to leave" },
   "eventHubWaitlistPosition": "You're #{position} on the waitlist",
   "@eventHubWaitlistPosition": { "description": "Event hub: viewer waitlist position", "placeholders": { "position": { "type": "num" } } },
+  "eventDetailViewCommunity": "View community",
+  "@eventDetailViewCommunity": { "description": "Event detail: tap the host community to open its public profile" },
   "eventHubEdit": "Edit",
   "commonDelete": "Delete",
   "eventHubDelete": "Delete event",

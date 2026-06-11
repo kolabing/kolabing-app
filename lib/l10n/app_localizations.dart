@@ -8324,6 +8324,12 @@ abstract class AppLocalizations {
   /// **'You\'re #{position} on the waitlist'**
   String eventHubWaitlistPosition(num position);
 
+  /// Event detail: tap the host community to open its public profile
+  ///
+  /// In en, this message translates to:
+  /// **'View community'**
+  String get eventDetailViewCommunity;
+
   /// Event hub: edit the event
   ///
   /// In en, this message translates to:

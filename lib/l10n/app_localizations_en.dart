@@ -4631,6 +4631,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'View community';
+
+  @override
   String get eventHubEdit => 'Edit';
 
   @override
