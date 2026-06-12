@@ -20,6 +20,22 @@ Kolabing has three user types. Only two are in launch scope.
 | Community | Yes | No, free always | A real-life community (running club, yoga group, book club, and so on) that hosts events and needs venues or sponsors. |
 | Attendee | **[VERIFY]** code-live but spec-unconfirmed | Free for now | An individual who attends events. Gamification track (check-ins, challenges, badges, leaderboards, reward wallet) is **shipped in the backend**; see §7 and the backend map's §11. Whether attendees are formally part of launch and what the pricing/withdrawal model is needs to be confirmed with Daniel before any client-facing changes. |
 
+### 0.1 Admin (internal — Kolabing team)
+
+**The admin dashboard is a WEB surface in `kolabing-v2`, NOT in the mobile app.** When a
+task involves an admin/management view (gamification economy, per-community
+leaderboards, global XP leaderboard, partner-rewards CRUD, points/goals/challenges
+oversight, kolab lifecycle), it is built there:
+
+- Routes: `routes/web.php` → `Route::middleware(['auth:admin','maintainer'])->prefix('admin')` (admin login at `/admin/login`).
+- Controllers: `app/Http/Controllers/Admin/`. Views: `resources/views/admin/` (Blade).
+- Services: `app/Services/Admin/` (already includes `RewardEconomicsService`, `KolabLifecycleService`).
+- Auth guard: `admin` (separate from the API Sanctum users); permission: `maintainer`.
+
+**Rule:** never build admin/management dashboards in the Flutter app. Per-community
+gamification config is leader-facing (in-app, community Rewards tab); the cross-platform
+oversight (all communities, global XP, partner-reward catalog) is admin-web in `kolabing-v2`.
+
 ---
 
 ## 1. The golden rules (most violated, read twice)
