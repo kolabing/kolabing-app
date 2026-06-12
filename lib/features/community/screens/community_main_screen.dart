@@ -18,6 +18,9 @@ import '../../kolab/screens/my_kolabs_hub_screen.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
+import '../models/community_membership.dart';
+import '../providers/community_providers.dart';
+import 'community_detail_screen.dart';
 import 'community_hub_screen.dart';
 import 'my_opportunities_screen.dart';
 
@@ -155,7 +158,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           const _CommunityExploreTab(),
           _CommunityMyOppsTab(initialSubTab: widget.initialKolabsSubTab),
           const ChatsScreen(embedded: true),
-          const CommunityHubScreen(),
+          const _CommunityLeaderTab(),
         ],
       ),
       floatingActionButton:
@@ -214,6 +217,35 @@ class _CommunityMyOppsTab extends StatelessWidget {
     offersTab: const MyOpportunitiesScreen(embedded: true),
     initialSubTab: initialSubTab,
   );
+}
+
+// -----------------------------------------------------------------------------
+// Leader COMMUNITY tab — the restructured tabbed CommunityDetailScreen for the
+// leader's own community (Rewards/Members/Events, canManage). Falls back to the
+// CommunityHubScreen's empty/create + loading/error states when they have none.
+// -----------------------------------------------------------------------------
+
+class _CommunityLeaderTab extends ConsumerWidget {
+  const _CommunityLeaderTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final communities = ref.watch(communityManageProvider).communities;
+    return communities.maybeWhen(
+      data: (list) {
+        if (list.isEmpty) return const CommunityHubScreen();
+        // v1: a leader runs one community (the free cap). Show it tabbed.
+        return CommunityDetailScreen(
+          membership: CommunityMembership(
+            community: list.first,
+            canManage: true,
+          ),
+          embedded: true,
+        );
+      },
+      orElse: () => const CommunityHubScreen(),
+    );
+  }
 }
 
 // -----------------------------------------------------------------------------

@@ -38,6 +38,7 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
     super.key,
     required this.membership,
     this.initialTabIndex = 0,
+    this.embedded = false,
   });
 
   final CommunityMembership membership;
@@ -45,6 +46,10 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
   /// Which sub-tab to open on (0 Rewards · 1 Members · 2 Events). The attendee
   /// community profile's "See all →" routes here with index 2 (Events).
   final int initialTabIndex;
+
+  /// When rendered as a bottom-nav tab body (the leader's COMMUNITY tab) rather
+  /// than a pushed route — suppresses the app-bar back button.
+  final bool embedded;
 
   @override
   ConsumerState<CommunityDetailScreen> createState() =>
@@ -132,6 +137,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
+        automaticallyImplyLeading: !widget.embedded,
         title: Text(c.name),
         actions: [
           // Chats → opens the chat screen for this community.
