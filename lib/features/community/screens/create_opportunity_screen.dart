@@ -150,6 +150,8 @@ class _CreateOpportunityScreenState
         .read(opportunityFormProvider.notifier)
         .saveDraft();
     if (success && mounted) {
+      // Reload My Kolabs so the new opportunity appears without a manual refresh.
+      ref.read(myOpportunitiesProvider.notifier).refresh();
       _showSuccessDialog(isDraft: true);
     }
   }
@@ -159,6 +161,9 @@ class _CreateOpportunityScreenState
         .read(opportunityFormProvider.notifier)
         .saveAndPublish();
     if (success && mounted) {
+      // Reload My Kolabs so the newly PUBLISHED opportunity shows immediately in
+      // the Offers/Published tab (the list is a kept-alive Notifier).
+      ref.read(myOpportunitiesProvider.notifier).refresh();
       final opportunity = ref.read(opportunityFormProvider).opportunity;
       _showSuccessDialog(isDraft: false, opportunity: opportunity);
     }
