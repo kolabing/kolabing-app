@@ -241,6 +241,10 @@ abstract final class KolabingRoutes {
   /// Notification preferences (message/application/collaboration/marketing)
   static const String notificationSettings = '/settings/notifications';
 
+  /// Personal Rewards Screen (P3) — global XP "Redeem your XP" surface +
+  /// per-community points & redeemable rewards. Fed by /me/rewards-overview.
+  static const String rewards = '/rewards';
+
   /// Friends list (self) — NF-17 friend graph
   static const String friends = '/me/friends';
 
@@ -789,6 +793,12 @@ final GoRouter kolabingRouter = GoRouter(
         final profileName = state.extra as String?;
         return ProfileReviewsScreen(profileId: id, profileName: profileName);
       },
+    ),
+    GoRoute(
+      path: KolabingRoutes.rewards,
+      name: 'rewards',
+      builder: (BuildContext context, GoRouterState state) =>
+          const PersonalRewardsScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.friends,

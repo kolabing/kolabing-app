@@ -4,22 +4,32 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/leaderboard.dart';
 
-/// Tile displaying a leaderboard entry
+/// Tile displaying a leaderboard entry.
+///
+/// P3: renders the row's [LeaderboardEntry.tier] + badge count under the name,
+/// and per-community points. Tapping the current user's row opens the Personal
+/// Rewards Screen (wired via [onTap]).
 class LeaderboardEntryTile extends StatelessWidget {
   const LeaderboardEntryTile({
     super.key,
     required this.entry,
     this.isCurrentUser = false,
+    this.onTap,
   });
 
   final LeaderboardEntry entry;
   final bool isCurrentUser;
 
+  /// Tapped → open Personal Rewards (current user) or a light peek (others).
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final l10n = AppLocalizations.of(context);
+    final tile = Container(
       margin: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.md,
         vertical: KolabingSpacing.xs,
@@ -73,7 +83,7 @@ class LeaderboardEntryTile extends StatelessWidget {
           ),
           const SizedBox(width: KolabingSpacing.md),
 
-          // Name
+          // Name + tier/badge subtitle
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,18 +110,55 @@ class LeaderboardEntryTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'You',
+                          l10n.leaderboardEntryYou,
                           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: context.colors.onPrimary),
                         ),
                       ),
                     ],
                   ],
                 ),
+                if (entry.tier != null ||
+                    (entry.badgeCount != null && entry.badgeCount! > 0)) ...[
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      if (entry.tier != null) ...[
+                        Icon(LucideIcons.award,
+                            size: 12, color: context.colors.onSurfaceVariant),
+                        const SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            entry.tier!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 11,
+                                color: context.colors.onSurfaceVariant),
+                          ),
+                        ),
+                      ],
+                      if (entry.badgeCount != null &&
+                          entry.badgeCount! > 0) ...[
+                        if (entry.tier != null)
+                          const SizedBox(width: KolabingSpacing.sm),
+                        Icon(LucideIcons.medal,
+                            size: 12, color: context.colors.onSurfaceVariant),
+                        const SizedBox(width: 3),
+                        Text(
+                          l10n.leaderboardEntryBadgeCount(entry.badgeCount!),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 11,
+                              color: context.colors.onSurfaceVariant),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
 
-          // Points
+          // Points (per-community points when present, else total)
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -122,13 +169,25 @@ class LeaderboardEntryTile extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                '${entry.totalPoints}',
+                '${entry.displayPoints}',
                 style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
               ),
+              if (onTap != null && isCurrentUser) ...[
+                const SizedBox(width: 4),
+                Icon(LucideIcons.chevronRight,
+                    size: 16, color: context.colors.onSurfaceVariant),
+              ],
             ],
           ),
         ],
       ),
+    );
+
+    if (onTap == null) return tile;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: tile,
     );
   }
 }

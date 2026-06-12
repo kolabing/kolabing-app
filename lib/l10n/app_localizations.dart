@@ -10736,6 +10736,78 @@ abstract class AppLocalizations {
   /// **'Couldn\'t load members'**
   String get communityMembersLoadError;
 
+  /// App bar title of the Personal Rewards Screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get personalRewardsTitle;
+
+  /// Title of the global XP redemption card.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem your XP'**
+  String get personalRewardsRedeemXpTitle;
+
+  /// Unit label shown after the XP balance.
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get personalRewardsXpUnit;
+
+  /// Disabled CTA label on the Redeem your XP card (partner rewards not redeemable yet).
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get personalRewardsComingSoon;
+
+  /// XP cost of a partner reward.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} XP} other{{points} XP}}'**
+  String personalRewardsXpCost(int points);
+
+  /// The viewer's per-community points balance shown in a community section header.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} pt} other{{points} pts}}'**
+  String personalRewardsMyPoints(int points);
+
+  /// Empty state for a community with no rewards.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet.'**
+  String get personalRewardsNoRewards;
+
+  /// Title of the empty state when the viewer has no community reward sections.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet'**
+  String get personalRewardsEmptyTitle;
+
+  /// Body of the empty state on the Personal Rewards Screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Join communities and earn points to unlock rewards.'**
+  String get personalRewardsEmptyBody;
+
+  /// Error title on the Personal Rewards Screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load rewards'**
+  String get personalRewardsFailedToLoad;
+
+  /// Badge shown on the current user's leaderboard row.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get leaderboardEntryYou;
+
+  /// Number of badges shown on a leaderboard row.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} badge} other{{count} badges}}'**
+  String leaderboardEntryBadgeCount(int count);
+
   /// Title shown when the rewards-hub endpoint isn't available yet.
   ///
   /// In en, this message translates to:

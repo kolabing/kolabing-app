@@ -6096,6 +6096,68 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'han pogut carregar els membres';
 
   @override
+  String get personalRewardsTitle => 'Recompenses';
+
+  @override
+  String get personalRewardsRedeemXpTitle => 'Bescanvia el teu XP';
+
+  @override
+  String get personalRewardsXpUnit => 'XP';
+
+  @override
+  String get personalRewardsComingSoon => 'Ben aviat';
+
+  @override
+  String personalRewardsXpCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points XP',
+      one: '$points XP',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String personalRewardsMyPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get personalRewardsNoRewards => 'Encara no hi ha recompenses.';
+
+  @override
+  String get personalRewardsEmptyTitle => 'Encara no hi ha recompenses';
+
+  @override
+  String get personalRewardsEmptyBody =>
+      'Uneix-te a comunitats i guanya punts per desbloquejar recompenses.';
+
+  @override
+  String get personalRewardsFailedToLoad =>
+      'No s\'han pogut carregar les recompenses';
+
+  @override
+  String get leaderboardEntryYou => 'Tu';
+
+  @override
+  String leaderboardEntryBadgeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count insígnies',
+      one: '$count insígnia',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get communityRewardsComingSoonTitle => 'Recompenses ben aviat';
 
   @override

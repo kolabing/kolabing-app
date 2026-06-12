@@ -223,6 +223,9 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                               _FlankStat(
                                 value: pointsCount,
                                 label: l10n.attendeeProfileStatPoints,
+                                // Points/level → Personal Rewards Screen (P3).
+                                onTap: () =>
+                                    context.push(KolabingRoutes.rewards),
                               ),
                             ],
                           ),

@@ -6064,6 +6064,68 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityMembersLoadError => 'No se pudieron cargar los miembros';
 
   @override
+  String get personalRewardsTitle => 'Recompensas';
+
+  @override
+  String get personalRewardsRedeemXpTitle => 'Canjea tu XP';
+
+  @override
+  String get personalRewardsXpUnit => 'XP';
+
+  @override
+  String get personalRewardsComingSoon => 'Próximamente';
+
+  @override
+  String personalRewardsXpCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points XP',
+      one: '$points XP',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String personalRewardsMyPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get personalRewardsNoRewards => 'Aún no hay recompensas.';
+
+  @override
+  String get personalRewardsEmptyTitle => 'Aún no hay recompensas';
+
+  @override
+  String get personalRewardsEmptyBody =>
+      'Únete a comunidades y gana puntos para desbloquear recompensas.';
+
+  @override
+  String get personalRewardsFailedToLoad =>
+      'No se pudieron cargar las recompensas';
+
+  @override
+  String get leaderboardEntryYou => 'Tú';
+
+  @override
+  String leaderboardEntryBadgeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count insignias',
+      one: '$count insignia',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get communityRewardsComingSoonTitle => 'Recompensas próximamente';
 
   @override

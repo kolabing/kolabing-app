@@ -7,4 +7,5 @@ export 'event_checkin.dart';
 export 'event_reward.dart';
 export 'gamification_stats.dart';
 export 'leaderboard.dart';
+export 'me_rewards_overview.dart';
 export 'reward_claim.dart';
