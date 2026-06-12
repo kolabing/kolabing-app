@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
@@ -38,7 +37,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
 
   /// Individual element animations
   late final Animation<double> _logoAnimation;
-  late final Animation<double> _titleAnimation;
   late final Animation<double> _buttonAnimation;
   late final Animation<double> _linkAnimation;
   late final Animation<double> _exitAnimation;
@@ -87,7 +85,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
 
     // Staggered entry animations
     _logoAnimation = _createStaggeredAnimation(0.0, 0.5);
-    _titleAnimation = _createStaggeredAnimation(0.15, 0.65);
     _buttonAnimation = _createStaggeredAnimation(0.35, 0.85);
     _linkAnimation = _createStaggeredAnimation(0.5, 1.0);
 
@@ -329,15 +326,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                   ),
                 ),
 
-                const SizedBox(height: 40),
-
-                // Staggered brand hero text
-                _AnimatedElement(
-                  animation: _titleAnimation,
-                  slideUp: true,
-                  child: const _BrandHeroText(),
-                ),
-
                 const SizedBox(height: 48),
 
                 // Google Sign In Button
@@ -399,83 +387,6 @@ class _AnimatedElement extends StatelessWidget {
     ),
     child: child,
   );
-}
-
-/// Staggered typographic brand hero — replicates the editorial composition
-/// "where businesses & communities grow together" with offset sizing.
-class _BrandHeroText extends StatelessWidget {
-  const _BrandHeroText();
-
-  @override
-  Widget build(BuildContext context) {
-    final bigStyle = GoogleFonts.archivoBlack(
-      fontSize: 52,
-      fontWeight: FontWeight.w400,
-      color: Colors.white,
-      height: 0.95,
-      letterSpacing: -1.5,
-    );
-    const smallStyle = TextStyle(
-      fontFamily: 'OpenSans',
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      color: Colors.white,
-      height: 1.2,
-      letterSpacing: 0.2,
-    );
-    const ampStyle = TextStyle(
-      fontFamily: 'OpenSans',
-      fontSize: 30,
-      fontWeight: FontWeight.w700,
-      color: Colors.white,
-      height: 1,
-    );
-
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // "where" — indented right
-            Padding(
-              padding: const EdgeInsets.only(left: 68),
-              child: Text('where', style: smallStyle),
-            ),
-            // "businesses" — same indent, huge
-            Padding(
-              padding: const EdgeInsets.only(left: 68),
-              child: Text('businesses', style: bigStyle),
-            ),
-            // "& communities" — & left-edge, communities continues
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 6),
-                  child: Text('&', style: ampStyle),
-                ),
-                Text('communities', style: bigStyle),
-              ],
-            ),
-            // "grow together" — grow small + together big on same baseline
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 40, right: 8),
-                  child: Text('grow', style: smallStyle.copyWith(fontSize: 18)),
-                ),
-                Text('together', style: bigStyle),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 /// Dialog for user type mismatch error
