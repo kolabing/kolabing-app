@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
@@ -71,6 +73,39 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     super.dispose();
   }
 
+  /// Share a join-invite link for this community (#5). Uses the backend's
+  /// canonical link when present, else a slug fallback; degrades by copying the
+  /// link if the OS share sheet is unavailable.
+  Future<void> _shareInvite() async {
+    final l10n = AppLocalizations.of(context);
+    final c = _community;
+    final url = c.shareInviteUrl;
+    if (url == null) return;
+    final message = l10n.communityShareInviteMessage(c.name, url);
+    final box = context.findRenderObject() as RenderBox?;
+    final origin =
+        box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+    try {
+      final result = await Share.share(message, sharePositionOrigin: origin);
+      if (result.status == ShareResultStatus.unavailable && mounted) {
+        await Clipboard.setData(ClipboardData(text: url));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.communityShareInviteCopied)),
+          );
+        }
+      }
+    } on Exception {
+      if (!mounted) return;
+      await Clipboard.setData(ClipboardData(text: url));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.communityShareInviteCopied)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -79,6 +114,15 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
       backgroundColor: KolabingColors.background,
       appBar: AppBar(
         title: Text(c.name),
+        actions: [
+          // Self-gated: only show Share invite when we have a usable link.
+          if (c.shareInviteUrl != null)
+            IconButton(
+              icon: const Icon(LucideIcons.share2),
+              tooltip: l10n.communityShareInvite,
+              onPressed: _shareInvite,
+            ),
+        ],
         bottom: TabBar(
           controller: _tabs,
           isScrollable: true,

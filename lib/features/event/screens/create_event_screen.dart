@@ -76,6 +76,17 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   /// Newly picked photos (paths) to upload (edit mode uploads after save).
   final List<XFile> _pickedPhotos = [];
 
+  /// Existing community-gallery photos (id → url) the leader chose to reuse
+  /// (#3). Attached after save via `addEventPhotosFromGallery`.
+  final Map<String, String> _pickedGalleryPhotos = {};
+
+  /// Photos already on the event being edited (counts toward the total cap).
+  int get _existingPhotoCount => widget.existing?.photos.length ?? 0;
+
+  /// Total photos that would exist after this save (existing + device + gallery).
+  int get _totalPhotoCount =>
+      _existingPhotoCount + _pickedPhotos.length + _pickedGalleryPhotos.length;
+
   // Recurrence (create only). 'none' | 'weekly' | 'biweekly' | 'monthly'.
   String _repeat = 'none';
   final Set<int> _weekdays = {}; // 0=Sun .. 6=Sat (multi-day = 2x/week etc.)
@@ -206,9 +217,58 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   Future<void> _pickPhotos() async {
-    final picked = await ImagePicker().pickMultiImage();
+    // Gallery caps: up to [kEventGalleryMaxPerAdd] per add, [kEventGalleryMaxTotal]
+    // total across existing + device + community-gallery photos.
+    if (_totalPhotoCount >= kEventGalleryMaxTotal) {
+      _snack(_l10n.eventPhotosTotalCapReached(
+          _totalPhotoCount, kEventGalleryMaxTotal));
+      return;
+    }
+    final picked = await ImagePicker().pickMultiImage(
+      limit: kEventGalleryMaxPerAdd,
+    );
     if (picked.isEmpty || !mounted) return;
-    setState(() => _pickedPhotos.addAll(picked));
+
+    var toAdd = picked;
+    if (picked.length > kEventGalleryMaxPerAdd) {
+      _snack(_l10n.eventPhotosMaxPerAdd(kEventGalleryMaxPerAdd));
+      toAdd = picked.take(kEventGalleryMaxPerAdd).toList();
+    }
+    final remaining = kEventGalleryMaxTotal - _totalPhotoCount;
+    if (toAdd.length > remaining) {
+      _snack(_l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal));
+      toAdd = toAdd.take(remaining).toList();
+    }
+    if (toAdd.isEmpty) return;
+    setState(() => _pickedPhotos.addAll(toAdd));
+  }
+
+  /// Pick photos from the community's existing gallery (#3) — its past events'
+  /// `event_photos`. Self-gated: if the community has no gallery photos, the
+  /// option simply isn't shown (see [_photosPicker]).
+  Future<void> _pickFromCommunityGallery(List<EventPhoto> gallery) async {
+    final remaining = kEventGalleryMaxTotal - _totalPhotoCount;
+    if (remaining <= 0) {
+      _snack(_l10n.eventPhotosTotalCapReached(
+          _totalPhotoCount, kEventGalleryMaxTotal));
+      return;
+    }
+    final selected = await showModalBottomSheet<Map<String, String>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: KolabingColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _CommunityGalleryPicker(
+        gallery: gallery,
+        alreadyPickedIds: _pickedGalleryPhotos.keys.toSet(),
+        maxSelectable: remaining,
+      ),
+    );
+    if (selected != null && selected.isNotEmpty && mounted) {
+      setState(() => _pickedGalleryPhotos.addAll(selected));
+    }
   }
 
   List<String>? _tierGate() {
@@ -327,6 +387,19 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         } catch (_) {
           // Photo endpoint ships in parallel; don't fail the whole save if it
           // isn't deployed yet — the event itself was saved.
+        }
+      }
+
+      // Attach any photos reused from the community gallery (#3). Self-gated:
+      // the reuse-by-id contract ships in parallel, so never fail the save.
+      if (_pickedGalleryPhotos.isNotEmpty) {
+        try {
+          result = await svc.addEventPhotosFromGallery(
+            result.id,
+            _pickedGalleryPhotos.keys.toList(),
+          );
+        } catch (_) {
+          // Gallery-reuse endpoint not deployed yet — event itself was saved.
         }
       }
 
@@ -675,6 +748,23 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   Widget _photosPicker() {
+    // The community's existing gallery = the union of its past events' photos.
+    // Self-gated: only offer "Choose from community gallery" when some exist.
+    final pastEvents = ref.watch(communityPastEventsProvider(widget.communityId));
+    final galleryPhotos = pastEvents.maybeWhen(
+      data: (events) {
+        final seen = <String>{};
+        final out = <EventPhoto>[];
+        for (final ev in events) {
+          for (final p in ev.photos) {
+            if (p.id.isNotEmpty && seen.add(p.id)) out.add(p);
+          }
+        }
+        return out;
+      },
+      orElse: () => const <EventPhoto>[],
+    );
+
     return Column(
       // NOTE: the app's OutlinedButtonTheme sets minimumSize.width = infinity
       // (full-width buttons). Such a button MUST NOT sit in a Row (Rows measure
@@ -689,50 +779,81 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               ? _l10n.eventFormAddFromGallery
               : '${_l10n.eventFormAddFromGallery} (${_pickedPhotos.length})'),
         ),
-        if (_pickedPhotos.isNotEmpty) ...[
+        if (galleryPhotos.isNotEmpty) ...[
+          const SizedBox(height: KolabingSpacing.sm),
+          OutlinedButton.icon(
+            onPressed:
+                _busy ? null : () => _pickFromCommunityGallery(galleryPhotos),
+            icon: const Icon(LucideIcons.image, size: 18),
+            label: Text(_pickedGalleryPhotos.isEmpty
+                ? _l10n.eventFormAddFromCommunity
+                : '${_l10n.eventFormAddFromCommunity} (${_pickedGalleryPhotos.length})'),
+          ),
+        ],
+        if (_pickedPhotos.isNotEmpty || _pickedGalleryPhotos.isNotEmpty) ...[
           const SizedBox(height: KolabingSpacing.sm),
           SizedBox(
             height: 72,
-            child: ListView.separated(
+            child: ListView(
               scrollDirection: Axis.horizontal,
-              itemCount: _pickedPhotos.length,
-              separatorBuilder: (_, __) =>
-                  const SizedBox(width: KolabingSpacing.xs),
-              itemBuilder: (_, i) => Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      _pickedPhotos[i].path,
-                      width: 72,
-                      height: 72,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+              children: [
+                for (var i = 0; i < _pickedPhotos.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(right: KolabingSpacing.xs),
+                    child: _photoThumb(
+                      Image.network(
+                        _pickedPhotos[i].path,
                         width: 72,
                         height: 72,
-                        color: KolabingColors.surfaceVariant,
-                        child: const Icon(LucideIcons.image,
-                            color: KolabingColors.textTertiary),
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _thumbFallback(),
                       ),
+                      onRemove: () => setState(() => _pickedPhotos.removeAt(i)),
                     ),
                   ),
-                  Positioned(
-                    top: -8,
-                    right: -8,
-                    child: IconButton(
-                      icon: const Icon(LucideIcons.x, size: 16),
-                      onPressed: () =>
-                          setState(() => _pickedPhotos.removeAt(i)),
+                for (final entry in _pickedGalleryPhotos.entries)
+                  Padding(
+                    padding: const EdgeInsets.only(right: KolabingSpacing.xs),
+                    child: _photoThumb(
+                      Image.network(
+                        entry.value,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _thumbFallback(),
+                      ),
+                      onRemove: () =>
+                          setState(() => _pickedGalleryPhotos.remove(entry.key)),
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
           ),
         ],
       ],
     );
   }
+
+  Widget _photoThumb(Widget image, {required VoidCallback onRemove}) => Stack(
+        children: [
+          ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
+          Positioned(
+            top: -8,
+            right: -8,
+            child: IconButton(
+              icon: const Icon(LucideIcons.x, size: 16),
+              onPressed: onRemove,
+            ),
+          ),
+        ],
+      );
+
+  Widget _thumbFallback() => Container(
+        width: 72,
+        height: 72,
+        color: KolabingColors.surfaceVariant,
+        child: const Icon(LucideIcons.image, color: KolabingColors.textTertiary),
+      );
 
   /// Google Places autocomplete location field (NF-20). Mirrors the business
   /// onboarding step-5 UX: type → suggestions → tap. On select the city is
@@ -918,5 +1039,183 @@ class _DateField extends StatelessWidget {
     final h = d.hour.toString().padLeft(2, '0');
     final m = d.minute.toString().padLeft(2, '0');
     return '${months[d.month - 1]} ${d.day}, ${d.year} · $h:$m';
+  }
+}
+
+/// Grid sheet to pick photos from the community's existing gallery (#3).
+/// Returns the selected photos as an `{id: url}` map, capped at [maxSelectable].
+class _CommunityGalleryPicker extends StatefulWidget {
+  const _CommunityGalleryPicker({
+    required this.gallery,
+    required this.alreadyPickedIds,
+    required this.maxSelectable,
+  });
+
+  final List<EventPhoto> gallery;
+  final Set<String> alreadyPickedIds;
+  final int maxSelectable;
+
+  @override
+  State<_CommunityGalleryPicker> createState() =>
+      _CommunityGalleryPickerState();
+}
+
+class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
+  final Set<String> _selected = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    // Only photos not already attached/picked are selectable here.
+    final available = widget.gallery
+        .where((p) => !widget.alreadyPickedIds.contains(p.id))
+        .toList();
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Column(
+          children: [
+            const SizedBox(height: KolabingSpacing.sm),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: KolabingColors.outlineVariant,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(KolabingSpacing.md),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  l10n.eventFormCommunityGalleryTitle,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: KolabingColors.onSurface,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: available.isEmpty
+                  ? Center(
+                      child: Text(
+                        l10n.eventFormCommunityGalleryEmpty,
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
+                      ),
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: KolabingSpacing.md,
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: KolabingSpacing.xs,
+                        mainAxisSpacing: KolabingSpacing.xs,
+                      ),
+                      itemCount: available.length,
+                      itemBuilder: (_, i) {
+                        final photo = available[i];
+                        final isSel = _selected.contains(photo.id);
+                        return GestureDetector(
+                          onTap: () => _toggle(photo.id, l10n),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  photo.thumbnailUrl ?? photo.url,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    color: KolabingColors.surfaceVariant,
+                                    child: const Icon(LucideIcons.image,
+                                        color: KolabingColors.textTertiary),
+                                  ),
+                                ),
+                              ),
+                              if (isSel)
+                                DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: KolabingColors.primary
+                                        .withValues(alpha: 0.35),
+                                    border: Border.all(
+                                      color: KolabingColors.primary,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: const Align(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(4),
+                                      child: Icon(LucideIcons.checkCircle2,
+                                          size: 20,
+                                          color: KolabingColors.primaryDark),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(KolabingSpacing.md),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton(
+                  onPressed: _selected.isEmpty
+                      ? null
+                      : () {
+                          final result = <String, String>{};
+                          for (final p in available) {
+                            if (_selected.contains(p.id)) result[p.id] = p.url;
+                          }
+                          Navigator.of(context).pop(result);
+                        },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: KolabingColors.primary,
+                    foregroundColor: KolabingColors.onPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.eventFormCommunityGalleryAdd(_selected.length),
+                    style: KolabingTextStyles.bodyMedium
+                        .copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _toggle(String id, AppLocalizations l10n) {
+    setState(() {
+      if (_selected.contains(id)) {
+        _selected.remove(id);
+      } else if (_selected.length < widget.maxSelectable) {
+        _selected.add(id);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.eventPhotosTotalCapPartial(
+                widget.maxSelectable, kEventGalleryMaxTotal)),
+          ),
+        );
+      }
+    });
   }
 }

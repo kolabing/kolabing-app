@@ -3640,6 +3640,30 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get attendeeNavProfile;
 
+  /// Attendee: title of the sheet showing the user's own profile QR code
+  ///
+  /// In en, this message translates to:
+  /// **'My profile QR'**
+  String get attendeeMyQrTitle;
+
+  /// Attendee: helper text under the user's own profile QR code
+  ///
+  /// In en, this message translates to:
+  /// **'Show this to a host to check in or connect.'**
+  String get attendeeMyQrSubtitle;
+
+  /// Attendee app bar: tooltip for the my-profile-QR action
+  ///
+  /// In en, this message translates to:
+  /// **'My QR code'**
+  String get attendeeMyQrTooltip;
+
+  /// Attendee: shown when the user's profile id/handle is missing so no QR can be rendered
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile QR isn\'t ready yet.'**
+  String get attendeeMyQrUnavailable;
+
   /// Attendee home greeting above the user name
   ///
   /// In en, this message translates to:
@@ -8360,6 +8384,12 @@ abstract class AppLocalizations {
   /// **'Delete event'**
   String get eventHubDelete;
 
+  /// Event hub leader menu: open the QR scanner to check attendees in
+  ///
+  /// In en, this message translates to:
+  /// **'Scan check-ins'**
+  String get eventHubScanCheckIns;
+
   /// No description provided for @eventHubDeleteConfirmTitle.
   ///
   /// In en, this message translates to:
@@ -8779,6 +8809,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photos uploaded.'**
   String get eventFormPhotosUploaded;
+
+  /// Gallery: too many photos selected in one batch
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to {max} photos at a time.'**
+  String eventPhotosMaxPerAdd(int max);
+
+  /// Gallery: total photo cap already reached
+  ///
+  /// In en, this message translates to:
+  /// **'This gallery already has {count} of {max} photos.'**
+  String eventPhotosTotalCapReached(int count, int max);
+
+  /// Gallery: only some of the picked photos fit under the total cap
+  ///
+  /// In en, this message translates to:
+  /// **'Only {allowed} more photos can be added (max {max} total).'**
+  String eventPhotosTotalCapPartial(int allowed, int max);
+
+  /// Event form: pick photos from the community's past-event gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from community gallery'**
+  String get eventFormAddFromCommunity;
+
+  /// Event form: title of the community gallery picker sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Community gallery'**
+  String get eventFormCommunityGalleryTitle;
+
+  /// Event form: empty state for the community gallery picker
+  ///
+  /// In en, this message translates to:
+  /// **'No photos in the community gallery yet.'**
+  String get eventFormCommunityGalleryEmpty;
+
+  /// Event form: confirm button for adding selected community-gallery photos
+  ///
+  /// In en, this message translates to:
+  /// **'Add {count} photos'**
+  String eventFormCommunityGalleryAdd(int count);
+
+  /// Community: action to share a join-invite link
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite'**
+  String get communityShareInvite;
+
+  /// Community: invite share message body
+  ///
+  /// In en, this message translates to:
+  /// **'Join {name} on Kolabing: {url}'**
+  String communityShareInviteMessage(String name, String url);
+
+  /// Community: invite link copied to clipboard fallback
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link copied.'**
+  String get communityShareInviteCopied;
 
   /// Notification settings screen title
   ///

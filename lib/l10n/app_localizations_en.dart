@@ -1986,6 +1986,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendeeNavProfile => 'Profile';
 
   @override
+  String get attendeeMyQrTitle => 'My profile QR';
+
+  @override
+  String get attendeeMyQrSubtitle =>
+      'Show this to a host to check in or connect.';
+
+  @override
+  String get attendeeMyQrTooltip => 'My QR code';
+
+  @override
+  String get attendeeMyQrUnavailable => 'Your profile QR isn\'t ready yet.';
+
+  @override
   String get attendeeHomeWelcomeBack => 'Welcome back';
 
   @override
@@ -4649,6 +4662,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventHubDelete => 'Delete event';
 
   @override
+  String get eventHubScanCheckIns => 'Scan check-ins';
+
+  @override
   String get eventHubDeleteConfirmTitle => 'Delete this event?';
 
   @override
@@ -4872,6 +4888,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventFormPhotosUploaded => 'Photos uploaded.';
+
+  @override
+  String eventPhotosMaxPerAdd(int max) {
+    return 'You can add up to $max photos at a time.';
+  }
+
+  @override
+  String eventPhotosTotalCapReached(int count, int max) {
+    return 'This gallery already has $count of $max photos.';
+  }
+
+  @override
+  String eventPhotosTotalCapPartial(int allowed, int max) {
+    return 'Only $allowed more photos can be added (max $max total).';
+  }
+
+  @override
+  String get eventFormAddFromCommunity => 'Choose from community gallery';
+
+  @override
+  String get eventFormCommunityGalleryTitle => 'Community gallery';
+
+  @override
+  String get eventFormCommunityGalleryEmpty =>
+      'No photos in the community gallery yet.';
+
+  @override
+  String eventFormCommunityGalleryAdd(int count) {
+    return 'Add $count photos';
+  }
+
+  @override
+  String get communityShareInvite => 'Share invite';
+
+  @override
+  String communityShareInviteMessage(String name, String url) {
+    return 'Join $name on Kolabing: $url';
+  }
+
+  @override
+  String get communityShareInviteCopied => 'Invite link copied.';
 
   @override
   String get notifSettingsTitle => 'Notifications';

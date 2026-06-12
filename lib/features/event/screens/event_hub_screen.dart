@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
+import '../../gamification/screens/qr_scanner_screen.dart';
 import '../models/event.dart';
 import '../models/event_signup.dart';
 import '../providers/event_provider.dart';
@@ -111,6 +112,20 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     }
   }
 
+  // Leader: scan attendee check-in QR codes ---------------------------------
+
+  /// Open the QR scanner so the leader can scan attendee check-in codes.
+  /// (The scanner left the attendee bottom nav; it stays reachable here.)
+  Future<void> _scanCheckIns() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const QRScannerScreen(),
+    );
+  }
+
   // Leader: edit + add photos ------------------------------------------------
 
   Future<void> _edit() async {
@@ -134,14 +149,37 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
 
   Future<void> _addPhotos() async {
     if (_uploadingPhotos) return;
+
+    // Gallery caps: up to [kEventGalleryMaxPerAdd] picked per add, and never
+    // more than [kEventGalleryMaxTotal] photos on the event in total.
+    final existing = _event.photos.length;
+    if (existing >= kEventGalleryMaxTotal) {
+      _snack(_l10n.eventPhotosTotalCapReached(existing, kEventGalleryMaxTotal));
+      return;
+    }
+
     final picker = ImagePicker();
-    final picked = await picker.pickMultiImage();
+    final picked = await picker.pickMultiImage(limit: kEventGalleryMaxPerAdd);
     if (picked.isEmpty || !mounted) return;
+
+    var toUpload = picked;
+    if (picked.length > kEventGalleryMaxPerAdd) {
+      _snack(_l10n.eventPhotosMaxPerAdd(kEventGalleryMaxPerAdd));
+      toUpload = picked.take(kEventGalleryMaxPerAdd).toList();
+    }
+
+    final remaining = kEventGalleryMaxTotal - existing;
+    if (toUpload.length > remaining) {
+      _snack(_l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal));
+      toUpload = toUpload.take(remaining).toList();
+    }
+    if (toUpload.isEmpty) return;
+
     setState(() => _uploadingPhotos = true);
     try {
       final updated = await ref
           .read(eventServiceProvider)
-          .addEventPhotos(_event.id, picked.map((x) => x.path).toList());
+          .addEventPhotos(_event.id, toUpload.map((x) => x.path).toList());
       if (!mounted) return;
       setState(() {
         _event = updated;
@@ -257,8 +295,20 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
               onSelected: (v) {
                 if (v == 'delete') _delete();
                 if (v == 'extend') _extend();
+                if (v == 'scan') _scanCheckIns();
               },
               itemBuilder: (context) => [
+                PopupMenuItem<String>(
+                  value: 'scan',
+                  child: Row(
+                    children: [
+                      const Icon(LucideIcons.qrCode,
+                          size: 18, color: KolabingColors.onSurface),
+                      const SizedBox(width: KolabingSpacing.sm),
+                      Text(_l10n.eventHubScanCheckIns),
+                    ],
+                  ),
+                ),
                 if (_event.isRecurring)
                   PopupMenuItem<String>(
                     value: 'extend',

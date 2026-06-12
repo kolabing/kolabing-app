@@ -2561,6 +2561,22 @@
   "@attendeeNavProfile": {
     "description": "Attendee bottom nav: Profile tab"
   },
+  "attendeeMyQrTitle": "My profile QR",
+  "@attendeeMyQrTitle": {
+    "description": "Attendee: title of the sheet showing the user's own profile QR code"
+  },
+  "attendeeMyQrSubtitle": "Show this to a host to check in or connect.",
+  "@attendeeMyQrSubtitle": {
+    "description": "Attendee: helper text under the user's own profile QR code"
+  },
+  "attendeeMyQrTooltip": "My QR code",
+  "@attendeeMyQrTooltip": {
+    "description": "Attendee app bar: tooltip for the my-profile-QR action"
+  },
+  "attendeeMyQrUnavailable": "Your profile QR isn't ready yet.",
+  "@attendeeMyQrUnavailable": {
+    "description": "Attendee: shown when the user's profile id/handle is missing so no QR can be rendered"
+  },
   "attendeeHomeWelcomeBack": "Welcome back",
   "@attendeeHomeWelcomeBack": {
     "description": "Attendee home greeting above the user name"
@@ -5822,6 +5838,8 @@
   "eventHubEdit": "Edit",
   "commonDelete": "Delete",
   "eventHubDelete": "Delete event",
+  "eventHubScanCheckIns": "Scan check-ins",
+  "@eventHubScanCheckIns": { "description": "Event hub leader menu: open the QR scanner to check attendees in" },
   "eventHubDeleteConfirmTitle": "Delete this event?",
   "eventHubDeleteConfirmBody": "\"{name}\" — anyone going or waitlisted will be notified it's cancelled.",
   "@eventHubDeleteConfirmBody": {
@@ -5946,6 +5964,41 @@
   "@eventFormErrTier": { "description": "Event form: error when 'Specific tier' visibility is chosen but no tier is selected." },
   "eventFormPhotosUploaded": "Photos uploaded.",
   "@eventFormPhotosUploaded": { "description": "Event form: photos uploaded confirmation" },
+  "eventPhotosMaxPerAdd": "You can add up to {max} photos at a time.",
+  "@eventPhotosMaxPerAdd": {
+    "description": "Gallery: too many photos selected in one batch",
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "eventPhotosTotalCapReached": "This gallery already has {count} of {max} photos.",
+  "@eventPhotosTotalCapReached": {
+    "description": "Gallery: total photo cap already reached",
+    "placeholders": { "count": { "type": "int" }, "max": { "type": "int" } }
+  },
+  "eventPhotosTotalCapPartial": "Only {allowed} more photos can be added (max {max} total).",
+  "@eventPhotosTotalCapPartial": {
+    "description": "Gallery: only some of the picked photos fit under the total cap",
+    "placeholders": { "allowed": { "type": "int" }, "max": { "type": "int" } }
+  },
+  "eventFormAddFromCommunity": "Choose from community gallery",
+  "@eventFormAddFromCommunity": { "description": "Event form: pick photos from the community's past-event gallery" },
+  "eventFormCommunityGalleryTitle": "Community gallery",
+  "@eventFormCommunityGalleryTitle": { "description": "Event form: title of the community gallery picker sheet" },
+  "eventFormCommunityGalleryEmpty": "No photos in the community gallery yet.",
+  "@eventFormCommunityGalleryEmpty": { "description": "Event form: empty state for the community gallery picker" },
+  "eventFormCommunityGalleryAdd": "Add {count} photos",
+  "@eventFormCommunityGalleryAdd": {
+    "description": "Event form: confirm button for adding selected community-gallery photos",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "communityShareInvite": "Share invite",
+  "@communityShareInvite": { "description": "Community: action to share a join-invite link" },
+  "communityShareInviteMessage": "Join {name} on Kolabing: {url}",
+  "@communityShareInviteMessage": {
+    "description": "Community: invite share message body",
+    "placeholders": { "name": { "type": "String" }, "url": { "type": "String" } }
+  },
+  "communityShareInviteCopied": "Invite link copied.",
+  "@communityShareInviteCopied": { "description": "Community: invite link copied to clipboard fallback" },
 
   "notifSettingsTitle": "Notifications",
   "@notifSettingsTitle": { "description": "Notification settings screen title" },

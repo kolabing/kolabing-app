@@ -2013,6 +2013,20 @@ class AppLocalizationsCa extends AppLocalizations {
   String get attendeeNavProfile => 'Perfil';
 
   @override
+  String get attendeeMyQrTitle => 'El meu QR de perfil';
+
+  @override
+  String get attendeeMyQrSubtitle =>
+      'Mostra\'l a un amfitrió per registrar-te o connectar.';
+
+  @override
+  String get attendeeMyQrTooltip => 'El meu codi QR';
+
+  @override
+  String get attendeeMyQrUnavailable =>
+      'El teu QR de perfil encara no està a punt.';
+
+  @override
   String get attendeeHomeWelcomeBack => 'Benvingut de nou';
 
   @override
@@ -4730,6 +4744,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventHubDelete => 'Elimina l\'esdeveniment';
 
   @override
+  String get eventHubScanCheckIns => 'Escaneja registres';
+
+  @override
   String get eventHubDeleteConfirmTitle => 'Vols eliminar aquest esdeveniment?';
 
   @override
@@ -4957,6 +4974,47 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventFormPhotosUploaded => 'Fotos pujades.';
+
+  @override
+  String eventPhotosMaxPerAdd(int max) {
+    return 'Pots afegir fins a $max fotos alhora.';
+  }
+
+  @override
+  String eventPhotosTotalCapReached(int count, int max) {
+    return 'Aquesta galeria ja té $count de $max fotos.';
+  }
+
+  @override
+  String eventPhotosTotalCapPartial(int allowed, int max) {
+    return 'Només es poden afegir $allowed fotos més (màxim $max en total).';
+  }
+
+  @override
+  String get eventFormAddFromCommunity => 'Tria de la galeria de la comunitat';
+
+  @override
+  String get eventFormCommunityGalleryTitle => 'Galeria de la comunitat';
+
+  @override
+  String get eventFormCommunityGalleryEmpty =>
+      'Encara no hi ha fotos a la galeria de la comunitat.';
+
+  @override
+  String eventFormCommunityGalleryAdd(int count) {
+    return 'Afegeix $count fotos';
+  }
+
+  @override
+  String get communityShareInvite => 'Comparteix invitació';
+
+  @override
+  String communityShareInviteMessage(String name, String url) {
+    return 'Uneix-te a $name a Kolabing: $url';
+  }
+
+  @override
+  String get communityShareInviteCopied => 'Enllaç d\'invitació copiat.';
 
   @override
   String get notifSettingsTitle => 'Notificacions';

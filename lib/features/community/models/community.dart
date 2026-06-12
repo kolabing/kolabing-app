@@ -99,6 +99,7 @@ class Community {
     this.matched = false,
     this.isMember,
     this.myJoinRequestStatus,
+    this.inviteUrl,
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
@@ -130,6 +131,10 @@ class Community {
       // deployed them yet, so the CTA degrades gracefully instead of crashing.
       isMember: json['is_member'] as bool?,
       myJoinRequestStatus: json['my_join_request_status'] as String?,
+      // Canonical join/invite link (`GET /communities/{id}`). Self-gated: ships
+      // in parallel, so null on older payloads — callers fall back to a
+      // slug-based link.
+      inviteUrl: (json['invite_url'] ?? json['join_url']) as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -174,8 +179,21 @@ class Community {
   /// `pending` | `approved` | `declined`, or null (no request / not deployed).
   final String? myJoinRequestStatus;
 
+  /// Canonical join/invite link from the backend (`GET /communities/{id}`).
+  /// Null until the backend exposes it; use [shareInviteUrl] which falls back
+  /// to a slug-based link.
+  final String? inviteUrl;
+
   /// Convenience: a pending join request is outstanding for the viewer.
   bool get hasPendingJoinRequest => myJoinRequestStatus == 'pending';
+
+  /// Best-available invite link to share (#5): the backend's [inviteUrl] when
+  /// present, else a slug-based fallback. Returns null if neither is usable.
+  String? get shareInviteUrl {
+    if (inviteUrl != null && inviteUrl!.isNotEmpty) return inviteUrl;
+    if (slug.isNotEmpty) return 'https://kolabing.com/c/$slug';
+    return null;
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -193,6 +211,7 @@ class Community {
         if (isMember != null) 'is_member': isMember,
         if (myJoinRequestStatus != null)
           'my_join_request_status': myJoinRequestStatus,
+        if (inviteUrl != null) 'invite_url': inviteUrl,
         'created_at': createdAt.toIso8601String(),
         'updated_at': updatedAt.toIso8601String(),
       };
@@ -215,6 +234,7 @@ class Community {
     bool? matched,
     bool? isMember,
     String? myJoinRequestStatus,
+    String? inviteUrl,
   }) =>
       Community(
         id: id ?? this.id,
@@ -234,5 +254,6 @@ class Community {
         matched: matched ?? this.matched,
         isMember: isMember ?? this.isMember,
         myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
+        inviteUrl: inviteUrl ?? this.inviteUrl,
       );
 }
