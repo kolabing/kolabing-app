@@ -5945,4 +5945,270 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeCommunityProfileOpenCommunity => 'Open community';
+
+  @override
+  String get communityDetailTabRewards => 'Rewards';
+
+  @override
+  String get communityDetailChatsAction => 'Chats →';
+
+  @override
+  String get communityDetailTiersAction => 'Tiers';
+
+  @override
+  String get communityMembersGroupNoTier => 'No tier';
+
+  @override
+  String communityMembersTierCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+      zero: 'No members',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersYou => '★ You';
+
+  @override
+  String communityMembersPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersEmptyTitle => 'No members yet';
+
+  @override
+  String get communityMembersEmptyBody =>
+      'Members appear here once people join this community.';
+
+  @override
+  String get communityMembersLoadError => 'Couldn\'t load members';
+
+  @override
+  String get communityRewardsComingSoonTitle => 'Rewards coming soon';
+
+  @override
+  String get communityRewardsComingSoonBody =>
+      'Goals, badges and rewards for this community will appear here.';
+
+  @override
+  String get communityRewardsPointsLabel => 'Your points';
+
+  @override
+  String get communityRewardsTierLabel => 'Tier';
+
+  @override
+  String get communityRewardsNoTier => 'No tier yet';
+
+  @override
+  String get communityRewardsGoalsTitle => 'Goals';
+
+  @override
+  String get communityRewardsBadgesTitle => 'Badges';
+
+  @override
+  String get communityRewardsRewardsTitle => 'Rewards';
+
+  @override
+  String communityRewardsGoalReward(int points) {
+    return '+$points pts';
+  }
+
+  @override
+  String communityRewardsGoalProgress(int progress, int target) {
+    return '$progress / $target';
+  }
+
+  @override
+  String get communityRewardsBadgeEarned => 'Earned';
+
+  @override
+  String get communityRewardsBadgeLocked => 'Locked';
+
+  @override
+  String get communityRewardsRedeem => 'Redeem';
+
+  @override
+  String communityRewardsRewardCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityRewardsRewardStock(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count left',
+      zero: 'Out of stock',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsRedeemConfirmTitle => 'Redeem reward?';
+
+  @override
+  String communityRewardsRedeemConfirmBody(int points, String title) {
+    return 'This will spend $points points on \"$title\".';
+  }
+
+  @override
+  String get communityRewardsRedeemedSnack => 'Redeemed ✓';
+
+  @override
+  String get communityRewardsGoalsEmpty => 'No goals yet.';
+
+  @override
+  String get communityRewardsBadgesEmpty => 'No badges yet.';
+
+  @override
+  String get communityRewardsRewardsEmpty => 'No rewards yet.';
+
+  @override
+  String get communityRewardsAddGoal => 'Goal';
+
+  @override
+  String get communityRewardsAddReward => 'Reward';
+
+  @override
+  String get communityRewardsAddBadge => 'Badge';
+
+  @override
+  String get communityGoalEditorNewTitle => 'New goal';
+
+  @override
+  String get communityGoalEditorEditTitle => 'Edit goal';
+
+  @override
+  String get communityGoalTitleLabel => 'Title';
+
+  @override
+  String get communityGoalTitleRequired => 'Enter a title';
+
+  @override
+  String get communityGoalEarnTypeLabel => 'Earn by';
+
+  @override
+  String get communityGoalEarnTypeEventCheckIns => 'Event check-ins';
+
+  @override
+  String get communityGoalEarnTypeChallenge => 'Challenge';
+
+  @override
+  String get communityGoalEarnTypeDaysInCommunity => 'Days in community';
+
+  @override
+  String get communityGoalTargetLabel => 'Target';
+
+  @override
+  String get communityGoalTargetRequired => 'Enter a target greater than 0';
+
+  @override
+  String get communityGoalRewardPointsLabel => 'Reward points';
+
+  @override
+  String get communityGoalRewardPointsRequired => 'Enter reward points';
+
+  @override
+  String get communityRewardEditorNewTitle => 'New reward';
+
+  @override
+  String get communityRewardEditorEditTitle => 'Edit reward';
+
+  @override
+  String get communityRewardTitleLabel => 'Title';
+
+  @override
+  String get communityRewardTitleRequired => 'Enter a title';
+
+  @override
+  String get communityRewardDescriptionLabel => 'Description';
+
+  @override
+  String get communityRewardCostLabel => 'Cost (points)';
+
+  @override
+  String get communityRewardCostRequired => 'Enter a cost';
+
+  @override
+  String get communityRewardStockLabel => 'Stock (leave empty for unlimited)';
+
+  @override
+  String get communityBadgeEditorNewTitle => 'New badge';
+
+  @override
+  String get communityBadgeEditorEditTitle => 'Edit badge';
+
+  @override
+  String get communityBadgeTitleLabel => 'Title';
+
+  @override
+  String get communityBadgeTitleRequired => 'Enter a title';
+
+  @override
+  String get communityBadgeCriteriaLabel => 'Criteria';
+
+  @override
+  String get communityBadgeCriteriaPointsThreshold => 'Points threshold';
+
+  @override
+  String get communityBadgeCriteriaEventCheckIns => 'Event check-ins';
+
+  @override
+  String get communityBadgeCriteriaDaysInCommunity => 'Days in community';
+
+  @override
+  String get communityBadgeCriteriaChallengesCompleted =>
+      'Challenges completed';
+
+  @override
+  String get communityBadgeValueLabel => 'Value';
+
+  @override
+  String get communityBadgeValueRequired => 'Enter a value';
+
+  @override
+  String get communityBadgeChallengesLabel => 'Challenges';
+
+  @override
+  String get communityBadgeChallengesEmpty => 'No challenges available yet.';
+
+  @override
+  String get communityRewardsDeleteTitle => 'Delete?';
+
+  @override
+  String communityRewardsDeleteBody(String title) {
+    return 'Delete \"$title\"? This can\'t be undone.';
+  }
+
+  @override
+  String get communityEventsMyView => 'My view';
+
+  @override
+  String get communityEventsAttendeeView => 'Attendee view';
+
+  @override
+  String get communityEventVisibilityPublic => 'Public';
+
+  @override
+  String get communityEventVisibilityMembers => 'Members';
+
+  @override
+  String get communityEventVisibilityTier => 'Tier';
 }

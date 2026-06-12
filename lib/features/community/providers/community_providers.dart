@@ -208,3 +208,31 @@ final communityTiersProvider =
   final tiers = await ref.read(communityServiceProvider).getTiers(communityId);
   return [...tiers]..sort((a, b) => b.rank.compareTo(a.rank));
 });
+
+/// A specific community's roster (`GET /communities/{id}/members`), keyed by id.
+/// Used by the community detail Members tab for ANY community the viewer is in
+/// (not just the leader's primary — that's [communityManageProvider]). A
+/// Notifier so `reload()` sets state directly (kept-alive recompute caveat).
+class CommunityMembersByIdNotifier
+    extends Notifier<AsyncValue<List<CommunityMember>>> {
+  CommunityMembersByIdNotifier(this.communityId);
+
+  final String communityId;
+
+  @override
+  AsyncValue<List<CommunityMember>> build() {
+    Future.microtask(reload);
+    return const AsyncLoading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+        () => ref.read(communityServiceProvider).getMembers(communityId));
+  }
+}
+
+final communityMembersByIdProvider = NotifierProvider.family<
+    CommunityMembersByIdNotifier, AsyncValue<List<CommunityMember>>, String>(
+  CommunityMembersByIdNotifier.new,
+);

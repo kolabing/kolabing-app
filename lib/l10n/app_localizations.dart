@@ -10675,6 +10675,450 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open community'**
   String get attendeeCommunityProfileOpenCommunity;
+
+  /// Community detail tab: Rewards (goals, rewards, badges).
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get communityDetailTabRewards;
+
+  /// Header action that opens the chat screen for this community.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats →'**
+  String get communityDetailChatsAction;
+
+  /// Action that opens the tier editor from the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers'**
+  String get communityDetailTiersAction;
+
+  /// Section header for members without an assigned tier.
+  ///
+  /// In en, this message translates to:
+  /// **'No tier'**
+  String get communityMembersGroupNoTier;
+
+  /// Member count next to a tier section header.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No members} one{{count} member} other{{count} members}}'**
+  String communityMembersTierCount(int count);
+
+  /// Marker on the viewer's own roster row in member view.
+  ///
+  /// In en, this message translates to:
+  /// **'★ You'**
+  String get communityMembersYou;
+
+  /// Points shown on a member row.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} pt} other{{points} pts}}'**
+  String communityMembersPoints(int points);
+
+  /// Empty state title for the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'No members yet'**
+  String get communityMembersEmptyTitle;
+
+  /// Empty state body for the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Members appear here once people join this community.'**
+  String get communityMembersEmptyBody;
+
+  /// Error title for the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load members'**
+  String get communityMembersLoadError;
+
+  /// Title shown when the rewards-hub endpoint isn't available yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards coming soon'**
+  String get communityRewardsComingSoonTitle;
+
+  /// Body shown when the rewards-hub endpoint isn't available yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals, badges and rewards for this community will appear here.'**
+  String get communityRewardsComingSoonBody;
+
+  /// Label on the member points card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your points'**
+  String get communityRewardsPointsLabel;
+
+  /// Tier label on the member points card.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier'**
+  String get communityRewardsTierLabel;
+
+  /// Shown when the member has no tier yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No tier yet'**
+  String get communityRewardsNoTier;
+
+  /// Goals section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get communityRewardsGoalsTitle;
+
+  /// Badges section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get communityRewardsBadgesTitle;
+
+  /// Rewards section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get communityRewardsRewardsTitle;
+
+  /// Reward points a goal grants.
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} pts'**
+  String communityRewardsGoalReward(int points);
+
+  /// Goal progress text.
+  ///
+  /// In en, this message translates to:
+  /// **'{progress} / {target}'**
+  String communityRewardsGoalProgress(int progress, int target);
+
+  /// Label on an earned badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned'**
+  String get communityRewardsBadgeEarned;
+
+  /// Label on a locked badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get communityRewardsBadgeLocked;
+
+  /// Button to redeem a reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get communityRewardsRedeem;
+
+  /// Cost of a reward in points.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} pt} other{{points} pts}}'**
+  String communityRewardsRewardCost(int points);
+
+  /// Remaining stock of a reward.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Out of stock} other{{count} left}}'**
+  String communityRewardsRewardStock(int count);
+
+  /// Confirm dialog title before redeeming.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem reward?'**
+  String get communityRewardsRedeemConfirmTitle;
+
+  /// Confirm dialog body before redeeming.
+  ///
+  /// In en, this message translates to:
+  /// **'This will spend {points} points on \"{title}\".'**
+  String communityRewardsRedeemConfirmBody(int points, String title);
+
+  /// Snackbar after a successful redemption.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeemed ✓'**
+  String get communityRewardsRedeemedSnack;
+
+  /// Empty state for the goals section.
+  ///
+  /// In en, this message translates to:
+  /// **'No goals yet.'**
+  String get communityRewardsGoalsEmpty;
+
+  /// Empty state for the badges section.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges yet.'**
+  String get communityRewardsBadgesEmpty;
+
+  /// Empty state for the rewards section.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet.'**
+  String get communityRewardsRewardsEmpty;
+
+  /// Leader action to add a goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get communityRewardsAddGoal;
+
+  /// Leader action to add a reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward'**
+  String get communityRewardsAddReward;
+
+  /// Leader action to add a badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge'**
+  String get communityRewardsAddBadge;
+
+  /// Title of the goal editor when creating.
+  ///
+  /// In en, this message translates to:
+  /// **'New goal'**
+  String get communityGoalEditorNewTitle;
+
+  /// Title of the goal editor when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal'**
+  String get communityGoalEditorEditTitle;
+
+  /// Goal title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get communityGoalTitleLabel;
+
+  /// Validation when the goal title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get communityGoalTitleRequired;
+
+  /// Goal earn-type field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn by'**
+  String get communityGoalEarnTypeLabel;
+
+  /// Goal earn type: event check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Event check-ins'**
+  String get communityGoalEarnTypeEventCheckIns;
+
+  /// Goal earn type: challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get communityGoalEarnTypeChallenge;
+
+  /// Goal earn type: days in community.
+  ///
+  /// In en, this message translates to:
+  /// **'Days in community'**
+  String get communityGoalEarnTypeDaysInCommunity;
+
+  /// Goal target field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get communityGoalTargetLabel;
+
+  /// Validation for the goal target.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a target greater than 0'**
+  String get communityGoalTargetRequired;
+
+  /// Goal reward-points field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward points'**
+  String get communityGoalRewardPointsLabel;
+
+  /// Validation for the goal reward points.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reward points'**
+  String get communityGoalRewardPointsRequired;
+
+  /// Title of the reward editor when creating.
+  ///
+  /// In en, this message translates to:
+  /// **'New reward'**
+  String get communityRewardEditorNewTitle;
+
+  /// Title of the reward editor when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit reward'**
+  String get communityRewardEditorEditTitle;
+
+  /// Reward title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get communityRewardTitleLabel;
+
+  /// Validation when the reward title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get communityRewardTitleRequired;
+
+  /// Reward description field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get communityRewardDescriptionLabel;
+
+  /// Reward cost field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost (points)'**
+  String get communityRewardCostLabel;
+
+  /// Validation for the reward cost.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a cost'**
+  String get communityRewardCostRequired;
+
+  /// Reward stock field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock (leave empty for unlimited)'**
+  String get communityRewardStockLabel;
+
+  /// Title of the badge editor when creating.
+  ///
+  /// In en, this message translates to:
+  /// **'New badge'**
+  String get communityBadgeEditorNewTitle;
+
+  /// Title of the badge editor when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit badge'**
+  String get communityBadgeEditorEditTitle;
+
+  /// Badge title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get communityBadgeTitleLabel;
+
+  /// Validation when the badge title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get communityBadgeTitleRequired;
+
+  /// Badge criteria-type field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Criteria'**
+  String get communityBadgeCriteriaLabel;
+
+  /// Badge criteria: points threshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Points threshold'**
+  String get communityBadgeCriteriaPointsThreshold;
+
+  /// Badge criteria: event check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Event check-ins'**
+  String get communityBadgeCriteriaEventCheckIns;
+
+  /// Badge criteria: days in community.
+  ///
+  /// In en, this message translates to:
+  /// **'Days in community'**
+  String get communityBadgeCriteriaDaysInCommunity;
+
+  /// Badge criteria: challenges completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges completed'**
+  String get communityBadgeCriteriaChallengesCompleted;
+
+  /// Badge criteria-value field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get communityBadgeValueLabel;
+
+  /// Validation for the badge value.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a value'**
+  String get communityBadgeValueRequired;
+
+  /// Label for the challenge picker on a badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get communityBadgeChallengesLabel;
+
+  /// Shown when no challenges can be picked.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges available yet.'**
+  String get communityBadgeChallengesEmpty;
+
+  /// Generic delete confirm title for goals/rewards/badges.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete?'**
+  String get communityRewardsDeleteTitle;
+
+  /// Generic delete confirm body.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{title}\"? This can\'t be undone.'**
+  String communityRewardsDeleteBody(String title);
+
+  /// Toggle option: the leader's own view of events.
+  ///
+  /// In en, this message translates to:
+  /// **'My view'**
+  String get communityEventsMyView;
+
+  /// Toggle option: preview events as an attendee sees them.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendee view'**
+  String get communityEventsAttendeeView;
+
+  /// Event visibility badge: public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get communityEventVisibilityPublic;
+
+  /// Event visibility badge: members only.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get communityEventVisibilityMembers;
+
+  /// Event visibility badge: tier-gated.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier'**
+  String get communityEventVisibilityTier;
 }
 
 class _AppLocalizationsDelegate

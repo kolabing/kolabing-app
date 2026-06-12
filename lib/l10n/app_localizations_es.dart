@@ -6014,4 +6014,270 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attendeeCommunityProfileOpenCommunity => 'Abrir comunidad';
+
+  @override
+  String get communityDetailTabRewards => 'Recompensas';
+
+  @override
+  String get communityDetailChatsAction => 'Chats →';
+
+  @override
+  String get communityDetailTiersAction => 'Niveles';
+
+  @override
+  String get communityMembersGroupNoTier => 'Sin nivel';
+
+  @override
+  String communityMembersTierCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '$count miembro',
+      zero: 'Sin miembros',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersYou => '★ Tú';
+
+  @override
+  String communityMembersPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersEmptyTitle => 'Aún no hay miembros';
+
+  @override
+  String get communityMembersEmptyBody =>
+      'Los miembros aparecerán aquí cuando se unan a esta comunidad.';
+
+  @override
+  String get communityMembersLoadError => 'No se pudieron cargar los miembros';
+
+  @override
+  String get communityRewardsComingSoonTitle => 'Recompensas próximamente';
+
+  @override
+  String get communityRewardsComingSoonBody =>
+      'Aquí aparecerán los objetivos, las insignias y las recompensas de esta comunidad.';
+
+  @override
+  String get communityRewardsPointsLabel => 'Tus puntos';
+
+  @override
+  String get communityRewardsTierLabel => 'Nivel';
+
+  @override
+  String get communityRewardsNoTier => 'Aún sin nivel';
+
+  @override
+  String get communityRewardsGoalsTitle => 'Objetivos';
+
+  @override
+  String get communityRewardsBadgesTitle => 'Insignias';
+
+  @override
+  String get communityRewardsRewardsTitle => 'Recompensas';
+
+  @override
+  String communityRewardsGoalReward(int points) {
+    return '+$points pts';
+  }
+
+  @override
+  String communityRewardsGoalProgress(int progress, int target) {
+    return '$progress / $target';
+  }
+
+  @override
+  String get communityRewardsBadgeEarned => 'Conseguida';
+
+  @override
+  String get communityRewardsBadgeLocked => 'Bloqueada';
+
+  @override
+  String get communityRewardsRedeem => 'Canjear';
+
+  @override
+  String communityRewardsRewardCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityRewardsRewardStock(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Quedan $count',
+      zero: 'Agotado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsRedeemConfirmTitle => '¿Canjear recompensa?';
+
+  @override
+  String communityRewardsRedeemConfirmBody(int points, String title) {
+    return 'Se gastarán $points puntos en «$title».';
+  }
+
+  @override
+  String get communityRewardsRedeemedSnack => 'Canjeada ✓';
+
+  @override
+  String get communityRewardsGoalsEmpty => 'Aún no hay objetivos.';
+
+  @override
+  String get communityRewardsBadgesEmpty => 'Aún no hay insignias.';
+
+  @override
+  String get communityRewardsRewardsEmpty => 'Aún no hay recompensas.';
+
+  @override
+  String get communityRewardsAddGoal => 'Objetivo';
+
+  @override
+  String get communityRewardsAddReward => 'Recompensa';
+
+  @override
+  String get communityRewardsAddBadge => 'Insignia';
+
+  @override
+  String get communityGoalEditorNewTitle => 'Nuevo objetivo';
+
+  @override
+  String get communityGoalEditorEditTitle => 'Editar objetivo';
+
+  @override
+  String get communityGoalTitleLabel => 'Título';
+
+  @override
+  String get communityGoalTitleRequired => 'Introduce un título';
+
+  @override
+  String get communityGoalEarnTypeLabel => 'Se consigue por';
+
+  @override
+  String get communityGoalEarnTypeEventCheckIns => 'Registros en eventos';
+
+  @override
+  String get communityGoalEarnTypeChallenge => 'Reto';
+
+  @override
+  String get communityGoalEarnTypeDaysInCommunity => 'Días en la comunidad';
+
+  @override
+  String get communityGoalTargetLabel => 'Objetivo';
+
+  @override
+  String get communityGoalTargetRequired => 'Introduce un objetivo mayor que 0';
+
+  @override
+  String get communityGoalRewardPointsLabel => 'Puntos de recompensa';
+
+  @override
+  String get communityGoalRewardPointsRequired =>
+      'Introduce los puntos de recompensa';
+
+  @override
+  String get communityRewardEditorNewTitle => 'Nueva recompensa';
+
+  @override
+  String get communityRewardEditorEditTitle => 'Editar recompensa';
+
+  @override
+  String get communityRewardTitleLabel => 'Título';
+
+  @override
+  String get communityRewardTitleRequired => 'Introduce un título';
+
+  @override
+  String get communityRewardDescriptionLabel => 'Descripción';
+
+  @override
+  String get communityRewardCostLabel => 'Coste (puntos)';
+
+  @override
+  String get communityRewardCostRequired => 'Introduce un coste';
+
+  @override
+  String get communityRewardStockLabel => 'Existencias (vacío = ilimitadas)';
+
+  @override
+  String get communityBadgeEditorNewTitle => 'Nueva insignia';
+
+  @override
+  String get communityBadgeEditorEditTitle => 'Editar insignia';
+
+  @override
+  String get communityBadgeTitleLabel => 'Título';
+
+  @override
+  String get communityBadgeTitleRequired => 'Introduce un título';
+
+  @override
+  String get communityBadgeCriteriaLabel => 'Criterio';
+
+  @override
+  String get communityBadgeCriteriaPointsThreshold => 'Umbral de puntos';
+
+  @override
+  String get communityBadgeCriteriaEventCheckIns => 'Registros en eventos';
+
+  @override
+  String get communityBadgeCriteriaDaysInCommunity => 'Días en la comunidad';
+
+  @override
+  String get communityBadgeCriteriaChallengesCompleted => 'Retos completados';
+
+  @override
+  String get communityBadgeValueLabel => 'Valor';
+
+  @override
+  String get communityBadgeValueRequired => 'Introduce un valor';
+
+  @override
+  String get communityBadgeChallengesLabel => 'Retos';
+
+  @override
+  String get communityBadgeChallengesEmpty => 'Aún no hay retos disponibles.';
+
+  @override
+  String get communityRewardsDeleteTitle => '¿Eliminar?';
+
+  @override
+  String communityRewardsDeleteBody(String title) {
+    return '¿Eliminar «$title»? No se puede deshacer.';
+  }
+
+  @override
+  String get communityEventsMyView => 'Mi vista';
+
+  @override
+  String get communityEventsAttendeeView => 'Vista de asistente';
+
+  @override
+  String get communityEventVisibilityPublic => 'Público';
+
+  @override
+  String get communityEventVisibilityMembers => 'Miembros';
+
+  @override
+  String get communityEventVisibilityTier => 'Nivel';
 }

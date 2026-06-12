@@ -6045,4 +6045,274 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeCommunityProfileOpenCommunity => 'Obrir comunitat';
+
+  @override
+  String get communityDetailTabRewards => 'Recompenses';
+
+  @override
+  String get communityDetailChatsAction => 'Xats →';
+
+  @override
+  String get communityDetailTiersAction => 'Nivells';
+
+  @override
+  String get communityMembersGroupNoTier => 'Sense nivell';
+
+  @override
+  String communityMembersTierCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '$count membre',
+      zero: 'Sense membres',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersYou => '★ Tu';
+
+  @override
+  String communityMembersPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersEmptyTitle => 'Encara no hi ha membres';
+
+  @override
+  String get communityMembersEmptyBody =>
+      'Els membres apareixeran aquí quan s\'uneixin a aquesta comunitat.';
+
+  @override
+  String get communityMembersLoadError =>
+      'No s\'han pogut carregar els membres';
+
+  @override
+  String get communityRewardsComingSoonTitle => 'Recompenses ben aviat';
+
+  @override
+  String get communityRewardsComingSoonBody =>
+      'Aquí apareixeran els objectius, les insígnies i les recompenses d\'aquesta comunitat.';
+
+  @override
+  String get communityRewardsPointsLabel => 'Els teus punts';
+
+  @override
+  String get communityRewardsTierLabel => 'Nivell';
+
+  @override
+  String get communityRewardsNoTier => 'Encara sense nivell';
+
+  @override
+  String get communityRewardsGoalsTitle => 'Objectius';
+
+  @override
+  String get communityRewardsBadgesTitle => 'Insígnies';
+
+  @override
+  String get communityRewardsRewardsTitle => 'Recompenses';
+
+  @override
+  String communityRewardsGoalReward(int points) {
+    return '+$points pts';
+  }
+
+  @override
+  String communityRewardsGoalProgress(int progress, int target) {
+    return '$progress / $target';
+  }
+
+  @override
+  String get communityRewardsBadgeEarned => 'Aconseguida';
+
+  @override
+  String get communityRewardsBadgeLocked => 'Bloquejada';
+
+  @override
+  String get communityRewardsRedeem => 'Bescanviar';
+
+  @override
+  String communityRewardsRewardCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityRewardsRewardStock(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'En queden $count',
+      zero: 'Exhaurit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsRedeemConfirmTitle =>
+      'Vols bescanviar la recompensa?';
+
+  @override
+  String communityRewardsRedeemConfirmBody(int points, String title) {
+    return 'Es gastaran $points punts en «$title».';
+  }
+
+  @override
+  String get communityRewardsRedeemedSnack => 'Bescanviada ✓';
+
+  @override
+  String get communityRewardsGoalsEmpty => 'Encara no hi ha objectius.';
+
+  @override
+  String get communityRewardsBadgesEmpty => 'Encara no hi ha insígnies.';
+
+  @override
+  String get communityRewardsRewardsEmpty => 'Encara no hi ha recompenses.';
+
+  @override
+  String get communityRewardsAddGoal => 'Objectiu';
+
+  @override
+  String get communityRewardsAddReward => 'Recompensa';
+
+  @override
+  String get communityRewardsAddBadge => 'Insígnia';
+
+  @override
+  String get communityGoalEditorNewTitle => 'Nou objectiu';
+
+  @override
+  String get communityGoalEditorEditTitle => 'Edita l\'objectiu';
+
+  @override
+  String get communityGoalTitleLabel => 'Títol';
+
+  @override
+  String get communityGoalTitleRequired => 'Introdueix un títol';
+
+  @override
+  String get communityGoalEarnTypeLabel => 'S\'aconsegueix per';
+
+  @override
+  String get communityGoalEarnTypeEventCheckIns => 'Registres a esdeveniments';
+
+  @override
+  String get communityGoalEarnTypeChallenge => 'Repte';
+
+  @override
+  String get communityGoalEarnTypeDaysInCommunity => 'Dies a la comunitat';
+
+  @override
+  String get communityGoalTargetLabel => 'Objectiu';
+
+  @override
+  String get communityGoalTargetRequired =>
+      'Introdueix un objectiu superior a 0';
+
+  @override
+  String get communityGoalRewardPointsLabel => 'Punts de recompensa';
+
+  @override
+  String get communityGoalRewardPointsRequired =>
+      'Introdueix els punts de recompensa';
+
+  @override
+  String get communityRewardEditorNewTitle => 'Nova recompensa';
+
+  @override
+  String get communityRewardEditorEditTitle => 'Edita la recompensa';
+
+  @override
+  String get communityRewardTitleLabel => 'Títol';
+
+  @override
+  String get communityRewardTitleRequired => 'Introdueix un títol';
+
+  @override
+  String get communityRewardDescriptionLabel => 'Descripció';
+
+  @override
+  String get communityRewardCostLabel => 'Cost (punts)';
+
+  @override
+  String get communityRewardCostRequired => 'Introdueix un cost';
+
+  @override
+  String get communityRewardStockLabel => 'Estoc (buit = il·limitat)';
+
+  @override
+  String get communityBadgeEditorNewTitle => 'Nova insígnia';
+
+  @override
+  String get communityBadgeEditorEditTitle => 'Edita la insígnia';
+
+  @override
+  String get communityBadgeTitleLabel => 'Títol';
+
+  @override
+  String get communityBadgeTitleRequired => 'Introdueix un títol';
+
+  @override
+  String get communityBadgeCriteriaLabel => 'Criteri';
+
+  @override
+  String get communityBadgeCriteriaPointsThreshold => 'Llindar de punts';
+
+  @override
+  String get communityBadgeCriteriaEventCheckIns => 'Registres a esdeveniments';
+
+  @override
+  String get communityBadgeCriteriaDaysInCommunity => 'Dies a la comunitat';
+
+  @override
+  String get communityBadgeCriteriaChallengesCompleted => 'Reptes completats';
+
+  @override
+  String get communityBadgeValueLabel => 'Valor';
+
+  @override
+  String get communityBadgeValueRequired => 'Introdueix un valor';
+
+  @override
+  String get communityBadgeChallengesLabel => 'Reptes';
+
+  @override
+  String get communityBadgeChallengesEmpty =>
+      'Encara no hi ha reptes disponibles.';
+
+  @override
+  String get communityRewardsDeleteTitle => 'Vols eliminar-ho?';
+
+  @override
+  String communityRewardsDeleteBody(String title) {
+    return 'Vols eliminar «$title»? No es pot desfer.';
+  }
+
+  @override
+  String get communityEventsMyView => 'La meva vista';
+
+  @override
+  String get communityEventsAttendeeView => 'Vista d\'assistent';
+
+  @override
+  String get communityEventVisibilityPublic => 'Públic';
+
+  @override
+  String get communityEventVisibilityMembers => 'Membres';
+
+  @override
+  String get communityEventVisibilityTier => 'Nivell';
 }

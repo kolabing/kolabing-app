@@ -85,7 +85,7 @@ class RosterScreen extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: context.colors.surface,
       builder: (_) =>
-          _MemberEditSheet(communityId: communityId, member: member),
+          MemberRosterEditSheet(communityId: communityId, member: member),
     );
     if (changed ?? false) {
       ref.read(communityManageProvider.notifier).reloadMembers();
@@ -271,17 +271,17 @@ class _EmptyRoster extends StatelessWidget {
 // Member edit sheet
 // -----------------------------------------------------------------------------
 
-class _MemberEditSheet extends ConsumerStatefulWidget {
-  const _MemberEditSheet({required this.communityId, required this.member});
+class MemberRosterEditSheet extends ConsumerStatefulWidget {
+  const MemberRosterEditSheet({required this.communityId, required this.member});
 
   final String communityId;
   final CommunityMember member;
 
   @override
-  ConsumerState<_MemberEditSheet> createState() => _MemberEditSheetState();
+  ConsumerState<MemberRosterEditSheet> createState() => MemberRosterEditSheetState();
 }
 
-class _MemberEditSheetState extends ConsumerState<_MemberEditSheet> {
+class MemberRosterEditSheetState extends ConsumerState<MemberRosterEditSheet> {
   late String? _tierId = widget.member.tierId;
   late bool _canManage = widget.member.canManage;
   late MembershipStatus _status = widget.member.status;

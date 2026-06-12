@@ -24,14 +24,14 @@ import 'community_detail_screen.dart';
 /// Past Kolabs / Send-Kolab), this fetches the REAL community via
 /// `GET /communities/{id}` + its upcoming events via `GET /events?community_id=`
 /// and offers a state-aware join CTA. Index of the events sub-tab in
-/// [CommunityDetailScreen] is 1 — "See all →" routes there.
+/// [CommunityDetailScreen] is 2 — "See all →" routes there.
 class AttendeeCommunityProfileScreen extends ConsumerWidget {
   const AttendeeCommunityProfileScreen({super.key, required this.communityId});
 
   final String communityId;
 
-  /// Events sub-tab index inside [CommunityDetailScreen] (Chats·Events·…).
-  static const int _eventsTabIndex = 1;
+  /// Events sub-tab index inside [CommunityDetailScreen] (Rewards·Members·Events).
+  static const int _eventsTabIndex = 2;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
