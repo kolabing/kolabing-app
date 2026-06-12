@@ -30,17 +30,17 @@ class OnboardingProgressIndicator extends StatelessWidget {
               // Even indices are circles, odd indices are lines
               if (index.isEven) {
                 final stepNumber = (index ~/ 2) + 1;
-                return _buildCircle(stepNumber);
+                return _buildCircle(context, stepNumber);
               } else {
                 final stepNumber = (index ~/ 2) + 1;
-                return _buildLine(stepNumber);
+                return _buildLine(context, stepNumber);
               }
             },
           ),
         ),
       );
 
-  Widget _buildCircle(int stepNumber) {
+  Widget _buildCircle(BuildContext context, int stepNumber) {
     final isActive = stepNumber <= currentStep;
     final isCompleted = stepNumber < currentStep;
 
@@ -50,23 +50,23 @@ class OnboardingProgressIndicator extends StatelessWidget {
       height: 12,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive ? KolabingColors.secondary : KolabingColors.darkBorder,
+        color: isActive ? context.colors.primary : context.colors.surfaceVariant,
         border: Border.all(
-          color: isActive ? KolabingColors.secondary : KolabingColors.darkBorder,
+          color: isActive ? context.colors.primary : context.colors.outlineVariant,
           width: 2,
         ),
       ),
       child: isCompleted
-          ? const Icon(
+          ? Icon(
               Icons.check,
               size: 8,
-              color: KolabingColors.onAccent,
+              color: context.colors.onSurface,
             )
           : null,
     );
   }
 
-  Widget _buildLine(int stepBeforeNumber) {
+  Widget _buildLine(BuildContext context, int stepBeforeNumber) {
     final isActive = stepBeforeNumber < currentStep;
 
     return AnimatedContainer(
@@ -75,7 +75,7 @@ class OnboardingProgressIndicator extends StatelessWidget {
       height: 2,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: isActive ? KolabingColors.secondary : KolabingColors.darkBorder,
+        color: isActive ? context.colors.primary : context.colors.outlineVariant,
         borderRadius: BorderRadius.circular(1),
       ),
     );

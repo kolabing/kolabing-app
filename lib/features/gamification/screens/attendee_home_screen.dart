@@ -77,8 +77,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       isScrollControlled: true,
       backgroundColor: KolabingColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
       ),
       builder: (_) => _CityPickerSheet(selectedCityId: state.cityId),
     );
@@ -100,9 +101,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     final user = ref.read(authProvider).user;
     if (user == null || user.cityId == cityId) return;
     try {
-      final updated = await ref
-          .read(profileServiceProvider)
-          .updateProfile({'city_id': cityId});
+      final updated = await ref.read(profileServiceProvider).updateProfile({
+        'city_id': cityId,
+      });
       await ref.read(authProvider.notifier).syncUser(updated);
     } catch (_) {
       // Non-critical: the city is still applied locally for this session.
@@ -135,8 +136,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       context: context,
       backgroundColor: KolabingColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
       ),
       builder: (_) => _DateRangeSheet(selected: state.dateRange),
     );
@@ -152,16 +154,16 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       isScrollControlled: true,
       backgroundColor: KolabingColors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(KolabingRadius.xl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
       ),
       builder: (_) => _TypeFilterSheet(selectedSlug: state.typeSlug),
     );
     if (result != null) {
-      await ref.read(discoveryProvider.notifier).setTypeFilter(
-            typeSlug: result.slug,
-            typeName: result.name,
-          );
+      await ref
+          .read(discoveryProvider.notifier)
+          .setTypeFilter(typeSlug: result.slug, typeName: result.name);
     }
   }
 
@@ -172,10 +174,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     final state = ref.watch(discoveryProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
-    final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+    final textColor = isDark
+        ? KolabingColors.textOnDark
+        : KolabingColors.onSurface;
+    final secondaryTextColor = isDark
+        ? KolabingColors.textTertiary
+        : KolabingColors.onSurfaceVariant;
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -193,8 +197,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   children: [
                     Text(
                       l10n.attendeeHomeWelcomeBack,
-                      style: KolabingTextStyles.bodySmall
-                          .copyWith(color: secondaryTextColor),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: secondaryTextColor,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -224,7 +229,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   KolabingSpacing.sm,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       l10n.attendeeHomeEventsTitle,
@@ -285,7 +289,10 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     );
   }
 
-  List<Widget> _buildEventsContent(DiscoveryState state, AppLocalizations l10n) {
+  List<Widget> _buildEventsContent(
+    DiscoveryState state,
+    AppLocalizations l10n,
+  ) {
     // No city selected yet — invite the user to pick one.
     if (!state.canQuery && !state.isLoading) {
       return [SliverToBoxAdapter(child: _buildPickCityPrompt(l10n))];
@@ -301,7 +308,8 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               child: Column(
                 children: [
                   const CircularProgressIndicator(
-                      color: KolabingColors.primary),
+                    color: KolabingColors.primary,
+                  ),
                   const SizedBox(height: KolabingSpacing.md),
                   Text(l10n.attendeeHomeSearchingEvents),
                 ],
@@ -314,7 +322,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
 
     // Error
     if (state.error != null && state.events.isEmpty) {
-      return [SliverToBoxAdapter(child: _buildDiscoveryError(state.error!, l10n))];
+      return [
+        SliverToBoxAdapter(child: _buildDiscoveryError(state.error!, l10n)),
+      ];
     }
 
     // Empty
@@ -325,24 +335,20 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     // Event list
     return [
       SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final event = state.events[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-                vertical: KolabingSpacing.xs,
-              ),
-              child: DiscoveredEventCard(
-                event: event,
-                onTap: () => context.push(
-                  KolabingRoutes.buildEventDetailPath(event.id),
-                ),
-              ),
-            );
-          },
-          childCount: state.events.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final event = state.events[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.md,
+              vertical: KolabingSpacing.xs,
+            ),
+            child: DiscoveredEventCard(
+              event: event,
+              onTap: () =>
+                  context.push(KolabingRoutes.buildEventDetailPath(event.id)),
+            ),
+          );
+        }, childCount: state.events.length),
       ),
       if (state.hasMore)
         SliverToBoxAdapter(
@@ -428,8 +434,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.attendeeHomePickCityHint,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -473,8 +480,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.attendeeHomeNoEventsCityHint,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.textTertiary),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.textTertiary,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -516,8 +524,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -546,21 +555,21 @@ class _ExploreCommunitiesCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: () => context.push(KolabingRoutes.discoverCommunities),
-          icon: const Icon(LucideIcons.compass, size: 18),
-          label: Text(l10n.attendeeHomeExploreCommunities),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.onSurface,
-            side: const BorderSide(color: KolabingColors.outlineVariant),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(KolabingRadius.md),
-            ),
-          ),
+    width: double.infinity,
+    child: OutlinedButton.icon(
+      onPressed: () => context.push(KolabingRoutes.discoverCommunities),
+      icon: const Icon(LucideIcons.compass, size: 18),
+      label: Text(l10n.attendeeHomeExploreCommunities),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: KolabingColors.onSurface,
+        side: const BorderSide(color: KolabingColors.outlineVariant),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -580,10 +589,10 @@ class _CityPickerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _DropdownChip(
-        icon: LucideIcons.mapPin,
-        label: cityName ?? l10n.attendeeHomeChooseCity,
-        onTap: onTap,
-      );
+    icon: LucideIcons.mapPin,
+    label: cityName ?? l10n.attendeeHomeChooseCity,
+    onTap: onTap,
+  );
 }
 
 // =============================================================================
@@ -604,44 +613,40 @@ class _DropdownChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(KolabingRadius.round),
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.sm,
+        vertical: KolabingSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: KolabingColors.surfaceVariant,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.sm,
-            vertical: KolabingSpacing.xs,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: KolabingColors.onSurface),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: KolabingColors.onSurface,
+            ),
           ),
-          decoration: BoxDecoration(
-            color: KolabingColors.surfaceVariant,
-            borderRadius: BorderRadius.circular(KolabingRadius.round),
+          const SizedBox(width: 2),
+          const Icon(
+            LucideIcons.chevronDown,
+            size: 14,
+            color: KolabingColors.onSurface,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 14,
-                color: KolabingColors.onSurface,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
-                ),
-              ),
-              const SizedBox(width: 2),
-              const Icon(
-                LucideIcons.chevronDown,
-                size: 14,
-                color: KolabingColors.onSurface,
-              ),
-            ],
-          ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -732,7 +737,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
     final filtered = ref.watch(filteredCitiesProvider(_query));
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.75,
         child: Column(
@@ -751,8 +758,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (v) => setState(() => _query = v),
-                style: KolabingTextStyles.bodyMedium
-                    .copyWith(color: KolabingColors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  color: KolabingColors.onSurface,
+                ),
                 decoration: InputDecoration(
                   hintText: l10n.editProfileCitySearchHint,
                   prefixIcon: const Icon(LucideIcons.search, size: 20),
@@ -776,8 +784,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
                     return Center(
                       child: Text(
                         l10n.editProfileNoCitiesFound,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
                       ),
                     );
                   }
@@ -797,8 +806,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
                   );
                 },
                 loading: () => const Center(
-                  child:
-                      CircularProgressIndicator(color: KolabingColors.primary),
+                  child: CircularProgressIndicator(
+                    color: KolabingColors.primary,
+                  ),
                 ),
                 error: (_, _) => Center(
                   child: Column(
@@ -812,8 +822,9 @@ class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         l10n.editProfileCityLoadError,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       TextButton(
@@ -885,21 +896,23 @@ class _TypeFilterSheet extends ConsumerWidget {
                     _TypeRow(
                       label: l10n.attendeeHomeFilterTypeAll,
                       selected: selectedSlug == null,
-                      onTap: () => Navigator.of(context)
-                          .pop(const _TypeSelection()),
+                      onTap: () =>
+                          Navigator.of(context).pop(const _TypeSelection()),
                     ),
                     for (final CommunityType t in types)
                       _TypeRow(
                         label: t.name,
                         selected: selectedSlug == t.slug,
-                        onTap: () => Navigator.of(context)
-                            .pop(_TypeSelection(slug: t.slug, name: t.name)),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pop(_TypeSelection(slug: t.slug, name: t.name)),
                       ),
                   ],
                 ),
                 loading: () => const Center(
-                  child:
-                      CircularProgressIndicator(color: KolabingColors.primary),
+                  child: CircularProgressIndicator(
+                    color: KolabingColors.primary,
+                  ),
                 ),
                 error: (_, _) => Center(
                   child: Column(
@@ -913,8 +926,9 @@ class _TypeFilterSheet extends ConsumerWidget {
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         l10n.attendeeHomeFailedToLoadEvents,
-                        style: KolabingTextStyles.bodySmall
-                            .copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: KolabingColors.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       TextButton(
@@ -946,31 +960,31 @@ class _TypeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.md,
-            vertical: KolabingSpacing.sm + 4,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                    color: KolabingColors.onSurface,
-                  ),
-                ),
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: KolabingSpacing.md,
+        vertical: KolabingSpacing.sm + 4,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: KolabingColors.onSurface,
               ),
-              if (selected)
-                const Icon(
-                  LucideIcons.check,
-                  size: 18,
-                  color: KolabingColors.primaryDark,
-                ),
-            ],
+            ),
           ),
-        ),
-      );
+          if (selected)
+            const Icon(
+              LucideIcons.check,
+              size: 18,
+              color: KolabingColors.primaryDark,
+            ),
+        ],
+      ),
+    ),
+  );
 }

@@ -184,6 +184,120 @@ abstract class AppLocalizations {
   /// **'Get started'**
   String get welcomeGetStarted;
 
+  /// Welcome screen primary CTA — redesigned version.
+  ///
+  /// In en, this message translates to:
+  /// **'Start kolabing'**
+  String get welcomeStartKolabing;
+
+  /// Hero sentence part 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get welcomeHeroWhere;
+
+  /// Hero sentence part 2.
+  ///
+  /// In en, this message translates to:
+  /// **'businesses'**
+  String get welcomeHeroBusinesses;
+
+  /// Hero sentence part 3.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get welcomeHeroAnd;
+
+  /// Hero sentence part 4.
+  ///
+  /// In en, this message translates to:
+  /// **'communities'**
+  String get welcomeHeroCommunities;
+
+  /// Hero sentence part 5.
+  ///
+  /// In en, this message translates to:
+  /// **'grow'**
+  String get welcomeHeroGrow;
+
+  /// Hero sentence part 6.
+  ///
+  /// In en, this message translates to:
+  /// **'together'**
+  String get welcomeHeroTogether;
+
+  /// Tagline first word.
+  ///
+  /// In en, this message translates to:
+  /// **'MATCH'**
+  String get welcomeTaglineMatch;
+
+  /// Tagline separator dot.
+  ///
+  /// In en, this message translates to:
+  /// **'·'**
+  String get welcomeTaglineDot;
+
+  /// Tagline middle word — highlighted in yellow.
+  ///
+  /// In en, this message translates to:
+  /// **'KOLAB'**
+  String get welcomeTaglineKolab;
+
+  /// Tagline last word.
+  ///
+  /// In en, this message translates to:
+  /// **'GROW'**
+  String get welcomeTaglineGrow;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'events'**
+  String get welcomeFloatingEvents;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'UGC'**
+  String get welcomeFloatingUgc;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'reviews'**
+  String get welcomeFloatingReviews;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'growth'**
+  String get welcomeFloatingGrowth;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'community'**
+  String get welcomeFloatingCommunity;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'brands'**
+  String get welcomeFloatingBrands;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'people'**
+  String get welcomeFloatingPeople;
+
+  /// Atmospheric floating word on welcome screen.
+  ///
+  /// In en, this message translates to:
+  /// **'connection'**
+  String get welcomeFloatingConnection;
+
   /// Settings/profile row label that opens the language picker.
   ///
   /// In en, this message translates to:
@@ -1147,19 +1261,19 @@ abstract class AppLocalizations {
   /// User-type selection card title for the Business option.
   ///
   /// In en, this message translates to:
-  /// **'I\'M A BUSINESS'**
+  /// **'I\'m a business'**
   String get selectionCardBusinessTitle;
 
   /// User-type selection card title for the Community option.
   ///
   /// In en, this message translates to:
-  /// **'I\'M A COMMUNITY'**
+  /// **'I\'m a community'**
   String get selectionCardCommunityTitle;
 
   /// User-type selection card title for the Attendee option.
   ///
   /// In en, this message translates to:
-  /// **'I\'M AN ATTENDEE'**
+  /// **'I\'m an attendee'**
   String get selectionCardAttendeeTitle;
 
   /// User-type selection card description for the Business option.
@@ -6097,13 +6211,13 @@ abstract class AppLocalizations {
   /// Business onboarding final: title when user is already authenticated
   ///
   /// In en, this message translates to:
-  /// **'FINISH BUSINESS ONBOARDING'**
+  /// **'Finish business onboarding'**
   String get businessFinalTitleAuthenticated;
 
   /// Business onboarding final: title for new account creation
   ///
   /// In en, this message translates to:
-  /// **'CREATE YOUR ACCOUNT'**
+  /// **'Create your account'**
   String get businessFinalTitleNewAccount;
 
   /// Business onboarding final: subtitle when authenticated
@@ -6235,7 +6349,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 2: screen title
   ///
   /// In en, this message translates to:
-  /// **'REVIEW YOUR BUSINESS DETAILS'**
+  /// **'Review your business details'**
   String get businessStep2Title;
 
   /// Business onboarding step 2: screen subtitle
@@ -6379,7 +6493,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 3: screen title
   ///
   /// In en, this message translates to:
-  /// **'ADD VENUE PHOTOS'**
+  /// **'Add venue photos'**
   String get businessStep3Title;
 
   /// Business onboarding step 3: screen subtitle (Kolab is a brand term, untranslated)
@@ -6409,7 +6523,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 5: screen title
   ///
   /// In en, this message translates to:
-  /// **'CHOOSE YOUR VENUE'**
+  /// **'Choose your venue'**
   String get businessStep5Title;
 
   /// Business onboarding step 5: screen subtitle
@@ -6451,7 +6565,7 @@ abstract class AppLocalizations {
   /// Business onboarding step 5: imported photos preview title
   ///
   /// In en, this message translates to:
-  /// **'PHOTOS FROM GOOGLE'**
+  /// **'Photos from Google'**
   String get businessStep5PreviewTitle;
 
   /// Business onboarding step 5: imported photos preview subtitle
@@ -6475,7 +6589,7 @@ abstract class AppLocalizations {
   /// Community onboarding final screen title
   ///
   /// In en, this message translates to:
-  /// **'CREATE YOUR ACCOUNT'**
+  /// **'Create your account'**
   String get communityFinalTitle;
 
   /// Community onboarding final screen subtitle
@@ -6583,7 +6697,7 @@ abstract class AppLocalizations {
   /// Community onboarding step 1 title
   ///
   /// In en, this message translates to:
-  /// **'TELL US ABOUT YOU'**
+  /// **'Tell us about you'**
   String get communityStep1Title;
 
   /// Community onboarding step 1 subtitle
@@ -6637,7 +6751,7 @@ abstract class AppLocalizations {
   /// Community onboarding step 3 title
   ///
   /// In en, this message translates to:
-  /// **'WHERE ARE YOU LOCATED?'**
+  /// **'Where are you located?'**
   String get communityStep3Title;
 
   /// Community onboarding step 3 subtitle
@@ -6679,7 +6793,7 @@ abstract class AppLocalizations {
   /// Community onboarding step 4 title
   ///
   /// In en, this message translates to:
-  /// **'COMPLETE YOUR PROFILE'**
+  /// **'Complete your profile'**
   String get communityStep4Title;
 
   /// Community onboarding step 4 subtitle

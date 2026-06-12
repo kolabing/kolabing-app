@@ -35,7 +35,7 @@ class NotificationBell extends ConsumerWidget {
         children: [
           Icon(
             LucideIcons.bell,
-            color: color ?? KolabingColors.onSurface,
+            color: color ?? context.colors.onSurface,
             size: size,
           ),
           if (unreadCount > 0)
@@ -46,10 +46,10 @@ class NotificationBell extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 constraints: const BoxConstraints(minWidth: 18),
                 decoration: BoxDecoration(
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                   borderRadius: BorderRadius.circular(9),
                   border: Border.all(
-                    color: KolabingColors.surface,
+                    color: context.colors.surface,
                     width: 1.5,
                   ),
                 ),

@@ -32,7 +32,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -59,7 +59,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
           content: Text(
             AppLocalizations.of(context).communityStep3CityRequired,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -80,7 +80,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     final canContinue = data?.cityId != null;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -104,7 +104,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Title
                         Text(
                           l10n.communityStep3Title,
-                          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
@@ -112,7 +112,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Subtitle
                         Text(
                           l10n.communityStep3Subtitle,
-                          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
@@ -125,21 +125,21 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                               _searchQuery = value;
                             });
                           },
-                          style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
                           decoration: InputDecoration(
                             hintText: l10n.communityStep3SearchHint,
-                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
-                            prefixIcon: const Icon(
+                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+                            prefixIcon: Icon(
                               LucideIcons.search,
                               size: 20,
-                              color: KolabingColors.textTertiary,
+                              color: context.colors.textTertiary,
                             ),
                             suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       LucideIcons.x,
                                       size: 20,
-                                      color: KolabingColors.textTertiary,
+                                      color: context.colors.textTertiary,
                                     ),
                                     onPressed: () {
                                       _searchController.clear();
@@ -150,10 +150,10 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                                   )
                                 : null,
                             filled: true,
-                            fillColor: KolabingColors.surfaceVariant,
+                            fillColor: context.colors.surfaceContainerLow,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
+                              borderSide: BorderSide(color: context.colors.outlineVariant),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -169,7 +169,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               l10n.communityStep3PopularCities,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
                             ),
                           ),
                       ],
@@ -186,7 +186,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           return Center(
                             child: Text(
                               l10n.communityStep3NoCitiesFound,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                             ),
                           );
                         }
@@ -206,24 +206,24 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           },
                         );
                       },
-                      loading: () => const Center(
+                      loading: () => Center(
                         child: CircularProgressIndicator(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                       error: (error, stack) => Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.error_outline,
-                              color: KolabingColors.error,
+                              color: context.colors.error,
                               size: 48,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               l10n.communityStep3LoadError,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
@@ -248,15 +248,12 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                 child: ElevatedButton(
                   onPressed: canContinue ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
                     disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
+                        context.colors.primary.withValues(alpha: 0.5),
                     disabledForegroundColor:
-                        KolabingColors.onPrimary.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                        context.colors.onPrimary.withValues(alpha: 0.5),
                     elevation: 0,
                   ),
                   child: Text(

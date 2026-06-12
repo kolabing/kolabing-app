@@ -57,7 +57,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -196,28 +196,28 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 AppLocalizations.of(context).communityFinalNoInternet,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.textOnDark),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: _handleRegister,
         ),
       ),
@@ -229,9 +229,9 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       SnackBar(
         content: Text(
           message,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.textOnDark),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.textOnDark),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -257,7 +257,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
     return PopScope(
       canPop: !_isLoading,
       child: Scaffold(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () => FocusScope.of(context).unfocus(),
@@ -279,15 +279,15 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.arrow_back_ios_rounded,
                                 size: 20,
-                                color: KolabingColors.onSurface,
+                                color: context.colors.onSurface,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 l10n.commonBack,
-                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
                               ),
                             ],
                           ),
@@ -312,7 +312,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           // Title
                           Text(
                             l10n.communityFinalTitle,
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -320,7 +320,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           // Subtitle
                           Text(
                             l10n.communityFinalSubtitle,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -335,15 +335,15 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.edit_outlined,
                                   size: 16,
-                                  color: KolabingColors.primary,
+                                  color: context.colors.primary,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   l10n.communityFinalEdit,
-                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
                                 ),
                               ],
                             ),
@@ -373,30 +373,30 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               hintText: l10n.communityFinalEmailHint,
                               prefixIcon: const Icon(Icons.email_outlined),
                               filled: true,
-                              fillColor: KolabingColors.surface,
+                              fillColor: context.colors.surface,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
+                                borderSide: BorderSide(
+                                  color: context.colors.primary,
                                   width: 2,
                                 ),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.error,
+                                borderSide: BorderSide(
+                                  color: context.colors.error,
                                 ),
                               ),
                             ),
@@ -437,30 +437,30 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 },
                               ),
                               filled: true,
-                              fillColor: KolabingColors.surface,
+                              fillColor: context.colors.surface,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
+                                borderSide: BorderSide(
+                                  color: context.colors.primary,
                                   width: 2,
                                 ),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.error,
+                                borderSide: BorderSide(
+                                  color: context.colors.error,
                                 ),
                               ),
                             ),
@@ -495,30 +495,30 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 },
                               ),
                               filled: true,
-                              fillColor: KolabingColors.surface,
+                              fillColor: context.colors.surface,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.darkBorder,
+                                borderSide: BorderSide(
+                                  color: context.colors.darkBorder,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.primary,
+                                borderSide: BorderSide(
+                                  color: context.colors.primary,
                                   width: 2,
                                 ),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: KolabingColors.error,
+                                borderSide: BorderSide(
+                                  color: context.colors.error,
                                 ),
                               ),
                             ),
@@ -542,31 +542,28 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleRegister,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: KolabingColors.primary,
-                            foregroundColor: KolabingColors.onPrimary,
-                            disabledBackgroundColor: KolabingColors.primary
+                            backgroundColor: context.colors.primary,
+                            foregroundColor: context.colors.onPrimary,
+                            disabledBackgroundColor: context.colors.primary
                                 .withValues(alpha: 0.7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
                             elevation: 0,
                           ),
                           child: _isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      KolabingColors.onPrimary,
+                                      context.colors.onPrimary,
                                     ),
                                   ),
                                 )
                               : _showSuccess
-                              ? const Icon(
+                              ? Icon(
                                   Icons.check_rounded,
                                   size: 24,
-                                  color: KolabingColors.onPrimary,
+                                  color: context.colors.onPrimary,
                                 )
                               : Text(
                                   l10n.communityFinalCreateAccountButton,
@@ -579,7 +576,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                       // Terms text
                       Text(
                         l10n.communityFinalTermsNotice,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                         textAlign: TextAlign.center,
                       ),
                     ],

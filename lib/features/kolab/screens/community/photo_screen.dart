@@ -97,7 +97,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
             content: Text(
               AppLocalizations.of(context).photoUploadFailed(e.toString()),
             ),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -163,12 +163,12 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           // Section header
           Text(
             l10n.photoAddHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.photoAddSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
 
           const SizedBox(height: KolabingSpacing.lg),
@@ -184,13 +184,13 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
               padding: const EdgeInsets.all(KolabingSpacing.md),
               decoration: BoxDecoration(
                 color: useProfilePhoto
-                    ? KolabingColors.softYellow
-                    : KolabingColors.surface,
+                    ? context.colors.softYellow
+                    : context.colors.surface,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
                   color: useProfilePhoto
-                      ? KolabingColors.primary
-                      : KolabingColors.darkBorder,
+                      ? context.colors.primary
+                      : context.colors.darkBorder,
                   width: useProfilePhoto ? 2 : 1,
                 ),
               ),
@@ -202,21 +202,21 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                     height: 24,
                     decoration: BoxDecoration(
                       color: useProfilePhoto
-                          ? KolabingColors.primary
+                          ? context.colors.primary
                           : Colors.transparent,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: useProfilePhoto
-                            ? KolabingColors.primary
-                            : KolabingColors.darkBorder,
+                            ? context.colors.primary
+                            : context.colors.darkBorder,
                         width: 2,
                       ),
                     ),
                     child: useProfilePhoto
-                        ? const Icon(
+                        ? Icon(
                             Icons.check,
                             size: 14,
-                            color: KolabingColors.onPrimary,
+                            color: context.colors.onPrimary,
                           )
                         : null,
                   ),
@@ -224,7 +224,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                   Expanded(
                     child: Text(
                       l10n.photoUseProfilePhoto,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     ),
                   ),
                 ],
@@ -237,17 +237,17 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           // Divider with "OR"
           Row(
             children: [
-              const Expanded(child: Divider(color: KolabingColors.darkBorder)),
+              Expanded(child: Divider(color: context.colors.darkBorder)),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: KolabingSpacing.sm,
                 ),
                 child: Text(
                   l10n.photoDividerOr,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
                 ),
               ),
-              const Expanded(child: Divider(color: KolabingColors.darkBorder)),
+              Expanded(child: Divider(color: context.colors.darkBorder)),
             ],
           ),
 
@@ -263,7 +263,7 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           ],
 
           if (_isUploading) ...[
-            const LinearProgressIndicator(color: KolabingColors.primary),
+            LinearProgressIndicator(color: context.colors.primary),
             const SizedBox(height: KolabingSpacing.md),
           ],
 
@@ -275,13 +275,13 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 width: double.infinity,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: KolabingColors.surface,
+                  color: context.colors.surface,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.darkBorder, width: 1),
+                  border: Border.all(color: context.colors.darkBorder, width: 1),
                 ),
                 child: CustomPaint(
                   painter: _DashedBorderPainter(
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                     borderRadius: KolabingRadius.md,
                   ),
                   child: Column(
@@ -289,25 +289,25 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(KolabingSpacing.md),
-                        decoration: const BoxDecoration(
-                          color: KolabingColors.surfaceVariant,
+                        decoration: BoxDecoration(
+                          color: context.colors.surfaceVariant,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           LucideIcons.camera,
                           size: 32,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         l10n.photoUploadTitle,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xxs),
                       Text(
                         l10n.photoUploadMaxSize,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                       ),
                     ],
                   ),
@@ -352,9 +352,9 @@ class _UploadedPhotoCard extends StatelessWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(KolabingSpacing.sm),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.primary, width: 1.5),
+      border: Border.all(color: context.colors.primary, width: 1.5),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,11 +369,11 @@ class _UploadedPhotoCard extends StatelessWidget {
                     photo.url,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      color: KolabingColors.surfaceVariant,
+                      color: context.colors.surfaceVariant,
                       alignment: Alignment.center,
-                      child: const Icon(
+                      child: Icon(
                         LucideIcons.imageOff,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                         size: 28,
                       ),
                     ),
@@ -383,12 +383,12 @@ class _UploadedPhotoCard extends StatelessWidget {
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           l10n.photoUploadedSelectedTitle,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: context.colors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.photoUploadedSelectedSubtitle,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Row(
@@ -403,10 +403,6 @@ class _UploadedPhotoCard extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: isUploading ? null : onReplace,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                ),
                 child: Text(l10n.photoReplacePhotoButton),
               ),
             ),

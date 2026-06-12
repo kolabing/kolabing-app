@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
@@ -32,44 +33,44 @@ class PastEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      event == null ? _buildAddCard() : _buildEventCard();
+      event == null ? _buildAddCard(context) : _buildEventCard(context);
 
   // ---------------------------------------------------------------------------
   // Add mode — dashed border placeholder
   // ---------------------------------------------------------------------------
 
-  Widget _buildAddCard() => GestureDetector(
+  Widget _buildAddCard(BuildContext context) => GestureDetector(
     onTap: onAdd,
-    child: CustomPaint(
-      painter: const _DashedBorderPainter(
-        color: KolabingColors.darkBorder,
-        radius: KolabingRadius.md,
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.lg),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: KolabingColors.background,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                LucideIcons.plus,
-                size: 20,
-                color: KolabingColors.textTertiary,
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Text(
-              'Add a past event',
-              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurfaceVariant),
+            child: Icon(
+              LucideIcons.plus,
+              size: 20,
+              color: context.colors.onSurface,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            'Add a past event',
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
+          ),
+        ],
       ),
     ),
   );
@@ -78,16 +79,17 @@ class PastEventCard extends StatelessWidget {
   // Existing event card
   // ---------------------------------------------------------------------------
 
-  Widget _buildEventCard() {
+  Widget _buildEventCard(BuildContext context) {
     final e = event!;
     final formattedDate = DateFormat('MMM dd, yyyy').format(e.date);
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,14 +98,14 @@ class PastEventCard extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: const BoxDecoration(
-              color: KolabingColors.softYellow,
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.calendar,
               size: 18,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -114,29 +116,29 @@ class PastEventCard extends StatelessWidget {
               children: [
                 Text(
                   e.name,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: KolabingSpacing.xxxs),
                 Text(
                   formattedDate,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                 ),
                 if (e.partnerName != null && e.partnerName!.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.xxxs),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.users,
                         size: 13,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: KolabingSpacing.xxs),
                       Expanded(
                         child: Text(
                           e.partnerName!,
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -152,21 +154,21 @@ class PastEventCard extends StatelessWidget {
                       vertical: KolabingSpacing.xxxs,
                     ),
                     decoration: BoxDecoration(
-                      color: KolabingColors.background,
+                      color: context.colors.background,
                       borderRadius: KolabingRadius.borderRadiusXs,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.image,
                           size: 12,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                         const SizedBox(width: KolabingSpacing.xxs),
                         Text(
                           '${e.photos.length} photo${e.photos.length == 1 ? '' : 's'}',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
                         ),
                       ],
                     ),
@@ -180,21 +182,21 @@ class PastEventCard extends StatelessWidget {
                       vertical: KolabingSpacing.xxxs,
                     ),
                     decoration: BoxDecoration(
-                      color: KolabingColors.background,
+                      color: context.colors.background,
                       borderRadius: KolabingRadius.borderRadiusXs,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           LucideIcons.video,
                           size: 12,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                         const SizedBox(width: KolabingSpacing.xxs),
                         Text(
                           '${e.videos.length} video${e.videos.length == 1 ? '' : 's'}',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
                         ),
                       ],
                     ),
@@ -207,9 +209,9 @@ class PastEventCard extends StatelessWidget {
           if (onRemove != null)
             GestureDetector(
               onTap: onRemove,
-              child: const DecoratedBox(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: KolabingColors.errorBg,
+                  color: context.colors.errorBg,
                   shape: BoxShape.circle,
                 ),
                 child: SizedBox(
@@ -218,7 +220,7 @@ class PastEventCard extends StatelessWidget {
                   child: Icon(
                     LucideIcons.x,
                     size: 14,
-                    color: KolabingColors.error,
+                    color: context.colors.error,
                   ),
                 ),
               ),
@@ -227,49 +229,4 @@ class PastEventCard extends StatelessWidget {
       ),
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Dashed border painter
-// ---------------------------------------------------------------------------
-
-class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({required this.color, required this.radius});
-
-  final Color color;
-  final double radius;
-
-  static const double _strokeWidth = 1.5;
-  static const double _dashLength = 6;
-  static const double _gapLength = 4;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = _strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final rrect = RRect.fromRectAndRadius(
-      Offset.zero & size,
-      Radius.circular(radius),
-    );
-
-    final path = Path()..addRRect(rrect);
-    final metrics = path.computeMetrics();
-
-    for (final metric in metrics) {
-      double distance = 0;
-      while (distance < metric.length) {
-        final end = (distance + _dashLength).clamp(0.0, metric.length);
-        final segment = metric.extractPath(distance, end);
-        canvas.drawPath(segment, paint);
-        distance += _dashLength + _gapLength;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) =>
-      color != oldDelegate.color || radius != oldDelegate.radius;
 }

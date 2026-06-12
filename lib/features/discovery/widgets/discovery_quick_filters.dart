@@ -223,7 +223,7 @@ class DiscoveryQuickFilters extends StatelessWidget {
           ];
 
     return SizedBox(
-      height: 44,
+      height: 38,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
         scrollDirection: Axis.horizontal,
@@ -276,16 +276,16 @@ class _QuickChip extends StatelessWidget {
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xs,
+        horizontal: 12,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         color: data.isActive
-            ? KolabingColors.softYellow
-            : KolabingColors.surface,
+            ? context.colors.softYellow
+            : Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: data.isActive ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: data.isActive ? context.colors.softYellowBorder : context.colors.hairline,
         ),
       ),
       child: Row(
@@ -293,15 +293,15 @@ class _QuickChip extends StatelessWidget {
         children: [
           Text(
             data.label,
-            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: context.colors.onSurface),
           ),
           const SizedBox(width: 6),
           Icon(
             LucideIcons.slidersHorizontal,
             size: 14,
             color: data.isActive
-                ? KolabingColors.onSurface
-                : KolabingColors.textTertiary,
+                ? context.colors.onSurface
+                : context.colors.textTertiary,
           ),
         ],
       ),

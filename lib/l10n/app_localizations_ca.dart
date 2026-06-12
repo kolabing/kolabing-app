@@ -53,6 +53,63 @@ class AppLocalizationsCa extends AppLocalizations {
   String get welcomeGetStarted => 'Comença';
 
   @override
+  String get welcomeStartKolabing => 'Comença a kolabing';
+
+  @override
+  String get welcomeHeroWhere => 'On';
+
+  @override
+  String get welcomeHeroBusinesses => 'empreses';
+
+  @override
+  String get welcomeHeroAnd => 'i';
+
+  @override
+  String get welcomeHeroCommunities => 'comunitats';
+
+  @override
+  String get welcomeHeroGrow => 'creixen';
+
+  @override
+  String get welcomeHeroTogether => 'juntes';
+
+  @override
+  String get welcomeTaglineMatch => 'CONNECTA';
+
+  @override
+  String get welcomeTaglineDot => '·';
+
+  @override
+  String get welcomeTaglineKolab => 'KOLAB';
+
+  @override
+  String get welcomeTaglineGrow => 'CREIX';
+
+  @override
+  String get welcomeFloatingEvents => 'esdeveniments';
+
+  @override
+  String get welcomeFloatingUgc => 'UGC';
+
+  @override
+  String get welcomeFloatingReviews => 'ressenyes';
+
+  @override
+  String get welcomeFloatingGrowth => 'creixement';
+
+  @override
+  String get welcomeFloatingCommunity => 'comunitat';
+
+  @override
+  String get welcomeFloatingBrands => 'marques';
+
+  @override
+  String get welcomeFloatingPeople => 'persones';
+
+  @override
+  String get welcomeFloatingConnection => 'connexió';
+
+  @override
   String get settingsLanguage => 'Idioma';
 
   @override
@@ -577,13 +634,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get kolabingLogoSemanticLabel => 'Logotip de Kolabing';
 
   @override
-  String get selectionCardBusinessTitle => 'SÓC UN NEGOCI';
+  String get selectionCardBusinessTitle => 'Sóc un negoci';
 
   @override
-  String get selectionCardCommunityTitle => 'SÓC UNA COMUNITAT';
+  String get selectionCardCommunityTitle => 'Sóc una comunitat';
 
   @override
-  String get selectionCardAttendeeTitle => 'SÓC UN ASSISTENT';
+  String get selectionCardAttendeeTitle => 'Sóc un assistent';
 
   @override
   String get selectionCardBusinessDescription =>
@@ -3425,10 +3482,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get businessFinalTitleAuthenticated =>
-      'FINALITZA L\'ALTA DEL TEU NEGOCI';
+      'Finalitza l\'alta del teu negoci';
 
   @override
-  String get businessFinalTitleNewAccount => 'CREA EL TEU COMPTE';
+  String get businessFinalTitleNewAccount => 'Crea el teu compte';
 
   @override
   String get businessFinalSubtitleAuthenticated =>
@@ -3506,7 +3563,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get businessStep2PhoneTooLong => 'El número de telèfon és massa llarg';
 
   @override
-  String get businessStep2Title => 'REVISA LES DADES DEL TEU NEGOCI';
+  String get businessStep2Title => 'Revisa les dades del teu negoci';
 
   @override
   String get businessStep2Subtitle =>
@@ -3587,7 +3644,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Afegeix com a mínim una foto del local per continuar';
 
   @override
-  String get businessStep3Title => 'AFEGEIX FOTOS DEL LOCAL';
+  String get businessStep3Title => 'Afegeix fotos del local';
 
   @override
   String get businessStep3Subtitle =>
@@ -3605,7 +3662,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'No hem pogut importar des de Google, omple-ho manualment.';
 
   @override
-  String get businessStep5Title => 'TRIA EL TEU LOCAL';
+  String get businessStep5Title => 'Tria el teu local';
 
   @override
   String get businessStep5Subtitle =>
@@ -3631,7 +3688,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Important la informació del teu negoci des de Google';
 
   @override
-  String get businessStep5PreviewTitle => 'FOTOS DE GOOGLE';
+  String get businessStep5PreviewTitle => 'Fotos de Google';
 
   @override
   String get businessStep5PreviewSubtitle =>
@@ -3645,7 +3702,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get businessStep5SelectedAddress => 'Adreça seleccionada';
 
   @override
-  String get communityFinalTitle => 'CREA EL TEU COMPTE';
+  String get communityFinalTitle => 'Crea el teu compte';
 
   @override
   String get communityFinalSubtitle =>
@@ -3708,7 +3765,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'En crear un compte, acceptes els nostres Termes del servei i la Política de privadesa';
 
   @override
-  String get communityStep1Title => 'EXPLICA\'NS SOBRE TU';
+  String get communityStep1Title => 'Explica\'ns sobre tu';
 
   @override
   String get communityStep1Subtitle => 'Creem el teu perfil';
@@ -3737,7 +3794,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'han pogut carregar els tipus de comunitat';
 
   @override
-  String get communityStep3Title => 'ON ET TROBES?';
+  String get communityStep3Title => 'On et trobes?';
 
   @override
   String get communityStep3Subtitle => 'Troba oportunitats a la teva zona';
@@ -3758,7 +3815,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityStep3CityRequired => 'Selecciona una ciutat';
 
   @override
-  String get communityStep4Title => 'COMPLETA EL TEU PERFIL';
+  String get communityStep4Title => 'Completa el teu perfil';
 
   @override
   String get communityStep4Subtitle =>

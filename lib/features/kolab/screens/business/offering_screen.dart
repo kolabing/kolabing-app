@@ -115,13 +115,13 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         // -- Section header
         Text(
           l10n.offeringTitle,
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
           l10n.offeringSelectAllThatApply,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -131,7 +131,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['offering']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
             ),
           ),
 
@@ -162,7 +162,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.offeringBaseOfferHelper,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
@@ -171,14 +171,14 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           maxLines: 3,
           onChanged: notifier.updateBaseOffer,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
           decoration: InputDecoration(
             hintText: l10n.offeringBaseOfferHint,
             filled: true,
-            fillColor: KolabingColors.surface,
+            fillColor: context.colors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: KolabingColors.darkBorder),
+              borderSide: BorderSide(color: context.colors.darkBorder),
             ),
           ),
         ),
@@ -190,7 +190,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.offeringExtraTermsHelper,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -204,15 +204,6 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             label: Text(
               l10n.offeringAddExtraTerm,
               style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
-            ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.primary,
-              side: BorderSide(
-                color: KolabingColors.primary.withValues(alpha: 0.5),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
             ),
           ),
         ),
@@ -310,7 +301,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
       );
 }
 
@@ -331,9 +322,9 @@ class _TriggerCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: KolabingColors.darkBorder),
+          border: Border.all(color: context.colors.darkBorder),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,12 +335,12 @@ class _TriggerCard extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context).offeringTriggerIfPrefix(condition),
-                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.5),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     additionalOffer,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface, height: 1.4),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface, height: 1.4),
                   ),
                 ],
               ),
@@ -358,10 +349,10 @@ class _TriggerCard extends StatelessWidget {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               onPressed: onRemove,
-              icon: const Icon(
+              icon: Icon(
                 LucideIcons.x,
                 size: 18,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ],
@@ -392,8 +383,8 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
     final l10n = AppLocalizations.of(context);
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -411,7 +402,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -419,12 +410,12 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             l10n.offeringTriggerSheetTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.offeringTriggerSheetSubtitle,
-            style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
           TextField(
@@ -465,11 +456,6 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
                 elevation: 0,
               ),
               child: Text(
@@ -531,13 +517,13 @@ class _ToggleCard extends StatelessWidget {
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
-              ? KolabingColors.softYellow
-              : KolabingColors.surface,
+              ? context.colors.softYellow
+              : context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
             color: isSelected
-                ? KolabingColors.primary
-                : KolabingColors.darkBorder,
+                ? context.colors.primary
+                : context.colors.darkBorder,
           ),
         ),
         child: Row(
@@ -549,13 +535,13 @@ class _ToggleCard extends StatelessWidget {
               height: 24,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? KolabingColors.primary
+                    ? context.colors.primary
                     : Colors.transparent,
                 borderRadius: KolabingRadius.borderRadiusXs,
                 border: Border.all(
                   color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.darkBorder,
+                      ? context.colors.primary
+                      : context.colors.darkBorder,
                   width: 1.5,
                 ),
               ),
@@ -563,7 +549,7 @@ class _ToggleCard extends StatelessWidget {
                   ? Icon(
                       isLocked ? LucideIcons.lock : LucideIcons.check,
                       size: 14,
-                      color: KolabingColors.onPrimary,
+                      color: context.colors.onPrimary,
                     )
                   : null,
             ),
@@ -574,8 +560,8 @@ class _ToggleCard extends StatelessWidget {
               icon,
               size: 20,
               color: isSelected
-                  ? KolabingColors.onSurface
-                  : KolabingColors.onSurfaceVariant,
+                  ? context.colors.onSurface
+                  : context.colors.onSurfaceVariant,
             ),
             const SizedBox(width: KolabingSpacing.sm),
 
@@ -586,12 +572,12 @@ class _ToggleCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                   ),
                 ],
               ),

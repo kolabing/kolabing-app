@@ -24,13 +24,13 @@ class ProfileAvatarButton extends ConsumerWidget {
       padding: const EdgeInsets.only(right: KolabingSpacing.md),
       child: GestureDetector(
         onTap: () => _openProfile(context, type),
-        child: const CircleAvatar(
+        child: CircleAvatar(
           radius: 16,
-          backgroundColor: KolabingColors.charcoal,
+          backgroundColor: context.colors.charcoal,
           child: Icon(
             Icons.person,
             size: 18,
-            color: KolabingColors.navBarBackground,
+            color: context.colors.navBarBackground,
           ),
         ),
       ),
@@ -50,8 +50,8 @@ class ProfileAvatarButton extends ConsumerWidget {
       MaterialPageRoute<void>(
         builder: (_) => Scaffold(
           appBar: AppBar(
-            backgroundColor: KolabingColors.navBarBackground,
-            foregroundColor: KolabingColors.charcoal,
+            backgroundColor: context.colors.navBarBackground,
+            foregroundColor: context.colors.charcoal,
             elevation: 0,
             scrolledUnderElevation: 0,
             title: const Text('Profile'),

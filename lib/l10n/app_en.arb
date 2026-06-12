@@ -56,6 +56,82 @@
   "@welcomeGetStarted": {
     "description": "Welcome screen primary call-to-action button."
   },
+  "welcomeStartKolabing": "Start kolabing",
+  "@welcomeStartKolabing": {
+    "description": "Welcome screen primary CTA — redesigned version."
+  },
+  "welcomeHeroWhere": "Where",
+  "@welcomeHeroWhere": {
+    "description": "Hero sentence part 1."
+  },
+  "welcomeHeroBusinesses": "businesses",
+  "@welcomeHeroBusinesses": {
+    "description": "Hero sentence part 2."
+  },
+  "welcomeHeroAnd": "and",
+  "@welcomeHeroAnd": {
+    "description": "Hero sentence part 3."
+  },
+  "welcomeHeroCommunities": "communities",
+  "@welcomeHeroCommunities": {
+    "description": "Hero sentence part 4."
+  },
+  "welcomeHeroGrow": "grow",
+  "@welcomeHeroGrow": {
+    "description": "Hero sentence part 5."
+  },
+  "welcomeHeroTogether": "together",
+  "@welcomeHeroTogether": {
+    "description": "Hero sentence part 6."
+  },
+  "welcomeTaglineMatch": "MATCH",
+  "@welcomeTaglineMatch": {
+    "description": "Tagline first word."
+  },
+  "welcomeTaglineDot": "·",
+  "@welcomeTaglineDot": {
+    "description": "Tagline separator dot."
+  },
+  "welcomeTaglineKolab": "KOLAB",
+  "@welcomeTaglineKolab": {
+    "description": "Tagline middle word — highlighted in yellow."
+  },
+  "welcomeTaglineGrow": "GROW",
+  "@welcomeTaglineGrow": {
+    "description": "Tagline last word."
+  },
+  "welcomeFloatingEvents": "events",
+  "@welcomeFloatingEvents": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingUgc": "UGC",
+  "@welcomeFloatingUgc": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingReviews": "reviews",
+  "@welcomeFloatingReviews": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingGrowth": "growth",
+  "@welcomeFloatingGrowth": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingCommunity": "community",
+  "@welcomeFloatingCommunity": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingBrands": "brands",
+  "@welcomeFloatingBrands": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingPeople": "people",
+  "@welcomeFloatingPeople": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingConnection": "connection",
+  "@welcomeFloatingConnection": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
   "settingsLanguage": "Language",
   "@settingsLanguage": {
     "description": "Settings/profile row label that opens the language picker."
@@ -729,15 +805,15 @@
   "@kolabingLogoSemanticLabel": {
     "description": "Accessibility label for the Kolabing logo image."
   },
-  "selectionCardBusinessTitle": "I'M A BUSINESS",
+  "selectionCardBusinessTitle": "I'm a business",
   "@selectionCardBusinessTitle": {
     "description": "User-type selection card title for the Business option."
   },
-  "selectionCardCommunityTitle": "I'M A COMMUNITY",
+  "selectionCardCommunityTitle": "I'm a community",
   "@selectionCardCommunityTitle": {
     "description": "User-type selection card title for the Community option."
   },
-  "selectionCardAttendeeTitle": "I'M AN ATTENDEE",
+  "selectionCardAttendeeTitle": "I'm an attendee",
   "@selectionCardAttendeeTitle": {
     "description": "User-type selection card title for the Attendee option."
   },
@@ -4288,11 +4364,11 @@
   "@businessFinalCopyDetails": {
     "description": "Business onboarding final: copy error details button"
   },
-  "businessFinalTitleAuthenticated": "FINISH BUSINESS ONBOARDING",
+  "businessFinalTitleAuthenticated": "Finish business onboarding",
   "@businessFinalTitleAuthenticated": {
     "description": "Business onboarding final: title when user is already authenticated"
   },
-  "businessFinalTitleNewAccount": "CREATE YOUR ACCOUNT",
+  "businessFinalTitleNewAccount": "Create your account",
   "@businessFinalTitleNewAccount": {
     "description": "Business onboarding final: title for new account creation"
   },
@@ -4380,7 +4456,7 @@
   "@businessStep2PhoneTooLong": {
     "description": "Business onboarding step 2: phone too long error"
   },
-  "businessStep2Title": "REVIEW YOUR BUSINESS DETAILS",
+  "businessStep2Title": "Review your business details",
   "@businessStep2Title": {
     "description": "Business onboarding step 2: screen title"
   },
@@ -4476,7 +4552,7 @@
   "@businessStep3NoPhotosError": {
     "description": "Business onboarding step 3: no photos added error"
   },
-  "businessStep3Title": "ADD VENUE PHOTOS",
+  "businessStep3Title": "Add venue photos",
   "@businessStep3Title": {
     "description": "Business onboarding step 3: screen title"
   },
@@ -4496,7 +4572,7 @@
   "@businessStep5ImportFallback": {
     "description": "Business onboarding step 5: Google import fallback message"
   },
-  "businessStep5Title": "CHOOSE YOUR VENUE",
+  "businessStep5Title": "Choose your venue",
   "@businessStep5Title": {
     "description": "Business onboarding step 5: screen title"
   },
@@ -4524,7 +4600,7 @@
   "@businessStep5Importing": {
     "description": "Business onboarding step 5: importing overlay message"
   },
-  "businessStep5PreviewTitle": "PHOTOS FROM GOOGLE",
+  "businessStep5PreviewTitle": "Photos from Google",
   "@businessStep5PreviewTitle": {
     "description": "Business onboarding step 5: imported photos preview title"
   },
@@ -4540,7 +4616,7 @@
   "@businessStep5SelectedAddress": {
     "description": "Business onboarding step 5: selected address card heading"
   },
-  "communityFinalTitle": "CREATE YOUR ACCOUNT",
+  "communityFinalTitle": "Create your account",
   "@communityFinalTitle": {
     "description": "Community onboarding final screen title"
   },
@@ -4612,7 +4688,7 @@
   "@communityFinalTermsNotice": {
     "description": "Terms and privacy notice below register button"
   },
-  "communityStep1Title": "TELL US ABOUT YOU",
+  "communityStep1Title": "Tell us about you",
   "@communityStep1Title": {
     "description": "Community onboarding step 1 title"
   },
@@ -4648,7 +4724,7 @@
   "@communityStep2LoadError": {
     "description": "Error message when community types fail to load"
   },
-  "communityStep3Title": "WHERE ARE YOU LOCATED?",
+  "communityStep3Title": "Where are you located?",
   "@communityStep3Title": {
     "description": "Community onboarding step 3 title"
   },
@@ -4676,7 +4752,7 @@
   "@communityStep3CityRequired": {
     "description": "Validation snackbar when city not selected"
   },
-  "communityStep4Title": "COMPLETE YOUR PROFILE",
+  "communityStep4Title": "Complete your profile",
   "@communityStep4Title": {
     "description": "Community onboarding step 4 title"
   },

@@ -12,11 +12,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling event discovery operations
 class DiscoveryService {
-  DiscoveryService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  DiscoveryService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -59,8 +57,9 @@ class DiscoveryService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$_baseUrl/events/discover')
-        .replace(queryParameters: queryParams);
+    final uri = Uri.parse(
+      '$_baseUrl/events/discover',
+    ).replace(queryParameters: queryParams);
     debugPrint('Discover Events: GET $uri');
 
     try {
@@ -77,7 +76,8 @@ class DiscoveryService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         return DiscoveredEventsResponse.fromJson(
-            json['data'] as Map<String, dynamic>);
+          json['data'] as Map<String, dynamic>,
+        );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw DiscoveryException(

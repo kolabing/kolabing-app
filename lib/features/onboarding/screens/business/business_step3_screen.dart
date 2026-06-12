@@ -35,7 +35,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -69,7 +69,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
         _ => l10n.businessStep3PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: KolabingColors.error),
+        SnackBar(content: Text(message), backgroundColor: context.colors.error),
       );
     } finally {
       if (mounted) {
@@ -90,7 +90,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
           content: Text(
             AppLocalizations.of(context).businessStep3NoPhotosError,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -106,7 +106,7 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
     final notifier = ref.read(onboardingProvider.notifier);
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -124,21 +124,21 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                     const SizedBox(height: 32),
                     Text(
                       AppLocalizations.of(context).businessStep3Title,
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       AppLocalizations.of(context).businessStep3Subtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
                     if (_isPicking)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: LinearProgressIndicator(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                     Wrap(
@@ -165,16 +165,11 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                 child: ElevatedButton(
                   onPressed: photos.isNotEmpty ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(
+                    disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
-                    disabledForegroundColor: KolabingColors.onPrimary
+                    disabledForegroundColor: context.colors.onPrimary
                         .withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     elevation: 0,
                   ),
                   child: Text(
@@ -203,18 +198,18 @@ class _AddPhotoTile extends StatelessWidget {
       width: 104,
       height: 104,
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
+        color: context.colors.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(LucideIcons.plus, color: KolabingColors.onSurfaceVariant),
+          Icon(LucideIcons.plus, color: context.colors.onSurfaceVariant),
           const SizedBox(height: 8),
           Text(
             AppLocalizations.of(context).businessStep3AddPhoto,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
           ),
         ],
       ),
@@ -243,8 +238,8 @@ class _VenuePhotoTile extends StatelessWidget {
           child: Container(
             width: 24,
             height: 24,
-            decoration: const BoxDecoration(
-              color: KolabingColors.error,
+            decoration: BoxDecoration(
+              color: context.colors.error,
               shape: BoxShape.circle,
             ),
             child: const Icon(LucideIcons.x, size: 14, color: Colors.white),

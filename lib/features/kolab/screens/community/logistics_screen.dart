@@ -115,7 +115,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.logisticsAvailabilitySubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
 
           if (state.fieldErrors['availability_mode'] != null) ...[
@@ -172,13 +172,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             const SizedBox(height: KolabingSpacing.xxs),
           ],
           citiesAsync.when(
-            loading: () => const LinearProgressIndicator(
-              color: KolabingColors.primary,
-              backgroundColor: KolabingColors.darkBorder,
+            loading: () => LinearProgressIndicator(
+              color: context.colors.primary,
+              backgroundColor: context.colors.darkBorder,
             ),
             error: (e, _) => Text(
               l10n.logisticsCitiesLoadError(e.toString()),
-              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.error),
+              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.error),
             ),
             data: (cities) => DropdownButtonFormField<String>(
               initialValue: kolab.preferredCity.isNotEmpty
@@ -223,13 +223,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateArea(value.trim().isEmpty ? null : value.trim());
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
             decoration: _inputDecoration(hint: l10n.logisticsPreferredAreaHint)
                 .copyWith(
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     LucideIcons.mapPin,
                     size: 18,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ),
           ),
@@ -257,31 +257,31 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return Container(
           margin: const EdgeInsets.only(top: KolabingSpacing.xxs),
           decoration: BoxDecoration(
-            color: KolabingColors.surface,
+            color: context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: KolabingColors.darkBorder),
+            border: Border.all(color: context.colors.darkBorder),
           ),
           child: Column(
             children: [
               for (var i = 0; i < items.length; i++) ...[
                 if (i != 0)
-                  const Divider(height: 1, color: KolabingColors.darkBorder),
+                  Divider(height: 1, color: context.colors.darkBorder),
                 ListTile(
                   dense: true,
-                  leading: const Icon(
+                  leading: Icon(
                     LucideIcons.mapPin,
                     size: 18,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                   title: Text(
                     items[i].title,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   ),
                   subtitle: Text(
                     items[i].formattedAddress,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
                   ),
                   onTap: () => _selectAreaSuggestion(items[i]),
                 ),
@@ -290,11 +290,11 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           ),
         );
       },
-      loading: () => const Padding(
+      loading: () => Padding(
         padding: EdgeInsets.only(top: KolabingSpacing.xs),
         child: LinearProgressIndicator(
-          color: KolabingColors.primary,
-          backgroundColor: KolabingColors.darkBorder,
+          color: context.colors.primary,
+          backgroundColor: context.colors.darkBorder,
         ),
       ),
       error: (error, stackTrace) => const SizedBox.shrink(),
@@ -375,21 +375,21 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? KolabingColors.softYellow
-                      : KolabingColors.surface,
+                      ? context.colors.softYellow
+                      : context.colors.surface,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.darkBorder,
+                        ? context.colors.primary
+                        : context.colors.darkBorder,
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
                 child: Text(
                   _dayNames[i].substring(0, 3),
                   style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400, color: isSelected
-                        ? KolabingColors.onSurface
-                        : KolabingColors.onSurfaceVariant),
+                        ? context.colors.onSurface
+                        : context.colors.onSurfaceVariant),
                 ),
               ),
             ),
@@ -423,10 +423,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        color: isSelected ? context.colors.softYellow : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: isSelected ? context.colors.primary : context.colors.darkBorder,
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -436,19 +436,19 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             icon,
             size: 24,
             color: isSelected
-                ? KolabingColors.primary
-                : KolabingColors.textTertiary,
+                ? context.colors.primary
+                : context.colors.textTertiary,
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             title,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
           Text(
             description,
-            style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: KolabingColors.textTertiary),
+            style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: context.colors.textTertiary),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -493,9 +493,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               lastDate: lastDate,
               builder: (context, child) => Theme(
                 data: Theme.of(context).copyWith(
-                  colorScheme: const ColorScheme.light(
-                    primary: KolabingColors.primary,
-                    onPrimary: KolabingColors.onPrimary,
+                  colorScheme: ColorScheme.light(
+                    primary: context.colors.primary,
+                    onPrimary: context.colors.onPrimary,
                   ),
                 ),
                 child: child!,
@@ -511,20 +511,20 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               vertical: KolabingSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: KolabingRadius.borderRadiusMd,
               border: Border.all(
                 color: error != null
-                    ? KolabingColors.error
-                    : KolabingColors.darkBorder,
+                    ? context.colors.error
+                    : context.colors.darkBorder,
               ),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.calendar,
                   size: 18,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
@@ -533,8 +533,8 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                         ? dateFormat.format(value)
                         : AppLocalizations.of(context).logisticsSelectDate,
                     style: KolabingTextStyles.bodySmall.copyWith(color: value != null
-                          ? KolabingColors.onSurface
-                          : KolabingColors.textTertiary),
+                          ? context.colors.onSurface
+                          : context.colors.textTertiary),
                   ),
                 ),
               ],
@@ -545,7 +545,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: 4),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
           ),
         ],
       ],
@@ -578,20 +578,20 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             vertical: KolabingSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: KolabingColors.surface,
+            color: context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
               color: error != null
-                  ? KolabingColors.error
-                  : KolabingColors.darkBorder,
+                  ? context.colors.error
+                  : context.colors.darkBorder,
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.clock,
                 size: 18,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
@@ -599,8 +599,8 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                     ? value.format(context)
                     : AppLocalizations.of(context).logisticsSelectTime,
                 style: KolabingTextStyles.bodySmall.copyWith(color: value != null
-                      ? KolabingColors.onSurface
-                      : KolabingColors.textTertiary),
+                      ? context.colors.onSurface
+                      : context.colors.textTertiary),
               ),
             ],
           ),
@@ -610,7 +610,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         const SizedBox(height: 4),
         Text(
           error,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
         ),
       ],
     ],
@@ -618,31 +618,31 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   InputDecoration _inputDecoration({required String hint}) => InputDecoration(
     hintText: hint,
-    hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
     filled: true,
-    fillColor: KolabingColors.surface,
+    fillColor: context.colors.surface,
     border: OutlineInputBorder(
       borderRadius: KolabingRadius.borderRadiusSm,
-      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+      borderSide: BorderSide(color: context.colors.darkBorder),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: KolabingRadius.borderRadiusSm,
-      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+      borderSide: BorderSide(color: context.colors.darkBorder),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: KolabingRadius.borderRadiusSm,
-      borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
+      borderSide: BorderSide(color: context.colors.primary, width: 2),
     ),
   );
 
   Widget _buildSectionHeader(String title) => Text(
     title,
-    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
   );
 
   Widget _buildLabel(String label) => Text(
     label,
-    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
   );
 
   Widget _buildFieldError(String error) => Container(
@@ -651,17 +651,17 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
       vertical: KolabingSpacing.xs,
     ),
     decoration: BoxDecoration(
-      color: KolabingColors.errorBg,
+      color: context.colors.errorBg,
       borderRadius: KolabingRadius.borderRadiusSm,
     ),
     child: Row(
       children: [
-        const Icon(Icons.error_outline, size: 14, color: KolabingColors.error),
+        Icon(Icons.error_outline, size: 14, color: context.colors.error),
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
           child: Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
           ),
         ),
       ],

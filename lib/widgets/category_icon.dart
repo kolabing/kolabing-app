@@ -173,6 +173,7 @@ class CategoryIcon extends StatelessWidget {
     super.key,
     this.size = 32,
     this.assetPath,
+    this.color,
     this.iconUrl,
   });
 
@@ -181,6 +182,9 @@ class CategoryIcon extends StatelessWidget {
 
   /// Override the auto-resolved asset path.
   final String? assetPath;
+
+  /// Optional tint color applied to the SVG via [ColorFilter.mode].
+  final Color? color;
 
   /// Admin-uploaded SVG URL (from the type tables' `icon_url`). Takes priority.
   final String? iconUrl;
@@ -196,11 +200,17 @@ class CategoryIcon extends StatelessWidget {
         width: size,
         height: size,
         fit: BoxFit.contain,
+        colorFilter: color != null
+            ? ColorFilter.mode(color!, BlendMode.srcIn)
+            : null,
         placeholderBuilder: (_) => SvgPicture.asset(
           path,
           width: size,
           height: size,
           fit: BoxFit.contain,
+          colorFilter: color != null
+              ? ColorFilter.mode(color!, BlendMode.srcIn)
+              : null,
         ),
       );
     }
@@ -210,6 +220,9 @@ class CategoryIcon extends StatelessWidget {
       width: size,
       height: size,
       fit: BoxFit.contain,
+      colorFilter: color != null
+          ? ColorFilter.mode(color!, BlendMode.srcIn)
+          : null,
     );
   }
 }

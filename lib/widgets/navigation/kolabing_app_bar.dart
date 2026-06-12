@@ -20,14 +20,14 @@ class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: KolabingColors.navBarBackground,
+      backgroundColor: context.colors.navBarBackground,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       leading: showBackButton
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
-              color: KolabingColors.charcoal,
+              color: context.colors.charcoal,
               onPressed: () => Navigator.of(context).pop(),
             )
           : null,

@@ -24,14 +24,14 @@ class MatchBreakdown extends StatelessWidget {
   final bool compact;
 
   /// Optional accent color for the filled portion of the weight bar.
-  /// Defaults to [KolabingColors.primary].
+  /// Defaults to [context.colors.primary].
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
     if (signals.isEmpty) return const SizedBox.shrink();
 
-    final accent = color ?? KolabingColors.primary;
+    final accent = color ?? context.colors.primary;
     final rowGap = compact ? 4.0 : 6.0;
 
     return Column(
@@ -79,7 +79,7 @@ class _SignalRow extends StatelessWidget {
             signal.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurfaceVariant, letterSpacing: 0.2),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant, letterSpacing: 0.2),
           ),
         ),
         const SizedBox(width: 8),
@@ -123,7 +123,7 @@ class _CellRow extends StatelessWidget {
             decoration: BoxDecoration(
               color: i < filled
                   ? accent
-                  : KolabingColors.darkBorder.withValues(alpha: 0.6),
+                  : context.colors.darkBorder.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(1.5),
             ),
           ),

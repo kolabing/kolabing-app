@@ -58,10 +58,10 @@ class KolabActionBar extends StatelessWidget {
           top: KolabingSpacing.sm,
           bottom: MediaQuery.of(context).padding.bottom + KolabingSpacing.sm,
         ),
-        decoration: const BoxDecoration(
-          color: KolabingColors.surface,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           border: Border(
-            top: BorderSide(color: KolabingColors.darkBorder),
+            top: BorderSide(color: context.colors.darkBorder),
           ),
         ),
         child: isLastStep
@@ -137,27 +137,22 @@ class _PrimaryActionButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
             disabledBackgroundColor:
-                KolabingColors.primary.withValues(alpha: 0.5),
+                context.colors.primary.withValues(alpha: 0.5),
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
           ),
           child: isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: KolabingColors.onPrimary,
+                    color: context.colors.onPrimary,
                   ),
                 )
               : Text(
                   label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                  style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
                 ),
         ),
       );
@@ -184,25 +179,22 @@ class _OutlinedActionButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: KolabingColors.onSurface,
-            side: const BorderSide(color: KolabingColors.darkBorder),
+            foregroundColor: context.colors.onSurface,
+            side: BorderSide(color: context.colors.darkBorder),
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
           ),
           child: isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 )
               : Text(
                   label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                  style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
                 ),
         ),
       );

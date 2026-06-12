@@ -55,6 +55,7 @@ class _AttendeeRegisterScreenState
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
+        // Static value: initState runs before Theme is available.
         systemNavigationBarColor: KolabingColors.background,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
@@ -246,9 +247,9 @@ class _AttendeeRegisterScreenState
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -256,21 +257,21 @@ class _AttendeeRegisterScreenState
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: _handleRegister,
         ),
       ),
@@ -283,11 +284,11 @@ class _AttendeeRegisterScreenState
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -307,22 +308,22 @@ class _AttendeeRegisterScreenState
     prefixIcon: Icon(prefixIcon),
     suffixIcon: suffixIcon,
     filled: true,
-    fillColor: KolabingColors.surface,
+    fillColor: context.colors.surface,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+      borderSide: BorderSide(color: context.colors.darkBorder),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.darkBorder),
+      borderSide: BorderSide(color: context.colors.darkBorder),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
+      borderSide: BorderSide(color: context.colors.primary, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: KolabingColors.error),
+      borderSide: BorderSide(color: context.colors.error),
     ),
   );
 
@@ -330,7 +331,7 @@ class _AttendeeRegisterScreenState
   Widget build(BuildContext context) => PopScope(
     canPop: !_anyLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       resizeToAvoidBottomInset: false,
       body: KeyboardAvoidingContent(
         child: SafeArea(
@@ -348,17 +349,17 @@ class _AttendeeRegisterScreenState
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.arrow_back_ios_rounded,
                               size: 20,
-                              color: KolabingColors.onSurface,
+                              color: context.colors.onSurface,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               AppLocalizations.of(context).commonBack,
                               style: KolabingTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
-                                color: KolabingColors.onSurface,
+                                color: context.colors.onSurface,
                               ),
                             ),
                           ],
@@ -391,7 +392,7 @@ class _AttendeeRegisterScreenState
                           style: KolabingTextStyles.bodyLarge.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.onSurface,
+                            color: context.colors.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -401,7 +402,7 @@ class _AttendeeRegisterScreenState
                         Text(
                           AppLocalizations.of(context).attendeeRegisterSubtitle,
                           style: KolabingTextStyles.bodySmall.copyWith(
-                            color: KolabingColors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -550,13 +551,8 @@ class _AttendeeRegisterScreenState
                       child: ElevatedButton(
                         onPressed: _anyLoading ? null : _handleRegister,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: KolabingColors.primary,
-                          foregroundColor: KolabingColors.onPrimary,
                           disabledBackgroundColor: KolabingColors.primary
                               .withValues(alpha: 0.7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
                           elevation: 0,
                         ),
                         child: _isLoading
@@ -591,7 +587,7 @@ class _AttendeeRegisterScreenState
                       AppLocalizations.of(context).attendeeRegisterTerms,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 12,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       textAlign: TextAlign.center,
                     ),

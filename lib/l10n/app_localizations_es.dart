@@ -52,6 +52,63 @@ class AppLocalizationsEs extends AppLocalizations {
   String get welcomeGetStarted => 'Empezar';
 
   @override
+  String get welcomeStartKolabing => 'Empieza a kolabing';
+
+  @override
+  String get welcomeHeroWhere => 'Donde';
+
+  @override
+  String get welcomeHeroBusinesses => 'empresas';
+
+  @override
+  String get welcomeHeroAnd => 'y';
+
+  @override
+  String get welcomeHeroCommunities => 'comunidades';
+
+  @override
+  String get welcomeHeroGrow => 'crecen';
+
+  @override
+  String get welcomeHeroTogether => 'juntas';
+
+  @override
+  String get welcomeTaglineMatch => 'ENCUENTRA';
+
+  @override
+  String get welcomeTaglineDot => '·';
+
+  @override
+  String get welcomeTaglineKolab => 'KOLAB';
+
+  @override
+  String get welcomeTaglineGrow => 'CRECE';
+
+  @override
+  String get welcomeFloatingEvents => 'eventos';
+
+  @override
+  String get welcomeFloatingUgc => 'UGC';
+
+  @override
+  String get welcomeFloatingReviews => 'reseñas';
+
+  @override
+  String get welcomeFloatingGrowth => 'crecimiento';
+
+  @override
+  String get welcomeFloatingCommunity => 'comunidad';
+
+  @override
+  String get welcomeFloatingBrands => 'marcas';
+
+  @override
+  String get welcomeFloatingPeople => 'personas';
+
+  @override
+  String get welcomeFloatingConnection => 'conexión';
+
+  @override
   String get settingsLanguage => 'Idioma';
 
   @override
@@ -572,13 +629,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get kolabingLogoSemanticLabel => 'Logotipo de Kolabing';
 
   @override
-  String get selectionCardBusinessTitle => 'SOY UN NEGOCIO';
+  String get selectionCardBusinessTitle => 'Soy un negocio';
 
   @override
-  String get selectionCardCommunityTitle => 'SOY UNA COMUNIDAD';
+  String get selectionCardCommunityTitle => 'Soy una comunidad';
 
   @override
-  String get selectionCardAttendeeTitle => 'SOY UN ASISTENTE';
+  String get selectionCardAttendeeTitle => 'Soy un asistente';
 
   @override
   String get selectionCardBusinessDescription =>
@@ -3407,10 +3464,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get businessFinalTitleAuthenticated =>
-      'FINALIZA EL ALTA DE TU NEGOCIO';
+      'Finaliza el alta de tu negocio';
 
   @override
-  String get businessFinalTitleNewAccount => 'CREA TU CUENTA';
+  String get businessFinalTitleNewAccount => 'Crea tu cuenta';
 
   @override
   String get businessFinalSubtitleAuthenticated =>
@@ -3489,7 +3546,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'El número de teléfono es demasiado largo';
 
   @override
-  String get businessStep2Title => 'REVISA LOS DATOS DE TU NEGOCIO';
+  String get businessStep2Title => 'Revisa los datos de tu negocio';
 
   @override
   String get businessStep2Subtitle =>
@@ -3570,7 +3627,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Añade al menos una foto del local para continuar';
 
   @override
-  String get businessStep3Title => 'AÑADE FOTOS DEL LOCAL';
+  String get businessStep3Title => 'Añade fotos del local';
 
   @override
   String get businessStep3Subtitle =>
@@ -3588,7 +3645,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'No pudimos importar desde Google, rellénalo manualmente.';
 
   @override
-  String get businessStep5Title => 'ELIGE TU LOCAL';
+  String get businessStep5Title => 'Elige tu local';
 
   @override
   String get businessStep5Subtitle =>
@@ -3614,7 +3671,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Importando la información de tu negocio desde Google';
 
   @override
-  String get businessStep5PreviewTitle => 'FOTOS DE GOOGLE';
+  String get businessStep5PreviewTitle => 'Fotos de Google';
 
   @override
   String get businessStep5PreviewSubtitle =>
@@ -3628,7 +3685,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get businessStep5SelectedAddress => 'Dirección seleccionada';
 
   @override
-  String get communityFinalTitle => 'CREA TU CUENTA';
+  String get communityFinalTitle => 'Crea tu cuenta';
 
   @override
   String get communityFinalSubtitle =>
@@ -3689,7 +3746,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Al crear una cuenta, aceptas nuestros Términos de servicio y Política de privacidad';
 
   @override
-  String get communityStep1Title => 'CUÉNTANOS SOBRE TI';
+  String get communityStep1Title => 'Cuéntanos sobre ti';
 
   @override
   String get communityStep1Subtitle => 'Vamos a crear tu perfil';
@@ -3718,7 +3775,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudieron cargar los tipos de comunidad';
 
   @override
-  String get communityStep3Title => '¿DÓNDE TE ENCUENTRAS?';
+  String get communityStep3Title => '¿Dónde te encuentras?';
 
   @override
   String get communityStep3Subtitle => 'Encuentra oportunidades en tu zona';
@@ -3739,7 +3796,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityStep3CityRequired => 'Selecciona una ciudad';
 
   @override
-  String get communityStep4Title => 'COMPLETA TU PERFIL';
+  String get communityStep4Title => 'Completa tu perfil';
 
   @override
   String get communityStep4Subtitle =>

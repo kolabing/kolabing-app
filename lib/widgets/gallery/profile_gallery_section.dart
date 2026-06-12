@@ -55,7 +55,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: isDark
             ? null
@@ -74,18 +74,18 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
           // Header row
           Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.image,
                 size: 20,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 l10n.profileGallerySectionTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
               if (visiblePhotos.isNotEmpty)
@@ -94,7 +94,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   child: Text(
                     '${visiblePhotos.length}/${GalleryState.maxPhotos}',
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ),
@@ -108,7 +108,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                       vertical: KolabingSpacing.xxs,
                     ),
                     decoration: BoxDecoration(
-                      color: KolabingColors.primary.withValues(alpha: 0.1),
+                      color: context.colors.primary.withValues(alpha: 0.1),
                       borderRadius: KolabingRadius.borderRadiusRound,
                     ),
                     child: Row(
@@ -118,15 +118,15 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                           LucideIcons.plus,
                           size: 14,
                           color: isDark
-                              ? KolabingColors.textOnDark
-                              : KolabingColors.onSurface,
+                              ? context.colors.textOnDark
+                              : context.colors.onSurface,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           l10n.profileGallerySectionAdd,
                           style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: isDark
-                                ? KolabingColors.textOnDark
-                                : KolabingColors.onSurface),
+                                ? context.colors.textOnDark
+                                : context.colors.onSurface),
                         ),
                       ],
                     ),
@@ -163,7 +163,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
             Text(
               galleryState.error!,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.error,
+                color: context.colors.error,
               ),
             ),
           ],
@@ -176,7 +176,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
     HapticFeedback.selectionClick();
     showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -190,7 +190,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.darkBorder,
+                  color: context.colors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -198,7 +198,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               Text(
                 AppLocalizations.of(context).profileGallerySheetTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -207,12 +207,12 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    color: context.colors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.camera,
-                    color: KolabingColors.primary,
+                    color: context.colors.primary,
                   ),
                 ),
                 title: Text(AppLocalizations.of(context).profileGallerySheetTakePhoto),
@@ -224,12 +224,12 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: KolabingColors.info.withValues(alpha: 0.1),
+                    color: context.colors.info.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.image,
-                    color: KolabingColors.info,
+                    color: context.colors.info,
                   ),
                 ),
                 title: Text(AppLocalizations.of(context).profileGallerySheetChooseGallery),
@@ -251,16 +251,16 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   Widget _buildLoadingState(bool isDark) => Container(
     height: 120,
     decoration: BoxDecoration(
-      color: isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
+      color: isDark ? context.colors.darkBorder : context.colors.surfaceVariant,
       borderRadius: KolabingRadius.borderRadiusMd,
     ),
-    child: const Center(
+    child: Center(
       child: SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: KolabingColors.primary,
+          color: context.colors.primary,
         ),
       ),
     ),
@@ -269,19 +269,19 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
   Widget _buildUploadingIndicator(bool isDark) => Container(
     height: 120,
     decoration: BoxDecoration(
-      color: isDark ? KolabingColors.darkBorder : KolabingColors.surfaceVariant,
+      color: isDark ? context.colors.darkBorder : context.colors.surfaceVariant,
       borderRadius: KolabingRadius.borderRadiusMd,
     ),
     child: Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 24,
             height: 24,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -289,8 +289,8 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
             AppLocalizations.of(context).profileGallerySectionUploading,
             style: TextStyle(
               color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
             ),
           ),
         ],
@@ -309,7 +309,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
       decoration: BoxDecoration(
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+          color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
           width: 1.5,
           strokeAlign: BorderSide.strokeAlignInside,
         ),
@@ -327,15 +327,15 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.08),
+                  color: context.colors.primary.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   LucideIcons.camera,
                   size: 24,
                   color: isDark
-                      ? KolabingColors.textOnDark.withValues(alpha: 0.72)
-                      : KolabingColors.onSurfaceVariant,
+                      ? context.colors.textOnDark.withValues(alpha: 0.72)
+                      : context.colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
@@ -346,8 +346,8 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.titleSmall.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -358,8 +358,8 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark.withValues(alpha: 0.68)
-                      : KolabingColors.onSurfaceVariant,
+                      ? context.colors.textOnDark.withValues(alpha: 0.68)
+                      : context.colors.onSurfaceVariant,
                   height: 1.45,
                 ),
               ),
@@ -432,7 +432,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(AppLocalizations.of(context).profileGalleryDeleteConfirm),
           ),
         ],
@@ -476,14 +476,14 @@ class _GalleryThumbnail extends StatelessWidget {
           if (photo.url.isEmpty)
             Container(
               color: isDark
-                  ? KolabingColors.darkBorder
-                  : KolabingColors.surfaceVariant,
+                  ? context.colors.darkBorder
+                  : context.colors.surfaceVariant,
               child: Icon(
                 LucideIcons.imageOff,
                 size: 24,
                 color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                    : KolabingColors.textTertiary,
+                    ? context.colors.textOnDark.withValues(alpha: 0.6)
+                    : context.colors.textTertiary,
               ),
             )
           else
@@ -494,15 +494,15 @@ class _GalleryThumbnail extends StatelessWidget {
                 if (loadingProgress == null) return child;
                 return Container(
                   color: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.surfaceVariant,
-                  child: const Center(
+                      ? context.colors.darkBorder
+                      : context.colors.surfaceVariant,
+                  child: Center(
                     child: SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: KolabingColors.primary,
+                        color: context.colors.primary,
                       ),
                     ),
                   ),
@@ -512,14 +512,14 @@ class _GalleryThumbnail extends StatelessWidget {
                 debugPrint('Gallery thumbnail error for ${photo.url}: $error');
                 return Container(
                   color: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.surfaceVariant,
+                      ? context.colors.darkBorder
+                      : context.colors.surfaceVariant,
                   child: Icon(
                     LucideIcons.imageOff,
                     size: 24,
                     color: isDark
-                        ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                        : KolabingColors.textTertiary,
+                        ? context.colors.textOnDark.withValues(alpha: 0.6)
+                        : context.colors.textTertiary,
                   ),
                 );
               },

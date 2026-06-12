@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -79,10 +80,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           content: Text(
             AppLocalizations.of(context).createChallengeSuccess,
           ),
-          backgroundColor: KolabingColors.success,
+          backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
           ),
         ),
       );
@@ -92,10 +93,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
           ),
         ),
       );
@@ -111,14 +112,14 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
-        ? KolabingColors.surface
-        : KolabingColors.background;
+        ? context.colors.surface
+        : context.colors.background;
     final textColor = isDark
-        ? KolabingColors.textOnDark
-        : KolabingColors.onSurface;
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
     final surfaceColor = isDark
-        ? KolabingColors.darkSurface
-        : KolabingColors.surface;
+        ? context.colors.darkSurface
+        : context.colors.surface;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -244,7 +245,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   l10n.createChallengePointsDefaultHint,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                 ),
 
                 const SizedBox(height: KolabingSpacing.xxl),
@@ -256,22 +257,17 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleCreate,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
-                      disabledBackgroundColor: KolabingColors.primary
+                      disabledBackgroundColor: context.colors.primary
                           .withValues(alpha: 0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
                     child: _isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.5,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                KolabingColors.onPrimary,
+                                context.colors.onPrimary,
                               ),
                             ),
                           )
@@ -297,31 +293,31 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+      hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
       prefixIcon: prefixIcon != null
-          ? Icon(prefixIcon, color: KolabingColors.textTertiary)
+          ? Icon(prefixIcon, color: context.colors.textTertiary)
           : null,
       filled: true,
       fillColor: surfaceColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+          color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+          color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
         ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
+        borderSide: BorderSide(color: context.colors.primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.error),
+        borderSide: BorderSide(color: context.colors.error),
       ),
     );
   }
@@ -337,8 +333,8 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
-        ? KolabingColors.textOnDark
-        : KolabingColors.onSurface;
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
 
     return Row(
       children: [
@@ -349,7 +345,7 @@ class _FieldLabel extends StatelessWidget {
         if (required)
           Text(
             ' *',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.error),
           ),
       ],
     );
@@ -414,37 +410,37 @@ class _DifficultyOption extends StatelessWidget {
         bgColor = isSelected ? const Color(0xFFD4EDDA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF155724)
-            : KolabingColors.darkBorder;
+            : context.colors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF155724)
-            : KolabingColors.onSurfaceVariant;
+            : context.colors.onSurfaceVariant;
         icon = LucideIcons.leaf;
       case ChallengeDifficulty.medium:
         bgColor = isSelected ? const Color(0xFFFFF3CD) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF856404)
-            : KolabingColors.darkBorder;
+            : context.colors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF856404)
-            : KolabingColors.onSurfaceVariant;
+            : context.colors.onSurfaceVariant;
         icon = LucideIcons.flame;
       case ChallengeDifficulty.hard:
         bgColor = isSelected ? const Color(0xFFF8D7DA) : Colors.transparent;
         borderColor = isSelected
             ? const Color(0xFF721C24)
-            : KolabingColors.darkBorder;
+            : context.colors.darkBorder;
         textColor = isSelected
             ? const Color(0xFF721C24)
-            : KolabingColors.onSurfaceVariant;
+            : context.colors.onSurfaceVariant;
         icon = LucideIcons.zap;
     }
 
     return Material(
       color: bgColor,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(KolabingRadius.md),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(KolabingRadius.md),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(

@@ -1,27 +1,60 @@
 import 'package:flutter/material.dart';
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/ui_icon.dart';
 
+/// Semantic accent for a dashboard stat card.
+///
+/// Maps meaning → icon circle fill + icon color.
+/// Do not alternate by index — assign by what the stat represents.
+enum StatCardAccent { pending, accepted, active, completed }
+
+extension _StatCardAccentColors on StatCardAccent {
+  Color circleFill(BuildContext context) {
+    switch (this) {
+      case StatCardAccent.pending:
+        return context.colors.secondaryContainer;
+      case StatCardAccent.accepted:
+        return context.colors.tertiaryContainer;
+      case StatCardAccent.active:
+        return context.colors.softYellow;
+      case StatCardAccent.completed:
+        return context.colors.surfaceContainerHigh;
+    }
+  }
+
+  Color iconColor(BuildContext context) {
+    switch (this) {
+      case StatCardAccent.pending:
+        return context.colors.secondary;
+      case StatCardAccent.accepted:
+        return context.colors.tertiary;
+      case StatCardAccent.active:
+        return context.colors.onSurface;
+      case StatCardAccent.completed:
+        return context.colors.onSurfaceVariant;
+    }
+  }
+}
+
 /// A stats card widget used on both Business and Community dashboards.
 ///
-/// Displays a count with a label, subtitle, and a colored icon circle.
+/// Neutral cream card face — personality comes from the small icon circle only.
 class DashboardStatCard extends StatelessWidget {
   const DashboardStatCard({
     super.key,
     required this.title,
     required this.count,
     required this.icon,
-    required this.accentColor,
-    required this.index,
+    required this.accent,
     this.subtitle,
     this.iconSlug,
-    this.iconVariant = UiIconVariant.minimal,
   });
 
-  /// Uppercase label at the top (e.g. "PUBLISHED OPPORTUNITIES")
+  /// Uppercase label (e.g. "PENDING")
   final String title;
 
   /// Large numeric count
@@ -30,100 +63,80 @@ class DashboardStatCard extends StatelessWidget {
   /// Fallback icon (used when [iconSlug] is null)
   final IconData icon;
 
-  /// When provided, renders a custom [UiIcon] instead of the Lucide [icon].
+  /// Optional custom [UiIcon] slug
   final UiIconSlug? iconSlug;
 
-  /// Icon variant — defaults to minimal; pass expressive for the B direction.
-  final UiIconVariant iconVariant;
-
-  /// Accent color for the icon circle background and icon tint
-  final Color accentColor;
+  /// Semantic accent — determines icon circle fill and icon color
+  final StatCardAccent accent;
 
   /// Optional subtitle text below the count
   final String? subtitle;
 
-  /// Position index — even = lavender, odd = sage
-  final int index;
-
-  Color get _cardColor => index.isEven
-      ? KolabingColors.secondaryContainer
-      : KolabingColors.tertiaryContainer;
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : _cardColor,
+        color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusXl,
+        border: Border.all(color: context.colors.hairline),
+        boxShadow: [KolabingShadows.card],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Title label
+          // Label
           Text(
-            title,
+            title.toUpperCase(),
             style: KolabingTextStyles.labelSmall.copyWith(
-              color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.45)
-                  : KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: KolabingSpacing.sm),
 
-          // Count + icon row
+          // Count + icon circle row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Count
               Text(
                 count.toString(),
                 style: KolabingTextStyles.displaySmall.copyWith(
-                  fontWeight: FontWeight.w500,
+                  fontSize: 36,
+                  fontWeight: FontWeight.w400,
                   letterSpacing: -0.5,
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
-
-              // Colored icon circle
               Container(
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.15),
+                  color: accent.circleFill(context),
                   shape: BoxShape.circle,
                 ),
-                child: iconSlug != null
-                    ? UiIcon(
-                        icon: iconSlug!,
-                        size: 22,
-                        variant: iconVariant,
-                        color: iconVariant == UiIconVariant.expressive
-                            ? null
-                            : accentColor,
-                      )
-                    : Icon(icon, size: 20, color: accentColor),
+                child: Center(
+                  child: iconSlug != null
+                      ? UiIcon(
+                          icon: iconSlug!,
+                          size: 18,
+                          color: accent.iconColor(context),
+                        )
+                      : Icon(icon, size: 18, color: accent.iconColor(context)),
+                ),
               ),
             ],
           ),
 
-          // Optional subtitle
           if (subtitle != null) ...[
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               subtitle!,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.45)
-                    : KolabingColors.onSurfaceVariant,
+              style: KolabingTextStyles.captionSecondary.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

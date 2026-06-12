@@ -23,7 +23,7 @@ class ThemeSelectorSection extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: isDark
             ? null
@@ -44,15 +44,15 @@ class ThemeSelectorSection extends ConsumerWidget {
               Icon(
                 LucideIcons.palette,
                 size: 20,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 l10n.themeSelectorTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
             ],
@@ -122,19 +122,19 @@ class _ThemeOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final backgroundColor = isSelected
         ? (isDark
-            ? KolabingColors.primary.withValues(alpha: 0.15)
-            : KolabingColors.softYellow)
-        : (isDark ? KolabingColors.surface : KolabingColors.surfaceVariant);
+            ? context.colors.primary.withValues(alpha: 0.15)
+            : context.colors.softYellow)
+        : (isDark ? context.colors.surface : context.colors.surfaceVariant);
 
     final borderColor = isSelected
-        ? KolabingColors.primary
-        : (isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder);
+        ? context.colors.primary
+        : (isDark ? context.colors.darkBorder : context.colors.darkBorder);
 
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
+        isDark ? context.colors.textOnDark : context.colors.onSurface;
 
     final subtitleColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -158,20 +158,20 @@ class _ThemeOption extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? KolabingColors.primary
+                    ? context.colors.primary
                     : (isDark
-                        ? KolabingColors.darkSurface
-                        : KolabingColors.surface),
+                        ? context.colors.darkSurface
+                        : context.colors.surface),
                 borderRadius: KolabingRadius.borderRadiusSm,
               ),
               child: Icon(
                 icon,
                 size: 20,
                 color: isSelected
-                    ? KolabingColors.onPrimary
+                    ? context.colors.onPrimary
                     : (isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurfaceVariant),
+                        ? context.colors.textOnDark
+                        : context.colors.onSurfaceVariant),
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -203,14 +203,14 @@ class _ThemeOption extends StatelessWidget {
               Container(
                 width: 24,
                 height: 24,
-                decoration: const BoxDecoration(
-                  color: KolabingColors.primary,
+                decoration: BoxDecoration(
+                  color: context.colors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.check,
                   size: 14,
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
           ],

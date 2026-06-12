@@ -71,8 +71,8 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
       },
       child: Container(
         constraints: BoxConstraints(maxHeight: maxHeight),
-        decoration: const BoxDecoration(
-          color: KolabingColors.surface,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -83,7 +83,7 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
               width: 42,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
@@ -95,12 +95,12 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                 children: [
                   Text(
                     'Review photos from Google',
-                    style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Tap any photo to remove it before we add it to your venue. You can always edit photos later.',
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
                   ),
                 ],
               ),
@@ -134,10 +134,10 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                 20,
                 12 + mediaQuery.padding.bottom,
               ),
-              decoration: const BoxDecoration(
-                color: KolabingColors.surface,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 border: Border(
-                  top: BorderSide(color: KolabingColors.darkBorder),
+                  top: BorderSide(color: context.colors.darkBorder),
                 ),
               ),
               child: Column(
@@ -145,16 +145,16 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.info,
                         size: 14,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           'Photos from Google. Credits are kept with each photo.',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
                         ),
                       ),
                     ],
@@ -166,11 +166,8 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                     child: ElevatedButton(
                       onPressed: _confirm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: KolabingColors.primary,
-                        foregroundColor: KolabingColors.onPrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        backgroundColor: context.colors.primary,
+                        foregroundColor: context.colors.onPrimary,
                         elevation: 0,
                       ),
                       child: Text(
@@ -226,25 +223,25 @@ class _PhotoTile extends StatelessWidget {
                 photo.previewUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
-                  color: KolabingColors.surfaceVariant,
+                  color: context.colors.surfaceVariant,
                   alignment: Alignment.center,
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.imageOff,
                     size: 22,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ),
                 loadingBuilder: (context, child, progress) {
                   if (progress == null) return child;
                   return Container(
-                    color: KolabingColors.surfaceVariant,
+                    color: context.colors.surfaceVariant,
                     alignment: Alignment.center,
-                    child: const SizedBox(
+                    child: SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: KolabingColors.primary,
+                        color: context.colors.primary,
                       ),
                     ),
                   );
@@ -266,7 +263,7 @@ class _PhotoTile extends StatelessWidget {
               width: 26,
               height: 26,
               decoration: BoxDecoration(
-                color: isKept ? KolabingColors.primary : KolabingColors.error,
+                color: isKept ? context.colors.primary : context.colors.error,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -280,8 +277,8 @@ class _PhotoTile extends StatelessWidget {
                 isKept ? LucideIcons.check : LucideIcons.x,
                 size: 16,
                 color: isKept
-                    ? KolabingColors.onPrimary
-                    : KolabingColors.surface,
+                    ? context.colors.onPrimary
+                    : context.colors.surface,
               ),
             ),
           ),

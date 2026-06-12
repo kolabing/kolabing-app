@@ -294,11 +294,11 @@ final challengeSelectionProvider =
     );
 
 Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
-  final creator = raw['creator_profile'] as Map<String, dynamic>?;
-  final applicant = raw['applicant_profile'] as Map<String, dynamic>?;
-  final opportunity = raw['collab_opportunity'] as Map<String, dynamic>?;
-  final businessProfile = raw['business_profile'] as Map<String, dynamic>?;
-  final communityProfile = raw['community_profile'] as Map<String, dynamic>?;
+  final creator = raw['creator_profile'] is Map<String, dynamic> ? raw['creator_profile'] as Map<String, dynamic> : null;
+  final applicant = raw['applicant_profile'] is Map<String, dynamic> ? raw['applicant_profile'] as Map<String, dynamic> : null;
+  final opportunity = raw['collab_opportunity'] is Map<String, dynamic> ? raw['collab_opportunity'] as Map<String, dynamic> : null;
+  final businessProfile = raw['business_profile'] is Map<String, dynamic> ? raw['business_profile'] as Map<String, dynamic> : null;
+  final communityProfile = raw['community_profile'] is Map<String, dynamic> ? raw['community_profile'] as Map<String, dynamic> : null;
 
   final businessSummary = creator?['user_type'] == 'business'
       ? creator

@@ -14,15 +14,7 @@ class ThemeService {
     final prefs = await SharedPreferences.getInstance();
     final value = prefs.getString(_themeModeKey);
 
-    switch (value) {
-      case 'light':
-        return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      case 'system':
-      default:
-        return ThemeMode.system;
-    }
+    return ThemeMode.light;
   }
 
   /// Save theme mode to SharedPreferences

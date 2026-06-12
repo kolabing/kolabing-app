@@ -36,8 +36,8 @@ class LeaderboardPodium extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            KolabingColors.primary.withValues(alpha: 0.1),
-            KolabingColors.primary.withValues(alpha: 0.05),
+            context.colors.primary.withValues(alpha: 0.1),
+            context.colors.primary.withValues(alpha: 0.05),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -49,7 +49,7 @@ class LeaderboardPodium extends StatelessWidget {
         children: [
           // 2nd place
           if (ordered[0] != null)
-            _buildPodiumEntry(ordered[0]!, 2, 100)
+            _buildPodiumEntry(context, ordered[0]!, 2, 100)
           else
             const SizedBox(width: 100),
 
@@ -57,7 +57,7 @@ class LeaderboardPodium extends StatelessWidget {
 
           // 1st place
           if (ordered[1] != null)
-            _buildPodiumEntry(ordered[1]!, 1, 130)
+            _buildPodiumEntry(context, ordered[1]!, 1, 130)
           else
             const SizedBox(width: 100),
 
@@ -65,7 +65,7 @@ class LeaderboardPodium extends StatelessWidget {
 
           // 3rd place
           if (ordered[2] != null)
-            _buildPodiumEntry(ordered[2]!, 3, 80)
+            _buildPodiumEntry(context, ordered[2]!, 3, 80)
           else
             const SizedBox(width: 100),
         ],
@@ -73,14 +73,15 @@ class LeaderboardPodium extends StatelessWidget {
     );
   }
 
-  Widget _buildPodiumEntry(LeaderboardEntry entry, int rank, double height) {
+  Widget _buildPodiumEntry(
+      BuildContext context, LeaderboardEntry entry, int rank, double height) {
     Color crownColor;
     Color bgColor;
 
     switch (rank) {
       case 1:
-        crownColor = const Color(0xFFFFD700); // Gold
-        bgColor = const Color(0xFFFFD700).withValues(alpha: 0.2);
+        crownColor = const Color(0xFFFFE28C); // Brand yellow
+        bgColor = const Color(0xFFFFE28C).withValues(alpha: 0.2);
         break;
       case 2:
         crownColor = const Color(0xFFC0C0C0); // Silver
@@ -118,7 +119,7 @@ class LeaderboardPodium extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: rank == 1 ? 36 : 28,
-                backgroundColor: KolabingColors.primary.withValues(alpha: 0.1),
+                backgroundColor: context.colors.primary.withValues(alpha: 0.1),
                 backgroundImage: entry.profilePhoto != null
                     ? NetworkImage(entry.profilePhoto!)
                     : null,
@@ -127,7 +128,7 @@ class LeaderboardPodium extends StatelessWidget {
                         entry.displayName.isNotEmpty
                             ? entry.displayName[0].toUpperCase()
                             : '?',
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
                       )
                     : null,
               ),
@@ -165,7 +166,7 @@ class LeaderboardPodium extends StatelessWidget {
           width: 80,
           child: Text(
             entry.displayName,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -176,15 +177,15 @@ class LeaderboardPodium extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               LucideIcons.star,
               size: 12,
-              color: KolabingColors.primary,
+              color: context.colors.primary,
             ),
             const SizedBox(width: 2),
             Text(
               '${entry.totalPoints}',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.primary),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.primary),
             ),
           ],
         ),

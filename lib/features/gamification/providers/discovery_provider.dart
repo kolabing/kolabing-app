@@ -88,22 +88,21 @@ class DiscoveryState {
     String? error,
     int? currentPage,
     bool? hasMore,
-  }) =>
-      DiscoveryState(
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude,
-        radiusKm: radiusKm ?? this.radiusKm,
-        cityId: cityId ?? this.cityId,
-        cityName: cityName ?? this.cityName,
-        dateRange: dateRange ?? this.dateRange,
-        typeSlug: clearType ? null : (typeSlug ?? this.typeSlug),
-        typeName: clearType ? null : (typeName ?? this.typeName),
-        events: events ?? this.events,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        currentPage: currentPage ?? this.currentPage,
-        hasMore: hasMore ?? this.hasMore,
-      );
+  }) => DiscoveryState(
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    radiusKm: radiusKm ?? this.radiusKm,
+    cityId: cityId ?? this.cityId,
+    cityName: cityName ?? this.cityName,
+    dateRange: dateRange ?? this.dateRange,
+    typeSlug: clearType ? null : (typeSlug ?? this.typeSlug),
+    typeName: clearType ? null : (typeName ?? this.typeName),
+    events: events ?? this.events,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    currentPage: currentPage ?? this.currentPage,
+    hasMore: hasMore ?? this.hasMore,
+  );
 }
 
 /// Notifier for discovery with location and pagination
@@ -218,8 +217,11 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
   }
 
   /// Set location and fetch events
-  Future<void> setLocationAndDiscover(double lat, double lng,
-      {double? radiusKm}) async {
+  Future<void> setLocationAndDiscover(
+    double lat,
+    double lng, {
+    double? radiusKm,
+  }) async {
     if (!ensureAuthenticatedUser(
       clearSignedOutState: _clearSignedOutState,
       onUnauthenticated: _invalidateActiveRequests,
@@ -273,10 +275,7 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     }
     if (!state.canQuery || state.isLoading || !state.hasMore) return;
 
-    state = state.copyWith(
-      isLoading: true,
-      currentPage: state.currentPage + 1,
-    );
+    state = state.copyWith(isLoading: true, currentPage: state.currentPage + 1);
 
     await _fetchEvents(append: true);
   }
@@ -327,8 +326,9 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
         return;
       }
 
-      final events =
-          append ? [...state.events, ...response.events] : response.events;
+      final events = append
+          ? [...state.events, ...response.events]
+          : response.events;
 
       state = state.copyWith(
         events: events,
@@ -340,10 +340,7 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
           isStaleAuthSession(sessionVersion)) {
         return;
       }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.message,
-      );
+      state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
       if (requestGeneration != _activeRequestGeneration ||
           isStaleAuthSession(sessionVersion)) {

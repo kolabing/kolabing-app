@@ -82,10 +82,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           controller: _titleController,
           maxLength: 255,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsListingTitleHint,
             error: errors['title'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateTitle,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -98,10 +99,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           controller: _nameController,
           maxLength: 255,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsProductNameHint,
             error: errors['product_name'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateProductName,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -115,7 +117,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xxs),
             child: Text(
               errors['product_type']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
             ),
           ),
         Wrap(
@@ -135,13 +137,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.surface,
+                      ? context.colors.primary
+                      : context.colors.surface,
                   borderRadius: KolabingRadius.borderRadiusSm,
                   border: Border.all(
                     color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.darkBorder,
+                        ? context.colors.primary
+                        : context.colors.darkBorder,
                   ),
                 ),
                 child: Row(
@@ -151,15 +153,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       type.icon,
                       size: 16,
                       color: isSelected
-                          ? KolabingColors.onPrimary
-                          : KolabingColors.onSurface,
+                          ? context.colors.onPrimary
+                          : context.colors.onSurface,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                     Text(
                       type.displayName,
                       style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
-                            ? KolabingColors.onPrimary
-                            : KolabingColors.onSurface),
+                            ? context.colors.onPrimary
+                            : context.colors.onSurface),
                     ),
                   ],
                 ),
@@ -177,10 +179,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           maxLength: 2000,
           maxLines: 5,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsDescriptionHint,
             error: errors['description'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -190,17 +193,18 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.productDetailsOfferHeadlineHelper,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
           controller: _headlineController,
           maxLength: 50,
           decoration: _inputDecoration(
+            context,
             hint: l10n.productDetailsOfferHeadlineHint,
             error: errors['offer_headline'],
           ),
-          style: _inputTextStyle,
+          style: _inputTextStyle(context),
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -215,20 +219,21 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ? kolab.preferredCity
                   : null,
               decoration: _inputDecoration(
+                context,
                 hint: l10n.productDetailsSelectCityHint,
                 error: errors['preferred_city'],
               ),
-              style: _inputTextStyle,
-              icon: const Icon(
+              style: _inputTextStyle(context),
+              icon: Icon(
                 LucideIcons.chevronDown,
                 size: 20,
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               items: cities
                   .map(
                     (c) => DropdownMenuItem(
                       value: c.name,
-                      child: Text(c.name, style: _inputTextStyle),
+                      child: Text(c.name, style: _inputTextStyle(context)),
                     ),
                   )
                   .toList(),
@@ -236,13 +241,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 if (v != null) notifier.updatePreferredCity(v);
               },
             ),
-          loading: () => const LinearProgressIndicator(
-            color: KolabingColors.primary,
-            backgroundColor: KolabingColors.darkBorder,
+          loading: () => LinearProgressIndicator(
+            color: context.colors.primary,
+            backgroundColor: context.colors.darkBorder,
           ),
           error: (_, _) => Text(
             l10n.productDetailsFailedToLoadCities,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.error),
           ),
         ),
 
@@ -256,44 +261,46 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 // Shared helpers (file-private)
 // =============================================================================
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) =>
     InputDecoration(
       hintText: hint,
-      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
+      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
       errorText: error,
       errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
       filled: true,
-      fillColor: KolabingColors.surface,
+      fillColor: context.colors.surface,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.md,
         vertical: 14,
       ),
       border: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.darkBorder),
+        borderSide: BorderSide(color: context.colors.darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.darkBorder),
+        borderSide: BorderSide(color: context.colors.darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderFocus, width: 1.5),
+        borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderError),
+        borderSide: BorderSide(color: context.colors.borderError),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: const BorderSide(color: KolabingColors.borderError, width: 1.5),
+        borderSide: BorderSide(color: context.colors.borderError, width: 1.5),
       ),
     );
 
-TextStyle get _inputTextStyle => KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);
+TextStyle _inputTextStyle(BuildContext context) =>
+    KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
 
 // ---------------------------------------------------------------------------
 // Reusable small widgets
@@ -306,7 +313,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
       label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
     );
 }
 
@@ -317,6 +324,6 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
       label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
     );
 }

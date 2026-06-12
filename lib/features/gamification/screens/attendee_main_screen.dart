@@ -7,7 +7,6 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/navigation/profile_avatar_button.dart';
 import '../../../widgets/ui_icon.dart';
@@ -96,14 +95,14 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? KolabingColors.surface : KolabingColors.background,
+          isDark ? context.colors.surface : context.colors.background,
       appBar: KolabingAppBar(
         // QR action shows the attendee's OWN profile QR (#4); the avatar still
         // opens the profile.
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.qrCode),
-            color: KolabingColors.charcoal,
+            color: context.colors.charcoal,
             tooltip: l10n.attendeeMyQrTooltip,
             onPressed: _openMyQr,
           ),

@@ -89,7 +89,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).mediaUploadFailed(e.toString())), backgroundColor: KolabingColors.error),
+          SnackBar(content: Text(AppLocalizations.of(context).mediaUploadFailed(e.toString())), backgroundColor: context.colors.error),
         );
       }
     } finally {
@@ -136,7 +136,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
               AppLocalizations.of(context).mediaPhotosAlreadyAdded,
               style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
             ),
-            backgroundColor: KolabingColors.onSurfaceVariant,
+            backgroundColor: context.colors.onSurfaceVariant,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -161,7 +161,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             AppLocalizations.of(context).mediaPhotosAdded(toAdd.length),
             style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
           ),
-          backgroundColor: KolabingColors.success,
+          backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -198,19 +198,19 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       children: [
         Text(
           title,
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           l10n.mediaSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
         if (errors.containsKey('media'))
           Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-            child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error)),
+            child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error)),
           ),
 
         // Reuse previously uploaded profile gallery photos, plus venue fallback.
@@ -223,12 +223,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
               style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.primary,
+              foregroundColor: context.colors.primary,
               side: BorderSide(
-                color: KolabingColors.primary.withValues(alpha: 0.5),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.sm),
+                color: context.colors.primary.withValues(alpha: 0.5),
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.md,
@@ -241,9 +238,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
 
         // Upload progress
         if (_isUploading)
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(bottom: KolabingSpacing.sm),
-            child: LinearProgressIndicator(color: KolabingColors.primary),
+            child: LinearProgressIndicator(color: context.colors.primary),
           ),
 
         _PhotoGrid(
@@ -301,25 +298,25 @@ class _PhotoGrid extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
+                color: context.colors.surfaceVariant,
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
-                  color: KolabingColors.darkBorder,
+                  color: context.colors.darkBorder,
                   style: BorderStyle.solid,
                 ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.plus,
                     size: 24,
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     AppLocalizations.of(context).mediaAddPhoto,
-                    style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -350,9 +347,9 @@ class _PhotoSlot extends StatelessWidget {
           width: 100,
           height: 100,
           decoration: BoxDecoration(
-            color: KolabingColors.softYellow,
+            color: context.colors.softYellow,
             borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(color: KolabingColors.softYellowBorder),
+            border: Border.all(color: context.colors.softYellowBorder),
           ),
           child: ClipRRect(
             borderRadius: KolabingRadius.borderRadiusMd,
@@ -383,8 +380,8 @@ class _PhotoSlot extends StatelessWidget {
             child: Container(
               width: 22,
               height: 22,
-              decoration: const BoxDecoration(
-                color: KolabingColors.error,
+              decoration: BoxDecoration(
+                color: context.colors.error,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -402,11 +399,11 @@ class _PhotoSlot extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.image, size: 24, color: KolabingColors.onSurfaceVariant),
+            Icon(LucideIcons.image, size: 24, color: context.colors.onSurfaceVariant),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               AppLocalizations.of(context).mediaPhotoSlot(index + 1),
-              style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
             ),
           ],
         ),

@@ -14,6 +14,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
+import '../../../widgets/glass_button.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
@@ -63,7 +64,7 @@ class _CommunityProfileScreenState
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style:
-                  TextButton.styleFrom(foregroundColor: KolabingColors.error),
+                  TextButton.styleFrom(foregroundColor: context.colors.error),
               child: Text(l10n.communityProfileSignOutConfirm),
             ),
           ],
@@ -95,7 +96,7 @@ class _CommunityProfileScreenState
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style:
-                  TextButton.styleFrom(foregroundColor: KolabingColors.error),
+                  TextButton.styleFrom(foregroundColor: context.colors.error),
               child: Text(l10n.communityProfileDeleteAccountConfirm),
             ),
           ],
@@ -114,7 +115,7 @@ class _CommunityProfileScreenState
   Future<void> _handleChangePhoto() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -130,7 +131,7 @@ class _CommunityProfileScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: KolabingColors.darkBorder,
+                  color: context.colors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -138,7 +139,7 @@ class _CommunityProfileScreenState
               Text(
                 l10n.communityProfileChangePhotoTitle,
                 style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -147,12 +148,12 @@ class _CommunityProfileScreenState
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    color: context.colors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.camera,
-                    color: KolabingColors.primary,
+                    color: context.colors.primary,
                   ),
                 ),
                 title: Text(l10n.communityProfileTakePhoto),
@@ -164,12 +165,12 @@ class _CommunityProfileScreenState
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: KolabingColors.info.withValues(alpha: 0.1),
+                    color: context.colors.info.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.image,
-                    color: KolabingColors.info,
+                    color: context.colors.info,
                   ),
                 ),
                 title: Text(l10n.communityProfileChooseFromGallery),
@@ -243,7 +244,7 @@ class _CommunityProfileScreenState
               content: Text(
                 AppLocalizations.of(context).communityProfilePhotoUpdated,
               ),
-              backgroundColor: KolabingColors.success,
+              backgroundColor: context.colors.success,
             ),
           );
         }
@@ -258,7 +259,7 @@ class _CommunityProfileScreenState
                 e.toString(),
               ),
             ),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -275,7 +276,7 @@ class _CommunityProfileScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error!),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
             action: SnackBarAction(
               label: AppLocalizations.of(context).communityProfileDismiss,
               textColor: Colors.white,
@@ -292,8 +293,8 @@ class _CommunityProfileScreenState
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
+          ? context.colors.surface
+          : context.colors.background,
       body: SafeArea(
         child: _buildBody(state, isDark),
       ),
@@ -335,15 +336,15 @@ class _CommunityProfileScreenState
             // Header shimmer
             Shimmer.fromColors(
               baseColor: isDark
-                  ? KolabingColors.darkSurface
-                  : KolabingColors.surfaceVariant,
+                  ? context.colors.darkSurface
+                  : context.colors.surfaceVariant,
               highlightColor: isDark
-                  ? KolabingColors.darkBorder
-                  : KolabingColors.surface,
+                  ? context.colors.darkBorder
+                  : context.colors.surface,
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? context.colors.darkSurface : Colors.white,
                   borderRadius: KolabingRadius.borderRadiusLg,
                 ),
                 child: Row(
@@ -351,8 +352,8 @@ class _CommunityProfileScreenState
                     Container(
                       width: 80,
                       height: 80,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: isDark ? context.colors.darkSurface : Colors.white,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -365,7 +366,7 @@ class _CommunityProfileScreenState
                             width: 150,
                             height: 20,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? context.colors.darkSurface : Colors.white,
                               borderRadius: KolabingRadius.borderRadiusSm,
                             ),
                           ),
@@ -374,7 +375,7 @@ class _CommunityProfileScreenState
                             width: 80,
                             height: 24,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? context.colors.darkSurface : Colors.white,
                               borderRadius: KolabingRadius.borderRadiusSm,
                             ),
                           ),
@@ -393,15 +394,15 @@ class _CommunityProfileScreenState
                 padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
                 child: Shimmer.fromColors(
                   baseColor: isDark
-                      ? KolabingColors.darkSurface
-                      : KolabingColors.surfaceVariant,
+                      ? context.colors.darkSurface
+                      : context.colors.surfaceVariant,
                   highlightColor: isDark
-                      ? KolabingColors.darkBorder
-                      : KolabingColors.surface,
+                      ? context.colors.darkBorder
+                      : context.colors.surface,
                   child: Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: isDark ? KolabingColors.darkSurface : Colors.white,
+                      color: isDark ? context.colors.darkSurface : Colors.white,
                       borderRadius: KolabingRadius.borderRadiusLg,
                     ),
                   ),
@@ -423,14 +424,14 @@ class _CommunityProfileScreenState
               Container(
                 width: 80,
                 height: 80,
-                decoration: const BoxDecoration(
-                  color: KolabingColors.errorBg,
+                decoration: BoxDecoration(
+                  color: context.colors.errorBg,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.alertCircle,
                   size: 36,
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -438,32 +439,25 @@ class _CommunityProfileScreenState
                 l10n.communityProfileErrorTitle,
                 style: KolabingTextStyles.headlineSmall.copyWith(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 error,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
-              ElevatedButton.icon(
+              GlassButton(
+                label: l10n.communityProfileTryAgain,
                 onPressed: () =>
                     ref.read(profileProvider.notifier).loadProfile(),
-                icon: const Icon(LucideIcons.rotateCcw, size: 18),
-                label: Text(l10n.communityProfileTryAgain),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.lg,
-                    vertical: KolabingSpacing.sm,
-                  ),
-                ),
+                intent: GlassButtonIntent.primary,
+                icon: LucideIcons.rotateCcw,
               ),
             ],
           ),
@@ -476,10 +470,15 @@ class _CommunityProfileScreenState
     final about = profile.communityProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
 
-    return RefreshIndicator(
-      onRefresh: () => ref.read(profileProvider.notifier).refresh(),
-      color: KolabingColors.primary,
-      child: SingleChildScrollView(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildProfileScreenHeader(isDark),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () => ref.read(profileProvider.notifier).refresh(),
+            color: context.colors.primary,
+            child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
@@ -527,8 +526,39 @@ class _CommunityProfileScreenState
           ],
         ),
       ),
+          ),
+        ),
+      ],
     );
   }
+
+  Widget _buildProfileScreenHeader(bool isDark) => Padding(
+    padding: const EdgeInsets.fromLTRB(
+      KolabingSpacing.md,
+      KolabingSpacing.md,
+      KolabingSpacing.md,
+      KolabingSpacing.xs,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Text(
+            'PROFILE',
+            style: KolabingTextStyles.headlineLarge.copyWith(
+              color: context.colors.onSurface,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+        Icon(
+          LucideIcons.pencil,
+          size: 20,
+          color: context.colors.onSurfaceVariant,
+        ),
+      ],
+    ),
+  );
 
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final l10n = AppLocalizations.of(context);
@@ -539,21 +569,14 @@ class _CommunityProfileScreenState
         profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Avatar with edit button
           Stack(
@@ -561,12 +584,12 @@ class _CommunityProfileScreenState
               GestureDetector(
                 onTap: isUpdating ? null : _handleChangePhoto,
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                       width: 3,
                     ),
                   ),
@@ -591,19 +614,19 @@ class _CommunityProfileScreenState
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isDark
-                            ? KolabingColors.darkSurface
-                            : KolabingColors.surface,
+                            ? context.colors.darkSurface
+                            : context.colors.surface,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       LucideIcons.camera,
                       size: 16,
-                      color: KolabingColors.onPrimary,
+                      color: context.colors.onPrimary,
                     ),
                   ),
                 ),
@@ -635,33 +658,34 @@ class _CommunityProfileScreenState
           // Name
           Text(
             name,
-            style: KolabingTextStyles.headlineMedium.copyWith(
+            style: KolabingTextStyles.titleLarge.copyWith(
               color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
+              letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
           ),
 
           const SizedBox(height: KolabingSpacing.xs),
 
-          // Community type badge
+          // Community type badge — slate palette
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
               vertical: KolabingSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.info.withValues(alpha: 0.1),
+              color: context.colors.info.withValues(alpha: 0.1),
               borderRadius: KolabingRadius.borderRadiusRound,
               border: Border.all(
-                color: KolabingColors.info.withValues(alpha: 0.3),
+                color: context.colors.info.withValues(alpha: 0.3),
               ),
             ),
             child: Text(
               communityType,
               style: KolabingTextStyles.labelSmall.copyWith(
-                color: KolabingColors.info,
+                color: context.colors.info,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -681,9 +705,9 @@ class _CommunityProfileScreenState
                   vertical: KolabingSpacing.xxs,
                 ),
                 decoration: BoxDecoration(
-                  color: KolabingColors.softYellow,
+                  color: context.colors.softYellow,
                   borderRadius: KolabingRadius.borderRadiusRound,
-                  border: Border.all(color: KolabingColors.softYellowBorder),
+                  border: Border.all(color: context.colors.softYellowBorder),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -698,7 +722,7 @@ class _CommunityProfileScreenState
                       ),
                       style: KolabingTextStyles.labelSmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                   ],
@@ -712,12 +736,12 @@ class _CommunityProfileScreenState
   }
 
   Widget _buildAvatarPlaceholder(String name) => Container(
-        color: KolabingColors.surfaceVariant,
+        color: context.colors.surfaceVariant,
         child: Center(
           child: Text(
             name.isNotEmpty ? name[0].toUpperCase() : '?',
             style: KolabingTextStyles.displaySmall.copyWith(
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
         ),
@@ -728,7 +752,7 @@ class _CommunityProfileScreenState
         child: Text(
           about,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       );
@@ -843,8 +867,8 @@ class _CommunityProfileScreenState
                   LucideIcons.mail,
                   size: 20,
                   color: isDark
-                      ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                      : KolabingColors.textTertiary,
+                      ? context.colors.textOnDark.withValues(alpha: 0.6)
+                      : context.colors.textTertiary,
                 ),
                 const SizedBox(width: KolabingSpacing.sm),
                 Expanded(
@@ -852,8 +876,8 @@ class _CommunityProfileScreenState
                     email,
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       color: isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.onSurface,
+                          ? context.colors.textOnDark
+                          : context.colors.onSurface,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -882,17 +906,11 @@ class _CommunityProfileScreenState
             const SizedBox(height: KolabingSpacing.lg),
 
             // Sign Out Button
-            OutlinedButton.icon(
+            GlassButton(
+              label: l10n.communityProfileSignOutButton,
               onPressed: isUpdating ? null : _handleSignOut,
-              icon: const Icon(LucideIcons.logOut, size: 18),
-              label: Text(l10n.communityProfileSignOutButton),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.error,
-                side: const BorderSide(color: KolabingColors.error),
-                padding: const EdgeInsets.symmetric(
-                  vertical: KolabingSpacing.sm,
-                ),
-              ),
+              intent: GlassButtonIntent.destructive,
+              icon: LucideIcons.logOut,
             ),
 
             const SizedBox(height: KolabingSpacing.md),
@@ -908,12 +926,12 @@ class _CommunityProfileScreenState
                   textAlign: TextAlign.center,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     color: isUpdating
-                        ? KolabingColors.textTertiary
-                        : KolabingColors.error,
+                        ? context.colors.textTertiary
+                        : context.colors.error,
                     decoration: TextDecoration.underline,
                     decorationColor: isUpdating
-                        ? KolabingColors.textTertiary
-                        : KolabingColors.error,
+                        ? context.colors.textTertiary
+                        : context.colors.error,
                   ),
                 ),
               ),
@@ -944,28 +962,19 @@ class _SectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            title,
-            style: KolabingTextStyles.titleMedium.copyWith(
-              color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
+            title.toUpperCase(),
+            style: KolabingTextStyles.labelLarge.copyWith(
+              color: context.colors.textTertiary,
+              letterSpacing: 1.0,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -1006,8 +1015,8 @@ class _ContactInfoTile extends StatelessWidget {
               icon,
               size: 20,
               color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                  : KolabingColors.textTertiary,
+                  ? context.colors.textOnDark.withValues(alpha: 0.6)
+                  : context.colors.textTertiary,
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
@@ -1015,10 +1024,10 @@ class _ContactInfoTile extends StatelessWidget {
                 label,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: onTap != null
-                      ? KolabingColors.info
+                      ? context.colors.info
                       : isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.onSurface,
+                          ? context.colors.textOnDark
+                          : context.colors.onSurface,
                 ),
               ),
             ),
@@ -1027,8 +1036,8 @@ class _ContactInfoTile extends StatelessWidget {
                 LucideIcons.externalLink,
                 size: 16,
                 color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                    : KolabingColors.textTertiary,
+                    ? context.colors.textOnDark.withValues(alpha: 0.6)
+                    : context.colors.textTertiary,
               ),
           ],
         ),
@@ -1077,17 +1086,17 @@ class _NotificationToggle extends StatelessWidget {
                   label,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     color: isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface,
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
                   ),
                 ),
               ),
               Switch(
                 value: value,
                 onChanged: isUpdating ? null : onChanged,
-                activeThumbColor: KolabingColors.primary,
+                activeThumbColor: context.colors.primary,
                 activeTrackColor:
-                    KolabingColors.primary.withValues(alpha: 0.5),
+                    context.colors.primary.withValues(alpha: 0.5),
               ),
             ],
           ),

@@ -6,7 +6,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/navigation/kolabing_app_bar.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
@@ -147,9 +146,8 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
-      appBar: const KolabingAppBar(),
+          ? context.colors.surface
+          : context.colors.background,
       body: IndexedStack(
         index: _currentIndex,
         children: [

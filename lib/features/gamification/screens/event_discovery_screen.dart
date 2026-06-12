@@ -122,7 +122,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(color: KolabingColors.primary),
+            CircularProgressIndicator(color: context.colors.primary),
             const SizedBox(height: KolabingSpacing.md),
             Text(AppLocalizations.of(context).eventDiscoveryGettingLocation),
           ],
@@ -139,7 +139,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(color: KolabingColors.primary),
+            CircularProgressIndicator(color: context.colors.primary),
             const SizedBox(height: KolabingSpacing.md),
             Text(AppLocalizations.of(context).eventDiscoverySearching),
           ],
@@ -163,7 +163,7 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
       onRefresh: () async {
         await ref.read(discoveryProvider.notifier).refresh();
       },
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: CustomScrollView(
         slivers: [
           // Radius info
@@ -172,26 +172,26 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               margin: const EdgeInsets.all(KolabingSpacing.md),
               padding: const EdgeInsets.all(KolabingSpacing.md),
               decoration: BoxDecoration(
-                color: KolabingColors.info.withValues(alpha: 0.1),
+                color: context.colors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.mapPin,
                     size: 20,
-                    color: KolabingColors.info,
+                    color: context.colors.info,
                   ),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context).eventDiscoveryRadiusInfo(state.radiusKm.toStringAsFixed(0)),
-                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.info),
+                      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.info),
                     ),
                   ),
                   Text(
                     AppLocalizations.of(context).eventDiscoveryFoundCount(state.events.length),
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.info),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.info),
                   ),
                 ],
               ),
@@ -225,8 +225,8 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                 padding: const EdgeInsets.all(KolabingSpacing.md),
                 child: Center(
                   child: state.isLoading
-                      ? const CircularProgressIndicator(
-                          color: KolabingColors.primary,
+                      ? CircularProgressIndicator(
+                          color: context.colors.primary,
                         )
                       : TextButton.icon(
                           onPressed: () {
@@ -234,9 +234,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
                           },
                           icon: const Icon(LucideIcons.chevronDown),
                           label: Text(AppLocalizations.of(context).eventDiscoveryLoadMore),
-                          style: TextButton.styleFrom(
-                            foregroundColor: KolabingColors.primary,
-                          ),
                         ),
                 ),
               ),
@@ -261,17 +258,17 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             Icon(
               LucideIcons.mapPinOff,
               size: 64,
-              color: KolabingColors.textTertiary.withValues(alpha: 0.5),
+              color: context.colors.textTertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               AppLocalizations.of(context).eventDiscoveryLocationRequired,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               _locationError!,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -279,13 +276,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               onPressed: _initLocation,
               icon: const Icon(LucideIcons.refreshCw),
               label: Text(AppLocalizations.of(context).commonTryAgain),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             TextButton(
@@ -308,17 +298,17 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             Icon(
               LucideIcons.mapPin,
               size: 80,
-              color: KolabingColors.textTertiary.withValues(alpha: 0.5),
+              color: context.colors.textTertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               AppLocalizations.of(context).eventDiscoveryEmptyTitle,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               AppLocalizations.of(context).eventDiscoveryEmptyBody,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
@@ -326,13 +316,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               onPressed: () => _showRadiusFilter(context),
               icon: const Icon(LucideIcons.sliders),
               label: Text(AppLocalizations.of(context).eventDiscoveryAdjustRadius),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
-                side: const BorderSide(color: KolabingColors.primary),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
             ),
           ],
         ),
@@ -350,17 +333,17 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error.withValues(alpha: 0.7),
+              color: context.colors.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).eventDiscoveryErrorTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -370,9 +353,6 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               },
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).commonTryAgain),
-              style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
-              ),
             ),
           ],
         ),
@@ -438,7 +418,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -446,13 +426,13 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).eventDiscoverySearchRadius,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).eventDiscoveryRadiusKm(_radius.toStringAsFixed(0)),
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.primary),
+            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: context.colors.primary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -461,7 +441,7 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             min: 1,
             max: 50,
             divisions: 49,
-            activeColor: KolabingColors.primary,
+            activeColor: context.colors.primary,
             onChanged: (value) {
               setState(() {
                 _radius = value;
@@ -473,11 +453,11 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             children: [
               Text(
                 AppLocalizations.of(context).eventDiscoveryRadiusKm('1'),
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
               ),
               Text(
                 AppLocalizations.of(context).eventDiscoveryRadiusKm('50'),
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
               ),
             ],
           ),
@@ -486,13 +466,6 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             height: 52,
             child: ElevatedButton(
               onPressed: () => widget.onRadiusChanged(_radius),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(AppLocalizations.of(context).eventDiscoveryApply),
             ),
           ),

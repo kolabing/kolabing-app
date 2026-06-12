@@ -27,18 +27,18 @@ class NeedsScreen extends ConsumerWidget {
           // Section header
           Text(
             'WHAT DO YOU NEED?',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Select all that apply',
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
 
           // Error
           if (state.fieldErrors['needs'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
-            _buildFieldError(state.fieldErrors['needs']!),
+            _buildFieldError(context, state.fieldErrors['needs']!),
           ],
 
           const SizedBox(height: KolabingSpacing.lg),
@@ -61,13 +61,13 @@ class NeedsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(KolabingSpacing.sm),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? KolabingColors.softYellow
-                        : KolabingColors.surface,
+                        ? context.colors.softYellow
+                        : context.colors.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
-                          ? KolabingColors.primary
-                          : KolabingColors.darkBorder,
+                          ? context.colors.primary
+                          : context.colors.darkBorder,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -78,15 +78,15 @@ class NeedsScreen extends ConsumerWidget {
                         need.icon,
                         size: 28,
                         color: isSelected
-                            ? KolabingColors.primary
-                            : KolabingColors.textTertiary,
+                            ? context.colors.primary
+                            : context.colors.textTertiary,
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         need.displayName,
                         style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
-                              ? KolabingColors.onSurface
-                              : KolabingColors.onSurfaceVariant),
+                              ? context.colors.onSurface
+                              : context.colors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -100,27 +100,27 @@ class NeedsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildFieldError(String error) => Container(
+  Widget _buildFieldError(BuildContext context, String error) => Container(
         padding: const EdgeInsets.symmetric(
           horizontal: KolabingSpacing.sm,
           vertical: KolabingSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
+          color: context.colors.errorBg,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 14,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Expanded(
               child: Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
               ),
             ),
           ],

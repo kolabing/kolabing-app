@@ -41,12 +41,12 @@ class ReviewScreen extends ConsumerWidget {
           // Section header
           Text(
             'REVIEW & PUBLISH',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Make sure everything looks correct before publishing',
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -55,9 +55,9 @@ class ReviewScreen extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(KolabingSpacing.md),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: KolabingRadius.borderRadiusLg,
-              border: Border.all(color: KolabingColors.darkBorder),
+              border: Border.all(color: context.colors.darkBorder),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +66,7 @@ class ReviewScreen extends ConsumerWidget {
                 // Title & Description (tap -> step 2)
                 // -------------------------------------------------------
                 _buildTappableSection(
+                  context,
                   ref: ref,
                   step: 2,
                   child: Column(
@@ -73,14 +74,14 @@ class ReviewScreen extends ConsumerWidget {
                     children: [
                       Text(
                         kolab.title.isEmpty ? 'Untitled Kolab' : kolab.title,
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         kolab.description.isEmpty
                             ? 'No description provided'
                             : kolab.description,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -93,24 +94,25 @@ class ReviewScreen extends ConsumerWidget {
                 // Looking for (needs) -> step 0
                 // -------------------------------------------------------
                 _buildTappableSection(
+                  context,
                   ref: ref,
                   step: 0,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildReviewLabel('Looking for'),
+                      _buildReviewLabel(context, 'Looking for'),
                       const SizedBox(height: KolabingSpacing.xs),
                       if (kolab.needs.isEmpty)
                         Text(
                           'No needs selected',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
                         )
                       else
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
                           children: kolab.needs
-                              .map((need) => _buildChip(need.displayName))
+                              .map((need) => _buildChip(context, need.displayName))
                               .toList(),
                         ),
                     ],
@@ -122,24 +124,25 @@ class ReviewScreen extends ConsumerWidget {
                 // Offering in return -> step 2
                 // -------------------------------------------------------
                 _buildTappableSection(
+                  context,
                   ref: ref,
                   step: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildReviewLabel('Offering'),
+                      _buildReviewLabel(context, 'Offering'),
                       const SizedBox(height: KolabingSpacing.xs),
                       if (kolab.offersInReturn.isEmpty)
                         Text(
                           'No deliverables selected',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
                         )
                       else
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
                           children: kolab.offersInReturn
-                              .map((d) => _buildChip(d.displayName))
+                              .map((d) => _buildChip(context, d.displayName))
                               .toList(),
                         ),
                     ],
@@ -151,29 +154,32 @@ class ReviewScreen extends ConsumerWidget {
                 // Community info -> step 1
                 // -------------------------------------------------------
                 _buildTappableSection(
+                  context,
                   ref: ref,
                   step: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildReviewLabel('Community'),
+                      _buildReviewLabel(context, 'Community'),
                       const SizedBox(height: KolabingSpacing.xs),
                       if (kolab.communityTypes.isNotEmpty) ...[
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
                           children: kolab.communityTypeLabels
-                              .map(_buildChip)
+                              .map((label) => _buildChip(context, label))
                               .toList(),
                         ),
                         const SizedBox(height: KolabingSpacing.xs),
                       ],
                       _buildReviewInfoRow(
+                        context,
                         LucideIcons.users,
                         'Community size: ${kolab.communitySize ?? '--'}',
                       ),
                       const SizedBox(height: KolabingSpacing.xxs),
                       _buildReviewInfoRow(
+                        context,
                         LucideIcons.userCheck,
                         'Expected attendees: ${kolab.typicalAttendance ?? '--'}',
                       ),
@@ -186,14 +192,16 @@ class ReviewScreen extends ConsumerWidget {
                 // Location -> step 3
                 // -------------------------------------------------------
                 _buildTappableSection(
+                  context,
                   ref: ref,
                   step: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildReviewLabel('Location'),
+                      _buildReviewLabel(context, 'Location'),
                       const SizedBox(height: KolabingSpacing.xs),
                       _buildReviewInfoRow(
+                        context,
                         LucideIcons.mapPin,
                         kolab.preferredCity.isNotEmpty
                             ? kolab.preferredCity
@@ -202,6 +210,7 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.area != null && kolab.area!.isNotEmpty) ...[
                         const SizedBox(height: KolabingSpacing.xxs),
                         _buildReviewInfoRow(
+                        context,
                           LucideIcons.navigation,
                           kolab.area!,
                         ),
@@ -215,15 +224,17 @@ class ReviewScreen extends ConsumerWidget {
                 // Availability -> step 3
                 // -------------------------------------------------------
                 _buildTappableSection(
+                  context,
                   ref: ref,
                   step: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildReviewLabel('Availability'),
+                      _buildReviewLabel(context, 'Availability'),
                       const SizedBox(height: KolabingSpacing.xs),
                       if (kolab.availabilityMode != null) ...[
                         _buildReviewInfoRow(
+                        context,
                           _availabilityModeIcon(kolab.availabilityMode!),
                           kolab.availabilityMode!.displayName,
                         ),
@@ -231,12 +242,14 @@ class ReviewScreen extends ConsumerWidget {
                         if (kolab.availabilityMode ==
                             AvailabilityMode.recurring) ...[
                           _buildReviewInfoRow(
+                        context,
                             LucideIcons.calendar,
                             'Every ${kolab.recurringDays.isNotEmpty ? kolab.recurringDays.map((d) => _dayNames[d - 1]).join(', ') : '--'}'
                             '${kolab.selectedTime != null ? ' at ${kolab.selectedTime!.format(context)}' : ''}',
                           ),
                         ] else ...[
                           _buildReviewInfoRow(
+                        context,
                             LucideIcons.calendar,
                             '${kolab.availabilityStart != null ? dateFormat.format(kolab.availabilityStart!) : '--'}'
                             ' -- '
@@ -247,7 +260,7 @@ class ReviewScreen extends ConsumerWidget {
                       ] else
                         Text(
                           'Not set',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
                         ),
                     ],
                   ),
@@ -262,7 +275,7 @@ class ReviewScreen extends ConsumerWidget {
           Center(
             child: Text(
               'Tap any section above to edit',
-              style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.textTertiary, fontStyle: FontStyle.italic),
+              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary, fontStyle: FontStyle.italic),
             ),
           ),
         ],
@@ -274,7 +287,8 @@ class ReviewScreen extends ConsumerWidget {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  Widget _buildTappableSection({
+  Widget _buildTappableSection(
+    BuildContext context, {
     required WidgetRef ref,
     required int step,
     required Widget child,
@@ -288,12 +302,12 @@ class ReviewScreen extends ConsumerWidget {
         children: [
           Expanded(child: child),
           const SizedBox(width: KolabingSpacing.xs),
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 2),
             child: Icon(
               LucideIcons.pencil,
               size: 16,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
         ],
@@ -301,37 +315,37 @@ class ReviewScreen extends ConsumerWidget {
     ),
   );
 
-  Widget _buildReviewLabel(String label) => Text(
+  Widget _buildReviewLabel(BuildContext context, String label) => Text(
     label.toUpperCase(),
-    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.8),
+    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.8),
   );
 
-  Widget _buildReviewInfoRow(IconData icon, String label) => Row(
+  Widget _buildReviewInfoRow(BuildContext context, IconData icon, String label) => Row(
     children: [
-      Icon(icon, size: 16, color: KolabingColors.onSurfaceVariant),
+      Icon(icon, size: 16, color: context.colors.onSurfaceVariant),
       const SizedBox(width: KolabingSpacing.xs),
       Expanded(
         child: Text(
           label,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
         ),
       ),
     ],
   );
 
-  Widget _buildChip(String label) => Container(
+  Widget _buildChip(BuildContext context, String label) => Container(
     padding: const EdgeInsets.symmetric(
       horizontal: KolabingSpacing.xs,
       vertical: KolabingSpacing.xxs,
     ),
     decoration: BoxDecoration(
-      color: KolabingColors.softYellow,
+      color: context.colors.softYellow,
       borderRadius: KolabingRadius.borderRadiusSm,
-      border: Border.all(color: KolabingColors.softYellowBorder),
+      border: Border.all(color: context.colors.softYellowBorder),
     ),
     child: Text(
       label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
     ),
   );
 

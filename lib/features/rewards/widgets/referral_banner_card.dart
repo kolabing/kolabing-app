@@ -9,14 +9,19 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/glass_button.dart';
 import '../providers/wallet_provider.dart';
 
 /// A banner card prompting the user to reveal and share their referral code.
 ///
 /// Reads the [referralCode] from [walletProvider] and opens a bottom sheet
 /// where the user can copy or share the code.
+///
+/// When [usePastelStyle] is true, uses a pastel yellow background and border.
 class ReferralBannerCard extends ConsumerWidget {
-  const ReferralBannerCard({super.key});
+  const ReferralBannerCard({super.key, this.usePastelStyle = false});
+
+  final bool usePastelStyle;
 
   // ---------------------------------------------------------------------------
   // Build
@@ -37,8 +42,15 @@ class ReferralBannerCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surfaceContainerLow,
+        color: usePastelStyle
+            ? context.colors.pastelYellowBg
+            : context.colors.surfaceContainerLow,
         borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(
+          color: usePastelStyle
+              ? context.colors.pastelYellowBorder
+              : context.colors.hairline,
+        ),
       ),
       child: Row(
         children: [
@@ -49,52 +61,30 @@ class ReferralBannerCard extends ConsumerWidget {
               children: [
                 Text(
                   AppLocalizations.of(context).referralBannerEarnBySharing,
-                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 1.0),
+                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
                 ),
                 const SizedBox(height: KolabingSpacing.xxs),
                 Text(
                   AppLocalizations.of(context).referralBannerTagline,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
-                OutlinedButton(
+                GlassButton(
+                  label: AppLocalizations.of(context).referralBannerShareButton,
                   onPressed: () =>
                       _showReferralCodeSheet(context, referralCode),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: KolabingColors.onSurface,
-                    side: const BorderSide(color: KolabingColors.onSurface),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: KolabingRadius.borderRadiusSm,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: KolabingSpacing.md,
-                      vertical: KolabingSpacing.xs,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).referralBannerShareButton,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-                  ),
+                  intent: GlassButtonIntent.primary,
+                  icon: LucideIcons.share2,
                 ),
               ],
             ),
           ),
           const SizedBox(width: KolabingSpacing.md),
-          // Right icon
-          Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: KolabingColors.softYellow,
-            ),
-            child: const Icon(
-              LucideIcons.gift,
-              size: 28,
-              color: KolabingColors.onSurface,
-            ),
+          // Bare gift icon \u2014 no circle backplate
+          Icon(
+            LucideIcons.gift,
+            size: 36,
+            color: context.colors.onSurface,
           ),
         ],
       ),
@@ -127,8 +117,8 @@ class _ReferralCodeSheet extends StatelessWidget {
       KolabingSpacing.lg,
       KolabingSpacing.lg,
     ),
-    decoration: const BoxDecoration(
-      color: KolabingColors.surface,
+    decoration: BoxDecoration(
+      color: context.colors.surface,
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
     ),
     child: SafeArea(
@@ -140,14 +130,14 @@ class _ReferralCodeSheet extends StatelessWidget {
             width: 44,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.darkBorder,
+              color: context.colors.darkBorder,
               borderRadius: BorderRadius.circular(999),
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).referralSheetYourCode,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 1.2),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Container(
@@ -157,14 +147,14 @@ class _ReferralCodeSheet extends StatelessWidget {
               vertical: KolabingSpacing.lg,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: KolabingRadius.borderRadiusLg,
-              border: Border.all(color: KolabingColors.softYellowBorder),
+              border: Border.all(color: context.colors.softYellowBorder),
             ),
             child: Text(
               code,
               textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 2.5),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 2.5),
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -172,7 +162,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             AppLocalizations.of(context).referralSheetInstructions,
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -187,11 +177,8 @@ class _ReferralCodeSheet extends StatelessWidget {
                 style: KolabingTextStyles.buttonSmall,
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.onSurface,
-                side: const BorderSide(color: KolabingColors.darkBorder),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
+                foregroundColor: context.colors.onSurface,
+                side: BorderSide(color: context.colors.darkBorder),
               ),
             ),
           ),
@@ -205,15 +192,12 @@ class _ReferralCodeSheet extends StatelessWidget {
               label: Text(
                 AppLocalizations.of(context).referralSheetShareCode,
                 style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
               ),
             ),
           ),
@@ -228,7 +212,7 @@ class _ReferralCodeSheet extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context).referralCodeCopied),
-        backgroundColor: KolabingColors.success,
+        backgroundColor: context.colors.success,
       ),
     );
   }
@@ -255,7 +239,7 @@ class _ReferralCodeSheet extends StatelessWidget {
               content: Text(
                 AppLocalizations.of(context).referralSheetShareUnavailable,
               ),
-              backgroundColor: KolabingColors.onSurface,
+              backgroundColor: context.colors.onSurface,
             ),
           );
         }
@@ -268,7 +252,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             content: Text(
               AppLocalizations.of(context).referralSheetShareFailed,
             ),
-            backgroundColor: KolabingColors.onSurface,
+            backgroundColor: context.colors.onSurface,
           ),
         );
       }

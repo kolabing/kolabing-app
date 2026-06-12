@@ -90,10 +90,10 @@ class _MediaSlot extends StatelessWidget {
               Image.network(
                 media.url,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildPlaceholder(),
+                errorBuilder: (_, _, _) => _buildPlaceholder(context),
               )
             else
-              _buildPlaceholder(),
+              _buildPlaceholder(context),
             // Video overlay icon
             if (media.type == 'video')
               Center(
@@ -136,13 +136,13 @@ class _MediaSlot extends StatelessWidget {
         ),
       );
 
-  Widget _buildPlaceholder() => const ColoredBox(
-        color: KolabingColors.surfaceVariant,
+  Widget _buildPlaceholder(BuildContext context) => ColoredBox(
+        color: context.colors.surfaceVariant,
         child: Center(
           child: Icon(
             LucideIcons.image,
             size: 24,
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
           ),
         ),
       );
@@ -166,22 +166,22 @@ class _AddSlot extends StatelessWidget {
         onTap: onTap,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: KolabingColors.background,
+            color: context.colors.background,
             borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: KolabingColors.darkBorder),
+            border: Border.all(color: context.colors.darkBorder),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.camera,
                 size: 22,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 '$remaining left',
-                style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: KolabingColors.textTertiary),
+                style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: context.colors.textTertiary),
               ),
             ],
           ),

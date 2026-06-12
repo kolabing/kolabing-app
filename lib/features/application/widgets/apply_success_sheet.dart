@@ -86,8 +86,8 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
         widget.opportunity.creatorProfile?.displayName ?? 'the host';
 
     return Container(
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -107,7 +107,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               height: 4,
               margin: const EdgeInsets.only(top: 6, bottom: KolabingSpacing.lg),
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -130,13 +130,13 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                 Text(
                   'Application sent!',
                   textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.2),
+                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: context.colors.onSurface, height: 1.2),
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Your application is on its way to $creatorName.',
                   textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurfaceVariant, height: 1.5),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurfaceVariant, height: 1.5),
                 ),
               ],
             ),
@@ -150,10 +150,10 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
             child: Container(
               padding: const EdgeInsets.all(KolabingSpacing.md),
               decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.08),
+                color: context.colors.primary.withValues(alpha: 0.08),
                 borderRadius: KolabingRadius.borderRadiusMd,
                 border: Border.all(
-                  color: KolabingColors.primary.withValues(alpha: 0.25),
+                  color: context.colors.primary.withValues(alpha: 0.25),
                 ),
               ),
               child: Column(
@@ -167,7 +167,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                   const SizedBox(height: KolabingSpacing.sm),
                   Container(
                     height: 1,
-                    color: KolabingColors.primary.withValues(alpha: 0.18),
+                    color: context.colors.primary.withValues(alpha: 0.18),
                   ),
                   const SizedBox(height: KolabingSpacing.sm),
                   const _InfoRow(
@@ -197,12 +197,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                 style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1.0),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
               ),
             ),
           ),
@@ -215,10 +210,7 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.onSurfaceVariant,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
+                foregroundColor: context.colors.onSurfaceVariant,
               ),
               child: Text(
                 'Keep exploring',
@@ -261,7 +253,7 @@ class _Hero extends StatelessWidget {
               height: 96,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: KolabingColors.success.withValues(alpha: 0.12),
+                color: context.colors.success.withValues(alpha: 0.12),
               ),
             ),
           ),
@@ -271,9 +263,9 @@ class _Hero extends StatelessWidget {
             child: Container(
               width: 72,
               height: 72,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: KolabingColors.success,
+                color: context.colors.success,
               ),
             ),
           ),
@@ -311,14 +303,14 @@ class _InfoRow extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: KolabingColors.primary.withValues(alpha: 0.25),
+                color: context.colors.primary.withValues(alpha: 0.25),
               ),
             ),
             alignment: Alignment.center,
-            child: Icon(icon, size: 18, color: KolabingColors.onSurface),
+            child: Icon(icon, size: 18, color: context.colors.onSurface),
           ),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
@@ -327,12 +319,12 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.3),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, height: 1.3),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   body,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
+                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
                 ),
               ],
             ),

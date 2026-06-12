@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
+import 'features/settings/providers/theme_provider.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/settings/providers/locale_provider.dart';
 import 'features/settings/services/locale_service.dart';
@@ -66,13 +67,15 @@ class KolabingApp extends ConsumerWidget {
     // Null locale = follow the device language (resolved against
     // supportedLocales). A pinned locale comes from the in-app picker.
     final locale = ref.watch(localeProvider.select((s) => s.locale));
+    final themeMode = ref.watch(themeProvider.select((s) => s.themeMode));
 
     return MaterialApp.router(
       title: 'Kolabing',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: globalScaffoldMessengerKey,
       theme: KolabingTheme.lightTheme,
-      themeMode: ThemeMode.light,
+      darkTheme: KolabingTheme.darkTheme,
+      themeMode: themeMode,
       locale: locale,
       supportedLocales: LocaleService.supportedLocales,
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
