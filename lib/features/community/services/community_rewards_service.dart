@@ -42,8 +42,27 @@ class CommunityRewardsService {
     };
   }
 
-  /// True when a status means "endpoint not deployed yet" — treat as empty.
-  bool _notDeployed(int status) => status == 404 || status == 405;
+  /// True when a status means "treat this read as empty/unavailable" rather than
+  /// an error: endpoint not deployed yet (404/405) or a request that timed out /
+  /// the gateway is unreachable (408/503/504 — see [_get]). Self-gating keeps a
+  /// stuck request from spinning the Rewards tab forever; it degrades to the
+  /// normal empty state, recoverable via pull-to-refresh.
+  bool _notDeployed(int status) =>
+      status == 404 ||
+      status == 405 ||
+      status == 408 ||
+      status == 503 ||
+      status == 504;
+
+  /// GET with a hard timeout. On timeout the future ALWAYS completes (synthetic
+  /// 408) so [_notDeployed] can self-gate it — a dropped/slow response can never
+  /// hang a section spinner indefinitely.
+  Future<http.Response> _get(String path) async => _httpClient
+      .get(Uri.parse('$_baseUrl$path'), headers: await _headers())
+      .timeout(
+        const Duration(seconds: 12),
+        onTimeout: () => http.Response('', 408),
+      );
 
   dynamic _unwrap(http.Response res) {
     final body = res.body.isEmpty
@@ -81,10 +100,7 @@ class CommunityRewardsService {
   /// state instead of crashing.
   Future<CommunityRewardsHub?> getRewardsHub(String communityId) =>
       _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/communities/$communityId/rewards-hub'),
-          headers: await _headers(),
-        );
+        final res = await _get('/communities/$communityId/rewards-hub');
         if (_notDeployed(res.statusCode)) return null;
         return CommunityRewardsHub.fromJson(
             _unwrap(res) as Map<String, dynamic>);
@@ -96,10 +112,7 @@ class CommunityRewardsService {
 
   /// `GET /communities/{id}/goals` (leader CRUD list).
   Future<List<CommunityGoal>> getGoals(String communityId) => _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/communities/$communityId/goals'),
-          headers: await _headers(),
-        );
+        final res = await _get('/communities/$communityId/goals');
         if (_notDeployed(res.statusCode)) return const <CommunityGoal>[];
         return _asList(_unwrap(res)).map(CommunityGoal.fromJson).toList();
       }, 'getGoals');
@@ -107,10 +120,7 @@ class CommunityRewardsService {
   /// `GET /communities/{id}/rewards` (leader CRUD list).
   Future<List<CommunityReward>> getRewards(String communityId) =>
       _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/communities/$communityId/rewards'),
-          headers: await _headers(),
-        );
+        final res = await _get('/communities/$communityId/rewards');
         if (_notDeployed(res.statusCode)) return const <CommunityReward>[];
         return _asList(_unwrap(res)).map(CommunityReward.fromJson).toList();
       }, 'getRewards');
@@ -118,10 +128,7 @@ class CommunityRewardsService {
   /// `GET /communities/{id}/badges` (leader CRUD list).
   Future<List<CommunityBadge>> getBadges(String communityId) =>
       _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/communities/$communityId/badges'),
-          headers: await _headers(),
-        );
+        final res = await _get('/communities/$communityId/badges');
         if (_notDeployed(res.statusCode)) return const <CommunityBadge>[];
         return _asList(_unwrap(res)).map(CommunityBadge.fromJson).toList();
       }, 'getBadges');

@@ -180,7 +180,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
               children: [
                 _RewardsTab(communityId: c.id, canManage: _canManage),
                 _MembersTab(community: c, canManage: _canManage),
-                _EventsTab(communityId: c.id, canManage: _canManage),
+                _EventsTab(communityId: c.id),
               ],
             ),
           ),
@@ -1188,93 +1188,54 @@ class _MemberRow extends StatelessWidget {
 // Events tab — cards with profile picture + visibility badge + view toggle
 // =============================================================================
 
-class _EventsTab extends ConsumerStatefulWidget {
-  const _EventsTab({required this.communityId, required this.canManage});
+class _EventsTab extends ConsumerWidget {
+  const _EventsTab({required this.communityId});
 
   final String communityId;
-  final bool canManage;
 
   @override
-  ConsumerState<_EventsTab> createState() => _EventsTabState();
-}
-
-class _EventsTabState extends ConsumerState<_EventsTab> {
-  /// When true (leader only), render the list as an attendee would see it:
-  /// non-public events the viewer couldn't access are hidden/locked.
-  bool _attendeeView = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final async = ref.watch(communityUpcomingEventsProvider(widget.communityId));
-    return Column(
-      children: [
-        if (widget.canManage)
-          Padding(
-            padding: const EdgeInsets.all(KolabingSpacing.sm),
-            child: SegmentedButton<bool>(
-              segments: [
-                ButtonSegment(
-                    value: false, label: Text(l10n.communityEventsMyView)),
-                ButtonSegment(
-                    value: true,
-                    label: Text(l10n.communityEventsAttendeeView)),
-              ],
-              selected: {_attendeeView},
-              onSelectionChanged: (s) =>
-                  setState(() => _attendeeView = s.first),
-            ),
-          ),
-        Expanded(
-          child: async.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => _TabMessage(
-              icon: LucideIcons.calendar,
-              title: l10n.communityDetailNoEventsTitle,
-              subtitle: l10n.communityDetailNoEventsBody,
-            ),
-            data: (events) {
-              // Attendee-view preview: hide non-public events the viewer can't
-              // access, so leaders evaluate their visibility settings.
-              final visible = _attendeeView
-                  ? events
-                      .where((e) =>
-                          e.visibility == 'public' || e.canAccess)
-                      .toList()
-                  : events;
-              if (visible.isEmpty) {
-                return RefreshIndicator(
-                  onRefresh: () => ref
-                      .read(communityUpcomingEventsProvider(widget.communityId)
-                          .notifier)
-                      .reload(),
-                  child: ListView(
-                    children: [
-                      const SizedBox(height: 120),
-                      _TabMessage(
-                        icon: LucideIcons.calendar,
-                        title: l10n.communityDetailNoEventsTitle,
-                        subtitle: l10n.communityDetailNoEventsBody,
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: () => ref
-                    .read(communityUpcomingEventsProvider(widget.communityId)
-                        .notifier)
-                    .reload(),
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(KolabingSpacing.md),
-                  itemCount: visible.length,
-                  itemBuilder: (_, i) => _EventCard(event: visible[i]),
+    final async = ref.watch(communityUpcomingEventsProvider(communityId));
+    // No my-view/attendee-view toggle: a leader can access every event, so an
+    // "attendee preview" filters nothing and renders identically. Each card
+    // carries an always-on visibility badge (Public/Members/Tier), which is the
+    // information that preview was meant to convey.
+    Future<void> reload() => ref
+        .read(communityUpcomingEventsProvider(communityId).notifier)
+        .reload();
+    return async.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, __) => _TabMessage(
+        icon: LucideIcons.calendar,
+        title: l10n.communityDetailNoEventsTitle,
+        subtitle: l10n.communityDetailNoEventsBody,
+      ),
+      data: (events) {
+        if (events.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: reload,
+            child: ListView(
+              children: [
+                const SizedBox(height: 120),
+                _TabMessage(
+                  icon: LucideIcons.calendar,
+                  title: l10n.communityDetailNoEventsTitle,
+                  subtitle: l10n.communityDetailNoEventsBody,
                 ),
-              );
-            },
+              ],
+            ),
+          );
+        }
+        return RefreshIndicator(
+          onRefresh: reload,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            itemCount: events.length,
+            itemBuilder: (_, i) => _EventCard(event: events[i]),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }
