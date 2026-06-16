@@ -74,3 +74,20 @@ Backward-compatible, no drops, no app change required to keep working.
   for them in Phase 1 backfill or they orphan. Count them first.
 - Keep API response shapes stable through Phase 2 so the app keeps working unchanged.
 - Each phase behind tests; no destructive step before Phase 4.
+
+---
+
+## Interim audit verdict (2026-06-17, pre-ship)
+
+**Onboarding integrity: PASS.** No `collab_opportunities` dependency in any onboarding/register path. Auto-offer kolab (`OnboardingService::provisionBusinessAutoOffer` → `KolabService::create`+`publish`) and auto-management-community (`provisionManagementCommunity` → `CommunityService::create`) go through the SoT paths and are immediately visible to viewer-scoped reads. `CreateKolabRequest` correctly does NOT require community_types/community_size (inherited via `enrichCommunitySeekingData`); product_type/venue_type/offering/needs/deliverable validate against `offer_options` DB slugs. No dead code in onboarding flows.
+
+**Current state:** Phase 1 dual-write + Phase 2 dual-read are ACTIVE and correct. `collab_opportunities` is no longer source-of-truth; new creates go to `kolabs`.
+
+### Phase 4 checklist (from the audit — 32 legacy sites; do AFTER prod soak)
+- DELETE legacy write endpoints + service + requests: `OpportunityController` store/update/destroy/publish/close, all of `OpportunityService`, `CreateOpportunityRequest`/`UpdateOpportunityRequest`.
+- DEPRECATE (alias to `/kolabs`) legacy read endpoints: `GET /opportunities`, `GET /me/opportunities`, `GET /opportunities/{id}` (+ deprecation header). Keep the apply route + bridge for legacy IDs.
+- REMOVE dual-writes: `ApplicationService::apply` + `CollaborationService::createCollaboration` stop writing `collab_opportunity_id`.
+- RE-POINT remaining reads to `kolab_id`: `ApplicationService::getForOpportunity/getReceivedApplications`, `DashboardService::getReceivedApplicationStats` (drop the legacy fallback), Application/Collaboration `collabOpportunity()` relations, `OpportunitySummaryResource`/`ApplicationResource` resolution, admin `KolabController` diagnostic filters.
+- GUARD: verify NO `applications`/`collaborations` row has NULL `kolab_id` (Phase 2 inverse-bridge should make this true in prod: 20 apps + 9 collabs → 0), then make `kolab_id` NOT NULL, drop the `collab_opportunity_id` FKs + columns, drop `collab_opportunities` table, retire both bridge services.
+- APP: migrate `create_opportunity_screen` (legacy Opportunity boolean model) to the kolab model.
+- Then run the final "zero collab_opportunities references" audit + update BACKEND-SCHEMA.md.
