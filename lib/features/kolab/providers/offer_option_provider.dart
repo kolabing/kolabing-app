@@ -26,3 +26,16 @@ final deliverablesProvider = FutureProvider.autoDispose<List<OfferOption>>(
 final needsProvider = FutureProvider.autoDispose<List<OfferOption>>(
   (ref) => ref.watch(offerOptionServiceProvider).getNeeds(),
 );
+
+/// "Product type" options — the category of product/service a business promotes
+/// (kolab `product_type`, business onboarding product path). From
+/// `GET /lookup/product-types`. Self-gating to the hardcoded list on 404/empty.
+final productTypesProvider = FutureProvider.autoDispose<List<OfferOption>>(
+  (ref) => ref.watch(offerOptionServiceProvider).getProductTypes(),
+);
+
+/// "Venue type" options — the kind of venue a business runs (business
+/// onboarding venue path, kolab `venue_type`). From `GET /lookup/venue-types`.
+final venueTypesProvider = FutureProvider.autoDispose<List<OfferOption>>(
+  (ref) => ref.watch(offerOptionServiceProvider).getVenueTypes(),
+);

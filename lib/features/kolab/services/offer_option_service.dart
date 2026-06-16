@@ -31,6 +31,12 @@ class OfferOptionService {
 
   Future<List<OfferOption>> getNeeds() => _fetch('lookup/needs', _fallbackNeeds);
 
+  Future<List<OfferOption>> getProductTypes() =>
+      _fetch('lookup/product-types', _fallbackProductTypes);
+
+  Future<List<OfferOption>> getVenueTypes() =>
+      _fetch('lookup/venue-types', _fallbackVenueTypes);
+
   Future<List<OfferOption>> _fetch(
     String path,
     List<OfferOption> fallback,
@@ -113,6 +119,50 @@ class OfferOptionService {
     OfferOption(id: 'sponsor', slug: 'sponsor', name: 'Sponsor'),
     OfferOption(id: 'products', slug: 'products', name: 'Products'),
     OfferOption(id: 'discount', slug: 'discount', name: 'Discount'),
+    OfferOption(id: 'other', slug: 'other', name: 'Other'),
+  ];
+
+  // Slugs identical to ProductType.toApiValue() so storage never regresses
+  // when the endpoint isn't deployed yet.
+  static const List<OfferOption> _fallbackProductTypes = [
+    OfferOption(id: 'food_product', slug: 'food_product', name: 'Food Product'),
+    OfferOption(id: 'beverage', slug: 'beverage', name: 'Beverage'),
+    OfferOption(
+      id: 'health_beauty',
+      slug: 'health_beauty',
+      name: 'Health & Beauty',
+    ),
+    OfferOption(
+      id: 'sports_equipment',
+      slug: 'sports_equipment',
+      name: 'Sports Equipment',
+    ),
+    OfferOption(id: 'fashion', slug: 'fashion', name: 'Fashion'),
+    OfferOption(id: 'tech_gadget', slug: 'tech_gadget', name: 'Tech Gadget'),
+    OfferOption(
+      id: 'experience_service',
+      slug: 'experience_service',
+      name: 'Experience / Service',
+    ),
+    OfferOption(id: 'other', slug: 'other', name: 'Other'),
+  ];
+
+  // Slugs identical to VenueType.toApiValue().
+  static const List<OfferOption> _fallbackVenueTypes = [
+    OfferOption(id: 'restaurant', slug: 'restaurant', name: 'Restaurant'),
+    OfferOption(id: 'cafe', slug: 'cafe', name: 'Cafe'),
+    OfferOption(id: 'bar_lounge', slug: 'bar_lounge', name: 'Bar & Lounge'),
+    OfferOption(id: 'hotel', slug: 'hotel', name: 'Hotel'),
+    OfferOption(id: 'coworking', slug: 'coworking', name: 'Coworking'),
+    OfferOption(
+      id: 'sports_facility',
+      slug: 'sports_facility',
+      name: 'Sports Facility',
+    ),
+    OfferOption(id: 'event_space', slug: 'event_space', name: 'Event Space'),
+    OfferOption(id: 'rooftop', slug: 'rooftop', name: 'Rooftop'),
+    OfferOption(id: 'beach_club', slug: 'beach_club', name: 'Beach Club'),
+    OfferOption(id: 'retail_store', slug: 'retail_store', name: 'Retail Store'),
     OfferOption(id: 'other', slug: 'other', name: 'Other'),
   ];
 }

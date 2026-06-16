@@ -12,6 +12,8 @@ import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/models/user_model.dart';
 import '../../../kolab/enums/venue_type.dart';
+import '../../../kolab/models/offer_option.dart';
+import '../../../kolab/providers/offer_option_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/photo_upload_widget.dart';
@@ -242,6 +244,15 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       orElse: () => data.selectedBusinessTypeIds,
     );
     final selectedVenueType = data.venueType;
+    // Admin-managed venue-type list (GET /lookup/venue-types); the service
+    // self-gates to the bundled list on 404/empty. Storage stays on the slug
+    // (data.venueType), so the payload is unchanged.
+    final venueTypeOptionsAsync = ref.watch(venueTypesProvider);
+    final venueTypeOptions = venueTypeOptionsAsync.when(
+      data: (data) => data,
+      loading: () => const <OfferOption>[],
+      error: (_, _) => const <OfferOption>[],
+    );
     final canContinue =
         data.isStep2Complete &&
         data.venuePhotos.isNotEmpty &&
@@ -426,12 +437,17 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: VenueType.values.map((type) {
-                        final isSelected =
-                            selectedVenueType == type.toApiValue();
+                      children: venueTypeOptions.map((option) {
+                        // Map the admin slug onto the typed enum for the icon;
+                        // storage stays on the slug (the wire value).
+                        final type = VenueType.fromString(option.slug);
+                        final isSelected = selectedVenueType == option.slug;
+                        // Prefer the admin label; fall back to the enum name.
+                        final label = option.name.isNotEmpty
+                            ? option.name
+                            : type.displayName;
                         return GestureDetector(
-                          onTap: () =>
-                              notifier.updateVenueType(type.toApiValue()),
+                          onTap: () => notifier.updateVenueType(option.slug),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 180),
                             padding: const EdgeInsets.symmetric(
@@ -461,7 +477,7 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  type.displayName,
+                                  label,
                                   style: KolabingTextStyles.bodySmall.copyWith(
                                     fontWeight: isSelected
                                         ? FontWeight.w700
@@ -477,6 +493,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         );
                       }).toList(),
                     ),
+                    if (venueTypeOptionsAsync.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
                     const SizedBox(height: 20),
                     _FieldLabel(
                       label: AppLocalizations.of(
