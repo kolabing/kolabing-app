@@ -2770,6 +2770,18 @@ abstract class AppLocalizations {
   /// **'Contact Info'**
   String get communityProfileContactInfoSection;
 
+  /// Community profile: section title for editable community details
+  ///
+  /// In en, this message translates to:
+  /// **'Community Details'**
+  String get communityProfileDetailsSection;
+
+  /// Community profile: placeholder when community size is not set
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get communityProfileSizeNotSet;
+
   /// Community profile: section title for notification preferences
   ///
   /// In en, this message translates to:
@@ -4905,6 +4917,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select all that apply'**
   String get offeringSelectAllThatApply;
+
+  /// Community needs picker section header
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT DO YOU NEED?'**
+  String get needsScreenTitle;
 
   /// Offering option: venue, title
   ///

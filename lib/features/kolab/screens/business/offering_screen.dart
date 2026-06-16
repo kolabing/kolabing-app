@@ -7,6 +7,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
@@ -25,34 +26,6 @@ class OfferingScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<OfferingScreen> createState() => _OfferingScreenState();
-
-  /// Maps an offering slug to its bundled Lucide icon. New admin-added slugs we
-  /// don't recognise fall back to a neutral icon.
-  static IconData iconForSlug(String slug) {
-    switch (slug) {
-      case 'venue':
-      case 'venue_space':
-        return LucideIcons.building2;
-      case 'food_drink':
-        return LucideIcons.utensils;
-      case 'free_drinks':
-        return LucideIcons.wine;
-      case 'discount':
-        return LucideIcons.percent;
-      case 'products':
-        return LucideIcons.gift;
-      case 'social_media':
-        return LucideIcons.share2;
-      case 'content_creation':
-        return LucideIcons.camera;
-      case 'sponsorship':
-        return LucideIcons.banknote;
-      case 'other':
-        return LucideIcons.moreHorizontal;
-      default:
-        return LucideIcons.tag;
-    }
-  }
 }
 
 class _OfferingScreenState extends ConsumerState<OfferingScreen> {
@@ -138,7 +111,8 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
                 option.slug,
                 option.description ?? '',
               ),
-              icon: OfferingScreen.iconForSlug(option.slug),
+              iconName: option.name,
+              iconUrl: option.iconUrl,
               isSelected: isVenueLocked || isSelected,
               isLocked: isVenueLocked,
               onTap: isVenueLocked
@@ -478,15 +452,21 @@ class _ToggleCard extends StatelessWidget {
   const _ToggleCard({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.iconName,
     required this.isSelected,
+    this.iconUrl,
     this.isLocked = false,
     this.onTap,
   });
 
   final String title;
   final String subtitle;
-  final IconData icon;
+
+  /// Name used to resolve the personalised bundled category SVG.
+  final String iconName;
+
+  /// Admin-uploaded SVG URL; overrides the bundled asset when present.
+  final String? iconUrl;
   final bool isSelected;
   final bool isLocked;
   final VoidCallback? onTap;
@@ -537,14 +517,8 @@ class _ToggleCard extends StatelessWidget {
             ),
             const SizedBox(width: KolabingSpacing.sm),
 
-            // Icon
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? context.colors.onSurface
-                  : context.colors.onSurfaceVariant,
-            ),
+            // Icon (personalised category SVG; admin icon_url overrides)
+            CategoryIcon(name: iconName, iconUrl: iconUrl, size: 24),
             const SizedBox(width: KolabingSpacing.sm),
 
             // Title + subtitle

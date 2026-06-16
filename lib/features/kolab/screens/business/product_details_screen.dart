@@ -7,6 +7,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../enums/product_type.dart';
 import '../../models/kolab.dart';
@@ -168,12 +169,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      type.icon,
-                      size: 16,
-                      color: isSelected
-                          ? context.colors.onPrimary
-                          : context.colors.onSurface,
+                    CategoryIcon(
+                      name: option.name,
+                      iconUrl: option.iconUrl,
+                      size: 18,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                     Text(

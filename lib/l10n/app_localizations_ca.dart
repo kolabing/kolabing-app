@@ -1509,6 +1509,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityProfileContactInfoSection => 'Informació de contacte';
 
   @override
+  String get communityProfileDetailsSection => 'Detalls de la comunitat';
+
+  @override
+  String get communityProfileSizeNotSet => 'Sense definir';
+
+  @override
   String get communityProfileNotificationsSection => 'Notificacions';
 
   @override
@@ -2716,6 +2722,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get offeringSelectAllThatApply => 'Selecciona tot el que correspongui';
+
+  @override
+  String get needsScreenTitle => 'QUÈ NECESSITES?';
 
   @override
   String get offeringVenueTitle => 'Local';

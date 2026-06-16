@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../enums/need_type.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -24,29 +25,9 @@ import '../../providers/offer_option_provider.dart';
 class NeedsScreen extends ConsumerWidget {
   const NeedsScreen({super.key});
 
-  /// Maps a need slug to its bundled Lucide icon. Admin-added slugs we don't
-  /// recognise fall back to a neutral icon.
-  static IconData iconForSlug(String slug) {
-    switch (slug) {
-      case 'venue':
-        return LucideIcons.building2;
-      case 'food_drink':
-        return LucideIcons.utensils;
-      case 'sponsor':
-        return LucideIcons.coins;
-      case 'products':
-        return LucideIcons.gift;
-      case 'discount':
-        return LucideIcons.percent;
-      case 'other':
-        return LucideIcons.moreHorizontal;
-      default:
-        return LucideIcons.tag;
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
     final needOptionsAsync = ref.watch(needsProvider);
@@ -67,12 +48,12 @@ class NeedsScreen extends ConsumerWidget {
         children: [
           // Section header
           Text(
-            'WHAT DO YOU NEED?',
+            l10n.needsScreenTitle,
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            'Select all that apply',
+            l10n.offeringSelectAllThatApply,
             style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
 
@@ -122,12 +103,10 @@ class NeedsScreen extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        NeedsScreen.iconForSlug(option.slug),
-                        size: 28,
-                        color: isSelected
-                            ? context.colors.primary
-                            : context.colors.textTertiary,
+                      CategoryIcon(
+                        name: option.name,
+                        iconUrl: option.iconUrl,
+                        size: 32,
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(

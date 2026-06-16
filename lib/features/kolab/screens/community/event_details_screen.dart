@@ -6,6 +6,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../enums/deliverable_type.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -242,6 +243,13 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                                 color: context.colors.onPrimary,
                               )
                             : null,
+                      ),
+                      const SizedBox(width: KolabingSpacing.sm),
+                      // Personalised category SVG (admin icon_url overrides).
+                      CategoryIcon(
+                        name: option.name,
+                        iconUrl: option.iconUrl,
+                        size: 24,
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Expanded(

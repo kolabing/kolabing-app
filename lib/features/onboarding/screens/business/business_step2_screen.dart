@@ -10,6 +10,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../../auth/models/user_model.dart';
 import '../../../kolab/enums/venue_type.dart';
 import '../../../kolab/models/offer_option.dart';
@@ -468,12 +469,10 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  type.icon,
-                                  size: 16,
-                                  color: isSelected
-                                      ? context.colors.onPrimary
-                                      : context.colors.onSurface,
+                                CategoryIcon(
+                                  name: option.name,
+                                  iconUrl: option.iconUrl,
+                                  size: 18,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(

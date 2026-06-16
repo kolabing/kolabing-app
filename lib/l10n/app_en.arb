@@ -1949,6 +1949,14 @@
   "@communityProfileContactInfoSection": {
     "description": "Community profile: section title for contact information"
   },
+  "communityProfileDetailsSection": "Community Details",
+  "@communityProfileDetailsSection": {
+    "description": "Community profile: section title for editable community details"
+  },
+  "communityProfileSizeNotSet": "Not set",
+  "@communityProfileSizeNotSet": {
+    "description": "Community profile: placeholder when community size is not set"
+  },
   "communityProfileNotificationsSection": "Notifications",
   "@communityProfileNotificationsSection": {
     "description": "Community profile: section title for notification preferences"
@@ -3427,6 +3435,10 @@
   "offeringSelectAllThatApply": "Select all that apply",
   "@offeringSelectAllThatApply": {
     "description": "Offering step instruction under the header"
+  },
+  "needsScreenTitle": "WHAT DO YOU NEED?",
+  "@needsScreenTitle": {
+    "description": "Community needs picker section header"
   },
   "offeringVenueTitle": "Venue",
   "@offeringVenueTitle": {
