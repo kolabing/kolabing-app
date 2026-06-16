@@ -146,11 +146,16 @@ class UpcomingOpportunityInfo {
 }
 
 /// Partner info nested in upcoming collaboration
+///
+/// All fields are nullable: the backend can return `partner.id`, `name` and
+/// `user_type` as null (e.g. when the counterpart account was removed or the
+/// collaboration has no resolved partner yet). Keeping them nullable means
+/// `GET /me/dashboard` never throws while parsing this sub-object.
 @immutable
 class UpcomingPartnerInfo {
-  const UpcomingPartnerInfo({required this.id, this.name, this.userType});
+  const UpcomingPartnerInfo({this.id, this.name, this.userType});
 
-  final String id;
+  final String? id;
   final String? name;
   final String? userType;
 
@@ -160,7 +165,7 @@ class UpcomingPartnerInfo {
 
   factory UpcomingPartnerInfo.fromJson(Map<String, dynamic> json) {
     return UpcomingPartnerInfo(
-      id: json['id']?.toString() ?? '',
+      id: json['id']?.toString(),
       name: json['name'] as String?,
       userType: json['user_type'] as String?,
     );
@@ -247,7 +252,7 @@ class UpcomingCollaboration {
           ? UpcomingPartnerInfo.fromJson(
               json['partner'] as Map<String, dynamic>,
             )
-          : const UpcomingPartnerInfo(id: ''),
+          : const UpcomingPartnerInfo(),
     );
   }
 }
