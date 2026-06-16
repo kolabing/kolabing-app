@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../models/community_rewards.dart';
 import '../services/community_rewards_service.dart';
+
+/// Hard ceiling for a Rewards-tab read. Whatever hangs underneath (token read,
+/// a socket that never returns, a route that doesn't respond), the section
+/// resolves to its empty state instead of spinning forever.
+const Duration _kRewardsReadTimeout = Duration(seconds: 12);
 
 /// DI for [CommunityRewardsService].
 final communityRewardsServiceProvider =
@@ -34,7 +41,10 @@ class CommunityRewardsHubNotifier
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(communityRewardsServiceProvider).getRewardsHub(communityId));
+        () => ref
+            .read(communityRewardsServiceProvider)
+            .getRewardsHub(communityId)
+            .timeout(_kRewardsReadTimeout, onTimeout: () => null));
   }
 }
 
@@ -99,19 +109,28 @@ class CommunityRewardsAdminNotifier
   Future<void> reloadGoals() async {
     state = state.copyWith(goals: const AsyncLoading());
     state = state.copyWith(
-        goals: await AsyncValue.guard(() => _svc.getGoals(communityId)));
+        goals: await AsyncValue.guard(() => _svc
+            .getGoals(communityId)
+            .timeout(_kRewardsReadTimeout,
+                onTimeout: () => const <CommunityGoal>[])));
   }
 
   Future<void> reloadRewards() async {
     state = state.copyWith(rewards: const AsyncLoading());
     state = state.copyWith(
-        rewards: await AsyncValue.guard(() => _svc.getRewards(communityId)));
+        rewards: await AsyncValue.guard(() => _svc
+            .getRewards(communityId)
+            .timeout(_kRewardsReadTimeout,
+                onTimeout: () => const <CommunityReward>[])));
   }
 
   Future<void> reloadBadges() async {
     state = state.copyWith(badges: const AsyncLoading());
     state = state.copyWith(
-        badges: await AsyncValue.guard(() => _svc.getBadges(communityId)));
+        badges: await AsyncValue.guard(() => _svc
+            .getBadges(communityId)
+            .timeout(_kRewardsReadTimeout,
+                onTimeout: () => const <CommunityBadge>[])));
   }
 }
 
