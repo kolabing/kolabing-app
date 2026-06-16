@@ -469,3 +469,25 @@ Planned backend (NOT in any branch yet):
 - Businesses then render a **Verified badge** on the community (read-only consumer of `verification_status`).
 
 Never paywalled; verification is an admin/trust feature, not a gate on either role's create/apply.
+
+## 20. Admin-managed taxonomies + personalised icons + community inheritance (impl deltas 2026-06-17)
+
+> Status: backend on `feat/onboarding-backend-local`, app on `feat/onboarding-update` (LOCAL, undeployed). These are the "remove hard-wired data" deltas; full plan: `kolabing-v2/docs/ADMIN-TAXONOMIES-ROADMAP.md`.
+
+**Offer taxonomies are now DB/admin-managed (not hardcoded):**
+- `offer_options` table, kind-discriminated: `offering | need | deliverable | product_type | venue_type`. Admin CRUD at `/admin/offer-options`. `OfferOptionValues::for(KIND)` returns active slugs.
+- `CreateKolabRequest`/`UpdateKolabRequest` validate `offering/needs/deliverable(expects/offers_in_return)/product_type/venue_type` against the DB active slugs (PHP enums kept as typed fallback only). Wire slugs unchanged.
+- Endpoints `GET /lookup/{offerings,needs,deliverables,product-types,venue-types}` return `{value,label,icon,icon_url,is_active,sort_order}`.
+- App reads them via `lib/features/kolab/providers/offer_option_provider.dart` + `OfferOption` model (`value,label,icon,iconUrl`); all kolab pickers + the product-onboarding picker are dynamic with bundled fallbacks.
+
+**Personalised icons (see `kolabing-app/docs/ICONS-AND-IMAGES.md` — READ IT):**
+- App categories use personalised SVGs via `CategoryIcon` (network `iconUrl` priority → bundled `assets/icons/categories/*` → default). NOT Lucide.
+- Backend `icons` table + SVGs in `storage/app/public/category-icons/` (seeded from the 24 app SVGs; admin can upload more on the admin Icons page). Taxonomy rows store `icon_url`; `/lookup/*` returns it; the app renders it automatically.
+
+**`business_types` facets:** `icon` + `applies_to` (`venue | product | both`) — app filters the product-path category pills to `product`/`both` (`BusinessType.isForProduct`). Admin UI for icon/applies_to is backlog.
+
+**Community self-describing fields are inherited, not re-asked on kolab create:**
+- `KolabService::enrichCommunitySeekingData($creator, $data)` fills `community_types` (from `community_profiles.community_type`) and `community_size` (from `community_profiles.community_size`) on create + update when absent. `CreateKolabRequest` no longer requires them. `typical_attendance` stays a per-kolab input.
+- `community_size` is now editable from the profile: added to `UpdateProfileRequest` community rules + `getCommunityProfileData()` (column/cast/`CommunityProfileResource` already existed). `community_type` was already profile-editable.
+
+**Business product auto-offer:** `business_profiles.product_type` (nullable) accepted on register/onboarding; `OnboardingService::provisionBusinessAutoOffer` uses it (else `other`). Auto-create community + auto-offer kolab now fire on the one-shot `/auth/register/*` path (the app does NOT call `/onboarding/* complete` for business/community).
