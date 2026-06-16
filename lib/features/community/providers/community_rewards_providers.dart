@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
@@ -44,12 +43,8 @@ class CommunityRewardsHubNotifier
   bool _reloading = false;
 
   Future<void> reload() async {
-    if (_reloading) {
-      debugPrint('🎯 RewardsHub($communityId) reload SKIP (in-flight)');
-      return;
-    }
+    if (_reloading) return;
     _reloading = true;
-    debugPrint('🎯 RewardsHub($communityId) reload START');
     state = const AsyncLoading();
     try {
       state = await AsyncValue.guard(
@@ -60,8 +55,6 @@ class CommunityRewardsHubNotifier
     } finally {
       _reloading = false;
     }
-    debugPrint(
-        '🎯 RewardsHub($communityId) reload END -> ${state.runtimeType} hasValue=${state.hasValue} value=${state.asData?.value == null ? "null(coming-soon)" : "hub"} err=${state.error}');
   }
 }
 
@@ -126,19 +119,13 @@ class CommunityRewardsAdminNotifier
   bool _reloadingAll = false;
 
   Future<void> reloadAll() async {
-    if (_reloadingAll) {
-      debugPrint('🎯 RewardsAdmin($communityId) reloadAll SKIP (in-flight)');
-      return;
-    }
+    if (_reloadingAll) return;
     _reloadingAll = true;
-    debugPrint('🎯 RewardsAdmin($communityId) reloadAll START');
     try {
       await Future.wait([reloadGoals(), reloadRewards(), reloadBadges()]);
     } finally {
       _reloadingAll = false;
     }
-    debugPrint(
-        '🎯 RewardsAdmin($communityId) reloadAll END -> goals=${state.goals.runtimeType} rewards=${state.rewards.runtimeType} badges=${state.badges.runtimeType}');
   }
 
   // IMPORTANT: assign the awaited result from a LOCAL, then write state.
