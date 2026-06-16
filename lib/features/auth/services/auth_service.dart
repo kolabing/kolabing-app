@@ -54,14 +54,6 @@ class AuthService {
   /// Cached token
   String? _cachedToken;
 
-  /// Serializes ALL keychain access. flutter_secure_storage can deadlock under
-  /// concurrent reads/writes (e.g. a screen that fans out several list fetches
-  /// on open, or startup reading token+refresh+user at once) — leaving callers
-  /// hung forever with no timeout, which froze the community Rewards tab's
-  /// Goals/Badges sections on a perpetual loader. Chaining every op through one
-  /// queue guarantees the keychain is touched one-at-a-time.
-  Future<void> _keychainLock = Future<void>.value();
-
   /// Cached user
   UserModel? _cachedUser;
 
@@ -1113,46 +1105,30 @@ class AuthService {
     await _secureWrite(_userKey, jsonEncode(user.toJson()));
   }
 
-  /// Run [op] after any in-flight keychain op completes, so the secure storage
-  /// is never accessed concurrently (see [_keychainLock]). A failure in one op
-  /// never breaks the chain.
-  Future<T> _serializeKeychain<T>(Future<T> Function() op) {
-    final completer = Completer<T>();
-    _keychainLock = _keychainLock.then((_) async {
-      try {
-        completer.complete(await op());
-      } catch (e, s) {
-        completer.completeError(e, s);
-      }
-    });
-    return completer.future;
+  Future<void> _secureWrite(String key, String value) async {
+    try {
+      await _secureStorage.write(key: key, value: value);
+    } catch (e) {
+      debugPrint('[AUTH] keychain write unavailable ($key): $e');
+    }
   }
 
-  Future<void> _secureWrite(String key, String value) =>
-      _serializeKeychain(() async {
-        try {
-          await _secureStorage.write(key: key, value: value);
-        } catch (e) {
-          debugPrint('[AUTH] keychain write unavailable ($key): $e');
-        }
-      });
+  Future<String?> _secureRead(String key) async {
+    try {
+      return await _secureStorage.read(key: key);
+    } catch (e) {
+      debugPrint('[AUTH] keychain read unavailable ($key): $e');
+      return null;
+    }
+  }
 
-  Future<String?> _secureRead(String key) => _serializeKeychain(() async {
-        try {
-          return await _secureStorage.read(key: key);
-        } catch (e) {
-          debugPrint('[AUTH] keychain read unavailable ($key): $e');
-          return null;
-        }
-      });
-
-  Future<void> _secureDelete(String key) => _serializeKeychain(() async {
-        try {
-          await _secureStorage.delete(key: key);
-        } catch (e) {
-          debugPrint('[AUTH] keychain delete unavailable ($key): $e');
-        }
-      });
+  Future<void> _secureDelete(String key) async {
+    try {
+      await _secureStorage.delete(key: key);
+    } catch (e) {
+      debugPrint('[AUTH] keychain delete unavailable ($key): $e');
+    }
+  }
 
   /// Persist a freshly-fetched user into the in-memory + secure-storage cache.
   /// Used when a flow (e.g. picking a city on home) already holds the updated
