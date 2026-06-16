@@ -9,7 +9,9 @@ import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
 
 /// Step 2 (venue / product flows): "WHAT YOU'RE OFFERING"
 ///
@@ -24,57 +26,33 @@ class OfferingScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<OfferingScreen> createState() => _OfferingScreenState();
 
-  static const List<_OfferingOption> _options = [
-    _OfferingOption(
-      value: 'venue',
-      title: 'Venue',
-      subtitle: 'Provide your space for the kolab',
-      icon: LucideIcons.building2,
-    ),
-    _OfferingOption(
-      value: 'food_drink',
-      title: 'Food & Drink included',
-      subtitle: 'Meals or beverages for community members',
-      icon: LucideIcons.utensils,
-    ),
-    _OfferingOption(
-      value: 'discount',
-      title: 'Discount for community members',
-      subtitle: 'Exclusive pricing for participants',
-      icon: LucideIcons.percent,
-    ),
-    _OfferingOption(
-      value: 'products',
-      title: 'Products / Samples',
-      subtitle: 'Free product samples or giveaways',
-      icon: LucideIcons.gift,
-    ),
-    _OfferingOption(
-      value: 'social_media',
-      title: 'Social Media Exposure',
-      subtitle: 'Feature on your channels',
-      icon: LucideIcons.share2,
-    ),
-    _OfferingOption(
-      value: 'content_creation',
-      title: 'Content Creation',
-      subtitle: 'Professional photos/video',
-      icon: LucideIcons.camera,
-    ),
-    _OfferingOption(
-      value: 'sponsorship',
-      title: 'Sponsorship budget',
-      subtitle: 'Financial support for the kolab',
-      icon: LucideIcons.banknote,
-    ),
-    _OfferingOption(
-      value: 'other',
-      title: 'Other',
-      subtitle: 'Something else to offer',
-      icon: LucideIcons.moreHorizontal,
-    ),
-  ];
-
+  /// Maps an offering slug to its bundled Lucide icon. New admin-added slugs we
+  /// don't recognise fall back to a neutral icon.
+  static IconData iconForSlug(String slug) {
+    switch (slug) {
+      case 'venue':
+      case 'venue_space':
+        return LucideIcons.building2;
+      case 'food_drink':
+        return LucideIcons.utensils;
+      case 'free_drinks':
+        return LucideIcons.wine;
+      case 'discount':
+        return LucideIcons.percent;
+      case 'products':
+        return LucideIcons.gift;
+      case 'social_media':
+        return LucideIcons.share2;
+      case 'content_creation':
+        return LucideIcons.camera;
+      case 'sponsorship':
+        return LucideIcons.banknote;
+      case 'other':
+        return LucideIcons.moreHorizontal;
+      default:
+        return LucideIcons.tag;
+    }
+  }
 }
 
 class _OfferingScreenState extends ConsumerState<OfferingScreen> {
@@ -105,6 +83,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
     final l10n = AppLocalizations.of(context);
     final isVenueFlow = formState.intentType == IntentType.venuePromotion;
     final offerings = kolab.offering;
+    final offeringOptionsAsync = ref.watch(offeringsProvider);
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -135,25 +114,45 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             ),
           ),
 
-        // -- Toggle cards
-        ...OfferingScreen._options.map((option) {
-          final isSelected = offerings.contains(option.value);
-          final isVenueLocked = isVenueFlow && option.value == 'venue';
+        // -- Toggle cards (admin-managed taxonomy via offeringsProvider; falls
+        //    back to the bundled list when the endpoint isn't deployed)
+        ...offeringOptionsAsync
+            .when(
+              data: (options) => options,
+              // While loading or on error the provider's service already returns
+              // the hardcoded fallback, but guard here too so the picker is never
+              // empty mid-flight.
+              loading: () => const <OfferOption>[],
+              error: (_, _) => const <OfferOption>[],
+            )
+            .map((option) {
+          final isSelected = offerings.contains(option.slug);
+          final isVenueLocked = isVenueFlow && option.slug == 'venue';
 
           return Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
             child: _ToggleCard(
-              title: _offeringTitle(l10n, option.value, option.title),
-              subtitle: _offeringSubtitle(l10n, option.value, option.subtitle),
-              icon: option.icon,
+              title: _offeringTitle(l10n, option.slug, option.name),
+              subtitle: _offeringSubtitle(
+                l10n,
+                option.slug,
+                option.description ?? '',
+              ),
+              icon: OfferingScreen.iconForSlug(option.slug),
               isSelected: isVenueLocked || isSelected,
               isLocked: isVenueLocked,
               onTap: isVenueLocked
                   ? null
-                  : () => notifier.toggleOffering(option.value),
+                  : () => notifier.toggleOffering(option.slug),
             ),
           );
         }),
+
+        if (offeringOptionsAsync.isLoading)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+            child: Center(child: CircularProgressIndicator()),
+          ),
 
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -385,7 +384,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.fromLTRB(
         KolabingSpacing.lg,
@@ -470,23 +469,6 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
   }
 }
 
-// =============================================================================
-// Data class for offering options
-// =============================================================================
-
-class _OfferingOption {
-  const _OfferingOption({
-    required this.value,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
-
-  final String value;
-  final String title;
-  final String subtitle;
-  final IconData icon;
-}
 
 // =============================================================================
 // Toggle Card
