@@ -703,12 +703,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['needs'] = 'Select at least 1 need';
         }
       case 1: // About your community
-        if (kolab.communityTypes.isEmpty) {
-          errors['community_types'] = 'Select at least 1 community type';
-        }
-        if (kolab.communitySize == null || kolab.communitySize! <= 0) {
-          errors['community_size'] = 'Community size must be greater than 0';
-        }
+        // community_types + community_size are inherited from the community
+        // profile (set at onboarding), so they are NOT asked/validated here.
+        // Only typical_attendance is a per-kolab input.
         if (kolab.typicalAttendance == null || kolab.typicalAttendance! <= 0) {
           errors['typical_attendance'] =
               'Typical attendance must be greater than 0';
