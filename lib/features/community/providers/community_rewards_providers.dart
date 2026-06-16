@@ -48,7 +48,7 @@ class CommunityRewardsHubNotifier
             .getRewardsHub(communityId)
             .timeout(_kRewardsReadTimeout, onTimeout: () => null));
     debugPrint(
-        '🎯 RewardsHub($communityId) reload END -> ${state.runtimeType} hasValue=${state.hasValue} value=${state.valueOrNull == null ? "null(coming-soon)" : "hub"} err=${state.error}');
+        '🎯 RewardsHub($communityId) reload END -> ${state.runtimeType} hasValue=${state.hasValue} value=${state.asData?.value == null ? "null(coming-soon)" : "hub"} err=${state.error}');
   }
 }
 
