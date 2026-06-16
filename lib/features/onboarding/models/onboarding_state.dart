@@ -21,6 +21,7 @@ class OnboardingData {
     this.targetCityIds = const [],
     this.targetCityNames = const [],
     this.offering,
+    this.productType,
     this.communitySize,
     this.cityId,
     this.cityName,
@@ -100,6 +101,13 @@ class OnboardingData {
 
   /// Optional free-text "what you offer" (product path, business only).
   final String? offering;
+
+  /// Product-type slug (product path, business only). Drives the backend
+  /// auto-offer category. Admin-managed via `GET /lookup/product-types`; slugs
+  /// match `ProductType.toApiValue()`. Sent as `product_type`; the field is
+  /// being added server-side, so the submit is guarded against a 422 on the
+  /// unknown field (see [OnboardingNotifier.completeWithEmail]).
+  final String? productType;
 
   /// Stable community size captured during community onboarding (community
   /// only). Sent as `community_size`; the column is being added server-side, so
@@ -313,6 +321,7 @@ class OnboardingData {
     double? venueRating,
     int? venueUserRatingsTotal,
     List<String>? venueGooglePlaceTypes,
+    String? productType,
     String? about,
     String? phone,
     String? instagram,
@@ -320,6 +329,7 @@ class OnboardingData {
     String? website,
     String? referralCode,
     int? currentStep,
+    bool clearProductType = false,
     bool clearPhoto = false,
     bool clearAbout = false,
     bool clearPhone = false,
@@ -357,6 +367,7 @@ class OnboardingData {
     targetCityIds: targetCityIds ?? this.targetCityIds,
     targetCityNames: targetCityNames ?? this.targetCityNames,
     offering: clearOffering ? null : (offering ?? this.offering),
+    productType: clearProductType ? null : (productType ?? this.productType),
     communitySize: clearCommunitySize
         ? null
         : (communitySize ?? this.communitySize),
@@ -442,6 +453,10 @@ class OnboardingData {
         if (targetCityIds.isNotEmpty) 'target_city_ids': targetCityIds,
         if (offering != null && offering!.trim().isNotEmpty)
           'offering': offering!.trim(),
+        // Drives the backend auto-offer category. Guarded by the 422-strip
+        // retry so onboarding still completes if the field isn't deployed.
+        if (productType != null && productType!.trim().isNotEmpty)
+          'product_type': productType!.trim(),
         if (venuePhotos.isNotEmpty)
           'offer_photos': venuePhotos
               .map((photo) => photo.payloadValue)

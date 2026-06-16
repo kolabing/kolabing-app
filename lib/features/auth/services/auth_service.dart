@@ -305,6 +305,7 @@ class AuthService {
     'target_city_ids',
     'offering',
     'offer_photos',
+    'product_type',
     'community_size',
   };
 

@@ -6424,6 +6424,12 @@ class AppLocalizationsCa extends AppLocalizations {
       'Tria\'n fins a 3 que et descriguin millor.';
 
   @override
+  String get businessProductTypeLabel => 'Tipus de producte';
+
+  @override
+  String get businessProductTypeHint => 'Quin tipus de producte o servei és?';
+
+  @override
   String get businessProductCitiesTitle => 'A quines ciutats vols arribar?';
 
   @override

@@ -1893,6 +1893,8 @@
   "businessProductNameHint": "El nom de la teva marca o empresa",
   "businessProductCategoryLabel": "Categoria",
   "businessProductCategoryHint": "Tria'n fins a 3 que et descriguin millor.",
+  "businessProductTypeLabel": "Tipus de producte",
+  "businessProductTypeHint": "Quin tipus de producte o servei és?",
 
   "businessProductCitiesTitle": "A quines ciutats vols arribar?",
   "businessProductCitiesSubtitle": "Pla gratuït: fins a {limit} ciutats. Passa a Premium per a un abast il·limitat.",

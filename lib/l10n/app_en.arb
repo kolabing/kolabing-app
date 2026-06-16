@@ -6977,6 +6977,11 @@
   "businessProductCategoryHint": "Pick up to 3 that best describe you.",
   "@businessProductCategoryHint": { "description": "Business product path: category field hint" },
 
+  "businessProductTypeLabel": "Product type",
+  "@businessProductTypeLabel": { "description": "Business product path: product-type picker label" },
+  "businessProductTypeHint": "What kind of product or service is it?",
+  "@businessProductTypeHint": { "description": "Business product path: product-type picker hint" },
+
   "businessProductCitiesTitle": "Which cities do you want to reach?",
   "@businessProductCitiesTitle": { "description": "Business product path cities step: title" },
   "businessProductCitiesSubtitle": "Free plan: up to {limit} cities. Upgrade to Premium for unlimited reach.",

@@ -241,6 +241,21 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     }
   }
 
+  /// Update the product-type slug (product path, business onboarding).
+  ///
+  /// Slugs match `ProductType.toApiValue()` and come from the admin-managed
+  /// `productTypesProvider`. Sent as `product_type`; guarded by the 422-strip
+  /// retry so onboarding still completes pre-deploy.
+  void updateProductType(String? productType) {
+    if (state == null) return;
+    final trimmed = productType?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      state = state!.copyWith(clearProductType: true);
+    } else {
+      state = state!.copyWith(productType: trimmed);
+    }
+  }
+
   /// Update the stable community size (community onboarding).
   void updateCommunitySize(int? size) {
     if (state == null) return;

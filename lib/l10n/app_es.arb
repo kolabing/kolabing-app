@@ -1893,6 +1893,8 @@
   "businessProductNameHint": "El nombre de tu marca o empresa",
   "businessProductCategoryLabel": "Categoría",
   "businessProductCategoryHint": "Elige hasta 3 que mejor te describan.",
+  "businessProductTypeLabel": "Tipo de producto",
+  "businessProductTypeHint": "¿Qué tipo de producto o servicio es?",
 
   "businessProductCitiesTitle": "¿A qué ciudades quieres llegar?",
   "businessProductCitiesSubtitle": "Plan gratuito: hasta {limit} ciudades. Pasa a Premium para un alcance ilimitado.",

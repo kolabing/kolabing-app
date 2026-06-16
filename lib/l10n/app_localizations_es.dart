@@ -6389,6 +6389,12 @@ class AppLocalizationsEs extends AppLocalizations {
       'Elige hasta 3 que mejor te describan.';
 
   @override
+  String get businessProductTypeLabel => 'Tipo de producto';
+
+  @override
+  String get businessProductTypeHint => '¿Qué tipo de producto o servicio es?';
+
+  @override
   String get businessProductCitiesTitle => '¿A qué ciudades quieres llegar?';
 
   @override

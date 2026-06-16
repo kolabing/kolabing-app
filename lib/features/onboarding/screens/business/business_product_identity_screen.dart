@@ -8,6 +8,9 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/models/user_model.dart';
+import '../../../kolab/enums/product_type.dart';
+import '../../../kolab/models/offer_option.dart';
+import '../../../kolab/providers/offer_option_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/photo_upload_widget.dart';
@@ -82,6 +85,17 @@ class _BusinessProductIdentityScreenState
     final data = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
     final businessTypes = ref.watch(businessTypesProvider);
+
+    // Admin-managed product-type list (GET /lookup/product-types); the service
+    // self-gates to the bundled list on 404/empty. Stored as the slug
+    // (data.productType, the wire value) and sent as `product_type`.
+    final productTypeOptionsAsync = ref.watch(productTypesProvider);
+    final productTypeOptions = productTypeOptionsAsync.when(
+      data: (options) => options,
+      loading: () => const <OfferOption>[],
+      error: (_, _) => const <OfferOption>[],
+    );
+    final selectedProductType = data?.productType;
 
     final selectedTypeIds = businessTypes.maybeWhen(
       data: (types) => types
@@ -209,6 +223,83 @@ class _BusinessProductIdentityScreenState
                         ),
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    // -- Product type (admin-managed; drives the auto-offer).
+                    _FieldLabel(label: l10n.businessProductTypeLabel),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.businessProductTypeHint,
+                      style: KolabingTextStyles.captionSecondary.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: productTypeOptions.map((option) {
+                        // Map the admin slug onto the typed enum for the icon;
+                        // storage stays on the slug (the wire value).
+                        final type = ProductType.fromString(option.slug);
+                        final isSelected = selectedProductType == option.slug;
+                        // Prefer the admin label; fall back to the enum name.
+                        final label = option.name.isNotEmpty
+                            ? option.name
+                            : type.displayName;
+                        return GestureDetector(
+                          onTap: () => notifier.updateProductType(
+                            isSelected ? null : option.slug,
+                          ),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? context.colors.primary
+                                  : context.colors.surfaceVariant,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? context.colors.primary
+                                    : context.colors.darkBorder,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  type.icon,
+                                  size: 16,
+                                  color: isSelected
+                                      ? context.colors.onPrimary
+                                      : context.colors.onSurface,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  label,
+                                  style: KolabingTextStyles.bodySmall.copyWith(
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                    color: isSelected
+                                        ? context.colors.onPrimary
+                                        : context.colors.onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    if (productTypeOptionsAsync.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
                     const SizedBox(height: 16),
                   ],
                 ),

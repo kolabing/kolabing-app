@@ -11270,6 +11270,18 @@ abstract class AppLocalizations {
   /// **'Pick up to 3 that best describe you.'**
   String get businessProductCategoryHint;
 
+  /// Business product path: product-type picker label
+  ///
+  /// In en, this message translates to:
+  /// **'Product type'**
+  String get businessProductTypeLabel;
+
+  /// Business product path: product-type picker hint
+  ///
+  /// In en, this message translates to:
+  /// **'What kind of product or service is it?'**
+  String get businessProductTypeHint;
+
   /// Business product path cities step: title
   ///
   /// In en, this message translates to:
