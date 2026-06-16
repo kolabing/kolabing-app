@@ -220,6 +220,7 @@ class CommunityProfile {
     this.tiktok,
     this.website,
     this.profilePhoto,
+    this.communitySize,
   });
 
   factory CommunityProfile.fromJson(Map<String, dynamic> json) =>
@@ -235,6 +236,9 @@ class CommunityProfile {
         tiktok: json['tiktok'] as String?,
         website: json['website'] as String?,
         profilePhoto: json['profile_photo'] as String?,
+        communitySize: json['community_size'] is int
+            ? json['community_size'] as int
+            : int.tryParse('${json['community_size'] ?? ''}'),
       );
 
   final String id;
@@ -246,6 +250,9 @@ class CommunityProfile {
   final String? tiktok;
   final String? website;
   final String? profilePhoto;
+
+  /// Approximate member count (backend column `community_profiles.community_size`).
+  final int? communitySize;
 
   String get communityTypeLabel =>
       formatProfileTypeLabel(communityType ?? 'Community');
@@ -260,6 +267,7 @@ class CommunityProfile {
     if (tiktok != null) 'tiktok': tiktok,
     if (website != null) 'website': website,
     if (profilePhoto != null) 'profile_photo': profilePhoto,
+    if (communitySize != null) 'community_size': communitySize,
   };
 }
 
