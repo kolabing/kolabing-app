@@ -8,11 +8,16 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../models/onboarding_state.dart';
 
-/// Summary card showing all collected onboarding data
+/// Summary card showing all collected onboarding data.
+///
+/// [compact] renders only the header row (avatar + name + type · city) and
+/// drops the details block — used on the final step so the login fields stay
+/// above the fold.
 class SummaryCard extends StatelessWidget {
-  const SummaryCard({required this.data, super.key});
+  const SummaryCard({required this.data, this.compact = false, super.key});
 
   final OnboardingData data;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -23,7 +28,7 @@ class SummaryCard extends StatelessWidget {
 
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(compact ? 14 : 20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -81,12 +86,13 @@ class SummaryCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (data.about != null ||
-                data.venueName != null ||
-                data.phone != null ||
-                data.instagram != null ||
-                data.tiktok != null ||
-                data.website != null) ...[
+            if (!compact &&
+                (data.about != null ||
+                    data.venueName != null ||
+                    data.phone != null ||
+                    data.instagram != null ||
+                    data.tiktok != null ||
+                    data.website != null)) ...[
               const SizedBox(height: 16),
               Divider(color: context.colors.darkBorder, height: 1),
               const SizedBox(height: 16),

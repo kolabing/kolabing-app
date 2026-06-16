@@ -554,11 +554,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
 
-                          // Summary card (collapsed)
-                          SummaryCard(data: data),
-                          const SizedBox(height: 8),
+                          // Summary card (compact recap so the login fields
+                          // stay above the fold — see batch fix 2026-06-16).
+                          SummaryCard(data: data, compact: true),
+                          const SizedBox(height: 4),
 
                           // Edit button
                           TextButton(

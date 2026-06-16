@@ -154,6 +154,16 @@ class _AuthSessionRedirectorState
 
   bool _hadAuthenticatedSession = false;
 
+  /// Routes from which a transient "unauthenticated" blip must NOT bounce the
+  /// user to login: the public auth screens, plus the onboarding flow and the
+  /// permissions step. During onboarding completion the auth state can flip
+  /// briefly (token write + checkAuthStatus); without this, the user landed on
+  /// the "Welcome back" login screen right after finishing onboarding.
+  bool _isExemptFromLoginBounce(String path) =>
+      _publicPaths.contains(path) ||
+      path.startsWith(KolabingRoutes.onboarding) ||
+      path == KolabingRoutes.permissions;
+
   @override
   void initState() {
     super.initState();
@@ -184,7 +194,7 @@ class _AuthSessionRedirectorState
 
       final currentPath =
           kolabingRouter.routeInformationProvider.value.uri.path;
-      if (_publicPaths.contains(currentPath)) {
+      if (_isExemptFromLoginBounce(currentPath)) {
         return;
       }
 
@@ -194,7 +204,7 @@ class _AuthSessionRedirectorState
         }
         final activePath =
             kolabingRouter.routeInformationProvider.value.uri.path;
-        if (_publicPaths.contains(activePath)) {
+        if (_isExemptFromLoginBounce(activePath)) {
           return;
         }
         kolabingRouter.go(KolabingRoutes.login);
