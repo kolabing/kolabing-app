@@ -7,12 +7,21 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../enums/deliverable_type.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
 
 /// Community step 2: "COLLABORATION DETAILS"
 ///
-/// Collects title, description, and what the community offers in return
-/// (deliverable type toggles).
+/// Collects title, description, and what the community offers in return.
+///
+/// The "what you offer in return" option LIST is admin-managed: it comes from
+/// [deliverablesProvider] (`GET /lookup/deliverables`, self-gating to the
+/// hardcoded launch list on 404/empty), so admins can edit labels/order or add
+/// options without an app release. STORAGE stays on the typed [DeliverableType]
+/// enum (the `offers_in_return[]` wire contract): each option's `slug` maps back
+/// via [DeliverableType.fromString], so the payload and backend validation are
+/// unchanged.
 class EventDetailsScreen extends ConsumerStatefulWidget {
   const EventDetailsScreen({super.key});
 
@@ -55,6 +64,16 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
+    final deliverableOptionsAsync = ref.watch(deliverablesProvider);
+
+    // Admin-managed list; the provider's service already falls back to the
+    // bundled list on 404/empty, but guard here so the list is never empty
+    // mid-flight.
+    final deliverableOptions = deliverableOptionsAsync.when(
+      data: (data) => data,
+      loading: () => const <OfferOption>[],
+      error: (_, _) => const <OfferOption>[],
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -162,9 +181,20 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           ],
           const SizedBox(height: KolabingSpacing.md),
 
-          // Deliverable type toggle cards
-          ...DeliverableType.values.map((deliverable) {
+          // Deliverable type toggle cards (admin-managed list via
+          // deliverablesProvider; slug maps back onto DeliverableType for
+          // storage/wire).
+          ...deliverableOptions.map((option) {
+            final deliverable = DeliverableType.fromString(option.slug);
             final isSelected = kolab.offersInReturn.contains(deliverable);
+            // Prefer the admin-provided label/description; fall back to the
+            // enum's static copy so a mid-flight empty value never renders blank.
+            final label = option.name.isNotEmpty
+                ? option.name
+                : deliverable.displayName;
+            final subtitle = (option.description?.isNotEmpty ?? false)
+                ? option.description!
+                : deliverable.subtitle;
             return Padding(
               padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
               child: GestureDetector(
@@ -219,12 +249,12 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              deliverable.displayName,
+                              label,
                               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              deliverable.subtitle,
+                              subtitle,
                               style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
                             ),
                           ],
@@ -236,6 +266,12 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
               ),
             );
           }),
+
+          if (deliverableOptionsAsync.isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+              child: Center(child: CircularProgressIndicator()),
+            ),
         ],
       ),
     );
