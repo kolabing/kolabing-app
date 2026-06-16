@@ -1,6 +1,6 @@
 # Kolabing — Roles → Backend → Database Map (Ground-Truth)
 
-**Last updated:** 2026-06-05 (community-social Wave 1: chat admin/join/ban, public events, friends, attendee profile)
+**Last updated:** 2026-06-16 (kolab single-source-of-truth migration in flight; goal-based onboarding backend fields; planned community verification — see §17)
 **Status:** Authoritative companion to [`ROLES-AND-PERMISSIONS.md`](./ROLES-AND-PERMISSIONS.md). Read that first (the *what*), then this (the *where*).
 **Sync note:** Duplicated in both repos (`kolabing-app`, `kolabing-v2`). Keep identical, and **bump the Last updated date in both** when role behaviour or backend wiring changes.
 
@@ -12,7 +12,7 @@
 
 > Fixed-since-last-update marked ✅; still-open marked ⚠️.
 
-1. ⚠️ **Two parallel post systems exist** (`collab_opportunities` *and* `kolabs`). They share a `id` UUID via `LegacyOpportunityBridgeService` so applications and collaborations (which FK to `collab_opportunities.id`) still resolve when a `kolab` is the actual post. The duplication is still the single biggest source of role bugs. See §2.
+1. ⚠️ **Two parallel post systems exist** (`collab_opportunities` *and* `kolabs`) — **a SoT migration to make `kolabs` authoritative is now IN FLIGHT** (branches `feat/kolab-sot-phase1/2` backend, `feat/onboarding-update` app; **none deployed**). They share an `id` UUID via `LegacyOpportunityBridgeService` so applications and collaborations (which FK to `collab_opportunities.id`) still resolve when a `kolab` is the actual post. The duplication is still the single biggest source of role bugs. See §2 (current state) and §17 (the migration). One concrete bug it caused: a freshly created community kolab didn't list in Offers / dashboard and couldn't be edited (read `/me/opportunities` while creates wrote `/kolabs`) — see §8 mistakes list.
 2. ✅ **`KolabService::publish` now has the `isBusiness()` guard** — `app/Services/KolabService.php:190`. A community publishing a non-`CommunitySeeking` kolab no longer hits the freemium gate.
 3. ⚠️ **The blur still does not exist.** `app/Http/Resources/Api/V1/DiscoveryOpportunityResource.php` returns full `creator_profile.display_name` + `avatar_url` to every viewer; no `identity_locked` / `hide_creator_identity` flag is emitted. Violates golden rules 4 & 5. See §4.
 4. ✅ **Account deletion now frees the email, closes posts on both systems, cancels active collaborations, and revokes tokens.** `ProfileService::deleteProfile()` (`app/Services/ProfileService.php:111`) renames the soft-deleted profile's email to `deleted+{id}@kolabing.invalid` so the unique index releases the original address. See §6.
@@ -54,6 +54,7 @@ There are **two** "post" tables plus the accepted-match table. Per `ROLES-AND-PE
 - `kolabs.intent_type` (CommunitySeeking | VenuePromotion | ProductPromotion) encodes authorship in System B: **CommunitySeeking = community-authored; Venue/ProductPromotion = business-authored.**
 - **The bridge — partially resolved.** `App\Services\LegacyOpportunityBridgeService::resolveOrFail($id, $persistFromKolab)` mints a compatibility `collab_opportunities` row **with the same UUID as the kolab** when an application is filed against a kolab id. This is why `applications.collab_opportunity_id == kolab.id` works downstream. So both systems coexist at runtime; **the canonical authoring source is `kolabs`**, and System A is now effectively a denormalized projection used for the apply / collaboration FK chain.
 - **Practical implication:** when in doubt about "which model is the post?" → it's the **Kolab**. When you need to query applications/collaborations, you can do so by `kolab.id` directly because the bridge ensures the row exists. Eliminating System A entirely is the long-running cleanup; until then, do not change the bridge invariant (kolab.id == collab_opportunity.id).
+- ⚠️ **The cleanup is now underway (IN FLIGHT, undeployed).** The kolab-SoT migration adds a real `kolab_id` FK on `applications`/`collaborations` (replacing the same-id bridge trick), backfills it, and repoints reads at `kolabs`. See §17 for phases, branches, and exact wiring. **Until those branches deploy, the bridge invariant above is still the live contract** — keep relying on `kolab.id == collab_opportunity.id`, not on `kolab_id`.
 
 ---
 
@@ -185,6 +186,7 @@ Fixed since the last revision:
 - [x] **Feedback gate on `/complete` shipped** with admin force-complete, auto-timeout scheduler, and a `/review`→`/feedback` mirror for legacy clients (§3, §9, §10). XP moved from `/complete` to `/feedback` per Q7. PR #9, 2026-06-01.
 - [x] **NF-6 community members + tiers, Phase 1 shipped** (2026-06-03): `communities` / `community_tiers` / `community_members` tables, `events.community_id`, `CommunityPolicy`, the cap gate (NOT the paywall), the auto-assignment command + on-check-in hook, and the chapter-scoped leaderboard. See §12.
 - [x] **Paywall helper must role-gate; never call it from a community/attendee path** (2026-06-10, FX-11). `SubscriptionPaywall.checkAndShow` was invoked unconditionally from `community_main_screen._onFabPressed`, paywalling non-subscribed communities (golden-rule violation). The helper now role-gates (business-only); the community FAB no longer calls it at all. **Rule:** the paywall is Business-only on exactly two actions — any new "can I do X?" gate on a community/attendee path must NOT route through the paywall helper, and the helper itself must short-circuit to "allowed" for non-business.
+- [x] **Community Offers list / edit pointed at the wrong post system** (2026-06-16, app branch `feat/onboarding-update`, Phase 3 of the SoT migration). The community Offers list historically read `/me/opportunities` (System A, `collab_opportunities`) while community **creation** writes to `/kolabs` (System B). Because a kolab only materialized into a `collab_opportunity` lazily on first apply (`LegacyOpportunityBridgeService`), a newly created kolab **never listed** in Offers / dashboard and **could not be edited** there. App fix: the community Offers list + edit now use `GET /kolabs/me` and `PUT /kolabs/{id}` (`community_main_screen.dart`), matching what the business role already did. **Rule:** read a role's posts from the same system its create flow writes to. Full unification is the SoT migration (§17); the app-side repoint is shipped on this branch, the backend phases are not yet deployed.
 - [x] **Community create must not blank the leader's picture** (2026-06-10, FX-13). `CommunityService::create` set `avatar_url = null` when the client sent none, so the community-profile surface read a blank primary community. Now inherits `owner->communityProfile->profile_photo` (mirrors `update()`'s same-image sync). **Rule:** a create path must never null an image the user already has — inherit it.
 
 Still open:
@@ -193,7 +195,7 @@ Still open:
 - [ ] Past events linked to collaborations and `completed_at` populated.
 - [ ] "View profile" deep-link confirmed to pass a `profiles.id` (not a `business_profile.id` or `collaboration.id`).
 - [ ] Type tags formatted on exactly one side (discovery formats server-side; profiles format client-side — pick one).
-- [ ] **Reconcile the two post systems** — bridge is in place via `LegacyOpportunityBridgeService`, but the long-running cleanup is to delete System A entirely. (§2)
+- [ ] **Reconcile the two post systems** — **now IN FLIGHT (undeployed)** as the kolab-SoT migration (§17): `kolab_id` FK + backfill + repointed reads (Phases 1–3 done in branches, Phase 4 = drop System A, deferred). Bridge (`LegacyOpportunityBridgeService`) stays the live contract until those branches ship. (§2, §17)
 - [ ] **Add `coliving` to `BusinessOnboardingRequest::BUSINESS_TYPES`** so the spec list in `ROLES-AND-PERMISSIONS.md` §2.1 actually validates. (Hot spot #7)
 - [ ] **`Admin\ManagedUserController::destroy()` should run the full `ProfileService::deleteProfile()` cleanup**, not a bare soft-delete (§6).
 - [ ] **Document the attendee role in `ROLES-AND-PERMISSIONS.md`** — track is shipped (§11) but the canonical doc still says "deferred / out of scope". A first-pass §7 has been added; confirm scope, pricing (free?), and gating with Daniel.
@@ -272,6 +274,7 @@ The attendee track ships substantial code despite `ROLES-AND-PERMISSIONS.md §0`
 **Points & money**
 - `point_ledger` is append-only with `event_type` enum (`CollaborationComplete`, `FirstKolabBonus`, `ReviewPosted`, `UgcPosted`, `ReferralConversion`, `Withdrawal`). Attendees accrue points via `CheckinService`, `ChallengeCompletionService`, and `BadgeService`.
 - `wallets` and `withdrawal_requests` exist with `profile_id` FK — **[VERIFY] with Daniel** whether attendees can actually withdraw cash, or whether withdrawals are community-only (the `ROLES-AND-PERMISSIONS.md §3.5` mentions €0.25/point with €75 threshold for the community side; the attendee equivalent is unspecified).
+- **Withdrawals gated to REFERRAL earnings only (not XP)** — `GamificationController` permits a withdrawal only against referral-sourced earnings, not against XP/points accrued from check-ins or challenges. `XpLevelService` wraps level changes in a DB transaction. (Backend branch `crm-admin-fix`; confirm deployment state before relying on it client-side.)
 
 **What attendees CANNOT do (confirmed by code paths)**
 - Create kolabs or opportunities (creator-resolution paths route to business / community profiles only).
@@ -409,3 +412,60 @@ Implements `ROLES-AND-PERMISSIONS.md §12`. `GET /profiles/{profile}/attendee` +
 aggregate). Sources: `attendee_profiles`, `xp_levels` (level rule, Schema-guarded),
 `earned_badges`, `community_members`/`community_tiers`, `event_checkins`→`events`,
 `friendships` (friends_count, Schema-guarded). No gamification writes; never paywalled.
+
+## 17. Kolab single-source-of-truth migration — backend map (IN FLIGHT, undeployed — added 2026-06-16)
+
+Implements the data-model change in `ROLES-AND-PERMISSIONS.md §14`. **This is a storage/SoT change, NOT a permission change.** Production runs **none** of it yet; each phase is tagged with its branch and deploy state.
+
+**Problem (pre-migration, still the live behaviour in prod):** `kolabs` is the create/Explore table; `collab_opportunities` is the FK target for `applications` + `collaborations` + dashboard reads. A new kolab only became a `collab_opportunity` lazily, on **first apply**, via `LegacyOpportunityBridgeService::resolveOrFail($id, $persistFromKolab)` (persisting a `collab_opportunity` with `id = kolab.id`). So a brand-new kolab had no `collab_opportunity` row → invisible to `/me/opportunities`-backed Offers/dashboard and not editable there.
+
+### 17.1 Phase 1 — backend branch `feat/kolab-sot-phase1` (local/undeployed)
+- Added nullable `kolab_id` FK (→ `kolabs`) to **`applications`** and **`collaborations`**.
+- Dual-write in `ApplicationService` (set `kolab_id` alongside the legacy `collab_opportunity_id`).
+- New Eloquent relations: `Application::kolab()` + `Collaboration::kolab()` (`BelongsTo`); `Kolab::applications()` + `Kolab::collaborations()` (`HasMany`).
+
+### 17.2 Phase 2 — backend branch `feat/kolab-sot-phase2` (local/undeployed)
+- New `InverseLegacyOpportunityBridgeService`: for every legacy `collab_opportunity` that lacked a kolab, creates a kolab **with the same id**, then backfills `kolab_id` on the related `applications`/`collaborations`. (Prod baseline = 20 applications + 9 collaborations that were true-legacy / NULL → **0** after backfill.)
+- `/me/opportunities` now returns the **viewer's kolabs**, mapped to the existing `OpportunityResource` shape (incl. `offer_photo`) so the client contract is unchanged.
+- `DashboardService` counts opportunities off **`kolabs`** and applications/collaborations off the new **`kolab_id`** (legacy fallback retained).
+- `Application` / `Collaboration` API resources **prefer the related `kolab`** over the legacy `collab_opportunity`.
+- Dashboard parse bug fixed server-side: categories always serialized as an array; null-safe access to `collabOpportunity`.
+
+### 17.3 Phase 3 — app branch `feat/onboarding-update` (this branch, app-side only)
+- Community **Offers list + edit** now use `GET /kolabs/me` and `PUT /kolabs/{id}` (the business role already did) — `lib/features/community/screens/community_main_screen.dart`. This is the app-side fix for the §8 known-mistake entry.
+- `create_opportunity_screen` **deferred** — still writes the legacy Opportunity boolean model (System A). Not yet migrated.
+- Dashboard model `UpcomingPartnerInfo.id` made **nullable** (`lib/features/dashboard/models/dashboard_model.dart:158`) so `/me/dashboard` never fails to parse when the partner id is absent.
+
+### 17.4 Phase 4 — NOT done
+Drop the legacy `collab_opportunities` table + its endpoints. Held until Phases 1–3 are tested and deployed. **Do not** remove System A or the bridge invariant (`kolab.id == collab_opportunity.id`) until then.
+
+**Deploy guard:** because Phases 1–2 are undeployed, `kolab_id` is **not populated in production**. Any new code must keep working against the bridge (`collab_opportunity_id == kolab.id`) and treat `kolab_id` as best-effort until the backend branches ship.
+
+## 18. Goal-based onboarding — backend fields (IN FLIGHT, undeployed — added 2026-06-16)
+
+Implements `ROLES-AND-PERMISSIONS.md §2.2 / §3.2 / §15`. App UI on `feat/onboarding-update`; backend columns/validation on branch **`feat/onboarding-backend-local`** (in progress, **not deployed**). **No permission rules change** — these are profile-shape fields.
+
+| Field | Table.Column | Notes / validation (planned) |
+|---|---|---|
+| Business has a venue | `business_profiles.has_venue` (bool, default **true**) | Drives the goal fork. |
+| Primary venue | `business_profiles.primary_venue` | Becomes `required_if:has_venue,true`. |
+| Target cities (product path) | `business_profiles.target_city_ids[]` | For `has_venue=false` businesses. Multi-select; **≤ 3 free / unlimited premium** (a create-surface nicety, not a paywall class). |
+| Offering | `business_profiles.offering` (text) + `offer_photos[]` | Product/service businesses. |
+| City requirement | — | City required when `has_venue=false`. |
+| Community size | `community_profiles.community_size` (int) | Captured at community onboarding. |
+| Business-type facets | `business_types.icon`, `business_types.applies_to` (`venue \| product \| both`) | Separates venue vs non-venue categories in the type picker. Admin-editable; **admin UI is backlog**. |
+
+**Already deployed (master):** community onboarding auto-creates a management community (`OnboardingService`, NF-6 surface §12). The app also normalizes Instagram input to `^@?[a-zA-Z0-9._]+$` before send (`kolabing-app/lib/features/onboarding/providers/onboarding_provider.dart:471`), matching the backend rule.
+
+## 19. Community verification — PLANNED (not built — added 2026-06-16)
+
+Implements the forward-looking `ROLES-AND-PERMISSIONS.md §16`. **Nothing built yet — placeholder so the schema lands consistently when it ships.** Spec: `docs/plans/2026-06-16-onboarding-update-plan.md`.
+
+Planned backend (NOT in any branch yet):
+- `community_profiles.verification_status` (`unverified | pending | verified | rejected`, default `unverified`).
+- `community_profiles.verified_at` (timestamp nullable).
+- Proof-link fields submitted at onboarding: Instagram + Strava + WhatsApp group + website/TikTok ("sources of truth").
+- Admin-web (`kolabing-v2`, §9 admin surface, NOT the app) Verify modal on the community profile → reviews submitted links → sets `verified`.
+- Businesses then render a **Verified badge** on the community (read-only consumer of `verification_status`).
+
+Never paywalled; verification is an admin/trust feature, not a gate on either role's create/apply.

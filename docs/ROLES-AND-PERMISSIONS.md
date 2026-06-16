@@ -1,6 +1,6 @@
 # Kolabing — Roles, Permissions & Features (Canonical Reference)
 
-**Last updated:** 2026-06-05 (community-social Wave 1: chat admin/join/ban, public events, friends, attendee profile)
+**Last updated:** 2026-06-16 (onboarding-update: goal-based business onboarding + product path; kolab single-source-of-truth migration in flight; planned community verification — see §14–§16)
 **Status:** Authoritative. This document overrides assumptions.
 **Sync note:** This file is duplicated in both repos (`kolabing-app` and `kolabing-v2`). Keep the two copies identical. When role behaviour changes, update both **and bump the Last updated date** in both.
 
@@ -58,10 +58,17 @@ Businesses are venues (café, restaurant, bar, bakery, coworking, coliving, gym,
 
 ### 2.2 Onboarding
 - Path: "I'm a Business."
-- Choose to promote a Venue or a Product/Service.
+- **Goal-based fork (onboarding-update, app branch `feat/onboarding-update`):** the business first picks a goal:
+  - **"Fill my venue"** → venue path (`has_venue = true`). Requires a primary venue. Uses the Google Maps lookup (below).
+  - **"Promote a product/service"** → product path (`has_venue = false`). No venue; instead the business sets an `offering` (text) + offer photos and picks **target cities** (multi-select, **≤ 3 free / unlimited premium**). City is required on this path.
+  - App screens: `lib/features/onboarding/screens/business/business_goal_screen.dart`, `business_product_identity_screen.dart`.
 - Venue businesses use the Google Maps lookup: the first onboarding screen finds the venue on Google Maps and the API pre-populates name, photos, and details. The user must see a preview and be able to delete individual imported photos.
+- Business types now carry an `applies_to` facet (`venue | product | both`) so the type picker can separate venue categories from non-venue ones (plus an `icon`). Admin-editable; the admin UI for editing types is backlog. (Backend fields below in DB-MAP §17 are on branch `feat/onboarding-backend-local`, **not yet deployed**.)
 - A business profile can also be pre-created by the Kolabing team (the pre-launch catalogue) and activated by the owner via an emailed link (review, edit, set password).
+- Instagram input is normalized client-side to the backend rule `^@?[a-zA-Z0-9._]+$` (pasted URLs / leading `@` stripped to a bare handle) — `onboarding_provider.dart:471`.
 - Onboarding must stay under roughly 5 minutes.
+
+> **Status:** the goal-fork UI ships on `feat/onboarding-update`. The backing columns (`business_profiles.has_venue`, `target_city_ids[]`, `offering`, `offer_photos[]`, the `applies_to`/`icon` business-type facets) are on backend branch `feat/onboarding-backend-local` and are **not in production yet**. Until deployed, `has_venue` defaults true and the product path's extra fields are not persisted server-side.
 
 ### 2.3 Explore — what a business sees
 The business Explore feed shows COMMUNITY Kolabs (the posts communities created, that is, what communities are looking for). For each Kolab the business sees:
@@ -145,8 +152,10 @@ Communities are real-life groups: running clubs, yoga groups, book clubs, cyclin
 
 ### 3.2 Onboarding
 - Path: "I'm a Community."
-- Community type, size, photos, description.
-- Free and fast.
+- Community type, size, photos, description. (Community size persists to `community_profiles.community_size` — backend field on branch `feat/onboarding-backend-local`, **not yet deployed**; see DB-MAP §17.)
+- **Already in production:** completing community onboarding **auto-creates a management community** for the account (`OnboardingService`, the NF-6 community surface in §8). This is live on master.
+- Instagram input is normalized to `^@?[a-zA-Z0-9._]+$` (same rule as business, `onboarding_provider.dart:471`).
+- Free and fast. (Onboarding is never paywalled — golden rule 2.)
 
 ### 3.3 Explore — what a community sees
 The community Explore feed shows BUSINESSES and business offers. For each, the community sees:
@@ -327,6 +336,36 @@ Read-only aggregate `GET /profiles/{profile}/attendee`: identity, gamification
 (points/level/badges), communities (+ tier, `can_manage`), `events_attended` (count +
 recent history), `friends_count`. Plus `GET /me/events-attended` (paginated history from
 `event_checkins`). No gamification write paths touched; never paywalled.
+
+## 14. Kolab as the single source of truth (migration, IN FLIGHT — added 2026-06-16)
+
+This is an **implementation/data-model change, not a permission change.** Golden rule 6 still holds: "opportunity" (community-created) and "collaboration" (business-created) stay distinct. What changes is *which table is authoritative*.
+
+**Background.** Two parallel post entities existed: `kolabs` (the intent-based create/Explore/discovery table) and `collab_opportunities` (the FK target for `applications`, `collaborations`, and dashboard reads). A new kolab only materialized into a `collab_opportunity` lazily, on the **first apply**, via `LegacyOpportunityBridgeService` (which persists a `collab_opportunity` with `id = kolab.id`). **Bug this caused:** a freshly created kolab did not appear in the community Offers list / dashboard and could not be edited there, because those surfaces read the (not-yet-created) `collab_opportunity`.
+
+**The fix** makes `kolabs` the single source of truth and points reads/writes at it. The full backend wiring is in DB-MAP §2 and §17.
+
+**Status by phase (none deployed to production yet except where noted):**
+- **Phase 1** — backend branch `feat/kolab-sot-phase1` (local/undeployed): added nullable `kolab_id` FK to `applications` + `collaborations`, dual-write, and Eloquent relations.
+- **Phase 2** — backend branch `feat/kolab-sot-phase2` (local/undeployed): backfilled `kolab_id` for true-legacy rows, `/me/opportunities` now returns the viewer's kolabs, dashboard counts off `kolabs` + `kolab_id`.
+- **Phase 3** — app branch `feat/onboarding-update` (this branch): the **community** Offers list + edit now use `GET /kolabs/me` and `PUT /kolabs/{id}` (the business role already did). `create_opportunity_screen` is **deferred** (still uses the legacy Opportunity model). Dashboard model `UpcomingPartnerInfo.id` made nullable so `/me/dashboard` never fails to parse (`lib/features/dashboard/models/dashboard_model.dart:158`).
+- **Phase 4** — drop legacy `collab_opportunities` table + endpoints: **NOT done**, held until tested + deployed.
+
+**Production reality (2026-06-16):** production runs **none** of the kolab-SoT migration. The app-side Phase 3 change ships on this branch but the backend Phases 1–2 it relies on for full parity are still local.
+
+## 15. Onboarding-update — what changes per role (IN FLIGHT — added 2026-06-16)
+
+Cross-reference for the goal-based onboarding rolled into §2.2 / §3.2. No permission rule changes; these are profile-shape and capability-surface additions on branch `feat/onboarding-update` (app) + `feat/onboarding-backend-local` (backend, undeployed):
+- **Business:** goal fork — "Fill my venue" (venue path, `has_venue=true`) vs "Promote a product/service" (product path, `has_venue=false`, multi-select target cities ≤3 free / unlimited premium, `offering` + offer photos). Business types gain `applies_to` (venue|product|both) + `icon`.
+- **Community:** `community_size` captured; management community auto-created (already live).
+
+The ≤3 vs unlimited target-city split is a **product-tier nicety on the create surface**, not a new gate class — it does not change the two-action Business paywall (golden rules 1–2). See plan `docs/plans/2026-06-16-onboarding-update-plan.md`.
+
+## 16. Community verification — PLANNED (not built — added 2026-06-16)
+
+Forward-looking only; **no code ships this yet.** Communities will submit proof links during onboarding — Instagram + Strava + WhatsApp group + website/TikTok ("sources of truth"). An **admin** (admin-web in `kolabing-v2`, not the app — see §0.1) opens a Verify modal from the community's profile in the admin dashboard, reviews the submitted links, and marks the community **Verified**. Businesses then see a **Verified badge** on the community.
+
+Backend (planned) will add `community_profiles.verification_status` (`unverified | pending | verified | rejected`) + `verified_at` + the proof-link fields. This is **PLANNED only**; mark any reference to it as such. Spec: `docs/plans/2026-06-16-onboarding-update-plan.md`. Backend map placeholder in DB-MAP §17.
 
 ## 13. Maintaining this document
 
