@@ -22,6 +22,7 @@ class CommunityStep1Screen extends ConsumerStatefulWidget {
 class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
   final _nameController = TextEditingController();
   final _nameFocusNode = FocusNode();
+  final _communitySizeController = TextEditingController();
 
   @override
   void initState() {
@@ -46,12 +47,16 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
     if (data?.name != null) {
       _nameController.text = data!.name!;
     }
+    if (data?.communitySize != null) {
+      _communitySizeController.text = '${data!.communitySize}';
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _nameFocusNode.dispose();
+    _communitySizeController.dispose();
     super.dispose();
   }
 
@@ -72,7 +77,11 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
       return;
     }
 
-    ref.read(onboardingProvider.notifier).updateName(_nameController.text);
+    final notifier = ref.read(onboardingProvider.notifier);
+    notifier.updateName(_nameController.text);
+    notifier.updateCommunitySize(
+      int.tryParse(_communitySizeController.text.trim()),
+    );
     context.push('/onboarding/community/step2');
   }
 
@@ -186,6 +195,56 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                           vertical: 16,
                         ),
                         counterStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Community size label
+                    Text(
+                      l10n.communityInfoCommunitySizeLabel,
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.communityStep1SizeHelper,
+                      style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Community size input
+                    TextField(
+                      controller: _communitySizeController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                      onChanged: (value) => ref
+                          .read(onboardingProvider.notifier)
+                          .updateCommunitySize(int.tryParse(value.trim())),
+                      style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
+                      decoration: InputDecoration(
+                        hintText: l10n.communityInfoCommunitySizeHint,
+                        hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+                        filled: true,
+                        fillColor: context.colors.surfaceContainerLow,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: context.colors.primary,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
                     ),
                   ],
