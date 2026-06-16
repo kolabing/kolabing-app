@@ -39,14 +39,27 @@ class CommunityRewardsHubNotifier
     return const AsyncLoading();
   }
 
+  // Re-entrancy guard — see CommunityRewardsAdminNotifier.reloadAll. build() and
+  // the screen's initState both trigger a reload; only one runs at a time.
+  bool _reloading = false;
+
   Future<void> reload() async {
+    if (_reloading) {
+      debugPrint('🎯 RewardsHub($communityId) reload SKIP (in-flight)');
+      return;
+    }
+    _reloading = true;
     debugPrint('🎯 RewardsHub($communityId) reload START');
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-        () => ref
-            .read(communityRewardsServiceProvider)
-            .getRewardsHub(communityId)
-            .timeout(_kRewardsReadTimeout, onTimeout: () => null));
+    try {
+      state = await AsyncValue.guard(
+          () => ref
+              .read(communityRewardsServiceProvider)
+              .getRewardsHub(communityId)
+              .timeout(_kRewardsReadTimeout, onTimeout: () => null));
+    } finally {
+      _reloading = false;
+    }
     debugPrint(
         '🎯 RewardsHub($communityId) reload END -> ${state.runtimeType} hasValue=${state.hasValue} value=${state.asData?.value == null ? "null(coming-soon)" : "hub"} err=${state.error}');
   }
@@ -106,9 +119,26 @@ class CommunityRewardsAdminNotifier
     return CommunityRewardsAdminState.initial;
   }
 
+  // Re-entrancy guard. build() schedules reloadAll AND the screen's initState
+  // calls it on open; running both concurrently makes the three per-field
+  // `state = state.copyWith(...)` writes interleave and clobber each other (a
+  // late "set Loading" lands after a "set Data"), which left goals/rewards stuck
+  // on AsyncLoading forever — the infinite Rewards-tab spinner. Only one full
+  // reload runs at a time.
+  bool _reloadingAll = false;
+
   Future<void> reloadAll() async {
+    if (_reloadingAll) {
+      debugPrint('🎯 RewardsAdmin($communityId) reloadAll SKIP (in-flight)');
+      return;
+    }
+    _reloadingAll = true;
     debugPrint('🎯 RewardsAdmin($communityId) reloadAll START');
-    await Future.wait([reloadGoals(), reloadRewards(), reloadBadges()]);
+    try {
+      await Future.wait([reloadGoals(), reloadRewards(), reloadBadges()]);
+    } finally {
+      _reloadingAll = false;
+    }
     debugPrint(
         '🎯 RewardsAdmin($communityId) reloadAll END -> goals=${state.goals.runtimeType} rewards=${state.rewards.runtimeType} badges=${state.badges.runtimeType}');
   }
