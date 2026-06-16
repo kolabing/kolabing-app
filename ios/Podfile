@@ -65,6 +65,49 @@ post_install do |installer|
       end
       # Fix signing mismatch for simulator builds
       config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO' if config.name == 'Debug'
+
+      # FX-27: Xcode 16 ⌘-Archive fails with rsync_sender / rsync_receiver and
+      # "dSYMs/...framework.dSYM/... No such file or directory" while copying
+      # vendored frameworks (notably OneSignal). The framework-copy script runs
+      # under the User Script Sandbox, which denies the rsync writes during
+      # Archive. Disabling the sandbox for the Pods targets is the widely
+      # recommended, minimal fix and lets Product ▸ Archive succeed directly
+      # (no more "flutter build ipa, then Organizer" workaround).
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
     end
+  end
+
+  # FX-26: silence the run-script warnings:
+  #   "[CP] Copy XCFrameworks / Copy Pods Resources / Embed Pods Frameworks /
+  #    [firebase_crashlytics] Crashlytics Upload Symbols ... will be run during
+  #    every build because it does not specify any outputs".
+  # We use `install! :disable_input_output_paths => true` (above) for build-speed,
+  # which strips the output paths Xcode uses for dependency analysis, so Xcode
+  # warns that the phases run every build. These phases SHOULD run every build,
+  # so mark them as intentional by clearing "Based on dependency analysis"
+  # (always_out_of_date = '1'). This removes the warnings without changing
+  # behaviour. Apply to the Pods [CP] phases and to the Runner target's
+  # CocoaPods / Crashlytics script phases.
+  projects = installer.generated_projects
+  # The [CP] Copy Pods Resources / Embed Pods Frameworks and the
+  # [firebase_crashlytics] Crashlytics Upload Symbols script phases live in the
+  # user (Runner) project, not the generated Pods project, so include those too.
+  installer.aggregate_targets.each do |aggregate_target|
+    projects << aggregate_target.user_project
+  end
+  projects.uniq.each do |project|
+    project.targets.each do |target|
+      target.build_phases.each do |phase|
+        next unless phase.is_a?(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+        phase.always_out_of_date = '1'
+      end
+      # FX-27: the rsync/dSYM framework-copy phase that breaks ⌘-Archive runs on
+      # the Runner target too, so disable the User Script Sandbox there as well
+      # (the per-config loop above only covered the Pods targets).
+      target.build_configurations.each do |config|
+        config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      end
+    end
+    project.save
   end
 end
