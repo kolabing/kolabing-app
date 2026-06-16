@@ -119,12 +119,10 @@ class CommunityRewardsAdminNotifier
     return CommunityRewardsAdminState.initial;
   }
 
-  // Re-entrancy guard. build() schedules reloadAll AND the screen's initState
-  // calls it on open; running both concurrently makes the three per-field
-  // `state = state.copyWith(...)` writes interleave and clobber each other (a
-  // late "set Loading" lands after a "set Data"), which left goals/rewards stuck
-  // on AsyncLoading forever — the infinite Rewards-tab spinner. Only one full
-  // reload runs at a time.
+  // Re-entrancy guard: build() schedules reloadAll AND the screen's initState
+  // calls it on open; this avoids a redundant duplicate fetch. (The infinite
+  // Rewards-tab spinner itself was the stale-receiver clobber fixed in the
+  // reload* methods below, not this double-call.)
   bool _reloadingAll = false;
 
   Future<void> reloadAll() async {
@@ -143,31 +141,37 @@ class CommunityRewardsAdminNotifier
         '🎯 RewardsAdmin($communityId) reloadAll END -> goals=${state.goals.runtimeType} rewards=${state.rewards.runtimeType} badges=${state.badges.runtimeType}');
   }
 
+  // IMPORTANT: assign the awaited result from a LOCAL, then write state.
+  // `state = state.copyWith(field: await X)` evaluates the receiver `state`
+  // BEFORE the await, so when reloadGoals/reloadRewards/reloadBadges run
+  // concurrently (Future.wait in reloadAll) each resumes with a STALE state
+  // snapshot and clobbers the others' fields back to AsyncLoading — the
+  // last-to-finish wins and the rest stay stuck spinning forever. Reading
+  // `state` AFTER the await (below) always merges into the latest state.
   Future<void> reloadGoals() async {
     state = state.copyWith(goals: const AsyncLoading());
-    state = state.copyWith(
-        goals: await AsyncValue.guard(() => _svc
-            .getGoals(communityId)
-            .timeout(_kRewardsReadTimeout,
-                onTimeout: () => const <CommunityGoal>[])));
+    final goals = await AsyncValue.guard(() => _svc
+        .getGoals(communityId)
+        .timeout(_kRewardsReadTimeout, onTimeout: () => const <CommunityGoal>[]));
+    state = state.copyWith(goals: goals);
   }
 
   Future<void> reloadRewards() async {
     state = state.copyWith(rewards: const AsyncLoading());
-    state = state.copyWith(
-        rewards: await AsyncValue.guard(() => _svc
-            .getRewards(communityId)
-            .timeout(_kRewardsReadTimeout,
-                onTimeout: () => const <CommunityReward>[])));
+    final rewards = await AsyncValue.guard(() => _svc
+        .getRewards(communityId)
+        .timeout(_kRewardsReadTimeout,
+            onTimeout: () => const <CommunityReward>[]));
+    state = state.copyWith(rewards: rewards);
   }
 
   Future<void> reloadBadges() async {
     state = state.copyWith(badges: const AsyncLoading());
-    state = state.copyWith(
-        badges: await AsyncValue.guard(() => _svc
-            .getBadges(communityId)
-            .timeout(_kRewardsReadTimeout,
-                onTimeout: () => const <CommunityBadge>[])));
+    final badges = await AsyncValue.guard(() => _svc
+        .getBadges(communityId)
+        .timeout(_kRewardsReadTimeout,
+            onTimeout: () => const <CommunityBadge>[]));
+    state = state.copyWith(badges: badges);
   }
 }
 
