@@ -42,6 +42,8 @@ class MyKolabCard extends ConsumerWidget {
   /// 3. else the first photo from the owner's gallery.
   /// Falls through to the initials placeholder only when none exist.
   String? _resolveImageUrl(WidgetRef ref) {
+    final offer = kolab.offerPhoto;
+    if (offer != null && offer.isNotEmpty) return offer;
     if (kolab.media.isNotEmpty) return kolab.media.first.url;
 
     final user = ref.watch(authProvider).user;
@@ -55,8 +57,9 @@ class MyKolabCard extends ConsumerWidget {
   }
 
   String get _initials {
-    final t = kolab.title.trim();
-    return t.isNotEmpty ? t[0].toUpperCase() : 'K';
+    // Strip leading non-letters so "[TEST] ..." yields "T", not "[".
+    final cleaned = kolab.title.replaceAll(RegExp(r'^[^A-Za-z0-9]+'), '').trim();
+    return cleaned.isNotEmpty ? cleaned[0].toUpperCase() : 'K';
   }
 
   String get _availabilityLabel {
