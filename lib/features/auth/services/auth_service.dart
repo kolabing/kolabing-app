@@ -230,31 +230,7 @@ class AuthService {
         'upload=$uploadCount google=$googleCount hosted=$hostedCount',
       );
 
-      final response = await _httpClient.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(body),
-      );
-
-      debugPrint('🔐 Response status: ${response.statusCode}');
-      debugPrint(
-        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final authResponse = AuthResponse.fromJson(json);
-        await _saveAuthData(authResponse);
-        return authResponse;
-      } else {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: response.statusCode),
-        );
-      }
+      return await _postRegistration(url, body, label: 'business');
     } catch (e) {
       if (e is ApiException || e is NetworkException) {
         rethrow;
@@ -287,6 +263,10 @@ class AuthService {
         'name': onboardingData.name?.trim(),
         'community_type': onboardingData.typeSlug,
         'city_id': onboardingData.cityId,
+        // Stable community size — backend column being added separately, so the
+        // unknown-field 422 is tolerated by [_onboardingFieldsToStrip] below.
+        if (onboardingData.communitySize != null)
+          'community_size': onboardingData.communitySize,
         if (onboardingData.about != null && onboardingData.about!.isNotEmpty)
           'about': onboardingData.about,
         if (onboardingData.phone != null && onboardingData.phone!.isNotEmpty)
@@ -305,31 +285,7 @@ class AuthService {
 
       debugPrint('🔐 Request body keys: ${body.keys.toList()}');
 
-      final response = await _httpClient.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(body),
-      );
-
-      debugPrint('🔐 Response status: ${response.statusCode}');
-      debugPrint(
-        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final authResponse = AuthResponse.fromJson(json);
-        await _saveAuthData(authResponse);
-        return authResponse;
-      } else {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: response.statusCode),
-        );
-      }
+      return await _postRegistration(url, body, label: 'community');
     } catch (e) {
       if (e is ApiException || e is NetworkException) {
         rethrow;
@@ -337,6 +293,76 @@ class AuthService {
       debugPrint('🔐 Register community error: $e');
       throw NetworkException('Failed to connect to server: $e');
     }
+  }
+
+  /// New onboarding fields whose backend columns are being added separately.
+  ///
+  /// While the migration is in flight the API may 422 on these unknown fields.
+  /// When a 422 mentions ONLY these keys we strip them and retry once, so
+  /// onboarding still completes. Once the columns ship this is a harmless no-op.
+  static const Set<String> _onboardingFieldsToStrip = {
+    'has_venue',
+    'target_city_ids',
+    'offering',
+    'offer_photos',
+    'community_size',
+  };
+
+  /// POST a registration body, tolerating not-yet-migrated onboarding fields.
+  Future<AuthResponse> _postRegistration(
+    String url,
+    Map<String, dynamic> body, {
+    required String label,
+  }) async {
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    debugPrint('🔐 Response status: ${response.statusCode}');
+    debugPrint(
+      '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final authResponse = AuthResponse.fromJson(json);
+      await _saveAuthData(authResponse);
+      return authResponse;
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final apiError = ApiError.fromJson(json, statusCode: response.statusCode);
+
+    // If the only validation failures are the new (not-yet-migrated) fields,
+    // strip them and retry once so onboarding still completes.
+    if (response.statusCode == 422 &&
+        apiError.errors != null &&
+        apiError.errors!.isNotEmpty) {
+      final failingKeys = apiError.errors!.keys
+          .map((k) => k.split('.').first)
+          .toSet();
+      final onlyNewFields = failingKeys.isNotEmpty &&
+          failingKeys.every(_onboardingFieldsToStrip.contains);
+      final bodyHasNewFields =
+          body.keys.any(_onboardingFieldsToStrip.contains);
+
+      if (onlyNewFields && bodyHasNewFields) {
+        debugPrint(
+          '🔐 Register $label 422 on not-yet-migrated fields '
+          '($failingKeys) — stripping and retrying.',
+        );
+        final retryBody = Map<String, dynamic>.from(body)
+          ..removeWhere((key, _) => _onboardingFieldsToStrip.contains(key));
+        return _postRegistration(url, retryBody, label: '$label-retry');
+      }
+    }
+
+    throw ApiException(error: apiError);
   }
 
   /// Build profile photo data URI

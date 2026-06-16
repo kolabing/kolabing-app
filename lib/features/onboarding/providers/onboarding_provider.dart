@@ -180,6 +180,76 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     );
   }
 
+  /// Select the business onboarding goal.
+  ///
+  /// [hasVenue] true -> "Fill my venue" (venue path); false -> "Promote a
+  /// product/service" (product path). Stored as [OnboardingData.hasVenue] and
+  /// sent to the backend as `has_venue`.
+  void selectBusinessGoal({required bool hasVenue}) {
+    if (state == null) return;
+    state = state!.copyWith(hasVenue: hasVenue);
+  }
+
+  /// Toggle a target city for the product path (business, no venue).
+  ///
+  /// The free tier allows up to [maxFreeCities]; when [isPremium] is false the
+  /// selection is capped and [onLimitReached] is invoked so the UI can surface
+  /// the upgrade copy. Premium accounts have no limit.
+  void toggleTargetCity(
+    String cityId,
+    String cityName, {
+    bool isPremium = false,
+    int maxFreeCities = 3,
+    VoidCallback? onLimitReached,
+  }) {
+    if (state == null) return;
+
+    final ids = List<String>.from(state!.targetCityIds);
+    final names = List<String>.from(state!.targetCityNames);
+    final existingIndex = ids.indexOf(cityId);
+
+    if (existingIndex >= 0) {
+      ids.removeAt(existingIndex);
+      if (existingIndex < names.length) names.removeAt(existingIndex);
+    } else {
+      if (!isPremium && ids.length >= maxFreeCities) {
+        onLimitReached?.call();
+        return;
+      }
+      ids.add(cityId);
+      names.add(cityName);
+    }
+
+    // Keep the profile city in sync with the first target city so summaries
+    // and the product-path payload have a city to display/send.
+    state = state!.copyWith(
+      targetCityIds: ids,
+      targetCityNames: names,
+      cityId: ids.isNotEmpty ? ids.first : null,
+      cityName: names.isNotEmpty ? names.first : null,
+    );
+  }
+
+  /// Update the optional "what you offer" free text (product path).
+  void updateOffering(String? offering) {
+    if (state == null) return;
+    final trimmed = offering?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      state = state!.copyWith(clearOffering: true);
+    } else {
+      state = state!.copyWith(offering: trimmed);
+    }
+  }
+
+  /// Update the stable community size (community onboarding).
+  void updateCommunitySize(int? size) {
+    if (state == null) return;
+    state = state!.copyWith(
+      communitySize: size,
+      clearCommunitySize: size == null,
+    );
+  }
+
   /// Update city (step 3)
   void updateCity(String cityId, String cityName) {
     if (state == null) return;
