@@ -167,7 +167,13 @@ class _BusinessProductIdentityScreenState
                     ),
                     const SizedBox(height: 12),
                     businessTypes.when(
-                      data: (types) => GridView.builder(
+                      // Product/service path: hide venue-only categories so a
+                      // non-venue business sees only product/both categories
+                      // (admin-controlled via business_types.applies_to).
+                      data: (allTypes) {
+                        final types =
+                            allTypes.where((t) => t.isForProduct).toList();
+                        return GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
@@ -189,7 +195,8 @@ class _BusinessProductIdentityScreenState
                             onTap: () => notifier.toggleBusinessType(type),
                           );
                         },
-                      ),
+                        );
+                      },
                       loading: () => Center(
                         child: CircularProgressIndicator(
                           color: context.colors.primary,

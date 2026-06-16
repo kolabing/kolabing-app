@@ -6,6 +6,7 @@ class BusinessType {
     required this.slug,
     this.icon,
     this.iconUrl,
+    this.appliesTo = 'both',
   });
 
   factory BusinessType.fromJson(Map<String, dynamic> json) {
@@ -21,6 +22,7 @@ class BusinessType {
       slug: slug,
       icon: json['icon']?.toString(),
       iconUrl: json['icon_url']?.toString(),
+      appliesTo: (json['applies_to']?.toString() ?? 'both'),
     );
   }
 
@@ -32,12 +34,25 @@ class BusinessType {
   /// Admin-uploaded SVG URL (for types with no bundled asset).
   final String? iconUrl;
 
+  /// Which onboarding path this category applies to: `venue`, `product`, or
+  /// `both` (default). Used to filter category pills so a product/service
+  /// business does not see venue-only categories (and vice versa). Backend
+  /// source: `business_types.applies_to` (exposed by /lookup/business-types).
+  final String appliesTo;
+
+  /// True when this category should be offered on the VENUE onboarding path.
+  bool get isForVenue => appliesTo == 'venue' || appliesTo == 'both';
+
+  /// True when this category should be offered on the PRODUCT/service path.
+  bool get isForProduct => appliesTo == 'product' || appliesTo == 'both';
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'slug': slug,
         if (icon != null) 'icon': icon,
         if (iconUrl != null) 'icon_url': iconUrl,
+        'applies_to': appliesTo,
       };
 
   @override
