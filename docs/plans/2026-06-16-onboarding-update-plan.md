@@ -14,6 +14,10 @@
 - **typical_attendance** stays per-kolab (varies Tue–Sun) but **pre-fills from the last kolab** as a template.
 - Remove the self-describing fields (community type/size) from the kolab/opportunity creation flow (inherit from profile); city defaults from profile.
 
+### Status (2026-06-17)
+- DONE: kolab create no longer asks community **type** or **size**; backend inherits both from `community_profile` (`KolabService::enrichCommunitySeekingData`); `CreateKolabRequest` no longer requires them; the community kolab step now only collects `typical_attendance`. (app `19ae422`, backend `32b3e03`)
+- **GAP to close:** community **size** must be editable from the community **profile** (Daniel: "modifiable from there"). Currently `UpdateProfileRequest` accepts `community_type` but NOT `community_size`, and the app profile edit has no size field. TODO: add `community_size` to `UpdateProfileRequest` (+ persist) and a size field on the community profile edit screen (PUT /me/profile). `community_type` is already profile-editable.
+
 ## 3. Auto-first-offer (free visibility, premium depth)
 - On finishing onboarding, **auto-create one real kolab** from the profile (server-side, composed via the validated mapping: intent, `offering[]`, deliverables, community_types, city, venue_type/product_type, media, availability defaults). **Publish live immediately.**
 - **Free tier = exactly one auto-offer, non-editable.** Premium unlocks the normal create/edit modal + more offers + commission comp + >3 cities. (Backend-enforced, reuses the Business paywall; communities stay free.)
