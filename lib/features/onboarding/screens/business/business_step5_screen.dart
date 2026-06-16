@@ -215,8 +215,8 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
               child: Column(
                 children: [
                   OnboardingHeader(
-                    currentStep: 1,
-                    totalSteps: 3,
+                    currentStep: 2,
+                    totalSteps: 4,
                     onBack: _handleBack,
                     showSkip: false,
                   ),
@@ -491,8 +491,8 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
         child: Column(
           children: [
             OnboardingHeader(
-              currentStep: 1,
-              totalSteps: 3,
+              currentStep: 2,
+              totalSteps: 4,
               onBack: () => setState(() => _showImportedPreview = false),
               showSkip: false,
             ),

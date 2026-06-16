@@ -128,7 +128,7 @@ class _UserTypeSelectionScreenState
         switch (type) {
           case SelectionUserType.business:
             ref.read(onboardingProvider.notifier).initialize(UserType.business);
-            context.push('/onboarding/business/step5');
+            context.push(KolabingRoutes.businessOnboardingGoal);
           case SelectionUserType.community:
             ref
                 .read(onboardingProvider.notifier)

@@ -36,6 +36,10 @@ import '../../features/onboarding/screens/attendee/attendee_step2_screen.dart';
 import '../../features/onboarding/screens/attendee/attendee_step3_screen.dart';
 import '../../features/onboarding/screens/attendee/attendee_step4_screen.dart';
 import '../../features/onboarding/screens/business/business_final_screen.dart';
+import '../../features/onboarding/screens/business/business_goal_screen.dart';
+import '../../features/onboarding/screens/business/business_product_about_screen.dart';
+import '../../features/onboarding/screens/business/business_product_cities_screen.dart';
+import '../../features/onboarding/screens/business/business_product_identity_screen.dart';
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
@@ -81,12 +85,24 @@ abstract final class KolabingRoutes {
   static const String onboarding = '/onboarding';
 
   /// Business onboarding routes
+  /// Entry point: the goal step (venue vs product). The venue path reuses the
+  /// existing step5/step2/final screens; the product path uses the dedicated
+  /// product/* screens below.
+  static const String businessOnboardingGoal = '/onboarding/business/goal';
   static const String businessOnboardingStep1 = '/onboarding/business/step1';
   static const String businessOnboardingStep2 = '/onboarding/business/step2';
   static const String businessOnboardingStep3 = '/onboarding/business/step3';
   static const String businessOnboardingStep4 = '/onboarding/business/step4';
   static const String businessOnboardingStep5 = '/onboarding/business/step5';
   static const String businessOnboardingFinal = '/onboarding/business/final';
+
+  /// Business product path (goal = "promote a product/service", no venue).
+  static const String businessOnboardingProductIdentity =
+      '/onboarding/business/product/identity';
+  static const String businessOnboardingProductCities =
+      '/onboarding/business/product/cities';
+  static const String businessOnboardingProductAbout =
+      '/onboarding/business/product/about';
 
   /// Community onboarding routes
   static const String communityOnboardingStep1 = '/onboarding/community/step1';
@@ -420,12 +436,38 @@ final GoRouter kolabingRouter = GoRouter(
     ),
 
     // Business Onboarding
-    // Step 1 now starts at the venue picker/import screen.
+    // Entry point is now the goal step (venue vs product).
+    GoRoute(
+      path: KolabingRoutes.businessOnboardingGoal,
+      name: 'businessOnboardingGoal',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessGoalScreen(),
+    ),
+    // Legacy step 1 deep links land on the goal step.
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep1,
       name: 'businessOnboardingStep1',
       redirect: (BuildContext context, GoRouterState state) =>
-          KolabingRoutes.businessOnboardingStep5,
+          KolabingRoutes.businessOnboardingGoal,
+    ),
+    // Product path (goal = "promote a product/service").
+    GoRoute(
+      path: KolabingRoutes.businessOnboardingProductIdentity,
+      name: 'businessOnboardingProductIdentity',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessProductIdentityScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.businessOnboardingProductCities,
+      name: 'businessOnboardingProductCities',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessProductCitiesScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.businessOnboardingProductAbout,
+      name: 'businessOnboardingProductAbout',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessProductAboutScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.businessOnboardingStep2,
