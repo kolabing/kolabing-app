@@ -342,9 +342,24 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   // ---------------------------------------------------------------------------
 
   void updateAvailabilityMode(AvailabilityMode mode) {
+    final kolab = state.kolab;
+    var start = kolab.availabilityStart;
+    var end = kolab.availabilityEnd;
+
+    // Pre-fill a one-time kolab with sensible default dates (tomorrow → one
+    // month later) so the range isn't empty; still fully editable.
+    if (mode == AvailabilityMode.oneTime && start == null) {
+      final tomorrow =
+          DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
+      start = tomorrow;
+      end ??= DateTime(tomorrow.year, tomorrow.month + 1, tomorrow.day);
+    }
+
     state = state.copyWith(
-      kolab: state.kolab.copyWith(
+      kolab: kolab.copyWith(
         availabilityMode: mode,
+        availabilityStart: start,
+        availabilityEnd: end,
         recurringDays: mode != AvailabilityMode.recurring ? const [] : null,
       ),
       clearError: true,
