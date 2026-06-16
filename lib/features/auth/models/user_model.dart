@@ -449,14 +449,17 @@ class UserModel {
     return email.split('@').first;
   }
 
-  /// Get profile photo URL
+  /// Get profile photo URL (normalized to an absolute URL — the raw
+  /// `profile_photo` from the API can be relative/host-less, which fails
+  /// `Image.network` and falls back to an initials placeholder).
   String? get profilePhotoUrl {
-    if (isBusiness && businessProfile != null) {
-      return businessProfile!.profilePhoto;
-    } else if (isCommunity && communityProfile != null) {
-      return communityProfile!.profilePhoto;
-    }
-    return avatarUrl;
+    final raw = (isBusiness && businessProfile != null)
+        ? businessProfile!.profilePhoto
+        : (isCommunity && communityProfile != null)
+            ? communityProfile!.profilePhoto
+            : avatarUrl;
+    if (raw == null || raw.trim().isEmpty) return null;
+    return normalizeRemoteMediaUrl(raw);
   }
 
   Map<String, dynamic> toJson() => {
