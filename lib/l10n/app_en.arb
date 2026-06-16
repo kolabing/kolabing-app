@@ -6947,5 +6947,67 @@
   "communityEventVisibilityMembers": "Members",
   "@communityEventVisibilityMembers": { "description": "Event visibility badge: members only." },
   "communityEventVisibilityTier": "Tier",
-  "@communityEventVisibilityTier": { "description": "Event visibility badge: tier-gated." }
+  "@communityEventVisibilityTier": { "description": "Event visibility badge: tier-gated." },
+
+  "businessGoalTitle": "What's your goal?",
+  "@businessGoalTitle": { "description": "Business onboarding goal step: title" },
+  "businessGoalSubtitle": "We'll tailor your setup based on what you want to achieve.",
+  "@businessGoalSubtitle": { "description": "Business onboarding goal step: subtitle" },
+  "businessGoalVenueTitle": "Fill my venue",
+  "@businessGoalVenueTitle": { "description": "Business onboarding goal step: venue option title" },
+  "businessGoalVenueDescription": "I have a physical place (bar, gym, shop, studio) and want communities to come.",
+  "@businessGoalVenueDescription": { "description": "Business onboarding goal step: venue option description" },
+  "businessGoalProductTitle": "Promote a product or service",
+  "@businessGoalProductTitle": { "description": "Business onboarding goal step: product option title" },
+  "businessGoalProductDescription": "I want to reach communities in one or more cities, no physical venue needed.",
+  "@businessGoalProductDescription": { "description": "Business onboarding goal step: product option description" },
+
+  "businessProductIdentityTitle": "Tell us about your brand",
+  "@businessProductIdentityTitle": { "description": "Business product path identity step: title" },
+  "businessProductIdentitySubtitle": "Add your name, category and logo so communities know who you are.",
+  "@businessProductIdentitySubtitle": { "description": "Business product path identity step: subtitle" },
+  "businessProductIdentityIncomplete": "Please add a name and at least one category.",
+  "@businessProductIdentityIncomplete": { "description": "Business product path identity step: validation error" },
+  "businessProductNameLabel": "Brand name",
+  "@businessProductNameLabel": { "description": "Business product path: brand name field label" },
+  "businessProductNameHint": "Your brand or company name",
+  "@businessProductNameHint": { "description": "Business product path: brand name field hint" },
+  "businessProductCategoryLabel": "Category",
+  "@businessProductCategoryLabel": { "description": "Business product path: category field label" },
+  "businessProductCategoryHint": "Pick up to 3 that best describe you.",
+  "@businessProductCategoryHint": { "description": "Business product path: category field hint" },
+
+  "businessProductCitiesTitle": "Which cities do you want to reach?",
+  "@businessProductCitiesTitle": { "description": "Business product path cities step: title" },
+  "businessProductCitiesSubtitle": "Free plan: up to {limit} cities. Upgrade to Premium for unlimited reach.",
+  "@businessProductCitiesSubtitle": {
+    "description": "Business product path cities step: subtitle with free limit",
+    "placeholders": { "limit": { "type": "int" } }
+  },
+  "businessProductCitiesRequired": "Please select at least one city.",
+  "@businessProductCitiesRequired": { "description": "Business product path cities step: validation error" },
+  "businessProductCitiesLimitReached": "Free plan covers up to {limit} cities. Upgrade to Premium to add more.",
+  "@businessProductCitiesLimitReached": {
+    "description": "Business product path cities step: free limit reached toast",
+    "placeholders": { "limit": { "type": "int" } }
+  },
+  "businessProductCitiesCounter": "{selected} of {limit} cities selected",
+  "@businessProductCitiesCounter": {
+    "description": "Business product path cities step: selection counter",
+    "placeholders": { "selected": { "type": "int" }, "limit": { "type": "int" } }
+  },
+
+  "businessProductAboutTitle": "Add a few more details",
+  "@businessProductAboutTitle": { "description": "Business product path about step: title" },
+  "businessProductAboutSubtitle": "All optional, but they help communities decide to work with you.",
+  "@businessProductAboutSubtitle": { "description": "Business product path about step: subtitle" },
+  "businessProductOfferingLabel": "What you offer",
+  "@businessProductOfferingLabel": { "description": "Business product path: offering field label" },
+  "businessProductOfferingHint": "e.g., 20% off for community members, free samples, sponsored prizes",
+  "@businessProductOfferingHint": { "description": "Business product path: offering field hint" },
+  "businessProductPhotosLabel": "Photos (optional)",
+  "@businessProductPhotosLabel": { "description": "Business product path: photos field label" },
+
+  "communityStep1SizeHelper": "Roughly how many members are in your community?",
+  "@communityStep1SizeHelper": { "description": "Community onboarding step 1: community size helper text" }
 }

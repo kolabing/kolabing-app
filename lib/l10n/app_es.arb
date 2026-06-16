@@ -1877,5 +1877,34 @@
   "communityEventsAttendeeView": "Vista de asistente",
   "communityEventVisibilityPublic": "Público",
   "communityEventVisibilityMembers": "Miembros",
-  "communityEventVisibilityTier": "Nivel"
+  "communityEventVisibilityTier": "Nivel",
+
+  "businessGoalTitle": "¿Cuál es tu objetivo?",
+  "businessGoalSubtitle": "Adaptaremos tu configuración según lo que quieras conseguir.",
+  "businessGoalVenueTitle": "Llenar mi local",
+  "businessGoalVenueDescription": "Tengo un sitio físico (bar, gimnasio, tienda, estudio) y quiero que vengan comunidades.",
+  "businessGoalProductTitle": "Promocionar un producto o servicio",
+  "businessGoalProductDescription": "Quiero llegar a comunidades en una o varias ciudades, sin local físico.",
+
+  "businessProductIdentityTitle": "Háblanos de tu marca",
+  "businessProductIdentitySubtitle": "Añade tu nombre, categoría y logotipo para que las comunidades sepan quién eres.",
+  "businessProductIdentityIncomplete": "Añade un nombre y al menos una categoría.",
+  "businessProductNameLabel": "Nombre de la marca",
+  "businessProductNameHint": "El nombre de tu marca o empresa",
+  "businessProductCategoryLabel": "Categoría",
+  "businessProductCategoryHint": "Elige hasta 3 que mejor te describan.",
+
+  "businessProductCitiesTitle": "¿A qué ciudades quieres llegar?",
+  "businessProductCitiesSubtitle": "Plan gratuito: hasta {limit} ciudades. Pasa a Premium para un alcance ilimitado.",
+  "businessProductCitiesRequired": "Selecciona al menos una ciudad.",
+  "businessProductCitiesLimitReached": "El plan gratuito incluye hasta {limit} ciudades. Pasa a Premium para añadir más.",
+  "businessProductCitiesCounter": "{selected} de {limit} ciudades seleccionadas",
+
+  "businessProductAboutTitle": "Añade algunos detalles más",
+  "businessProductAboutSubtitle": "Todo es opcional, pero ayuda a las comunidades a decidir trabajar contigo.",
+  "businessProductOfferingLabel": "Qué ofreces",
+  "businessProductOfferingHint": "p. ej., 20% de descuento para miembros de la comunidad, muestras gratis, premios patrocinados",
+  "businessProductPhotosLabel": "Fotos (opcional)",
+
+  "communityStep1SizeHelper": "¿Aproximadamente cuántos miembros tiene tu comunidad?"
 }

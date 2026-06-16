@@ -11191,6 +11191,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tier'**
   String get communityEventVisibilityTier;
+
+  /// Business onboarding goal step: title
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your goal?'**
+  String get businessGoalTitle;
+
+  /// Business onboarding goal step: subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll tailor your setup based on what you want to achieve.'**
+  String get businessGoalSubtitle;
+
+  /// Business onboarding goal step: venue option title
+  ///
+  /// In en, this message translates to:
+  /// **'Fill my venue'**
+  String get businessGoalVenueTitle;
+
+  /// Business onboarding goal step: venue option description
+  ///
+  /// In en, this message translates to:
+  /// **'I have a physical place (bar, gym, shop, studio) and want communities to come.'**
+  String get businessGoalVenueDescription;
+
+  /// Business onboarding goal step: product option title
+  ///
+  /// In en, this message translates to:
+  /// **'Promote a product or service'**
+  String get businessGoalProductTitle;
+
+  /// Business onboarding goal step: product option description
+  ///
+  /// In en, this message translates to:
+  /// **'I want to reach communities in one or more cities, no physical venue needed.'**
+  String get businessGoalProductDescription;
+
+  /// Business product path identity step: title
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your brand'**
+  String get businessProductIdentityTitle;
+
+  /// Business product path identity step: subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Add your name, category and logo so communities know who you are.'**
+  String get businessProductIdentitySubtitle;
+
+  /// Business product path identity step: validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a name and at least one category.'**
+  String get businessProductIdentityIncomplete;
+
+  /// Business product path: brand name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Brand name'**
+  String get businessProductNameLabel;
+
+  /// Business product path: brand name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Your brand or company name'**
+  String get businessProductNameHint;
+
+  /// Business product path: category field label
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get businessProductCategoryLabel;
+
+  /// Business product path: category field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 3 that best describe you.'**
+  String get businessProductCategoryHint;
+
+  /// Business product path cities step: title
+  ///
+  /// In en, this message translates to:
+  /// **'Which cities do you want to reach?'**
+  String get businessProductCitiesTitle;
+
+  /// Business product path cities step: subtitle with free limit
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan: up to {limit} cities. Upgrade to Premium for unlimited reach.'**
+  String businessProductCitiesSubtitle(int limit);
+
+  /// Business product path cities step: validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one city.'**
+  String get businessProductCitiesRequired;
+
+  /// Business product path cities step: free limit reached toast
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan covers up to {limit} cities. Upgrade to Premium to add more.'**
+  String businessProductCitiesLimitReached(int limit);
+
+  /// Business product path cities step: selection counter
+  ///
+  /// In en, this message translates to:
+  /// **'{selected} of {limit} cities selected'**
+  String businessProductCitiesCounter(int selected, int limit);
+
+  /// Business product path about step: title
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few more details'**
+  String get businessProductAboutTitle;
+
+  /// Business product path about step: subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'All optional, but they help communities decide to work with you.'**
+  String get businessProductAboutSubtitle;
+
+  /// Business product path: offering field label
+  ///
+  /// In en, this message translates to:
+  /// **'What you offer'**
+  String get businessProductOfferingLabel;
+
+  /// Business product path: offering field hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 20% off for community members, free samples, sponsored prizes'**
+  String get businessProductOfferingHint;
+
+  /// Business product path: photos field label
+  ///
+  /// In en, this message translates to:
+  /// **'Photos (optional)'**
+  String get businessProductPhotosLabel;
+
+  /// Community onboarding step 1: community size helper text
+  ///
+  /// In en, this message translates to:
+  /// **'Roughly how many members are in your community?'**
+  String get communityStep1SizeHelper;
 }
 
 class _AppLocalizationsDelegate

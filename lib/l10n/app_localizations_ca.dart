@@ -6377,4 +6377,91 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get communityEventVisibilityTier => 'Nivell';
+
+  @override
+  String get businessGoalTitle => 'Quin és el teu objectiu?';
+
+  @override
+  String get businessGoalSubtitle =>
+      'Adaptarem la teva configuració segons el que vulguis aconseguir.';
+
+  @override
+  String get businessGoalVenueTitle => 'Omplir el meu local';
+
+  @override
+  String get businessGoalVenueDescription =>
+      'Tinc un lloc físic (bar, gimnàs, botiga, estudi) i vull que hi vinguin comunitats.';
+
+  @override
+  String get businessGoalProductTitle => 'Promocionar un producte o servei';
+
+  @override
+  String get businessGoalProductDescription =>
+      'Vull arribar a comunitats en una o més ciutats, sense local físic.';
+
+  @override
+  String get businessProductIdentityTitle => 'Parla\'ns de la teva marca';
+
+  @override
+  String get businessProductIdentitySubtitle =>
+      'Afegeix el teu nom, categoria i logotip perquè les comunitats sàpiguen qui ets.';
+
+  @override
+  String get businessProductIdentityIncomplete =>
+      'Afegeix un nom i almenys una categoria.';
+
+  @override
+  String get businessProductNameLabel => 'Nom de la marca';
+
+  @override
+  String get businessProductNameHint => 'El nom de la teva marca o empresa';
+
+  @override
+  String get businessProductCategoryLabel => 'Categoria';
+
+  @override
+  String get businessProductCategoryHint =>
+      'Tria\'n fins a 3 que et descriguin millor.';
+
+  @override
+  String get businessProductCitiesTitle => 'A quines ciutats vols arribar?';
+
+  @override
+  String businessProductCitiesSubtitle(int limit) {
+    return 'Pla gratuït: fins a $limit ciutats. Passa a Premium per a un abast il·limitat.';
+  }
+
+  @override
+  String get businessProductCitiesRequired => 'Selecciona almenys una ciutat.';
+
+  @override
+  String businessProductCitiesLimitReached(int limit) {
+    return 'El pla gratuït inclou fins a $limit ciutats. Passa a Premium per afegir-ne més.';
+  }
+
+  @override
+  String businessProductCitiesCounter(int selected, int limit) {
+    return '$selected de $limit ciutats seleccionades';
+  }
+
+  @override
+  String get businessProductAboutTitle => 'Afegeix uns quants detalls més';
+
+  @override
+  String get businessProductAboutSubtitle =>
+      'Tot és opcional, però ajuda les comunitats a decidir treballar amb tu.';
+
+  @override
+  String get businessProductOfferingLabel => 'Què ofereixes';
+
+  @override
+  String get businessProductOfferingHint =>
+      'p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis patrocinats';
+
+  @override
+  String get businessProductPhotosLabel => 'Fotos (opcional)';
+
+  @override
+  String get communityStep1SizeHelper =>
+      'Aproximadament, quants membres té la teva comunitat?';
 }

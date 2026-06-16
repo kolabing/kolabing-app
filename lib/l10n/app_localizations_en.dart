@@ -6272,4 +6272,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityEventVisibilityTier => 'Tier';
+
+  @override
+  String get businessGoalTitle => 'What\'s your goal?';
+
+  @override
+  String get businessGoalSubtitle =>
+      'We\'ll tailor your setup based on what you want to achieve.';
+
+  @override
+  String get businessGoalVenueTitle => 'Fill my venue';
+
+  @override
+  String get businessGoalVenueDescription =>
+      'I have a physical place (bar, gym, shop, studio) and want communities to come.';
+
+  @override
+  String get businessGoalProductTitle => 'Promote a product or service';
+
+  @override
+  String get businessGoalProductDescription =>
+      'I want to reach communities in one or more cities, no physical venue needed.';
+
+  @override
+  String get businessProductIdentityTitle => 'Tell us about your brand';
+
+  @override
+  String get businessProductIdentitySubtitle =>
+      'Add your name, category and logo so communities know who you are.';
+
+  @override
+  String get businessProductIdentityIncomplete =>
+      'Please add a name and at least one category.';
+
+  @override
+  String get businessProductNameLabel => 'Brand name';
+
+  @override
+  String get businessProductNameHint => 'Your brand or company name';
+
+  @override
+  String get businessProductCategoryLabel => 'Category';
+
+  @override
+  String get businessProductCategoryHint =>
+      'Pick up to 3 that best describe you.';
+
+  @override
+  String get businessProductCitiesTitle => 'Which cities do you want to reach?';
+
+  @override
+  String businessProductCitiesSubtitle(int limit) {
+    return 'Free plan: up to $limit cities. Upgrade to Premium for unlimited reach.';
+  }
+
+  @override
+  String get businessProductCitiesRequired =>
+      'Please select at least one city.';
+
+  @override
+  String businessProductCitiesLimitReached(int limit) {
+    return 'Free plan covers up to $limit cities. Upgrade to Premium to add more.';
+  }
+
+  @override
+  String businessProductCitiesCounter(int selected, int limit) {
+    return '$selected of $limit cities selected';
+  }
+
+  @override
+  String get businessProductAboutTitle => 'Add a few more details';
+
+  @override
+  String get businessProductAboutSubtitle =>
+      'All optional, but they help communities decide to work with you.';
+
+  @override
+  String get businessProductOfferingLabel => 'What you offer';
+
+  @override
+  String get businessProductOfferingHint =>
+      'e.g., 20% off for community members, free samples, sponsored prizes';
+
+  @override
+  String get businessProductPhotosLabel => 'Photos (optional)';
+
+  @override
+  String get communityStep1SizeHelper =>
+      'Roughly how many members are in your community?';
 }

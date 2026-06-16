@@ -1877,5 +1877,34 @@
   "communityEventsAttendeeView": "Vista d'assistent",
   "communityEventVisibilityPublic": "Públic",
   "communityEventVisibilityMembers": "Membres",
-  "communityEventVisibilityTier": "Nivell"
+  "communityEventVisibilityTier": "Nivell",
+
+  "businessGoalTitle": "Quin és el teu objectiu?",
+  "businessGoalSubtitle": "Adaptarem la teva configuració segons el que vulguis aconseguir.",
+  "businessGoalVenueTitle": "Omplir el meu local",
+  "businessGoalVenueDescription": "Tinc un lloc físic (bar, gimnàs, botiga, estudi) i vull que hi vinguin comunitats.",
+  "businessGoalProductTitle": "Promocionar un producte o servei",
+  "businessGoalProductDescription": "Vull arribar a comunitats en una o més ciutats, sense local físic.",
+
+  "businessProductIdentityTitle": "Parla'ns de la teva marca",
+  "businessProductIdentitySubtitle": "Afegeix el teu nom, categoria i logotip perquè les comunitats sàpiguen qui ets.",
+  "businessProductIdentityIncomplete": "Afegeix un nom i almenys una categoria.",
+  "businessProductNameLabel": "Nom de la marca",
+  "businessProductNameHint": "El nom de la teva marca o empresa",
+  "businessProductCategoryLabel": "Categoria",
+  "businessProductCategoryHint": "Tria'n fins a 3 que et descriguin millor.",
+
+  "businessProductCitiesTitle": "A quines ciutats vols arribar?",
+  "businessProductCitiesSubtitle": "Pla gratuït: fins a {limit} ciutats. Passa a Premium per a un abast il·limitat.",
+  "businessProductCitiesRequired": "Selecciona almenys una ciutat.",
+  "businessProductCitiesLimitReached": "El pla gratuït inclou fins a {limit} ciutats. Passa a Premium per afegir-ne més.",
+  "businessProductCitiesCounter": "{selected} de {limit} ciutats seleccionades",
+
+  "businessProductAboutTitle": "Afegeix uns quants detalls més",
+  "businessProductAboutSubtitle": "Tot és opcional, però ajuda les comunitats a decidir treballar amb tu.",
+  "businessProductOfferingLabel": "Què ofereixes",
+  "businessProductOfferingHint": "p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis patrocinats",
+  "businessProductPhotosLabel": "Fotos (opcional)",
+
+  "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?"
 }
