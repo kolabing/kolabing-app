@@ -38,6 +38,14 @@ void main() async {
     return true;
   };
 
+  // Replace Flutter's default ErrorWidget — the blank grey box that filled the
+  // dashboard whenever a child widget threw — with a graceful, neutral fallback,
+  // and record the failure to Crashlytics so the underlying throw is captured.
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    FirebaseCrashlytics.instance.recordFlutterError(details);
+    return const _AppErrorFallback();
+  };
+
   // Initialize PostHog product analytics (curated events only — no autocapture
   // or session replay). Fail-safe: an init fault never blocks app launch.
   await AnalyticsService.instance.init();
@@ -56,6 +64,37 @@ void main() async {
 
   // Run the app with Riverpod
   runApp(const ProviderScope(child: KolabingApp()));
+}
+
+/// Neutral fallback shown in place of a widget that threw during build, instead
+/// of Flutter's default blank grey box. Kept self-contained (no theme/provider
+/// dependencies) so it renders even when the surrounding subtree is broken.
+class _AppErrorFallback extends StatelessWidget {
+  const _AppErrorFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return const ColoredBox(
+      color: Color(0xFFF7F8FA),
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, size: 36, color: Color(0xFF8A8A8A)),
+              SizedBox(height: 12),
+              Text(
+                'Something went wrong here.\nPull to refresh or try again.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Color(0xFF6B6B6B)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Main application widget

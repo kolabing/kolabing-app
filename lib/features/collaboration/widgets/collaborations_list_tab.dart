@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../models/collaboration.dart';
 import '../providers/collaborations_list_provider.dart';
 
@@ -91,19 +92,29 @@ class CollaborationsListTab extends ConsumerWidget {
 /// Which derived bucket a [CollaborationsListTab] renders.
 enum CollaborationBucket { active, finished }
 
-class _CollaborationCard extends StatelessWidget {
+class _CollaborationCard extends ConsumerWidget {
   const _CollaborationCard({required this.collaboration, required this.isDark});
 
   final Collaboration collaboration;
   final bool isDark;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final partner = collaboration.businessPartner.name.isNotEmpty
         ? '${collaboration.businessPartner.name} × ${collaboration.communityPartner.name}'
         : collaboration.communityPartner.name;
 
-    final imageUrl = collaboration.opportunity?.offerPhoto;
+    // Show the counterpart (the party you are kolabing with) first: business
+    // viewers see the community partner, community viewers see the business
+    // partner. Fall back to the kolab's own posted photo.
+    final viewer = ref.watch(authProvider).user;
+    final counterpart = viewer?.isBusiness ?? false
+        ? collaboration.communityPartner
+        : collaboration.businessPartner;
+    final counterpartPhoto = counterpart.profilePhoto;
+    final imageUrl = (counterpartPhoto != null && counterpartPhoto.isNotEmpty)
+        ? counterpartPhoto
+        : collaboration.opportunity?.offerPhoto;
     final initials = partner.isNotEmpty ? partner[0].toUpperCase() : 'K';
 
     return KolabCardShell(

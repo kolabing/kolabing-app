@@ -1,5 +1,6 @@
 // lib/features/kolab/widgets/my_kolab_card.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -11,11 +12,12 @@ import '../../../widgets/glass_icon_button.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
 
-class MyKolabCard extends StatelessWidget {
+class MyKolabCard extends ConsumerWidget {
   const MyKolabCard({
     required this.kolab,
     super.key,
@@ -33,8 +35,24 @@ class MyKolabCard extends StatelessWidget {
   final VoidCallback? onClose;
   final VoidCallback? onDelete;
 
-  String? get _imageUrl =>
-      kolab.media.isNotEmpty ? kolab.media.first.url : null;
+  /// Thumbnail priority for a kolab/offer card:
+  /// 1. the photo posted for the kolab itself,
+  /// 2. else the owner's profile photo (these are the user's own offers, so
+  ///    there is no counterpart to show yet — fall back to their brand),
+  /// 3. else the first photo from the owner's gallery.
+  /// Falls through to the initials placeholder only when none exist.
+  String? _resolveImageUrl(WidgetRef ref) {
+    if (kolab.media.isNotEmpty) return kolab.media.first.url;
+
+    final user = ref.watch(authProvider).user;
+    final ownerPhoto = user?.profilePhotoUrl;
+    if (ownerPhoto != null && ownerPhoto.isNotEmpty) return ownerPhoto;
+
+    final gallery = user?.businessProfile?.primaryVenue?.photos ?? const [];
+    if (gallery.isNotEmpty) return gallery.first;
+
+    return null;
+  }
 
   String get _initials {
     final t = kolab.title.trim();
@@ -62,12 +80,12 @@ class MyKolabCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final (primaryAction, secondaryActions) = _buildActions(context);
 
     return KolabCardShell(
-      imageUrl: _imageUrl,
+      imageUrl: _resolveImageUrl(ref),
       initials: _initials,
       primaryAction: primaryAction,
       secondaryActions: secondaryActions,
