@@ -459,13 +459,31 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   /// Update instagram (step 4)
   void updateInstagram(String? instagram) {
     if (state == null) return;
-    // Remove @ prefix if present
-    final handle = instagram?.replaceFirst('@', '');
-    if (handle == null || handle.isEmpty) {
+    final handle = _normalizeInstagramHandle(instagram);
+    if (handle == null) {
       state = state!.copyWith(clearInstagram: true);
     } else {
       state = state!.copyWith(instagram: handle);
     }
+  }
+
+  /// Normalize any user-entered Instagram value into a bare handle that
+  /// satisfies the backend rule `^@?[a-zA-Z0-9._]+$`. Accepts a pasted profile
+  /// URL (e.g. `https://instagram.com/realrunclub/`), a leading `@`, and strips
+  /// any other characters (spaces, hyphens, query strings). Returns null when
+  /// nothing valid remains, so onboarding simply omits the field.
+  String? _normalizeInstagramHandle(String? raw) {
+    if (raw == null) return null;
+    var value = raw.trim();
+    if (value.isEmpty) return null;
+    // Pull the handle out of a pasted profile URL.
+    if (value.contains('instagram.com')) {
+      value = value.split('instagram.com/').last;
+    }
+    // Drop a leading @, anything after a slash/query, then strip disallowed chars.
+    value = value.replaceFirst('@', '').split('/').first.split('?').first;
+    value = value.replaceAll(RegExp(r'[^a-zA-Z0-9._]'), '');
+    return value.isEmpty ? null : value;
   }
 
   /// Update tiktok (step 4 - community only)
