@@ -41,6 +41,12 @@
 ## 6. DECISION — kolab is the full source of truth (2026-06-16, Daniel)
 Chosen over the quick app-only fix. Migrate applications/collaborations/dashboard/lists off `collab_opportunities` onto `kolabs`. See `docs/plans/2026-06-16-kolab-source-of-truth-migration.md`. The auto-offer (#3), create_opportunity taxonomy wiring (#4), and the Offers list/edit fixes all sit on top of this migration.
 
+## 7. Admin dashboard backlog — category icons + venue/non-venue separation (Daniel, 2026-06-16)
+> MIRROR THIS into `kolabing-v2/docs/ADMIN-DASHBOARD-ROADMAP.md` "Still open" section once the backend tree is free (currently held by the onboarding-backend agent).
+- **Icon picker (gallery) per category.** Admin can assign an icon to each business/community category from a gallery picker (not free text). Backend foundation: `business_types.icon` column is being added now (Part B of the local-backend work); the admin UI to browse/select icons + persist is the backlog item. Fixes the broken/missing category icons seen on the product path.
+- **Separate venue vs non-venue business categories.** Categories must be flaggable as applicable to venue businesses, non-venue (product/service) businesses, or both. Backend foundation: `business_types.applies_to` (venue|product|both) is being added now; the admin UI to set this per category + the app filtering pills by it is the backlog item. Fixes the product path showing the same categories as venue businesses.
+- Both are admin-editable (no deploy), mirroring the existing Types module pattern.
+
 ## Dependencies / sequencing
 - The kolab-table migration (kolabs vs collab_opportunities) should land before/with the auto-offer + create_opportunity taxonomy wiring (those touch the offer create/list paths).
 - Verification (#5) is independent and can ship on its own.
