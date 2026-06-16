@@ -237,6 +237,8 @@ class _BusinessProductAboutScreenState
                     VenuePhotoManager(
                       photos: data?.venuePhotos ?? const [],
                       isUploading: _isPickingPhoto,
+                      emptyTitle: l10n.businessProductPhotosEmptyTitle,
+                      emptyDescription: l10n.businessProductPhotosEmptyDescription,
                       onAddPhoto: _pickPhoto,
                       onRemovePhoto: notifier.removeVenuePhoto,
                       onMovePhoto: notifier.moveVenuePhoto,

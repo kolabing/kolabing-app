@@ -11330,6 +11330,18 @@ abstract class AppLocalizations {
   /// **'Photos (optional)'**
   String get businessProductPhotosLabel;
 
+  /// Business product path: photos empty-state title (non-venue)
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos'**
+  String get businessProductPhotosEmptyTitle;
+
+  /// Business product path: photos empty-state description (non-venue)
+  ///
+  /// In en, this message translates to:
+  /// **'Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.'**
+  String get businessProductPhotosEmptyDescription;
+
   /// Community onboarding step 1: community size helper text
   ///
   /// In en, this message translates to:

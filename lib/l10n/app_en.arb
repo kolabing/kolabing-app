@@ -7008,6 +7008,11 @@
   "businessProductPhotosLabel": "Photos (optional)",
   "@businessProductPhotosLabel": { "description": "Business product path: photos field label" },
 
+  "businessProductPhotosEmptyTitle": "Add photos",
+  "@businessProductPhotosEmptyTitle": { "description": "Business product path: photos empty-state title (non-venue)" },
+  "businessProductPhotosEmptyDescription": "Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.",
+  "@businessProductPhotosEmptyDescription": { "description": "Business product path: photos empty-state description (non-venue)" },
+
   "communityStep1SizeHelper": "Roughly how many members are in your community?",
   "@communityStep1SizeHelper": { "description": "Community onboarding step 1: community size helper text" }
 }

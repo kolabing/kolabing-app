@@ -6358,6 +6358,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessProductPhotosLabel => 'Photos (optional)';
 
   @override
+  String get businessProductPhotosEmptyTitle => 'Add photos';
+
+  @override
+  String get businessProductPhotosEmptyDescription =>
+      'Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.';
+
+  @override
   String get communityStep1SizeHelper =>
       'Roughly how many members are in your community?';
 }

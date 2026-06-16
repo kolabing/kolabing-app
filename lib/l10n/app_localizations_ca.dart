@@ -6462,6 +6462,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get businessProductPhotosLabel => 'Fotos (opcional)';
 
   @override
+  String get businessProductPhotosEmptyTitle => 'Afegeix fotos';
+
+  @override
+  String get businessProductPhotosEmptyDescription =>
+      'Mostra el que ofereixes. Puja les teves fotos, elimina les que no vulguis i ordena-les aquí.';
+
+  @override
   String get communityStep1SizeHelper =>
       'Aproximadament, quants membres té la teva comunitat?';
 }

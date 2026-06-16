@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
@@ -39,12 +40,15 @@ class CommunityRewardsHubNotifier
   }
 
   Future<void> reload() async {
+    debugPrint('🎯 RewardsHub($communityId) reload START');
     state = const AsyncLoading();
     state = await AsyncValue.guard(
         () => ref
             .read(communityRewardsServiceProvider)
             .getRewardsHub(communityId)
             .timeout(_kRewardsReadTimeout, onTimeout: () => null));
+    debugPrint(
+        '🎯 RewardsHub($communityId) reload END -> ${state.runtimeType} hasValue=${state.hasValue} value=${state.valueOrNull == null ? "null(coming-soon)" : "hub"} err=${state.error}');
   }
 }
 
@@ -103,7 +107,10 @@ class CommunityRewardsAdminNotifier
   }
 
   Future<void> reloadAll() async {
+    debugPrint('🎯 RewardsAdmin($communityId) reloadAll START');
     await Future.wait([reloadGoals(), reloadRewards(), reloadBadges()]);
+    debugPrint(
+        '🎯 RewardsAdmin($communityId) reloadAll END -> goals=${state.goals.runtimeType} rewards=${state.rewards.runtimeType} badges=${state.badges.runtimeType}');
   }
 
   Future<void> reloadGoals() async {

@@ -57,12 +57,25 @@ class CommunityRewardsService {
   /// GET with a hard timeout. On timeout the future ALWAYS completes (synthetic
   /// 408) so [_notDeployed] can self-gate it — a dropped/slow response can never
   /// hang a section spinner indefinitely.
-  Future<http.Response> _get(String path) async => _httpClient
-      .get(Uri.parse('$_baseUrl$path'), headers: await _headers())
-      .timeout(
-        const Duration(seconds: 12),
-        onTimeout: () => http.Response('', 408),
-      );
+  Future<http.Response> _get(String path) async {
+    final sw = Stopwatch()..start();
+    debugPrint('🎯 CommunityRewards GET $path ...');
+    try {
+      final res = await _httpClient
+          .get(Uri.parse('$_baseUrl$path'), headers: await _headers())
+          .timeout(
+            const Duration(seconds: 12),
+            onTimeout: () => http.Response('', 408),
+          );
+      debugPrint(
+          '🎯 CommunityRewards GET $path -> ${res.statusCode} in ${sw.elapsedMilliseconds}ms');
+      return res;
+    } catch (e) {
+      debugPrint(
+          '🎯 CommunityRewards GET $path THREW after ${sw.elapsedMilliseconds}ms: $e');
+      rethrow;
+    }
+  }
 
   dynamic _unwrap(http.Response res) {
     final body = res.body.isEmpty
