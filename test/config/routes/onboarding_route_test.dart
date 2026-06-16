@@ -24,6 +24,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Page Not Found'), findsNothing);
-    expect(find.text('CHOOSE YOUR PATH'), findsOneWidget);
+    expect(find.text('Choose your path'), findsOneWidget);
   });
 }

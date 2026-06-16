@@ -48,15 +48,11 @@ void main() {
       ),
     );
 
-    // The nav renders labels upper-cased; the selected item's label scales to
-    // fit via a FittedBox.
-    expect(
-      find.ancestor(
-        of: find.text('MY OPPORTUNITIES'),
-        matching: find.byType(FittedBox),
-      ),
-      findsOneWidget,
-    );
+    // The nav renders labels upper-cased; long labels stay on a single line
+    // and clip with an ellipsis rather than wrapping or overflowing.
+    final label = tester.widget<Text>(find.text('MY OPPORTUNITIES'));
+    expect(label.maxLines, 1);
+    expect(label.overflow, TextOverflow.ellipsis);
   });
 }
 

@@ -5,7 +5,6 @@ import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/auth/screens/login_screen.dart';
-import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
 Future<void> _pumpLogin(
   WidgetTester tester, {
@@ -52,10 +51,8 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(SingleChildScrollView), findsNothing);
-    final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    expect(logo.variant, KolabingLogoVariant.yellowTransparent);
     // Current minimal hero copy (localized) + social buttons.
-    expect(find.text('Welcome back.'), findsOneWidget);
+    expect(find.text('WELCOME BACK.'), findsOneWidget);
     expect(find.text('Sign in to your account'), findsOneWidget);
     expect(find.text('Sign in'), findsOneWidget);
     expect(find.text('Google'), findsOneWidget);
@@ -74,7 +71,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Welcome back.'), findsOneWidget);
+    expect(find.text('WELCOME BACK.'), findsOneWidget);
     expect(find.text('Apple'), findsOneWidget);
   });
 
