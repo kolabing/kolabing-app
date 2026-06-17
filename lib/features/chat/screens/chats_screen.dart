@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
+import '../../../widgets/navigation/kolabing_main_app_bar.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import '../widgets/chat_management.dart';
@@ -109,9 +110,16 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
       return Scaffold(
         backgroundColor: context.colors.background,
         floatingActionButton: fab,
-        // SafeArea(top) so the first section label ("MAIN") doesn't render up
-        // under the status bar — the community shell provides no app bar here.
-        body: SafeArea(child: body),
+        // As a main tab the role shell provides no app bar, so render the shared
+        // header here (title + bell + avatar). SafeArea(top) is handled inside
+        // KolabingMainAppBar; the body keeps its own SafeArea-less list since
+        // the header now reserves the top inset.
+        body: Column(
+          children: [
+            KolabingMainAppBar(title: l10n.chatsScreenTitle),
+            Expanded(child: body),
+          ],
+        ),
       );
     }
     return Scaffold(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -86,33 +85,22 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                KolabingSpacing.md,
-                KolabingSpacing.md,
-                KolabingSpacing.md,
-                KolabingSpacing.xs,
+            KolabingMainAppBar(
+              title: l10n.myKolabsHubTitle,
+              bottom: TabBar(
+                controller: _tabController,
+                labelStyle: KolabingTextStyles.labelLarge,
+                labelColor: context.colors.charcoal,
+                unselectedLabelColor: context.colors.navInactive,
+                indicatorColor: context.colors.charcoal,
+                indicatorWeight: 3,
+                tabs: [
+                  Tab(text: l10n.myKolabsHubTabOffers),
+                  Tab(text: l10n.myKolabsHubTabRequests),
+                  Tab(text: l10n.myKolabsHubTabActive),
+                  Tab(text: l10n.myKolabsHubTabFinished),
+                ],
               ),
-              child: Text(
-                l10n.myKolabsHubTitle.toUpperCase(),
-                style: KolabingTextStyles.headlineLarge.copyWith(
-                  color: context.colors.titleInk,
-                ),
-              ),
-            ),
-            TabBar(
-              controller: _tabController,
-              labelStyle: KolabingTextStyles.labelLarge,
-              labelColor: context.colors.charcoal,
-              unselectedLabelColor: context.colors.navInactive,
-              indicatorColor: context.colors.charcoal,
-              indicatorWeight: 3,
-              tabs: [
-                Tab(text: l10n.myKolabsHubTabOffers),
-                Tab(text: l10n.myKolabsHubTabRequests),
-                Tab(text: l10n.myKolabsHubTabActive),
-                Tab(text: l10n.myKolabsHubTabFinished),
-              ],
             ),
             Expanded(
               child: TabBarView(

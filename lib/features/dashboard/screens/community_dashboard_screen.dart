@@ -10,9 +10,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/ui_icon.dart';
-import '../../auth/providers/auth_provider.dart';
-import '../../../widgets/navigation/profile_avatar_button.dart';
-import '../../notification/widgets/notification_bell.dart';
+import '../../../widgets/navigation/kolabing_main_app_bar.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
@@ -71,25 +69,28 @@ class _CommunityDashboardScreenState
   @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
-    final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ??
-        AppLocalizations.of(context).dashboardDefaultCommunityName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
-      child: RefreshIndicator(
-        onRefresh: _onRefresh,
-        color: context.colors.primary,
-        child: _buildBody(dashboardState, userName, isDark),
+      child: Column(
+        children: [
+          KolabingMainAppBar(
+            title: AppLocalizations.of(context).communityMainNavHome,
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _onRefresh,
+              color: context.colors.primary,
+              child: _buildBody(dashboardState, isDark),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildBody(
-    DashboardState dashboardState,
-    String userName,
-    bool isDark,
-  ) {
+  Widget _buildBody(DashboardState dashboardState, bool isDark) {
     // Loading state
     if (dashboardState.isLoading && !dashboardState.isInitialized) {
       return const DashboardShimmer();
@@ -104,14 +105,15 @@ class _CommunityDashboardScreenState
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState(AppLocalizations.of(context).dashboardErrorLoad, isDark);
+      return _buildErrorState(
+        AppLocalizations.of(context).dashboardErrorLoad,
+        isDark,
+      );
     }
 
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
-        _buildHeader(userName, isDark),
-        const SizedBox(height: KolabingSpacing.lg),
         ..._buildVariantContent(data, isDark),
         const SizedBox(height: KolabingSpacing.xl),
       ],
@@ -121,37 +123,6 @@ class _CommunityDashboardScreenState
   // ---------------------------------------------------------------------------
   // Header
   // ---------------------------------------------------------------------------
-
-  Widget _buildHeader(String userName, bool isDark) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context).dashboardCommunityTitle,
-                style: KolabingTextStyles.headlineLarge.copyWith(
-                  // titleInk = 80% white in night, ink in light (spec rule #2).
-                  color: context.colors.titleInk,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xxs),
-              Text(
-                AppLocalizations.of(context).dashboardWelcomeBack(userName),
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
-              ),
-            ],
-          ),
-        ),
-        const NotificationBell(),
-        const SizedBox(width: KolabingSpacing.xs),
-        const ProfileAvatarButton(),
-      ],
-    );
-  }
 
   // ---------------------------------------------------------------------------
   // Variant dispatcher
@@ -283,7 +254,10 @@ class _CommunityDashboardScreenState
       children: [
         Text(
           AppLocalizations.of(context).dashboardUpcomingKolabs,
-          style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.labelLarge.copyWith(
+            color: context.colors.onSurface,
+            letterSpacing: 1.0,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -330,9 +304,11 @@ class _CommunityDashboardScreenState
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             AppLocalizations.of(context).dashboardNoUpcomingKolabs,
-            style: KolabingTextStyles.bodySmall.copyWith(color: isDark
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: isDark
                   ? context.colors.textOnDark.withValues(alpha: 0.5)
-                  : context.colors.textTertiary),
+                  : context.colors.textTertiary,
+            ),
           ),
         ],
       ),
@@ -358,7 +334,9 @@ class _CommunityDashboardScreenState
             const SizedBox(height: KolabingSpacing.md),
             Text(
               message,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),

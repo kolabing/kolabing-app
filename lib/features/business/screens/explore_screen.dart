@@ -21,7 +21,7 @@ import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
-import '../../notification/widgets/notification_bell.dart';
+import '../../../widgets/navigation/kolabing_main_app_bar.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 
@@ -163,7 +163,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         bottom: false,
         child: Column(
           children: [
-            _buildHeader(),
+            KolabingMainAppBar(
+              title: AppLocalizations.of(context).communityMainNavExplore,
+            ),
             const SizedBox(height: 6),
             _buildTopBar(filters, listState),
             const SizedBox(height: 6),
@@ -193,49 +195,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    final photoUrl = ref.watch(authProvider).user?.profilePhotoUrl;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        KolabingSpacing.md,
-        KolabingSpacing.xs,
-        KolabingSpacing.md,
-        0,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Text(
-              'EXPLORE',
-              style: KolabingTextStyles.headlineLarge.copyWith(
-                color: context.colors.onSurface,
-                letterSpacing: 1.0,
-              ),
-            ),
-          ),
-          const NotificationBell(),
-          const SizedBox(width: KolabingSpacing.xs),
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: context.colors.darkBorder, width: 1.5),
-              color: context.colors.surfaceContainerLow,
-            ),
-            child: ClipOval(
-              child: photoUrl != null && photoUrl.isNotEmpty
-                  ? Image.network(photoUrl, fit: BoxFit.cover)
-                  : Icon(LucideIcons.user, size: 20, color: context.colors.onSurfaceVariant),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -501,7 +460,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? AppLocalizations.of(context).exploreEmptyNoRecommended
                   : AppLocalizations.of(context).exploreEmptyNoOpportunities,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -512,7 +475,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : AppLocalizations.of(
                       context,
                     ).exploreEmptyNoOpportunitiesHint,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             if (filters.hasActiveFilters) ...[
@@ -556,12 +521,18 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).exploreSomethingWrong,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -636,9 +607,7 @@ class _FeedSegment extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? const Color(0xFFFFF4C2) : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected
-            ? Border.all(color: const Color(0xFFFFE28C))
-            : null,
+        border: isSelected ? Border.all(color: const Color(0xFFFFE28C)) : null,
       ),
       alignment: Alignment.center,
       child: Text(

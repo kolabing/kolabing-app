@@ -242,29 +242,41 @@ class _CommunityLeaderTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     // SHIP GATE: this tab is the rewards/members/events gamification layer,
     // which is part of the unshipped member experience. Keep the nav tab + flag
     // icon visible, but show a "Coming soon" placeholder on tap while
     // FeatureFlags.attendeeEnabled is false. Flipping the flag back to true
     // restores the full CommunityDetailScreen layer below.
+    final Widget inner;
     if (!FeatureFlags.attendeeEnabled) {
-      return const ComingSoonView();
+      inner = const ComingSoonView();
+    } else {
+      final communities = ref.watch(communityManageProvider).communities;
+      inner = communities.maybeWhen(
+        data: (list) {
+          if (list.isEmpty) return const CommunityHubScreen();
+          // v1: a leader runs one community (the free cap). Show it tabbed.
+          return CommunityDetailScreen(
+            membership: CommunityMembership(
+              community: list.first,
+              canManage: true,
+            ),
+            embedded: true,
+          );
+        },
+        orElse: () => const CommunityHubScreen(),
+      );
     }
 
-    final communities = ref.watch(communityManageProvider).communities;
-    return communities.maybeWhen(
-      data: (list) {
-        if (list.isEmpty) return const CommunityHubScreen();
-        // v1: a leader runs one community (the free cap). Show it tabbed.
-        return CommunityDetailScreen(
-          membership: CommunityMembership(
-            community: list.first,
-            canManage: true,
-          ),
-          embedded: true,
-        );
-      },
-      orElse: () => const CommunityHubScreen(),
+    return SafeArea(
+      child: Column(
+        children: [
+          KolabingMainAppBar(title: l10n.communityMainNavCommunity),
+          Expanded(child: inner),
+        ],
+      ),
     );
   }
 }
