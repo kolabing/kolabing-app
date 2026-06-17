@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/feature_flags.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/coming_soon_view.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
@@ -240,6 +242,15 @@ class _CommunityLeaderTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // SHIP GATE: this tab is the rewards/members/events gamification layer,
+    // which is part of the unshipped member experience. Keep the nav tab + flag
+    // icon visible, but show a "Coming soon" placeholder on tap while
+    // FeatureFlags.attendeeEnabled is false. Flipping the flag back to true
+    // restores the full CommunityDetailScreen layer below.
+    if (!FeatureFlags.attendeeEnabled) {
+      return const ComingSoonView();
+    }
+
     final communities = ref.watch(communityManageProvider).communities;
     return communities.maybeWhen(
       data: (list) {
