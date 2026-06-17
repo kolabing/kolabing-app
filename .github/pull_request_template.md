@@ -1,52 +1,56 @@
 <!--
-  Bu template ZORUNLUDUR. Her başlığı doldurmadan PR "hazır" sayılmaz.
-  Boş bıraktığın başlıkları silme — "Yok / Gerekmiyor" yaz.
-  Bu bir MOBILE (Flutter) reposudur: iOS + Android birlikte düşünülmeli.
+  This template is MANDATORY. A PR is not "ready" until every section is filled in.
+  Do NOT delete sections — if one does not apply, write "N/A" with a one-line reason.
+  This is a MOBILE (Flutter) repo: always consider iOS AND Android.
 -->
 
-## 🎯 Bu feature'da ne yapıldı?
-<!-- Bu PR neyi değiştiriyor? Kısa ve net, madde madde. -->
+## 🎯 What does this PR do?
+<!-- What changed? Short, clear, bullet points. -->
 
 
 
-## 🐞 Hangi sorunu çözdük?
-<!-- Hangi bug / ihtiyaç / talep için yapıldı? Varsa issue linki: Closes #__ -->
+## 🐞 What problem does it solve?
+<!-- The bug / need / request behind it. Link the issue: Closes #__ -->
 
 
 
-## 🚀 Production'da çalışması için gereken değişiklikler
+## 🚀 What's needed for this to work in production?
 <!--
-  Merge sonrası prod'da çalışması için NE gerekiyor? Yoksa "Ekstra değişiklik gerekmiyor" yaz.
-  - [ ] Yeni env / secret: ____
-  - [ ] Backend deploy / migration / yeni endpoint canlıda olmalı: ____
-  - [ ] App Store / Play Store build alınmalı (versiyon/build no: ____)
+  After merge, what is required for this to work in prod? Write "Nothing extra" if none.
+  - [ ] New env var / secret: ____
+  - [ ] Backend deploy / migration / new endpoint must be live: ____
+  - [ ] New App Store / Play Store build (version / build no: ____)
   - [ ] Feature flag / remote config: ____
+  - [ ] Third-party setup (IAP product, push cert, deep link, etc.): ____
 -->
 
 
 
-## 📱 Bu iş için mobilde hangi branch merge edilmeli?
-<!-- Bağımlılık varsa yaz. Yoksa "Sadece bu branch". -->
+## 📱 Which branch should be merged for this work?
+<!-- Note any dependencies. Otherwise write "This branch only". -->
 
 - Base branch: `master`
-- Bağımlı branch(ler): ____
+- Dependent branch(es): ____
 
-## 🧪 Bu merge nasıl test edilir? (reviewer adım adım çalıştırabilsin)
-<!-- Reviewer'ın senin değişikliğini cihazda doğrulayabilmesi için NET adımlar. -->
+## 🧪 How to test this merge (reviewer must be able to reproduce)
+<!-- Clear steps so a reviewer can verify the change on a device. -->
 
-- **Etkilenen rol:** Business / Community / Attendee (ilgili olanı bırak)
-- **Test hesabı / data:** ____
-- **Adımlar:**
+- **Affected role:** Business / Community / Attendee (keep what applies)
+- **Test account / data:** ____
+- **Steps:**
   1.
   2.
   3.
-- **Beklenen sonuç:** ____
+- **Expected result:** ____
 
-## 📸 Ekran görüntüsü / video (ZORUNLU — UI'a dokunan her PR'da)
+## 📸 Screenshots / screen recording
 <!--
-  En az 1 görsel ekle. UI değiştiyse before/after koy.
-  Mümkünse hem iOS hem Android. UI değişikliği yoksa "UI değişikliği yok" yaz.
+  MANDATORY for ANY design / UI change — a PR that touches UI without a screenshot
+  will not be merged. Include before/after. Prefer BOTH iOS and Android.
+  If there is genuinely no UI change, tick the box below instead.
 -->
+
+- [ ] This PR has **no UI/design change** (no screenshot needed)
 
 | Before | After |
 | ------ | ----- |
@@ -54,15 +58,16 @@
 
 ---
 
-## ✅ Definition of Done (kapatmadan kontrol et)
-- [ ] `flutter analyze` temiz (yeni error/warning eklemedim)
-- [ ] Değişen dosyalara `dart format` uygulandı
-- [ ] **iOS** simülatör/cihazda denendi
-- [ ] **Android** emülatör/cihazda denendi
-- [ ] Kullanıcıya görünen yeni metinler i18n'de var (`app_en.arb` + `app_es.arb` + `app_ca.arb`) ve `flutter gen-l10n` çalıştırıldı
-- [ ] Hardcode yok (base URL / ID / email / şehir-kategori listesi — hepsi API'den)
-- [ ] `BACKLOG.md` güncellendi (biten iş çıkarıldı / yeni bug eklendi)
+## ✅ Definition of Done (check before requesting review)
+- [ ] `flutter analyze` is clean (no new errors/warnings)
+- [ ] `dart format lib test` applied to changed files
+- [ ] Tested on **iOS** simulator/device
+- [ ] Tested on **Android** emulator/device
+- [ ] **Screenshots attached for every UI/design change** (see section above)
+- [ ] New user-facing strings exist in i18n (`app_en.arb` + `app_es.arb` + `app_ca.arb`) and `flutter gen-l10n` was run
+- [ ] No hardcoded values (base URL / IDs / emails / city–category lists — all from the API)
+- [ ] `BACKLOG.md` updated (finished item removed / new bug added)
 
-## 🤖 AI ile mi yazıldı?
-<!-- Hangi tool + ne yaptırdın? Sorumluluk sende kalır, sorun değil — sadece şeffaf ol. -->
+## 🤖 Was AI used?
+<!-- Which tool + what you had it do? Ownership stays with you — just be transparent. -->
 

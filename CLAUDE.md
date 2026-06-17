@@ -37,6 +37,33 @@ If you catch a literal while editing a file, fix it in passing. Do not add new d
 
 ---
 
+## MUST FOLLOW — Pull Request template is mandatory (every PR)
+
+Every PR MUST use [`.github/pull_request_template.md`](.github/pull_request_template.md)
+and **fill in every section** — a PR with empty sections is not ready for review and
+must not be merged. `master` is protected: changes land through PRs, and only
+`olucvolkan` can merge.
+
+Hard rules when you open a PR (or write its body):
+1. **Fill all sections.** If one truly does not apply, write `N/A` with a one-line
+   reason — never delete the heading.
+2. **Screenshots are mandatory for ANY design/UI change.** Include before/after,
+   ideally both iOS and Android. A UI-touching PR without a screenshot must not be
+   merged. Only tick the "no UI/design change" box when there is genuinely no visual
+   change.
+3. **"How to test" must be reproducible** — affected role (Business/Community/
+   Attendee), test account/data, numbered steps, expected result.
+4. **State production needs** explicitly (env/secret, backend deploy/migration, new
+   App Store/Play Store build, feature flag, third-party setup) or write "Nothing extra".
+5. Tick the **Definition of Done**: `flutter analyze` clean, `dart format` applied,
+   tested on iOS AND Android, i18n added in all three ARBs, no hardcoded values,
+   `BACKLOG.md` updated.
+
+Keep this section, `.github/pull_request_template.md`, and the AGENTS.md PR section in
+sync — if you change one, change the others.
+
+---
+
 ## MUST READ — Backend schema (before any data/model/API/DB change)
 
 Read [`docs/BACKEND-SCHEMA.md`](docs/BACKEND-SCHEMA.md) before changing anything that
