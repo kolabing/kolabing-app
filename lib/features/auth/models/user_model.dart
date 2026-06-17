@@ -224,7 +224,9 @@ class CommunityProfile {
     this.communitySize,
     this.isVerified = false,
     this.verificationStatus,
+    this.verificationRejectionReason,
     this.verificationChannels = const [],
+    this.publicChannels = const [],
   });
 
   factory CommunityProfile.fromJson(Map<String, dynamic> json) =>
@@ -245,8 +247,14 @@ class CommunityProfile {
             : int.tryParse('${json['community_size'] ?? ''}'),
         isVerified: json['is_verified'] as bool? ?? false,
         verificationStatus: json['verification_status']?.toString(),
-        verificationChannels:
-            VerificationChannel.listFromJson(json['verification_channels']),
+        verificationRejectionReason: json['verification_rejection_reason']
+            ?.toString(),
+        verificationChannels: VerificationChannel.listFromJson(
+          json['verification_channels'],
+        ),
+        publicChannels: VerificationChannel.publicListFromJson(
+          json['public_channels'],
+        ),
       );
 
   final String id;
@@ -268,8 +276,15 @@ class CommunityProfile {
   /// Verification review state (`verification_status`).
   final String? verificationStatus;
 
-  /// Owner-only verification proof channels ({type,url}).
+  /// Reviewer note shown to the owner when [verificationStatus] is `rejected`.
+  final String? verificationRejectionReason;
+
+  /// Owner-only verification proof channels ({type,url,is_public}).
   final List<VerificationChannel> verificationChannels;
+
+  /// Public contact/links ({type,url}) the community chose to expose. Present
+  /// for every viewer (incl. the owner). Drives the public-icons row.
+  final List<VerificationChannel> publicChannels;
 
   String get communityTypeLabel =>
       formatProfileTypeLabel(communityType ?? 'Community');
@@ -287,9 +302,16 @@ class CommunityProfile {
     if (communitySize != null) 'community_size': communitySize,
     'is_verified': isVerified,
     if (verificationStatus != null) 'verification_status': verificationStatus,
+    if (verificationRejectionReason != null)
+      'verification_rejection_reason': verificationRejectionReason,
     if (verificationChannels.isNotEmpty)
-      'verification_channels':
-          verificationChannels.map((c) => c.toJson()).toList(),
+      'verification_channels': verificationChannels
+          .map((c) => c.toJson())
+          .toList(),
+    if (publicChannels.isNotEmpty)
+      'public_channels': publicChannels
+          .map((c) => {'type': c.type.slug, 'url': c.url})
+          .toList(),
   };
 }
 
@@ -486,8 +508,8 @@ class UserModel {
     final raw = (isBusiness && businessProfile != null)
         ? businessProfile!.profilePhoto
         : (isCommunity && communityProfile != null)
-            ? communityProfile!.profilePhoto
-            : avatarUrl;
+        ? communityProfile!.profilePhoto
+        : avatarUrl;
     if (raw == null || raw.trim().isEmpty) return null;
     return normalizeRemoteMediaUrl(raw);
   }

@@ -105,7 +105,9 @@ class Community {
     this.inviteUrl,
     this.isVerified = false,
     this.verificationStatus,
+    this.verificationRejectionReason,
     this.verificationChannels = const [],
+    this.publicChannels = const [],
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
@@ -129,8 +131,9 @@ class Community {
       description: json['description'] as String?,
       avatarUrl: normalizeRemoteMediaUrlOrNull(json['avatar_url'] as String?),
       isPrimary: json['is_primary'] as bool? ?? true,
-      joinPolicy:
-          CommunityJoinPolicy.fromString(json['join_policy'] as String? ?? 'open'),
+      joinPolicy: CommunityJoinPolicy.fromString(
+        json['join_policy'] as String? ?? 'open',
+      ),
       memberCount: json['member_count'] as int?,
       // Viewer-scoped fields exposed by `GET /communities/{id}` (attendee
       // community-profile contract). Self-gated: null when the backend hasn't
@@ -145,8 +148,16 @@ class Community {
       // tick hidden + channels empty when the backend hasn't deployed yet.
       isVerified: json['is_verified'] as bool? ?? false,
       verificationStatus: json['verification_status']?.toString(),
-      verificationChannels:
-          VerificationChannel.listFromJson(json['verification_channels']),
+      verificationRejectionReason: json['verification_rejection_reason']
+          ?.toString(),
+      verificationChannels: VerificationChannel.listFromJson(
+        json['verification_channels'],
+      ),
+      // Public contact/links ({type,url}) emitted for EVERYONE (incl. owner);
+      // drives the compact public-icons row on the profile.
+      publicChannels: VerificationChannel.publicListFromJson(
+        json['public_channels'],
+      ),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -205,9 +216,17 @@ class Community {
   /// [isVerified].
   final String? verificationStatus;
 
-  /// The owner-only proof channels ({type,url}) backing the verification
-  /// request. Empty for non-owner viewers (the backend omits it).
+  /// Reviewer note shown to the owner when [verificationStatus] is `rejected`.
+  /// Null when not rejected / not provided.
+  final String? verificationRejectionReason;
+
+  /// The owner-only proof channels ({type,url,is_public}) backing the
+  /// verification request. Empty for non-owner viewers (the backend omits it).
   final List<VerificationChannel> verificationChannels;
+
+  /// Public contact/links ({type,url}) the community chose to expose. Present
+  /// for every viewer (incl. the owner). Drives the public-icons row.
+  final List<VerificationChannel> publicChannels;
 
   /// Convenience: a pending join request is outstanding for the viewer.
   bool get hasPendingJoinRequest => myJoinRequestStatus == 'pending';
@@ -221,31 +240,36 @@ class Community {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'owner_profile_id': ownerProfileId,
-        if (communityProfileId != null)
-          'community_profile_id': communityProfileId,
-        'name': name,
-        'slug': slug,
-        'type': type.toApiValue(),
-        if (description != null) 'description': description,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-        'is_primary': isPrimary,
-        'join_policy': joinPolicy.toApiValue(),
-        if (memberCount != null) 'member_count': memberCount,
-        if (isMember != null) 'is_member': isMember,
-        if (myJoinRequestStatus != null)
-          'my_join_request_status': myJoinRequestStatus,
-        if (inviteUrl != null) 'invite_url': inviteUrl,
-        'is_verified': isVerified,
-        if (verificationStatus != null)
-          'verification_status': verificationStatus,
-        if (verificationChannels.isNotEmpty)
-          'verification_channels':
-              verificationChannels.map((c) => c.toJson()).toList(),
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'owner_profile_id': ownerProfileId,
+    if (communityProfileId != null) 'community_profile_id': communityProfileId,
+    'name': name,
+    'slug': slug,
+    'type': type.toApiValue(),
+    if (description != null) 'description': description,
+    if (avatarUrl != null) 'avatar_url': avatarUrl,
+    'is_primary': isPrimary,
+    'join_policy': joinPolicy.toApiValue(),
+    if (memberCount != null) 'member_count': memberCount,
+    if (isMember != null) 'is_member': isMember,
+    if (myJoinRequestStatus != null)
+      'my_join_request_status': myJoinRequestStatus,
+    if (inviteUrl != null) 'invite_url': inviteUrl,
+    'is_verified': isVerified,
+    if (verificationStatus != null) 'verification_status': verificationStatus,
+    if (verificationRejectionReason != null)
+      'verification_rejection_reason': verificationRejectionReason,
+    if (verificationChannels.isNotEmpty)
+      'verification_channels': verificationChannels
+          .map((c) => c.toJson())
+          .toList(),
+    if (publicChannels.isNotEmpty)
+      'public_channels': publicChannels
+          .map((c) => {'type': c.type.slug, 'url': c.url})
+          .toList(),
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   Community copyWith({
     String? id,
@@ -268,30 +292,33 @@ class Community {
     String? inviteUrl,
     bool? isVerified,
     String? verificationStatus,
+    String? verificationRejectionReason,
     List<VerificationChannel>? verificationChannels,
-  }) =>
-      Community(
-        id: id ?? this.id,
-        ownerProfileId: ownerProfileId ?? this.ownerProfileId,
-        communityProfileId: communityProfileId ?? this.communityProfileId,
-        name: name ?? this.name,
-        slug: slug ?? this.slug,
-        type: type ?? this.type,
-        description: description ?? this.description,
-        avatarUrl: avatarUrl ?? this.avatarUrl,
-        isPrimary: isPrimary ?? this.isPrimary,
-        joinPolicy: joinPolicy ?? this.joinPolicy,
-        memberCount: memberCount ?? this.memberCount,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        typeSlug: typeSlug ?? this.typeSlug,
-        matched: matched ?? this.matched,
-        isMember: isMember ?? this.isMember,
-        myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
-        inviteUrl: inviteUrl ?? this.inviteUrl,
-        isVerified: isVerified ?? this.isVerified,
-        verificationStatus: verificationStatus ?? this.verificationStatus,
-        verificationChannels:
-            verificationChannels ?? this.verificationChannels,
-      );
+    List<VerificationChannel>? publicChannels,
+  }) => Community(
+    id: id ?? this.id,
+    ownerProfileId: ownerProfileId ?? this.ownerProfileId,
+    communityProfileId: communityProfileId ?? this.communityProfileId,
+    name: name ?? this.name,
+    slug: slug ?? this.slug,
+    type: type ?? this.type,
+    description: description ?? this.description,
+    avatarUrl: avatarUrl ?? this.avatarUrl,
+    isPrimary: isPrimary ?? this.isPrimary,
+    joinPolicy: joinPolicy ?? this.joinPolicy,
+    memberCount: memberCount ?? this.memberCount,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    typeSlug: typeSlug ?? this.typeSlug,
+    matched: matched ?? this.matched,
+    isMember: isMember ?? this.isMember,
+    myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
+    inviteUrl: inviteUrl ?? this.inviteUrl,
+    isVerified: isVerified ?? this.isVerified,
+    verificationStatus: verificationStatus ?? this.verificationStatus,
+    verificationRejectionReason:
+        verificationRejectionReason ?? this.verificationRejectionReason,
+    verificationChannels: verificationChannels ?? this.verificationChannels,
+    publicChannels: publicChannels ?? this.publicChannels,
+  );
 }
