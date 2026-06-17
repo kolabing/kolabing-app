@@ -184,6 +184,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
               initialValue: kolab.preferredCity.isNotEmpty
                   ? kolab.preferredCity
                   : null,
+              // Match the neighbourhood field's input text size/colour so the
+              // selected city does not render larger/bolder than its sibling.
+              style: KolabingTextStyles.bodySmall
+                  .copyWith(fontSize: 15, color: context.colors.onSurface),
               decoration: _inputDecoration(hint: l10n.logisticsSelectCityHint),
               items: cities
                   .map(
@@ -637,12 +641,12 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   Widget _buildSectionHeader(String title) => Text(
     title,
-    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w800, color: context.colors.onSurface, letterSpacing: 1.0),
   );
 
   Widget _buildLabel(String label) => Text(
     label,
-    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
   );
 
   Widget _buildFieldError(String error) => Container(
