@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../../widgets/verified_tick.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/collaboration.dart';
 import '../providers/collaborations_list_provider.dart';
@@ -126,15 +127,29 @@ class _CollaborationCard extends ConsumerWidget {
         children: [
           KolabStatusBadge(status: collaboration.status.toApiValue()),
           const SizedBox(height: 6),
-          Text(
-            partner,
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontWeight: FontWeight.w700,
-              height: 1.25,
-              color: context.colors.onSurface,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  partner,
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.w700,
+                    height: 1.25,
+                    color: context.colors.onSurface,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (collaboration.communityPartner.isVerified) ...[
+                const SizedBox(width: KolabingSpacing.xs),
+                const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: VerifiedTick(isVerified: true),
+                ),
+              ],
+            ],
           ),
           const SizedBox(height: 7),
           Row(

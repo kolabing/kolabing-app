@@ -365,6 +365,7 @@ class CreatorProfile {
     this.displayNameValue,
     this.businessName,
     this.avatarUrl,
+    this.isVerified = false,
   });
 
   factory CreatorProfile.fromJson(Map<String, dynamic> json) => CreatorProfile(
@@ -373,6 +374,7 @@ class CreatorProfile {
     displayNameValue: json['display_name']?.toString(),
     businessName: json['business_name']?.toString(),
     avatarUrl: json['avatar_url']?.toString(),
+    isVerified: json['is_verified'] as bool? ?? false,
   );
 
   final String id;
@@ -380,6 +382,9 @@ class CreatorProfile {
   final String? displayNameValue;
   final String? businessName;
   final String? avatarUrl;
+
+  /// Whether the creator is a verified community (drives [VerifiedTick]).
+  final bool isVerified;
 
   /// Display name from API, with fallbacks
   String get displayName => displayNameValue ?? businessName ?? 'Unknown';

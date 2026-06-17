@@ -5,6 +5,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
+import '../../../widgets/verified_tick.dart';
 import '../models/dashboard_model.dart';
 
 /// A card widget displaying an upcoming collaboration item.
@@ -58,14 +59,26 @@ class UpcomingCollaborationCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Partner name
-                  Text(
-                    collaboration.partner.name ?? 'Unknown Partner',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: isDark
-                          ? context.colors.textOnDark
-                          : context.colors.onSurface),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  // Partner name (+ verified tick when verified)
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          collaboration.partner.name ?? 'Unknown Partner',
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? context.colors.textOnDark
+                                  : context.colors.onSurface),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (collaboration.partner.isVerified) ...[
+                        const SizedBox(width: KolabingSpacing.xxs),
+                        const VerifiedTick(isVerified: true, size: 14),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: KolabingSpacing.xxxs),
 

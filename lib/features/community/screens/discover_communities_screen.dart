@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/verified_tick.dart';
 import '../models/community.dart';
 import '../providers/community_providers.dart';
 import '../services/community_service.dart';
@@ -180,14 +181,24 @@ class _DiscoverCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      community.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KolabingTextStyles.bodyLarge.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            community.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        if (community.isVerified) ...[
+                          const SizedBox(width: KolabingSpacing.xs),
+                          const VerifiedTick(isVerified: true),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Wrap(

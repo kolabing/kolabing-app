@@ -12,6 +12,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/verified_tick.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -245,6 +246,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return application.recipientName;
   }
 
+  /// Whether the chat counterparty is a verified community (mirrors
+  /// [_counterpartyName]'s applicant/creator resolution).
+  bool _counterpartyIsVerified(Application application) {
+    final user = ref.read(authProvider).user;
+    final myId = user?.id ?? '';
+    if (myId.isNotEmpty && application.applicantId == myId) {
+      return application.opportunity?.creatorProfile?.isVerified ?? false;
+    }
+    if (myId.isNotEmpty && application.recipientId == myId) {
+      return application.applicantProfile?.isVerified ?? false;
+    }
+    // Fallback path mirrors _counterpartyName: prefer the applicant.
+    final applicant = application.applicantName;
+    if (applicant.isNotEmpty && applicant != 'Unknown') {
+      return application.applicantProfile?.isVerified ?? false;
+    }
+    return application.opportunity?.creatorProfile?.isVerified ?? false;
+  }
+
   Widget _buildScaffold({
     required Widget body,
     Application? application,
@@ -281,16 +301,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          displayName,
-                          style: KolabingTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? context.colors.textOnDark
-                                : context.colors.onSurface,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                displayName,
+                                style: KolabingTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? context.colors.textOnDark
+                                      : context.colors.onSurface,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (_counterpartyIsVerified(application)) ...[
+                              const SizedBox(width: KolabingSpacing.xxs),
+                              const VerifiedTick(isVerified: true, size: 14),
+                            ],
+                          ],
                         ),
                         Text(
                           application.status.displayName,

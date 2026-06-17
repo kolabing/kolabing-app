@@ -11,6 +11,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../event/models/event.dart';
 import '../../event/providers/event_provider.dart';
 import '../../event/widgets/event_card.dart';
+import '../../../widgets/verified_tick.dart';
 import '../models/community.dart';
 import '../models/community_membership.dart';
 import '../providers/community_providers.dart';
@@ -239,11 +240,23 @@ class _Header extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: KolabingSpacing.lg,
                 ),
-                child: Text(
-                  community.name,
-                  textAlign: TextAlign.center,
-                  style: KolabingTextStyles.headlineMedium
-                      .copyWith(color: KolabingColors.onSurface),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        community.name,
+                        textAlign: TextAlign.center,
+                        style: KolabingTextStyles.headlineMedium
+                            .copyWith(color: KolabingColors.onSurface),
+                      ),
+                    ),
+                    if (community.isVerified) ...[
+                      const SizedBox(width: KolabingSpacing.xs),
+                      const VerifiedTick(isVerified: true, size: 20),
+                    ],
+                  ],
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),

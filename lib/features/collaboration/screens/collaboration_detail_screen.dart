@@ -19,6 +19,7 @@ import '../providers/collaboration_detail_provider.dart';
 import '../widgets/kolab_completion_sheet.dart';
 import '../widgets/kolab_review_sheet.dart';
 import '../../../widgets/category_icon.dart';
+import '../../../widgets/verified_tick.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
 /// Both business and community users see this screen with role-aware content.
@@ -335,13 +336,27 @@ class _StatusHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
-                Text(
-                  '${collaboration.businessPartner.name} x ${collaboration.communityPartner.name}',
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.onSurface,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${collaboration.businessPartner.name} x ${collaboration.communityPartner.name}',
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.onSurface,
+                        ),
+                      ),
+                    ),
+                    if (collaboration.communityPartner.isVerified) ...[
+                      const SizedBox(width: KolabingSpacing.xs),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 3),
+                        child: VerifiedTick(isVerified: true, size: 18),
+                      ),
+                    ],
+                  ],
                 ),
                 if (collaboration.opportunity?.title != null) ...[
                   const SizedBox(height: KolabingSpacing.xxs),

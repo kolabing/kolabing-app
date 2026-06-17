@@ -11,6 +11,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../../widgets/verified_tick.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
@@ -408,15 +409,28 @@ class _ApplicationCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 3),
-          Text(
-            isReceived
-                ? AppLocalizations.of(context)
-                    .applicationCardFrom(application.applicantName)
-                : AppLocalizations.of(context)
-                    .applicationCardTo(application.recipientName),
-            style: KolabingTextStyles.captionSecondary.copyWith(
-              color: context.colors.onSurfaceVariant,
-            ),
+          Row(
+            children: [
+              Flexible(
+                child: Text(
+                  isReceived
+                      ? AppLocalizations.of(context)
+                          .applicationCardFrom(application.applicantName)
+                      : AppLocalizations.of(context)
+                          .applicationCardTo(application.recipientName),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (isReceived &&
+                  (application.applicantProfile?.isVerified ?? false)) ...[
+                const SizedBox(width: KolabingSpacing.xxs),
+                const VerifiedTick(isVerified: true, size: 14),
+              ],
+            ],
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(

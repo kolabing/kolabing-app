@@ -13,6 +13,7 @@ import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 import '../../../widgets/category_icon.dart';
+import '../../../widgets/verified_tick.dart';
 
 /// Application review screen — shown when tapping a received application.
 /// Displays the applicant's profile like a "CV card" with their message,
@@ -259,15 +260,27 @@ class _ApplicationReviewScreenState
           ),
           const SizedBox(height: KolabingSpacing.sm),
 
-          // Name
-          Text(
-            profile?.displayName ?? application.applicantName,
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: context.colors.onSurface,
-            ),
-            textAlign: TextAlign.center,
+          // Name (+ verified tick when verified)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  profile?.displayName ?? application.applicantName,
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (profile?.isVerified ?? false) ...[
+                const SizedBox(width: KolabingSpacing.xs),
+                const VerifiedTick(isVerified: true, size: 18),
+              ],
+            ],
           ),
 
           // Category
