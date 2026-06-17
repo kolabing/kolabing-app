@@ -23,4 +23,17 @@ Follow Flutter conventions with 2-space indentation and trailing commas for mult
 Use `flutter_test` for widget and unit tests. Name test files `*_test.dart` and keep them under `test/`, mirroring the feature they cover where practical. Add or update tests for new business logic, providers, and reusable widgets. The current suite is minimal, so contributors should strengthen coverage rather than rely on the default smoke test.
 
 ## Commit & Pull Request Guidelines
-Recent history favors short Conventional Commit-style messages such as `feat: ...`, `fix: ...`, and `chore: ...`. Keep commits focused and descriptive. Pull requests should include a clear summary, linked issue or task when relevant, test results (`flutter analyze`, `flutter test`), and screenshots or screen recordings for UI changes.
+Recent history favors short Conventional Commit-style messages such as `feat: ...`, `fix: ...`, and `chore: ...`. Keep commits focused and descriptive.
+
+**The PR template is mandatory.** Every PR MUST use `.github/pull_request_template.md` and fill in **every** section — a PR with empty sections is not ready for review and must not be merged. `master` is protected: changes land through PRs and only `olucvolkan` can merge. Required sections:
+
+- **What does this PR do?** — concise bullets of the change.
+- **What problem does it solve?** — the bug/need behind it, with linked issue (`Closes #__`).
+- **What's needed for production?** — env/secret, backend deploy/migration, new App Store/Play Store build, feature flag, third-party setup, or "Nothing extra".
+- **Which branch should be merged** — base branch and any dependencies.
+- **How to test this merge** — affected role (Business/Community/Attendee), test account/data, numbered steps, expected result, so a reviewer can reproduce it.
+- **Screenshots / screen recording** — **MANDATORY for ANY design/UI change** (before/after, ideally both iOS and Android). A UI-touching PR without a screenshot must not be merged; only tick the "no UI/design change" box when there is genuinely no visual change.
+- **Definition of Done** — `flutter analyze` clean, `dart format` applied, tested on iOS AND Android, i18n in all three ARBs, no hardcoded values, `BACKLOG.md` updated.
+- **Was AI used?** — which tool and what for; be transparent.
+
+Keep this section, `.github/pull_request_template.md`, and the CLAUDE.md PR section in sync — if you change one, change the others.
