@@ -552,7 +552,7 @@ class _SocialLinks extends StatelessWidget {
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
-            PublicChannelsRow(channels: channels),
+            PublicChannelsRow(channels: channels, verified: community.isVerified),
           ],
         ),
       ),

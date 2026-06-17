@@ -1928,6 +1928,8 @@
   "verificationSkip": "Omet per ara",
   "verificationSectionTitle": "Verificació",
   "verificationStatusVerified": "Verificada",
+  "verifiedTickLabel": "Comunitat verificada",
+  "verifiedTickTooltip": "Verificada per Kolabing — els canals d'aquesta comunitat s'han revisat manualment.",
   "verificationStatusPending": "Verificació pendent",
   "verificationStatusUnverified": "Encara sense verificar",
   "verificationChannelInstagram": "Instagram",

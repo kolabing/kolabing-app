@@ -916,11 +916,29 @@ class _CommunityProfileScreenState
     final cp = profile.communityProfile;
     final publicChannels = cp?.publicChannels ?? const <VerificationChannel>[];
 
+    final isVerified = cp?.isVerified ?? false;
+
     return _SectionCard(
       title: l10n.contactAndLinksTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (isVerified) ...[
+            Row(
+              children: [
+                const VerifiedTick(isVerified: true, size: 16),
+                const SizedBox(width: KolabingSpacing.xs),
+                Text(
+                  l10n.verificationStatusVerified,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurface,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+          ],
           if (publicChannels.isEmpty)
             Text(
               l10n.contactAndLinksEmptyOwner,
@@ -929,7 +947,7 @@ class _CommunityProfileScreenState
               ),
             )
           else
-            PublicChannelsRow(channels: publicChannels),
+            PublicChannelsRow(channels: publicChannels, verified: isVerified),
           const SizedBox(height: KolabingSpacing.md),
           Align(
             alignment: Alignment.centerLeft,

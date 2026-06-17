@@ -6427,6 +6427,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verificationStatusVerified => 'Verified';
 
   @override
+  String get verifiedTickLabel => 'Verified community';
+
+  @override
+  String get verifiedTickTooltip =>
+      'Verified by Kolabing — this community\'s channels were manually reviewed.';
+
+  @override
   String get verificationStatusPending => 'Verification pending';
 
   @override

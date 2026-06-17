@@ -1928,6 +1928,8 @@
   "verificationSkip": "Omitir por ahora",
   "verificationSectionTitle": "Verificación",
   "verificationStatusVerified": "Verificada",
+  "verifiedTickLabel": "Comunidad verificada",
+  "verifiedTickTooltip": "Verificada por Kolabing — los canales de esta comunidad se revisaron manualmente.",
   "verificationStatusPending": "Verificación pendiente",
   "verificationStatusUnverified": "Aún sin verificar",
   "verificationChannelInstagram": "Instagram",

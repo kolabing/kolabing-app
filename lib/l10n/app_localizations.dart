@@ -11456,6 +11456,18 @@ abstract class AppLocalizations {
   /// **'Verified'**
   String get verificationStatusVerified;
 
+  /// Accessibility label for the verified tick
+  ///
+  /// In en, this message translates to:
+  /// **'Verified community'**
+  String get verifiedTickLabel;
+
+  /// Tooltip shown when tapping/hovering the verified tick
+  ///
+  /// In en, this message translates to:
+  /// **'Verified by Kolabing — this community\'s channels were manually reviewed.'**
+  String get verifiedTickTooltip;
+
   /// Pending verification status label
   ///
   /// In en, this message translates to:

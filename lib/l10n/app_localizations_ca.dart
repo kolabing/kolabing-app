@@ -6530,6 +6530,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get verificationStatusVerified => 'Verificada';
 
   @override
+  String get verifiedTickLabel => 'Comunitat verificada';
+
+  @override
+  String get verifiedTickTooltip =>
+      'Verificada per Kolabing — els canals d\'aquesta comunitat s\'han revisat manualment.';
+
+  @override
   String get verificationStatusPending => 'Verificació pendent';
 
   @override
