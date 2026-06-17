@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -92,11 +91,6 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     super.dispose();
   }
 
-  /// Open the chat inbox; the backend role-scopes the threads. Reuses the
-  /// existing `/chats` navigation (the former Chats tab pointed at the same
-  /// thread list).
-  void _openChats() => context.pushNamed('chats');
-
   /// Share a join-invite link for this community. Uses the backend's canonical
   /// link when present, else a slug fallback; degrades by copying the link if
   /// the OS share sheet is unavailable.
@@ -140,12 +134,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
         automaticallyImplyLeading: !widget.embedded,
         title: Text(c.name),
         actions: [
-          // Chats → opens the chat screen for this community.
-          IconButton(
-            icon: const Icon(LucideIcons.messageCircle),
-            tooltip: l10n.communityDetailChatsAction,
-            onPressed: _openChats,
-          ),
+          // Chat is reached via the global bottom Chats tab (same as the rest
+          // of the app), so the per-page chat affordances were removed here.
           // Self-gated: only show Share invite when we have a usable link.
           if (c.shareInviteUrl != null)
             IconButton(
@@ -173,7 +163,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
       ),
       body: Column(
         children: [
-          _Header(membership: widget.membership, onChats: _openChats),
+          _Header(membership: widget.membership),
           Expanded(
             child: TabBarView(
               controller: _tabs,
@@ -195,10 +185,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
 // -----------------------------------------------------------------------------
 
 class _Header extends StatelessWidget {
-  const _Header({required this.membership, required this.onChats});
+  const _Header({required this.membership});
 
   final CommunityMembership membership;
-  final VoidCallback onChats;
 
   @override
   Widget build(BuildContext context) {
@@ -240,14 +229,6 @@ class _Header extends StatelessWidget {
                       .copyWith(color: context.colors.onSurfaceVariant),
                 ),
               ],
-            ),
-          ),
-          TextButton.icon(
-            onPressed: onChats,
-            icon: const Icon(LucideIcons.messageCircle, size: 16),
-            label: Text(l10n.communityDetailChatsAction),
-            style: TextButton.styleFrom(
-              foregroundColor: context.colors.onSurface,
             ),
           ),
         ],
