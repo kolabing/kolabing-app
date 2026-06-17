@@ -6219,7 +6219,7 @@
   "@communityDetailTabMembers": { "description": "Community detail tab: members." },
   "communityDetailTabDetails": "Details",
   "@communityDetailTabDetails": { "description": "Community detail tab: details." },
-  "communityDetailTypeAndMembers": "{type} · {count} members",
+  "communityDetailTypeAndMembers": "{type} · {count, plural, =1{1 Member} other{{count} Members}}",
   "@communityDetailTypeAndMembers": {
     "description": "Community header subtitle: community type and member count.",
     "placeholders": {
@@ -6227,7 +6227,7 @@
       "count": { "type": "int" }
     }
   },
-  "communityDetailMembersCount": "{count} members",
+  "communityDetailMembersCount": "{count, plural, =1{1 Member} other{{count} Members}}",
   "@communityDetailMembersCount": {
     "description": "Member count label.",
     "placeholders": {
@@ -6296,7 +6296,7 @@
   "@communityHubSectionEvents": { "description": "Section label: events." },
   "communityHubSectionChats": "Chats",
   "@communityHubSectionChats": { "description": "Section label: chats." },
-  "communityHubTypeAndMembers": "{type}  ·  {count} members",
+  "communityHubTypeAndMembers": "{type}  ·  {count, plural, =1{1 Member} other{{count} Members}}",
   "@communityHubTypeAndMembers": {
     "description": "Hub header subtitle with type and member count.",
     "placeholders": {

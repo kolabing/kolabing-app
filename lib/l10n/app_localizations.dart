@@ -9335,13 +9335,13 @@ abstract class AppLocalizations {
   /// Community header subtitle: community type and member count.
   ///
   /// In en, this message translates to:
-  /// **'{type} · {count} members'**
+  /// **'{type} · {count, plural, =1{1 Member} other{{count} Members}}'**
   String communityDetailTypeAndMembers(String type, int count);
 
   /// Member count label.
   ///
   /// In en, this message translates to:
-  /// **'{count} members'**
+  /// **'{count, plural, =1{1 Member} other{{count} Members}}'**
   String communityDetailMembersCount(int count);
 
   /// Title shown when the community chats fail to load.
@@ -9527,7 +9527,7 @@ abstract class AppLocalizations {
   /// Hub header subtitle with type and member count.
   ///
   /// In en, this message translates to:
-  /// **'{type}  ·  {count} members'**
+  /// **'{type}  ·  {count, plural, =1{1 Member} other{{count} Members}}'**
   String communityHubTypeAndMembers(String type, int count);
 
   /// Empty state for the hub events section.

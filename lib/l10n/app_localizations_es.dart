@@ -5245,12 +5245,24 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String communityDetailTypeAndMembers(String type, int count) {
-    return '$type · $count miembros';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '1 miembro',
+    );
+    return '$type · $_temp0';
   }
 
   @override
   String communityDetailMembersCount(int count) {
-    return '$count miembros';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '1 miembro',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -5353,7 +5365,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String communityHubTypeAndMembers(String type, int count) {
-    return '$type  ·  $count miembros';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count miembros',
+      one: '1 miembro',
+    );
+    return '$type  ·  $_temp0';
   }
 
   @override
