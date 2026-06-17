@@ -1498,6 +1498,7 @@
   "notifSettingsSaveError": "No s'ha pogut desar la teva preferència. Torna-ho a provar.",
 
   "chatsTitle": "Xats",
+  "chatsScreenTitle": "Missatges",
   "chatInboxTooltip": "Xats",
   "chatThreadFallbackTitle": "Xat",
   "chatSenderFallback": "Membre",

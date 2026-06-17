@@ -9068,6 +9068,12 @@ abstract class AppLocalizations {
   /// **'Chats'**
   String get chatsTitle;
 
+  /// Chats main-tab header title (uppercased by the shared app bar).
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get chatsScreenTitle;
+
   /// Tooltip on the app-bar chat inbox icon.
   ///
   /// In en, this message translates to:

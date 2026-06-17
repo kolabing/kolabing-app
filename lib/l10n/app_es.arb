@@ -1498,6 +1498,7 @@
   "notifSettingsSaveError": "No se pudo guardar tu preferencia. Inténtalo de nuevo.",
 
   "chatsTitle": "Chats",
+  "chatsScreenTitle": "Mensajes",
   "chatInboxTooltip": "Chats",
   "chatThreadFallbackTitle": "Chat",
   "chatSenderFallback": "Miembro",

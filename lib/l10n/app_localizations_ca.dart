@@ -5122,6 +5122,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get chatsTitle => 'Xats';
 
   @override
+  String get chatsScreenTitle => 'Missatges';
+
+  @override
   String get chatInboxTooltip => 'Xats';
 
   @override

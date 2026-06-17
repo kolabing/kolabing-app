@@ -6111,6 +6111,8 @@
 
   "chatsTitle": "Chats",
   "@chatsTitle": { "description": "Chat inbox screen app-bar title." },
+  "chatsScreenTitle": "Messages",
+  "@chatsScreenTitle": { "description": "Chats main-tab header title (uppercased by the shared app bar)." },
   "chatInboxTooltip": "Chats",
   "@chatInboxTooltip": { "description": "Tooltip on the app-bar chat inbox icon." },
   "chatThreadFallbackTitle": "Chat",

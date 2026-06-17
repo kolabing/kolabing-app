@@ -5035,6 +5035,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatsTitle => 'Chats';
 
   @override
+  String get chatsScreenTitle => 'Messages';
+
+  @override
   String get chatInboxTooltip => 'Chats';
 
   @override
