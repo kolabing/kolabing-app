@@ -140,8 +140,7 @@ class VerificationChannelRepeater extends StatelessWidget {
             channel: channels[i],
             onTypeChanged: (type) =>
                 _updateAt(i, channels[i].copyWith(type: type)),
-            onUrlChanged: (url) =>
-                _updateAt(i, channels[i].copyWith(url: url)),
+            onUrlChanged: (url) => _updateAt(i, channels[i].copyWith(url: url)),
             onRemove: () => _removeAt(i),
           ),
           const SizedBox(height: KolabingSpacing.sm),

@@ -34,11 +34,7 @@ class VerifiedTick extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         alignment: Alignment.center,
-        child: Icon(
-          Icons.check_rounded,
-          size: size * 0.7,
-          color: Colors.black,
-        ),
+        child: Icon(Icons.check_rounded, size: size * 0.7, color: Colors.black),
       ),
     );
   }
