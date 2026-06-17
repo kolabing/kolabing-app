@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../community/models/verification_channel.dart';
 import '../models/business_type.dart';
 import '../models/city.dart';
 import '../models/community_type.dart';
@@ -523,6 +524,12 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       final url = website.startsWith('http') ? website : 'https://$website';
       state = state!.copyWith(website: url, venueWebsite: url);
     }
+  }
+
+  /// Replace the community verification channels (step 4).
+  void updateVerificationChannels(List<VerificationChannel> channels) {
+    if (state == null) return;
+    state = state!.copyWith(verificationChannels: channels);
   }
 
   /// Update optional referral code for business signups.

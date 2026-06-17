@@ -274,6 +274,7 @@ class OnboardingService {
     'offering',
     'offer_photos',
     'community_size',
+    'verification_channels',
   };
 
   /// PUT an onboarding payload, tolerating not-yet-migrated fields.

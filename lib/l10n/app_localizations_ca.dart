@@ -6486,4 +6486,76 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get communityStep1SizeHelper =>
       'Aproximadament, quants membres té la teva comunitat?';
+
+  @override
+  String get verificationStepTitle => 'Aconsegueix la verificació';
+
+  @override
+  String get verificationStepSubtitle =>
+      'Afegeix enllaços que demostrin que la teva comunitat és real. Les comunitats verificades obtenen un tic en què confien les empreses. La revisió triga uns dies.';
+
+  @override
+  String get verificationChannelsLabel => 'Enllaços de verificació';
+
+  @override
+  String get verificationAddChannel => 'Afegeix un enllaç';
+
+  @override
+  String get verificationRemoveChannel => 'Elimina l\'enllaç';
+
+  @override
+  String get verificationChannelTypeLabel => 'Tipus';
+
+  @override
+  String get verificationChannelUrlLabel => 'Enllaç o usuari';
+
+  @override
+  String get verificationChannelUrlHint => 'https://… o @usuari';
+
+  @override
+  String get verificationNeedOneChannel =>
+      'Afegeix almenys un enllaç per sol·licitar la verificació.';
+
+  @override
+  String get verificationInvalidUrl =>
+      'Introdueix un enllaç o usuari vàlid per a aquest tipus.';
+
+  @override
+  String get verificationSkip => 'Omet per ara';
+
+  @override
+  String get verificationSectionTitle => 'Verificació';
+
+  @override
+  String get verificationStatusVerified => 'Verificada';
+
+  @override
+  String get verificationStatusPending => 'Verificació pendent';
+
+  @override
+  String get verificationStatusUnverified => 'Encara sense verificar';
+
+  @override
+  String get verificationChannelInstagram => 'Instagram';
+
+  @override
+  String get verificationChannelStrava => 'Strava';
+
+  @override
+  String get verificationChannelWhatsapp => 'WhatsApp';
+
+  @override
+  String get verificationChannelTelegram => 'Telegram';
+
+  @override
+  String get verificationChannelFlaire => 'Flaire';
+
+  @override
+  String get verificationChannelSkool => 'Skool';
+
+  @override
+  String get verificationChannelTiktok => 'TikTok';
+
+  @override
+  String get verificationChannelWebsite => 'Lloc web';
 }

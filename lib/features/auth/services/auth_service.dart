@@ -279,6 +279,13 @@ class AuthService {
         if (onboardingData.website != null &&
             onboardingData.website!.isNotEmpty)
           'website': onboardingData.website,
+        // Verification proof channels ([{type,url}]) — backend field being added
+        // separately, so the unknown-field 422 is tolerated by
+        // [_onboardingFieldsToStrip] below.
+        if (onboardingData.verificationChannels.isNotEmpty)
+          'verification_channels': onboardingData.verificationChannels
+              .map((c) => c.toJson())
+              .toList(),
         if (onboardingData.photoBase64 != null)
           'profile_photo': _buildProfilePhotoDataUri(onboardingData),
       };
@@ -307,6 +314,7 @@ class AuthService {
     'offer_photos',
     'product_type',
     'community_size',
+    'verification_channels',
   };
 
   /// POST a registration body, tolerating not-yet-migrated onboarding fields.

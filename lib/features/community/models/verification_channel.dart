@@ -56,8 +56,8 @@ class VerificationChannel {
   static List<VerificationChannel> listFromJson(dynamic raw) {
     if (raw is! List) return const [];
     return raw
-        .whereType<Map>()
-        .map((e) => VerificationChannel.fromJson(Map<String, dynamic>.from(e)))
+        .whereType<Map<String, dynamic>>()
+        .map(VerificationChannel.fromJson)
         .where((c) => c.url.trim().isNotEmpty)
         .toList(growable: false);
   }

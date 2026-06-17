@@ -6383,4 +6383,76 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityStep1SizeHelper =>
       'Roughly how many members are in your community?';
+
+  @override
+  String get verificationStepTitle => 'Get verified';
+
+  @override
+  String get verificationStepSubtitle =>
+      'Add links that prove your community is real. Verified communities get a tick businesses trust. Review takes a few days.';
+
+  @override
+  String get verificationChannelsLabel => 'Verification links';
+
+  @override
+  String get verificationAddChannel => 'Add link';
+
+  @override
+  String get verificationRemoveChannel => 'Remove link';
+
+  @override
+  String get verificationChannelTypeLabel => 'Type';
+
+  @override
+  String get verificationChannelUrlLabel => 'Link or handle';
+
+  @override
+  String get verificationChannelUrlHint => 'https://… or @handle';
+
+  @override
+  String get verificationNeedOneChannel =>
+      'Add at least one link to request verification.';
+
+  @override
+  String get verificationInvalidUrl =>
+      'Enter a valid link or handle for this type.';
+
+  @override
+  String get verificationSkip => 'Skip for now';
+
+  @override
+  String get verificationSectionTitle => 'Verification';
+
+  @override
+  String get verificationStatusVerified => 'Verified';
+
+  @override
+  String get verificationStatusPending => 'Verification pending';
+
+  @override
+  String get verificationStatusUnverified => 'Not verified yet';
+
+  @override
+  String get verificationChannelInstagram => 'Instagram';
+
+  @override
+  String get verificationChannelStrava => 'Strava';
+
+  @override
+  String get verificationChannelWhatsapp => 'WhatsApp';
+
+  @override
+  String get verificationChannelTelegram => 'Telegram';
+
+  @override
+  String get verificationChannelFlaire => 'Flaire';
+
+  @override
+  String get verificationChannelSkool => 'Skool';
+
+  @override
+  String get verificationChannelTiktok => 'TikTok';
+
+  @override
+  String get verificationChannelWebsite => 'Website';
 }

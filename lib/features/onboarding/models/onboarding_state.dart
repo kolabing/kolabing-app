@@ -1,5 +1,6 @@
 import '../../../utils/referral_code.dart';
 import '../../auth/models/user_model.dart';
+import '../../community/models/verification_channel.dart';
 import 'onboarding_photo.dart';
 import 'place_suggestion.dart';
 
@@ -45,6 +46,7 @@ class OnboardingData {
     this.tiktok,
     this.website,
     this.referralCode,
+    this.verificationChannels = const [],
     this.currentStep = 1,
   });
 
@@ -179,6 +181,11 @@ class OnboardingData {
 
   /// Optional referral code for business signups.
   final String? referralCode;
+
+  /// Community verification proof channels ({type,url}) gathered on step 4.
+  /// Sent as `verification_channels`; guarded by the 422-strip retry so
+  /// onboarding still completes if the backend field isn't deployed.
+  final List<VerificationChannel> verificationChannels;
 
   /// Current onboarding step (1-4)
   final int currentStep;
@@ -328,6 +335,7 @@ class OnboardingData {
     String? tiktok,
     String? website,
     String? referralCode,
+    List<VerificationChannel>? verificationChannels,
     int? currentStep,
     bool clearProductType = false,
     bool clearPhoto = false,
@@ -407,6 +415,7 @@ class OnboardingData {
     referralCode: clearReferralCode
         ? null
         : (referralCode ?? this.referralCode),
+    verificationChannels: verificationChannels ?? this.verificationChannels,
     currentStep: currentStep ?? this.currentStep,
   );
 
@@ -525,6 +534,11 @@ class OnboardingData {
       'instagram': instagram?.trim(),
     if (tiktok != null && tiktok!.isNotEmpty) 'tiktok': tiktok?.trim(),
     if (website != null && website!.isNotEmpty) 'website': website?.trim(),
+    // Verification proof channels ([{type,url}]). Guarded by the 422-strip
+    // retry so onboarding still completes if the field isn't deployed.
+    if (verificationChannels.isNotEmpty)
+      'verification_channels':
+          verificationChannels.map((c) => c.toJson()).toList(),
   };
 
   @override

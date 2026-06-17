@@ -11377,6 +11377,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Roughly how many members are in your community?'**
   String get communityStep1SizeHelper;
+
+  /// Community verification step title
+  ///
+  /// In en, this message translates to:
+  /// **'Get verified'**
+  String get verificationStepTitle;
+
+  /// Community verification step explanatory copy
+  ///
+  /// In en, this message translates to:
+  /// **'Add links that prove your community is real. Verified communities get a tick businesses trust. Review takes a few days.'**
+  String get verificationStepSubtitle;
+
+  /// Label above the channel repeater
+  ///
+  /// In en, this message translates to:
+  /// **'Verification links'**
+  String get verificationChannelsLabel;
+
+  /// Button to add a verification channel row
+  ///
+  /// In en, this message translates to:
+  /// **'Add link'**
+  String get verificationAddChannel;
+
+  /// Tooltip/label to remove a verification channel row
+  ///
+  /// In en, this message translates to:
+  /// **'Remove link'**
+  String get verificationRemoveChannel;
+
+  /// Channel type dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get verificationChannelTypeLabel;
+
+  /// Channel URL/handle field label
+  ///
+  /// In en, this message translates to:
+  /// **'Link or handle'**
+  String get verificationChannelUrlLabel;
+
+  /// Channel URL/handle field hint
+  ///
+  /// In en, this message translates to:
+  /// **'https://… or @handle'**
+  String get verificationChannelUrlHint;
+
+  /// Validation message when no channel is added
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one link to request verification.'**
+  String get verificationNeedOneChannel;
+
+  /// Validation message for an invalid channel value
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid link or handle for this type.'**
+  String get verificationInvalidUrl;
+
+  /// Skip verification button (stays unverified)
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get verificationSkip;
+
+  /// Verification section title on the profile edit
+  ///
+  /// In en, this message translates to:
+  /// **'Verification'**
+  String get verificationSectionTitle;
+
+  /// Verified status label
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get verificationStatusVerified;
+
+  /// Pending verification status label
+  ///
+  /// In en, this message translates to:
+  /// **'Verification pending'**
+  String get verificationStatusPending;
+
+  /// Unverified status label
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified yet'**
+  String get verificationStatusUnverified;
+
+  /// Channel type label: Instagram
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get verificationChannelInstagram;
+
+  /// Channel type label: Strava
+  ///
+  /// In en, this message translates to:
+  /// **'Strava'**
+  String get verificationChannelStrava;
+
+  /// Channel type label: WhatsApp
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get verificationChannelWhatsapp;
+
+  /// Channel type label: Telegram
+  ///
+  /// In en, this message translates to:
+  /// **'Telegram'**
+  String get verificationChannelTelegram;
+
+  /// Channel type label: Flaire
+  ///
+  /// In en, this message translates to:
+  /// **'Flaire'**
+  String get verificationChannelFlaire;
+
+  /// Channel type label: Skool
+  ///
+  /// In en, this message translates to:
+  /// **'Skool'**
+  String get verificationChannelSkool;
+
+  /// Channel type label: TikTok
+  ///
+  /// In en, this message translates to:
+  /// **'TikTok'**
+  String get verificationChannelTiktok;
+
+  /// Channel type label: Website
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get verificationChannelWebsite;
 }
 
 class _AppLocalizationsDelegate

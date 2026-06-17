@@ -1913,5 +1913,29 @@
   "businessProductPhotosEmptyTitle": "Afegeix fotos",
   "businessProductPhotosEmptyDescription": "Mostra el que ofereixes. Puja les teves fotos, elimina les que no vulguis i ordena-les aquí.",
 
-  "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?"
+  "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?",
+
+  "verificationStepTitle": "Aconsegueix la verificació",
+  "verificationStepSubtitle": "Afegeix enllaços que demostrin que la teva comunitat és real. Les comunitats verificades obtenen un tic en què confien les empreses. La revisió triga uns dies.",
+  "verificationChannelsLabel": "Enllaços de verificació",
+  "verificationAddChannel": "Afegeix un enllaç",
+  "verificationRemoveChannel": "Elimina l'enllaç",
+  "verificationChannelTypeLabel": "Tipus",
+  "verificationChannelUrlLabel": "Enllaç o usuari",
+  "verificationChannelUrlHint": "https://… o @usuari",
+  "verificationNeedOneChannel": "Afegeix almenys un enllaç per sol·licitar la verificació.",
+  "verificationInvalidUrl": "Introdueix un enllaç o usuari vàlid per a aquest tipus.",
+  "verificationSkip": "Omet per ara",
+  "verificationSectionTitle": "Verificació",
+  "verificationStatusVerified": "Verificada",
+  "verificationStatusPending": "Verificació pendent",
+  "verificationStatusUnverified": "Encara sense verificar",
+  "verificationChannelInstagram": "Instagram",
+  "verificationChannelStrava": "Strava",
+  "verificationChannelWhatsapp": "WhatsApp",
+  "verificationChannelTelegram": "Telegram",
+  "verificationChannelFlaire": "Flaire",
+  "verificationChannelSkool": "Skool",
+  "verificationChannelTiktok": "TikTok",
+  "verificationChannelWebsite": "Lloc web"
 }
