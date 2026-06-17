@@ -6564,4 +6564,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contactAndLinksChannelsGroup => 'Canales';
+
+  @override
+  String get comingSoonTitle => 'Próximamente';
+
+  @override
+  String get comingSoonMessage =>
+      'Esta experiencia está en camino. Vuelve pronto.';
+
+  @override
+  String get selectionCardAttendeeComingSoonDescription =>
+      'El descubrimiento de eventos y los check-ins llegarán pronto';
+
+  @override
+  String get memberExperienceComingSoon =>
+      'La experiencia para miembros llegará pronto';
 }

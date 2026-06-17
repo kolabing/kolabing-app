@@ -1950,5 +1950,9 @@
   "contactAndLinksManage": "Gestionar",
   "contactAndLinksEmptyOwner": "Aún no hay enlaces públicos. Toca Gestionar para añadir datos de contacto y canales, y elegir qué mostrar.",
   "contactAndLinksContactGroup": "Contacto",
-  "contactAndLinksChannelsGroup": "Canales"
+  "contactAndLinksChannelsGroup": "Canales",
+  "comingSoonTitle": "Próximamente",
+  "comingSoonMessage": "Esta experiencia está en camino. Vuelve pronto.",
+  "selectionCardAttendeeComingSoonDescription": "El descubrimiento de eventos y los check-ins llegarán pronto",
+  "memberExperienceComingSoon": "La experiencia para miembros llegará pronto"
 }

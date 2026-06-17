@@ -7104,5 +7104,13 @@
   "contactAndLinksContactGroup": "Contact",
   "@contactAndLinksContactGroup": { "description": "Contact group header in the manage sheet (email/phone)" },
   "contactAndLinksChannelsGroup": "Channels",
-  "@contactAndLinksChannelsGroup": { "description": "Channels group header in the manage sheet (socials/website)" }
+  "@contactAndLinksChannelsGroup": { "description": "Channels group header in the manage sheet (socials/website)" },
+  "comingSoonTitle": "Coming soon",
+  "@comingSoonTitle": { "description": "Default headline for the Coming soon placeholder (gated member layer)" },
+  "comingSoonMessage": "This experience is on the way. Check back soon.",
+  "@comingSoonMessage": { "description": "Default supporting line for the Coming soon placeholder" },
+  "selectionCardAttendeeComingSoonDescription": "Event discovery & check-ins are coming soon",
+  "@selectionCardAttendeeComingSoonDescription": { "description": "Attendee account-type card description shown while the member layer is disabled" },
+  "memberExperienceComingSoon": "The member experience is coming soon",
+  "@memberExperienceComingSoon": { "description": "Message shown when an attendee account is blocked from entering the app" }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../config/constants/feature_flags.dart';
 import '../../../config/routes/routes.dart';
 import '../../../services/one_signal_service.dart';
 import '../../../services/permission_service.dart';
@@ -83,6 +84,19 @@ class SplashStateNotifier extends Notifier<SplashState> {
       // Fresh launches should land on the welcome chooser unless a valid
       // session was restored into authProvider.
       if (!authState.isAuthenticated || user == null) {
+        state = state.copyWith(
+          isLoading: false,
+          navigationTarget: SplashNavigationTarget.welcome,
+        );
+        return KolabingRoutes.welcome;
+      }
+
+      // SHIP GATE (FeatureFlags.attendeeEnabled == false): a restored attendee
+      // session must not enter the app. Sign it out and land on welcome; the
+      // attendee cannot reach the gated member shell. Flipping the flag back to
+      // true restores the attendee-dashboard branch below.
+      if (user.isAttendee && !FeatureFlags.attendeeEnabled) {
+        await ref.read(authProvider.notifier).logout();
         state = state.copyWith(
           isLoading: false,
           navigationTarget: SplashNavigationTarget.welcome,

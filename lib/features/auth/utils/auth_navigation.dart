@@ -1,11 +1,21 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../config/constants/feature_flags.dart';
 import '../../../config/routes/routes.dart';
 import '../models/user_model.dart';
 
 /// Resolves the next in-app route after authentication or session restore.
 String resolveAuthDestination(UserModel user, {bool isNewUser = false}) {
   if (user.isAttendee) {
+    // SHIP GATE (FeatureFlags.attendeeEnabled == false): the attendee/member
+    // experience is not shipped. Existing attendee accounts (trial users) must
+    // NOT enter the app — never route them into the attendee shell. Send them
+    // to login; the GoRouter global redirect signs the session out and surfaces
+    // the "member experience is coming soon" message. Flipping the flag back to
+    // true restores the normal onboarding/dashboard routing below.
+    if (!FeatureFlags.attendeeEnabled) {
+      return KolabingRoutes.login;
+    }
     // A brand-new social attendee (Google/Apple is_new_user) runs the 4-step
     // onboarding (name/handle/interests/join) just like the email/password
     // path; an existing attendee goes straight to their dashboard.

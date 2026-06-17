@@ -6599,4 +6599,19 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get contactAndLinksChannelsGroup => 'Canals';
+
+  @override
+  String get comingSoonTitle => 'Ben aviat';
+
+  @override
+  String get comingSoonMessage =>
+      'Aquesta experiència està en camí. Torna aviat.';
+
+  @override
+  String get selectionCardAttendeeComingSoonDescription =>
+      'El descobriment d\'esdeveniments i els check-ins arribaran ben aviat';
+
+  @override
+  String get memberExperienceComingSoon =>
+      'L\'experiència per a membres arribarà ben aviat';
 }

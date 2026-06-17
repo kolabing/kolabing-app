@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../config/constants/feature_flags.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/selection_card.dart';
@@ -135,7 +137,11 @@ class _UserTypeSelectionScreenState
                 .initialize(UserType.community);
             context.push('/onboarding/community/step1');
           case SelectionUserType.attendee:
-            context.push(KolabingRoutes.attendeeRegister);
+            // The attendee surface is gated off; the card is disabled so its
+            // onTap never fires while the flag is false. Guard anyway.
+            if (FeatureFlags.attendeeEnabled) {
+              context.push(KolabingRoutes.attendeeRegister);
+            }
         }
       }
     });
@@ -224,13 +230,26 @@ class _UserTypeSelectionScreenState
 
                   const SizedBox(height: 10),
 
-                  // Attendee Card
+                  // Attendee Card — disabled with a "Coming soon" badge while
+                  // the member layer is gated off (FeatureFlags.attendeeEnabled).
                   _AnimatedElement(
                     opacityAnimation: _attendeeCardAnimation,
                     slideAnimation: _attendeeCardSlideAnimation,
                     child: SelectionCard(
                       userType: SelectionUserType.attendee,
-                      isSelected: _selectedType == SelectionUserType.attendee,
+                      isSelected:
+                          FeatureFlags.attendeeEnabled &&
+                          _selectedType == SelectionUserType.attendee,
+                      isEnabled: FeatureFlags.attendeeEnabled,
+                      badgeLabel: FeatureFlags.attendeeEnabled
+                          ? null
+                          : AppLocalizations.of(context).comingSoonTitle
+                                .toUpperCase(),
+                      descriptionOverride: FeatureFlags.attendeeEnabled
+                          ? null
+                          : AppLocalizations.of(
+                              context,
+                            ).selectionCardAttendeeComingSoonDescription,
                       onTap: () => _handleCardTap(SelectionUserType.attendee),
                     ),
                   ),

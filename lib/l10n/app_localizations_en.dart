@@ -6496,4 +6496,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactAndLinksChannelsGroup => 'Channels';
+
+  @override
+  String get comingSoonTitle => 'Coming soon';
+
+  @override
+  String get comingSoonMessage =>
+      'This experience is on the way. Check back soon.';
+
+  @override
+  String get selectionCardAttendeeComingSoonDescription =>
+      'Event discovery & check-ins are coming soon';
+
+  @override
+  String get memberExperienceComingSoon =>
+      'The member experience is coming soon';
 }

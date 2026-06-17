@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/coming_soon_view.dart';
+import '../constants/feature_flags.dart';
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
 import '../../features/chat/screens/chats_screen.dart';
@@ -329,6 +333,40 @@ abstract final class KolabingRoutes {
   // ---------------------------------------------------------------------------
   /// Permission request screen
   static const String permissions = '/permissions';
+
+  /// "Coming soon" placeholder. Deep links into gated attendee/member surfaces
+  /// resolve here while [FeatureFlags.attendeeEnabled] is false.
+  static const String comingSoon = '/coming-soon';
+}
+
+/// Path prefixes that belong to the attendee / member layer. While
+/// [FeatureFlags.attendeeEnabled] is false, any navigation matching one of
+/// these is redirected to a "Coming soon" placeholder (deep-link safety).
+///
+/// Kept here next to the route table so the guard and the routes stay in sync.
+/// NOTE: community-as-PARTNER routes (/community, /community/offers,
+/// /community/opportunities, /community/wallet, /community/referrals, ...) are
+/// NOT gated. Only the attendee/member-facing community profile
+/// (/community/:id/profile) is, and it is matched explicitly in the redirect.
+const List<String> kAttendeeGatedPrefixes = <String>[
+  '/auth/register/attendee',
+  '/onboarding/attendee',
+  '/attendee',
+  '/communities/discover',
+  '/rewards',
+];
+
+/// Whether [location] points at a gated attendee/member surface.
+bool isAttendeeGatedLocation(String location) {
+  // Strip query string.
+  final path = location.split('?').first;
+  for (final prefix in kAttendeeGatedPrefixes) {
+    if (path == prefix || path.startsWith('$prefix/')) return true;
+  }
+  // Attendee/member view of a community profile: /community/:id/profile.
+  // Distinct from the partner community routes above.
+  if (RegExp(r'^/community/[^/]+/profile/?$').hasMatch(path)) return true;
+  return false;
 }
 
 /// Navigator key for programmatic navigation (e.g. from push notifications)
@@ -377,6 +415,33 @@ final GoRouter kolabingRouter = GoRouter(
             '&email=${Uri.encodeComponent(email)}';
       }
     }
+
+    // SHIP GATE: the attendee / member layer is not shipped.
+    // While FeatureFlags.attendeeEnabled is false, deep links into any
+    // attendee/member surface resolve to the "Coming soon" placeholder, and an
+    // authenticated attendee session is signed out (it cannot enter the app).
+    // Flipping the flag back to true disables this whole block — normal routing
+    // resumes with no other change.
+    if (!FeatureFlags.attendeeEnabled) {
+      final container = ProviderScope.containerOf(context);
+      final auth = container.read(authProvider);
+      final user = auth.user;
+
+      // An authenticated attendee tries to navigate anywhere → sign them out
+      // and bounce to login with a one-shot notice. (Trial accounts: blocked,
+      // not given a member app.)
+      if (auth.isAuthenticated && user != null && user.isAttendee) {
+        // Fire-and-forget: redirect now, clear the session in the background.
+        unawaited(container.read(authProvider.notifier).logout());
+        return '${KolabingRoutes.login}?notice=member_coming_soon';
+      }
+
+      // Deep link into a gated attendee/member surface → Coming soon.
+      if (isAttendeeGatedLocation(state.matchedLocation)) {
+        return KolabingRoutes.comingSoon;
+      }
+    }
+
     return null;
   },
 
@@ -596,6 +661,15 @@ final GoRouter kolabingRouter = GoRouter(
             state.uri.queryParameters['destination'] ?? '/business';
         return PermissionScreen(destination: destination);
       },
+    ),
+
+    // "Coming soon" placeholder — destination for deep links into gated
+    // attendee/member surfaces while FeatureFlags.attendeeEnabled is false.
+    GoRoute(
+      path: KolabingRoutes.comingSoon,
+      name: 'comingSoon',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ComingSoonView(),
     ),
 
     // -------------------------------------------------------------------------

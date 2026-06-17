@@ -1950,5 +1950,9 @@
   "contactAndLinksManage": "Gestiona",
   "contactAndLinksEmptyOwner": "Encara no hi ha enllaços públics. Toca Gestiona per afegir dades de contacte i canals, i triar què mostrar.",
   "contactAndLinksContactGroup": "Contacte",
-  "contactAndLinksChannelsGroup": "Canals"
+  "contactAndLinksChannelsGroup": "Canals",
+  "comingSoonTitle": "Ben aviat",
+  "comingSoonMessage": "Aquesta experiència està en camí. Torna aviat.",
+  "selectionCardAttendeeComingSoonDescription": "El descobriment d'esdeveniments i els check-ins arribaran ben aviat",
+  "memberExperienceComingSoon": "L'experiència per a membres arribarà ben aviat"
 }

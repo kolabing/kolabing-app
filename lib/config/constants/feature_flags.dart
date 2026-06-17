@@ -16,4 +16,18 @@ abstract final class FeatureFlags {
   /// (kolabing-v2 PR #24); until then a new Apple signup may get the backend's
   /// default role. Existing Apple users are unaffected.
   static const bool attendeeAppleSignupEnabled = true;
+
+  /// MASTER SWITCH for the attendee / member layer (event discovery, check-ins,
+  /// rewards, gamification, the joinable-community / member surfaces).
+  ///
+  /// The app ships with ONLY the Business and Community (partner) experiences.
+  /// While this is `false`:
+  ///   - the attendee sign-up card is disabled and shows a "Coming soon" badge,
+  ///   - existing attendee accounts are signed out on login (they cannot enter),
+  ///   - every attendee / member route resolves to a "Coming soon" placeholder,
+  ///   - the Community nav tab (rewards/members/events) shows "Coming soon".
+  ///
+  /// ALL member code is kept (gated, not deleted). Flipping this to `true`
+  /// restores the full member layer with NO other change.
+  static const bool attendeeEnabled = false;
 }
