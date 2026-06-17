@@ -6486,4 +6486,19 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get communityStep1SizeHelper =>
       'Aproximadament, quants membres té la teva comunitat?';
+
+  @override
+  String get comingSoonTitle => 'Ben aviat';
+
+  @override
+  String get comingSoonMessage =>
+      'Aquesta experiència està en camí. Torna aviat.';
+
+  @override
+  String get selectionCardAttendeeComingSoonDescription =>
+      'El descobriment d\'esdeveniments i els check-ins arribaran ben aviat';
+
+  @override
+  String get memberExperienceComingSoon =>
+      'L\'experiència per a membres arribarà ben aviat';
 }

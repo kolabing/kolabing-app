@@ -1913,5 +1913,10 @@
   "businessProductPhotosEmptyTitle": "Añadir fotos",
   "businessProductPhotosEmptyDescription": "Muestra lo que ofreces. Sube tus propias fotos, elimina las que no quieras y ordénalas aquí.",
 
-  "communityStep1SizeHelper": "¿Aproximadamente cuántos miembros tiene tu comunidad?"
+  "communityStep1SizeHelper": "¿Aproximadamente cuántos miembros tiene tu comunidad?",
+
+  "comingSoonTitle": "Próximamente",
+  "comingSoonMessage": "Esta experiencia está en camino. Vuelve pronto.",
+  "selectionCardAttendeeComingSoonDescription": "El descubrimiento de eventos y los check-ins llegarán pronto",
+  "memberExperienceComingSoon": "La experiencia para miembros llegará pronto"
 }

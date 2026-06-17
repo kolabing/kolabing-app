@@ -11377,6 +11377,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Roughly how many members are in your community?'**
   String get communityStep1SizeHelper;
+
+  /// Default headline for the Coming soon placeholder (gated member layer)
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoonTitle;
+
+  /// Default supporting line for the Coming soon placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'This experience is on the way. Check back soon.'**
+  String get comingSoonMessage;
+
+  /// Attendee account-type card description shown while the member layer is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Event discovery & check-ins are coming soon'**
+  String get selectionCardAttendeeComingSoonDescription;
+
+  /// Message shown when an attendee account is blocked from entering the app
+  ///
+  /// In en, this message translates to:
+  /// **'The member experience is coming soon'**
+  String get memberExperienceComingSoon;
 }
 
 class _AppLocalizationsDelegate
