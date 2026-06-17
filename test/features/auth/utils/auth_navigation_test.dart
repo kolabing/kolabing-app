@@ -15,19 +15,28 @@ void main() {
     userType: UserType.business,
   );
 
-  test('new attendee routes into onboarding step 1', () {
+  // SHIP GATE (FeatureFlags.attendeeEnabled == false): the attendee/member
+  // layer is not shipped, so resolveAuthDestination must NEVER route an
+  // attendee into the attendee shell. New and existing attendees alike are sent
+  // to login (the GoRouter redirect then signs them out). When the flag is
+  // flipped back to true these expectations would change to the onboarding /
+  // dashboard routes below.
+  test('attendee is bounced to login while the member layer is gated (new)', () {
     expect(
       resolveAuthDestination(attendee, isNewUser: true),
-      KolabingRoutes.attendeeOnboardingStep1,
+      KolabingRoutes.login,
     );
   });
 
-  test('existing attendee routes to the attendee dashboard', () {
-    expect(
-      resolveAuthDestination(attendee, isNewUser: false),
-      KolabingRoutes.attendeeDashboard,
-    );
-  });
+  test(
+    'attendee is bounced to login while the member layer is gated (existing)',
+    () {
+      expect(
+        resolveAuthDestination(attendee, isNewUser: false),
+        KolabingRoutes.login,
+      );
+    },
+  );
 
   test('new business still routes to business onboarding (regression)', () {
     expect(

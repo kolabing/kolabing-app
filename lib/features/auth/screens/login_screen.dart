@@ -104,6 +104,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _startPhraseRotation();
   }
 
+  bool _noticeShown = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Surface a one-shot notice when an attendee account was bounced to login
+    // by the ship gate (FeatureFlags.attendeeEnabled == false). The redirect
+    // appends ?notice=member_coming_soon.
+    if (_noticeShown) return;
+    // Guard: GoRouterState.of throws if there is no GoRouter ancestor (e.g. in
+    // widget tests that pump LoginScreen directly under a MaterialApp).
+    String? notice;
+    try {
+      notice = GoRouterState.of(context).uri.queryParameters['notice'];
+    } on Object {
+      notice = null;
+    }
+    if (notice == 'member_coming_soon') {
+      _noticeShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).memberExperienceComingSoon,
+            ),
+          ),
+        );
+      });
+    }
+  }
+
   void _startPhraseRotation() {
     _phraseTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       setState(() => _phraseOpacity = 0.0);
