@@ -26,6 +26,7 @@ class MyKolabCard extends ConsumerWidget {
     this.onPublish,
     this.onClose,
     this.onDelete,
+    this.onShare,
   });
 
   final Kolab kolab;
@@ -34,6 +35,7 @@ class MyKolabCard extends ConsumerWidget {
   final VoidCallback? onPublish;
   final VoidCallback? onClose;
   final VoidCallback? onDelete;
+  final VoidCallback? onShare;
 
   /// Thumbnail priority for a kolab/offer card:
   /// 1. the photo posted for the kolab itself,
@@ -155,6 +157,16 @@ class MyKolabCard extends ConsumerWidget {
             icon: LucideIcons.edit,
             onPressed: onEdit,
             tooltip: 'Edit',
+            size: 48,
+          ),
+        );
+      }
+      if (onShare != null) {
+        secondaryIcons.add(
+          GlassIconButton(
+            icon: LucideIcons.share2,
+            onPressed: onShare,
+            tooltip: 'Share',
             size: 48,
           ),
         );

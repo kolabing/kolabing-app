@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../config/constants/radius.dart';
@@ -14,6 +15,7 @@ import '../../kolab/models/kolab.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
 import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
+import '../../opportunity/utils/opportunity_share.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../providers/profile_provider.dart';
 
@@ -101,6 +103,36 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
     }
 
     context.push(KolabingRoutes.kolabFlow, extra: kolab);
+  }
+
+  /// Preview the kolab's public detail (same route the legacy Offers card used;
+  /// the id resolves through the opportunity bridge).
+  void _onView(Kolab kolab) {
+    final id = kolab.id;
+    if (id == null || id.isEmpty) {
+      return;
+    }
+    context.push('/opportunity/$id');
+  }
+
+  Future<void> _onShare(Kolab kolab) async {
+    final id = kolab.id;
+    if (id == null || id.isEmpty) {
+      return;
+    }
+    final box = context.findRenderObject() as RenderBox?;
+    final origin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : null;
+    await Share.share(
+      buildOpportunityShareMessage(
+        title: kolab.title.isNotEmpty
+            ? kolab.title
+            : AppLocalizations.of(context).myKolabCardUntitled,
+        opportunityId: id,
+      ),
+      sharePositionOrigin: origin,
+    );
   }
 
   Future<void> _onPublish(String id) async {
@@ -334,7 +366,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
               final kolab = listState.kolabs[index];
               return MyKolabCard(
                 kolab: kolab,
+                onView: kolab.id != null ? () => _onView(kolab) : null,
                 onEdit: () => _onEdit(kolab),
+                onShare: kolab.id != null ? () => _onShare(kolab) : null,
                 onPublish: kolab.id != null
                     ? () => _onPublish(kolab.id!)
                     : null,
