@@ -13,6 +13,10 @@ String verificationChannelLabel(
   VerificationChannelType type,
 ) {
   switch (type) {
+    case VerificationChannelType.email:
+      return l10n.verificationChannelEmail;
+    case VerificationChannelType.phone:
+      return l10n.verificationChannelPhone;
     case VerificationChannelType.instagram:
       return l10n.verificationChannelInstagram;
     case VerificationChannelType.strava:
@@ -37,6 +41,10 @@ String verificationChannelLabel(
 /// docs/ICONS-AND-IMAGES.md §3).
 IconData verificationChannelIcon(VerificationChannelType type) {
   switch (type) {
+    case VerificationChannelType.email:
+      return LucideIcons.mail;
+    case VerificationChannelType.phone:
+      return LucideIcons.phone;
     case VerificationChannelType.instagram:
       return LucideIcons.instagram;
     case VerificationChannelType.strava:
@@ -62,6 +70,16 @@ IconData verificationChannelIcon(VerificationChannelType type) {
 bool isValidChannelValue(VerificationChannelType type, String raw) {
   final value = raw.trim();
   if (value.isEmpty) return false;
+  // Email: a basic local@domain.tld shape.
+  if (type == VerificationChannelType.email) {
+    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
+  }
+  // Phone: digits (optionally a leading +), spaces / dashes / parens allowed,
+  // at least 6 digits.
+  if (type == VerificationChannelType.phone) {
+    final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
+    return RegExp(r'^\+?[0-9\s().-]+$').hasMatch(value) && digits.length >= 6;
+  }
   final looksLikeUrl =
       value.startsWith('http://') ||
       value.startsWith('https://') ||
@@ -75,6 +93,41 @@ bool isValidChannelValue(VerificationChannelType type, String raw) {
   return handle.length >= 2;
 }
 
+/// Best-effort launch URI for a channel value (used by the public-icons rows).
+/// Returns null when the value can't be turned into a launchable link.
+Uri? channelLaunchUri(VerificationChannelType type, String raw) {
+  final value = raw.trim();
+  if (value.isEmpty) return null;
+  switch (type) {
+    case VerificationChannelType.email:
+      return Uri(scheme: 'mailto', path: value);
+    case VerificationChannelType.phone:
+      final digits = value.replaceAll(RegExp(r'[^0-9+]'), '');
+      return Uri(scheme: 'tel', path: digits);
+    case VerificationChannelType.whatsapp:
+      final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
+      if (value.startsWith('http')) return Uri.tryParse(value);
+      return Uri.tryParse('https://wa.me/$digits');
+    case VerificationChannelType.instagram:
+      if (value.startsWith('http')) return Uri.tryParse(value);
+      return Uri.tryParse(
+        'https://instagram.com/${value.replaceFirst('@', '')}',
+      );
+    case VerificationChannelType.tiktok:
+      if (value.startsWith('http')) return Uri.tryParse(value);
+      return Uri.tryParse('https://tiktok.com/@${value.replaceFirst('@', '')}');
+    case VerificationChannelType.telegram:
+      if (value.startsWith('http')) return Uri.tryParse(value);
+      return Uri.tryParse('https://t.me/${value.replaceFirst('@', '')}');
+    case VerificationChannelType.strava:
+    case VerificationChannelType.flaire:
+    case VerificationChannelType.skool:
+    case VerificationChannelType.website:
+      if (value.startsWith('http')) return Uri.tryParse(value);
+      return Uri.tryParse('https://$value');
+  }
+}
+
 /// A dynamic repeater of verification channels. Each row is a type dropdown +
 /// a URL/handle field + a remove (✕). An "Add link" button appends a new row.
 ///
@@ -86,23 +139,40 @@ class VerificationChannelRepeater extends StatelessWidget {
     required this.onChanged,
     super.key,
     this.showLabel = true,
+    this.showPublicToggle = false,
+    this.minChannels = 0,
+    this.allowedTypes,
   });
 
   /// The current channels.
   final List<VerificationChannel> channels;
 
-  /// Called with the full updated list on any add / edit / remove.
+  /// Called with the full updated list on any add / edit / remove / toggle.
   final ValueChanged<List<VerificationChannel>> onChanged;
 
   /// Whether to render the section label above the rows.
   final bool showLabel;
 
+  /// Whether each row shows the public eye toggle (profile manage sheet only;
+  /// onboarding omits it and sends is_public:false).
+  final bool showPublicToggle;
+
+  /// Minimum number of rows that must remain (remove is hidden at the floor).
+  final int minChannels;
+
+  /// Restrict the type dropdown + the add-default to this subset (e.g. the
+  /// Contact group passes [email, phone]). Null = all types.
+  final List<VerificationChannelType>? allowedTypes;
+
+  List<VerificationChannelType> get _types =>
+      allowedTypes ?? VerificationChannelType.values;
+
   void _addChannel() {
-    // Default a new row to the first unused type, else website.
+    // Default a new row to the first unused allowed type, else the first.
     final used = channels.map((c) => c.type).toSet();
-    final next = VerificationChannelType.values.firstWhere(
+    final next = _types.firstWhere(
       (t) => !used.contains(t),
-      orElse: () => VerificationChannelType.website,
+      orElse: () => _types.first,
     );
     onChanged([...channels, VerificationChannel(type: next, url: '')]);
   }
@@ -138,9 +208,14 @@ class VerificationChannelRepeater extends StatelessWidget {
           _ChannelRow(
             key: ValueKey('channel-row-$i'),
             channel: channels[i],
+            allowedTypes: _types,
+            showPublicToggle: showPublicToggle,
+            canRemove: channels.length > minChannels,
             onTypeChanged: (type) =>
                 _updateAt(i, channels[i].copyWith(type: type)),
             onUrlChanged: (url) => _updateAt(i, channels[i].copyWith(url: url)),
+            onPublicChanged: (isPublic) =>
+                _updateAt(i, channels[i].copyWith(isPublic: isPublic)),
             onRemove: () => _removeAt(i),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -163,14 +238,22 @@ class _ChannelRow extends StatefulWidget {
     required this.channel,
     required this.onTypeChanged,
     required this.onUrlChanged,
+    required this.onPublicChanged,
     required this.onRemove,
+    required this.showPublicToggle,
+    required this.canRemove,
+    required this.allowedTypes,
     super.key,
   });
 
   final VerificationChannel channel;
+  final List<VerificationChannelType> allowedTypes;
   final ValueChanged<VerificationChannelType> onTypeChanged;
   final ValueChanged<String> onUrlChanged;
+  final ValueChanged<bool> onPublicChanged;
   final VoidCallback onRemove;
+  final bool showPublicToggle;
+  final bool canRemove;
 
   @override
   State<_ChannelRow> createState() => _ChannelRowState();
@@ -200,10 +283,33 @@ class _ChannelRowState extends State<_ChannelRow> {
     super.dispose();
   }
 
+  TextInputType get _keyboardType {
+    switch (widget.channel.type) {
+      case VerificationChannelType.email:
+        return TextInputType.emailAddress;
+      case VerificationChannelType.phone:
+      case VerificationChannelType.whatsapp:
+        return TextInputType.phone;
+      default:
+        return TextInputType.url;
+    }
+  }
+
+  String _hint(AppLocalizations l10n) {
+    switch (widget.channel.type) {
+      case VerificationChannelType.email:
+        return l10n.verificationChannelEmailHint;
+      case VerificationChannelType.phone:
+        return l10n.verificationChannelPhoneHint;
+      default:
+        return l10n.verificationChannelUrlHint;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Row(
+    final row = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Type dropdown
@@ -225,7 +331,7 @@ class _ChannelRowState extends State<_ChannelRow> {
               ),
             ),
             items: [
-              for (final type in VerificationChannelType.values)
+              for (final type in {widget.channel.type, ...widget.allowedTypes})
                 DropdownMenuItem(
                   value: type,
                   child: Row(
@@ -260,12 +366,12 @@ class _ChannelRowState extends State<_ChannelRow> {
           flex: 6,
           child: TextField(
             controller: _controller,
-            keyboardType: TextInputType.url,
+            keyboardType: _keyboardType,
             style: KolabingTextStyles.bodyMedium.copyWith(
               color: context.colors.onSurface,
             ),
             decoration: InputDecoration(
-              hintText: l10n.verificationChannelUrlHint,
+              hintText: _hint(l10n),
               hintStyle: KolabingTextStyles.bodyMedium.copyWith(
                 color: context.colors.textTertiary,
               ),
@@ -283,11 +389,64 @@ class _ChannelRowState extends State<_ChannelRow> {
             onChanged: widget.onUrlChanged,
           ),
         ),
-        // Remove
-        IconButton(
-          tooltip: l10n.verificationRemoveChannel,
-          onPressed: widget.onRemove,
-          icon: Icon(LucideIcons.x, size: 18, color: context.colors.error),
+        // Remove (hidden at the minimum floor)
+        if (widget.canRemove)
+          IconButton(
+            tooltip: l10n.verificationRemoveChannel,
+            onPressed: widget.onRemove,
+            icon: Icon(LucideIcons.x, size: 18, color: context.colors.error),
+          )
+        else
+          const SizedBox(width: 48),
+      ],
+    );
+
+    if (!widget.showPublicToggle) return row;
+
+    // Public eye toggle rendered under the row (manage sheet only).
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        row,
+        InkWell(
+          onTap: () => widget.onPublicChanged(!widget.channel.isPublic),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: KolabingSpacing.xxs,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  widget.channel.isPublic
+                      ? LucideIcons.eye
+                      : LucideIcons.eyeOff,
+                  size: 16,
+                  color: widget.channel.isPublic
+                      ? context.colors.primary
+                      : context.colors.textTertiary,
+                ),
+                const SizedBox(width: KolabingSpacing.xs),
+                Expanded(
+                  child: Text(
+                    l10n.verificationPublicToggleLabel,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Switch(
+                  value: widget.channel.isPublic,
+                  onChanged: widget.onPublicChanged,
+                  activeThumbColor: context.colors.primary,
+                  activeTrackColor: context.colors.primary.withValues(
+                    alpha: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
