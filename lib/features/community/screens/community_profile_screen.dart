@@ -568,11 +568,6 @@ class _CommunityProfileScreenState
             ),
           ),
         ),
-        Icon(
-          LucideIcons.pencil,
-          size: 20,
-          color: context.colors.onSurfaceVariant,
-        ),
       ],
     ),
   );
