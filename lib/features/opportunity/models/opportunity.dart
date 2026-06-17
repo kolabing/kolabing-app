@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../utils/remote_media_url.dart';
+
 // =============================================================================
 // Enums
 // =============================================================================
@@ -506,7 +508,7 @@ class Opportunity {
       ),
       address: json['address']?.toString(),
       preferredCity: json['preferred_city']?.toString() ?? '',
-      offerPhoto: json['offer_photo']?.toString(),
+      offerPhoto: normalizeRemoteMediaUrlOrNull(json['offer_photo']?.toString()),
       status: OpportunityStatus.fromString(
         json['status']?.toString() ?? 'draft',
       ),

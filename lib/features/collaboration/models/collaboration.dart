@@ -1,3 +1,4 @@
+import '../../../utils/remote_media_url.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 
@@ -94,7 +95,8 @@ class CollaborationPartner {
       // must not crash parsing and silently drop the whole collaboration.
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
-      profilePhoto: json['profile_photo'] as String?,
+      profilePhoto:
+          normalizeRemoteMediaUrlOrNull(json['profile_photo'] as String?),
       category: json['category'] as String?,
       city: json['city'] is Map
           ? (json['city'] as Map<String, dynamic>)['name'] as String?

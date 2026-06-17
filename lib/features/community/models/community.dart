@@ -1,3 +1,5 @@
+import '../../../utils/remote_media_url.dart';
+
 /// The kind of community a leader runs. Community-agnostic by design — the
 /// tier system means Kolabing ships the mechanism and the leader supplies the
 /// meaning. `greek` is the launch inspiration; the rest prove generality.
@@ -121,7 +123,7 @@ class Community {
       // (`GET /communities/discover` interest ranking, contract §7).
       matched: json['matched'] as bool? ?? false,
       description: json['description'] as String?,
-      avatarUrl: json['avatar_url'] as String?,
+      avatarUrl: normalizeRemoteMediaUrlOrNull(json['avatar_url'] as String?),
       isPrimary: json['is_primary'] as bool? ?? true,
       joinPolicy:
           CommunityJoinPolicy.fromString(json['join_policy'] as String? ?? 'open'),
