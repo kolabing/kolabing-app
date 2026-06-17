@@ -1937,5 +1937,16 @@
   "verificationChannelFlaire": "Flaire",
   "verificationChannelSkool": "Skool",
   "verificationChannelTiktok": "TikTok",
-  "verificationChannelWebsite": "Sitio web"
+  "verificationChannelWebsite": "Sitio web",
+  "verificationChannelEmail": "Correo electrónico",
+  "verificationChannelPhone": "Teléfono",
+  "verificationChannelEmailHint": "nombre@ejemplo.com",
+  "verificationChannelPhoneHint": "+34 600 000 000",
+  "verificationStatusRejected": "Verificación rechazada",
+  "verificationPublicToggleLabel": "Mostrar en el perfil",
+  "contactAndLinksTitle": "Contacto y enlaces",
+  "contactAndLinksManage": "Gestionar",
+  "contactAndLinksEmptyOwner": "Aún no hay enlaces públicos. Toca Gestionar para añadir datos de contacto y canales, y elegir qué mostrar.",
+  "contactAndLinksContactGroup": "Contacto",
+  "contactAndLinksChannelsGroup": "Canales"
 }

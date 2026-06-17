@@ -6455,4 +6455,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verificationChannelWebsite => 'Website';
+
+  @override
+  String get verificationChannelEmail => 'Email';
+
+  @override
+  String get verificationChannelPhone => 'Phone';
+
+  @override
+  String get verificationChannelEmailHint => 'name@example.com';
+
+  @override
+  String get verificationChannelPhoneHint => '+34 600 000 000';
+
+  @override
+  String get verificationStatusRejected => 'Verification rejected';
+
+  @override
+  String get verificationPublicToggleLabel => 'Show on profile';
+
+  @override
+  String get contactAndLinksTitle => 'Contact & links';
+
+  @override
+  String get contactAndLinksManage => 'Manage';
+
+  @override
+  String get contactAndLinksEmptyOwner =>
+      'No public links yet. Tap Manage to add contact details and channels, and choose what to show.';
+
+  @override
+  String get contactAndLinksContactGroup => 'Contact';
+
+  @override
+  String get contactAndLinksChannelsGroup => 'Channels';
 }

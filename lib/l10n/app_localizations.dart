@@ -11515,6 +11515,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Website'**
   String get verificationChannelWebsite;
+
+  /// Channel type label: Email
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get verificationChannelEmail;
+
+  /// Channel type label: Phone
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get verificationChannelPhone;
+
+  /// Email channel field hint
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com'**
+  String get verificationChannelEmailHint;
+
+  /// Phone channel field hint
+  ///
+  /// In en, this message translates to:
+  /// **'+34 600 000 000'**
+  String get verificationChannelPhoneHint;
+
+  /// Rejected verification status label
+  ///
+  /// In en, this message translates to:
+  /// **'Verification rejected'**
+  String get verificationStatusRejected;
+
+  /// Per-channel public visibility toggle label
+  ///
+  /// In en, this message translates to:
+  /// **'Show on profile'**
+  String get verificationPublicToggleLabel;
+
+  /// Compact contact & links section title
+  ///
+  /// In en, this message translates to:
+  /// **'Contact & links'**
+  String get contactAndLinksTitle;
+
+  /// Button to open the manage contact & links sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get contactAndLinksManage;
+
+  /// Empty state under the contact & links row for the owner
+  ///
+  /// In en, this message translates to:
+  /// **'No public links yet. Tap Manage to add contact details and channels, and choose what to show.'**
+  String get contactAndLinksEmptyOwner;
+
+  /// Contact group header in the manage sheet (email/phone)
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contactAndLinksContactGroup;
+
+  /// Channels group header in the manage sheet (socials/website)
+  ///
+  /// In en, this message translates to:
+  /// **'Channels'**
+  String get contactAndLinksChannelsGroup;
 }
 
 class _AppLocalizationsDelegate

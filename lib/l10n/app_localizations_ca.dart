@@ -6558,4 +6558,38 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get verificationChannelWebsite => 'Lloc web';
+
+  @override
+  String get verificationChannelEmail => 'Correu electrònic';
+
+  @override
+  String get verificationChannelPhone => 'Telèfon';
+
+  @override
+  String get verificationChannelEmailHint => 'nom@exemple.com';
+
+  @override
+  String get verificationChannelPhoneHint => '+34 600 000 000';
+
+  @override
+  String get verificationStatusRejected => 'Verificació rebutjada';
+
+  @override
+  String get verificationPublicToggleLabel => 'Mostra al perfil';
+
+  @override
+  String get contactAndLinksTitle => 'Contacte i enllaços';
+
+  @override
+  String get contactAndLinksManage => 'Gestiona';
+
+  @override
+  String get contactAndLinksEmptyOwner =>
+      'Encara no hi ha enllaços públics. Toca Gestiona per afegir dades de contacte i canals, i triar què mostrar.';
+
+  @override
+  String get contactAndLinksContactGroup => 'Contacte';
+
+  @override
+  String get contactAndLinksChannelsGroup => 'Canals';
 }

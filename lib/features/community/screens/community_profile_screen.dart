@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
@@ -20,6 +19,7 @@ import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
 import '../models/verification_channel.dart';
+import '../widgets/public_channels_row.dart';
 import '../widgets/verification_channel_repeater.dart';
 import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
@@ -66,8 +66,9 @@ class _CommunityProfileScreenState
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style:
-                  TextButton.styleFrom(foregroundColor: context.colors.error),
+              style: TextButton.styleFrom(
+                foregroundColor: context.colors.error,
+              ),
               child: Text(l10n.communityProfileSignOutConfirm),
             ),
           ],
@@ -98,8 +99,9 @@ class _CommunityProfileScreenState
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style:
-                  TextButton.styleFrom(foregroundColor: context.colors.error),
+              style: TextButton.styleFrom(
+                foregroundColor: context.colors.error,
+              ),
               child: Text(l10n.communityProfileDeleteAccountConfirm),
             ),
           ],
@@ -125,66 +127,65 @@ class _CommunityProfileScreenState
       builder: (context) {
         final l10n = AppLocalizations.of(context);
         return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.colors.darkBorder,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                l10n.communityProfileChangePhotoTitle,
-                style: KolabingTextStyles.titleMedium.copyWith(
-                  color: context.colors.onSurface,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              ListTile(
-                leading: Container(
-                  width: 48,
-                  height: 48,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
                   decoration: BoxDecoration(
-                    color: context.colors.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    LucideIcons.camera,
-                    color: context.colors.primary,
+                    color: context.colors.darkBorder,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                title: Text(l10n.communityProfileTakePhoto),
-                subtitle: Text(l10n.communityProfileTakePhotoSubtitle),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
-              ),
-              ListTile(
-                leading: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: context.colors.info.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    LucideIcons.image,
-                    color: context.colors.info,
+                const SizedBox(height: KolabingSpacing.lg),
+                Text(
+                  l10n.communityProfileChangePhotoTitle,
+                  style: KolabingTextStyles.titleMedium.copyWith(
+                    color: context.colors.onSurface,
                   ),
                 ),
-                title: Text(l10n.communityProfileChooseFromGallery),
-                subtitle: Text(l10n.communityProfileChooseFromGallerySubtitle),
-                onTap: () => Navigator.pop(context, ImageSource.gallery),
-              ),
-              const SizedBox(height: KolabingSpacing.md),
-            ],
+                const SizedBox(height: KolabingSpacing.lg),
+                ListTile(
+                  leading: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: context.colors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      LucideIcons.camera,
+                      color: context.colors.primary,
+                    ),
+                  ),
+                  title: Text(l10n.communityProfileTakePhoto),
+                  subtitle: Text(l10n.communityProfileTakePhotoSubtitle),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+                ListTile(
+                  leading: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: context.colors.info.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(LucideIcons.image, color: context.colors.info),
+                  ),
+                  title: Text(l10n.communityProfileChooseFromGallery),
+                  subtitle: Text(
+                    l10n.communityProfileChooseFromGallerySubtitle,
+                  ),
+                  onTap: () => Navigator.pop(context, ImageSource.gallery),
+                ),
+                const SizedBox(height: KolabingSpacing.md),
+              ],
+            ),
           ),
-        ),
-      );
+        );
       },
     );
 
@@ -215,7 +216,9 @@ class _CommunityProfileScreenState
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(AppLocalizations.of(context).communityProfileUploadingPhoto),
+                Text(
+                  AppLocalizations.of(context).communityProfileUploadingPhoto,
+                ),
               ],
             ),
             duration: const Duration(seconds: 30),
@@ -258,9 +261,9 @@ class _CommunityProfileScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context).communityProfilePhotoUpdateFailed(
-                e.toString(),
-              ),
+              AppLocalizations.of(
+                context,
+              ).communityProfilePhotoUpdateFailed(e.toString()),
             ),
             backgroundColor: context.colors.error,
           ),
@@ -298,9 +301,7 @@ class _CommunityProfileScreenState
       backgroundColor: isDark
           ? context.colors.surface
           : context.colors.background,
-      body: SafeArea(
-        child: _buildBody(state, isDark),
-      ),
+      body: SafeArea(child: _buildBody(state, isDark)),
     );
   }
 
@@ -333,11 +334,73 @@ class _CommunityProfileScreenState
   }
 
   Widget _buildLoadingState(bool isDark) => SingleChildScrollView(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        child: Column(
-          children: [
-            // Header shimmer
-            Shimmer.fromColors(
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    child: Column(
+      children: [
+        // Header shimmer
+        Shimmer.fromColors(
+          baseColor: isDark
+              ? context.colors.darkSurface
+              : context.colors.surfaceVariant,
+          highlightColor: isDark
+              ? context.colors.darkBorder
+              : context.colors.surface,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? context.colors.darkSurface : Colors.white,
+              borderRadius: KolabingRadius.borderRadiusLg,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: isDark ? context.colors.darkSurface : Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: KolabingSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 150,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? context.colors.darkSurface
+                              : Colors.white,
+                          borderRadius: KolabingRadius.borderRadiusSm,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: 80,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? context.colors.darkSurface
+                              : Colors.white,
+                          borderRadius: KolabingRadius.borderRadiusSm,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        // Section shimmer
+        ...List.generate(
+          3,
+          (index) => Padding(
+            padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
+            child: Shimmer.fromColors(
               baseColor: isDark
                   ? context.colors.darkSurface
                   : context.colors.surfaceVariant,
@@ -345,127 +408,68 @@ class _CommunityProfileScreenState
                   ? context.colors.darkBorder
                   : context.colors.surface,
               child: Container(
-                padding: const EdgeInsets.all(20),
+                height: 120,
                 decoration: BoxDecoration(
                   color: isDark ? context.colors.darkSurface : Colors.white,
                   borderRadius: KolabingRadius.borderRadiusLg,
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: isDark ? context.colors.darkSurface : Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: KolabingSpacing.md),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 150,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: isDark ? context.colors.darkSurface : Colors.white,
-                              borderRadius: KolabingRadius.borderRadiusSm,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            width: 80,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: isDark ? context.colors.darkSurface : Colors.white,
-                              borderRadius: KolabingRadius.borderRadiusSm,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
-            const SizedBox(height: KolabingSpacing.md),
-            // Section shimmer
-            ...List.generate(
-              3,
-              (index) => Padding(
-                padding: const EdgeInsets.only(bottom: KolabingSpacing.md),
-                child: Shimmer.fromColors(
-                  baseColor: isDark
-                      ? context.colors.darkSurface
-                      : context.colors.surfaceVariant,
-                  highlightColor: isDark
-                      ? context.colors.darkBorder
-                      : context.colors.surface,
-                  child: Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: isDark ? context.colors.darkSurface : Colors.white,
-                      borderRadius: KolabingRadius.borderRadiusLg,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   Widget _buildErrorState(String error, bool isDark) {
     final l10n = AppLocalizations.of(context);
     return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: context.colors.errorBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  LucideIcons.alertCircle,
-                  size: 36,
-                  color: context.colors.error,
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: context.colors.errorBg,
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                l10n.communityProfileErrorTitle,
-                style: KolabingTextStyles.headlineSmall.copyWith(
-                  color: isDark
-                      ? context.colors.textOnDark
-                      : context.colors.onSurface,
-                ),
+              child: Icon(
+                LucideIcons.alertCircle,
+                size: 36,
+                color: context.colors.error,
               ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                error,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: context.colors.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            Text(
+              l10n.communityProfileErrorTitle,
+              style: KolabingTextStyles.headlineSmall.copyWith(
+                color: isDark
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
               ),
-              const SizedBox(height: KolabingSpacing.lg),
-              GlassButton(
-                label: l10n.communityProfileTryAgain,
-                onPressed: () =>
-                    ref.read(profileProvider.notifier).loadProfile(),
-                intent: GlassButtonIntent.primary,
-                icon: LucideIcons.rotateCcw,
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              error,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            GlassButton(
+              label: l10n.communityProfileTryAgain,
+              onPressed: () => ref.read(profileProvider.notifier).loadProfile(),
+              intent: GlassButtonIntent.primary,
+              icon: LucideIcons.rotateCcw,
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 
   Widget _buildProfileContent(ProfileState state, bool isDark) {
@@ -482,63 +486,63 @@ class _CommunityProfileScreenState
             onRefresh: () => ref.read(profileProvider.notifier).refresh(),
             color: context.colors.primary,
             child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Profile Header Card
-            _buildProfileHeader(profile, state.isUpdating, isDark),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(KolabingSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Profile Header Card
+                  _buildProfileHeader(profile, state.isUpdating, isDark),
 
-            const SizedBox(height: KolabingSpacing.md),
+                  const SizedBox(height: KolabingSpacing.md),
 
-            // About Section
-            if (hasAbout) ...[
-              _buildAboutSection(about, isDark),
-              const SizedBox(height: KolabingSpacing.md),
-            ],
+                  // Compact Contact & links (merges contact + channels). Sits right
+                  // under the header, above gallery / past-events.
+                  _buildContactAndLinks(profile, state.isUpdating, isDark),
 
-            // Community details (editable: community size)
-            _buildCommunityDetailsSection(profile, state.isUpdating, isDark),
+                  const SizedBox(height: KolabingSpacing.md),
 
-            const SizedBox(height: KolabingSpacing.md),
+                  // About Section
+                  if (hasAbout) ...[
+                    _buildAboutSection(about, isDark),
+                    const SizedBox(height: KolabingSpacing.md),
+                  ],
 
-            // Gallery Section
-            const ProfileGallerySection(),
+                  // Community details (editable: community size)
+                  _buildCommunityDetailsSection(
+                    profile,
+                    state.isUpdating,
+                    isDark,
+                  ),
 
-            const SizedBox(height: KolabingSpacing.md),
+                  const SizedBox(height: KolabingSpacing.md),
 
-            // Past Events Section
-            const PastEventsSection(),
+                  // Gallery Section
+                  const ProfileGallerySection(),
 
-            const SizedBox(height: KolabingSpacing.md),
+                  const SizedBox(height: KolabingSpacing.md),
 
-            // Contact Info Section
-            _buildContactInfoSection(profile, isDark),
+                  // Past Events Section
+                  const PastEventsSection(),
 
-            const SizedBox(height: KolabingSpacing.md),
+                  const SizedBox(height: KolabingSpacing.md),
 
-            // Verification Section (channel repeater + status)
-            _buildVerificationSection(profile, state.isUpdating),
+                  // Notification Preferences Section
+                  _buildNotificationPreferencesSection(
+                    state.notificationPrefs,
+                    state.isUpdating,
+                    isDark,
+                  ),
 
-            const SizedBox(height: KolabingSpacing.md),
+                  const SizedBox(height: KolabingSpacing.md),
 
-            // Notification Preferences Section
-            _buildNotificationPreferencesSection(
-              state.notificationPrefs,
-              state.isUpdating,
-              isDark,
+                  // Account Section
+                  _buildAccountSection(profile.email, state.isUpdating, isDark),
+
+                  const SizedBox(height: KolabingSpacing.xxl),
+                ],
+              ),
             ),
-
-            const SizedBox(height: KolabingSpacing.md),
-
-            // Account Section
-            _buildAccountSection(profile.email, state.isUpdating, isDark),
-
-            const SizedBox(height: KolabingSpacing.xxl),
-          ],
-        ),
-      ),
           ),
         ),
       ],
@@ -576,7 +580,8 @@ class _CommunityProfileScreenState
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {
     final l10n = AppLocalizations.of(context);
     final name = profile.communityProfile?.name ?? profile.displayName;
-    final communityType = profile.communityProfile?.communityTypeLabel ??
+    final communityType =
+        profile.communityProfile?.communityTypeLabel ??
         l10n.communityProfileCommunityFallback;
     final photoUrl =
         profile.communityProfile?.profilePhoto ?? profile.avatarUrl;
@@ -601,10 +606,7 @@ class _CommunityProfileScreenState
                   height: 96,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: context.colors.primary,
-                      width: 3,
-                    ),
+                    border: Border.all(color: context.colors.primary, width: 3),
                   ),
                   child: ClipOval(
                     child: photoUrl != null
@@ -761,26 +763,26 @@ class _CommunityProfileScreenState
   }
 
   Widget _buildAvatarPlaceholder(String name) => Container(
-        color: context.colors.surfaceVariant,
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: KolabingTextStyles.displaySmall.copyWith(
-              color: context.colors.textTertiary,
-            ),
-          ),
+    color: context.colors.surfaceVariant,
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: KolabingTextStyles.displaySmall.copyWith(
+          color: context.colors.textTertiary,
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildAboutSection(String about, bool isDark) => _SectionCard(
-        title: AppLocalizations.of(context).communityProfileAboutSection,
-        child: Text(
-          about,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            color: context.colors.onSurfaceVariant,
-          ),
-        ),
-      );
+    title: AppLocalizations.of(context).communityProfileAboutSection,
+    child: Text(
+      about,
+      style: KolabingTextStyles.bodyMedium.copyWith(
+        color: context.colors.onSurfaceVariant,
+      ),
+    ),
+  );
 
   Widget _buildCommunityDetailsSection(
     UserModel profile,
@@ -789,9 +791,7 @@ class _CommunityProfileScreenState
   ) {
     final l10n = AppLocalizations.of(context);
     final size = profile.communityProfile?.communitySize;
-    final sizeLabel = size != null
-        ? '$size'
-        : l10n.communityProfileSizeNotSet;
+    final sizeLabel = size != null ? '$size' : l10n.communityProfileSizeNotSet;
 
     return _SectionCard(
       title: l10n.communityProfileDetailsSection,
@@ -884,8 +884,9 @@ class _CommunityProfileScreenState
             child: Text(l10n.commonCancel),
           ),
           TextButton(
-            onPressed: () => Navigator.of(dialogContext)
-                .pop(int.tryParse(controller.text.trim()) ?? -1),
+            onPressed: () => Navigator.of(
+              dialogContext,
+            ).pop(int.tryParse(controller.text.trim()) ?? -1),
             child: Text(l10n.commonSave),
           ),
         ],
@@ -899,66 +900,67 @@ class _CommunityProfileScreenState
     // -1 sentinel means the field was left empty / invalid; ignore.
     if (result < 0) return;
 
-    await ref
-        .read(profileProvider.notifier)
-        .updateProfile({'community_size': result});
+    await ref.read(profileProvider.notifier).updateProfile({
+      'community_size': result,
+    });
   }
 
-  Widget _buildContactInfoSection(UserModel profile, bool isDark) {
-    final email = profile.email;
-    final phone = profile.phoneNumber;
-    final website = profile.communityProfile?.website;
-    final instagram = profile.communityProfile?.instagram;
-    final tiktok = profile.communityProfile?.tiktok;
-    final city = profile.communityProfile?.city?.name;
+  /// Compact "Contact & links" card: the public-icons row + a Manage button
+  /// (owner). Merges the old buried Contact Info + Verification sections.
+  Widget _buildContactAndLinks(
+    UserModel profile,
+    bool isUpdating,
+    bool isDark,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    final cp = profile.communityProfile;
+    final publicChannels = cp?.publicChannels ?? const <VerificationChannel>[];
 
     return _SectionCard(
-      title: AppLocalizations.of(context).communityProfileContactInfoSection,
+      title: l10n.contactAndLinksTitle,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ContactInfoTile(icon: LucideIcons.mail, label: email),
-          if (phone != null && phone.isNotEmpty)
-            _ContactInfoTile(icon: LucideIcons.phone, label: phone),
-          if (city != null && city.isNotEmpty)
-            _ContactInfoTile(icon: LucideIcons.mapPin, label: city),
-          if (website != null && website.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.globe,
-              label: website,
-              onTap: () => launchUrl(Uri.parse(website)),
+          if (publicChannels.isEmpty)
+            Text(
+              l10n.contactAndLinksEmptyOwner,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            )
+          else
+            PublicChannelsRow(channels: publicChannels),
+          const SizedBox(height: KolabingSpacing.md),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: isUpdating ? null : () => _openManageSheet(profile),
+              icon: const Icon(LucideIcons.settings2, size: 18),
+              label: Text(l10n.contactAndLinksManage),
             ),
-          if (instagram != null && instagram.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.instagram,
-              label: '@$instagram',
-              onTap: () =>
-                  launchUrl(Uri.parse('https://instagram.com/$instagram')),
-            ),
-          if (tiktok != null && tiktok.isNotEmpty)
-            _ContactInfoTile(
-              icon: LucideIcons.music2,
-              label: '@$tiktok',
-              onTap: () => launchUrl(Uri.parse('https://tiktok.com/@$tiktok')),
-            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildVerificationSection(UserModel profile, bool isUpdating) {
-    final l10n = AppLocalizations.of(context);
+  Future<void> _openManageSheet(UserModel profile) async {
     final cp = profile.communityProfile;
-    return _SectionCard(
-      title: l10n.verificationSectionTitle,
-      child: _VerificationEditor(
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => _ManageContactSheet(
         isVerified: cp?.isVerified ?? false,
         verificationStatus: cp?.verificationStatus,
+        rejectionReason: cp?.verificationRejectionReason,
         initialChannels: cp?.verificationChannels ?? const [],
-        isSaving: isUpdating,
         onSave: (channels) async {
           await ref.read(profileProvider.notifier).updateProfile({
-            'verification_channels':
-                channels.map((c) => c.toJson()).toList(),
+            'verification_channels': channels.map((c) => c.toJson()).toList(),
           });
         },
       ),
@@ -972,140 +974,139 @@ class _CommunityProfileScreenState
   ) {
     final l10n = AppLocalizations.of(context);
     return _SectionCard(
-        title: l10n.communityProfileNotificationsSection,
-        child: Column(
-          children: [
-            _NotificationToggle(
-              label: l10n.communityProfileNotifMessages,
-              value: preferences?.messagesEnabled ?? true,
-              isUpdating: isUpdating,
-              onChanged: (value) => ref
-                  .read(profileProvider.notifier)
-                  .updateNotificationPreference('messages_enabled', value),
-            ),
-            _NotificationToggle(
-              label: l10n.communityProfileNotifApplications,
-              value: preferences?.applicationsEnabled ?? true,
-              isUpdating: isUpdating,
-              onChanged: (value) => ref
-                  .read(profileProvider.notifier)
-                  .updateNotificationPreference('applications_enabled', value),
-            ),
-            _NotificationToggle(
-              label: l10n.communityProfileNotifKolabUpdates,
-              value: preferences?.collaborationsEnabled ?? true,
-              isUpdating: isUpdating,
-              onChanged: (value) => ref
-                  .read(profileProvider.notifier)
-                  .updateNotificationPreference('collaborations_enabled', value),
-            ),
-            _NotificationToggle(
-              label: l10n.communityProfileNotifRewards,
-              value: preferences?.rewardsEnabled ?? true,
-              isUpdating: isUpdating,
-              onChanged: (value) => ref
-                  .read(profileProvider.notifier)
-                  .updateNotificationPreference('rewards_enabled', value),
-            ),
-            _NotificationToggle(
-              label: l10n.communityProfileNotifMarketing,
-              value: preferences?.marketingEnabled ?? false,
-              isUpdating: isUpdating,
-              onChanged: (value) => ref
-                  .read(profileProvider.notifier)
-                  .updateNotificationPreference('marketing_enabled', value),
-            ),
-          ],
-        ),
-      );
+      title: l10n.communityProfileNotificationsSection,
+      child: Column(
+        children: [
+          _NotificationToggle(
+            label: l10n.communityProfileNotifMessages,
+            value: preferences?.messagesEnabled ?? true,
+            isUpdating: isUpdating,
+            onChanged: (value) => ref
+                .read(profileProvider.notifier)
+                .updateNotificationPreference('messages_enabled', value),
+          ),
+          _NotificationToggle(
+            label: l10n.communityProfileNotifApplications,
+            value: preferences?.applicationsEnabled ?? true,
+            isUpdating: isUpdating,
+            onChanged: (value) => ref
+                .read(profileProvider.notifier)
+                .updateNotificationPreference('applications_enabled', value),
+          ),
+          _NotificationToggle(
+            label: l10n.communityProfileNotifKolabUpdates,
+            value: preferences?.collaborationsEnabled ?? true,
+            isUpdating: isUpdating,
+            onChanged: (value) => ref
+                .read(profileProvider.notifier)
+                .updateNotificationPreference('collaborations_enabled', value),
+          ),
+          _NotificationToggle(
+            label: l10n.communityProfileNotifRewards,
+            value: preferences?.rewardsEnabled ?? true,
+            isUpdating: isUpdating,
+            onChanged: (value) => ref
+                .read(profileProvider.notifier)
+                .updateNotificationPreference('rewards_enabled', value),
+          ),
+          _NotificationToggle(
+            label: l10n.communityProfileNotifMarketing,
+            value: preferences?.marketingEnabled ?? false,
+            isUpdating: isUpdating,
+            onChanged: (value) => ref
+                .read(profileProvider.notifier)
+                .updateNotificationPreference('marketing_enabled', value),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildAccountSection(String email, bool isUpdating, bool isDark) {
     final l10n = AppLocalizations.of(context);
     return _SectionCard(
-        title: l10n.communityProfileAccountSection,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Email
-            Row(
-              children: [
-                Icon(
-                  LucideIcons.mail,
-                  size: 20,
-                  color: isDark
-                      ? context.colors.textOnDark.withValues(alpha: 0.6)
-                      : context.colors.textTertiary,
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: Text(
-                    email,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: isDark
-                          ? context.colors.textOnDark
-                          : context.colors.onSurface,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: KolabingSpacing.sm),
-
-            // Language
-            _ContactInfoTile(
-              icon: LucideIcons.globe,
-              label: AppLocalizations.of(context).settingsLanguage,
-              onTap: () => context.push(KolabingRoutes.language),
-            ),
-
-            const SizedBox(height: KolabingSpacing.sm),
-
-            // Notification preferences
-            _ContactInfoTile(
-              icon: LucideIcons.bell,
-              label: AppLocalizations.of(context).notifSettingsTitle,
-              onTap: () => context.push(KolabingRoutes.notificationSettings),
-            ),
-
-            const SizedBox(height: KolabingSpacing.lg),
-
-            // Sign Out Button
-            GlassButton(
-              label: l10n.communityProfileSignOutButton,
-              onPressed: isUpdating ? null : _handleSignOut,
-              intent: GlassButtonIntent.destructive,
-              icon: LucideIcons.logOut,
-            ),
-
-            const SizedBox(height: KolabingSpacing.md),
-
-            // Delete Account
-            GestureDetector(
-              onTap: isUpdating ? null : _handleDeleteAccount,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+      title: l10n.communityProfileAccountSection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Email
+          Row(
+            children: [
+              Icon(
+                LucideIcons.mail,
+                size: 20,
+                color: isDark
+                    ? context.colors.textOnDark.withValues(alpha: 0.6)
+                    : context.colors.textTertiary,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
                 child: Text(
-                  l10n.communityProfileDeleteAccountLink,
-                  textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: isUpdating
-                        ? context.colors.textTertiary
-                        : context.colors.error,
-                    decoration: TextDecoration.underline,
-                    decorationColor: isUpdating
-                        ? context.colors.textTertiary
-                        : context.colors.error,
+                  email,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: isDark
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: KolabingSpacing.sm),
+
+          // Language
+          _ContactInfoTile(
+            icon: LucideIcons.globe,
+            label: AppLocalizations.of(context).settingsLanguage,
+            onTap: () => context.push(KolabingRoutes.language),
+          ),
+
+          const SizedBox(height: KolabingSpacing.sm),
+
+          // Notification preferences
+          _ContactInfoTile(
+            icon: LucideIcons.bell,
+            label: AppLocalizations.of(context).notifSettingsTitle,
+            onTap: () => context.push(KolabingRoutes.notificationSettings),
+          ),
+
+          const SizedBox(height: KolabingSpacing.lg),
+
+          // Sign Out Button
+          GlassButton(
+            label: l10n.communityProfileSignOutButton,
+            onPressed: isUpdating ? null : _handleSignOut,
+            intent: GlassButtonIntent.destructive,
+            icon: LucideIcons.logOut,
+          ),
+
+          const SizedBox(height: KolabingSpacing.md),
+
+          // Delete Account
+          GestureDetector(
+            onTap: isUpdating ? null : _handleDeleteAccount,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+              child: Text(
+                l10n.communityProfileDeleteAccountLink,
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: isUpdating
+                      ? context.colors.textTertiary
+                      : context.colors.error,
+                  decoration: TextDecoration.underline,
+                  decorationColor: isUpdating
+                      ? context.colors.textTertiary
+                      : context.colors.error,
                 ),
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -1114,10 +1115,7 @@ class _CommunityProfileScreenState
 // -----------------------------------------------------------------------------
 
 class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.title,
-    required this.child,
-  });
+  const _SectionCard({required this.title, required this.child});
 
   final String title;
   final Widget child;
@@ -1157,11 +1155,7 @@ class _SectionCard extends StatelessWidget {
 // -----------------------------------------------------------------------------
 
 class _ContactInfoTile extends StatelessWidget {
-  const _ContactInfoTile({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
+  const _ContactInfoTile({required this.icon, required this.label, this.onTap});
 
   final IconData icon;
   final String label;
@@ -1193,8 +1187,8 @@ class _ContactInfoTile extends StatelessWidget {
                   color: onTap != null
                       ? context.colors.info
                       : isDark
-                          ? context.colors.textOnDark
-                          : context.colors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               ),
             ),
@@ -1262,8 +1256,7 @@ class _NotificationToggle extends StatelessWidget {
                 value: value,
                 onChanged: isUpdating ? null : onChanged,
                 activeThumbColor: context.colors.primary,
-                activeTrackColor:
-                    context.colors.primary.withValues(alpha: 0.5),
+                activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
               ),
             ],
           ),
@@ -1274,47 +1267,49 @@ class _NotificationToggle extends StatelessWidget {
 }
 
 // -----------------------------------------------------------------------------
-// Verification Editor (status line + channel repeater + Save)
+// Manage Contact & links sheet (owner): Contact + Channels groups, each row a
+// type + value + public eye toggle, plus a verification status line + Save.
 // -----------------------------------------------------------------------------
 
-class _VerificationEditor extends StatefulWidget {
-  const _VerificationEditor({
+class _ManageContactSheet extends StatefulWidget {
+  const _ManageContactSheet({
     required this.isVerified,
     required this.verificationStatus,
+    required this.rejectionReason,
     required this.initialChannels,
-    required this.isSaving,
     required this.onSave,
   });
 
   final bool isVerified;
   final String? verificationStatus;
+  final String? rejectionReason;
   final List<VerificationChannel> initialChannels;
-  final bool isSaving;
   final Future<void> Function(List<VerificationChannel>) onSave;
 
   @override
-  State<_VerificationEditor> createState() => _VerificationEditorState();
+  State<_ManageContactSheet> createState() => _ManageContactSheetState();
 }
 
-class _VerificationEditorState extends State<_VerificationEditor> {
+class _ManageContactSheetState extends State<_ManageContactSheet> {
+  // Two partitions: contact (email/phone) and channels (the rest).
+  late List<VerificationChannel> _contact;
   late List<VerificationChannel> _channels;
+  bool _saving = false;
 
   @override
   void initState() {
     super.initState();
-    _channels = List<VerificationChannel>.from(widget.initialChannels);
+    _contact = widget.initialChannels
+        .where((c) => c.type.isContact)
+        .toList(growable: true);
+    _channels = widget.initialChannels
+        .where((c) => !c.type.isContact)
+        .toList(growable: true);
   }
 
-  @override
-  void didUpdateWidget(_VerificationEditor oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Re-seed from the server payload when it changes (e.g. after a save).
-    if (oldWidget.initialChannels != widget.initialChannels) {
-      _channels = List<VerificationChannel>.from(widget.initialChannels);
-    }
-  }
-
-  List<VerificationChannel> get _validChannels => _channels
+  /// Merged, validated, trimmed channels (min 1 channel required for
+  /// verification is enforced by the repeater floor on the channels group).
+  List<VerificationChannel> get _validChannels => [..._contact, ..._channels]
       .where((c) => isValidChannelValue(c.type, c.url))
       .map((c) => c.copyWith(url: c.url.trim()))
       .toList(growable: false);
@@ -1333,60 +1328,171 @@ class _VerificationEditorState extends State<_VerificationEditor> {
         color: context.colors.onSurfaceVariant,
       );
     }
+    if (status == 'rejected') {
+      return (
+        label: l10n.verificationStatusRejected,
+        color: context.colors.error,
+      );
+    }
     return (
       label: l10n.verificationStatusUnverified,
       color: context.colors.onSurfaceVariant,
     );
   }
 
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    await widget.onSave(_validChannels);
+    if (mounted) {
+      setState(() => _saving = false);
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final status = _status(l10n);
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Status line
-        Row(
-          children: [
-            if (widget.isVerified) ...[
-              const VerifiedTick(isVerified: true),
-              const SizedBox(width: KolabingSpacing.sm),
-            ],
-            Text(
-              status.label,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                color: status.color,
-                fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: KolabingSpacing.md,
+          right: KolabingSpacing.md,
+          top: KolabingSpacing.md,
+          bottom: KolabingSpacing.md + bottomInset,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: context.colors.darkBorder,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.xs),
-        Text(
-          l10n.verificationStepSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(
-            color: context.colors.onSurfaceVariant,
+              const SizedBox(height: KolabingSpacing.md),
+              Text(
+                l10n.contactAndLinksTitle,
+                style: KolabingTextStyles.titleMedium.copyWith(
+                  color: context.colors.onSurface,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+              Text(
+                l10n.verificationStepSubtitle,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+
+              // Status line
+              Row(
+                children: [
+                  if (widget.isVerified) ...[
+                    const VerifiedTick(isVerified: true),
+                    const SizedBox(width: KolabingSpacing.sm),
+                  ],
+                  Text(
+                    status.label,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: status.color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              if (widget.verificationStatus?.toLowerCase() == 'rejected' &&
+                  (widget.rejectionReason?.isNotEmpty ?? false)) ...[
+                const SizedBox(height: KolabingSpacing.xs),
+                Text(
+                  widget.rejectionReason!,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ],
+              const SizedBox(height: KolabingSpacing.lg),
+
+              // Contact group (email / phone)
+              Text(
+                l10n.contactAndLinksContactGroup,
+                style: KolabingTextStyles.labelLarge.copyWith(
+                  color: context.colors.textTertiary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.sm),
+              VerificationChannelRepeater(
+                channels: _contact,
+                showLabel: false,
+                showPublicToggle: true,
+                allowedTypes: const [
+                  VerificationChannelType.email,
+                  VerificationChannelType.phone,
+                ],
+                onChanged: (next) => setState(() => _contact = next),
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+
+              // Channels group (the rest)
+              Text(
+                l10n.contactAndLinksChannelsGroup,
+                style: KolabingTextStyles.labelLarge.copyWith(
+                  color: context.colors.textTertiary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.sm),
+              VerificationChannelRepeater(
+                channels: _channels,
+                showLabel: false,
+                showPublicToggle: true,
+                minChannels: 1,
+                allowedTypes: const [
+                  VerificationChannelType.instagram,
+                  VerificationChannelType.strava,
+                  VerificationChannelType.whatsapp,
+                  VerificationChannelType.telegram,
+                  VerificationChannelType.flaire,
+                  VerificationChannelType.skool,
+                  VerificationChannelType.tiktok,
+                  VerificationChannelType.website,
+                ],
+                onChanged: (next) => setState(() => _channels = next),
+              ),
+              const SizedBox(height: KolabingSpacing.lg),
+
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _saving ? null : _save,
+                  style: ElevatedButton.styleFrom(elevation: 0),
+                  child: _saving
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
+                        )
+                      : Text(l10n.commonSave),
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: KolabingSpacing.md),
-
-        VerificationChannelRepeater(
-          channels: _channels,
-          onChanged: (next) => setState(() => _channels = next),
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed:
-                widget.isSaving ? null : () => widget.onSave(_validChannels),
-            child: Text(l10n.commonSave),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

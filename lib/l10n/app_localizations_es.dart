@@ -6523,4 +6523,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get verificationChannelWebsite => 'Sitio web';
+
+  @override
+  String get verificationChannelEmail => 'Correo electrónico';
+
+  @override
+  String get verificationChannelPhone => 'Teléfono';
+
+  @override
+  String get verificationChannelEmailHint => 'nombre@ejemplo.com';
+
+  @override
+  String get verificationChannelPhoneHint => '+34 600 000 000';
+
+  @override
+  String get verificationStatusRejected => 'Verificación rechazada';
+
+  @override
+  String get verificationPublicToggleLabel => 'Mostrar en el perfil';
+
+  @override
+  String get contactAndLinksTitle => 'Contacto y enlaces';
+
+  @override
+  String get contactAndLinksManage => 'Gestionar';
+
+  @override
+  String get contactAndLinksEmptyOwner =>
+      'Aún no hay enlaces públicos. Toca Gestionar para añadir datos de contacto y canales, y elegir qué mostrar.';
+
+  @override
+  String get contactAndLinksContactGroup => 'Contacto';
+
+  @override
+  String get contactAndLinksChannelsGroup => 'Canales';
 }
