@@ -436,9 +436,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
             DecoratedBox(
               decoration: BoxDecoration(
-                color: context.colors.surfaceVariant,
+                color: context.colors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: SizedBox(
@@ -449,7 +450,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       ? LucideIcons.searchX
                       : LucideIcons.sparkles,
                   size: 36,
-                  color: context.colors.textTertiary,
+                  color: context.colors.primary,
                 ),
               ),
             ),

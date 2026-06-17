@@ -190,10 +190,19 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                LucideIcons.bellOff,
-                size: 48,
-                color: context.colors.textTertiary,
+              // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: context.colors.primary.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  LucideIcons.bellOff,
+                  size: 34,
+                  color: context.colors.primary,
+                ),
               ),
               const SizedBox(height: KolabingSpacing.md),
               Text(

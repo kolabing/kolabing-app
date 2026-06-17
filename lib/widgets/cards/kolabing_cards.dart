@@ -120,14 +120,16 @@ class EmptyStateCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
+            // Brand empty-state treatment: yellow glyph inside a soft-yellow
+            // tinted circle (matches the Requests/applications reference).
             Container(
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: context.colors.softYellow,
+                color: context.colors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 26, color: context.colors.onSurface),
+              child: Icon(icon, size: 26, color: context.colors.primary),
             ),
             const SizedBox(height: KolabingSpacing.md),
           ],

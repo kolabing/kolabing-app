@@ -417,11 +417,10 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
           DecoratedBox(
             decoration: BoxDecoration(
-              color: isDark
-                  ? context.colors.darkSurface
-                  : context.colors.surfaceVariant,
+              color: context.colors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -430,9 +429,7 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
               child: Icon(
                 LucideIcons.briefcase,
                 size: 36,
-                color: isDark
-                    ? context.colors.textOnDark.withValues(alpha: 0.5)
-                    : context.colors.textTertiary,
+                color: context.colors.primary,
               ),
             ),
           ),

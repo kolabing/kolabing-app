@@ -494,9 +494,10 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
           DecoratedBox(
             decoration: BoxDecoration(
-              color: context.colors.surfaceVariant,
+              color: context.colors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: SizedBox(
@@ -505,7 +506,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
               child: Icon(
                 LucideIcons.star,
                 size: 36,
-                color: context.colors.textTertiary,
+                color: context.colors.primary,
               ),
             ),
           ),

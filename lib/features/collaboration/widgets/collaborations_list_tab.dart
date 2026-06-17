@@ -224,17 +224,16 @@ class _Message extends StatelessWidget {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
         DecoratedBox(
           decoration: BoxDecoration(
-            color: isDark
-                ? context.colors.darkSurface
-                : context.colors.surfaceVariant,
+            color: context.colors.primary.withValues(alpha: 0.12),
             shape: BoxShape.circle,
           ),
           child: SizedBox(
             width: 80,
             height: 80,
-            child: Icon(icon, size: 36, color: context.colors.textTertiary),
+            child: Icon(icon, size: 36, color: context.colors.primary),
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),

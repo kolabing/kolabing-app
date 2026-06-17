@@ -328,10 +328,19 @@ class _FriendsEmpty extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            const Icon(
-              LucideIcons.users,
-              size: 40,
-              color: KolabingColors.textTertiary,
+            // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: KolabingColors.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                LucideIcons.users,
+                size: 30,
+                color: KolabingColors.primary,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(

@@ -299,21 +299,18 @@ class PastEventsSection extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
           Container(
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: isDark
-                  ? context.colors.darkBorder
-                  : context.colors.surfaceVariant,
+              color: context.colors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(
               LucideIcons.calendarX,
               size: 28,
-              color: isDark
-                  ? context.colors.textOnDark.withValues(alpha: 0.6)
-                  : context.colors.textTertiary,
+              color: context.colors.primary,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),

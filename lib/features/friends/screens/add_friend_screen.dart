@@ -177,10 +177,19 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            LucideIcons.searchX,
-            size: 40,
-            color: KolabingColors.textTertiary,
+          // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: KolabingColors.primary.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              LucideIcons.searchX,
+              size: 30,
+              color: KolabingColors.primary,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(

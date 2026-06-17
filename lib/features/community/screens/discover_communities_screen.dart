@@ -102,7 +102,7 @@ class _DiscoverCommunitiesScreenState
             // Empty list also covers the 404 self-gate (endpoint not deployed).
             return _DiscoverMessage(
               icon: LucideIcons.compass,
-              iconColor: KolabingColors.onSurface,
+              iconColor: KolabingColors.primary,
               title: l10n.discoverCommunitiesEmptyTitle,
               body: l10n.discoverCommunitiesEmptyBody,
             );
@@ -326,11 +326,13 @@ class _DiscoverMessage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Brand empty-state treatment: soft-yellow circle (the glyph
+              // colour is caller-provided so error states can stay red).
               Container(
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.18),
+                  color: KolabingColors.primary.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, size: 32, color: iconColor),

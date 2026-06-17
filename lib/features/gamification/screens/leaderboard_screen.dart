@@ -247,10 +247,19 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              LucideIcons.trophy,
-              size: 80,
-              color: context.colors.textTertiary.withValues(alpha: 0.5),
+            // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                color: context.colors.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                LucideIcons.trophy,
+                size: 44,
+                color: context.colors.primary,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(

@@ -90,15 +90,16 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
             Container(
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: context.colors.primary.withValues(alpha: 0.18),
+                color: context.colors.primary.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(LucideIcons.users,
-                  size: 32, color: context.colors.onSurface),
+                  size: 32, color: context.colors.primary),
             ),
             const SizedBox(height: KolabingSpacing.lg),
             Text(
