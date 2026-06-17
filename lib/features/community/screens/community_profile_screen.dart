@@ -19,8 +19,11 @@ import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../models/verification_channel.dart';
+import '../widgets/verification_channel_repeater.dart';
 import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
+import '../../../widgets/verified_tick.dart';
 
 /// Community profile screen
 class CommunityProfileScreen extends ConsumerStatefulWidget {
@@ -515,6 +518,11 @@ class _CommunityProfileScreenState
 
             const SizedBox(height: KolabingSpacing.md),
 
+            // Verification Section (channel repeater + status)
+            _buildVerificationSection(profile, state.isUpdating),
+
+            const SizedBox(height: KolabingSpacing.md),
+
             // Notification Preferences Section
             _buildNotificationPreferencesSection(
               state.notificationPrefs,
@@ -660,16 +668,28 @@ class _CommunityProfileScreenState
 
           const SizedBox(height: KolabingSpacing.md),
 
-          // Name
-          Text(
-            name,
-            style: KolabingTextStyles.titleLarge.copyWith(
-              color: isDark
-                  ? context.colors.textOnDark
-                  : context.colors.onSurface,
-              letterSpacing: 0.5,
-            ),
-            textAlign: TextAlign.center,
+          // Name (+ verified tick when verified)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  name,
+                  style: KolabingTextStyles.titleLarge.copyWith(
+                    color: isDark
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (profile.communityProfile?.isVerified ?? false) ...[
+                const SizedBox(width: KolabingSpacing.xs),
+                const VerifiedTick(isVerified: true, size: 18),
+              ],
+            ],
           ),
 
           const SizedBox(height: KolabingSpacing.xs),
@@ -921,6 +941,26 @@ class _CommunityProfileScreenState
               onTap: () => launchUrl(Uri.parse('https://tiktok.com/@$tiktok')),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildVerificationSection(UserModel profile, bool isUpdating) {
+    final l10n = AppLocalizations.of(context);
+    final cp = profile.communityProfile;
+    return _SectionCard(
+      title: l10n.verificationSectionTitle,
+      child: _VerificationEditor(
+        isVerified: cp?.isVerified ?? false,
+        verificationStatus: cp?.verificationStatus,
+        initialChannels: cp?.verificationChannels ?? const [],
+        isSaving: isUpdating,
+        onSave: (channels) async {
+          await ref.read(profileProvider.notifier).updateProfile({
+            'verification_channels':
+                channels.map((c) => c.toJson()).toList(),
+          });
+        },
       ),
     );
   }
@@ -1229,6 +1269,124 @@ class _NotificationToggle extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Verification Editor (status line + channel repeater + Save)
+// -----------------------------------------------------------------------------
+
+class _VerificationEditor extends StatefulWidget {
+  const _VerificationEditor({
+    required this.isVerified,
+    required this.verificationStatus,
+    required this.initialChannels,
+    required this.isSaving,
+    required this.onSave,
+  });
+
+  final bool isVerified;
+  final String? verificationStatus;
+  final List<VerificationChannel> initialChannels;
+  final bool isSaving;
+  final Future<void> Function(List<VerificationChannel>) onSave;
+
+  @override
+  State<_VerificationEditor> createState() => _VerificationEditorState();
+}
+
+class _VerificationEditorState extends State<_VerificationEditor> {
+  late List<VerificationChannel> _channels;
+
+  @override
+  void initState() {
+    super.initState();
+    _channels = List<VerificationChannel>.from(widget.initialChannels);
+  }
+
+  @override
+  void didUpdateWidget(_VerificationEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-seed from the server payload when it changes (e.g. after a save).
+    if (oldWidget.initialChannels != widget.initialChannels) {
+      _channels = List<VerificationChannel>.from(widget.initialChannels);
+    }
+  }
+
+  List<VerificationChannel> get _validChannels => _channels
+      .where((c) => isValidChannelValue(c.type, c.url))
+      .map((c) => c.copyWith(url: c.url.trim()))
+      .toList(growable: false);
+
+  ({String label, Color color}) _status(AppLocalizations l10n) {
+    if (widget.isVerified) {
+      return (
+        label: l10n.verificationStatusVerified,
+        color: KolabingColors.activeText,
+      );
+    }
+    final status = widget.verificationStatus?.toLowerCase();
+    if (status == 'pending' || status == 'in_review') {
+      return (
+        label: l10n.verificationStatusPending,
+        color: context.colors.onSurfaceVariant,
+      );
+    }
+    return (
+      label: l10n.verificationStatusUnverified,
+      color: context.colors.onSurfaceVariant,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final status = _status(l10n);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Status line
+        Row(
+          children: [
+            if (widget.isVerified) ...[
+              const VerifiedTick(isVerified: true),
+              const SizedBox(width: KolabingSpacing.sm),
+            ],
+            Text(
+              status.label,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: status.color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        Text(
+          l10n.verificationStepSubtitle,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        VerificationChannelRepeater(
+          channels: _channels,
+          onChanged: (next) => setState(() => _channels = next),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed:
+                widget.isSaving ? null : () => widget.onSave(_validChannels),
+            child: Text(l10n.commonSave),
+          ),
+        ),
+      ],
     );
   }
 }
