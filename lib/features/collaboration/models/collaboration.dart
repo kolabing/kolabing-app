@@ -87,6 +87,7 @@ class CollaborationPartner {
     this.category,
     this.city,
     required this.userType,
+    this.isVerified = false,
   });
 
   factory CollaborationPartner.fromJson(Map<String, dynamic> json) {
@@ -102,6 +103,8 @@ class CollaborationPartner {
           ? (json['city'] as Map<String, dynamic>)['name'] as String?
           : json['city'] as String?,
       userType: json['user_type'] as String? ?? 'community',
+      // Community verified tick (shared contract). Self-gated default false.
+      isVerified: json['is_verified'] as bool? ?? false,
     );
   }
 
@@ -111,6 +114,9 @@ class CollaborationPartner {
   final String? category;
   final String? city;
   final String userType;
+
+  /// Whether this partner is a verified community (drives [VerifiedTick]).
+  final bool isVerified;
 
   bool get isBusiness => userType == 'business';
   bool get isCommunity => userType == 'community';

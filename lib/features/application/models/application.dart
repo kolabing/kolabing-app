@@ -54,12 +54,16 @@ class SenderProfile {
     required this.name,
     this.profilePhoto,
     this.userType,
+    this.isVerified = false,
   });
 
   final String id;
   final String name;
   final String? profilePhoto;
   final String? userType;
+
+  /// Whether the sender is a verified community (drives [VerifiedTick]).
+  final bool isVerified;
 
   String get initial => name.isNotEmpty ? name[0].toUpperCase() : '?';
 
@@ -73,6 +77,7 @@ class SenderProfile {
       profilePhoto:
           (json['avatar_url'] ?? json['profile_photo'])?.toString(),
       userType: json['user_type']?.toString(),
+      isVerified: json['is_verified'] as bool? ?? false,
     );
   }
 }
@@ -180,6 +185,7 @@ class ApplicantProfile {
     this.avatarUrl,
     this.city,
     this.category,
+    this.isVerified = false,
   });
 
   final String id;
@@ -187,6 +193,9 @@ class ApplicantProfile {
   final String? avatarUrl;
   final String? city;
   final String? category;
+
+  /// Whether the applicant community is verified (drives [VerifiedTick]).
+  final bool isVerified;
 
   String get initial =>
       displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
@@ -216,6 +225,7 @@ class ApplicantProfile {
       avatarUrl: json['avatar_url']?.toString(),
       city: city,
       category: category,
+      isVerified: json['is_verified'] as bool? ?? false,
     );
   }
 }

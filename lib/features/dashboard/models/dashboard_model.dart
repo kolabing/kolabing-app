@@ -153,11 +153,19 @@ class UpcomingOpportunityInfo {
 /// `GET /me/dashboard` never throws while parsing this sub-object.
 @immutable
 class UpcomingPartnerInfo {
-  const UpcomingPartnerInfo({this.id, this.name, this.userType});
+  const UpcomingPartnerInfo({
+    this.id,
+    this.name,
+    this.userType,
+    this.isVerified = false,
+  });
 
   final String? id;
   final String? name;
   final String? userType;
+
+  /// Whether the partner community is verified (drives [VerifiedTick]).
+  final bool isVerified;
 
   /// Get the initial letter for avatar display
   String get initial =>
@@ -168,6 +176,7 @@ class UpcomingPartnerInfo {
       id: json['id']?.toString(),
       name: json['name'] as String?,
       userType: json['user_type'] as String?,
+      isVerified: json['is_verified'] as bool? ?? false,
     );
   }
 }

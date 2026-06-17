@@ -1,4 +1,5 @@
 import '../../../utils/remote_media_url.dart';
+import 'verification_channel.dart';
 
 /// The kind of community a leader runs. Community-agnostic by design — the
 /// tier system means Kolabing ships the mechanism and the leader supplies the
@@ -102,6 +103,9 @@ class Community {
     this.isMember,
     this.myJoinRequestStatus,
     this.inviteUrl,
+    this.isVerified = false,
+    this.verificationStatus,
+    this.verificationChannels = const [],
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
@@ -137,6 +141,12 @@ class Community {
       // in parallel, so null on older payloads — callers fall back to a
       // slug-based link.
       inviteUrl: (json['invite_url'] ?? json['join_url']) as String?,
+      // Community verification (shared contract). Self-gated: defaults keep the
+      // tick hidden + channels empty when the backend hasn't deployed yet.
+      isVerified: json['is_verified'] as bool? ?? false,
+      verificationStatus: json['verification_status']?.toString(),
+      verificationChannels:
+          VerificationChannel.listFromJson(json['verification_channels']),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -186,6 +196,19 @@ class Community {
   /// to a slug-based link.
   final String? inviteUrl;
 
+  /// Whether this community has earned the verified tick (shared contract
+  /// `is_verified`). Drives [VerifiedTick]. Defaults false (unverified).
+  final bool isVerified;
+
+  /// Free-form review state (`verification_status`), e.g. `pending`,
+  /// `verified`, `rejected`. Display/diagnostic only — the tick is driven by
+  /// [isVerified].
+  final String? verificationStatus;
+
+  /// The owner-only proof channels ({type,url}) backing the verification
+  /// request. Empty for non-owner viewers (the backend omits it).
+  final List<VerificationChannel> verificationChannels;
+
   /// Convenience: a pending join request is outstanding for the viewer.
   bool get hasPendingJoinRequest => myJoinRequestStatus == 'pending';
 
@@ -214,6 +237,12 @@ class Community {
         if (myJoinRequestStatus != null)
           'my_join_request_status': myJoinRequestStatus,
         if (inviteUrl != null) 'invite_url': inviteUrl,
+        'is_verified': isVerified,
+        if (verificationStatus != null)
+          'verification_status': verificationStatus,
+        if (verificationChannels.isNotEmpty)
+          'verification_channels':
+              verificationChannels.map((c) => c.toJson()).toList(),
         'created_at': createdAt.toIso8601String(),
         'updated_at': updatedAt.toIso8601String(),
       };
@@ -237,6 +266,9 @@ class Community {
     bool? isMember,
     String? myJoinRequestStatus,
     String? inviteUrl,
+    bool? isVerified,
+    String? verificationStatus,
+    List<VerificationChannel>? verificationChannels,
   }) =>
       Community(
         id: id ?? this.id,
@@ -257,5 +289,9 @@ class Community {
         isMember: isMember ?? this.isMember,
         myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
         inviteUrl: inviteUrl ?? this.inviteUrl,
+        isVerified: isVerified ?? this.isVerified,
+        verificationStatus: verificationStatus ?? this.verificationStatus,
+        verificationChannels:
+            verificationChannels ?? this.verificationChannels,
       );
 }

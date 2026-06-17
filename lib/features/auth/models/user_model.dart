@@ -1,5 +1,6 @@
 import '../../../utils/profile_type_formatter.dart';
 import '../../../utils/remote_media_url.dart';
+import '../../community/models/verification_channel.dart';
 
 /// User type enumeration
 enum UserType {
@@ -221,6 +222,9 @@ class CommunityProfile {
     this.website,
     this.profilePhoto,
     this.communitySize,
+    this.isVerified = false,
+    this.verificationStatus,
+    this.verificationChannels = const [],
   });
 
   factory CommunityProfile.fromJson(Map<String, dynamic> json) =>
@@ -239,6 +243,10 @@ class CommunityProfile {
         communitySize: json['community_size'] is int
             ? json['community_size'] as int
             : int.tryParse('${json['community_size'] ?? ''}'),
+        isVerified: json['is_verified'] as bool? ?? false,
+        verificationStatus: json['verification_status']?.toString(),
+        verificationChannels:
+            VerificationChannel.listFromJson(json['verification_channels']),
       );
 
   final String id;
@@ -254,6 +262,15 @@ class CommunityProfile {
   /// Approximate member count (backend column `community_profiles.community_size`).
   final int? communitySize;
 
+  /// Whether the community has earned the verified tick (`is_verified`).
+  final bool isVerified;
+
+  /// Verification review state (`verification_status`).
+  final String? verificationStatus;
+
+  /// Owner-only verification proof channels ({type,url}).
+  final List<VerificationChannel> verificationChannels;
+
   String get communityTypeLabel =>
       formatProfileTypeLabel(communityType ?? 'Community');
 
@@ -268,6 +285,11 @@ class CommunityProfile {
     if (website != null) 'website': website,
     if (profilePhoto != null) 'profile_photo': profilePhoto,
     if (communitySize != null) 'community_size': communitySize,
+    'is_verified': isVerified,
+    if (verificationStatus != null) 'verification_status': verificationStatus,
+    if (verificationChannels.isNotEmpty)
+      'verification_channels':
+          verificationChannels.map((c) => c.toJson()).toList(),
   };
 }
 
