@@ -254,12 +254,21 @@ class _BusinessDashboardScreenState
     padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
     child: Column(
       children: [
-        UiIcon(
-          icon: UiIconSlug.calendar,
-          size: 40,
-          color: isDark
-              ? context.colors.textOnDark.withValues(alpha: 0.5)
-              : context.colors.textTertiary,
+        // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: context.colors.primary.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: UiIcon(
+              icon: UiIconSlug.calendar,
+              size: 30,
+              color: context.colors.primary,
+            ),
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(

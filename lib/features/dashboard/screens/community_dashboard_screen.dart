@@ -223,25 +223,16 @@ class _CommunityDashboardScreenState
   // Quick Actions
   // ---------------------------------------------------------------------------
 
-  Widget _buildQuickActions(bool isDark) => Row(
-    children: [
-      Expanded(
-        child: GlassButton(
-          label: AppLocalizations.of(context).dashboardFindAKolab,
-          onPressed: () => widget.onSwitchTab?.call(1),
-          intent: GlassButtonIntent.primary,
-          icon: LucideIcons.search,
-        ),
-      ),
-      const SizedBox(width: KolabingSpacing.sm),
-      Expanded(
-        child: GlassButton(
-          label: AppLocalizations.of(context).dashboardMyApplications,
-          onPressed: () => widget.onSwitchTab?.call(3),
-          intent: GlassButtonIntent.neutral,
-        ),
-      ),
-    ],
+  // Single full-width primary action. "My Applications" was removed (it
+  // truncated alongside this button and is reachable via My Kolabs → Requests).
+  Widget _buildQuickActions(bool isDark) => SizedBox(
+    width: double.infinity,
+    child: GlassButton(
+      label: AppLocalizations.of(context).dashboardFindAKolab,
+      onPressed: () => widget.onSwitchTab?.call(1),
+      intent: GlassButtonIntent.primary,
+      icon: LucideIcons.search,
+    ),
   );
 
   // ---------------------------------------------------------------------------
@@ -294,12 +285,21 @@ class _CommunityDashboardScreenState
       ),
       child: Column(
         children: [
-          UiIcon(
-            icon: UiIconSlug.calendar,
-            size: 36,
-            color: isDark
-                ? context.colors.textOnDark.withValues(alpha: 0.5)
-                : context.colors.textTertiary,
+          // Brand empty-state treatment: yellow glyph in a soft-yellow circle.
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: context.colors.primary.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: UiIcon(
+                icon: UiIconSlug.calendar,
+                size: 30,
+                color: context.colors.primary,
+              ),
+            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
