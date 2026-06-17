@@ -62,16 +62,22 @@ class KolabingBottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: SizedBox(
-          height: 68,
-          child: Row(
-            children: List.generate(
-              items.length,
-              (index) => _NavBarItem(
-                item: items[index],
-                isSelected: currentIndex == index,
-                onTap: () => onTap(index),
-                isDark: isDark,
+        // Clamp accessibility text scaling so large system fonts can't blow the
+        // labels past their slot (the per-label FittedBox handles the rest, incl.
+        // long labels like "COMMUNITY" on small iPhones).
+        child: MediaQuery.withClampedTextScaling(
+          maxScaleFactor: 1.2,
+          child: SizedBox(
+            height: 68,
+            child: Row(
+              children: List.generate(
+                items.length,
+                (index) => _NavBarItem(
+                  item: items[index],
+                  isSelected: currentIndex == index,
+                  onTap: () => onTap(index),
+                  isDark: isDark,
+                ),
               ),
             ),
           ),
@@ -140,17 +146,25 @@ class _NavBarItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                item.label.toUpperCase(),
-                style: KolabingTextStyles.labelSmall.copyWith(
-                  fontSize: 9,
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: labelColor,
-                  letterSpacing: 0.4,
+              // FittedBox scales the label down to fit its (equal) slot instead
+              // of truncating/overlapping — keeps every tab label fully visible
+              // and on a single line across screen sizes.
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    item.label.toUpperCase(),
+                    style: KolabingTextStyles.labelSmall.copyWith(
+                      fontSize: 9,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: labelColor,
+                      letterSpacing: 0.4,
+                    ),
+                    maxLines: 1,
+                  ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

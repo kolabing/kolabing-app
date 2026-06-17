@@ -87,19 +87,26 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
           children: [
             KolabingMainAppBar(
               title: l10n.myKolabsHubTitle,
-              bottom: TabBar(
-                controller: _tabController,
-                labelStyle: KolabingTextStyles.labelLarge,
-                labelColor: context.colors.charcoal,
-                unselectedLabelColor: context.colors.navInactive,
-                indicatorColor: context.colors.charcoal,
-                indicatorWeight: 3,
-                tabs: [
-                  Tab(text: l10n.myKolabsHubTabOffers),
-                  Tab(text: l10n.myKolabsHubTabRequests),
-                  Tab(text: l10n.myKolabsHubTabActive),
-                  Tab(text: l10n.myKolabsHubTabFinished),
-                ],
+              // Clamp text scaling + scale each label down so all four sub-tabs
+              // stay fully visible on one row (small screens / large fonts) —
+              // never truncate ("REQUES…") or wrap to two rows.
+              bottom: MediaQuery.withClampedTextScaling(
+                maxScaleFactor: 1.1,
+                child: TabBar(
+                  controller: _tabController,
+                  labelStyle: KolabingTextStyles.labelLarge,
+                  labelColor: context.colors.charcoal,
+                  unselectedLabelColor: context.colors.navInactive,
+                  indicatorColor: context.colors.charcoal,
+                  indicatorWeight: 3,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                  tabs: [
+                    _HubTab(l10n.myKolabsHubTabOffers),
+                    _HubTab(l10n.myKolabsHubTabRequests),
+                    _HubTab(l10n.myKolabsHubTabActive),
+                    _HubTab(l10n.myKolabsHubTabFinished),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -131,6 +138,24 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               heroTag: 'my_kolabs_hub_fab',
             )
           : null,
+    );
+  }
+}
+
+/// A hub sub-tab whose label scales down to fit its slot (BoxFit.scaleDown)
+/// rather than truncating, so all four tabs stay fully visible on one row.
+class _HubTab extends StatelessWidget {
+  const _HubTab(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(label, maxLines: 1),
+      ),
     );
   }
 }

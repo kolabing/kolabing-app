@@ -51,6 +51,9 @@ class KolabingMainAppBar extends StatelessWidget {
                       color: context.colors.titleInk,
                       letterSpacing: 1.0,
                     ),
+                    // Keep the title on one line (no 2-row wrap under large fonts).
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const NotificationBell(),
