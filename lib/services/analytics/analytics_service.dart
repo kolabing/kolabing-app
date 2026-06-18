@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../config/constants/analytics.dart';
+import '../../config/environment.dart';
 import '../../features/auth/models/user_model.dart';
 
 /// Canonical, hand-picked analytics event names.
@@ -78,6 +79,9 @@ class AnalyticsService {
         ..surveys = false
         ..debug = kDebugMode;
       await _posthog.setup(config);
+      // Tag every event with the build environment so dev traffic is
+      // filterable from prod in one PostHog project.
+      await _posthog.register('environment', Environment.current.name);
       _enabled = true;
     } on Object catch (e) {
       debugPrint('[Analytics] init failed: $e');
