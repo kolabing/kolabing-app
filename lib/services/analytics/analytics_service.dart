@@ -114,10 +114,7 @@ class AnalyticsService {
   }
 
   /// Capture a curated event. [properties] values must be non-null.
-  Future<void> capture(
-    String event, {
-    Map<String, Object>? properties,
-  }) async {
+  Future<void> capture(String event, {Map<String, Object>? properties}) async {
     if (!_enabled) return;
     try {
       await _posthog.capture(eventName: event, properties: properties);

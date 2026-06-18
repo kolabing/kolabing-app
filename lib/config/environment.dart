@@ -16,26 +16,30 @@ class Environment {
   static const String _prodBase = 'https://kolabing.com';
 
   /// Resolved once from the build flavor. Unknown / absent flavor => dev.
-  static const AppEnvironment current =
-      appFlavor == 'prod' ? AppEnvironment.prod : AppEnvironment.dev;
+  static const AppEnvironment current = appFlavor == 'prod'
+      ? AppEnvironment.prod
+      : AppEnvironment.dev;
 
   static const bool isProd = current == AppEnvironment.prod;
 
   /// REST base URL (`…/api/v1`).
-  static const String apiBaseUrl =
-      isProd ? '$_prodBase/api/v1' : '$_devBase/api/v1';
+  static const String apiBaseUrl = isProd
+      ? '$_prodBase/api/v1'
+      : '$_devBase/api/v1';
 
   /// Laravel broadcasting auth route (app-root, not under /api/v1).
-  static const String broadcastAuth =
-      isProd ? '$_prodBase/broadcasting/auth' : '$_devBase/broadcasting/auth';
+  static const String broadcastAuth = isProd
+      ? '$_prodBase/broadcasting/auth'
+      : '$_devBase/broadcasting/auth';
 
   /// Reverb WebSocket host. Kept on the prod host until a dev Reverb daemon
   /// exists; realtime is gated off on an empty app key regardless.
   static const String reverbHost = 'ws.kolabing.com';
 
   /// Host for user-facing share / QR deep links (no scheme).
-  static const String shareHost =
-      isProd ? 'kolabing.com' : 'kolabing-v2-development-uhzrzd.laravel.cloud';
+  static const String shareHost = isProd
+      ? 'kolabing.com'
+      : 'kolabing-v2-development-uhzrzd.laravel.cloud';
 
   /// Sentry `environment` tag.
   static const String sentryEnvironment = isProd ? 'production' : 'development';

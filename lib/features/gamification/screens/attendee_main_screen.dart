@@ -26,10 +26,7 @@ import 'attendee_home_screen.dart';
 /// scan to check them in / connect. Profile moved off the nav (NF-12) — reached
 /// via the app-bar avatar.
 class AttendeeMainScreen extends ConsumerStatefulWidget {
-  const AttendeeMainScreen({
-    super.key,
-    this.initialTab = 0,
-  });
+  const AttendeeMainScreen({super.key, this.initialTab = 0});
 
   final int initialTab;
 
@@ -96,8 +93,9 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
     ];
 
     return Scaffold(
-      backgroundColor:
-          isDark ? context.colors.surface : context.colors.background,
+      backgroundColor: isDark
+          ? context.colors.surface
+          : context.colors.background,
       appBar: KolabingAppBar(
         // QR action shows the attendee's OWN profile QR (#4); the avatar still
         // opens the profile.
@@ -141,8 +139,9 @@ class _MyProfileQrSheet extends ConsumerWidget {
     final user = ref.watch(authProvider).user;
 
     // Prefer the universal profile id; fall back to the handle. Empty → no QR.
-    final payload =
-        (user?.id.isNotEmpty ?? false) ? user!.id : (user?.handle ?? '');
+    final payload = (user?.id.isNotEmpty ?? false)
+        ? user!.id
+        : (user?.handle ?? '');
     final qrData = payload.isNotEmpty
         ? 'https://${Environment.shareHost}/u/$payload'
         : '';
@@ -205,8 +204,7 @@ class _MyProfileQrSheet extends ConsumerWidget {
                   errorCorrectionLevel: QrErrorCorrectLevel.M,
                 ),
               ),
-            if (user?.displayName != null &&
-                user!.displayName.isNotEmpty) ...[
+            if (user?.displayName != null && user!.displayName.isNotEmpty) ...[
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 user.displayName,

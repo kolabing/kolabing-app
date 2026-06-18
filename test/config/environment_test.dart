@@ -16,16 +16,22 @@ void main() {
       expect(Environment.resolveFlavor('staging'), AppEnvironment.dev);
     });
     test('prod uses kolabing.com REST base', () {
-      expect(Environment.apiBaseUrlFor(AppEnvironment.prod),
-          'https://kolabing.com/api/v1');
+      expect(
+        Environment.apiBaseUrlFor(AppEnvironment.prod),
+        'https://kolabing.com/api/v1',
+      );
     });
     test('dev uses the laravel.cloud REST base', () {
-      expect(Environment.apiBaseUrlFor(AppEnvironment.dev),
-          'https://kolabing-v2-development-uhzrzd.laravel.cloud/api/v1');
+      expect(
+        Environment.apiBaseUrlFor(AppEnvironment.dev),
+        'https://kolabing-v2-development-uhzrzd.laravel.cloud/api/v1',
+      );
     });
     test('const apiBaseUrl stays in sync with apiBaseUrlFor(current)', () {
-      expect(Environment.apiBaseUrl,
-          Environment.apiBaseUrlFor(Environment.current));
+      expect(
+        Environment.apiBaseUrl,
+        Environment.apiBaseUrlFor(Environment.current),
+      );
     });
   });
 }
