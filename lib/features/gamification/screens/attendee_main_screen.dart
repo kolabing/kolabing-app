@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/environment.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -143,7 +144,7 @@ class _MyProfileQrSheet extends ConsumerWidget {
     final payload =
         (user?.id.isNotEmpty ?? false) ? user!.id : (user?.handle ?? '');
     final qrData = payload.isNotEmpty
-        ? 'https://kolabing.com/u/$payload'
+        ? 'https://${Environment.shareHost}/u/$payload'
         : '';
 
     return SafeArea(
