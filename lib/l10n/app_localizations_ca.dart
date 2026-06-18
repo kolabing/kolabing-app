@@ -2856,6 +2856,19 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String pastEventsImportedMediaTrimmed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'S\'han importat $count esdeveniments del perfil. Cada esdeveniment anterior admet fins a 3 fotos i 1 vídeo; el contingut sobrant s\'ha retallat.',
+      one:
+          'S\'ha importat $count esdeveniment del perfil. Cada esdeveniment anterior admet fins a 3 fotos i 1 vídeo; el contingut sobrant s\'ha retallat.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String pastEventsEventNumber(int number) {
     return 'Esdeveniment $number';
   }

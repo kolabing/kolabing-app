@@ -5140,6 +5140,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{Imported {count} profile event.} other{Imported {count} profile events.}}'**
   String pastEventsImported(num count);
 
+  /// Snackbar when imported events had media trimmed to the per-event limits
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Imported {count} profile event. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.} other{Imported {count} profile events. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.}}'**
+  String pastEventsImportedMediaTrimmed(num count);
+
   /// Header for each past event card
   ///
   /// In en, this message translates to:

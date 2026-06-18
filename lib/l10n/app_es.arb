@@ -840,6 +840,7 @@
   "pastEventsAddPastEvent": "Añadir un evento anterior",
   "pastEventsAllAlreadyAdded": "Ya se han añadido todos los eventos del perfil.",
   "pastEventsImported": "{count, plural, one{Se importó {count} evento del perfil.} other{Se importaron {count} eventos del perfil.}}",
+  "pastEventsImportedMediaTrimmed": "{count, plural, one{Se importó {count} evento del perfil. Cada evento anterior admite hasta 3 fotos y 1 vídeo; el contenido sobrante se ha recortado.} other{Se importaron {count} eventos del perfil. Cada evento anterior admite hasta 3 fotos y 1 vídeo; el contenido sobrante se ha recortado.}}",
   "pastEventsEventNumber": "Evento {number}",
   "pastEventsEventNameLabel": "Nombre del evento",
   "pastEventsEventNameHint": "p. ej. Encuentro de bienestar de verano",

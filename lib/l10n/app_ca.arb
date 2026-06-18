@@ -840,6 +840,7 @@
   "pastEventsAddPastEvent": "Afegeix un esdeveniment anterior",
   "pastEventsAllAlreadyAdded": "Ja s'han afegit tots els esdeveniments del perfil.",
   "pastEventsImported": "{count, plural, one{S'ha importat {count} esdeveniment del perfil.} other{S'han importat {count} esdeveniments del perfil.}}",
+  "pastEventsImportedMediaTrimmed": "{count, plural, one{S'ha importat {count} esdeveniment del perfil. Cada esdeveniment anterior admet fins a 3 fotos i 1 vídeo; el contingut sobrant s'ha retallat.} other{S'han importat {count} esdeveniments del perfil. Cada esdeveniment anterior admet fins a 3 fotos i 1 vídeo; el contingut sobrant s'ha retallat.}}",
   "pastEventsEventNumber": "Esdeveniment {number}",
   "pastEventsEventNameLabel": "Nom de l'esdeveniment",
   "pastEventsEventNameHint": "p. ex. Trobada de benestar d'estiu",
