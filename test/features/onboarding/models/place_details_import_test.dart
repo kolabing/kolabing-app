@@ -1,8 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:kolabing_app/config/constants/api.dart';
 import 'package:kolabing_app/features/onboarding/models/place_details_import.dart';
 
 void main() {
+  // The normalizer absolutizes relative preview URLs against the API base
+  // (`Uri.parse('${ApiConfig.baseUrl}/').resolve(raw)`), so derive the expected
+  // URL from the SAME source the production code uses rather than a literal host.
+  const relativePreview =
+      '/api/v1/places/photo?name=places%2Fgoogle-place-id%2Fphotos%2Fphoto-1';
+  final expectedPreview = Uri.parse(
+    '${ApiConfig.baseUrl}/',
+  ).resolve(relativePreview).toString();
+
   test('normalizes relative preview urls for imported Google photos', () {
     final payload = <String, dynamic>{
       'data': <String, dynamic>{
@@ -16,8 +26,7 @@ void main() {
           'photos': <Map<String, dynamic>>[
             <String, dynamic>{
               'resource_name': 'places/google-place-id/photos/photo-1',
-              'preview_url':
-                  '/api/v1/places/photo?name=places%2Fgoogle-place-id%2Fphotos%2Fphoto-1',
+              'preview_url': relativePreview,
             },
           ],
         },
@@ -26,10 +35,7 @@ void main() {
 
     final result = PlaceDetailsImport.fromJson(payload);
 
-    expect(
-      result.primaryVenue.photos.single.previewUrl,
-      'https://kolabing.com/api/v1/places/photo?name=places%2Fgoogle-place-id%2Fphotos%2Fphoto-1',
-    );
+    expect(result.primaryVenue.photos.single.previewUrl, expectedPreview);
   });
 
   test('keeps absolute preview urls unchanged for imported Google photos', () {

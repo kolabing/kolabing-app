@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kolabing_app/config/environment.dart';
 import 'package:kolabing_app/features/opportunity/utils/opportunity_share_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 void main() {
+  // Host comes from config (flavor-dependent), not a hardcoded literal.
+  const shareHost = Environment.shareHost;
+
   test('launchOpportunityShare shares the canonical message', () async {
     var sharedMessage = '';
     Rect? sharedOrigin;
@@ -35,7 +39,7 @@ void main() {
     expect(
       sharedMessage,
       'Check out "Sunset Rooftop Collab" on Kolabing: '
-      'https://kolabing.com/c/opp-42',
+      'https://$shareHost/c/opp-42',
     );
     expect(sharedOrigin, shareOrigin);
     expect(copiedText, isEmpty);
@@ -62,7 +66,7 @@ void main() {
       },
     );
 
-    expect(copiedText, 'https://kolabing.com/c/opp-42');
+    expect(copiedText, 'https://$shareHost/c/opp-42');
     expect(fallbackMessage, 'Sharing is unavailable. Opportunity link copied.');
   });
 
@@ -87,7 +91,7 @@ void main() {
       },
     );
 
-    expect(copiedText, 'https://kolabing.com/c/opp-42');
+    expect(copiedText, 'https://$shareHost/c/opp-42');
     expect(
       fallbackMessage,
       'Could not open share sheet. Opportunity link copied.',
