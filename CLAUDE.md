@@ -23,7 +23,7 @@ No code is written until a tracked ticket and a dedicated branch exist. For **ev
 piece of work (feature, fix, refactor, chore), do these IN ORDER before touching code:
 
 1. **Open a GitHub Projects ticket FIRST.** Create a GitHub issue and add it to the
-   **Kolabing Engineering** project board (`gh project item-add 3 --owner kolabing --url <issue-url>`).
+   **Kolabing Engineering** project board (`gh project item-add 4 --owner kolabing --url <issue-url>`).
    Use the repo `kolabing/kolabing-app`.
 2. **Write the task description in the ticket** — goal, current state, the concrete
    work items (checklist), and acceptance criteria. A ticket with an empty body is not
