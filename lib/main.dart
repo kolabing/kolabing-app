@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -5,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'config/constants/sentry.dart';
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
 import 'features/settings/providers/theme_provider.dart';
@@ -18,10 +22,32 @@ import 'services/global_network_banner_service.dart';
 import 'services/notification_service.dart';
 import 'services/one_signal_service.dart';
 
-/// Application entry point
-void main() async {
+/// Application entry point.
+///
+/// When a Sentry DSN is configured, the whole app runs inside
+/// `SentryFlutter.init` so uncaught errors are captured; otherwise it boots
+/// directly (Sentry is a no-op).
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  if (SentryConfig.isEnabled) {
+    await SentryFlutter.init(_configureSentry, appRunner: _bootstrapAndRunApp);
+  } else {
+    await _bootstrapAndRunApp();
+  }
+}
+
+void _configureSentry(SentryFlutterOptions options) {
+  options
+    ..dsn = SentryConfig.dsn
+    ..environment = SentryConfig.environment
+    ..tracesSampleRate = SentryConfig.tracesSampleRate
+    ..debug = kDebugMode
+    // We never attach default PII; user context is added explicitly elsewhere.
+    ..sendDefaultPii = false;
+}
+
+Future<void> _bootstrapAndRunApp() async {
   // Firebase initialization
   await Firebase.initializeApp();
 
@@ -29,22 +55,7 @@ void main() async {
   // as soon as the app launches.
   await OneSignalService.instance.initialize();
 
-  // Crashlytics: catch all Flutter framework errors
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
-  // Crashlytics: catch all async/platform errors outside Flutter framework
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-
-  // Replace Flutter's default ErrorWidget — the blank grey box that filled the
-  // dashboard whenever a child widget threw — with a graceful, neutral fallback,
-  // and record the failure to Crashlytics so the underlying throw is captured.
-  ErrorWidget.builder = (FlutterErrorDetails details) {
-    FirebaseCrashlytics.instance.recordFlutterError(details);
-    return const _AppErrorFallback();
-  };
+  _configureErrorReporting();
 
   // Initialize PostHog product analytics (curated events only — no autocapture
   // or session replay). Fail-safe: an init fault never blocks app launch.
@@ -64,6 +75,41 @@ void main() async {
 
   // Run the app with Riverpod
   runApp(const ProviderScope(child: KolabingApp()));
+}
+
+/// Wires Flutter/platform errors to Crashlytics and (when enabled) Sentry.
+void _configureErrorReporting() {
+  // Catch all Flutter framework errors.
+  FlutterError.onError = (details) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+    if (SentryConfig.isEnabled) {
+      unawaited(
+        Sentry.captureException(details.exception, stackTrace: details.stack),
+      );
+    }
+  };
+
+  // Catch async/platform errors outside the Flutter framework.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    if (SentryConfig.isEnabled) {
+      unawaited(Sentry.captureException(error, stackTrace: stack));
+    }
+    return true;
+  };
+
+  // Replace Flutter's default ErrorWidget — the blank grey box that filled the
+  // dashboard whenever a child widget threw — with a graceful, neutral fallback,
+  // and record the failure so the underlying throw is captured.
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    FirebaseCrashlytics.instance.recordFlutterError(details);
+    if (SentryConfig.isEnabled) {
+      unawaited(
+        Sentry.captureException(details.exception, stackTrace: details.stack),
+      );
+    }
+    return const _AppErrorFallback();
+  };
 }
 
 /// Neutral fallback shown in place of a widget that threw during build, instead
