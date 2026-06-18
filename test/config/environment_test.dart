@@ -23,5 +23,9 @@ void main() {
       expect(Environment.apiBaseUrlFor(AppEnvironment.dev),
           'https://kolabing-v2-development-uhzrzd.laravel.cloud/api/v1');
     });
+    test('const apiBaseUrl stays in sync with apiBaseUrlFor(current)', () {
+      expect(Environment.apiBaseUrl,
+          Environment.apiBaseUrlFor(Environment.current));
+    });
   });
 }
