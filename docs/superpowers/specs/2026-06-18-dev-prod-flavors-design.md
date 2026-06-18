@@ -5,6 +5,29 @@
 - **Date:** 2026-06-18
 - **Status:** Design — pending user review
 
+> ## ⚠️ Scope update (2026-06-18, during implementation)
+>
+> After the Dart layer was built, the scope was narrowed based on two decisions:
+>
+> 1. **Android is dropped** — the app is not shipping on Android, so the Android
+>    product-flavor work (original Task 7) is removed entirely.
+> 2. **iOS uses "one app, two builds" (Approach A)** — same bundle id
+>    (`com.kolabing.kolabingApp`), same Firebase, same App Store Connect app. The
+>    two builds differ only by backend, distinguished on TestFlight by tester
+>    group. **No new bundle id, no new Firebase app, no new ASC app.**
+>
+> Because no Xcode schemes/bundle-ids change, the original `--flavor` mechanism
+> (which requires fragile Xcode build-config surgery) is replaced by a single
+> **`--dart-define=APP_ENV=dev|prod`**. This flips REST URL + realtime/broadcast
+> host + share host + Sentry environment + PostHog tag together. With no define,
+> the safe default is **prod in release, dev in debug/profile** — so a bare
+> release build can never accidentally ship the dev backend. Builds are produced
+> via the `Makefile` targets (`make ipa-dev` / `make ipa-prod`).
+>
+> The "Architecture", "iOS (Xcode)", "Android", and "Infra / production needs"
+> sections below describe the original flavor plan and are **superseded** by this
+> note for everything except the Dart wiring (which shipped as designed).
+
 ## Goal
 
 Ship **development** and **production** as separate, independently distributable
