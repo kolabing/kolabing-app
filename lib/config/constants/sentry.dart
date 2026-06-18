@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../environment.dart';
+
 /// Sentry runtime configuration for the **kolabing-mobile** Flutter project
 /// (org `kolabng`, project id `4511585430339664`) — separate from the Laravel
 /// backend project.
@@ -28,10 +30,9 @@ class SentryConfig {
 
   /// Tag applied to every event for filtering in the dashboard. Defaults to the
   /// build mode; override per environment via `SENTRY_ENVIRONMENT`.
-  static const String environment = String.fromEnvironment(
-    'SENTRY_ENVIRONMENT',
-    defaultValue: kReleaseMode ? 'production' : 'development',
-  );
+  static const String environment = bool.hasEnvironment('SENTRY_ENVIRONMENT')
+      ? String.fromEnvironment('SENTRY_ENVIRONMENT')
+      : Environment.sentryEnvironment;
 
   /// Fraction (0.0–1.0) of transactions captured for performance monitoring.
   ///
