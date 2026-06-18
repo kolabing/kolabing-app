@@ -17,6 +17,29 @@ where that ticket stands and what's next, then help with it.
 
 ---
 
+## MUST FOLLOW — Ticket → Branch → Description BEFORE any development (every task)
+
+No code is written until a tracked ticket and a dedicated branch exist. For **every**
+piece of work (feature, fix, refactor, chore), do these IN ORDER before touching code:
+
+1. **Open a GitHub Projects ticket FIRST.** Create a GitHub issue and add it to the
+   **Kolabing Engineering** project board (`gh project item-add 3 --owner kolabing --url <issue-url>`).
+   Use the repo `kolabing/kolabing-app`.
+2. **Write the task description in the ticket** — goal, current state, the concrete
+   work items (checklist), and acceptance criteria. A ticket with an empty body is not
+   ready to start. (See issue #14 "Integrate Sentry…" for the expected shape.)
+3. **Open a dedicated branch** off up-to-date `master`, named for the work
+   (`feat/…`, `fix/…`, `refactor/…`, `chore/…`) — never commit straight to `master`
+   (it is protected; see the PR rule below).
+4. **Only then start development.** When done, open a PR using the mandatory template
+   and link it to the ticket (`Closes #<n>`).
+
+If the user asks to "just fix/add X" without a ticket, create the ticket + branch
+first (it's cheap), then proceed — do not skip this. Keep this rule in sync with the
+AGENTS.md workflow section.
+
+---
+
 ## MUST FOLLOW — i18n is mandatory for EVERY new widget (no literal user-facing strings)
 
 This app is fully localized via gen-l10n (`l10n.yaml`, `lib/l10n/app_{en,es,ca}.arb`,

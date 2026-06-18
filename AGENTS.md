@@ -22,6 +22,16 @@ Follow Flutter conventions with 2-space indentation and trailing commas for mult
 ## Testing Guidelines
 Use `flutter_test` for widget and unit tests. Name test files `*_test.dart` and keep them under `test/`, mirroring the feature they cover where practical. Add or update tests for new business logic, providers, and reusable widgets. The current suite is minimal, so contributors should strengthen coverage rather than rely on the default smoke test.
 
+## Before Development — Ticket → Branch → Description (mandatory, every task)
+No code is written until a tracked ticket and a dedicated branch exist. For **every** task (feature, fix, refactor, chore), in order:
+
+1. **Open a GitHub Projects ticket first** — create a GitHub issue in `kolabing/kolabing-app` and add it to the **Kolabing Engineering** project board (`gh project item-add 3 --owner kolabing --url <issue-url>`).
+2. **Write the task description in the ticket** — goal, current state, work-item checklist, acceptance criteria. An empty-body ticket is not ready to start.
+3. **Open a dedicated branch** off up-to-date `master` (`feat/…`, `fix/…`, `refactor/…`, `chore/…`). Never commit to protected `master`.
+4. **Then start development**, and open a PR linked to the ticket (`Closes #__`).
+
+Keep this rule in sync with the CLAUDE.md "Ticket → Branch → Description" section.
+
 ## Commit & Pull Request Guidelines
 Recent history favors short Conventional Commit-style messages such as `feat: ...`, `fix: ...`, and `chore: ...`. Keep commits focused and descriptive.
 
