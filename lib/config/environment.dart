@@ -1,13 +1,16 @@
-import 'package:flutter/services.dart' show appFlavor;
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
-/// The two shipped environments. Selected by the Flutter build flavor
-/// (`--flavor dev|prod`); a flavorless `flutter run` is treated as [dev].
+/// The two shipped environments. Selected at build time with
+/// `--dart-define=APP_ENV=dev|prod`; with no define, release builds are [prod]
+/// and debug/profile builds are [dev].
 enum AppEnvironment { dev, prod }
 
 /// Single source of truth for environment-dependent hosts.
 ///
-/// [current] is a compile-time constant derived from Flutter's `appFlavor`,
-/// so every value below stays `const` (keeps `ApiConfig.baseUrl` const).
+/// [current] is a compile-time constant, so every value below stays `const`
+/// (keeps `ApiConfig.baseUrl` const). One `APP_ENV` define flips the REST URL,
+/// realtime/broadcast host, share host, Sentry environment and PostHog tag
+/// together — they can never drift out of sync.
 class Environment {
   Environment._();
 
@@ -15,10 +18,20 @@ class Environment {
       'https://kolabing-v2-development-uhzrzd.laravel.cloud';
   static const String _prodBase = 'https://kolabing.com';
 
-  /// Resolved once from the build flavor. Unknown / absent flavor => dev.
-  static const AppEnvironment current = appFlavor == 'prod'
+  static const String _envDefine = String.fromEnvironment('APP_ENV');
+
+  /// The active environment, resolved at compile time.
+  ///
+  /// Resolution order:
+  /// 1. `--dart-define=APP_ENV=dev|prod` (what build scripts / CI pass), else
+  /// 2. a safe default by build mode: **prod in release, dev in debug/profile**
+  ///    — so a bare `flutter build ipa` ships prod, while `flutter run` and
+  ///    tests use dev.
+  static const AppEnvironment current = _envDefine == 'prod'
       ? AppEnvironment.prod
-      : AppEnvironment.dev;
+      : _envDefine == 'dev'
+      ? AppEnvironment.dev
+      : (kReleaseMode ? AppEnvironment.prod : AppEnvironment.dev);
 
   static const bool isProd = current == AppEnvironment.prod;
 
@@ -48,13 +61,20 @@ class Environment {
   static const String label = isProd ? 'Kolabing' : 'Kolabing Dev';
 
   // --- Pure, testable mirrors of the const logic above. ---
-  // Keep [resolveFlavor]/[apiBaseUrlFor] in sync with [current]/[apiBaseUrl];
+  // Keep [resolveEnv]/[apiBaseUrlFor] in sync with [current]/[apiBaseUrl];
   // the const fields can't call methods, so the one-liners are duplicated.
 
-  /// Maps a raw flavor string to an [AppEnvironment]. Anything other than
-  /// `'prod'` is dev.
-  static AppEnvironment resolveFlavor(String? flavor) =>
-      flavor == 'prod' ? AppEnvironment.prod : AppEnvironment.dev;
+  /// Pure mirror of [current]'s resolution logic, for testing. An explicit
+  /// `'prod'`/`'dev'` define wins; otherwise [isRelease] decides (prod when
+  /// releasing, dev otherwise).
+  static AppEnvironment resolveEnv(
+    String envDefine, {
+    required bool isRelease,
+  }) => envDefine == 'prod'
+      ? AppEnvironment.prod
+      : envDefine == 'dev'
+      ? AppEnvironment.dev
+      : (isRelease ? AppEnvironment.prod : AppEnvironment.dev);
 
   static String apiBaseUrlFor(AppEnvironment env) =>
       env == AppEnvironment.prod ? '$_prodBase/api/v1' : '$_devBase/api/v1';
