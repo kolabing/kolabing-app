@@ -17,6 +17,30 @@ where that ticket stands and what's next, then help with it.
 
 ---
 
+## MUST FOLLOW — Pull requests & branching (every change that ships)
+
+`master` is protected: **no direct pushes; all work lands through a PR** (feature/fix
+branches: `feat/…`, `fix/…`, `chore/…`). Only the maintainer (`olucvolkan`) merges.
+
+**Every PR MUST follow the format of the canonical example:**
+[kolabing/kolabing-v2#26](https://github.com/kolabing/kolabing-v2/pull/26). Use a
+written-out body in English with these mandatory sections, filled in (use `N/A`,
+never delete a section):
+
+1. **## Summary** — what the PR does and why, in plain English.
+2. **## Linked tracking item** — the GitHub Projects item / issue (or `N/A — <reason>`).
+3. **## Type of change** — checkbox list (✨ Feature / 🐛 Fix / 🔧 Chore / 📝 Docs / ♻️ Refactor), tick what applies.
+4. **## Changes** — bullet list of the concrete changes, by file/area.
+5. **## Backend impact (kolabing-v2)** — `[x] No backend changes required`, OR describe the API/contract change + link the corresponding `kolabing-v2` PR/ticket. "No backend changes required" must be a deliberate statement, not an omission.
+6. **## Testing** — how it was verified (sim run, `flutter analyze`, manual steps).
+7. **## Docs & rules updated** — which docs/rules you touched (ROLES, CANONICAL-LISTS, BACKEND-SCHEMA, this file), or `[x] No docs impact`.
+8. **## Screenshots / notes** — UI screenshots for visible changes; notes otherwise.
+
+End the body with the Claude Code attribution line. Open PRs with `gh pr create`
+(gh is installed + authed). When a change spans both repos, cross-link the two PRs.
+
+---
+
 ## MUST FOLLOW — i18n is mandatory for EVERY new widget (no literal user-facing strings)
 
 This app is fully localized via gen-l10n (`l10n.yaml`, `lib/l10n/app_{en,es,ca}.arb`,
