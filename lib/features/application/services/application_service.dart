@@ -54,16 +54,14 @@ class ApplicationService {
   // Submit Application
   // ---------------------------------------------------------------------------
 
-  /// POST /api/v1/opportunities/{id}/applications
-  /// Apply to an opportunity
+  /// POST /api/v1/kolabs/{id}/applications
+  /// Apply to a kolab. [opportunityId] is the kolab id (same entity).
   Future<Application> submitApplication({
     required String opportunityId,
     required String message,
     required String availability,
   }) async {
-    final uri = Uri.parse(
-      '$_baseUrl/opportunities/$opportunityId/applications',
-    );
+    final uri = Uri.parse('$_baseUrl/kolabs/$opportunityId/applications');
     final body = jsonEncode({'message': message, 'availability': availability});
 
     debugPrint('ApplicationService: POST $uri');
@@ -71,11 +69,8 @@ class ApplicationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-          body: body,
-        ),
+        () async =>
+            _httpClient.post(uri, headers: await _getHeaders(), body: body),
         allowRetry: true,
       );
 
@@ -391,11 +386,8 @@ class ApplicationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-          body: body,
-        ),
+        () async =>
+            _httpClient.post(uri, headers: await _getHeaders(), body: body),
         allowRetry: true,
       );
 
@@ -447,10 +439,7 @@ class ApplicationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-        ),
+        () async => _httpClient.post(uri, headers: await _getHeaders()),
         allowRetry: true,
       );
 
@@ -566,11 +555,8 @@ class ApplicationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-          body: body,
-        ),
+        () async =>
+            _httpClient.post(uri, headers: await _getHeaders(), body: body),
         allowRetry: true,
       );
 
@@ -621,10 +607,7 @@ class ApplicationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-        ),
+        () async => _httpClient.post(uri, headers: await _getHeaders()),
         allowRetry: true,
       );
 

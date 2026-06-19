@@ -243,7 +243,11 @@ class UpcomingCollaboration {
         json['status'] as String? ?? 'scheduled',
       ),
       scheduledDate: json['scheduled_date'] as String?,
-      opportunity: json['opportunity'] is Map<String, dynamic>
+      opportunity: json['kolab'] is Map<String, dynamic>
+          ? UpcomingOpportunityInfo.fromJson(
+              json['kolab'] as Map<String, dynamic>,
+            )
+          : json['opportunity'] is Map<String, dynamic>
           ? UpcomingOpportunityInfo.fromJson(
               json['opportunity'] as Map<String, dynamic>,
             )
