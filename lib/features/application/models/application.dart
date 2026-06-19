@@ -70,8 +70,7 @@ class SenderProfile {
       // (and the avatar as `avatar_url`); tolerate the flat `name`/
       // `profile_photo` shapes too. Reading only `name` showed "Unknown".
       name: (json['display_name'] ?? json['name'])?.toString() ?? 'Unknown',
-      profilePhoto:
-          (json['avatar_url'] ?? json['profile_photo'])?.toString(),
+      profilePhoto: (json['avatar_url'] ?? json['profile_photo'])?.toString(),
       userType: json['user_type']?.toString(),
     );
   }
@@ -309,11 +308,15 @@ class Application {
     Map<String, dynamic> json, {
     String? currentUserId,
   }) {
-    // Parse nested collab_opportunity if present
+    // Parse the nested kolab (new) / collab_opportunity (legacy alias).
+    // Prefer kolab only when it is actually a Map, so a non-Map `kolab` value
+    // falls through to the legacy key instead of being kept by `??`.
     Opportunity? opportunity;
-    final collabOpp = json['collab_opportunity'];
-    if (collabOpp is Map<String, dynamic>) {
-      opportunity = Opportunity.fromJson(collabOpp);
+    final kolabJson = json['kolab'] is Map<String, dynamic>
+        ? json['kolab']
+        : json['collab_opportunity'];
+    if (kolabJson is Map<String, dynamic>) {
+      opportunity = Opportunity.fromJson(kolabJson);
     }
 
     // Parse applicant_profile if present
@@ -373,6 +376,7 @@ class Application {
     return Application(
       id: json['id']?.toString() ?? '',
       opportunityId:
+          json['kolab_id']?.toString() ??
           json['collab_opportunity_id']?.toString() ??
           json['opportunity_id']?.toString() ??
           '',

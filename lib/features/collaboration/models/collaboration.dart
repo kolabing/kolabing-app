@@ -95,8 +95,9 @@ class CollaborationPartner {
       // must not crash parsing and silently drop the whole collaboration.
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
-      profilePhoto:
-          normalizeRemoteMediaUrlOrNull(json['profile_photo'] as String?),
+      profilePhoto: normalizeRemoteMediaUrlOrNull(
+        json['profile_photo'] as String?,
+      ),
       category: json['category'] as String?,
       city: json['city'] is Map
           ? (json['city'] as Map<String, dynamic>)['name'] as String?
@@ -211,7 +212,9 @@ class Collaboration {
       communityPartner: CollaborationPartner.fromJson(
         json['community_partner'] as Map<String, dynamic>,
       ),
-      opportunity: json['opportunity'] != null
+      opportunity: json['kolab'] is Map<String, dynamic>
+          ? Opportunity.fromJson(json['kolab'] as Map<String, dynamic>)
+          : json['opportunity'] is Map<String, dynamic>
           ? Opportunity.fromJson(json['opportunity'] as Map<String, dynamic>)
           : null,
       contactMethods: json['contact_methods'] != null

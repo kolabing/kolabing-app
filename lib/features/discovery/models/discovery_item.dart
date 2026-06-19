@@ -317,6 +317,7 @@ class DiscoveryItem {
 
   static String? _resolveCanonicalOpportunityId(Map<String, dynamic> json) {
     const directKeys = <String>[
+      'kolab_id',
       'opportunity_id',
       'collab_opportunity_id',
       'legacy_opportunity_id',
@@ -334,6 +335,7 @@ class DiscoveryItem {
     }
 
     final nestedCandidates = <Object?>[
+      json['kolab'],
       json['opportunity'],
       json['collab_opportunity'],
       json['application_target'],

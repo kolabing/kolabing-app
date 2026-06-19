@@ -39,7 +39,7 @@ class OpportunityService {
   // Browse published opportunities
   // ---------------------------------------------------------------------------
 
-  /// GET /api/v1/opportunities
+  /// GET /api/v1/kolabs
   Future<PaginatedResponse<Opportunity>> getOpportunities({
     OpportunityFilters filters = const OpportunityFilters(),
     int page = 1,
@@ -68,7 +68,7 @@ class OpportunityService {
     // Categories need array notation
     final categoryParams = filters.toCategoryParams();
 
-    var uriString = '$_baseUrl/opportunities?';
+    var uriString = '$_baseUrl/kolabs?';
     uriString += queryParams.entries
         .map(
           (e) =>
@@ -132,7 +132,7 @@ class OpportunityService {
   // My opportunities
   // ---------------------------------------------------------------------------
 
-  /// GET /api/v1/me/opportunities
+  /// GET /api/v1/kolabs/me
   Future<PaginatedResponse<Opportunity>> getMyOpportunities({
     String? status,
     int page = 1,
@@ -159,7 +159,7 @@ class OpportunityService {
     };
 
     final uri = Uri.parse(
-      '$_baseUrl/me/opportunities',
+      '$_baseUrl/kolabs/me',
     ).replace(queryParameters: queryParams);
     debugPrint('OpportunityService: GET $uri');
 
@@ -198,7 +198,7 @@ class OpportunityService {
   // Single opportunity detail
   // ---------------------------------------------------------------------------
 
-  /// GET /api/v1/opportunities/{id}
+  /// GET /api/v1/kolabs/{id}
   Future<Opportunity> getOpportunity(String id) async {
     return _getOpportunity(id, allowRetry: true);
   }
@@ -207,7 +207,7 @@ class OpportunityService {
     String id, {
     required bool allowRetry,
   }) async {
-    final uri = Uri.parse('$_baseUrl/opportunities/$id');
+    final uri = Uri.parse('$_baseUrl/kolabs/$id');
     debugPrint('OpportunityService: GET $uri');
 
     try {
@@ -256,6 +256,11 @@ class OpportunityService {
   // ---------------------------------------------------------------------------
 
   /// POST /api/v1/opportunities
+  ///
+  /// DEPRECATED legacy create path (flat body). The active create flow is the
+  /// kolab flow (`KolabService.create` → POST /kolabs, intent-driven body), so
+  /// this is intentionally NOT repointed to /kolabs — the new endpoint rejects
+  /// the legacy flat body.
   Future<Opportunity> createOpportunity(Opportunity opportunity) async {
     return _createOpportunity(opportunity, allowRetry: true);
   }
@@ -313,6 +318,10 @@ class OpportunityService {
   // ---------------------------------------------------------------------------
 
   /// PUT /api/v1/opportunities/{id}
+  ///
+  /// DEPRECATED legacy update path (flat body) — see [createOpportunity].
+  /// Intentionally NOT repointed to /kolabs; the kolab flow
+  /// (`KolabService.update`) is the active edit path.
   Future<Opportunity> updateOpportunity(
     String id,
     Opportunity opportunity,
@@ -372,7 +381,7 @@ class OpportunityService {
   // Publish opportunity
   // ---------------------------------------------------------------------------
 
-  /// POST /api/v1/opportunities/{id}/publish
+  /// POST /api/v1/kolabs/{id}/publish
   ///
   /// Tries the dedicated publish endpoint first.
   /// Falls back to updating status via PUT if the publish endpoint returns 403.
@@ -385,7 +394,7 @@ class OpportunityService {
     required bool allowRetry,
   }) async {
     // First try the dedicated publish endpoint
-    final uri = Uri.parse('$_baseUrl/opportunities/$id/publish');
+    final uri = Uri.parse('$_baseUrl/kolabs/$id/publish');
     debugPrint('OpportunityService: POST $uri');
 
     try {
@@ -438,7 +447,7 @@ class OpportunityService {
     String id, {
     required bool allowRetry,
   }) async {
-    final uri = Uri.parse('$_baseUrl/opportunities/$id');
+    final uri = Uri.parse('$_baseUrl/kolabs/$id');
     final body = jsonEncode({'status': 'published'});
     debugPrint('OpportunityService: PUT $uri (status update fallback)');
 
@@ -491,7 +500,7 @@ class OpportunityService {
   // Close opportunity
   // ---------------------------------------------------------------------------
 
-  /// POST /api/v1/opportunities/{id}/close
+  /// POST /api/v1/kolabs/{id}/close
   Future<Opportunity> closeOpportunity(String id) async {
     return _closeOpportunity(id, allowRetry: true);
   }
@@ -500,7 +509,7 @@ class OpportunityService {
     String id, {
     required bool allowRetry,
   }) async {
-    final uri = Uri.parse('$_baseUrl/opportunities/$id/close');
+    final uri = Uri.parse('$_baseUrl/kolabs/$id/close');
     debugPrint('OpportunityService: POST $uri');
 
     try {
@@ -541,13 +550,13 @@ class OpportunityService {
   // Delete opportunity
   // ---------------------------------------------------------------------------
 
-  /// DELETE /api/v1/opportunities/{id}
+  /// DELETE /api/v1/kolabs/{id}
   Future<void> deleteOpportunity(String id) async {
     return _deleteOpportunity(id, allowRetry: true);
   }
 
   Future<void> _deleteOpportunity(String id, {required bool allowRetry}) async {
-    final uri = Uri.parse('$_baseUrl/opportunities/$id');
+    final uri = Uri.parse('$_baseUrl/kolabs/$id');
     debugPrint('OpportunityService: DELETE $uri');
 
     try {
