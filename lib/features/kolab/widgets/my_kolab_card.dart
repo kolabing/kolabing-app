@@ -94,19 +94,19 @@ class MyKolabCard extends StatelessWidget {
               if (_availabilityLabel.isNotEmpty)
                 KolabChip(
                   label: _availabilityLabel,
-                  variant: KolabChipVariant.sage,
+                  variant: KolabChipVariant.green,
                   icon: LucideIcons.calendar,
                 ),
               if (kolab.preferredCity.isNotEmpty)
                 KolabChip(
                   label: kolab.preferredCity,
-                  variant: KolabChipVariant.amber,
+                  variant: KolabChipVariant.yellow,
                   icon: LucideIcons.mapPin,
                 ),
               if (_secondaryLabel.isNotEmpty)
                 KolabChip(
                   label: _secondaryLabel,
-                  variant: KolabChipVariant.lavender,
+                  variant: KolabChipVariant.orange,
                 ),
             ],
           ),

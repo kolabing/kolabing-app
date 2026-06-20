@@ -7,12 +7,12 @@ import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
 
 enum KolabChipVariant {
-  neutral, // surfaceVariant — unselected / inactive
-  amber, // amberChipContainer — warm sand: location, venue, city
-  sage, // tertiaryContainer — sage green: date ranges, recurrence, time
-  lavender, // categoryOrangeBg — orange accent: role (Business, Community) & status
-  blueGrey, // categoryBlueBg — sky blue: music, art, culture, selected states
-  peach, // accentOrange — peach/apricot: categories, food & drink, sports, offers
+  neutral, // surfaceVariant fill — unselected / inactive
+  yellow, // primaryTint fill, amber text — location, venue, city
+  green, // categorySageBg fill — date ranges, recurrence, time
+  orange, // categoryOrangeBg fill — role (Business, Community) & status
+  blue, // categoryBlueBg fill — music, art, culture, selected states
+  red, // accentOrange fill — categories, food & drink, sports, offers
 }
 
 /// Shared pastel tag chip used in Explore cards and all My Kolabs cards.
@@ -64,11 +64,11 @@ class KolabChip extends StatelessWidget {
 
   static (Color, Color) _colors(KolabChipVariant v, KolabingColorTokens c) =>
       switch (v) {
-        KolabChipVariant.amber => (c.amberChipContainer, c.amberChipText),
-        KolabChipVariant.sage => (c.categorySageBg, c.categorySageText),
-        KolabChipVariant.lavender => (c.categoryOrangeBg, c.categoryOrangeText),
-        KolabChipVariant.blueGrey => (c.categoryBlueBg, c.categoryBlueText),
-        KolabChipVariant.peach => (c.accentOrange, c.accentOrangeText),
+        KolabChipVariant.yellow => (c.amberChipContainer, c.amberChipText),
+        KolabChipVariant.green => (c.categorySageBg, c.categorySageText),
+        KolabChipVariant.orange => (c.categoryOrangeBg, c.categoryOrangeText),
+        KolabChipVariant.blue => (c.categoryBlueBg, c.categoryBlueText),
+        KolabChipVariant.red => (c.accentOrange, c.accentOrangeText),
         KolabChipVariant.neutral => (c.surfaceVariant, c.onSurfaceVariant),
       };
 }
@@ -78,20 +78,20 @@ KolabChipVariant kolabChipVariantFor(String category) {
   final c = category.toLowerCase();
   // Role / status labels → orange accent
   if (c == 'business' || c == 'community') {
-    return KolabChipVariant.lavender;
+    return KolabChipVariant.orange;
   }
-  // Date / time / recurrence → sage green
+  // Date / time / recurrence → green
   if (c.contains('recurring') ||
       c.contains('daily') ||
       c.contains('weekly') ||
       c.contains('monthly')) {
-    return KolabChipVariant.sage;
+    return KolabChipVariant.green;
   }
-  // Location / venue → warm sand
+  // Location / venue → yellow (warm sand)
   if (c.contains('venue') || c.contains('location')) {
-    return KolabChipVariant.amber;
+    return KolabChipVariant.yellow;
   }
-  // Category / offer type → peach/apricot
+  // Category / offer type → red (peach/apricot)
   if (c.contains('food') ||
       c.contains('drink') ||
       c.contains('bar') ||
@@ -106,9 +106,9 @@ KolabChipVariant kolabChipVariantFor(String category) {
       c.contains('discount') ||
       c.contains('promo') ||
       c.contains('offer')) {
-    return KolabChipVariant.peach;
+    return KolabChipVariant.red;
   }
-  // Creative / cultural → sky blue
+  // Creative / cultural → blue (sky blue)
   if (c.contains('music') ||
       c.contains('art') ||
       c.contains('film') ||
@@ -117,7 +117,7 @@ KolabChipVariant kolabChipVariantFor(String category) {
       c.contains('community') ||
       c.contains('social') ||
       c.contains('event')) {
-    return KolabChipVariant.blueGrey;
+    return KolabChipVariant.blue;
   }
   return KolabChipVariant.neutral;
 }

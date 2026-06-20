@@ -110,13 +110,13 @@ class MyOpportunityCard extends StatelessWidget {
             children: [
               KolabChip(
                 label: _dateLabel,
-                variant: KolabChipVariant.sage,
+                variant: KolabChipVariant.green,
                 icon: LucideIcons.calendar,
               ),
               if (opportunity.preferredCity.isNotEmpty)
                 KolabChip(
                   label: opportunity.preferredCity,
-                  variant: KolabChipVariant.amber,
+                  variant: KolabChipVariant.yellow,
                   icon: LucideIcons.mapPin,
                 ),
               ...opportunity.categories
