@@ -193,7 +193,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   void _handleBack() {
-    context.pop();
+    // Login can be the navigation root (post-logout redirect, deep link, or
+    // initial route), where there is nothing to pop. Calling pop() then throws
+    // GoError("There is nothing to pop"), so fall back to the welcome screen.
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(_kWelcomeRoute);
+    }
   }
 
   void _navigateToSignUp() {
