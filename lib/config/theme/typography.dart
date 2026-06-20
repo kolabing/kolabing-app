@@ -253,6 +253,8 @@ abstract final class KolabingTextStyles {
         height: 1.2,
       );
 
+  static TextStyle get sectionHeader => sectionHeadingLarge;
+
   /// Large button label — Inter 16px Bold.
   static TextStyle get buttonLabelLg => GoogleFonts.inter(
         fontSize: 16,
