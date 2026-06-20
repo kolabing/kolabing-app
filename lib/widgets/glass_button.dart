@@ -66,7 +66,7 @@ class GlassButton extends StatelessWidget {
               ],
               Flexible(
                 child: Text(
-                  label,
+                  label.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: KolabingTextStyles.buttonLabelMd.copyWith(color: ink),
