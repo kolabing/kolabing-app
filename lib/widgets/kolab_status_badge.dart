@@ -38,12 +38,12 @@ class KolabStatusBadge extends StatelessWidget {
     KolabingColorTokens c,
   ) =>
       switch (status.toLowerCase()) {
-        'published' => (c.categoryOrangeBg, c.categoryOrangeText, 'PUBLISHED'),
-        'draft' => (c.categoryOrangeBg, c.categoryOrangeText, 'DRAFT'),
-        'closed' => (c.categoryOrangeBg, c.categoryOrangeText, 'CLOSED'),
-        'completed' => (c.categoryOrangeBg, c.categoryOrangeText, 'COMPLETED'),
-        'scheduled' => (c.categoryOrangeBg, c.categoryOrangeText, 'SCHEDULED'),
-        'in_progress' || 'active' => (c.categoryOrangeBg, c.categoryOrangeText, 'ACTIVE'),
+        'published' => (c.orangeTint, c.orange, 'PUBLISHED'),
+        'draft' => (c.surfaceVariant, c.muted, 'DRAFT'),
+        'closed' => (c.surfaceVariant, c.muted, 'CLOSED'),
+        'completed' => (c.completedBg, c.completedText, 'COMPLETED'),
+        'scheduled' => (c.primaryTint, c.amber, 'SCHEDULED'),
+        'in_progress' || 'active' => (c.activeBg, c.activeText, 'ACTIVE'),
         'pending_confirmation' => (
           c.pendingBg,
           c.pendingText,
