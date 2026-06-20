@@ -164,36 +164,41 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  Widget _buildGradientFallback() => DecoratedBox(
-    decoration: const BoxDecoration(
-      color: Color(0xFFEFEDE8),
-    ),
-    child: Center(
-      child: Container(
-        width: 64,
-        height: 64,
+  Widget _buildGradientFallback() => Builder(
+    builder: (BuildContext context) {
+      final colors = context.colors;
+      return DecoratedBox(
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white.withValues(alpha: 0.7),
-          border: Border.all(
-            color: const Color(0xFFDDD8CC),
-            width: 1.5,
+          color: colors.surfaceVariant,
+        ),
+        child: Center(
+          child: Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.7),
+              border: Border.all(
+                color: colors.hairline,
+                width: 1.5,
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              !widget.hideCreatorIdentity &&
+                      _item.creatorProfile.displayName.isNotEmpty
+                  ? _item.creatorProfile.displayName[0].toUpperCase()
+                  : '?',
+              style: GoogleFonts.inter(
+                fontSize: 26,
+                fontWeight: FontWeight.w600,
+                color: KolabingColors.onSurface.withValues(alpha: 0.5),
+              ),
+            ),
           ),
         ),
-        alignment: Alignment.center,
-        child: Text(
-          !widget.hideCreatorIdentity &&
-                  _item.creatorProfile.displayName.isNotEmpty
-              ? _item.creatorProfile.displayName[0].toUpperCase()
-              : '?',
-          style: GoogleFonts.inter(
-            fontSize: 26,
-            fontWeight: FontWeight.w600,
-            color: KolabingColors.onSurface.withValues(alpha: 0.5),
-          ),
-        ),
-      ),
-    ),
+      );
+    },
   );
 
   Widget _buildImagePlaceholder(ImageChunkEvent progress) {
@@ -223,7 +228,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: context.colors.ink,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
       ),
       child: Text(
