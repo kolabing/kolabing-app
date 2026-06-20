@@ -4568,7 +4568,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Precio';
 
   @override
-  String get subscriptionPriceMonthly => '29 EUR/mes';
+  String get subscriptionPriceMonthly => '39.99 EUR/mes';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Periodo actual';
@@ -4613,7 +4613,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get subscriptionSubscribeButton => 'SUSCRIBIRSE';
 
   @override
-  String get subscriptionSubscribePricedButton => 'SUSCRIBIRSE POR 29 EUR/MES';
+  String get subscriptionSubscribePricedButton =>
+      'SUSCRIBIRSE POR 39.99 EUR/MES';
 
   @override
   String get subscriptionUpdatePaymentButton => 'ACTUALIZAR MÉTODO DE PAGO';
@@ -4662,6 +4663,28 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get subscriptionPaywallPerMonth => '/ mes';
+
+  @override
+  String get subscriptionPlanMonthlyLabel => 'Mensual';
+
+  @override
+  String get subscriptionPlanThreeMonthsLabel => '3 meses';
+
+  @override
+  String get subscriptionPlanBestValueBadge => 'MEJOR PRECIO';
+
+  @override
+  String get subscriptionPlanPer3Months => '/ 3 meses';
+
+  @override
+  String subscriptionPlanPerMonthEq(String price) {
+    return '≈ $price/mes';
+  }
+
+  @override
+  String subscriptionPlanSavePercent(int percent) {
+    return 'Ahorra $percent%';
+  }
 
   @override
   String get subscriptionPaywallSubscribeButton => 'SUSCRIBIRSE AHORA';

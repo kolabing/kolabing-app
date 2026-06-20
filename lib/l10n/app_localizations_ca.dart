@@ -4589,7 +4589,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Preu';
 
   @override
-  String get subscriptionPriceMonthly => '29 EUR/mes';
+  String get subscriptionPriceMonthly => '39.99 EUR/mes';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Període actual';
@@ -4635,7 +4635,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionSubscribePricedButton =>
-      'SUBSCRIURE\'S PER 29 EUR/MES';
+      'SUBSCRIURE\'S PER 39.99 EUR/MES';
 
   @override
   String get subscriptionUpdatePaymentButton =>
@@ -4685,6 +4685,28 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionPaywallPerMonth => '/ mes';
+
+  @override
+  String get subscriptionPlanMonthlyLabel => 'Mensual';
+
+  @override
+  String get subscriptionPlanThreeMonthsLabel => '3 mesos';
+
+  @override
+  String get subscriptionPlanBestValueBadge => 'MILLOR PREU';
+
+  @override
+  String get subscriptionPlanPer3Months => '/ 3 mesos';
+
+  @override
+  String subscriptionPlanPerMonthEq(String price) {
+    return '≈ $price/mes';
+  }
+
+  @override
+  String subscriptionPlanSavePercent(int percent) {
+    return 'Estalvia $percent%';
+  }
 
   @override
   String get subscriptionPaywallSubscribeButton => 'SUBSCRIURE\'S ARA';
