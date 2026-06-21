@@ -7,6 +7,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../providers/kolab_form_provider.dart';
 
 /// Community step 1: "YOUR COMMUNITY TYPE"
@@ -151,7 +152,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           // Community Size
           _buildLabel(l10n.communityInfoCommunitySizeLabel),
           const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
+          KolabingInput(
             controller: _communitySizeController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -161,31 +162,8 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
               final parsed = int.tryParse(value);
               ref.read(kolabFormProvider.notifier).updateCommunitySize(parsed);
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-            decoration: InputDecoration(
-              hintText: l10n.communityInfoCommunitySizeHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
-              filled: true,
-              fillColor: context.colors.surface,
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    BorderSide(color: context.colors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.error),
-              ),
-              errorText: state.fieldErrors['community_size'],
-            ),
+            hint: l10n.communityInfoCommunitySizeHint,
+            errorText: state.fieldErrors['community_size'],
           ),
 
           const SizedBox(height: KolabingSpacing.md),
@@ -193,7 +171,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
           // Expected Attendees
           _buildLabel(l10n.communityInfoExpectedAttendeesLabel),
           const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
+          KolabingInput(
             controller: _attendanceController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -205,31 +183,8 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateTypicalAttendance(parsed);
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-            decoration: InputDecoration(
-              hintText: l10n.communityInfoExpectedAttendeesHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
-              filled: true,
-              fillColor: context.colors.surface,
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    BorderSide(color: context.colors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.error),
-              ),
-              errorText: state.fieldErrors['typical_attendance'],
-            ),
+            hint: l10n.communityInfoExpectedAttendeesHint,
+            errorText: state.fieldErrors['typical_attendance'],
           ),
         ],
       ),

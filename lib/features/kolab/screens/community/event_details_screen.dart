@@ -6,6 +6,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../enums/deliverable_type.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -76,38 +77,15 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           // Title
           _buildLabel(l10n.eventDetailsTitleLabel),
           const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
+          KolabingInput(
             controller: _titleController,
             maxLength: 255,
             onChanged: (value) =>
                 ref.read(kolabFormProvider.notifier).updateTitle(value),
             // C1: dismiss keyboard on tap-outside so the bottom action bar is reachable.
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-            decoration: InputDecoration(
-              hintText: l10n.eventDetailsTitleHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
-              filled: true,
-              fillColor: context.colors.surface,
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    BorderSide(color: context.colors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.error),
-              ),
-              errorText: state.fieldErrors['title'],
-            ),
+            hint: l10n.eventDetailsTitleHint,
+            errorText: state.fieldErrors['title'],
           ),
 
           const SizedBox(height: KolabingSpacing.md),
@@ -115,38 +93,15 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           // Description
           _buildLabel(l10n.eventDetailsDescriptionLabel),
           const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
+          KolabingInput(
             controller: _descriptionController,
             maxLength: 2000,
             maxLines: 5,
             onChanged: (value) =>
                 ref.read(kolabFormProvider.notifier).updateDescription(value),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-            decoration: InputDecoration(
-              hintText: l10n.eventDetailsDescriptionHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
-              filled: true,
-              fillColor: context.colors.surface,
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    BorderSide(color: context.colors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: BorderSide(color: context.colors.error),
-              ),
-              errorText: state.fieldErrors['description'],
-            ),
+            hint: l10n.eventDetailsDescriptionHint,
+            errorText: state.fieldErrors['description'],
           ),
 
           const SizedBox(height: KolabingSpacing.lg),

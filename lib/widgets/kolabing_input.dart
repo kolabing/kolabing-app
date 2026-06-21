@@ -27,6 +27,12 @@ class KolabingInput extends StatelessWidget {
     this.inputFormatters,
     this.autocorrect = true,
     this.textCapitalization = TextCapitalization.none,
+    this.maxLength,
+    this.minLines,
+    this.onTapOutside,
+    this.textStyle,
+    this.counterText,
+    this.fillColor,
   });
 
   final TextEditingController controller;
@@ -39,16 +45,22 @@ class KolabingInput extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final int? maxLines;
+  final int? minLines;
+  final int? maxLength;
   final Widget? prefix;
   final Widget? suffix;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
+  final TapRegionCallback? onTapOutside;
   final FormFieldValidator<String>? validator;
   final bool enabled;
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
   final bool autocorrect;
   final TextCapitalization textCapitalization;
+  final TextStyle? textStyle;
+  final String? counterText;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -67,17 +79,21 @@ class KolabingInput extends StatelessWidget {
       inputFormatters: inputFormatters,
       autocorrect: autocorrect,
       textCapitalization: textCapitalization,
-      style: KolabingTextStyles.bodyLg.copyWith(color: colors.ink),
+      maxLength: maxLength,
+      minLines: minLines,
+      onTapOutside: onTapOutside,
+      style: textStyle ?? KolabingTextStyles.bodyLg.copyWith(color: colors.ink),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         errorText: errorText,
         helperText: helperText,
         helperStyle: helperStyle,
+        counterText: counterText,
         prefixIcon: prefix,
         suffixIcon: suffix,
         filled: true,
-        fillColor: colors.surface,
+        fillColor: fillColor ?? colors.surface,
         hintStyle: KolabingTextStyles.bodyLg.copyWith(color: colors.muted),
         labelStyle: KolabingTextStyles.bodySm.copyWith(color: colors.muted),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

@@ -7,6 +7,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/time_picker.dart';
 import '../../../onboarding/models/place_suggestion.dart';
@@ -212,7 +213,7 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           // place lookup rather than free text. The city field above is kept.
           _buildLabel(l10n.logisticsPreferredAreaLabel),
           const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
+          KolabingInput(
             controller: _areaController,
             focusNode: _areaFocusNode,
             onChanged: (value) {
@@ -223,15 +224,12 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateArea(value.trim().isEmpty ? null : value.trim());
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-            decoration: _inputDecoration(hint: l10n.logisticsPreferredAreaHint)
-                .copyWith(
-                  prefixIcon: Icon(
-                    LucideIcons.mapPin,
-                    size: 18,
-                    color: context.colors.textTertiary,
-                  ),
-                ),
+            hint: l10n.logisticsPreferredAreaHint,
+            prefix: Icon(
+              LucideIcons.mapPin,
+              size: 18,
+              color: context.colors.textTertiary,
+            ),
           ),
           _buildAreaSuggestions(),
         ],

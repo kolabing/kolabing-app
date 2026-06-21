@@ -6,6 +6,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_input.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
@@ -328,18 +329,13 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
-                    TextFormField(
+                    KolabingInput(
                       controller: _messageController,
                       maxLength: 1000,
                       maxLines: 5,
                       minLines: 4,
-                      decoration: _buildInputDecoration(
-                        hintText:
-                            AppLocalizations.of(context).applyModalMessageHint,
-                      ),
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        color: context.colors.onSurface,
-                      ),
+                      hint: AppLocalizations.of(context).applyModalMessageHint,
+                      fillColor: context.colors.background,
                     ),
 
                     const SizedBox(height: KolabingSpacing.lg),
@@ -383,18 +379,13 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
-                      TextFormField(
+                      KolabingInput(
                         controller: _availabilityNotesController,
                         maxLength: 200,
                         maxLines: 2,
                         minLines: 1,
-                        decoration: _buildInputDecoration(
-                          hintText:
-                              AppLocalizations.of(context).applyModalNotesHint,
-                        ),
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: context.colors.onSurface,
-                        ),
+                        hint: AppLocalizations.of(context).applyModalNotesHint,
+                        fillColor: context.colors.background,
                       ),
                     ],
 
@@ -696,40 +687,6 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
       ],
     ],
   );
-
-  InputDecoration _buildInputDecoration({required String hintText}) =>
-      InputDecoration(
-        hintText: hintText,
-        hintStyle: KolabingTextStyles.bodySmall.copyWith(
-          color: context.colors.textTertiary,
-        ),
-        filled: true,
-        fillColor: context.colors.background,
-        border: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: BorderSide(color: context.colors.darkBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: BorderSide(color: context.colors.darkBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: BorderSide(
-            color: context.colors.primary,
-            width: 1.5,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: BorderSide(color: context.colors.error),
-        ),
-        contentPadding: const EdgeInsets.all(KolabingSpacing.md),
-        counterStyle: KolabingTextStyles.labelMedium.copyWith(
-          fontWeight: FontWeight.w400,
-          color: context.colors.textTertiary,
-        ),
-      );
 
   Widget _buildHeroCard() {
     final creator = widget.opportunity.creatorProfile;
