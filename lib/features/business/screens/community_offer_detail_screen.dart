@@ -142,17 +142,19 @@ class _CommunityOfferDetailScreenState
   }
 
   bool _isPreviewMode(UserModel? user, Opportunity opportunity) {
-    final communityProfileId = user?.communityProfile?.id;
-    if (user == null || !user.isCommunity || communityProfileId == null) {
-      return false;
-    }
-
+    if (user == null) return false;
     if (opportunity.status != OpportunityStatus.published) {
       return false;
     }
 
+    // Own post = the viewer's profile is the creator, for EITHER role. Previously
+    // only communities were detected, so a business viewing its own kolab still
+    // saw an Apply button (and could apply to itself).
+    final myProfileId = user.communityProfile?.id ?? user.businessProfile?.id;
     return opportunity.isOwn == true ||
-        opportunity.creatorProfile?.id == communityProfileId;
+        (myProfileId != null &&
+            myProfileId.isNotEmpty &&
+            opportunity.creatorProfile?.id == myProfileId);
   }
 
   Widget _buildContent(
@@ -550,11 +552,7 @@ class _CommunityOfferDetailScreenState
       children: [
         Row(
           children: [
-            Icon(
-              LucideIcons.gift,
-              size: 18,
-              color: context.colors.activeText,
-            ),
+            Icon(LucideIcons.gift, size: 18, color: context.colors.activeText),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).communityOfferDetailBusinessOffer,
@@ -862,9 +860,7 @@ class _CommunityOfferDetailScreenState
     return _buildBottomButtonShell(
       child: ElevatedButton(
         onPressed: () => _handleApply(opportunity),
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-        ),
+        style: ElevatedButton.styleFrom(elevation: 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1264,11 +1260,7 @@ class _BaseOfferCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              LucideIcons.gift,
-              size: 16,
-              color: context.colors.primary,
-            ),
+            Icon(LucideIcons.gift, size: 16, color: context.colors.primary),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).communityOfferDetailTheOffer,
@@ -1313,11 +1305,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              LucideIcons.unlock,
-              size: 16,
-              color: context.colors.primary,
-            ),
+            Icon(LucideIcons.unlock, size: 16, color: context.colors.primary),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).communityOfferDetailExtraTerms,
@@ -1345,43 +1333,43 @@ class _NegotiationTriggersSection extends StatelessWidget {
 
   Widget _buildTriggerRow(BuildContext context, NegotiationTrigger trigger) =>
       Padding(
-    padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '• ',
-          style: KolabingTextStyles.bodySmall.copyWith(
-            color: context.colors.primary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(
-                  context,
-                ).communityOfferDetailTriggerCondition(trigger.condition),
-                style: KolabingTextStyles.labelSmall.copyWith(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                  color: context.colors.textTertiary,
-                ),
+        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '• ',
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.primary,
+                fontWeight: FontWeight.w700,
               ),
-              Text(
-                trigger.additionalOffer,
-                style: KolabingTextStyles.captionSecondary.copyWith(
-                  color: context.colors.onSurface,
-                  height: 1.4,
-                ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(
+                      context,
+                    ).communityOfferDetailTriggerCondition(trigger.condition),
+                    style: KolabingTextStyles.labelSmall.copyWith(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: context.colors.textTertiary,
+                    ),
+                  ),
+                  Text(
+                    trigger.additionalOffer,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: context.colors.onSurface,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
