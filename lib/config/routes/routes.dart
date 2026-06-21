@@ -669,7 +669,12 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         final offer = state.extra as Opportunity?;
-        return CommunityOfferDetailScreen(offerId: id, offer: offer);
+        final canApply = state.uri.queryParameters['canApply'] != 'false';
+        return CommunityOfferDetailScreen(
+          offerId: id,
+          offer: offer,
+          canApply: canApply,
+        );
       },
     ),
 
@@ -696,7 +701,12 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         final offer = state.extra as Opportunity?;
-        return CommunityOfferDetailScreen(offerId: id, offer: offer);
+        final canApply = state.uri.queryParameters['canApply'] != 'false';
+        return CommunityOfferDetailScreen(
+          offerId: id,
+          offer: offer,
+          canApply: canApply,
+        );
       },
     ),
     // Community legacy create route (System A, collab_opportunities).
@@ -777,7 +787,12 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
         final offer = state.extra as Opportunity?;
-        return CommunityOfferDetailScreen(offerId: id, offer: offer);
+        final canApply = state.uri.queryParameters['canApply'] != 'false';
+        return CommunityOfferDetailScreen(
+          offerId: id,
+          offer: offer,
+          canApply: canApply,
+        );
       },
     ),
     GoRoute(
@@ -807,7 +822,8 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.chats,
       name: 'chats',
-      builder: (BuildContext context, GoRouterState state) => const ChatsScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const ChatsScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.notifications,
