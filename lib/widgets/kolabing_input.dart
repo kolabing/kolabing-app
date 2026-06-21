@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kolabing_app/config/constants/radius.dart';
 import 'package:kolabing_app/config/theme/color_tokens.dart';
 import 'package:kolabing_app/config/theme/typography.dart';
@@ -11,6 +12,8 @@ class KolabingInput extends StatelessWidget {
     this.label,
     this.hint,
     this.errorText,
+    this.helperText,
+    this.helperStyle,
     this.obscureText = false,
     this.keyboardType,
     this.maxLines = 1,
@@ -21,6 +24,9 @@ class KolabingInput extends StatelessWidget {
     this.validator,
     this.enabled = true,
     this.textInputAction,
+    this.inputFormatters,
+    this.autocorrect = true,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   final TextEditingController controller;
@@ -28,6 +34,8 @@ class KolabingInput extends StatelessWidget {
   final String? label;
   final String? hint;
   final String? errorText;
+  final String? helperText;
+  final TextStyle? helperStyle;
   final bool obscureText;
   final TextInputType? keyboardType;
   final int? maxLines;
@@ -38,6 +46,9 @@ class KolabingInput extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final bool enabled;
   final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool autocorrect;
+  final TextCapitalization textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +64,16 @@ class KolabingInput extends StatelessWidget {
       validator: validator,
       enabled: enabled,
       textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
+      autocorrect: autocorrect,
+      textCapitalization: textCapitalization,
       style: KolabingTextStyles.bodyLg.copyWith(color: colors.ink),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         errorText: errorText,
+        helperText: helperText,
+        helperStyle: helperStyle,
         prefixIcon: prefix,
         suffixIcon: suffix,
         filled: true,
