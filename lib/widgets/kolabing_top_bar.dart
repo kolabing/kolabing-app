@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kolabing_app/config/theme/color_tokens.dart';
-import 'package:kolabing_app/config/theme/typography.dart';
+
+import '../config/theme/color_tokens.dart';
+import '../config/theme/typography.dart';
 
 class KolabingTopBar extends StatelessWidget implements PreferredSizeWidget {
   const KolabingTopBar({

@@ -93,11 +93,12 @@ class KolabCardShell extends StatelessWidget {
       );
     }
 
+    final colors = context.colors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).extension<KolabingColorTokens>()?.surface ?? Colors.white,
+        color: colors.surface,
         borderRadius: KolabingRadius.borderRadiusCard,
-        border: Border.all(color: Theme.of(context).extension<KolabingColorTokens>()?.hairline ?? const Color(0xFFEDE5D5), width: 1),
+        border: Border.all(color: colors.hairline, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),

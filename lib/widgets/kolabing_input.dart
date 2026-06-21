@@ -23,6 +23,7 @@ class KolabingInput extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.enabled = true,
+    this.readOnly = false,
     this.textInputAction,
     this.inputFormatters,
     this.autocorrect = true,
@@ -54,6 +55,7 @@ class KolabingInput extends StatelessWidget {
   final TapRegionCallback? onTapOutside;
   final FormFieldValidator<String>? validator;
   final bool enabled;
+  final bool readOnly;
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
   final bool autocorrect;
@@ -75,6 +77,7 @@ class KolabingInput extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       enabled: enabled,
+      readOnly: readOnly,
       textInputAction: textInputAction,
       inputFormatters: inputFormatters,
       autocorrect: autocorrect,

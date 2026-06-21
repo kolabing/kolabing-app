@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kolabing_app/config/constants/radius.dart';
-import 'package:kolabing_app/config/theme/color_tokens.dart';
-import 'package:kolabing_app/config/theme/typography.dart';
+
+import '../config/constants/radius.dart';
+import '../config/theme/color_tokens.dart';
+import '../config/theme/typography.dart';
 
 class KolabingSelectableChip extends StatelessWidget {
   const KolabingSelectableChip({

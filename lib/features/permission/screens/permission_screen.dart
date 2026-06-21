@@ -303,7 +303,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-              color: context.colors.activeText,
+              color: context.colors.xpGreen,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.check, size: 15, color: Colors.white),

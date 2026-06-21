@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../config/constants/layout.dart';
+import '../config/theme/color_tokens.dart';
 import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
 
@@ -94,36 +95,30 @@ class KolabingButton extends StatelessWidget {
   };
 
   // ---------------------------------------------------------------------------
-  // Derived style properties per variant
+  // Derived style properties per variant — require context.colors to adapt
   // ---------------------------------------------------------------------------
 
-  Color get _fill {
-    return switch (variant) {
-      KolabingButtonVariant.primary => KolabingColors.primary,
-      KolabingButtonVariant.secondary => KolabingColors.surface,
-      KolabingButtonVariant.dark => KolabingColors.ink,
-    };
-  }
+  Color _fill(KolabingColorTokens colors) => switch (variant) {
+    KolabingButtonVariant.primary => colors.primary,
+    KolabingButtonVariant.secondary => colors.surface,
+    KolabingButtonVariant.dark => colors.ink,
+  };
 
-  Color get _labelColor {
-    return switch (variant) {
-      KolabingButtonVariant.primary => KolabingColors.onPrimary,
-      KolabingButtonVariant.secondary => KolabingColors.ink,
-      KolabingButtonVariant.dark => KolabingColors.primary,
-    };
-  }
+  Color _labelColor(KolabingColorTokens colors) => switch (variant) {
+    KolabingButtonVariant.primary => colors.onPrimary,
+    KolabingButtonVariant.secondary => colors.ink,
+    KolabingButtonVariant.dark => colors.primary,
+  };
 
-  List<BoxShadow>? get _shadows {
-    return switch (variant) {
-      KolabingButtonVariant.primary => KolabingShadows.designButtonShadow,
-      KolabingButtonVariant.secondary => KolabingShadows.buttonSecondaryShadow,
-      KolabingButtonVariant.dark => null,
-    };
-  }
+  List<BoxShadow>? get _shadows => switch (variant) {
+    KolabingButtonVariant.primary => KolabingShadows.designButtonShadow,
+    KolabingButtonVariant.secondary => KolabingShadows.buttonSecondaryShadow,
+    KolabingButtonVariant.dark => null,
+  };
 
-  BorderSide? get _border {
+  BorderSide? _border(KolabingColorTokens colors) {
     if (variant == KolabingButtonVariant.secondary) {
-      return const BorderSide(color: KolabingColors.hairline, width: 1);
+      return BorderSide(color: colors.hairline, width: 1);
     }
     return null;
   }
@@ -134,6 +129,10 @@ class KolabingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final fill = _fill(colors);
+    final labelColor = _labelColor(colors);
+    final border = _border(colors);
     final isActive = !isDisabled && !isLoading && onPressed != null;
     final h = _resolvedHeight;
 
@@ -145,29 +144,29 @@ class KolabingButton extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: h,
-        child: _buildButton(isActive, h),
+        child: _buildButton(isActive, h, fill, labelColor, border),
       ),
     );
   }
 
-  Widget _buildButton(bool isActive, double h) {
+  Widget _buildButton(bool isActive, double h, Color fill, Color labelColor, BorderSide? border) {
     final iconSize = _resolvedIconSize;
     return ElevatedButton(
       onPressed: isActive ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: _fill,
-        foregroundColor: _labelColor,
-        disabledBackgroundColor: _fill.withValues(alpha: 0.5),
-        disabledForegroundColor: _labelColor.withValues(alpha: 0.5),
+        backgroundColor: fill,
+        foregroundColor: labelColor,
+        disabledBackgroundColor: fill.withValues(alpha: 0.5),
+        disabledForegroundColor: labelColor.withValues(alpha: 0.5),
         elevation: 0,
         shadowColor: Colors.transparent,
         minimumSize: Size(0, h),
         maximumSize: Size(width.isInfinite ? double.infinity : width, h),
         padding: EdgeInsets.symmetric(horizontal: _resolvedHPad),
-        shape: _border != null
+        shape: border != null
             ? RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(999),
-                side: _border!,
+                side: border,
               )
             : const StadiumBorder(),
         textStyle: switch (size) {
@@ -182,7 +181,7 @@ class KolabingButton extends StatelessWidget {
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: _labelColor,
+                color: labelColor,
               ),
             )
           : Row(
@@ -191,7 +190,7 @@ class KolabingButton extends StatelessWidget {
               children: [
                 if (icon != null) ...[
                   IconTheme(
-                    data: IconThemeData(color: _labelColor, size: iconSize),
+                    data: IconThemeData(color: labelColor, size: iconSize),
                     child: icon!,
                   ),
                   const SizedBox(width: 6),
@@ -206,7 +205,7 @@ class KolabingButton extends StatelessWidget {
                 if (trailingIcon != null) ...[
                   const SizedBox(width: 6),
                   IconTheme(
-                    data: IconThemeData(color: _labelColor, size: iconSize),
+                    data: IconThemeData(color: labelColor, size: iconSize),
                     child: trailingIcon!,
                   ),
                 ],
