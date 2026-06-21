@@ -616,9 +616,12 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       )
       .join(' ');
 
-  /// Go to next step
+  /// Go to next step. Defensive guard: never advance past a step whose required
+  /// fields are incomplete, so the user cannot reach a later step (or the final
+  /// create-account screen) with a required field still missing.
   void nextStep() {
     if (state == null) return;
+    if (!canProceed()) return;
     if (state!.currentStep < 4) {
       state = state!.copyWith(currentStep: state!.currentStep + 1);
     }
