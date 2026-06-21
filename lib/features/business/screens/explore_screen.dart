@@ -60,6 +60,20 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return widget.lockedCreatorType == 'business';
   }
 
+  /// Whether [item] was authored by the current viewer. The discovery feed
+  /// doesn't emit `is_own` (and `toOpportunity()` hardcodes it false), so we
+  /// compare the creator profile id to the viewer's own profile id — the same
+  /// ownership signal the detail screen's preview-mode already trusts. Used to
+  /// keep your own kolab out of Explore and block self-application.
+  bool _isOwnItem(DiscoveryItem item) {
+    final user = ref.read(authProvider).user;
+    if (user == null) return false;
+    final myProfileId = user.communityProfile?.id ?? user.businessProfile?.id;
+    if (myProfileId == null || myProfileId.isEmpty) return false;
+    final creatorId = item.creatorProfile.id;
+    return creatorId.isNotEmpty && creatorId == myProfileId;
+  }
+
   void _onPageChanged(int index) {
     final listState = ref.read(discoveryListProvider);
     if (index >= listState.items.length - 2) {
@@ -69,6 +83,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   void _onCardTap(DiscoveryItem item, {required bool hasSubscription}) {
     final opportunity = item.toOpportunity();
+    // Defense-in-depth: own posts are already filtered out of the feed, but if
+    // one is ever opened, never allow applying to it.
+    final isOwn = _isOwnItem(item);
     // Free business viewing a community Kolab: blur the community identity only.
     // Per ROLES-AND-PERMISSIONS.md golden rules 4 & 5, the business STILL opens
     // the detail and sees every Kolab detail; only name/logo are blurred and
@@ -85,7 +102,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       // Apply is BUTTON-gated, not screen-gated: a free business can always open
       // the sheet and read everything. Tapping Apply either runs the apply flow
       // (subscribed / community) or surfaces the paywall (free business).
-      onApply: hasSubscription
+      onApply: hasSubscription && !isOwn
           ? () {
               Navigator.of(context).pop();
               _openApplyFlow(opportunity);
@@ -118,7 +135,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               }
             }
           : null,
-      canApply: _isCommunityViewer || hasSubscription,
+      canApply: (_isCommunityViewer || hasSubscription) && !isOwn,
     );
   }
 
@@ -232,7 +249,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             child: ClipOval(
               child: photoUrl != null && photoUrl.isNotEmpty
                   ? Image.network(photoUrl, fit: BoxFit.cover)
-                  : Icon(LucideIcons.user, size: 20, color: context.colors.onSurfaceVariant),
+                  : Icon(
+                      LucideIcons.user,
+                      size: 20,
+                      color: context.colors.onSurfaceVariant,
+                    ),
             ),
           ),
         ],
@@ -336,6 +357,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   }) {
     final today = DateTime.now();
     final activeItems = listState.items.where((DiscoveryItem item) {
+      // Never surface the viewer's own post — you can't collaborate with
+      // yourself. (The discovery feed doesn't exclude own items server-side.)
+      if (_isOwnItem(item)) return false;
       final end = item.availability.end;
       return !end.isBefore(DateTime(today.year, today.month, today.day));
     }).toList();
@@ -501,7 +525,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : isRecommended
                   ? AppLocalizations.of(context).exploreEmptyNoRecommended
                   : AppLocalizations.of(context).exploreEmptyNoOpportunities,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
@@ -512,7 +540,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : AppLocalizations.of(
                       context,
                     ).exploreEmptyNoOpportunitiesHint,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             if (filters.hasActiveFilters) ...[
@@ -556,12 +586,18 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).exploreSomethingWrong,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -636,9 +672,7 @@ class _FeedSegment extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? const Color(0xFFFFF4C2) : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected
-            ? Border.all(color: const Color(0xFFFFE28C))
-            : null,
+        border: isSelected ? Border.all(color: const Color(0xFFFFE28C)) : null,
       ),
       alignment: Alignment.center,
       child: Text(
