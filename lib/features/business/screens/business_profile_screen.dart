@@ -16,6 +16,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../../widgets/glass_button.dart';
 import '../../auth/models/user_model.dart';
+import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../providers/profile_provider.dart';
@@ -110,8 +111,13 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     context.push(KolabingRoutes.businessPlans);
   }
 
-  void _handleViewPlans() {
-    context.push(KolabingRoutes.businessPlans);
+  Future<void> _handleViewPlans() async {
+    // Upgrade entry point: show the same two-plan paywall modal used at publish
+    // time (monthly + 3-month picker), not the legacy single-plan screen.
+    final subscribed = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (subscribed && mounted) {
+      await ref.read(profileProvider.notifier).refreshSubscription();
+    }
   }
 
   Future<void> _handleChangePhoto() async {
@@ -172,10 +178,7 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                     color: context.colors.info.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    LucideIcons.image,
-                    color: context.colors.info,
-                  ),
+                  child: Icon(LucideIcons.image, color: context.colors.info),
                 ),
                 title: Text(
                   AppLocalizations.of(context).businessProfileChooseFromGallery,
@@ -365,7 +368,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                         width: 150,
                         height: 20,
                         decoration: BoxDecoration(
-                          color: isDark ? context.colors.darkSurface : Colors.white,
+                          color: isDark
+                              ? context.colors.darkSurface
+                              : Colors.white,
                           borderRadius: KolabingRadius.borderRadiusSm,
                         ),
                       ),
@@ -374,7 +379,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                         width: 80,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: isDark ? context.colors.darkSurface : Colors.white,
+                          color: isDark
+                              ? context.colors.darkSurface
+                              : Colors.white,
                           borderRadius: KolabingRadius.borderRadiusSm,
                         ),
                       ),
@@ -813,7 +820,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
           // Action button
           if (isActive)
             GlassButton(
-              label: AppLocalizations.of(context).businessProfileManageSubscription,
+              label: AppLocalizations.of(
+                context,
+              ).businessProfileManageSubscription,
               onPressed: _handleManageSubscription,
               intent: GlassButtonIntent.neutral,
               icon: LucideIcons.settings,
@@ -986,80 +995,79 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
     ),
   );
 
-  Widget _buildAccountSection(
-    String email,
-    bool isUpdating,
-    bool isDark,
-  ) => _SectionCard(
-    title: AppLocalizations.of(context).businessProfileAccount,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Email
-        Row(
+  Widget _buildAccountSection(String email, bool isUpdating, bool isDark) =>
+      _SectionCard(
+        title: AppLocalizations.of(context).businessProfileAccount,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(
-              LucideIcons.mail,
-              size: 20,
-              color: context.colors.textTertiary,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Text(
-                email,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: context.colors.onSurface,
+            // Email
+            Row(
+              children: [
+                Icon(
+                  LucideIcons.mail,
+                  size: 20,
+                  color: context.colors.textTertiary,
                 ),
-                overflow: TextOverflow.ellipsis,
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: Text(
+                    email,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      color: context.colors.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: KolabingSpacing.sm),
+
+            // Language
+            _ContactInfoTile(
+              icon: LucideIcons.globe,
+              label: AppLocalizations.of(context).settingsLanguage,
+              onTap: () => context.push(KolabingRoutes.language),
+            ),
+
+            const SizedBox(height: KolabingSpacing.lg),
+
+            // Sign Out Button
+            GlassButton(
+              label: AppLocalizations.of(context).businessProfileSignOut,
+              onPressed: isUpdating ? null : _handleSignOut,
+              intent: GlassButtonIntent.destructive,
+              icon: LucideIcons.logOut,
+            ),
+
+            const SizedBox(height: KolabingSpacing.md),
+
+            // Delete Account
+            GestureDetector(
+              onTap: isUpdating ? null : _handleDeleteAccount,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: KolabingSpacing.xs,
+                ),
+                child: Text(
+                  AppLocalizations.of(context).businessProfileDeleteAccount,
+                  textAlign: TextAlign.center,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: isUpdating
+                        ? context.colors.textTertiary
+                        : context.colors.error,
+                    decoration: TextDecoration.underline,
+                    decorationColor: isUpdating
+                        ? context.colors.textTertiary
+                        : context.colors.error,
+                  ),
+                ),
               ),
             ),
           ],
         ),
-
-        const SizedBox(height: KolabingSpacing.sm),
-
-        // Language
-        _ContactInfoTile(
-          icon: LucideIcons.globe,
-          label: AppLocalizations.of(context).settingsLanguage,
-          onTap: () => context.push(KolabingRoutes.language),
-        ),
-
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Sign Out Button
-        GlassButton(
-          label: AppLocalizations.of(context).businessProfileSignOut,
-          onPressed: isUpdating ? null : _handleSignOut,
-          intent: GlassButtonIntent.destructive,
-          icon: LucideIcons.logOut,
-        ),
-
-        const SizedBox(height: KolabingSpacing.md),
-
-        // Delete Account
-        GestureDetector(
-          onTap: isUpdating ? null : _handleDeleteAccount,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
-            child: Text(
-              AppLocalizations.of(context).businessProfileDeleteAccount,
-              textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: isUpdating
-                    ? context.colors.textTertiary
-                    : context.colors.error,
-                decoration: TextDecoration.underline,
-                decorationColor: isUpdating
-                    ? context.colors.textTertiary
-                    : context.colors.error,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 // -----------------------------------------------------------------------------
