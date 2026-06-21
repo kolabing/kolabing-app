@@ -33,6 +33,20 @@
     "description": "Confirm completion."
   },
   "commonErrorGeneric": "Something went wrong. Please try again.",
+  "onboardingCompleteMissingFields": "Please complete: {fields}",
+  "@onboardingCompleteMissingFields": {
+    "description": "Error when account creation is blocked by missing onboarding fields; {fields} is a comma-separated list of field names",
+    "placeholders": { "fields": { "type": "String" } }
+  },
+  "onboardingFieldName": "Name",
+  "onboardingFieldBusinessCategory": "Business category",
+  "onboardingFieldVenueType": "Venue type",
+  "onboardingFieldVenueCapacity": "Venue capacity",
+  "onboardingFieldVenuePhotos": "Venue photos",
+  "onboardingFieldBusinessAddress": "Address",
+  "onboardingFieldTargetCities": "Cities",
+  "onboardingFieldCommunityType": "Community type",
+  "onboardingFieldCommunityCity": "City",
   "@commonErrorGeneric": {
     "description": "Fallback error message shown when an operation fails without a specific reason."
   },

@@ -126,8 +126,8 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
       final message = switch (e.code) {
-        'photo_access_denied' || 'photo_access_restricted' =>
-          l10n.businessStep2PhotoAccessDenied,
+        'photo_access_denied' ||
+        'photo_access_restricted' => l10n.businessStep2PhotoAccessDenied,
         _ => l10n.businessStep2PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
@@ -192,8 +192,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
     }
     if (afterPlus.length > 14) {
       setState(
-        () =>
-            _phoneError = AppLocalizations.of(context).businessStep2PhoneTooLong,
+        () => _phoneError = AppLocalizations.of(
+          context,
+        ).businessStep2PhoneTooLong,
       );
       return;
     }
@@ -228,7 +229,10 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       return const SizedBox.shrink();
     }
 
-    if (data.location == null) {
+    // Require a *complete* location (city + address), not merely a non-null
+    // one, before the venue-details step — otherwise an import with a blank
+    // address would slip through to the final screen.
+    if (!data.isStep1Complete) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/onboarding/business/step5');
       });
@@ -325,10 +329,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                 AppLocalizations.of(
                                   context,
                                 ).businessStep2ImportedBanner,
-                                style: KolabingTextStyles.captionSecondary.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: context.colors.primaryDark,
-                                ),
+                                style: KolabingTextStyles.captionSecondary
+                                    .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: context.colors.primaryDark,
+                                    ),
                               ),
                             ),
                           ],
@@ -384,7 +389,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      AppLocalizations.of(context).businessStep2BusinessTypeHint,
+                      AppLocalizations.of(
+                        context,
+                      ).businessStep2BusinessTypeHint,
                       style: KolabingTextStyles.captionSecondary.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),
@@ -552,7 +559,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onChanged: notifier.updateAbout,
                       decoration: _inputDecoration(
                         context,
-                        hint: AppLocalizations.of(context).businessStep2AboutHint,
+                        hint: AppLocalizations.of(
+                          context,
+                        ).businessStep2AboutHint,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -705,11 +714,7 @@ class _VenueAddressCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              LucideIcons.mapPin,
-              size: 18,
-              color: context.colors.primary,
-            ),
+            Icon(LucideIcons.mapPin, size: 18, color: context.colors.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

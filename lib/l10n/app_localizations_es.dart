@@ -36,6 +36,38 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonErrorGeneric => 'Algo ha salido mal. Inténtalo de nuevo.';
 
   @override
+  String onboardingCompleteMissingFields(String fields) {
+    return 'Completa: $fields';
+  }
+
+  @override
+  String get onboardingFieldName => 'Nombre';
+
+  @override
+  String get onboardingFieldBusinessCategory => 'Categoría del negocio';
+
+  @override
+  String get onboardingFieldVenueType => 'Tipo de local';
+
+  @override
+  String get onboardingFieldVenueCapacity => 'Aforo';
+
+  @override
+  String get onboardingFieldVenuePhotos => 'Fotos del local';
+
+  @override
+  String get onboardingFieldBusinessAddress => 'Dirección';
+
+  @override
+  String get onboardingFieldTargetCities => 'Ciudades';
+
+  @override
+  String get onboardingFieldCommunityType => 'Tipo de comunidad';
+
+  @override
+  String get onboardingFieldCommunityCity => 'Ciudad';
+
+  @override
   String get welcomeLogIn => 'Iniciar sesión';
 
   @override

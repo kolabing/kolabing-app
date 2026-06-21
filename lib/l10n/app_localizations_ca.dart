@@ -37,6 +37,38 @@ class AppLocalizationsCa extends AppLocalizations {
       'Alguna cosa ha anat malament. Torna-ho a provar.';
 
   @override
+  String onboardingCompleteMissingFields(String fields) {
+    return 'Completa: $fields';
+  }
+
+  @override
+  String get onboardingFieldName => 'Nom';
+
+  @override
+  String get onboardingFieldBusinessCategory => 'Categoria del negoci';
+
+  @override
+  String get onboardingFieldVenueType => 'Tipus de local';
+
+  @override
+  String get onboardingFieldVenueCapacity => 'Aforament';
+
+  @override
+  String get onboardingFieldVenuePhotos => 'Fotos del local';
+
+  @override
+  String get onboardingFieldBusinessAddress => 'Adreça';
+
+  @override
+  String get onboardingFieldTargetCities => 'Ciutats';
+
+  @override
+  String get onboardingFieldCommunityType => 'Tipus de comunitat';
+
+  @override
+  String get onboardingFieldCommunityCity => 'Ciutat';
+
+  @override
   String get welcomeLogIn => 'Inicia la sessió';
 
   @override

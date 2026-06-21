@@ -616,9 +616,12 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       )
       .join(' ');
 
-  /// Go to next step
+  /// Go to next step. Defensive guard: never advance past a step whose required
+  /// fields are incomplete, so the user cannot reach a later step (or the final
+  /// create-account screen) with a required field still missing.
   void nextStep() {
     if (state == null) return;
+    if (!canProceed()) return;
     if (state!.currentStep < 4) {
       state = state!.copyWith(currentStep: state!.currentStep + 1);
     }
@@ -672,9 +675,10 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         '(step1=${state?.isStep1Complete} step2=${state?.isStep2Complete} '
         'step3=${state?.isStep3Complete})',
       );
-      return const OnboardingResult(
+      return OnboardingResult(
         success: false,
         errorMessage: 'Please complete all required fields',
+        missingFields: state?.missingFields ?? const [],
       );
     }
 
@@ -743,9 +747,10 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   /// Complete onboarding for an already-authenticated user.
   Future<OnboardingResult> completeAuthenticatedOnboarding() async {
     if (state == null || !state!.isComplete) {
-      return const OnboardingResult(
+      return OnboardingResult(
         success: false,
         errorMessage: 'Please complete all required fields',
+        missingFields: state?.missingFields ?? const [],
       );
     }
 
@@ -831,6 +836,7 @@ class OnboardingResult {
     this.user,
     this.error,
     this.errorMessage,
+    this.missingFields = const [],
     this.cancelled = false,
     this.isNetworkError = false,
   });
@@ -839,6 +845,10 @@ class OnboardingResult {
   final UserModel? user;
   final ApiError? error;
   final String? errorMessage;
+
+  /// Required onboarding fields still missing (when account creation is blocked
+  /// client-side). Lets the UI name them instead of showing a generic error.
+  final List<OnboardingField> missingFields;
   final bool cancelled;
   final bool isNetworkError;
 
