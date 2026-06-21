@@ -5,20 +5,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
-import '../../../config/theme/typography.dart';
-import '../../../l10n/app_localizations.dart';
 import '../widgets/kolabing_logo.dart';
 
 // ---------------------------------------------------------------------------
-// Local tokens
+// Warm sheet tokens
 // ---------------------------------------------------------------------------
 
-const Color _kBg = Color(0xFF0A0A0A);
-const Color _kTextMuted = Color(0xFFAAAAAA);
 const Color _kYellow = Color(0xFFFFE28C);
+const Color _kCream = Color(0xFFF6F1E7);
+const Color _kInk = Color(0xFF19150F);
+const Color _kMuted = Color(0xFF8C8474);
 
 // ---------------------------------------------------------------------------
-// WelcomeScreen
+// WelcomeScreen — Warm sheet direction
 // ---------------------------------------------------------------------------
 
 class WelcomeScreen extends StatefulWidget {
@@ -31,44 +30,16 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _entry;
-
-  late final Animation<double> _logoOpacity;
-  late final Animation<double> _logoSlideY;
-  late final Animation<double> _statementOpacity;
-  late final Animation<double> _statementSlideY;
-  late final Animation<double> _taglineOpacity;
-  late final Animation<double> _ctaOpacity;
+  late final Animation<double> _fadeIn;
 
   @override
   void initState() {
     super.initState();
     _entry = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 800),
     );
-
-    Animation<double> fade(double a, double b) =>
-        Tween<double>(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(
-            parent: _entry,
-            curve: Interval(a, b, curve: Curves.easeOutCubic),
-          ),
-        );
-
-    Animation<double> slideY(double a, double b, {double from = 20.0}) =>
-        Tween<double>(begin: from, end: 0.0).animate(
-          CurvedAnimation(
-            parent: _entry,
-            curve: Interval(a, b, curve: Curves.easeOutCubic),
-          ),
-        );
-
-    _logoOpacity = fade(0.00, 0.30);
-    _logoSlideY = slideY(0.00, 0.30, from: -16);
-    _statementOpacity = fade(0.25, 0.60);
-    _statementSlideY = slideY(0.25, 0.60);
-    _taglineOpacity = fade(0.45, 0.72);
-    _ctaOpacity = fade(0.65, 0.92);
+    _fadeIn = CurvedAnimation(parent: _entry, curve: Curves.easeOut);
   }
 
   @override
@@ -100,111 +71,116 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final compact = size.height < 760;
-    final l10n = AppLocalizations.of(context);
+    final screenWidth = size.width;
+    final heroHeight = size.height * 0.40;
+    final waveHeight = 130.0 * screenWidth / 402.0;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: _kBg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: _kCream,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: _kBg,
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              28,
-              compact ? 24 : 40,
-              28,
-              compact ? 20 : 28,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                // ── Logo ──────────────────────────────────────────────────
-                AnimatedBuilder(
-                  animation: _entry,
-                  builder: (context, child) => Opacity(
-                    opacity: _logoOpacity.value,
-                    child: Transform.translate(
-                      offset: Offset(0, _logoSlideY.value + 12),
-                      child: child,
-                    ),
-                  ),
-                  child: KolabingLogo(
-                    width: compact ? 172.0 : 200.0,
-                    variant: KolabingLogoVariant.lightTransparent,
-                  ),
+        backgroundColor: _kYellow,
+        body: FadeTransition(
+          opacity: _fadeIn,
+          child: Stack(
+            children: [
+              // Cream sheet background (bottom portion)
+              Positioned(
+                top: heroHeight,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(color: _kCream),
+              ),
+
+              // Wave transition — cream flowing up over yellow hero boundary
+              Positioned(
+                top: heroHeight - waveHeight + 12,
+                left: 0,
+                right: 0,
+                height: waveHeight,
+                child: CustomPaint(
+                  painter: _WavePainter(color: _kCream),
                 ),
+              ),
 
-                const Spacer(),
-
-                // ── Brand statement ───────────────────────────────────────
-                AnimatedBuilder(
-                  animation: _entry,
-                  builder: (context, child) => Opacity(
-                    opacity: _statementOpacity.value,
-                    child: Transform.translate(
-                      offset: Offset(0, _statementSlideY.value),
-                      child: child,
-                    ),
-                  ),
-                  child: _BrandHeroText(compact: compact),
-                ),
-
-                SizedBox(height: compact ? 24 : 32),
-
-                // ── MATCH · KOLAB · GROW ──────────────────────────────────
-                AnimatedBuilder(
-                  animation: _taglineOpacity,
-                  builder: (context, child) => Opacity(
-                    opacity: _taglineOpacity.value,
-                    child: child,
-                  ),
-                  child: _Tagline(l10n: l10n),
-                ),
-
-                const Spacer(),
-
-                // ── CTA ───────────────────────────────────────────────────
-                AnimatedBuilder(
-                  animation: _ctaOpacity,
-                  builder: (context, child) => Opacity(
-                    opacity: _ctaOpacity.value,
-                    child: child,
-                  ),
-                  child: _PrimaryCta(onPressed: _onPrimaryCta, l10n: l10n),
-                ),
-
-                const SizedBox(height: 10),
-
-                AnimatedBuilder(
-                  animation: _ctaOpacity,
-                  builder: (context, child) => Opacity(
-                    opacity: _ctaOpacity.value,
-                    child: child,
-                  ),
-                  child: TextButton(
-                    onPressed: _onLogin,
-                    style: TextButton.styleFrom(
-                      minimumSize: const Size(88, 44),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    child: Text(
-                      l10n.welcomeLogIn,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        color: _kTextMuted,
-                        fontWeight: FontWeight.w400,
-                        height: 1.0,
+              // Main layout
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Yellow hero — logo shifted above centre
+                  SafeArea(
+                    bottom: false,
+                    child: SizedBox(
+                      height: heroHeight,
+                      child: const Align(
+                        alignment: Alignment(0, -0.4),
+                        child: KolabingLogo(
+                          width: 158,
+                          variant: KolabingLogoVariant.onYellow,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+
+                  // Cream sheet content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(30, 50, 30, 40),
+                      child: SafeArea(
+                        top: false,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _WelcomeHeadline(),
+                            const SizedBox(height: 28),
+                            const _TaglineRow(),
+                            const SizedBox(height: 32),
+                            _PrimaryCta(onPressed: _onPrimaryCta),
+                            const SizedBox(height: 18),
+                            Center(
+                              child: GestureDetector(
+                                onTap: _onLogin,
+                                behavior: HitTestBehavior.opaque,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: _kMuted,
+                                      ),
+                                      children: const [
+                                        TextSpan(text: 'Already in? '),
+                                        TextSpan(
+                                          text: 'Log in',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: _kInk,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -213,165 +189,188 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 }
 
 // ---------------------------------------------------------------------------
-// Brand statement — staggered typographic layout
+// Headline — "where / businesses & communities / grow together"
 // ---------------------------------------------------------------------------
 
-class _BrandHeroText extends StatelessWidget {
-  const _BrandHeroText({required this.compact});
-
-  final bool compact;
+class _WelcomeHeadline extends StatelessWidget {
+  const _WelcomeHeadline();
 
   @override
   Widget build(BuildContext context) {
-    final bigSize = compact ? 32.0 : 36.0;
-
-    final bigStyle = GoogleFonts.archivoBlack(
-      fontSize: bigSize,
-      color: _kYellow.withValues(alpha: 0.92),
-      height: 0.95,
-      letterSpacing: -1.2,
-    );
-    final smallStyle = GoogleFonts.rubik(
-      fontSize: compact ? 13.0 : 15.0,
-      fontWeight: FontWeight.w600,
-      color: _kYellow.withValues(alpha: 0.65),
-      height: 1.2,
-    );
-    final ampStyle = GoogleFonts.rubik(
-      fontSize: compact ? 20.0 : 24.0,
+    final style = GoogleFonts.inter(
+      fontSize: 24,
       fontWeight: FontWeight.w700,
-      color: _kYellow.withValues(alpha: 0.65),
-      height: 1,
+      color: _kInk,
+      height: 1.14,
     );
 
-    return Align(
-      alignment: const Alignment(0.3, 0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 4),
-            child: Text('where', style: smallStyle),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 40),
-            child: Text('businesses', style: bigStyle, overflow: TextOverflow.visible, softWrap: false),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 4, right: 5),
-                child: Text('&', style: ampStyle),
-              ),
-              Text('communities', style: bigStyle, overflow: TextOverflow.visible, softWrap: false),
-            ],
-          ),
-          Transform.translate(
-            offset: const Offset(0, -6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 28, right: 6),
-                  child: Text('grow', style: smallStyle.copyWith(fontSize: compact ? 15.0 : 17.0)),
-                ),
-                Text('together', style: bigStyle.copyWith(color: _kYellow.withValues(alpha: 0.65)), overflow: TextOverflow.visible, softWrap: false),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('where', style: style),
+        Text('businesses & communities', style: style),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('grow ', style: style),
+            _YellowUnderlineText(text: 'together', style: style),
+          ],
+        ),
+      ],
     );
   }
 }
 
+/// Renders text with a yellow swash underline behind the baseline.
+class _YellowUnderlineText extends StatelessWidget {
+  const _YellowUnderlineText({
+    required this.text,
+    required this.style,
+  });
+
+  final String text;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    alignment: Alignment.bottomLeft,
+    children: [
+      // Yellow swash behind the text
+      Positioned(
+        bottom: 1,
+        left: 0,
+        right: 0,
+        child: Container(
+          height: 9,
+          decoration: BoxDecoration(
+            color: _kYellow,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ),
+      Text(text, style: style),
+    ],
+  );
+}
+
 // ---------------------------------------------------------------------------
-// Tagline
+// Tagline — MATCH · KOLAB · GROW
 // ---------------------------------------------------------------------------
 
-class _Tagline extends StatelessWidget {
-  const _Tagline({required this.l10n});
-
-  final AppLocalizations l10n;
+class _TaglineRow extends StatelessWidget {
+  const _TaglineRow();
 
   @override
   Widget build(BuildContext context) {
-    TextStyle muted() => GoogleFonts.rubik(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 3.0,
-          color: const Color(0xFF666666),
-          height: 1.0,
-        );
-
-    TextStyle yellow() => GoogleFonts.rubik(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 3.0,
-          color: _kYellow,
-          height: 1.0,
-        );
+    final baseStyle = GoogleFonts.inter(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 3.4,
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(l10n.welcomeTaglineMatch, style: muted()),
-        const SizedBox(width: 10),
-        Text(l10n.welcomeTaglineDot, style: muted()),
-        const SizedBox(width: 10),
-        Text(l10n.welcomeTaglineKolab, style: yellow()),
-        const SizedBox(width: 10),
-        Text(l10n.welcomeTaglineDot, style: muted()),
-        const SizedBox(width: 10),
-        Text(l10n.welcomeTaglineGrow, style: muted()),
+      children: [
+        Text('MATCH', style: baseStyle.copyWith(color: _kMuted)),
+        const SizedBox(width: 6),
+        Text('·', style: baseStyle.copyWith(color: Color(0xFFB5914A))),
+        const SizedBox(width: 6),
+        Text('KOLAB', style: baseStyle.copyWith(color: _kInk)),
+        const SizedBox(width: 6),
+        Text('·', style: baseStyle.copyWith(color: Color(0xFFB5914A))),
+        const SizedBox(width: 6),
+        Text('GROW', style: baseStyle.copyWith(color: _kMuted)),
       ],
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// Primary CTA
+// Primary CTA — pill, yellow, ink text, arrow
 // ---------------------------------------------------------------------------
 
 class _PrimaryCta extends StatelessWidget {
-  const _PrimaryCta({required this.onPressed, required this.l10n});
+  const _PrimaryCta({required this.onPressed});
 
   final VoidCallback onPressed;
-  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) => Semantics(
-        button: true,
-        label: l10n.welcomeStartKolabing,
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(56),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    l10n.welcomeStartKolabing,
-                    maxLines: 1,
-                    softWrap: false,
-                    style: KolabingTextStyles.button,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Icon(LucideIcons.arrowRight, size: 18),
-            ],
-          ),
+    button: true,
+    label: 'Start kolabing',
+    child: GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onPressed();
+      },
+      child: Container(
+        height: 58,
+        decoration: BoxDecoration(
+          color: _kYellow,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF141210).withValues(alpha: 0.12),
+              blurRadius: 26,
+              offset: const Offset(0, 12),
+            ),
+          ],
         ),
-      );
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Start kolabing',
+              style: GoogleFonts.inter(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: _kInk,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(LucideIcons.arrowRight, size: 18, color: _kInk),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Wave painter — cream sheet with organic wavy top edge
+// ---------------------------------------------------------------------------
+
+class _WavePainter extends CustomPainter {
+  const _WavePainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final sx = size.width / 402.0;
+    final sy = size.height / 130.0;
+
+    final path = Path()
+      ..moveTo(0, 130 * sy)
+      ..lineTo(0, 66 * sy)
+      ..cubicTo(
+        72 * sx, 22 * sy,
+        150 * sx, 52 * sy,
+        230 * sx, 60 * sy,
+      )
+      ..cubicTo(
+        300 * sx, 67 * sy,
+        352 * sx, 34 * sy,
+        402 * sx, 50 * sy,
+      )
+      ..lineTo(402 * sx, 130 * sy)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_WavePainter old) => old.color != color;
 }

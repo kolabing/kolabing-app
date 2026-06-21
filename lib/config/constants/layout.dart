@@ -126,9 +126,9 @@ abstract final class KolabingShadows {
     offset: Offset(0, 12),
   );
 
-  /// Secondary button shadow — 0 10px 22px rgba(20,18,16,0.08).
+  /// Secondary button shadow — 0 10px 22px rgba(20,18,16,0.10).
   static const BoxShadow buttonSecondary = BoxShadow(
-    color: Color(0x14141210),
+    color: Color(0x1A141210),
     blurRadius: 22,
     offset: Offset(0, 10),
   );
@@ -192,12 +192,12 @@ abstract final class KolabingShadows {
     ),
   ];
 
-  /// Design handoff button shadow — yellow glow beneath yellow buttons
+  /// Design handoff button shadow — warm dark drop shadow beneath yellow buttons
   static const List<BoxShadow> designButtonShadow = [
     BoxShadow(
-      color: Color(0x26FFE28C),
-      blurRadius: 12,
-      offset: Offset(0, 4),
+      color: Color(0x1F141210),
+      blurRadius: 26,
+      offset: Offset(0, 12),
     ),
   ];
 

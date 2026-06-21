@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dart pub *)",
+      "Bash(python3 -c \"import sys,json; deps=json.load\\(sys.stdin\\); [print\\(p['name'], p['version']\\) for p in deps.get\\('packages',[]\\) if 'permission' in p['name']]\")",
+      "Bash(sort -t: -k1,1)",
+      "Bash(CLAUDE_CODE_TMPDIR=/tmp grep -rn -A 8 \"\\\\.styleFrom\" lib/features/ --include=\"*.dart\")"
+    ]
+  }
+}

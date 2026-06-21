@@ -5,6 +5,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/reward_badge.dart';
 
 /// A full-screen overlay that celebrates a newly-unlocked badge with confetti,
@@ -167,19 +168,11 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   const SizedBox(height: KolabingSpacing.lg),
 
                   // CTA button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: widget.onDismiss,
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'SEE MY BADGES',
-                        style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
-                      ),
-                    ),
+                  KolabingButton(
+                    label: 'SEE MY BADGES',
+                    onPressed: widget.onDismiss,
+                    variant: KolabingButtonVariant.primary,
+                    size: KolabingButtonSize.compact,
                   ),
                 ],
               ),

@@ -7,6 +7,8 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/kolabing_top_bar.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../enums/intent_type.dart';
@@ -106,28 +108,16 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
       },
       child: Scaffold(
         backgroundColor: context.colors.background,
-        appBar: AppBar(
-          backgroundColor: context.colors.surface,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              LucideIcons.arrowLeft,
-              color: context.colors.onSurface,
-            ),
-            onPressed: () {
-              if (formState.isSubmitting || formState.isPublishing) return;
-              if (formState.currentStep == 0) {
-                context.pop();
-              } else {
-                notifier.previousStep();
-              }
-            },
-          ),
-          title: Text(
-            _getTitle(l10n, intentType),
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
-          ),
-          centerTitle: true,
+        appBar: KolabingTopBar(
+          title: _getTitle(l10n, intentType),
+          onBack: () {
+            if (formState.isSubmitting || formState.isPublishing) return;
+            if (formState.currentStep == 0) {
+              context.pop();
+            } else {
+              notifier.previousStep();
+            }
+          },
         ),
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -325,25 +315,17 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
           ],
         ),
         actions: [
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                ref.read(kolabFormProvider.notifier).reset();
-                // Force the dashboard's drafts/published list to refetch so the
-                // freshly created/published kolab is visible (B3).
-                ref.invalidate(myKolabsProvider);
-                // Pop back to dashboard (IntentSelection + FlowScreen)
-                if (context.canPop()) context.pop();
-                if (context.canPop()) context.pop();
-              },
-              child: Text(
-                l10n.commonDone,
-                style: KolabingTextStyles.button.copyWith(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-            ),
+          KolabingButton(
+            label: l10n.commonDone,
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(kolabFormProvider.notifier).reset();
+              ref.invalidate(myKolabsProvider);
+              if (context.canPop()) context.pop();
+              if (context.canPop()) context.pop();
+            },
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
           ),
         ],
       ),

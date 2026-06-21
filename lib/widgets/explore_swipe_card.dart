@@ -85,7 +85,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(KolabingRadius.lg),
                 border: Border.all(color: KolabingColors.hairline),
-                boxShadow: [KolabingShadows.card],
+                boxShadow: const [KolabingShadows.card],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(KolabingRadius.lg),
@@ -300,7 +300,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
             _buildTagChips(chips),
           ],
           const SizedBox(height: 10),
-          Divider(height: 1, thickness: 1, color: KolabingColors.hairline),
+          const Divider(height: 1, thickness: 1, color: KolabingColors.hairline),
           const SizedBox(height: 10),
           _buildViewDetailsRow(),
         ],
@@ -346,7 +346,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
         if (city.isNotEmpty) ...[
           Text(' · ', style: _secondaryStyle),
-          Icon(Icons.location_on_outlined, size: 12, color: KolabingColors.textTertiary),
+          const Icon(Icons.location_on_outlined, size: 12, color: KolabingColors.textTertiary),
           const SizedBox(width: 2),
           Flexible(
             child: Text(
@@ -364,8 +364,8 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildOfferRow(String offerLine) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Padding(
-        padding: const EdgeInsets.only(top: 1),
+      const Padding(
+        padding: EdgeInsets.only(top: 1),
         child: Icon(Icons.local_offer_outlined, size: 13, color: KolabingColors.onSurface),
       ),
       const SizedBox(width: 5),
@@ -393,20 +393,18 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
 
   (Color fill, Color text) _chipColors(String label) {
     final l = label.toLowerCase();
-    // Category / offer type → peach/apricot
-    if (_matchesAny(l, ['run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike',
+    // Category/offer/type chips → clean orange accent (soft warm fill + dark orange text)
+    if (_matchesAny(l, [
+      'run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike',
       'food', 'coffee', 'drink', 'restaurant', 'bar', 'gastro', 'cook', 'cafe',
-      'discount', 'promo', 'wellness', 'health', 'organic', 'mindful', 'spa'])) {
-      return (KolabingColors.accentOrange, KolabingColors.accentOrangeText);
+      'discount', 'promo', 'wellness', 'health', 'organic', 'mindful', 'spa',
+      'nature', 'eco', 'garden', 'outdoor', 'green',
+      'music', 'art', 'culture', 'film', 'photo', 'design', 'theatre', 'dance',
+      'venue', 'technology', 'fashion', 'retail', 'coworking', 'startup',
+    ])) {
+      return (KolabingColors.categoryOrangeBg, KolabingColors.accentOrangeText);
     }
-    // Nature / eco → sage green
-    if (_matchesAny(l, ['nature', 'eco', 'garden', 'outdoor', 'green'])) {
-      return (KolabingColors.tertiaryContainer, KolabingColors.tertiary);
-    }
-    // Creative / cultural → sky blue
-    if (_matchesAny(l, ['music', 'art', 'culture', 'film', 'photo', 'design', 'theatre', 'dance'])) {
-      return (KolabingColors.categoryBlueGrey, KolabingColors.categoryBlueGreyText);
-    }
+    // Everything else → warm neutral
     return (KolabingColors.surfaceContainerHigh, KolabingColors.onSurfaceVariant);
   }
 
@@ -447,7 +445,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
       ),
       const Spacer(),
-      Icon(Icons.chevron_right_rounded, size: 18, color: KolabingColors.onSurface),
+      const Icon(Icons.chevron_right_rounded, size: 18, color: KolabingColors.onSurface),
     ],
   );
 

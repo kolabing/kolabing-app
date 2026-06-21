@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../config/constants/layout.dart';
-import '../config/theme/color_tokens.dart';
 import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
 
@@ -40,7 +39,7 @@ enum KolabingButtonSize {
 ///   [KolabingButtonSize.small]       — 44 px, 14 px h-padding (inline)
 ///
 /// You may still pass [height] explicitly; it takes precedence over [size].
-class KolabingButton extends StatelessWidget {
+class KolabingButton extends StatefulWidget {
   const KolabingButton({
     required this.label,
     required this.onPressed,
@@ -76,56 +75,94 @@ class KolabingButton extends StatelessWidget {
   /// Override height. If null, derived from [size].
   final double? height;
 
-  double get _resolvedHeight => height ?? switch (size) {
-    KolabingButtonSize.defaultSize => KolabingLayout.buttonHeight,
-    KolabingButtonSize.compact => 48,
-    KolabingButtonSize.small => 44,
-  };
+  @override
+  State<KolabingButton> createState() => _KolabingButtonState();
+}
 
-  double get _resolvedHPad => switch (size) {
+class _KolabingButtonState extends State<KolabingButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _liftController;
+  late final Animation<double> _liftAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _liftController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 120),
+    );
+    _liftAnim = Tween<double>(begin: 0, end: -2).animate(
+      CurvedAnimation(parent: _liftController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _liftController.dispose();
+    super.dispose();
+  }
+
+  bool get _isActive =>
+      !widget.isDisabled && !widget.isLoading && widget.onPressed != null;
+
+  void _onTapDown(TapDownDetails _) {
+    if (_isActive) _liftController.forward();
+  }
+
+  void _onTapUp(TapUpDetails _) {
+    if (_isActive) _liftController.reverse();
+  }
+
+  void _onTapCancel() {
+    if (_isActive) _liftController.reverse();
+  }
+
+  double get _resolvedHeight => widget.height ??
+      switch (widget.size) {
+        KolabingButtonSize.defaultSize => KolabingLayout.buttonHeight,
+        KolabingButtonSize.compact => 48,
+        KolabingButtonSize.small => 44,
+      };
+
+  double get _resolvedHPad => switch (widget.size) {
     KolabingButtonSize.defaultSize => 24,
     KolabingButtonSize.compact => 16,
     KolabingButtonSize.small => 14,
   };
 
-  double get _resolvedIconSize => switch (size) {
+  double get _resolvedIconSize => switch (widget.size) {
     KolabingButtonSize.defaultSize => 18,
     KolabingButtonSize.compact => 16,
     KolabingButtonSize.small => 15,
   };
 
-  // ---------------------------------------------------------------------------
-  // Derived style properties per variant — require context.colors to adapt
-  // ---------------------------------------------------------------------------
-
-  Color _fill(KolabingColorTokens colors) => switch (variant) {
+  Color _fill(KolabingColorTokens colors) => switch (widget.variant) {
     KolabingButtonVariant.primary => colors.primary,
     KolabingButtonVariant.secondary => colors.surface,
     KolabingButtonVariant.dark => colors.ink,
   };
 
-  Color _labelColor(KolabingColorTokens colors) => switch (variant) {
-    KolabingButtonVariant.primary => colors.onPrimary,
-    KolabingButtonVariant.secondary => colors.ink,
+  // Always ink black on primary/secondary — never amber or tinted.
+  // Dark variant keeps yellow label (legible on black fill).
+  Color _labelColor(KolabingColorTokens colors) => switch (widget.variant) {
+    KolabingButtonVariant.primary => KolabingColors.ink,
+    KolabingButtonVariant.secondary => KolabingColors.ink,
     KolabingButtonVariant.dark => colors.primary,
   };
 
-  List<BoxShadow>? get _shadows => switch (variant) {
+  List<BoxShadow>? get _shadows => switch (widget.variant) {
     KolabingButtonVariant.primary => KolabingShadows.designButtonShadow,
     KolabingButtonVariant.secondary => KolabingShadows.buttonSecondaryShadow,
     KolabingButtonVariant.dark => null,
   };
 
   BorderSide? _border(KolabingColorTokens colors) {
-    if (variant == KolabingButtonVariant.secondary) {
-      return BorderSide(color: colors.hairline, width: 1);
+    if (widget.variant == KolabingButtonVariant.secondary) {
+      return BorderSide(color: colors.outlineVariant, width: 1);
     }
     return null;
   }
-
-  // ---------------------------------------------------------------------------
-  // Build
-  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -133,26 +170,46 @@ class KolabingButton extends StatelessWidget {
     final fill = _fill(colors);
     final labelColor = _labelColor(colors);
     final border = _border(colors);
-    final isActive = !isDisabled && !isLoading && onPressed != null;
     final h = _resolvedHeight;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: isActive ? _shadows : null,
-      ),
-      child: SizedBox(
-        width: width,
-        height: h,
-        child: _buildButton(isActive, h, fill, labelColor, border),
+    return GestureDetector(
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
+      child: AnimatedBuilder(
+        animation: _liftAnim,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(0, _liftAnim.value),
+          child: child,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: _isActive ? _shadows : null,
+          ),
+          child: SizedBox(
+            width: widget.width,
+            height: h,
+            child: _buildButton(h, fill, labelColor, border),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildButton(bool isActive, double h, Color fill, Color labelColor, BorderSide? border) {
+  Widget _buildButton(
+      double h, Color fill, Color labelColor, BorderSide? border) {
     final iconSize = _resolvedIconSize;
+
+    final shape = border != null
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
+            side: border,
+          )
+        : const StadiumBorder();
+
     return ElevatedButton(
-      onPressed: isActive ? onPressed : null,
+      onPressed: _isActive ? widget.onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: fill,
         foregroundColor: labelColor,
@@ -160,22 +217,32 @@ class KolabingButton extends StatelessWidget {
         disabledForegroundColor: labelColor.withValues(alpha: 0.5),
         elevation: 0,
         shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        splashFactory: InkRipple.splashFactory,
         minimumSize: Size(0, h),
-        maximumSize: Size(width.isInfinite ? double.infinity : width, h),
+        maximumSize: Size(
+            widget.width.isInfinite ? double.infinity : widget.width, h),
         padding: EdgeInsets.symmetric(horizontal: _resolvedHPad),
-        shape: border != null
-            ? RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(999),
-                side: border,
-              )
-            : const StadiumBorder(),
-        textStyle: switch (size) {
+        shape: shape,
+        textStyle: switch (widget.size) {
           KolabingButtonSize.defaultSize => KolabingTextStyles.buttonLabelLg,
           KolabingButtonSize.compact => KolabingTextStyles.buttonLabelMd,
-          KolabingButtonSize.small => KolabingTextStyles.buttonLabelMd.copyWith(fontSize: 13),
+          KolabingButtonSize.small =>
+            KolabingTextStyles.buttonLabelMd.copyWith(fontSize: 13),
         },
+      ).copyWith(
+        // Subtle ripple: 6% on press, 4% on hover — keeps lift as the primary feedback
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
+            return labelColor.withValues(alpha: 0.06);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return labelColor.withValues(alpha: 0.04);
+          }
+          return null;
+        }),
       ),
-      child: isLoading
+      child: widget.isLoading
           ? SizedBox(
               width: 20,
               height: 20,
@@ -188,25 +255,25 @@ class KolabingButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (icon != null) ...[
+                if (widget.icon != null) ...[
                   IconTheme(
                     data: IconThemeData(color: labelColor, size: iconSize),
-                    child: icon!,
+                    child: widget.icon!,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 10),
                 ],
                 Flexible(
                   child: Text(
-                    label,
+                    widget.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (trailingIcon != null) ...[
-                  const SizedBox(width: 6),
+                if (widget.trailingIcon != null) ...[
+                  const SizedBox(width: 10),
                   IconTheme(
                     data: IconThemeData(color: labelColor, size: iconSize),
-                    child: trailingIcon!,
+                    child: widget.trailingIcon!,
                   ),
                 ],
               ],

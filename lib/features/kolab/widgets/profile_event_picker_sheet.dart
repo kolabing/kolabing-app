@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../event/models/event.dart';
 
 class ProfileEventPickerSheet extends StatefulWidget {
@@ -163,11 +164,13 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Expanded(
-                        child: ElevatedButton(
+                        child: KolabingButton(
+                          label: l10n.profileEventPickerImport,
                           onPressed: selectedEvents.isEmpty
                               ? null
                               : () => Navigator.of(context).pop(selectedEvents),
-                          child: Text(l10n.profileEventPickerImport),
+                          variant: KolabingButtonVariant.primary,
+                          size: KolabingButtonSize.compact,
                         ),
                       ),
                     ],

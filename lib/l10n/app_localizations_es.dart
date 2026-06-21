@@ -876,13 +876,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityOfferDetailMode => 'Modo';
 
   @override
-  String get communityOfferDetailPreviewMode => 'MODO VISTA PREVIA';
+  String get communityOfferDetailPreviewMode => 'Modo vista previa';
 
   @override
-  String get communityOfferDetailAlreadyApplied => 'YA TE HAS POSTULADO';
+  String get communityOfferDetailAlreadyApplied => 'Ya te has postulado';
 
   @override
-  String get communityOfferDetailApplyNow => 'POSTULARSE AHORA';
+  String get communityOfferDetailApplyNow => 'Postularse ahora';
 
   @override
   String get communityOfferDetailTitle => 'Detalles de la oportunidad';
@@ -1339,7 +1339,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'El código QR estará disponible cuando se cree el evento';
 
   @override
-  String get collaborationDetailViewQr => 'VER CÓDIGO QR';
+  String get collaborationDetailViewQr => 'Ver código QR';
 
   @override
   String get collaborationDetailResubscribeTitle =>
@@ -1892,7 +1892,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get opportunityPublishSuccessViewOpportunities =>
-      'VER MIS OPORTUNIDADES';
+      'Ver mis oportunidades';
 
   @override
   String get eventDetailDeleteTitle => 'Eliminar evento';
@@ -4148,7 +4148,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Invita a 3 negocios → gana 75 € en efectivo';
 
   @override
-  String get referralBannerShareButton => 'COMPARTIR CÓDIGO';
+  String get referralBannerShareButton => 'Compartir código referral';
 
   @override
   String get referralSheetYourCode => 'TU CÓDIGO DE INVITACIÓN';
@@ -4410,7 +4410,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exploreDetailUnlockToApply => 'DESBLOQUEAR PARA POSTULARTE';
 
   @override
-  String get exploreDetailApplyNow => 'POSTULARTE AHORA';
+  String get exploreDetailApplyNow => 'Postularte ahora';
 
   @override
   String get exploreDetailViewCreatorProfile => 'Ver perfil del creador';
@@ -4676,10 +4676,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dashboardCreateKolabRequest => 'CREAR SOLICITUD DE KOLAB';
 
   @override
-  String get dashboardFindAKolab => 'BUSCAR UN KOLAB';
+  String get dashboardFindAKolab => 'Buscar un Kolab';
 
   @override
-  String get dashboardMyApplications => 'MIS SOLICITUDES';
+  String get dashboardMyApplications => 'Mis solicitudes';
 
   @override
   String get dashboardUpcomingKolabs => 'PRÓXIMOS KOLABS';

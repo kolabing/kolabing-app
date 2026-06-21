@@ -9,6 +9,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 
@@ -251,31 +252,11 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.xxl),
 
                 // Create button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleCreate,
-                    style: ElevatedButton.styleFrom(
-                      disabledBackgroundColor: context.colors.primary
-                          .withValues(alpha: 0.5),
-                    ),
-                    child: _isLoading
-                        ? SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                context.colors.onPrimary,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            l10n.createChallengeSubmit,
-                            style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
-                          ),
-                  ),
+                KolabingButton(
+                  label: l10n.createChallengeSubmit,
+                  onPressed: _isLoading ? null : _handleCreate,
+                  variant: KolabingButtonVariant.primary,
+                  isLoading: _isLoading,
                 ),
               ],
             ),

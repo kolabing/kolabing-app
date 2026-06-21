@@ -14,6 +14,7 @@ import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../rewards/widgets/collaboration_reward_nudge.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
 import '../widgets/kolab_completion_sheet.dart';
@@ -1520,40 +1521,29 @@ class _QRCodeSection extends StatelessWidget {
               const SizedBox(height: KolabingSpacing.md),
 
               // Generate QR button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    if (eventId != null) {
-                      context.push(
-                        '/attendee/events/$eventId/qr?name=Collaboration%20Event',
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            l10n.collaborationDetailQrUnavailable,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
-                          ),
-                          backgroundColor: context.colors.onSurfaceVariant,
-                          behavior: SnackBarBehavior.floating,
+              KolabingButton(
+                label: l10n.collaborationDetailViewQr,
+                onPressed: () {
+                  if (eventId != null) {
+                    context.push(
+                      '/attendee/events/$eventId/qr?name=Collaboration%20Event',
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          l10n.collaborationDetailQrUnavailable,
+                          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
                         ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                  ),
-                  icon: const Icon(LucideIcons.qrCode, size: 18),
-                  label: Text(
-                    l10n.collaborationDetailViewQr,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
+                        backgroundColor: context.colors.onSurfaceVariant,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
+                icon: const Icon(LucideIcons.qrCode),
               ),
             ],
           ),
@@ -1738,23 +1728,12 @@ class _ResubscribePrompt extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 46,
-            child: ElevatedButton.icon(
-              onPressed: () => context.push(KolabingRoutes.businessPlans),
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-              icon: const Icon(LucideIcons.creditCard, size: 18),
-              label: Text(
-                l10n.collaborationDetailResubscribeCta,
-                style: KolabingTextStyles.button.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
+          KolabingButton(
+            label: l10n.collaborationDetailResubscribeCta,
+            onPressed: () => context.push(KolabingRoutes.businessPlans),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.creditCard),
           ),
         ],
       ),
@@ -2070,27 +2049,20 @@ class _PostCompletionReviewSection extends ConsumerWidget {
         ),
       ),
       const SizedBox(height: 12),
-      SizedBox(
-        height: 44,
-        child: ElevatedButton(
-          onPressed: () async {
-            final submitted = await KolabReviewSheet.show(
-              context,
-              collaborationId: collaborationId,
-              partnerName: partnerName,
-            );
-            if (submitted) {
-              ref.invalidate(collaborationDetailProvider(collaborationId));
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-          ),
-          child: Text(
-            l10n.collaborationDetailLeaveReviewCta,
-            style: KolabingTextStyles.button,
-          ),
-        ),
+      KolabingButton(
+        label: l10n.collaborationDetailLeaveReviewCta,
+        onPressed: () async {
+          final submitted = await KolabReviewSheet.show(
+            context,
+            collaborationId: collaborationId,
+            partnerName: partnerName,
+          );
+          if (submitted) {
+            ref.invalidate(collaborationDetailProvider(collaborationId));
+          }
+        },
+        variant: KolabingButtonVariant.primary,
+        size: KolabingButtonSize.compact,
       ),
     ],
     );

@@ -7,6 +7,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
 import '../widgets/kolabing_logo.dart';
@@ -422,36 +423,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           _AnimatedElement(
             opacityAnimation: _buttonAnimation,
             slideAnimation: _buttonSlideAnimation,
-            child: SizedBox(
-              width: double.infinity,
-              height: ultraCompact ? 44 : (compact ? 46 : 48),
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleSendResetLink,
-                style: ElevatedButton.styleFrom(
-                  disabledBackgroundColor: KolabingColors.primary.withValues(
-                    alpha: 0.70,
-                  ),
-                  elevation: 0,
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            KolabingColors.onPrimary,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context).forgotPasswordSendButton,
-                        style: KolabingTextStyles.button.copyWith(
-                          fontSize: compact ? 15 : 16,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-              ),
+            child: KolabingButton(
+              label: AppLocalizations.of(context).forgotPasswordSendButton,
+              onPressed: _isLoading ? null : _handleSendResetLink,
+              variant: KolabingButtonVariant.primary,
+              size: compact ? KolabingButtonSize.compact : KolabingButtonSize.defaultSize,
+              isLoading: _isLoading,
             ),
           ),
         ],
@@ -534,23 +511,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         _AnimatedElement(
           opacityAnimation: _buttonAnimation,
           slideAnimation: _buttonSlideAnimation,
-          child: SizedBox(
-            width: double.infinity,
-            height: ultraCompact ? 44 : (compact ? 46 : 48),
-            child: ElevatedButton(
-              onPressed: () => context.go(_kLoginRoute),
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-              child: Text(
-                AppLocalizations.of(context).forgotPasswordBackToSignIn,
-                style: KolabingTextStyles.button.copyWith(
-                  fontSize: compact ? 15 : 16,
-                  letterSpacing: 1.0,
-                  color: KolabingColors.onPrimary,
-                ),
-              ),
-            ),
+          child: KolabingButton(
+            label: AppLocalizations.of(context).forgotPasswordBackToSignIn,
+            onPressed: () => context.go(_kLoginRoute),
+            variant: KolabingButtonVariant.primary,
+            size: compact ? KolabingButtonSize.compact : KolabingButtonSize.defaultSize,
           ),
         ),
         const SizedBox(height: 6),

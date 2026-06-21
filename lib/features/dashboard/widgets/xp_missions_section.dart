@@ -87,7 +87,7 @@ class XpMissionsSection extends StatelessWidget {
           final m = _missions[i];
           return Padding(
             padding: EdgeInsets.only(
-              bottom: i < _missions.length - 1 ? KolabingSpacing.xs : 0,
+              bottom: i < _missions.length - 1 ? 9.0 : 0,
             ),
             child: EarnXpActionCard(
               icon: m.icon,

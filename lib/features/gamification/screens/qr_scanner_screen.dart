@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../providers/checkin_provider.dart';
 
 /// QR Scanner screen for attendees to check in to events
@@ -206,12 +207,11 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
                   ),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
-                    child: ElevatedButton(
+                    child: KolabingButton(
+                      label: AppLocalizations.of(context).commonTryAgain,
                       onPressed: _retryScanning,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: Text(AppLocalizations.of(context).commonTryAgain),
+                      variant: KolabingButtonVariant.primary,
+                      size: KolabingButtonSize.compact,
                     ),
                   ),
                 ],

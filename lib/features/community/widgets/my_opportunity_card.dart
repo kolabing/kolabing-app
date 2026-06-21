@@ -9,6 +9,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/glass_icon_button.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
@@ -110,13 +111,13 @@ class MyOpportunityCard extends StatelessWidget {
             children: [
               KolabChip(
                 label: _dateLabel,
-                variant: KolabChipVariant.green,
+                variant: KolabChipVariant.sage,
                 icon: LucideIcons.calendar,
               ),
               if (opportunity.preferredCity.isNotEmpty)
                 KolabChip(
                   label: opportunity.preferredCity,
-                  variant: KolabChipVariant.yellow,
+                  variant: KolabChipVariant.amber,
                   icon: LucideIcons.mapPin,
                 ),
               ...opportunity.categories
@@ -138,11 +139,12 @@ class MyOpportunityCard extends StatelessWidget {
 
     if (status == OpportunityStatus.published) {
       if (onView != null) {
-        pill = GlassButton(
+        pill = KolabingButton(
           label: l10n.myOpportunityCardActionView,
           onPressed: onView,
-          intent: GlassButtonIntent.primary,
-          icon: LucideIcons.eye,
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.eye),
         );
       }
       if (status.canEdit && onEdit != null) {
@@ -177,11 +179,12 @@ class MyOpportunityCard extends StatelessWidget {
       }
     } else if (status.canEdit) {
       if (onEdit != null) {
-        pill = GlassButton(
+        pill = KolabingButton(
           label: l10n.myOpportunityCardActionEdit,
           onPressed: onEdit,
-          intent: GlassButtonIntent.primary,
-          icon: LucideIcons.edit,
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.edit),
         );
       }
       if (status.canPublish && onPublish != null) {
@@ -196,11 +199,12 @@ class MyOpportunityCard extends StatelessWidget {
       }
     } else if (status.canPublish) {
       if (onPublish != null) {
-        pill = GlassButton(
+        pill = KolabingButton(
           label: l10n.myOpportunityCardActionPublish,
           onPressed: onPublish,
-          intent: GlassButtonIntent.primary,
-          icon: LucideIcons.upload,
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.upload),
         );
       }
     }

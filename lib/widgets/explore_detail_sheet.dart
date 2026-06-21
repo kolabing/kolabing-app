@@ -13,6 +13,7 @@ import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
 import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
+import 'kolabing_button.dart';
 import 'category_icon.dart';
 
 /// Modal bottom sheet displaying full opportunity details.
@@ -81,7 +82,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     ),
     decoration: BoxDecoration(
       color: context.colors.surface,
-      borderRadius: BorderRadius.vertical(
+      borderRadius: const BorderRadius.vertical(
         top: Radius.circular(KolabingRadius.xxl),
       ),
     ),
@@ -367,13 +368,24 @@ class ExploreDetailSheet extends ConsumerWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: context.colors.surfaceVariant,
+      color: Colors.white,
       borderRadius: KolabingRadius.borderRadiusMd,
+      border: Border.all(color: context.colors.hairline),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: context.colors.categoryOrangeBg,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Icon(icon, size: 16, color: context.colors.categoryOrangeText),
+          ),
+        ),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Column(
@@ -433,26 +445,24 @@ class ExploreDetailSheet extends ConsumerWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: context.colors.success.withValues(alpha: 0.1),
+          color: context.colors.primary,
           borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: context.colors.success.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: context.colors.primaryDark),
         ),
         child: Row(
           children: [
             Icon(
               LucideIcons.gift,
               size: 18,
-              color: context.colors.success,
+              color: context.colors.charcoal,
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(
                 opportunity.offerSummary,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: context.colors.onSurface,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.charcoal,
                 ),
               ),
             ),
@@ -514,14 +524,15 @@ class ExploreDetailSheet extends ConsumerWidget {
   }
 
   Widget _buildDetailPill(BuildContext context, _DetailItem item) {
+    // Both sand and sage now use warm amber for visual consistency
     final (bg, fg) = switch (item.kind) {
       _DetailPillKind.sand => (
         context.colors.amberChipContainer,
         context.colors.amberChipText,
       ),
       _DetailPillKind.sage => (
-        context.colors.categorySageBg,
-        context.colors.categorySageText,
+        context.colors.amberChipContainer,
+        context.colors.amberChipText,
       ),
     };
     return Container(
@@ -579,7 +590,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: isAvailable
-                    ? context.colors.categoryBlueBg
+                    ? context.colors.primary
                     : context.colors.surfaceContainerLow,
                 shape: BoxShape.circle,
               ),
@@ -589,7 +600,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 style: KolabingTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isAvailable
-                      ? context.colors.categoryBlueText
+                      ? context.colors.onPrimary
                       : context.colors.textTertiary,
                 ),
               ),
@@ -669,33 +680,14 @@ class ExploreDetailSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: double.infinity,
+          KolabingButton(
+            label: showsSubscribeAction
+                ? AppLocalizations.of(context).exploreDetailUnlockToApply
+                : AppLocalizations.of(context).exploreDetailApplyNow,
+            onPressed: canApply ? onApply : onSubscribe,
+            variant: KolabingButtonVariant.primary,
+            icon: Icon(showsSubscribeAction ? LucideIcons.crown : LucideIcons.send),
             height: 52,
-            child: ElevatedButton.icon(
-              onPressed: canApply ? onApply : onSubscribe,
-              icon: Icon(
-                showsSubscribeAction ? LucideIcons.crown : LucideIcons.send,
-                size: 18,
-              ),
-              label: Text(
-                showsSubscribeAction
-                    ? AppLocalizations.of(context).exploreDetailUnlockToApply
-                    : AppLocalizations.of(context).exploreDetailApplyNow,
-                style: KolabingTextStyles.button.copyWith(
-                  fontSize: 15,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-            ),
           ),
           if (onViewCreatorProfile != null && !hideCreatorIdentity) ...[
             const SizedBox(height: KolabingSpacing.xs),

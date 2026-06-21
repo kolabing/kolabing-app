@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../widgets/kolabing_icon_option_card.dart';
 import '../../enums/need_type.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -24,18 +25,22 @@ class NeedsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header
+          // Section header — Anton uppercase
           Text(
             'WHAT DO YOU NEED?',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.sectionHeadingLarge.copyWith(
+              color: context.colors.ink,
+            ),
           ),
-          const SizedBox(height: KolabingSpacing.xxs),
+          const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Select all that apply',
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
 
-          // Error
+          // Validation error
           if (state.fieldErrors['needs'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             _buildFieldError(context, state.fieldErrors['needs']!),
@@ -53,45 +58,12 @@ class NeedsScreen extends ConsumerWidget {
             childAspectRatio: 1.3,
             children: NeedType.values.map((need) {
               final isSelected = kolab.needs.contains(need);
-              return GestureDetector(
+              return KolabingIconOptionCard(
+                icon: Icon(need.icon, size: 28),
+                label: need.displayName,
+                selected: isSelected,
                 onTap: () =>
                     ref.read(kolabFormProvider.notifier).toggleNeed(need),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.all(KolabingSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? context.colors.softYellow
-                        : context.colors.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected
-                          ? context.colors.primary
-                          : context.colors.darkBorder,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        need.icon,
-                        size: 28,
-                        color: isSelected
-                            ? context.colors.primary
-                            : context.colors.textTertiary,
-                      ),
-                      const SizedBox(height: KolabingSpacing.xs),
-                      Text(
-                        need.displayName,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
-                              ? context.colors.onSurface
-                              : context.colors.onSurfaceVariant),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
               );
             }).toList(),
           ),
@@ -120,7 +92,10 @@ class NeedsScreen extends ConsumerWidget {
             Expanded(
               child: Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: context.colors.error,
+                ),
               ),
             ),
           ],

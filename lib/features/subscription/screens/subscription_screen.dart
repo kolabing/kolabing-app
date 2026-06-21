@@ -12,6 +12,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
@@ -754,30 +755,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       children: [
         // Reactivate button (active but scheduled to cancel)
         if (isCancelPending) ...[
-          SizedBox(
-            height: 52,
-            child: ElevatedButton.icon(
-              onPressed: _isReactivating ? null : _handleReactivate,
-              icon: _isReactivating
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.colors.onPrimary,
-                      ),
-                    )
-                  : const Icon(LucideIcons.rotateCcw, size: 20),
-              label: Text(
-                l10n.subscriptionReactivateButton,
-                style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: context.colors.onPrimary,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-            ),
+          KolabingButton(
+            label: l10n.subscriptionReactivateButton,
+            onPressed: _isReactivating ? null : _handleReactivate,
+            variant: KolabingButtonVariant.primary,
+            isLoading: _isReactivating,
+            icon: const Icon(LucideIcons.rotateCcw, size: 20),
           ),
         ],
 
@@ -799,34 +782,17 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             },
           ),
           const SizedBox(height: KolabingSpacing.md),
-          SizedBox(
-            height: 52,
-            child: ElevatedButton.icon(
-              onPressed: canStartApplePurchase && !isSubscribeBusy
-                  ? _handleSubscribe
-                  : null,
-              icon: isSubscribeBusy
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.colors.onPrimary,
-                      ),
-                    )
-                  : const Icon(LucideIcons.sparkles, size: 20),
-              label: Text(
-                Platform.isIOS
-                    ? l10n.subscriptionSubscribeButton
-                    : l10n.subscriptionSubscribePricedButton,
-                style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: context.colors.onPrimary,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-            ),
+          KolabingButton(
+            label: Platform.isIOS
+                ? l10n.subscriptionSubscribeButton
+                : l10n.subscriptionSubscribePricedButton,
+            onPressed: canStartApplePurchase && !isSubscribeBusy
+                ? _handleSubscribe
+                : null,
+            variant: KolabingButtonVariant.primary,
+            isLoading: isSubscribeBusy,
+            isDisabled: !canStartApplePurchase,
+            icon: const Icon(LucideIcons.sparkles, size: 20),
           ),
           if (Platform.isIOS &&
               (iapState?.purchaseAvailabilityMessage != null)) ...[

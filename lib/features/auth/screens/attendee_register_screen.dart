@@ -6,6 +6,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/auth_response.dart';
 import '../providers/auth_provider.dart';
 
@@ -403,42 +404,13 @@ class _AttendeeRegisterScreenState
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleRegister,
-                        style: ElevatedButton.styleFrom(
-                          disabledBackgroundColor: KolabingColors.primary
-                              .withValues(alpha: 0.7),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    KolabingColors.onPrimary,
-                                  ),
-                                ),
-                              )
-                            : _showSuccess
-                            ? const Icon(
-                                Icons.check_rounded,
-                                size: 24,
-                                color: KolabingColors.onPrimary,
-                              )
-                            : Text(
-                                AppLocalizations.of(context).attendeeRegisterCreateAccount,
-                                style: KolabingTextStyles.button.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.0,
-                                ),
-                              ),
-                      ),
+                    KolabingButton(
+                      label: _showSuccess
+                          ? '✓'
+                          : AppLocalizations.of(context).attendeeRegisterCreateAccount,
+                      onPressed: _isLoading ? null : _handleRegister,
+                      variant: KolabingButtonVariant.primary,
+                      isLoading: _isLoading,
                     ),
                     const SizedBox(height: 16),
                     Text(

@@ -20,6 +20,8 @@ import '../../community/providers/community_providers.dart';
 import '../../friends/models/friendship.dart';
 import '../../friends/providers/friends_provider.dart';
 import '../../identity/widgets/handle_field.dart';
+import '../../../widgets/kolabing_button.dart';
+
 
 /// Attendee profile — a Flaire-style social hub.
 ///
@@ -486,25 +488,12 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                 ),
                 const SizedBox(width: KolabingSpacing.sm),
                 Expanded(
-                  child: ElevatedButton(
+                  child: KolabingButton(
+                    label: l10n.commonSave,
                     onPressed: _savingIdentity ? null : _saveIdentity,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(KolabingRadius.md),
-                      ),
-                    ),
-                    child: _savingIdentity
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: KolabingColors.onPrimary,
-                            ),
-                          )
-                        : Text(l10n.commonSave),
+                    variant: KolabingButtonVariant.primary,
+                    isLoading: _savingIdentity,
+                    size: KolabingButtonSize.compact,
                   ),
                 ),
               ],
@@ -823,14 +812,12 @@ class _MyCommunitiesEmpty extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: KolabingSpacing.sm),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () =>
-                      context.push(KolabingRoutes.discoverCommunities),
-                  icon: const Icon(LucideIcons.compass, size: 18),
-                  label: Text(l10n.discoverCommunitiesCta),
-                ),
+              KolabingButton(
+                label: l10n.discoverCommunitiesCta,
+                onPressed: () =>
+                    context.push(KolabingRoutes.discoverCommunities),
+                variant: KolabingButtonVariant.primary,
+                icon: const Icon(LucideIcons.compass, size: 18),
               ),
             ],
           ),

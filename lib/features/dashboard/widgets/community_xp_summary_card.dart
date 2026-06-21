@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
-import '../../../config/theme/colors.dart';
-import '../../../config/theme/typography.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
-/// Sage-green XP summary card for the redesigned Community Dashboard.
+// Design tokens for the yellow XP card
+const _cardBg = Color(0xFFFFE28C); // primary brand yellow
+const _inkDark = Color(0xFF19150F);
+const _mutedLabel = Color(0xFF9A7C28); // amber-on-yellow muted label
+const _orangeFill = Color(0xFFFF6114); // progress bar fill
+
+/// Yellow XP summary card for the Community Dashboard.
 ///
-/// Non-tappable. Shows level chip, total XP, "To next level" counter,
-/// and an animated progress bar. Does NOT navigate anywhere.
+/// Matches the referral card visual language: solid yellow, black pill badge,
+/// Anton numerics, orange progress fill. Styling only — all data wiring is unchanged.
 class CommunityXpSummaryCard extends ConsumerWidget {
   const CommunityXpSummaryCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final c = context.colors;
     final wallet = ref.watch(walletSummaryProvider);
     if (wallet == null) return const SizedBox.shrink();
-
-    final cardBg = c.categorySageBg;
-    final inkDark = c.categorySageText;
-    final inkMid = c.categorySageText;
-    final progressFill = c.success;
 
     final level = wallet.level;
     final progress = wallet.levelProgress;
@@ -32,73 +31,79 @@ class CommunityXpSummaryCard extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: inkMid.withValues(alpha: 0.15)),
+      padding: const EdgeInsets.all(22),
+      decoration: const BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.all(Radius.circular(24)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top row: level badge (left) + to-next-level stack (right)
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Level chip
-              _LevelChip(levelNumber: level.number, levelTitle: level.title),
+              _LevelBadge(levelNumber: level.number),
               const Spacer(),
-              // To next level
-              if (!level.isMaxLevel) ...[
+              if (!level.isMaxLevel)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       'To next level',
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        fontSize: 10,
-                        color: inkMid,
-                        fontWeight: FontWeight.w500,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: _mutedLabel,
                       ),
                     ),
+                    const SizedBox(height: 1),
                     Text(
                       '$xpToNext',
-                      style: KolabingTextStyles.displaySmall.copyWith(
-                        fontSize: 24,
-                        color: inkDark,
+                      style: GoogleFonts.anton(
+                        fontSize: 34,
+                        color: _inkDark,
+                        height: 1.05,
                       ),
                     ),
                     Text(
-                      'XP needed',
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        fontSize: 10,
-                        color: inkMid,
+                      'XP NEEDED',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: _mutedLabel,
+                        letterSpacing: 0.8,
                       ),
                     ),
                   ],
                 ),
-              ],
             ],
           ),
+
           const SizedBox(height: KolabingSpacing.sm),
+
           // Big XP number
           Text(
             '${wallet.totalXp}',
-            style: KolabingTextStyles.displaySmall.copyWith(
-              fontSize: 40,
-              color: inkDark,
-              fontWeight: FontWeight.w400,
+            style: GoogleFonts.anton(
+              fontSize: 56,
+              color: _inkDark,
+              height: 0.92,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             'XP POINTS',
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontSize: 10,
+            style: GoogleFonts.inter(
+              fontSize: 11.5,
               fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-              color: inkMid,
+              color: _mutedLabel,
+              letterSpacing: 1.4,
             ),
           ),
+
           const SizedBox(height: KolabingSpacing.sm),
+
           // Animated progress bar
           ClipRRect(
             borderRadius: KolabingRadius.borderRadiusRound,
@@ -108,9 +113,9 @@ class CommunityXpSummaryCard extends ConsumerWidget {
               curve: Curves.easeOut,
               builder: (_, value, _) => LinearProgressIndicator(
                 value: value,
-                minHeight: 6,
-                backgroundColor: inkMid.withValues(alpha: 0.12),
-                valueColor: AlwaysStoppedAnimation<Color>(progressFill),
+                minHeight: 8,
+                backgroundColor: const Color(0xFF19150F).withValues(alpha: 0.14),
+                valueColor: const AlwaysStoppedAnimation<Color>(_orangeFill),
               ),
             ),
           ),
@@ -120,36 +125,35 @@ class CommunityXpSummaryCard extends ConsumerWidget {
   }
 }
 
-class _LevelChip extends StatelessWidget {
-  const _LevelChip({required this.levelNumber, required this.levelTitle});
+class _LevelBadge extends StatelessWidget {
+  const _LevelBadge({required this.levelNumber});
 
   final int levelNumber;
-  final String levelTitle;
 
   @override
   Widget build(BuildContext context) {
-    final c = context.colors;
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: c.categorySageText,
-        borderRadius: KolabingRadius.borderRadiusRound,
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+      decoration: const BoxDecoration(
+        color: Color(0xFF19150F),
+        borderRadius: BorderRadius.all(Radius.circular(999)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(LucideIcons.shield, size: 11, color: c.textOnDark),
-          const SizedBox(width: 4),
+          const Icon(
+            LucideIcons.shield,
+            size: 11,
+            color: _cardBg, // yellow icon on black pill
+          ),
+          const SizedBox(width: 5),
           Text(
             'LEVEL $levelNumber',
-            style: TextStyle(
-              fontSize: 10,
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
               fontWeight: FontWeight.w700,
-              color: c.textOnDark,
-              letterSpacing: 0.5,
+              color: _cardBg,
+              letterSpacing: 0.6,
             ),
           ),
         ],

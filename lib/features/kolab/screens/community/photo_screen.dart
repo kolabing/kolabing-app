@@ -18,6 +18,7 @@ import '../../../profile/providers/gallery_provider.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../widgets/existing_photo_picker_sheet.dart';
+import '../../../../widgets/kolabing_button.dart';
 
 /// Community step 4: "ADD A PHOTO"
 ///
@@ -401,9 +402,11 @@ class _UploadedPhotoCard extends StatelessWidget {
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
-              child: ElevatedButton(
+              child: KolabingButton(
+                label: l10n.photoReplacePhotoButton,
                 onPressed: isUploading ? null : onReplace,
-                child: Text(l10n.photoReplacePhotoButton),
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
               ),
             ),
           ],

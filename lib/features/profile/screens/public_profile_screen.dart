@@ -24,6 +24,7 @@ import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/public_profile.dart';
 import '../providers/public_profile_provider.dart';
 import '../widgets/past_collaboration_card.dart';
+import '../../../widgets/kolabing_button.dart';
 
 /// Public profile preview screen.
 ///
@@ -1198,35 +1199,28 @@ class _SendKolabBottomBar extends ConsumerWidget {
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             flex: 2,
-            child: SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  final allowed = await SubscriptionPaywall.checkAndShow(
-                    context,
-                    ref,
-                  );
-                  if (!allowed || !context.mounted) {
-                    return;
-                  }
+            child: KolabingButton(
+              label: AppLocalizations.of(context).publicProfileSendKolabProposal,
+              onPressed: () async {
+                final allowed = await SubscriptionPaywall.checkAndShow(
+                  context,
+                  ref,
+                );
+                if (!allowed || !context.mounted) {
+                  return;
+                }
 
-                  // Route to the Kolab create flow with the community
-                  // pre-selected as the recipient. The flow reads the
-                  // `recipient_community_id` query param.
-                  await context.push(
-                    '${KolabingRoutes.kolabNew}'
-                    '?recipient_community_id=${Uri.encodeComponent(community.id)}',
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                ),
-                icon: const Icon(LucideIcons.send, size: 18),
-                label: Text(
-                  AppLocalizations.of(context).publicProfileSendKolabProposal,
-                  style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
-                ),
-              ),
+                // Route to the Kolab create flow with the community
+                // pre-selected as the recipient. The flow reads the
+                // `recipient_community_id` query param.
+                await context.push(
+                  '${KolabingRoutes.kolabNew}'
+                  '?recipient_community_id=${Uri.encodeComponent(community.id)}',
+                );
+              },
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.send, size: 18),
             ),
           ),
         ],

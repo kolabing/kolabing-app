@@ -567,7 +567,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 )
                               : Text(
                                   l10n.communityFinalCreateAccountButton,
-                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
+                                  style: KolabingTextStyles.button.copyWith(fontSize: 16),
                                 ),
                         ),
                       ),

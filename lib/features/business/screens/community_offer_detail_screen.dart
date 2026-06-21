@@ -12,6 +12,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/models/user_model.dart';
@@ -811,28 +812,12 @@ class _CommunityOfferDetailScreenState
 
     if (isPreviewMode) {
       return _buildBottomButtonShell(
-        child: ElevatedButton(
+        child: KolabingButton(
+          label: AppLocalizations.of(context).communityOfferDetailPreviewMode,
           onPressed: null,
-          style: ElevatedButton.styleFrom(
-            disabledBackgroundColor: context.colors.surfaceVariant,
-            elevation: 0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(LucideIcons.eye, size: 18),
-              const SizedBox(width: KolabingSpacing.xs),
-              Text(
-                AppLocalizations.of(context).communityOfferDetailPreviewMode,
-                style: KolabingTextStyles.button.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
-                  color: context.colors.textTertiary,
-                ),
-              ),
-            ],
-          ),
+          variant: KolabingButtonVariant.secondary,
+          icon: const Icon(LucideIcons.eye),
+          isDisabled: true,
         ),
       );
     }
@@ -840,46 +825,21 @@ class _CommunityOfferDetailScreenState
     // If user has already applied
     if (opportunity.hasApplied == true) {
       return _buildBottomButtonShell(
-        child: ElevatedButton(
+        child: KolabingButton(
+          label: AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
           onPressed: null,
-          style: ElevatedButton.styleFrom(
-            disabledBackgroundColor: context.colors.surfaceVariant,
-            elevation: 0,
-          ),
-          child: Text(
-            AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
-            style: KolabingTextStyles.button.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1,
-              color: context.colors.textTertiary,
-            ),
-          ),
+          variant: KolabingButtonVariant.secondary,
+          isDisabled: true,
         ),
       );
     }
 
     return _buildBottomButtonShell(
-      child: ElevatedButton(
+      child: KolabingButton(
+        label: AppLocalizations.of(context).communityOfferDetailApplyNow,
         onPressed: () => _handleApply(opportunity),
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(LucideIcons.send, size: 18),
-            const SizedBox(width: KolabingSpacing.xs),
-            Text(
-              AppLocalizations.of(context).communityOfferDetailApplyNow,
-              style: KolabingTextStyles.button.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1,
-              ),
-            ),
-          ],
-        ),
+        variant: KolabingButtonVariant.primary,
+        icon: const Icon(LucideIcons.send),
       ),
     );
   }

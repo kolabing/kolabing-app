@@ -15,6 +15,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../../widgets/glass_button.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
@@ -452,12 +453,13 @@ class _CommunityProfileScreenState
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.lg),
-              GlassButton(
+              KolabingButton(
                 label: l10n.communityProfileTryAgain,
                 onPressed: () =>
                     ref.read(profileProvider.notifier).loadProfile(),
-                intent: GlassButtonIntent.primary,
-                icon: LucideIcons.rotateCcw,
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
+                icon: const Icon(LucideIcons.rotateCcw, size: 16),
               ),
             ],
           ),
@@ -545,9 +547,8 @@ class _CommunityProfileScreenState
         Expanded(
           child: Text(
             'PROFILE',
-            style: KolabingTextStyles.headlineLarge.copyWith(
-              color: context.colors.onSurface,
-              letterSpacing: 1.0,
+            style: KolabingTextStyles.displayTitle.copyWith(
+              color: context.colors.ink,
             ),
           ),
         ),
@@ -669,23 +670,23 @@ class _CommunityProfileScreenState
 
           const SizedBox(height: KolabingSpacing.xs),
 
-          // Community type badge — slate palette
+          // Community type badge — orange palette
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: KolabingSpacing.md,
               vertical: KolabingSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: context.colors.info.withValues(alpha: 0.1),
+              color: context.colors.orangeTint,
               borderRadius: KolabingRadius.borderRadiusRound,
               border: Border.all(
-                color: context.colors.info.withValues(alpha: 0.3),
+                color: context.colors.orange.withValues(alpha: 0.4),
               ),
             ),
             child: Text(
               communityType,
               style: KolabingTextStyles.labelSmall.copyWith(
-                color: context.colors.info,
+                color: context.colors.orange,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -705,9 +706,9 @@ class _CommunityProfileScreenState
                   vertical: KolabingSpacing.xxs,
                 ),
                 decoration: BoxDecoration(
-                  color: context.colors.softYellow,
+                  color: context.colors.primaryTint,
                   borderRadius: KolabingRadius.borderRadiusRound,
-                  border: Border.all(color: context.colors.softYellowBorder),
+                  border: Border.all(color: context.colors.primary),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

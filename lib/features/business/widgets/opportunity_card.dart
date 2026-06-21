@@ -8,7 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/category_icon.dart';
-import '../../../widgets/glass_button.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../opportunity/models/opportunity.dart';
 
 /// Card widget for displaying an opportunity in the explore list
@@ -232,20 +232,22 @@ class OpportunityCard extends StatelessWidget {
   Widget _buildActionButtons(BuildContext context, bool isDark) => Row(
         children: [
           Expanded(
-            child: GlassButton(
-              label: 'view',
+            child: KolabingButton(
+              label: 'View',
               onPressed: onView,
-              intent: GlassButtonIntent.neutral,
-              icon: LucideIcons.eye,
+              variant: KolabingButtonVariant.secondary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.eye),
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
-            child: GlassButton(
-              label: 'apply',
+            child: KolabingButton(
+              label: 'Apply',
               onPressed: onApply,
-              intent: GlassButtonIntent.primary,
-              icon: LucideIcons.send,
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.send),
             ),
           ),
         ],

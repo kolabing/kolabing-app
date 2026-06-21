@@ -10,6 +10,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/services/auth_service.dart';
 
 /// Lightweight post-completion review sheet.
@@ -250,28 +251,12 @@ class _KolabReviewSheetState extends State<KolabReviewSheet> {
           const SizedBox(height: KolabingSpacing.lg),
 
           // Submit CTA
-          SizedBox(
-            height: 52,
-            child: ElevatedButton(
-              onPressed: _canSubmit ? _submit : null,
-              style: ElevatedButton.styleFrom(
-                disabledBackgroundColor:
-                    context.colors.primary.withValues(alpha: 0.4),
-              ),
-              child: _isSubmitting
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.colors.onPrimary,
-                      ),
-                    )
-                  : Text(
-                      l10n.kolabReviewSheetSubmitXp,
-                      style: KolabingTextStyles.button,
-                    ),
-            ),
+          KolabingButton(
+            label: l10n.kolabReviewSheetSubmitXp,
+            onPressed: _canSubmit ? _submit : null,
+            variant: KolabingButtonVariant.primary,
+            isLoading: _isSubmitting,
+            isDisabled: !_canSubmit,
           ),
 
           const SizedBox(height: KolabingSpacing.xs),

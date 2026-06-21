@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/kolabing_input.dart';
+import '../../../../widgets/kolabing_selectable_chip.dart';
 import '../../providers/kolab_form_provider.dart';
 
 /// Community step 1: "YOUR COMMUNITY TYPE"
@@ -76,24 +76,29 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
+    final selectedCount = kolab.communityTypes.length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header
+          // Section title — Anton uppercase
           Text(
             l10n.communityInfoTypeHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.sectionHeadingLarge.copyWith(
+              color: context.colors.ink,
+            ),
           ),
-          const SizedBox(height: KolabingSpacing.xxs),
+          const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.communityInfoTypeSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
 
-          // Community types error
+          // Community types validation error
           if (state.fieldErrors['community_types'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             _buildFieldError(state.fieldErrors['community_types']!),
@@ -107,42 +112,17 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             runSpacing: KolabingSpacing.xs,
             children: _communityTypeOptions.map((type) {
               final isSelected = kolab.communityTypes.contains(type);
-              final isMaxReached =
-                  kolab.communityTypes.length >= 3 && !isSelected;
+              // Disable unselected chips once the limit of 3 is reached.
+              // Selected chips are never disabled so they can be deselected.
+              final isDisabled = selectedCount >= 3 && !isSelected;
 
-              return GestureDetector(
-                onTap: isMaxReached
-                    ? null
-                    : () => ref
-                        .read(kolabFormProvider.notifier)
-                        .toggleCommunityType(type),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.sm,
-                    vertical: KolabingSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? context.colors.softYellow
-                        : context.colors.surface,
-                    borderRadius: KolabingRadius.borderRadiusSm,
-                    border: Border.all(
-                      color: isSelected
-                          ? context.colors.primary
-                          : context.colors.darkBorder,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Text(
-                    type,
-                    style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isMaxReached
-                          ? context.colors.textTertiary
-                          : isSelected
-                              ? context.colors.onSurface
-                              : context.colors.onSurfaceVariant),
-                  ),
-                ),
+              return KolabingSelectableChip(
+                label: type,
+                selected: isSelected,
+                disabled: isDisabled,
+                onTap: () => ref
+                    .read(kolabFormProvider.notifier)
+                    .toggleCommunityType(type),
               );
             }).toList(),
           ),
@@ -193,7 +173,9 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   Widget _buildLabel(String label) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+        style: KolabingTextStyles.metaLabel.copyWith(
+          color: context.colors.onSurfaceVariant,
+        ),
       );
 
   Widget _buildFieldError(String error) => Container(
@@ -203,7 +185,7 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
         ),
         decoration: BoxDecoration(
           color: context.colors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
@@ -216,7 +198,10 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
             Expanded(
               child: Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: context.colors.error,
+                ),
               ),
             ),
           ],

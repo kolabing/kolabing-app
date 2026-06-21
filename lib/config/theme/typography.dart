@@ -259,7 +259,7 @@ abstract final class KolabingTextStyles {
   static TextStyle get buttonLabelLg => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        letterSpacing: 0.1,
+        letterSpacing: -0.2,
       );
 
   /// Medium button label — Inter 14px Bold.

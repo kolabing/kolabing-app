@@ -7,6 +7,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -439,30 +440,23 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                final condition = _conditionController.text.trim();
-                final offer = _offerController.text.trim();
-                if (condition.isEmpty || offer.isEmpty) {
-                  return;
-                }
-                Navigator.of(context).pop(
-                  NegotiationTrigger(
-                    condition: condition,
-                    additionalOffer: offer,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-              child: Text(
-                l10n.offeringAddTerm,
-                style: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
-              ),
-            ),
+          KolabingButton(
+            label: l10n.offeringAddTerm,
+            onPressed: () {
+              final condition = _conditionController.text.trim();
+              final offer = _offerController.text.trim();
+              if (condition.isEmpty || offer.isEmpty) {
+                return;
+              }
+              Navigator.of(context).pop(
+                NegotiationTrigger(
+                  condition: condition,
+                  additionalOffer: offer,
+                ),
+              );
+            },
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
           ),
         ],
       ),

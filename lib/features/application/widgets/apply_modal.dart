@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../widgets/kolabing_input.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -392,36 +393,14 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     const SizedBox(height: KolabingSpacing.xl),
 
                     // Single full-width primary action (X in header is the escape)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton.icon(
-                        onPressed: _isSubmitting ? null : _handleSubmit,
-                        icon: _isSubmitting
-                            ? SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: context.colors.onPrimary,
-                                ),
-                              )
-                            : const Icon(LucideIcons.send, size: 18),
-                        label: Text(
-                          _isSubmitting
-                              ? AppLocalizations.of(context).applyModalSending
-                              : AppLocalizations.of(context).applyModalSend,
-                          style: KolabingTextStyles.button.copyWith(
-                            fontSize: 15,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          disabledBackgroundColor: context.colors.primary
-                              .withValues(alpha: 0.6),
-                          elevation: 0,
-                        ),
-                      ),
+                    KolabingButton(
+                      label: _isSubmitting
+                          ? AppLocalizations.of(context).applyModalSending
+                          : AppLocalizations.of(context).applyModalSend,
+                      onPressed: _isSubmitting ? null : _handleSubmit,
+                      variant: KolabingButtonVariant.primary,
+                      icon: const Icon(LucideIcons.send),
+                      isLoading: _isSubmitting,
                     ),
                   ],
                 ),

@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
 
 /// Permission request screen shown once after registration/login.
@@ -212,22 +213,11 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               const Spacer(flex: 3),
 
               // Continue button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _continue,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Continue',
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 15,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ),
+              KolabingButton(
+                label: 'Continue',
+                onPressed: _continue,
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
               ),
               const SizedBox(height: 14),
 

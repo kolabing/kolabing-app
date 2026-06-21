@@ -9,6 +9,7 @@ import '../../../config/theme/typography.dart';
 import '../../../widgets/kolabing_input.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../providers/wallet_provider.dart';
 
 /// Withdrawal request screen where users enter IBAN and request a payout.
@@ -290,39 +291,15 @@ class _WithdrawalRequestScreenState
         const SizedBox(height: KolabingSpacing.lg),
 
         // Submit button
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed: _isFormValid && !state.isWithdrawing
-                ? _handleSubmit
-                : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              disabledBackgroundColor: context.colors.primary.withValues(
-                alpha: 0.4,
-              ),
-              disabledForegroundColor: context.colors.onPrimary.withValues(
-                alpha: 0.5,
-              ),
-            ),
-            child: state.isWithdrawing
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: context.colors.onPrimary,
-                    ),
-                  )
-                : Text(
-                    AppLocalizations.of(context).withdrawalSubmitButton(
-                      eurValue.toStringAsFixed(2),
-                    ),
-                    style: KolabingTextStyles.button,
-                  ),
+        KolabingButton(
+          label: AppLocalizations.of(context).withdrawalSubmitButton(
+            eurValue.toStringAsFixed(2),
           ),
+          onPressed: _isFormValid && !state.isWithdrawing
+              ? _handleSubmit
+              : null,
+          variant: KolabingButtonVariant.primary,
+          isLoading: state.isWithdrawing,
         ),
 
         // Error message

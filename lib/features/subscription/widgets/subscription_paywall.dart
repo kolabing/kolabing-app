@@ -10,6 +10,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
@@ -372,35 +373,14 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               const SizedBox(height: KolabingSpacing.lg),
 
               // Subscribe button
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: isLoading || !canStartApplePurchase
-                      ? null
-                      : _handleSubscribe,
-                  style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor: context.colors.primary.withValues(
-                      alpha: 0.5,
-                    ),
-                    elevation: 0,
-                  ),
-                  child: isLoading
-                      ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: context.colors.onPrimary,
-                          ),
-                        )
-                      : Text(
-                          l10n.subscriptionPaywallSubscribeButton,
-                          style: KolabingTextStyles.button.copyWith(
-                            color: context.colors.onPrimary,
-                          ),
-                        ),
-                ),
+              KolabingButton(
+                label: l10n.subscriptionPaywallSubscribeButton,
+                onPressed: isLoading || !canStartApplePurchase
+                    ? null
+                    : _handleSubscribe,
+                variant: KolabingButtonVariant.primary,
+                isLoading: isLoading,
+                isDisabled: !canStartApplePurchase,
               ),
               const SizedBox(height: KolabingSpacing.sm),
 

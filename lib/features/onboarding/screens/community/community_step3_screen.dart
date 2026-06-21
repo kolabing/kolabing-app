@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
@@ -242,25 +243,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
             // Bottom button
             Padding(
               padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: canContinue ? _handleContinue : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
-                    disabledBackgroundColor:
-                        context.colors.primary.withValues(alpha: 0.5),
-                    disabledForegroundColor:
-                        context.colors.onPrimary.withValues(alpha: 0.5),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    l10n.commonContinue,
-                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
-                  ),
-                ),
+              child: KolabingButton(
+                label: l10n.commonContinue,
+                onPressed: canContinue ? _handleContinue : null,
+                variant: KolabingButtonVariant.primary,
+                isDisabled: !canContinue,
               ),
             ),
           ],
