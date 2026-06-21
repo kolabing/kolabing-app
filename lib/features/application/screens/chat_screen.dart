@@ -19,10 +19,12 @@ import '../providers/application_provider.dart';
 
 /// Destination for the chat "View opportunity" action.
 ///
-/// The **applicant** (community) opens the public offer they applied to. The
-/// **opportunity creator** (business) opens the applicant's submission instead
-/// — routing them to the offer page would wrongly show an "Apply now" CTA on
-/// their own kolab, which they can never apply to.
+/// The **opportunity creator** opens the applicant's submission
+/// (`ApplicationReviewScreen`) — what the counterparty gave us in the form.
+/// The **applicant** opens the offer they applied to, but with `canApply=false`
+/// so no "Apply now" CTA appears: the application is already accepted (the chat
+/// only exists afterwards) and the offer screen's own `has_applied`/`is_own`
+/// flags are unreliable in this payload.
 @visibleForTesting
 String chatViewOpportunityRoute({
   required bool viewerIsCreator,
@@ -30,7 +32,7 @@ String chatViewOpportunityRoute({
   required String opportunityId,
 }) => viewerIsCreator
     ? '/application/$applicationId'
-    : '/community/explore/offer/$opportunityId';
+    : '/community/explore/offer/$opportunityId?canApply=false';
 
 /// Chat screen for application conversation
 class ChatScreen extends ConsumerStatefulWidget {
@@ -774,13 +776,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               onTap: () {
                 Navigator.pop(ctx);
                 if (application == null) return;
-                // Compare the viewer's profile id against the opportunity
-                // creator's, mirroring [_counterpartyName]. Only the confirmed
-                // creator (business) is sent to the application submission;
-                // the applicant (or an unknown viewer) sees the offer.
-                final myId = ref.read(authProvider).user?.id ?? '';
-                final viewerIsCreator =
-                    myId.isNotEmpty && application.recipientId == myId;
+                // A chat is always between one business and one community
+                // (ROLES §2.5: chat exists only after an accepted application),
+                // so the viewer is the opportunity CREATOR exactly when their
+                // role matches the creator's. Profile-id comparison is
+                // unreliable here (user_id vs profile_id live in different id
+                // spaces — see community_offer_detail_screen). When the creator
+                // role is absent from the payload, fall back to the dominant
+                // flow: the business creates the kolab, the community applies.
+                final user = ref.read(authProvider).user;
+                final creatorType =
+                    application.opportunity?.creatorProfile?.userType
+                        .toLowerCase() ??
+                    '';
+                final viewerIsCreator = switch (creatorType) {
+                  'business' => user?.isBusiness ?? false,
+                  'community' => user?.isCommunity ?? false,
+                  _ => user?.isBusiness ?? false,
+                };
                 context.push(
                   chatViewOpportunityRoute(
                     viewerIsCreator: viewerIsCreator,

@@ -17,13 +17,17 @@ void main() {
       },
     );
 
-    test('applicant (community) opens the offer they applied to', () {
-      final route = chatViewOpportunityRoute(
-        viewerIsCreator: false,
-        applicationId: 'app-1',
-        opportunityId: 'opp-9',
-      );
-      expect(route, '/community/explore/offer/opp-9');
-    });
+    test(
+      'applicant opens the offer they applied to, with apply suppressed',
+      () {
+        final route = chatViewOpportunityRoute(
+          viewerIsCreator: false,
+          applicationId: 'app-1',
+          opportunityId: 'opp-9',
+        );
+        // canApply=false: already-accepted application, no "Apply now" CTA.
+        expect(route, '/community/explore/offer/opp-9?canApply=false');
+      },
+    );
   });
 }
