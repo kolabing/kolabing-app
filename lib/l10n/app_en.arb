@@ -5736,7 +5736,7 @@
   "@subscriptionDetailPriceLabel": {
     "description": "Detail row label: price"
   },
-  "subscriptionPriceMonthly": "29 EUR/month",
+  "subscriptionPriceMonthly": "39.99 EUR/month",
   "@subscriptionPriceMonthly": {
     "description": "Monthly price value shown in plan details"
   },
@@ -5790,7 +5790,7 @@
   "@subscriptionSubscribeButton": {
     "description": "Subscribe button label (iOS, no price)"
   },
-  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 29 EUR/MONTH",
+  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 39.99 EUR/MONTH",
   "@subscriptionSubscribePricedButton": {
     "description": "Subscribe button label with price (Android/Stripe)"
   },
@@ -5848,6 +5848,20 @@
     "description": "Paywall benefit row: manage applications"
   },
   "subscriptionPaywallPerMonth": "/ month",
+  "subscriptionPlanMonthlyLabel": "Monthly",
+  "subscriptionPlanThreeMonthsLabel": "3 months",
+  "subscriptionPlanBestValueBadge": "BEST VALUE",
+  "subscriptionPlanPer3Months": "/ 3 months",
+  "subscriptionPlanPerMonthEq": "≈ {price}/mo",
+  "@subscriptionPlanPerMonthEq": {
+    "description": "Per-month-equivalent price for a multi-month plan",
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "subscriptionPlanSavePercent": "Save {percent}%",
+  "@subscriptionPlanSavePercent": {
+    "description": "Savings percent of a multi-month plan vs paying monthly",
+    "placeholders": { "percent": { "type": "int" } }
+  },
   "@subscriptionPaywallPerMonth": {
     "description": "Per-month suffix shown after the price in the paywall"
   },

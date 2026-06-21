@@ -11,22 +11,56 @@ import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/services/profile_service.dart';
 
-/// App Store product ID for the monthly subscription
+/// App Store product IDs for the monthly subscription
 const String kMonthlySubscriptionId = 'com.kolabing.app.subscription.monthly';
 const String kBundleMonthlySubscriptionId =
     'com.kolabing.kolabingApp.subscription.monthly';
 
+/// App Store product ID for the 3-month subscription
+const String kBundleThreeMonthsSubscriptionId =
+    'com.kolabing.kolabingApp.subscription.three_months';
+
 /// Prefer the current bundle-scoped product id first, but keep the legacy
 /// identifier as a fallback so existing App Store Connect setups continue to
 /// work during migration.
-const List<String> kSubscriptionProductIdPriority = <String>[
+const List<String> kMonthlyProductIdPriority = <String>[
   kBundleMonthlySubscriptionId,
   kMonthlySubscriptionId,
 ];
 
-/// Set of all subscription product IDs
-final Set<String> kSubscriptionProductIds =
-    kSubscriptionProductIdPriority.toSet();
+/// Product id priority for the 3-month plan.
+const List<String> kThreeMonthsProductIdPriority = <String>[
+  kBundleThreeMonthsSubscriptionId,
+];
+
+/// Backwards-compatible alias for the monthly priority list.
+const List<String> kSubscriptionProductIdPriority = kMonthlyProductIdPriority;
+
+/// Set of all subscription product IDs queried from the store.
+final Set<String> kSubscriptionProductIds = <String>{
+  ...kMonthlyProductIdPriority,
+  ...kThreeMonthsProductIdPriority,
+};
+
+/// A purchasable subscription plan.
+enum SubscriptionPlan {
+  monthly(durationMonths: 1, productIdPriority: kMonthlyProductIdPriority),
+  threeMonths(
+    durationMonths: 3,
+    productIdPriority: kThreeMonthsProductIdPriority,
+  );
+
+  const SubscriptionPlan({
+    required this.durationMonths,
+    required this.productIdPriority,
+  });
+
+  /// Number of months the plan covers (used for per-month equivalents).
+  final int durationMonths;
+
+  /// Ordered list of App Store product ids that fulfil this plan.
+  final List<String> productIdPriority;
+}
 
 typedef PurchaseStartResult = ({bool started, String? validatedReferralCode});
 
@@ -36,10 +70,9 @@ class IAPService {
     ProfileService? profileService,
     InAppPurchase? iap,
     bool Function()? isIosPlatform,
-  })
-    : _profileService = profileService ?? ProfileService(),
-      _iap = iap ?? InAppPurchase.instance,
-      _isIosPlatform = isIosPlatform ?? (() => Platform.isIOS);
+  }) : _profileService = profileService ?? ProfileService(),
+       _iap = iap ?? InAppPurchase.instance,
+       _isIosPlatform = isIosPlatform ?? (() => Platform.isIOS);
 
   final ProfileService _profileService;
   final InAppPurchase _iap;
@@ -55,18 +88,31 @@ class IAPService {
   List<ProductDetails> _products = [];
   List<ProductDetails> get products => _products;
 
-  /// Get the monthly subscription product
-  ProductDetails? get monthlyProduct {
-    for (final productId in kSubscriptionProductIdPriority) {
+  /// Resolve the loaded [ProductDetails] for a given plan, honouring the
+  /// plan's product-id priority. Null if none of the plan's products loaded.
+  ProductDetails? productFor(SubscriptionPlan plan) {
+    for (final productId in plan.productIdPriority) {
       for (final product in _products) {
-        if (product.id == productId) {
-          return product;
-        }
+        if (product.id == productId) return product;
       }
     }
-
-    return _products.isEmpty ? null : _products.first;
+    return null;
   }
+
+  /// Get the monthly subscription product
+  ProductDetails? get monthlyProduct {
+    final byPriority = productFor(SubscriptionPlan.monthly);
+    if (byPriority != null) return byPriority;
+    // Legacy fallback: any loaded product that isn't the 3-month plan.
+    for (final product in _products) {
+      if (!kThreeMonthsProductIdPriority.contains(product.id)) return product;
+    }
+    return null;
+  }
+
+  /// Get the 3-month subscription product
+  ProductDetails? get threeMonthsProduct =>
+      productFor(SubscriptionPlan.threeMonths);
 
   /// Initialize the IAP service — call once at app start on iOS
   Future<void> initialize() async {
@@ -91,6 +137,12 @@ class IAPService {
 
     _products = response.productDetails;
     debugPrint('IAP: Loaded ${_products.length} products');
+    for (final p in _products) {
+      debugPrint(
+        'IAP: product ${p.id} → price="${p.price}" '
+        'symbol="${p.currencySymbol}" code=${p.currencyCode} raw=${p.rawPrice}',
+      );
+    }
   }
 
   /// Listen to purchase updates stream
@@ -119,12 +171,18 @@ class IAPService {
     );
   }
 
-  /// Start a subscription purchase
+  /// Start a subscription purchase for the given [plan].
   Future<PurchaseStartResult> purchaseSubscription({
+    SubscriptionPlan plan = SubscriptionPlan.monthly,
     String? referralCode,
   }) async {
-    if (!_isAvailable || monthlyProduct == null) {
-      debugPrint('IAP: Cannot purchase — store not available or no products');
+    final product =
+        productFor(plan) ??
+        (plan == SubscriptionPlan.monthly ? monthlyProduct : null);
+    if (!_isAvailable || product == null) {
+      debugPrint(
+        'IAP: Cannot purchase — store not available or no product for $plan',
+      );
       return (started: false, validatedReferralCode: null);
     }
 
@@ -132,7 +190,7 @@ class IAPService {
       referralCode,
     );
     _pendingReferralCode = validatedReferralCode;
-    final purchaseParam = PurchaseParam(productDetails: monthlyProduct!);
+    final purchaseParam = PurchaseParam(productDetails: product);
 
     try {
       final started = await _iap.buyNonConsumable(purchaseParam: purchaseParam);

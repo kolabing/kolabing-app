@@ -16,6 +16,7 @@ import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
+import '../services/iap_service.dart';
 
 /// Subscription paywall shown when business users try to publish
 /// without an active subscription.
@@ -58,6 +59,8 @@ class SubscriptionPaywall extends ConsumerStatefulWidget {
 
 class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   bool _isLoading = false;
+  // 3-month plan is preselected (best value).
+  SubscriptionPlan _selectedPlan = SubscriptionPlan.threeMonths;
   final _referralCodeController = TextEditingController();
   String? _referralCodeApiError;
   String? _referralCodeHelperText;
@@ -93,8 +96,14 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   /// iOS: Use Apple IAP
   Future<void> _handleAppleSubscribe() async {
     final iapNotifier = ref.read(iapProvider.notifier);
+    // Fall back to monthly if the selected plan's product didn't load.
+    final iapState = ref.read(iapProvider);
+    final plan = iapState.productFor(_selectedPlan) != null
+        ? _selectedPlan
+        : SubscriptionPlan.monthly;
     try {
       final result = await iapNotifier.purchase(
+        plan: plan,
         referralCode: _referralCodeController.text,
       );
       if (!mounted) return;
@@ -111,7 +120,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.error.message),
-            backgroundColor: context.colors.error,
+            backgroundColor: KolabingColors.error,
           ),
         );
       }
@@ -120,7 +129,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
-          backgroundColor: context.colors.error,
+          backgroundColor: KolabingColors.error,
         ),
       );
     } on Exception {
@@ -130,7 +139,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           content: Text(
             AppLocalizations.of(context).subscriptionPaywallAppleError,
           ),
-          backgroundColor: context.colors.error,
+          backgroundColor: KolabingColors.error,
         ),
       );
     }
@@ -172,7 +181,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.error.message),
-            backgroundColor: context.colors.error,
+            backgroundColor: KolabingColors.error,
           ),
         );
       }
@@ -182,7 +191,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message),
-          backgroundColor: context.colors.error,
+          backgroundColor: KolabingColors.error,
         ),
       );
     } on Exception {
@@ -193,7 +202,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           content: Text(
             AppLocalizations.of(context).subscriptionPaywallCheckoutError,
           ),
-          backgroundColor: context.colors.error,
+          backgroundColor: KolabingColors.error,
         ),
       );
     }
@@ -242,8 +251,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
     return Container(
       margin: EdgeInsets.only(bottom: bottomPadding),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
+      decoration: const BoxDecoration(
+        color: KolabingColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -258,7 +267,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: context.colors.darkBorder,
+                  color: KolabingColors.darkBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -268,13 +277,13 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Container(
                 width: 72,
                 height: 72,
-                decoration: BoxDecoration(
-                  color: context.colors.softYellow,
+                decoration: const BoxDecoration(
+                  color: KolabingColors.softYellow,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   LucideIcons.crown,
-                  color: context.colors.primary,
+                  color: KolabingColors.primary,
                   size: 36,
                 ),
               ),
@@ -284,7 +293,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Text(
                 l10n.subscriptionPaywallTitle,
                 style: KolabingTextStyles.headlineMedium.copyWith(
-                  color: context.colors.onSurface,
+                  color: KolabingColors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -293,7 +302,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               Text(
                 l10n.subscriptionPaywallDescription,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: context.colors.onSurfaceVariant,
+                  color: KolabingColors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -314,44 +323,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               ),
               const SizedBox(height: KolabingSpacing.lg),
 
-              // Price
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(KolabingSpacing.md),
-                decoration: BoxDecoration(
-                  color: context.colors.softYellow,
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: context.colors.softYellowBorder),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (!Platform.isIOS || iapState.monthlyProduct != null) ...[
-                      Text(
-                        Platform.isIOS ? iapState.priceString : '29 EUR',
-                        style: KolabingTextStyles.headlineLarge.copyWith(
-                          color: context.colors.onSurface,
-                        ),
-                      ),
-                      const SizedBox(width: KolabingSpacing.xs),
-                      Text(
-                        l10n.subscriptionPaywallPerMonth,
-                        style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: context.colors.onSurfaceVariant,
-                        ),
-                      ),
-                    ] else
-                      Text(
-                        iapState.isLoadingProducts
-                            ? l10n.subscriptionLoadingApplePrice
-                            : l10n.subscriptionUnavailable,
-                        style: KolabingTextStyles.titleMedium.copyWith(
-                          color: context.colors.onSurface,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+              // Plan picker (iOS: selectable cards; other: single monthly box)
+              _buildPlanPicker(l10n, iapState),
               const SizedBox(height: KolabingSpacing.lg),
 
               ReferralCodeField(
@@ -380,24 +353,29 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                       ? null
                       : _handleSubscribe,
                   style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor: context.colors.primary.withValues(
+                    backgroundColor: KolabingColors.primary,
+                    foregroundColor: KolabingColors.onPrimary,
+                    disabledBackgroundColor: KolabingColors.primary.withValues(
                       alpha: 0.5,
                     ),
                     elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: isLoading
-                      ? SizedBox(
+                      ? const SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: context.colors.onPrimary,
+                            color: KolabingColors.onPrimary,
                           ),
                         )
                       : Text(
                           l10n.subscriptionPaywallSubscribeButton,
                           style: KolabingTextStyles.button.copyWith(
-                            color: context.colors.onPrimary,
+                            color: KolabingColors.onPrimary,
                           ),
                         ),
                 ),
@@ -410,7 +388,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 child: Text(
                   l10n.subscriptionPaywallNotNowButton,
                   style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: context.colors.textTertiary,
+                    color: KolabingColors.textTertiary,
                   ),
                 ),
               ),
@@ -424,7 +402,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                   child: Text(
                     l10n.subscriptionRestorePurchasesButton,
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: context.colors.textTertiary,
+                      color: KolabingColors.textTertiary,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -443,8 +421,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                         iapState.error != null ||
                             (!iapState.isLoadingProducts &&
                                 !iapState.canPurchase)
-                        ? context.colors.error
-                        : context.colors.textTertiary;
+                        ? KolabingColors.error
+                        : KolabingColors.textTertiary;
 
                     return Padding(
                       padding: const EdgeInsets.only(top: KolabingSpacing.xs),
@@ -466,6 +444,233 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     );
   }
 
+  /// Builds the plan picker. On iOS, renders selectable plan cards when the
+  /// store products are loaded; otherwise (Android/Stripe) a single monthly box.
+  Widget _buildPlanPicker(AppLocalizations l10n, IAPState iapState) {
+    if (!Platform.isIOS) {
+      return _buildSinglePriceBox(
+        price: '€39.99',
+        suffix: l10n.subscriptionPaywallPerMonth,
+      );
+    }
+
+    final monthly = iapState.monthlyProduct;
+    final threeMonths = iapState.threeMonthsProduct;
+
+    // Nothing loaded yet — loading / unavailable message.
+    if (monthly == null && threeMonths == null) {
+      return _buildSinglePriceBox(
+        message: iapState.isLoadingProducts
+            ? l10n.subscriptionLoadingApplePrice
+            : l10n.subscriptionUnavailable,
+      );
+    }
+
+    // EUR-forced prices (Kolabing is euro-priced; never show the storefront's $).
+    final monthlyPrice =
+        iapState.eurPriceFor(SubscriptionPlan.monthly) ?? '€39.99';
+    final threeMonthsPrice =
+        iapState.eurPriceFor(SubscriptionPlan.threeMonths) ?? '€99.99';
+
+    // Only one plan available — single box, no choice to make.
+    if (threeMonths == null) {
+      return _buildSinglePriceBox(
+        price: monthlyPrice,
+        suffix: l10n.subscriptionPaywallPerMonth,
+      );
+    }
+    if (monthly == null) {
+      return _buildSinglePriceBox(
+        price: threeMonthsPrice,
+        suffix: l10n.subscriptionPlanPer3Months,
+      );
+    }
+
+    return Column(
+      children: [
+        _buildPlanCard(
+          l10n: l10n,
+          plan: SubscriptionPlan.threeMonths,
+          label: l10n.subscriptionPlanThreeMonthsLabel,
+          price: threeMonthsPrice,
+          suffix: l10n.subscriptionPlanPer3Months,
+          perMonthEq: iapState.perMonthEquivalent(SubscriptionPlan.threeMonths),
+          savingsPercent: iapState.savingsPercent(SubscriptionPlan.threeMonths),
+          badge: l10n.subscriptionPlanBestValueBadge,
+          selected: _selectedPlan == SubscriptionPlan.threeMonths,
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        _buildPlanCard(
+          l10n: l10n,
+          plan: SubscriptionPlan.monthly,
+          label: l10n.subscriptionPlanMonthlyLabel,
+          price: monthlyPrice,
+          suffix: l10n.subscriptionPaywallPerMonth,
+          selected: _selectedPlan == SubscriptionPlan.monthly,
+        ),
+      ],
+    );
+  }
+
+  /// Single non-selectable price box (Android, single-product, or status text).
+  Widget _buildSinglePriceBox({
+    String? price,
+    String? suffix,
+    String? message,
+  }) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: KolabingColors.softYellow,
+      borderRadius: KolabingRadius.borderRadiusMd,
+      border: Border.all(color: KolabingColors.softYellowBorder),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (price != null) ...[
+          Text(
+            price,
+            style: KolabingTextStyles.headlineLarge.copyWith(
+              color: KolabingColors.onSurface,
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.xs),
+          Text(
+            suffix ?? '',
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
+          ),
+        ] else
+          Text(
+            message ?? '',
+            style: KolabingTextStyles.titleMedium.copyWith(
+              color: KolabingColors.onSurface,
+            ),
+          ),
+      ],
+    ),
+  );
+
+  /// A selectable plan card.
+  Widget _buildPlanCard({
+    required AppLocalizations l10n,
+    required SubscriptionPlan plan,
+    required String label,
+    required String price,
+    required String suffix,
+    required bool selected,
+    String? perMonthEq,
+    int? savingsPercent,
+    String? badge,
+  }) => GestureDetector(
+    onTap: () => setState(() => _selectedPlan = plan),
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      width: double.infinity,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: selected ? KolabingColors.softYellow : KolabingColors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: selected
+              ? KolabingColors.primary
+              : KolabingColors.outlineVariant,
+          width: selected ? 2 : 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            selected ? LucideIcons.checkCircle2 : LucideIcons.circle,
+            color: selected
+                ? KolabingColors.primary
+                : KolabingColors.onSurfaceVariant,
+            size: 22,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        label,
+                        style: KolabingTextStyles.titleMedium.copyWith(
+                          color: KolabingColors.onSurface,
+                        ),
+                      ),
+                    ),
+                    if (badge != null) ...[
+                      const SizedBox(width: KolabingSpacing.xs),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: KolabingColors.primary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          badge,
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            color: KolabingColors.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                if (perMonthEq != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      l10n.subscriptionPlanPerMonthEq(perMonthEq),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: KolabingColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                price,
+                style: KolabingTextStyles.titleLarge.copyWith(
+                  color: KolabingColors.onSurface,
+                ),
+              ),
+              Text(
+                suffix,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
+                ),
+              ),
+              if (savingsPercent != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    l10n.subscriptionPlanSavePercent(savingsPercent),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.success,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+
   Widget _buildBenefitRow(IconData icon, String text) => Padding(
     padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
     child: Row(
@@ -474,17 +679,17 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: context.colors.success.withValues(alpha: 0.1),
+            color: KolabingColors.success.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: context.colors.success, size: 16),
+          child: Icon(icon, color: KolabingColors.success, size: 16),
         ),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Text(
             text,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: context.colors.onSurface,
+              color: KolabingColors.onSurface,
             ),
           ),
         ),

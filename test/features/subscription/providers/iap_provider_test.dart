@@ -50,24 +50,27 @@ void main() {
     expect(result.validatedReferralCode, 'KOLAB-IRSC');
   });
 
-  test('purchase refreshes products before buying when store is ready', () async {
-    final service = _RefreshOnDemandIAPService();
-    final container = ProviderContainer(
-      overrides: [iapServiceProvider.overrideWith((ref) => service)],
-    );
-    addTearDown(container.dispose);
+  test(
+    'purchase refreshes products before buying when store is ready',
+    () async {
+      final service = _RefreshOnDemandIAPService();
+      final container = ProviderContainer(
+        overrides: [iapServiceProvider.overrideWith((ref) => service)],
+      );
+      addTearDown(container.dispose);
 
-    final notifier = container.read(iapProvider.notifier)
-      ..state = const IAPState(isAvailable: true);
+      final notifier = container.read(iapProvider.notifier)
+        ..state = const IAPState(isAvailable: true);
 
-    final result = await notifier.purchase(referralCode: 'kolab-irsc');
+      final result = await notifier.purchase(referralCode: 'kolab-irsc');
 
-    expect(service.initializeCalls, 1);
-    expect(service.purchaseCalls, 1);
-    expect(result.started, isTrue);
-    expect(result.validatedReferralCode, 'KOLAB-IRSC');
-    expect(container.read(iapProvider).priceString, '29.99 EUR');
-  });
+      expect(service.initializeCalls, 1);
+      expect(service.purchaseCalls, 1);
+      expect(result.started, isTrue);
+      expect(result.validatedReferralCode, 'KOLAB-IRSC');
+      expect(container.read(iapProvider).priceString, '€29.99');
+    },
+  );
 
   test('state exposes loading and product availability guards', () {
     const loadingState = IAPState(isLoadingProducts: true);
@@ -82,15 +85,15 @@ void main() {
       loadingState.purchaseAvailabilityMessage,
       'Loading subscription options from the App Store...',
     );
-    expect(loadingState.priceString, '30 EUR');
+    expect(loadingState.priceString, '€39.99');
 
     expect(unavailableProductState.canPurchase, isTrue);
     expect(unavailableProductState.purchaseAvailabilityMessage, isNull);
-    expect(unavailableProductState.priceString, '30 EUR');
+    expect(unavailableProductState.priceString, '€39.99');
 
     expect(readyState.canPurchase, isTrue);
     expect(readyState.purchaseAvailabilityMessage, isNull);
-    expect(readyState.priceString, '29.99 EUR');
+    expect(readyState.priceString, '€29.99');
   });
 }
 
@@ -108,6 +111,7 @@ class _FakeIAPService extends IAPService {
   _FakeIAPService() : super(iap: _FakeInAppPurchase());
 
   int purchaseCalls = 0;
+  SubscriptionPlan? lastPlan;
 
   @override
   Future<void> initialize() async {}
@@ -127,9 +131,11 @@ class _FakeIAPService extends IAPService {
 
   @override
   Future<({bool started, String? validatedReferralCode})> purchaseSubscription({
+    SubscriptionPlan plan = SubscriptionPlan.monthly,
     String? referralCode,
   }) async {
     purchaseCalls += 1;
+    lastPlan = plan;
     return (started: false, validatedReferralCode: null);
   }
 
@@ -148,9 +154,11 @@ class _ReadyIAPService extends _FakeIAPService {
 
   @override
   Future<({bool started, String? validatedReferralCode})> purchaseSubscription({
+    SubscriptionPlan plan = SubscriptionPlan.monthly,
     String? referralCode,
   }) async {
     purchaseCalls += 1;
+    lastPlan = plan;
     lastReferralCode = referralCode?.toUpperCase();
     return (started: true, validatedReferralCode: lastReferralCode);
   }
@@ -176,9 +184,11 @@ class _RefreshOnDemandIAPService extends _FakeIAPService {
 
   @override
   Future<({bool started, String? validatedReferralCode})> purchaseSubscription({
+    SubscriptionPlan plan = SubscriptionPlan.monthly,
     String? referralCode,
   }) async {
     purchaseCalls += 1;
+    lastPlan = plan;
     lastReferralCode = referralCode?.toUpperCase();
     return (started: true, validatedReferralCode: lastReferralCode);
   }

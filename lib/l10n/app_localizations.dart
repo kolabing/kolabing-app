@@ -8135,7 +8135,7 @@ abstract class AppLocalizations {
   /// Monthly price value shown in plan details
   ///
   /// In en, this message translates to:
-  /// **'29 EUR/month'**
+  /// **'39.99 EUR/month'**
   String get subscriptionPriceMonthly;
 
   /// Detail row label: current billing period start
@@ -8201,7 +8201,7 @@ abstract class AppLocalizations {
   /// Subscribe button label with price (Android/Stripe)
   ///
   /// In en, this message translates to:
-  /// **'SUBSCRIBE FOR 29 EUR/MONTH'**
+  /// **'SUBSCRIBE FOR 39.99 EUR/MONTH'**
   String get subscriptionSubscribePricedButton;
 
   /// Button to update payment method when past due
@@ -8281,6 +8281,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'/ month'**
   String get subscriptionPaywallPerMonth;
+
+  /// No description provided for @subscriptionPlanMonthlyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get subscriptionPlanMonthlyLabel;
+
+  /// No description provided for @subscriptionPlanThreeMonthsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'3 months'**
+  String get subscriptionPlanThreeMonthsLabel;
+
+  /// No description provided for @subscriptionPlanBestValueBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST VALUE'**
+  String get subscriptionPlanBestValueBadge;
+
+  /// No description provided for @subscriptionPlanPer3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'/ 3 months'**
+  String get subscriptionPlanPer3Months;
+
+  /// Per-month-equivalent price for a multi-month plan
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {price}/mo'**
+  String subscriptionPlanPerMonthEq(String price);
+
+  /// Savings percent of a multi-month plan vs paying monthly
+  ///
+  /// In en, this message translates to:
+  /// **'Save {percent}%'**
+  String subscriptionPlanSavePercent(int percent);
 
   /// Paywall primary subscribe button label
   ///
