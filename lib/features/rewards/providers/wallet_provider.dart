@@ -77,11 +77,15 @@ class WalletState {
 
 class WalletNotifier extends Notifier<WalletState>
     with AuthScopeGuard<WalletState> {
-  late final RewardsService _service;
+  // Resolved lazily via a getter (NOT a `late final` assigned in build()):
+  // Riverpod re-runs build() on the same Notifier instance when the provider
+  // is invalidated (e.g. session_reset.dart on auth changes), and reassigning
+  // a `late final` throws LateInitializationError — which puts the provider in
+  // an error state and breaks every widget watching it.
+  RewardsService get _service => ref.read(rewardsServiceProvider);
 
   @override
   WalletState build() {
-    _service = ref.read(rewardsServiceProvider);
     ref.listen<AuthState>(authProvider, (previous, next) {
       handleAuthStateChange(
         previous,
