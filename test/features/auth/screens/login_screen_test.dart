@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
@@ -115,6 +116,55 @@ void main() {
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
+    },
+  );
+
+  // Regression for Sentry FLUTTER-4 (GoError: There is nothing to pop): the
+  // login back button must not crash when login is the navigation root; it
+  // should route to the welcome screen instead.
+  testWidgets(
+    'back button on root login routes to welcome instead of throwing',
+    (WidgetTester tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1.0;
+
+      final router = GoRouter(
+        initialLocation: '/auth/login',
+        routes: [
+          GoRoute(
+            path: '/auth/login',
+            builder: (context, state) => const LoginScreen(),
+          ),
+          GoRoute(
+            path: '/auth/welcome',
+            builder: (context, state) =>
+                const Scaffold(body: Text('WELCOME ROOT')),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 900));
+
+      // Login is the root route, so there is nothing to pop.
+      await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('WELCOME ROOT'), findsOneWidget);
     },
   );
 }
