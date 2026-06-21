@@ -97,9 +97,9 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor =
-        isSelected ? context.colors.charcoal : context.colors.navInactive;
+        isSelected ? context.colors.ink : context.colors.navInactive;
     final labelColor =
-        isSelected ? context.colors.charcoal : context.colors.navInactive;
+        isSelected ? context.colors.ink : context.colors.navInactive;
 
     return Expanded(
       child: GestureDetector(
