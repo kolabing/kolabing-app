@@ -146,11 +146,14 @@ class IAPService {
   }
 
   /// Listen to purchase updates stream
-  /// The [onPurchaseVerified] callback is called after successful backend verification
+  /// The [onPurchaseVerified] callback is called after successful backend verification.
+  /// [onCancelled] fires when the user dismisses the App Store sheet, so callers
+  /// can clear any "purchasing" loading state without surfacing an error.
   void listenToPurchases({
     required void Function(Subscription subscription) onPurchaseVerified,
     required void Function(String error) onError,
     required void Function() onPending,
+    required void Function() onCancelled,
   }) {
     _purchaseSubscription?.cancel();
     _purchaseSubscription = _iap.purchaseStream.listen(
@@ -161,6 +164,7 @@ class IAPService {
             onPurchaseVerified: onPurchaseVerified,
             onError: onError,
             onPending: onPending,
+            onCancelled: onCancelled,
           );
         }
       },
@@ -220,6 +224,7 @@ class IAPService {
     required void Function(Subscription) onPurchaseVerified,
     required void Function(String) onError,
     required void Function() onPending,
+    required void Function() onCancelled,
   }) async {
     switch (purchase.status) {
       case PurchaseStatus.pending:
@@ -268,7 +273,10 @@ class IAPService {
         debugPrint('IAP: Purchase error: ${purchase.error}');
         _pendingReferralCode = null;
         final errorMessage = purchase.error?.message ?? 'Purchase failed';
-        if (!errorMessage.toLowerCase().contains('cancel')) {
+        if (errorMessage.toLowerCase().contains('cancel')) {
+          // User-initiated cancel surfaced as an error: clear loading, no alert.
+          onCancelled();
+        } else {
           onError(errorMessage);
         }
         if (purchase.pendingCompletePurchase) {
@@ -278,6 +286,9 @@ class IAPService {
       case PurchaseStatus.canceled:
         debugPrint('IAP: Purchase canceled by user');
         _pendingReferralCode = null;
+        // Reset the purchasing state so the Subscribe button leaves its loading
+        // spinner; otherwise it stays stuck after the user dismisses the sheet.
+        onCancelled();
         if (purchase.pendingCompletePurchase) {
           await _iap.completePurchase(purchase);
         }
