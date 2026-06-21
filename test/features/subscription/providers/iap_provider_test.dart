@@ -127,6 +127,7 @@ class _FakeIAPService extends IAPService {
     required void Function(Subscription subscription) onPurchaseVerified,
     required void Function(String error) onError,
     required void Function() onPending,
+    required void Function() onCancelled,
   }) {}
 
   @override

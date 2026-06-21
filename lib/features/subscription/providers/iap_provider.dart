@@ -175,6 +175,15 @@ class IAPNotifier extends Notifier<IAPState> {
       onPending: () {
         state = state.copyWith(isPurchasing: true);
       },
+      onCancelled: () {
+        // User dismissed the App Store sheet — drop the loading state without
+        // showing an error so the Subscribe button returns to normal.
+        state = state.copyWith(
+          isPurchasing: false,
+          isRestoring: false,
+          clearError: true,
+        );
+      },
     );
   }
 

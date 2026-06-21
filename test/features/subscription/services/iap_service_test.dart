@@ -12,26 +12,26 @@ import 'package:kolabing_app/features/subscription/services/iap_service.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('initialize loads the subscription from a bundle-based product id', () async {
-    final iap = _TestInAppPurchase(
-      availableProducts: <ProductDetails>[_bundleMonthlyProduct],
-    );
-    addTearDown(iap.dispose);
+  test(
+    'initialize loads the subscription from a bundle-based product id',
+    () async {
+      final iap = _TestInAppPurchase(
+        availableProducts: <ProductDetails>[_bundleMonthlyProduct],
+      );
+      addTearDown(iap.dispose);
 
-    final service = IAPService(
-      iap: iap,
-      isIosPlatform: () => true,
-    );
+      final service = IAPService(iap: iap, isIosPlatform: () => true);
 
-    await service.initialize();
+      await service.initialize();
 
-    expect(
-      iap.lastQueriedProductIds,
-      contains('com.kolabing.kolabingApp.subscription.monthly'),
-    );
-    expect(service.isAvailable, isTrue);
-    expect(service.monthlyProduct?.id, _bundleMonthlyProduct.id);
-  });
+      expect(
+        iap.lastQueriedProductIds,
+        contains('com.kolabing.kolabingApp.subscription.monthly'),
+      );
+      expect(service.isAvailable, isTrue);
+      expect(service.monthlyProduct?.id, _bundleMonthlyProduct.id);
+    },
+  );
 
   test(
     'restored purchases verify with original transaction id when available',
@@ -47,6 +47,7 @@ void main() {
         onPurchaseVerified: verified.complete,
         onError: fail,
         onPending: () {},
+        onCancelled: () {},
       );
 
       iap.emitPurchases(<PurchaseDetails>[
@@ -86,6 +87,53 @@ void main() {
       );
     },
   );
+
+  test(
+    'canceled purchase invokes onCancelled, not onError/onPending',
+    () async {
+      final iap = _TestInAppPurchase();
+      addTearDown(iap.dispose);
+
+      final service = IAPService(iap: iap);
+
+      var cancelled = false;
+      var pending = false;
+      String? error;
+      service.listenToPurchases(
+        onPurchaseVerified: (_) =>
+            fail('should not verify a canceled purchase'),
+        onError: (e) => error = e,
+        onPending: () => pending = true,
+        onCancelled: () => cancelled = true,
+      );
+
+      iap.emitPurchases(<PurchaseDetails>[
+        AppStorePurchaseDetails(
+          productID: kMonthlySubscriptionId,
+          purchaseID: null,
+          verificationData: PurchaseVerificationData(
+            localVerificationData: '',
+            serverVerificationData: '',
+            source: 'app_store',
+          ),
+          transactionDate: null,
+          skPaymentTransaction: SKPaymentTransactionWrapper(
+            payment: const SKPaymentWrapper(
+              productIdentifier: kMonthlySubscriptionId,
+            ),
+            transactionState: SKPaymentTransactionStateWrapper.failed,
+          ),
+          status: PurchaseStatus.canceled,
+        ),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(cancelled, isTrue);
+      expect(error, isNull);
+      expect(pending, isFalse);
+    },
+  );
 }
 
 class _CapturingProfileService extends ProfileService {
@@ -111,9 +159,9 @@ class _CapturingProfileService extends ProfileService {
 }
 
 class _TestInAppPurchase implements InAppPurchase {
-  _TestInAppPurchase({
-    List<ProductDetails>? availableProducts,
-  }) : _availableProducts = availableProducts ?? <ProductDetails>[_monthlyProduct];
+  _TestInAppPurchase({List<ProductDetails>? availableProducts})
+    : _availableProducts =
+          availableProducts ?? <ProductDetails>[_monthlyProduct];
 
   final StreamController<List<PurchaseDetails>> _controller =
       StreamController<List<PurchaseDetails>>.broadcast();
