@@ -140,22 +140,22 @@ class ChallengeCard extends StatelessWidget {
   Color _getDifficultyBgColor(ChallengeDifficulty difficulty) {
     switch (difficulty) {
       case ChallengeDifficulty.easy:
-        return const Color(0xFFD4EDDA);
+        return KolabingColors.activeBg;
       case ChallengeDifficulty.medium:
-        return const Color(0xFFFFF3CD);
+        return KolabingColors.pendingBg;
       case ChallengeDifficulty.hard:
-        return const Color(0xFFF8D7DA);
+        return KolabingColors.errorBg;
     }
   }
 
   Color _getDifficultyColor(ChallengeDifficulty difficulty) {
     switch (difficulty) {
       case ChallengeDifficulty.easy:
-        return const Color(0xFF155724);
+        return KolabingColors.activeText;
       case ChallengeDifficulty.medium:
-        return const Color(0xFF856404);
+        return KolabingColors.pendingText;
       case ChallengeDifficulty.hard:
-        return const Color(0xFF721C24);
+        return KolabingColors.errorText;
     }
   }
 

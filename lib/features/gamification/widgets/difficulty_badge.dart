@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../config/theme/typography.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
+import '../../../config/theme/colors.dart';
+import '../../../config/theme/typography.dart';
 
 import '../models/challenge.dart';
 
@@ -23,16 +25,16 @@ class DifficultyBadge extends StatelessWidget {
 
     switch (difficulty) {
       case ChallengeDifficulty.easy:
-        bgColor = const Color(0xFFD4EDDA);
-        textColor = const Color(0xFF155724);
+        bgColor = KolabingColors.activeBg;
+        textColor = KolabingColors.activeText;
         icon = LucideIcons.leaf;
       case ChallengeDifficulty.medium:
-        bgColor = const Color(0xFFFFF3CD);
-        textColor = const Color(0xFF856404);
+        bgColor = KolabingColors.pendingBg;
+        textColor = KolabingColors.pendingText;
         icon = LucideIcons.flame;
       case ChallengeDifficulty.hard:
-        bgColor = const Color(0xFFF8D7DA);
-        textColor = const Color(0xFF721C24);
+        bgColor = KolabingColors.errorBg;
+        textColor = KolabingColors.errorText;
         icon = LucideIcons.zap;
     }
 
