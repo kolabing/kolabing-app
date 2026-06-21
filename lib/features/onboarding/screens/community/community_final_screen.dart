@@ -9,6 +9,7 @@ import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../services/permission_service.dart';
 import '../../providers/onboarding_provider.dart';
+import '../../utils/onboarding_field_label.dart';
 import '../../widgets/summary_card.dart';
 
 /// Community Onboarding Final: Summary + Email/Password Registration
@@ -186,8 +187,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
         }
       }
 
-      // Show generic error in snackbar for non-field errors
-      _showErrorSnackBar(result.displayError);
+      // Name the missing onboarding field(s) when creation is blocked
+      // client-side, instead of a generic "complete all required fields".
+      final missingMessage = missingFieldsMessage(
+        result.missingFields,
+        AppLocalizations.of(context),
+      );
+      _showErrorSnackBar(missingMessage ?? result.displayError);
     }
   }
 
@@ -205,7 +211,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
             Expanded(
               child: Text(
                 AppLocalizations.of(context).communityFinalNoInternet,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.textOnDark),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.textOnDark,
+                ),
               ),
             ),
           ],
@@ -229,7 +238,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       SnackBar(
         content: Text(
           message,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.textOnDark),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: context.colors.textOnDark,
+          ),
         ),
         backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
@@ -287,7 +299,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                               const SizedBox(width: 4),
                               Text(
                                 l10n.commonBack,
-                                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
+                                style: KolabingTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: context.colors.onSurface,
+                                ),
                               ),
                             ],
                           ),
@@ -312,7 +327,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           // Title
                           Text(
                             l10n.communityFinalTitle,
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.onSurface,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
@@ -320,7 +339,9 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                           // Subtitle
                           Text(
                             l10n.communityFinalSubtitle,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -343,7 +364,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   l10n.communityFinalEdit,
-                                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
+                                  style: KolabingTextStyles.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: context.colors.primary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -478,7 +502,8 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                             onFieldSubmitted: (_) => _handleRegister(),
                             scrollPadding: const EdgeInsets.only(bottom: 160),
                             decoration: InputDecoration(
-                              labelText: l10n.communityFinalConfirmPasswordLabel,
+                              labelText:
+                                  l10n.communityFinalConfirmPasswordLabel,
                               hintText: l10n.communityFinalConfirmPasswordHint,
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
@@ -567,7 +592,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 )
                               : Text(
                                   l10n.communityFinalCreateAccountButton,
-                                  style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
+                                  style: KolabingTextStyles.button.copyWith(
+                                    fontSize: 16,
+                                    letterSpacing: 1.0,
+                                  ),
                                 ),
                         ),
                       ),
@@ -576,7 +604,10 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                       // Terms text
                       Text(
                         l10n.communityFinalTermsNotice,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12,
+                          color: context.colors.textTertiary,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],

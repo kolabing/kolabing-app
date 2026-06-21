@@ -3,6 +3,20 @@ import '../../auth/models/user_model.dart';
 import 'onboarding_photo.dart';
 import 'place_suggestion.dart';
 
+/// A required onboarding field, surfaced when account creation is blocked so
+/// the user is told exactly what to complete (instead of a generic message).
+enum OnboardingField {
+  name,
+  businessCategory,
+  venueType,
+  venueCapacity,
+  venuePhotos,
+  businessAddress,
+  targetCities,
+  communityType,
+  communityCity,
+}
+
 /// Onboarding data state
 class OnboardingData {
   const OnboardingData({
@@ -282,6 +296,47 @@ class OnboardingData {
   bool get isComplete =>
       isStep1Complete && isStep2Complete && isStep3Complete && isStep4Complete;
 
+  /// The required fields still missing, per user type / path. Mirrors the
+  /// `isStepNComplete` rules so [isComplete] is true exactly when this is empty.
+  /// Used to tell the user which field to complete instead of a generic error.
+  List<OnboardingField> get missingFields {
+    final missing = <OnboardingField>[];
+    bool blank(String? v) => v == null || v.trim().isEmpty;
+
+    if (isProductBusiness) {
+      if (blank(name)) missing.add(OnboardingField.name);
+      if (selectedBusinessTypeSlugs.isEmpty) {
+        missing.add(OnboardingField.businessCategory);
+      }
+      if (targetCityIds.isEmpty) missing.add(OnboardingField.targetCities);
+      return missing;
+    }
+
+    if (isBusiness) {
+      if (location == null ||
+          blank(location!.city) ||
+          blank(location!.formattedAddress)) {
+        missing.add(OnboardingField.businessAddress);
+      }
+      if (blank(name)) missing.add(OnboardingField.name);
+      if (selectedBusinessTypeSlugs.isEmpty) {
+        missing.add(OnboardingField.businessCategory);
+      }
+      if (blank(venueType)) missing.add(OnboardingField.venueType);
+      if (venueCapacity == null || venueCapacity! <= 0) {
+        missing.add(OnboardingField.venueCapacity);
+      }
+      if (venuePhotos.isEmpty) missing.add(OnboardingField.venuePhotos);
+      return missing;
+    }
+
+    // Community
+    if (blank(name)) missing.add(OnboardingField.name);
+    if (blank(type)) missing.add(OnboardingField.communityType);
+    if (blank(cityId)) missing.add(OnboardingField.communityCity);
+    return missing;
+  }
+
   /// Is business user
   bool get isBusiness => userType == UserType.business;
 
@@ -430,7 +485,8 @@ class OnboardingData {
     final productCityId = (resolvedCityId == null || resolvedCityId.isEmpty)
         ? (targetCityIds.isNotEmpty ? targetCityIds.first : null)
         : resolvedCityId;
-    final productCityName = (resolvedCityName == null || resolvedCityName.isEmpty)
+    final productCityName =
+        (resolvedCityName == null || resolvedCityName.isEmpty)
         ? (targetCityNames.isNotEmpty ? targetCityNames.first : null)
         : resolvedCityName;
 
@@ -476,36 +532,37 @@ class OnboardingData {
       if (normalizedReferralCode != null)
         'referral_code': normalizedReferralCode,
       // Venue path only — product businesses have no physical venue.
-      if (!isProductBusiness) 'primary_venue': {
-        'name': venueName?.trim(),
-        'venue_type': venueType,
-        'capacity': venueCapacity,
-        'place_id': location?.placeId,
-        'formatted_address': location?.formattedAddress,
-        'city': location?.city,
-        if (location?.country != null) 'country': location?.country,
-        if (location?.latitude != null) 'latitude': location?.latitude,
-        if (location?.longitude != null) 'longitude': location?.longitude,
-        if (venuePhone != null && venuePhone!.isNotEmpty)
-          'phone_number': venuePhone?.trim(),
-        if (venueWebsite != null && venueWebsite!.isNotEmpty)
-          'website': venueWebsite?.trim(),
-        if (venueOpeningHours.isNotEmpty) 'opening_hours': venueOpeningHours,
-        if (venueDescription != null && venueDescription!.isNotEmpty)
-          'description': venueDescription?.trim(),
-        if (venuePriceLevel != null && venuePriceLevel!.isNotEmpty)
-          'price_level': venuePriceLevel,
-        if (venueRating != null) 'rating': venueRating,
-        if (venueUserRatingsTotal != null)
-          'user_ratings_total': venueUserRatingsTotal,
-        if (venueGooglePlaceTypes.isNotEmpty)
-          'google_place_types': venueGooglePlaceTypes,
-        if (venuePhotos.isNotEmpty)
-          'photos': venuePhotos
-              .map((photo) => photo.payloadValue)
-              .where((value) => value.trim().isNotEmpty)
-              .toList(),
-      },
+      if (!isProductBusiness)
+        'primary_venue': {
+          'name': venueName?.trim(),
+          'venue_type': venueType,
+          'capacity': venueCapacity,
+          'place_id': location?.placeId,
+          'formatted_address': location?.formattedAddress,
+          'city': location?.city,
+          if (location?.country != null) 'country': location?.country,
+          if (location?.latitude != null) 'latitude': location?.latitude,
+          if (location?.longitude != null) 'longitude': location?.longitude,
+          if (venuePhone != null && venuePhone!.isNotEmpty)
+            'phone_number': venuePhone?.trim(),
+          if (venueWebsite != null && venueWebsite!.isNotEmpty)
+            'website': venueWebsite?.trim(),
+          if (venueOpeningHours.isNotEmpty) 'opening_hours': venueOpeningHours,
+          if (venueDescription != null && venueDescription!.isNotEmpty)
+            'description': venueDescription?.trim(),
+          if (venuePriceLevel != null && venuePriceLevel!.isNotEmpty)
+            'price_level': venuePriceLevel,
+          if (venueRating != null) 'rating': venueRating,
+          if (venueUserRatingsTotal != null)
+            'user_ratings_total': venueUserRatingsTotal,
+          if (venueGooglePlaceTypes.isNotEmpty)
+            'google_place_types': venueGooglePlaceTypes,
+          if (venuePhotos.isNotEmpty)
+            'photos': venuePhotos
+                .map((photo) => photo.payloadValue)
+                .where((value) => value.trim().isNotEmpty)
+                .toList(),
+        },
     };
   }
 

@@ -154,6 +154,66 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get commonErrorGeneric;
 
+  /// Error when account creation is blocked by missing onboarding fields; {fields} is a comma-separated list of field names
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete: {fields}'**
+  String onboardingCompleteMissingFields(String fields);
+
+  /// No description provided for @onboardingFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get onboardingFieldName;
+
+  /// No description provided for @onboardingFieldBusinessCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Business category'**
+  String get onboardingFieldBusinessCategory;
+
+  /// No description provided for @onboardingFieldVenueType.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue type'**
+  String get onboardingFieldVenueType;
+
+  /// No description provided for @onboardingFieldVenueCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue capacity'**
+  String get onboardingFieldVenueCapacity;
+
+  /// No description provided for @onboardingFieldVenuePhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue photos'**
+  String get onboardingFieldVenuePhotos;
+
+  /// No description provided for @onboardingFieldBusinessAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get onboardingFieldBusinessAddress;
+
+  /// No description provided for @onboardingFieldTargetCities.
+  ///
+  /// In en, this message translates to:
+  /// **'Cities'**
+  String get onboardingFieldTargetCities;
+
+  /// No description provided for @onboardingFieldCommunityType.
+  ///
+  /// In en, this message translates to:
+  /// **'Community type'**
+  String get onboardingFieldCommunityType;
+
+  /// No description provided for @onboardingFieldCommunityCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get onboardingFieldCommunityCity;
+
   /// Welcome screen — secondary text button for existing users to sign in.
   ///
   /// In en, this message translates to:
