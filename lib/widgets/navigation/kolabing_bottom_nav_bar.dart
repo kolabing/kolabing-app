@@ -140,17 +140,19 @@ class _NavBarItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                item.label.toUpperCase(),
-                style: KolabingTextStyles.labelSmall.copyWith(
-                  fontSize: 9,
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: labelColor,
-                  letterSpacing: 0.4,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  item.label.toUpperCase(),
+                  style: KolabingTextStyles.labelSmall.copyWith(
+                    fontSize: 9,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: labelColor,
+                    letterSpacing: 0.4,
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
