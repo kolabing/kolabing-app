@@ -17,6 +17,21 @@ import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
+/// Destination for the chat "View opportunity" action.
+///
+/// The **applicant** (community) opens the public offer they applied to. The
+/// **opportunity creator** (business) opens the applicant's submission instead
+/// — routing them to the offer page would wrongly show an "Apply now" CTA on
+/// their own kolab, which they can never apply to.
+@visibleForTesting
+String chatViewOpportunityRoute({
+  required bool viewerIsCreator,
+  required String applicationId,
+  required String opportunityId,
+}) => viewerIsCreator
+    ? '/application/$applicationId'
+    : '/community/explore/offer/$opportunityId';
+
 /// Chat screen for application conversation
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({required this.applicationId, super.key});
@@ -131,7 +146,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         if (application == null) {
           return _buildScaffold(
             body: _buildErrorState(
-                AppLocalizations.of(context).chatApplicationNotFound),
+              AppLocalizations.of(context).chatApplicationNotFound,
+            ),
           );
         }
 
@@ -184,11 +200,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           child: Row(
             children: [
-              Icon(
-                LucideIcons.lock,
-                size: 16,
-                color: context.colors.onPrimary,
-              ),
+              Icon(LucideIcons.lock, size: 16, color: context.colors.onPrimary),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
                 child: Text(
@@ -267,9 +279,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
           onPressed: () => context.pop(),
-          color: isDark
-              ? context.colors.textOnDark
-              : context.colors.onSurface,
+          color: isDark ? context.colors.textOnDark : context.colors.onSurface,
         ),
         title: application != null
             ? Row(
@@ -362,17 +372,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         color: context.colors.primary.withValues(alpha: 0.1),
         border: Border(
           bottom: BorderSide(
-            color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+            color: isDark
+                ? context.colors.darkBorder
+                : context.colors.darkBorder,
           ),
         ),
       ),
       child: Row(
         children: [
-          Icon(
-            LucideIcons.briefcase,
-            size: 16,
-            color: context.colors.primary,
-          ),
+          Icon(LucideIcons.briefcase, size: 16, color: context.colors.primary),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
@@ -632,11 +640,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 48,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 48, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             error,
@@ -674,11 +678,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              LucideIcons.logIn,
-              size: 48,
-              color: context.colors.error,
-            ),
+            Icon(LucideIcons.logIn, size: 48, color: context.colors.error),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).chatSessionExpiredTitle,
@@ -773,24 +773,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               title: Text(AppLocalizations.of(context).chatViewOpportunity),
               onTap: () {
                 Navigator.pop(ctx);
-                if (application != null) {
-                  final authState = ref.read(authProvider);
-                  final isBusiness = authState.user?.isBusiness ?? false;
-                  final routePrefix = isBusiness
-                      ? '/business/explore/offer'
-                      : '/community/explore/offer';
-                  context.push(
-                    '$routePrefix/${application.opportunityId}',
-                    extra: application.opportunity,
-                  );
-                }
+                if (application == null) return;
+                // Compare the viewer's profile id against the opportunity
+                // creator's, mirroring [_counterpartyName]. Only the confirmed
+                // creator (business) is sent to the application submission;
+                // the applicant (or an unknown viewer) sees the offer.
+                final myId = ref.read(authProvider).user?.id ?? '';
+                final viewerIsCreator =
+                    myId.isNotEmpty && application.recipientId == myId;
+                context.push(
+                  chatViewOpportunityRoute(
+                    viewerIsCreator: viewerIsCreator,
+                    applicationId: widget.applicationId,
+                    opportunityId: application.opportunityId,
+                  ),
+                  extra: viewerIsCreator ? null : application.opportunity,
+                );
               },
             ),
             ListTile(
-              leading: Icon(
-                LucideIcons.xCircle,
-                color: context.colors.error,
-              ),
+              leading: Icon(LucideIcons.xCircle, color: context.colors.error),
               title: Text(
                 AppLocalizations.of(context).chatCancelApplication,
                 style: TextStyle(color: context.colors.error),
@@ -812,9 +814,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.chatCancelDialogTitle),
-        content: Text(
-          l10n.chatCancelDialogBody,
-        ),
+        content: Text(l10n.chatCancelDialogBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
