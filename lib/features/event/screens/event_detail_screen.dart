@@ -8,7 +8,10 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../config/routes/routes.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/models/user_model.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -528,9 +531,23 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     );
   }
 
+  /// Open the host community when the partner row is tapped. The destination is
+  /// viewer-scoped: a BUSINESS viewer keeps the existing profile-id-keyed
+  /// `PublicProfileScreen` (Send-Kolab flow); an attendee / community viewer
+  /// gets the community-keyed [AttendeeCommunityProfileScreen] (events + join).
+  void _openHostCommunity(String communityId) {
+    final isBusiness =
+        ref.read(authProvider).user?.userType == UserType.business;
+    if (isBusiness) {
+      context.push('/profile/$communityId');
+    } else {
+      context.push(KolabingRoutes.buildCommunityProfilePath(communityId));
+    }
+  }
+
   /// The host partner block. When the event carries a `communityId`, the whole
-  /// row becomes tappable and opens the community's public profile
-  /// (`/profile/:id`); otherwise it renders inert.
+  /// row becomes tappable and opens the host community (viewer-scoped, see
+  /// [_openHostCommunity]); otherwise it renders inert.
   Widget _buildPartnerChild(Event event) {
     final communityId = event.communityId;
     final tappable = communityId != null && communityId.isNotEmpty;
@@ -607,7 +624,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     if (!tappable) return row;
 
     return InkWell(
-      onTap: () => context.push('/profile/$communityId'),
+      onTap: () => _openHostCommunity(communityId),
       borderRadius: KolabingRadius.borderRadiusMd,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),

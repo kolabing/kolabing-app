@@ -1,3 +1,9 @@
+/// Max photos that can be picked in a single "add photos" action.
+const int kEventGalleryMaxPerAdd = 5;
+
+/// Hard cap on the total number of photos an event gallery can hold.
+const int kEventGalleryMaxTotal = 20;
+
 /// Event model representing a past collaboration event
 class Event {
   final String id;

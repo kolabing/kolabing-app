@@ -56,6 +56,10 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       maxWidth: 1920,
       maxHeight: 1920,
       imageQuality: 85,
+      // Skip loading full photo metadata — on iOS it forces a heavy copy that
+      // can trigger a memory jettison (app killed → cold start → bounced to
+      // login). We only need the image bytes.
+      requestFullMetadata: false,
     );
     if (image == null) return;
 

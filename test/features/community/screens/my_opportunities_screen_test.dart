@@ -47,7 +47,8 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Share'));
+    // Share is an icon button (GlassIconButton) with a "Share" tooltip.
+    await tester.tap(find.byTooltip('Share'));
     await tester.pumpAndSettle();
 
     expect(copiedText, contains('/c/opp-42'));
@@ -95,7 +96,8 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Share'));
+    // Share is an icon button (GlassIconButton) with a "Share" tooltip.
+    await tester.tap(find.byTooltip('Share'));
     await tester.pumpAndSettle();
 
     expect(copiedText, isEmpty);
@@ -252,9 +254,10 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('View'), findsOneWidget);
+    // The View pill renders its label uppercased (GlassButton).
+    expect(find.text('VIEW'), findsOneWidget);
 
-    await tester.tap(find.text('View'));
+    await tester.tap(find.text('VIEW'));
     await tester.pumpAndSettle();
 
     expect(find.text('detail:opp-42'), findsOneWidget);

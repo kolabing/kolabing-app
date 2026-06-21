@@ -227,7 +227,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                   KolabingSpacing.md,
                   KolabingSpacing.sm,
                   KolabingSpacing.md,
-                  0,
+                  KolabingSpacing.sm,
                 ),
                 child: Row(
                   children: [

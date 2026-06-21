@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -124,9 +126,15 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               final entry = rest[index];
+              final isMe = response.myRank?.profileId == entry.profileId;
               return LeaderboardEntryTile(
                 entry: entry,
-                isCurrentUser: response.myRank?.profileId == entry.profileId,
+                isCurrentUser: isMe,
+                // Tapping YOUR OWN row opens the Personal Rewards Screen.
+                // Other rows are no-op (kept minimal per P3).
+                onTap: isMe
+                    ? () => context.push(KolabingRoutes.rewards)
+                    : null,
               );
             }, childCount: rest.length),
           ),
@@ -139,7 +147,10 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   }
 
   Widget _buildMyRankCard(MyRank myRank) {
-    return Container(
+    return GestureDetector(
+      // Your own rank card → open the Personal Rewards Screen (P3).
+      onTap: () => context.push(KolabingRoutes.rewards),
+      child: Container(
       margin: const EdgeInsets.all(KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -224,6 +235,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             ],
           ),
         ],
+      ),
       ),
     );
   }

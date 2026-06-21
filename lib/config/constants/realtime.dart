@@ -1,3 +1,5 @@
+import '../environment.dart';
+
 /// Real-time chat (Laravel Reverb) configuration — NF-16 B4 / Part B.
 ///
 /// Reverb speaks the Pusher protocol over a self-hosted host, so these mirror
@@ -26,7 +28,7 @@ class RealtimeConfig {
 
   /// Laravel broadcasting auth route (Sanctum-guarded). This lives at the app
   /// root, NOT under `/api/v1` — confirm the exact path with Part A.
-  static const String authEndpoint = 'https://kolabing.com/broadcasting/auth';
+  static const String authEndpoint = Environment.broadcastAuth;
 
   /// Wire event name(s) the backend broadcasts `NewChatMessage` under. We bind
   /// to every candidate so the client works whether Part A keeps the class name

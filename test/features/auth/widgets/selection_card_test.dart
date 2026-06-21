@@ -27,7 +27,7 @@ void main() {
       ),
     );
 
-    expect(find.text("I'M AN ATTENDEE"), findsOneWidget);
+    expect(find.text("I'm an attendee"), findsOneWidget);
     expect(find.text('COMING SOON'), findsOneWidget);
     expect(
       find.text('Event discovery and check-ins are coming soon'),

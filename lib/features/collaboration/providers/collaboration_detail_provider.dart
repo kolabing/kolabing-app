@@ -13,12 +13,14 @@ import '../../gamification/models/challenge.dart';
 import '../models/collaboration.dart';
 
 /// Provider for collaboration detail.
-final collaborationDetailProvider =
-    FutureProvider.family<Collaboration?, String>((ref, id) async {
-      // No mock fallback: a failed fetch surfaces as an error/empty state so we
-      // never render fabricated data (see docs/BACKEND-SCHEMA.md — never hardcode).
-      return fetchCollaborationDetail(id);
-    });
+final collaborationDetailProvider = FutureProvider.family<Collaboration?, String>((
+  ref,
+  id,
+) async {
+  // No mock fallback: a failed fetch surfaces as an error/empty state so we
+  // never render fabricated data (see docs/BACKEND-SCHEMA.md — never hardcode).
+  return fetchCollaborationDetail(id);
+});
 
 Future<Collaboration?> fetchCollaborationDetail(String id) {
   return _fetchCollaborationDetail(id, allowRetry: true);
@@ -211,7 +213,9 @@ Future<Collaboration> _patchSchedule(
 
 /// Provider for the system challenge catalogue (the pool a collaboration can
 /// pick from). Fetches the real backend list — `GET /api/v1/challenges/system`.
-final availableChallengesProvider = FutureProvider<List<Challenge>>((ref) async {
+final availableChallengesProvider = FutureProvider<List<Challenge>>((
+  ref,
+) async {
   final authService = AuthService();
   final token = await authService.getToken();
   if (token == null || token.isEmpty) {
@@ -294,11 +298,23 @@ final challengeSelectionProvider =
     );
 
 Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
-  final creator = raw['creator_profile'] is Map<String, dynamic> ? raw['creator_profile'] as Map<String, dynamic> : null;
-  final applicant = raw['applicant_profile'] is Map<String, dynamic> ? raw['applicant_profile'] as Map<String, dynamic> : null;
-  final opportunity = raw['collab_opportunity'] is Map<String, dynamic> ? raw['collab_opportunity'] as Map<String, dynamic> : null;
-  final businessProfile = raw['business_profile'] is Map<String, dynamic> ? raw['business_profile'] as Map<String, dynamic> : null;
-  final communityProfile = raw['community_profile'] is Map<String, dynamic> ? raw['community_profile'] as Map<String, dynamic> : null;
+  final creator = raw['creator_profile'] is Map<String, dynamic>
+      ? raw['creator_profile'] as Map<String, dynamic>
+      : null;
+  final applicant = raw['applicant_profile'] is Map<String, dynamic>
+      ? raw['applicant_profile'] as Map<String, dynamic>
+      : null;
+  final opportunity = raw['kolab'] is Map<String, dynamic>
+      ? raw['kolab'] as Map<String, dynamic>
+      : raw['collab_opportunity'] is Map<String, dynamic>
+      ? raw['collab_opportunity'] as Map<String, dynamic>
+      : null;
+  final businessProfile = raw['business_profile'] is Map<String, dynamic>
+      ? raw['business_profile'] as Map<String, dynamic>
+      : null;
+  final communityProfile = raw['community_profile'] is Map<String, dynamic>
+      ? raw['community_profile'] as Map<String, dynamic>
+      : null;
 
   final businessSummary = creator?['user_type'] == 'business'
       ? creator
@@ -372,4 +388,3 @@ Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
     'viewer_must_resubscribe': raw['viewer_must_resubscribe'],
   };
 }
-

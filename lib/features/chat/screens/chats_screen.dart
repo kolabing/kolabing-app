@@ -107,9 +107,11 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     // screen, wrap with our own Scaffold + "Chats" app bar.
     if (widget.embedded) {
       return Scaffold(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         floatingActionButton: fab,
-        body: body,
+        // SafeArea(top) so the first section label ("MAIN") doesn't render up
+        // under the status bar — the community shell provides no app bar here.
+        body: SafeArea(child: body),
       );
     }
     return Scaffold(

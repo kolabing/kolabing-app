@@ -37,6 +37,38 @@ class AppLocalizationsCa extends AppLocalizations {
       'Alguna cosa ha anat malament. Torna-ho a provar.';
 
   @override
+  String onboardingCompleteMissingFields(String fields) {
+    return 'Completa: $fields';
+  }
+
+  @override
+  String get onboardingFieldName => 'Nom';
+
+  @override
+  String get onboardingFieldBusinessCategory => 'Categoria del negoci';
+
+  @override
+  String get onboardingFieldVenueType => 'Tipus de local';
+
+  @override
+  String get onboardingFieldVenueCapacity => 'Aforament';
+
+  @override
+  String get onboardingFieldVenuePhotos => 'Fotos del local';
+
+  @override
+  String get onboardingFieldBusinessAddress => 'Adreça';
+
+  @override
+  String get onboardingFieldTargetCities => 'Ciutats';
+
+  @override
+  String get onboardingFieldCommunityType => 'Tipus de comunitat';
+
+  @override
+  String get onboardingFieldCommunityCity => 'Ciutat';
+
+  @override
   String get welcomeLogIn => 'Inicia la sessió';
 
   @override
@@ -598,6 +630,12 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get signInWithGoogle => 'Iniciar sessió amb Google';
+
+  @override
+  String get signInWithApple => 'Iniciar sessió amb Apple';
+
+  @override
+  String get authOrContinueWith => 'o continua amb';
 
   @override
   String get signInNoAccount => 'No tens un compte?';
@@ -1503,6 +1541,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityProfileContactInfoSection => 'Informació de contacte';
 
   @override
+  String get communityProfileDetailsSection => 'Detalls de la comunitat';
+
+  @override
+  String get communityProfileSizeNotSet => 'Sense definir';
+
+  @override
   String get communityProfileNotificationsSection => 'Notificacions';
 
   @override
@@ -2062,6 +2106,20 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeNavProfile => 'Perfil';
+
+  @override
+  String get attendeeMyQrTitle => 'El meu QR de perfil';
+
+  @override
+  String get attendeeMyQrSubtitle =>
+      'Mostra\'l a un amfitrió per registrar-te o connectar.';
+
+  @override
+  String get attendeeMyQrTooltip => 'El meu codi QR';
+
+  @override
+  String get attendeeMyQrUnavailable =>
+      'El teu QR de perfil encara no està a punt.';
 
   @override
   String get attendeeHomeWelcomeBack => 'Benvingut de nou';
@@ -2698,6 +2756,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get offeringSelectAllThatApply => 'Selecciona tot el que correspongui';
 
   @override
+  String get needsScreenTitle => 'QUÈ NECESSITES?';
+
+  @override
   String get offeringVenueTitle => 'Local';
 
   @override
@@ -2822,6 +2883,19 @@ class AppLocalizationsCa extends AppLocalizations {
       locale: localeName,
       other: 'S\'han importat $count esdeveniments del perfil.',
       one: 'S\'ha importat $count esdeveniment del perfil.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pastEventsImportedMediaTrimmed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'S\'han importat $count esdeveniments del perfil. Cada esdeveniment anterior admet fins a 3 fotos i 1 vídeo; el contingut sobrant s\'ha retallat.',
+      one:
+          'S\'ha importat $count esdeveniment del perfil. Cada esdeveniment anterior admet fins a 3 fotos i 1 vídeo; el contingut sobrant s\'ha retallat.',
     );
     return '$_temp0';
   }
@@ -4547,7 +4621,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Preu';
 
   @override
-  String get subscriptionPriceMonthly => '29 EUR/mes';
+  String get subscriptionPriceMonthly => '39.99 EUR/mes';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Període actual';
@@ -4593,7 +4667,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionSubscribePricedButton =>
-      'SUBSCRIURE\'S PER 29 EUR/MES';
+      'SUBSCRIURE\'S PER 39.99 EUR/MES';
 
   @override
   String get subscriptionUpdatePaymentButton =>
@@ -4643,6 +4717,28 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionPaywallPerMonth => '/ mes';
+
+  @override
+  String get subscriptionPlanMonthlyLabel => 'Mensual';
+
+  @override
+  String get subscriptionPlanThreeMonthsLabel => '3 mesos';
+
+  @override
+  String get subscriptionPlanBestValueBadge => 'MILLOR PREU';
+
+  @override
+  String get subscriptionPlanPer3Months => '/ 3 mesos';
+
+  @override
+  String subscriptionPlanPerMonthEq(String price) {
+    return '≈ $price/mes';
+  }
+
+  @override
+  String subscriptionPlanSavePercent(int percent) {
+    return 'Estalvia $percent%';
+  }
 
   @override
   String get subscriptionPaywallSubscribeButton => 'SUBSCRIURE\'S ARA';
@@ -4779,6 +4875,9 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventHubDelete => 'Elimina l\'esdeveniment';
+
+  @override
+  String get eventHubScanCheckIns => 'Escaneja registres';
 
   @override
   String get eventHubDeleteConfirmTitle => 'Vols eliminar aquest esdeveniment?';
@@ -5008,6 +5107,47 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventFormPhotosUploaded => 'Fotos pujades.';
+
+  @override
+  String eventPhotosMaxPerAdd(int max) {
+    return 'Pots afegir fins a $max fotos alhora.';
+  }
+
+  @override
+  String eventPhotosTotalCapReached(int count, int max) {
+    return 'Aquesta galeria ja té $count de $max fotos.';
+  }
+
+  @override
+  String eventPhotosTotalCapPartial(int allowed, int max) {
+    return 'Només es poden afegir $allowed fotos més (màxim $max en total).';
+  }
+
+  @override
+  String get eventFormAddFromCommunity => 'Tria de la galeria de la comunitat';
+
+  @override
+  String get eventFormCommunityGalleryTitle => 'Galeria de la comunitat';
+
+  @override
+  String get eventFormCommunityGalleryEmpty =>
+      'Encara no hi ha fotos a la galeria de la comunitat.';
+
+  @override
+  String eventFormCommunityGalleryAdd(int count) {
+    return 'Afegeix $count fotos';
+  }
+
+  @override
+  String get communityShareInvite => 'Comparteix invitació';
+
+  @override
+  String communityShareInviteMessage(String name, String url) {
+    return 'Uneix-te a $name a Kolabing: $url';
+  }
+
+  @override
+  String get communityShareInviteCopied => 'Enllaç d\'invitació copiat.';
 
   @override
   String get notifSettingsTitle => 'Notificacions';
@@ -5926,4 +6066,491 @@ class AppLocalizationsCa extends AppLocalizations {
   String eventDateInDays(int days) {
     return 'D\'aquí a $days dies';
   }
+
+  @override
+  String get attendeeCommunityProfileErrorTitle =>
+      'No s\'ha pogut carregar la comunitat';
+
+  @override
+  String get attendeeCommunityProfileTypeFallback => 'Comunitat';
+
+  @override
+  String attendeeCommunityProfileMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '$count membre',
+      zero: 'Encara sense membres',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendeeCommunityProfileAboutTitle => 'Quant a';
+
+  @override
+  String get attendeeCommunityProfileUpcomingEventsTitle =>
+      'Propers esdeveniments';
+
+  @override
+  String get attendeeCommunityProfileSeeAll => 'Veure-ho tot →';
+
+  @override
+  String get attendeeCommunityProfileNoUpcomingEvents =>
+      'Encara no hi ha propers esdeveniments.';
+
+  @override
+  String get attendeeCommunityProfileJoin => 'Uneix-te a la comunitat';
+
+  @override
+  String get attendeeCommunityProfileJoinedSnack => 'T\'has unit ✓';
+
+  @override
+  String get attendeeCommunityProfileRequestToJoin => 'Sol·licitar unir-se';
+
+  @override
+  String get attendeeCommunityProfileRequested => 'Sol·licitat';
+
+  @override
+  String get attendeeCommunityProfileRequestedSnack => 'Sol·licitud enviada';
+
+  @override
+  String get attendeeCommunityProfileRequestUnavailable =>
+      'Les sol·licituds encara no estan disponibles. Torna-ho a provar més tard.';
+
+  @override
+  String get attendeeCommunityProfileOpenCommunity => 'Obrir comunitat';
+
+  @override
+  String get communityDetailTabRewards => 'Recompenses';
+
+  @override
+  String get communityDetailChatsAction => 'Xats →';
+
+  @override
+  String get communityDetailTiersAction => 'Nivells';
+
+  @override
+  String get communityMembersGroupNoTier => 'Sense nivell';
+
+  @override
+  String communityMembersTierCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count membres',
+      one: '$count membre',
+      zero: 'Sense membres',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersYou => '★ Tu';
+
+  @override
+  String communityMembersPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersEmptyTitle => 'Encara no hi ha membres';
+
+  @override
+  String get communityMembersEmptyBody =>
+      'Els membres apareixeran aquí quan s\'uneixin a aquesta comunitat.';
+
+  @override
+  String get communityMembersLoadError =>
+      'No s\'han pogut carregar els membres';
+
+  @override
+  String get personalRewardsTitle => 'Recompenses';
+
+  @override
+  String get personalRewardsRedeemXpTitle => 'Bescanvia el teu XP';
+
+  @override
+  String get personalRewardsXpUnit => 'XP';
+
+  @override
+  String get personalRewardsComingSoon => 'Ben aviat';
+
+  @override
+  String personalRewardsXpCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points XP',
+      one: '$points XP',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String personalRewardsMyPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get personalRewardsNoRewards => 'Encara no hi ha recompenses.';
+
+  @override
+  String get personalRewardsEmptyTitle => 'Encara no hi ha recompenses';
+
+  @override
+  String get personalRewardsEmptyBody =>
+      'Uneix-te a comunitats i guanya punts per desbloquejar recompenses.';
+
+  @override
+  String get personalRewardsFailedToLoad =>
+      'No s\'han pogut carregar les recompenses';
+
+  @override
+  String get leaderboardEntryYou => 'Tu';
+
+  @override
+  String leaderboardEntryBadgeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count insígnies',
+      one: '$count insígnia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsComingSoonTitle => 'Recompenses ben aviat';
+
+  @override
+  String get communityRewardsComingSoonBody =>
+      'Aquí apareixeran els objectius, les insígnies i les recompenses d\'aquesta comunitat.';
+
+  @override
+  String get communityRewardsPointsLabel => 'Els teus punts';
+
+  @override
+  String get communityRewardsTierLabel => 'Nivell';
+
+  @override
+  String get communityRewardsNoTier => 'Encara sense nivell';
+
+  @override
+  String get communityRewardsGoalsTitle => 'Objectius';
+
+  @override
+  String get communityRewardsBadgesTitle => 'Insígnies';
+
+  @override
+  String get communityRewardsRewardsTitle => 'Recompenses';
+
+  @override
+  String communityRewardsGoalReward(int points) {
+    return '+$points pts';
+  }
+
+  @override
+  String communityRewardsGoalProgress(int progress, int target) {
+    return '$progress / $target';
+  }
+
+  @override
+  String get communityRewardsBadgeEarned => 'Aconseguida';
+
+  @override
+  String get communityRewardsBadgeLocked => 'Bloquejada';
+
+  @override
+  String get communityRewardsRedeem => 'Bescanviar';
+
+  @override
+  String communityRewardsRewardCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityRewardsRewardStock(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'En queden $count',
+      zero: 'Exhaurit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsRedeemConfirmTitle =>
+      'Vols bescanviar la recompensa?';
+
+  @override
+  String communityRewardsRedeemConfirmBody(int points, String title) {
+    return 'Es gastaran $points punts en «$title».';
+  }
+
+  @override
+  String get communityRewardsRedeemedSnack => 'Bescanviada ✓';
+
+  @override
+  String get communityRewardsGoalsEmpty => 'Encara no hi ha objectius.';
+
+  @override
+  String get communityRewardsBadgesEmpty => 'Encara no hi ha insígnies.';
+
+  @override
+  String get communityRewardsRewardsEmpty => 'Encara no hi ha recompenses.';
+
+  @override
+  String get communityRewardsAddGoal => 'Objectiu';
+
+  @override
+  String get communityRewardsAddReward => 'Recompensa';
+
+  @override
+  String get communityRewardsAddBadge => 'Insígnia';
+
+  @override
+  String get communityGoalEditorNewTitle => 'Nou objectiu';
+
+  @override
+  String get communityGoalEditorEditTitle => 'Edita l\'objectiu';
+
+  @override
+  String get communityGoalTitleLabel => 'Títol';
+
+  @override
+  String get communityGoalTitleRequired => 'Introdueix un títol';
+
+  @override
+  String get communityGoalEarnTypeLabel => 'S\'aconsegueix per';
+
+  @override
+  String get communityGoalEarnTypeEventCheckIns => 'Registres a esdeveniments';
+
+  @override
+  String get communityGoalEarnTypeChallenge => 'Repte';
+
+  @override
+  String get communityGoalEarnTypeDaysInCommunity => 'Dies a la comunitat';
+
+  @override
+  String get communityGoalTargetLabel => 'Objectiu';
+
+  @override
+  String get communityGoalTargetRequired =>
+      'Introdueix un objectiu superior a 0';
+
+  @override
+  String get communityGoalRewardPointsLabel => 'Punts de recompensa';
+
+  @override
+  String get communityGoalRewardPointsRequired =>
+      'Introdueix els punts de recompensa';
+
+  @override
+  String get communityRewardEditorNewTitle => 'Nova recompensa';
+
+  @override
+  String get communityRewardEditorEditTitle => 'Edita la recompensa';
+
+  @override
+  String get communityRewardTitleLabel => 'Títol';
+
+  @override
+  String get communityRewardTitleRequired => 'Introdueix un títol';
+
+  @override
+  String get communityRewardDescriptionLabel => 'Descripció';
+
+  @override
+  String get communityRewardCostLabel => 'Cost (punts)';
+
+  @override
+  String get communityRewardCostRequired => 'Introdueix un cost';
+
+  @override
+  String get communityRewardStockLabel => 'Estoc (buit = il·limitat)';
+
+  @override
+  String get communityBadgeEditorNewTitle => 'Nova insígnia';
+
+  @override
+  String get communityBadgeEditorEditTitle => 'Edita la insígnia';
+
+  @override
+  String get communityBadgeTitleLabel => 'Títol';
+
+  @override
+  String get communityBadgeTitleRequired => 'Introdueix un títol';
+
+  @override
+  String get communityBadgeCriteriaLabel => 'Criteri';
+
+  @override
+  String get communityBadgeCriteriaPointsThreshold => 'Llindar de punts';
+
+  @override
+  String get communityBadgeCriteriaEventCheckIns => 'Registres a esdeveniments';
+
+  @override
+  String get communityBadgeCriteriaDaysInCommunity => 'Dies a la comunitat';
+
+  @override
+  String get communityBadgeCriteriaChallengesCompleted => 'Reptes completats';
+
+  @override
+  String get communityBadgeValueLabel => 'Valor';
+
+  @override
+  String get communityBadgeValueRequired => 'Introdueix un valor';
+
+  @override
+  String get communityBadgeChallengesLabel => 'Reptes';
+
+  @override
+  String get communityBadgeChallengesEmpty =>
+      'Encara no hi ha reptes disponibles.';
+
+  @override
+  String get communityRewardsDeleteTitle => 'Vols eliminar-ho?';
+
+  @override
+  String communityRewardsDeleteBody(String title) {
+    return 'Vols eliminar «$title»? No es pot desfer.';
+  }
+
+  @override
+  String get communityEventsMyView => 'La meva vista';
+
+  @override
+  String get communityEventsAttendeeView => 'Vista d\'assistent';
+
+  @override
+  String get communityEventVisibilityPublic => 'Públic';
+
+  @override
+  String get communityEventVisibilityMembers => 'Membres';
+
+  @override
+  String get communityEventVisibilityTier => 'Nivell';
+
+  @override
+  String get businessGoalTitle => 'Quin és el teu objectiu?';
+
+  @override
+  String get businessGoalSubtitle =>
+      'Adaptarem la teva configuració segons el que vulguis aconseguir.';
+
+  @override
+  String get businessGoalVenueTitle => 'Omplir el meu local';
+
+  @override
+  String get businessGoalVenueDescription =>
+      'Tinc un lloc físic (bar, gimnàs, botiga, estudi) i vull que hi vinguin comunitats.';
+
+  @override
+  String get businessGoalProductTitle => 'Promocionar un producte o servei';
+
+  @override
+  String get businessGoalProductDescription =>
+      'Vull arribar a comunitats en una o més ciutats, sense local físic.';
+
+  @override
+  String get businessProductIdentityTitle => 'Parla\'ns de la teva marca';
+
+  @override
+  String get businessProductIdentitySubtitle =>
+      'Afegeix el teu nom, categoria i logotip perquè les comunitats sàpiguen qui ets.';
+
+  @override
+  String get businessProductIdentityIncomplete =>
+      'Afegeix un nom i almenys una categoria.';
+
+  @override
+  String get businessProductNameLabel => 'Nom de la marca';
+
+  @override
+  String get businessProductNameHint => 'El nom de la teva marca o empresa';
+
+  @override
+  String get businessProductCategoryLabel => 'Categoria';
+
+  @override
+  String get businessProductCategoryHint =>
+      'Tria\'n fins a 3 que et descriguin millor.';
+
+  @override
+  String get businessProductTypeLabel => 'Tipus de producte';
+
+  @override
+  String get businessProductTypeHint => 'Quin tipus de producte o servei és?';
+
+  @override
+  String get businessProductCitiesTitle => 'A quines ciutats vols arribar?';
+
+  @override
+  String businessProductCitiesSubtitle(int limit) {
+    return 'Pla gratuït: fins a $limit ciutats. Passa a Premium per a un abast il·limitat.';
+  }
+
+  @override
+  String get businessProductCitiesRequired => 'Selecciona almenys una ciutat.';
+
+  @override
+  String businessProductCitiesLimitReached(int limit) {
+    return 'El pla gratuït inclou fins a $limit ciutats. Passa a Premium per afegir-ne més.';
+  }
+
+  @override
+  String businessProductCitiesCounter(int selected, int limit) {
+    return '$selected de $limit ciutats seleccionades';
+  }
+
+  @override
+  String get businessProductAboutTitle => 'Afegeix uns quants detalls més';
+
+  @override
+  String get businessProductAboutSubtitle =>
+      'Tot és opcional, però ajuda les comunitats a decidir treballar amb tu.';
+
+  @override
+  String get businessProductOfferingLabel => 'Què ofereixes';
+
+  @override
+  String get businessProductOfferingHint =>
+      'p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis patrocinats';
+
+  @override
+  String get businessProductPhotosLabel => 'Fotos (opcional)';
+
+  @override
+  String get businessProductPhotosEmptyTitle => 'Afegeix fotos';
+
+  @override
+  String get businessProductPhotosEmptyDescription =>
+      'Mostra el que ofereixes. Puja les teves fotos, elimina les que no vulguis i ordena-les aquí.';
+
+  @override
+  String get communityStep1SizeHelper =>
+      'Aproximadament, quants membres té la teva comunitat?';
 }

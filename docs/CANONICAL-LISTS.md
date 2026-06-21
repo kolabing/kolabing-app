@@ -16,6 +16,21 @@
 | **Business types** | `GET /business-types` (fallback `GET /lookup/business-types`) | `businessTypesProvider` (`onboarding_provider.dart:25`) | `BusinessType` (`lib/features/onboarding/models/business_type.dart`) | — |
 | **Cities** | `GET /cities` | `citiesProvider` (`onboarding_provider.dart:41` and `opportunity_provider.dart:28`) | `OnboardingCity` (`lib/features/onboarding/models/city.dart`) | — |
 | **Categories** | API-driven (verify the exact endpoint before relying on it) | — | — | — |
+| **Kolab offerings** (what a business offers, `offering[]`) | `GET /lookup/offerings` | `offeringsProvider` (`lib/features/kolab/providers/offer_option_provider.dart`) | `OfferOption {id,name,slug,description,icon,iconUrl}` (`lib/features/kolab/models/offer_option.dart`) | static `_options` list (removed from `offering_screen.dart`) |
+| **Kolab deliverables** (offered in return: `offers_in_return[]` / `expects[]`) | `GET /lookup/deliverables` | `deliverablesProvider` (same file) | `OfferOption` | ⚠️ `enum DeliverableType` (`lib/features/kolab/enums/deliverable_type.dart`) — still drives the community deliverables UI; NOT yet migrated |
+| **Kolab needs** (community asks, `needs[]`) | `GET /lookup/needs` | `needsProvider` (same file) | `OfferOption` | ⚠️ `enum NeedType` (`lib/features/kolab/enums/need_type.dart`) — still drives `needs_screen.dart`; NOT yet migrated |
+
+> **Offer taxonomy migration is partial.** The three lists are admin-managed in
+> the backend (`/admin/offer-options`, table `offer_options`, served by the
+> `/lookup/{offerings,deliverables,needs}` endpoints). The app providers + model +
+> self-gating service are wired, and **business `offering_screen.dart` reads
+> `offeringsProvider`**. The community needs/deliverable pickers
+> (`needs_screen.dart`, `event_details_screen.dart`,
+> `community/screens/create_opportunity_screen.dart`) are still backed by the
+> `NeedType` / `DeliverableType` enums and structured per-field form models, which
+> a dynamic flat list can't drop into without a model refactor — left for a
+> follow-up. The provider slugs and enum `toApiValue()`s share the same wire
+> contract, so both paths are payload-compatible today.
 
 ## ⚠️ The `CommunityType` trap — placeholders on BOTH sides
 

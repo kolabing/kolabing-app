@@ -17,6 +17,29 @@ where that ticket stands and what's next, then help with it.
 
 ---
 
+## MUST FOLLOW — Ticket → Branch → Description BEFORE any development (every task)
+
+No code is written until a tracked ticket and a dedicated branch exist. For **every**
+piece of work (feature, fix, refactor, chore), do these IN ORDER before touching code:
+
+1. **Open a GitHub Projects ticket FIRST.** Create a GitHub issue and add it to the
+   **Kolabing Engineering** project board (`gh project item-add 4 --owner kolabing --url <issue-url>`).
+   Use the repo `kolabing/kolabing-app`.
+2. **Write the task description in the ticket** — goal, current state, the concrete
+   work items (checklist), and acceptance criteria. A ticket with an empty body is not
+   ready to start. (See issue #14 "Integrate Sentry…" for the expected shape.)
+3. **Open a dedicated branch** off up-to-date `master`, named for the work
+   (`feat/…`, `fix/…`, `refactor/…`, `chore/…`) — never commit straight to `master`
+   (it is protected; see the PR rule below).
+4. **Only then start development.** When done, open a PR using the mandatory template
+   and link it to the ticket (`Closes #<n>`).
+
+If the user asks to "just fix/add X" without a ticket, create the ticket + branch
+first (it's cheap), then proceed — do not skip this. Keep this rule in sync with the
+AGENTS.md workflow section.
+
+---
+
 ## MUST FOLLOW — i18n is mandatory for EVERY new widget (no literal user-facing strings)
 
 This app is fully localized via gen-l10n (`l10n.yaml`, `lib/l10n/app_{en,es,ca}.arb`,
@@ -34,6 +57,33 @@ exist in all three ARBs. Whenever you design or add ANY user-facing text:
    through, and pure symbols/emoji.
 
 If you catch a literal while editing a file, fix it in passing. Do not add new debt.
+
+---
+
+## MUST FOLLOW — Pull Request template is mandatory (every PR)
+
+Every PR MUST use [`.github/pull_request_template.md`](.github/pull_request_template.md)
+and **fill in every section** — a PR with empty sections is not ready for review and
+must not be merged. `master` is protected: changes land through PRs, and only
+`olucvolkan` can merge.
+
+Hard rules when you open a PR (or write its body):
+1. **Fill all sections.** If one truly does not apply, write `N/A` with a one-line
+   reason — never delete the heading.
+2. **Screenshots are mandatory for ANY design/UI change.** Include before/after,
+   ideally both iOS and Android. A UI-touching PR without a screenshot must not be
+   merged. Only tick the "no UI/design change" box when there is genuinely no visual
+   change.
+3. **"How to test" must be reproducible** — affected role (Business/Community/
+   Attendee), test account/data, numbered steps, expected result.
+4. **State production needs** explicitly (env/secret, backend deploy/migration, new
+   App Store/Play Store build, feature flag, third-party setup) or write "Nothing extra".
+5. Tick the **Definition of Done**: `flutter analyze` clean, `dart format` applied,
+   tested on iOS AND Android, i18n added in all three ARBs, no hardcoded values,
+   `BACKLOG.md` updated.
+
+Keep this section, `.github/pull_request_template.md`, and the AGENTS.md PR section in
+sync — if you change one, change the others.
 
 ---
 

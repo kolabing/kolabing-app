@@ -247,9 +247,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: context.colors.error),
-            child: Text(
-              AppLocalizations.of(context).subscriptionCancelButton,
-            ),
+            child: Text(AppLocalizations.of(context).subscriptionCancelButton),
           ),
         ],
       ),
@@ -506,76 +504,76 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget _buildBenefitsSection(IAPState? iapState) {
     final l10n = AppLocalizations.of(context);
     return Container(
-    padding: const EdgeInsets.all(KolabingSpacing.md),
-    decoration: BoxDecoration(
-      color: context.colors.surface,
-      borderRadius: KolabingRadius.borderRadiusLg,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 10,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.subscriptionBenefitsTitle,
-          style: KolabingTextStyles.titleMedium.copyWith(
-            color: context.colors.onSurface,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-        _BenefitItem(
-          icon: LucideIcons.megaphone,
-          title: l10n.subscriptionBenefitPublishTitle,
-          description: l10n.subscriptionBenefitPublishDesc,
-        ),
-        _BenefitItem(
-          icon: LucideIcons.users,
-          title: l10n.subscriptionBenefitConnectTitle,
-          description: l10n.subscriptionBenefitConnectDesc,
-        ),
-        _BenefitItem(
-          icon: LucideIcons.inbox,
-          title: l10n.subscriptionBenefitApplicationsTitle,
-          description: l10n.subscriptionBenefitApplicationsDesc,
-        ),
-        _BenefitItem(
-          icon: LucideIcons.barChart2,
-          title: l10n.subscriptionBenefitTrackTitle,
-          description: l10n.subscriptionBenefitTrackDesc,
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-        Divider(height: 1, color: context.colors.darkBorder),
-        const SizedBox(height: KolabingSpacing.md),
-        Center(
-          child: Platform.isIOS
-              ? _buildApplePriceLabel(iapState)
-              : RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '29 ',
-                        style: KolabingTextStyles.displaySmall.copyWith(
-                          color: context.colors.onSurface,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.subscriptionBenefitsTitle,
+            style: KolabingTextStyles.titleMedium.copyWith(
+              color: context.colors.onSurface,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+          _BenefitItem(
+            icon: LucideIcons.megaphone,
+            title: l10n.subscriptionBenefitPublishTitle,
+            description: l10n.subscriptionBenefitPublishDesc,
+          ),
+          _BenefitItem(
+            icon: LucideIcons.users,
+            title: l10n.subscriptionBenefitConnectTitle,
+            description: l10n.subscriptionBenefitConnectDesc,
+          ),
+          _BenefitItem(
+            icon: LucideIcons.inbox,
+            title: l10n.subscriptionBenefitApplicationsTitle,
+            description: l10n.subscriptionBenefitApplicationsDesc,
+          ),
+          _BenefitItem(
+            icon: LucideIcons.barChart2,
+            title: l10n.subscriptionBenefitTrackTitle,
+            description: l10n.subscriptionBenefitTrackDesc,
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+          Divider(height: 1, color: context.colors.darkBorder),
+          const SizedBox(height: KolabingSpacing.md),
+          Center(
+            child: Platform.isIOS
+                ? _buildApplePriceLabel(iapState)
+                : RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '29 ',
+                          style: KolabingTextStyles.displaySmall.copyWith(
+                            color: context.colors.onSurface,
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: l10n.subscriptionPerMonthUnit,
-                        style: KolabingTextStyles.bodyLarge.copyWith(
-                          color: context.colors.onSurfaceVariant,
+                        TextSpan(
+                          text: l10n.subscriptionPerMonthUnit,
+                          style: KolabingTextStyles.bodyLarge.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-        ),
-      ],
-    ),
-  );
+          ),
+        ],
+      ),
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -585,59 +583,59 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget _buildPlanDetails(Subscription subscription) {
     final l10n = AppLocalizations.of(context);
     return Container(
-    padding: const EdgeInsets.all(KolabingSpacing.md),
-    decoration: BoxDecoration(
-      color: context.colors.surface,
-      borderRadius: KolabingRadius.borderRadiusLg,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 10,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.subscriptionPlanDetailsTitle,
-          style: KolabingTextStyles.titleMedium.copyWith(
-            color: context.colors.onSurface,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        ),
-        const SizedBox(height: KolabingSpacing.md),
-        _DetailRow(
-          label: l10n.subscriptionDetailPlanLabel,
-          value: l10n.subscriptionStatusPremiumTitle,
-          icon: LucideIcons.crown,
-        ),
-        _DetailRow(
-          label: l10n.subscriptionDetailPriceLabel,
-          value: l10n.subscriptionPriceMonthly,
-          icon: LucideIcons.creditCard,
-        ),
-        if (subscription.currentPeriodStart != null)
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.subscriptionPlanDetailsTitle,
+            style: KolabingTextStyles.titleMedium.copyWith(
+              color: context.colors.onSurface,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
           _DetailRow(
-            label: l10n.subscriptionDetailCurrentPeriodLabel,
-            value: _formatDate(subscription.currentPeriodStart!),
-            icon: LucideIcons.calendarCheck,
+            label: l10n.subscriptionDetailPlanLabel,
+            value: l10n.subscriptionStatusPremiumTitle,
+            icon: LucideIcons.crown,
           ),
-        if (subscription.currentPeriodEnd != null)
           _DetailRow(
-            label: l10n.subscriptionDetailRenewsOnLabel,
-            value: _formatDate(subscription.currentPeriodEnd!),
-            icon: LucideIcons.calendarClock,
+            label: l10n.subscriptionDetailPriceLabel,
+            value: l10n.subscriptionPriceMonthly,
+            icon: LucideIcons.creditCard,
           ),
-        if (subscription.daysRemaining != null)
-          _DetailRow(
-            label: l10n.subscriptionDetailDaysRemainingLabel,
-            value: l10n.subscriptionDaysValue(subscription.daysRemaining!),
-            icon: LucideIcons.clock,
-          ),
-      ],
-    ),
-  );
+          if (subscription.currentPeriodStart != null)
+            _DetailRow(
+              label: l10n.subscriptionDetailCurrentPeriodLabel,
+              value: _formatDate(subscription.currentPeriodStart!),
+              icon: LucideIcons.calendarCheck,
+            ),
+          if (subscription.currentPeriodEnd != null)
+            _DetailRow(
+              label: l10n.subscriptionDetailRenewsOnLabel,
+              value: _formatDate(subscription.currentPeriodEnd!),
+              icon: LucideIcons.calendarClock,
+            ),
+          if (subscription.daysRemaining != null)
+            _DetailRow(
+              label: l10n.subscriptionDetailDaysRemainingLabel,
+              value: l10n.subscriptionDaysValue(subscription.daysRemaining!),
+              icon: LucideIcons.clock,
+            ),
+        ],
+      ),
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -647,43 +645,43 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget _buildPastDueWarning() {
     final l10n = AppLocalizations.of(context);
     return Container(
-    padding: const EdgeInsets.all(KolabingSpacing.md),
-    decoration: BoxDecoration(
-      color: context.colors.errorBg,
-      borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
-    ),
-    child: Row(
-      children: [
-        Icon(
-          LucideIcons.alertTriangle,
-          color: context.colors.error,
-          size: 24,
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.subscriptionStatusPastDueTitle,
-                style: KolabingTextStyles.titleSmall.copyWith(
-                  color: context.colors.error,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                l10n.subscriptionPastDueWarningBody,
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  color: context.colors.error,
-                ),
-              ),
-            ],
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.errorBg,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            LucideIcons.alertTriangle,
+            color: context.colors.error,
+            size: 24,
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.subscriptionStatusPastDueTitle,
+                  style: KolabingTextStyles.titleSmall.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l10n.subscriptionPastDueWarningBody,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildCancelPendingWarning(Subscription subscription) {

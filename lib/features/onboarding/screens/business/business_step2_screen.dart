@@ -10,9 +10,12 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../../../widgets/kolabing_button.dart';
 import '../../../auth/models/user_model.dart';
 import '../../../kolab/enums/venue_type.dart';
+import '../../../kolab/models/offer_option.dart';
+import '../../../kolab/providers/offer_option_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/photo_upload_widget.dart';
@@ -124,8 +127,8 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
       final message = switch (e.code) {
-        'photo_access_denied' || 'photo_access_restricted' =>
-          l10n.businessStep2PhotoAccessDenied,
+        'photo_access_denied' ||
+        'photo_access_restricted' => l10n.businessStep2PhotoAccessDenied,
         _ => l10n.businessStep2PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
@@ -190,8 +193,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
     }
     if (afterPlus.length > 14) {
       setState(
-        () =>
-            _phoneError = AppLocalizations.of(context).businessStep2PhoneTooLong,
+        () => _phoneError = AppLocalizations.of(
+          context,
+        ).businessStep2PhoneTooLong,
       );
       return;
     }
@@ -226,7 +230,10 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       return const SizedBox.shrink();
     }
 
-    if (data.location == null) {
+    // Require a *complete* location (city + address), not merely a non-null
+    // one, before the venue-details step — otherwise an import with a blank
+    // address would slip through to the final screen.
+    if (!data.isStep1Complete) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/onboarding/business/step5');
       });
@@ -243,6 +250,15 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
       orElse: () => data.selectedBusinessTypeIds,
     );
     final selectedVenueType = data.venueType;
+    // Admin-managed venue-type list (GET /lookup/venue-types); the service
+    // self-gates to the bundled list on 404/empty. Storage stays on the slug
+    // (data.venueType), so the payload is unchanged.
+    final venueTypeOptionsAsync = ref.watch(venueTypesProvider);
+    final venueTypeOptions = venueTypeOptionsAsync.when(
+      data: (data) => data,
+      loading: () => const <OfferOption>[],
+      error: (_, _) => const <OfferOption>[],
+    );
     final canContinue =
         data.isStep2Complete &&
         data.venuePhotos.isNotEmpty &&
@@ -254,8 +270,8 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
         child: Column(
           children: [
             OnboardingHeader(
-              currentStep: 2,
-              totalSteps: 3,
+              currentStep: 3,
+              totalSteps: 4,
               onBack: _handleBack,
               showSkip: false,
             ),
@@ -314,10 +330,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                                 AppLocalizations.of(
                                   context,
                                 ).businessStep2ImportedBanner,
-                                style: KolabingTextStyles.captionSecondary.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: context.colors.primaryDark,
-                                ),
+                                style: KolabingTextStyles.captionSecondary
+                                    .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: context.colors.primaryDark,
+                                    ),
                               ),
                             ),
                           ],
@@ -373,7 +390,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      AppLocalizations.of(context).businessStep2BusinessTypeHint,
+                      AppLocalizations.of(
+                        context,
+                      ).businessStep2BusinessTypeHint,
                       style: KolabingTextStyles.captionSecondary.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),
@@ -427,12 +446,17 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: VenueType.values.map((type) {
-                        final isSelected =
-                            selectedVenueType == type.toApiValue();
+                      children: venueTypeOptions.map((option) {
+                        // Map the admin slug onto the typed enum for the icon;
+                        // storage stays on the slug (the wire value).
+                        final type = VenueType.fromString(option.slug);
+                        final isSelected = selectedVenueType == option.slug;
+                        // Prefer the admin label; fall back to the enum name.
+                        final label = option.name.isNotEmpty
+                            ? option.name
+                            : type.displayName;
                         return GestureDetector(
-                          onTap: () =>
-                              notifier.updateVenueType(type.toApiValue()),
+                          onTap: () => notifier.updateVenueType(option.slug),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 180),
                             padding: const EdgeInsets.symmetric(
@@ -453,16 +477,14 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  type.icon,
-                                  size: 16,
-                                  color: isSelected
-                                      ? context.colors.onPrimary
-                                      : context.colors.onSurface,
+                                CategoryIcon(
+                                  name: option.name,
+                                  iconUrl: option.iconUrl,
+                                  size: 18,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  type.displayName,
+                                  label,
                                   style: KolabingTextStyles.bodySmall.copyWith(
                                     fontWeight: isSelected
                                         ? FontWeight.w700
@@ -478,6 +500,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         );
                       }).toList(),
                     ),
+                    if (venueTypeOptionsAsync.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
                     const SizedBox(height: 20),
                     _FieldLabel(
                       label: AppLocalizations.of(
@@ -533,7 +560,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       onChanged: notifier.updateAbout,
                       decoration: _inputDecoration(
                         context,
-                        hint: AppLocalizations.of(context).businessStep2AboutHint,
+                        hint: AppLocalizations.of(
+                          context,
+                        ).businessStep2AboutHint,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -667,11 +696,7 @@ class _VenueAddressCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              LucideIcons.mapPin,
-              size: 18,
-              color: context.colors.primary,
-            ),
+            Icon(LucideIcons.mapPin, size: 18, color: context.colors.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

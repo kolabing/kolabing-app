@@ -180,6 +180,91 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
     );
   }
 
+  /// Select the business onboarding goal.
+  ///
+  /// [hasVenue] true -> "Fill my venue" (venue path); false -> "Promote a
+  /// product/service" (product path). Stored as [OnboardingData.hasVenue] and
+  /// sent to the backend as `has_venue`.
+  void selectBusinessGoal({required bool hasVenue}) {
+    if (state == null) return;
+    state = state!.copyWith(hasVenue: hasVenue);
+  }
+
+  /// Toggle a target city for the product path (business, no venue).
+  ///
+  /// The free tier allows up to [maxFreeCities]; when [isPremium] is false the
+  /// selection is capped and [onLimitReached] is invoked so the UI can surface
+  /// the upgrade copy. Premium accounts have no limit.
+  void toggleTargetCity(
+    String cityId,
+    String cityName, {
+    bool isPremium = false,
+    int maxFreeCities = 3,
+    VoidCallback? onLimitReached,
+  }) {
+    if (state == null) return;
+
+    final ids = List<String>.from(state!.targetCityIds);
+    final names = List<String>.from(state!.targetCityNames);
+    final existingIndex = ids.indexOf(cityId);
+
+    if (existingIndex >= 0) {
+      ids.removeAt(existingIndex);
+      if (existingIndex < names.length) names.removeAt(existingIndex);
+    } else {
+      if (!isPremium && ids.length >= maxFreeCities) {
+        onLimitReached?.call();
+        return;
+      }
+      ids.add(cityId);
+      names.add(cityName);
+    }
+
+    // Keep the profile city in sync with the first target city so summaries
+    // and the product-path payload have a city to display/send.
+    state = state!.copyWith(
+      targetCityIds: ids,
+      targetCityNames: names,
+      cityId: ids.isNotEmpty ? ids.first : null,
+      cityName: names.isNotEmpty ? names.first : null,
+    );
+  }
+
+  /// Update the optional "what you offer" free text (product path).
+  void updateOffering(String? offering) {
+    if (state == null) return;
+    final trimmed = offering?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      state = state!.copyWith(clearOffering: true);
+    } else {
+      state = state!.copyWith(offering: trimmed);
+    }
+  }
+
+  /// Update the product-type slug (product path, business onboarding).
+  ///
+  /// Slugs match `ProductType.toApiValue()` and come from the admin-managed
+  /// `productTypesProvider`. Sent as `product_type`; guarded by the 422-strip
+  /// retry so onboarding still completes pre-deploy.
+  void updateProductType(String? productType) {
+    if (state == null) return;
+    final trimmed = productType?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      state = state!.copyWith(clearProductType: true);
+    } else {
+      state = state!.copyWith(productType: trimmed);
+    }
+  }
+
+  /// Update the stable community size (community onboarding).
+  void updateCommunitySize(int? size) {
+    if (state == null) return;
+    state = state!.copyWith(
+      communitySize: size,
+      clearCommunitySize: size == null,
+    );
+  }
+
   /// Update city (step 3)
   void updateCity(String cityId, String cityName) {
     if (state == null) return;
@@ -389,13 +474,31 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   /// Update instagram (step 4)
   void updateInstagram(String? instagram) {
     if (state == null) return;
-    // Remove @ prefix if present
-    final handle = instagram?.replaceFirst('@', '');
-    if (handle == null || handle.isEmpty) {
+    final handle = _normalizeInstagramHandle(instagram);
+    if (handle == null) {
       state = state!.copyWith(clearInstagram: true);
     } else {
       state = state!.copyWith(instagram: handle);
     }
+  }
+
+  /// Normalize any user-entered Instagram value into a bare handle that
+  /// satisfies the backend rule `^@?[a-zA-Z0-9._]+$`. Accepts a pasted profile
+  /// URL (e.g. `https://instagram.com/realrunclub/`), a leading `@`, and strips
+  /// any other characters (spaces, hyphens, query strings). Returns null when
+  /// nothing valid remains, so onboarding simply omits the field.
+  String? _normalizeInstagramHandle(String? raw) {
+    if (raw == null) return null;
+    var value = raw.trim();
+    if (value.isEmpty) return null;
+    // Pull the handle out of a pasted profile URL.
+    if (value.contains('instagram.com')) {
+      value = value.split('instagram.com/').last;
+    }
+    // Drop a leading @, anything after a slash/query, then strip disallowed chars.
+    value = value.replaceFirst('@', '').split('/').first.split('?').first;
+    value = value.replaceAll(RegExp(r'[^a-zA-Z0-9._]'), '');
+    return value.isEmpty ? null : value;
   }
 
   /// Update tiktok (step 4 - community only)
@@ -513,9 +616,12 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       )
       .join(' ');
 
-  /// Go to next step
+  /// Go to next step. Defensive guard: never advance past a step whose required
+  /// fields are incomplete, so the user cannot reach a later step (or the final
+  /// create-account screen) with a required field still missing.
   void nextStep() {
     if (state == null) return;
+    if (!canProceed()) return;
     if (state!.currentStep < 4) {
       state = state!.copyWith(currentStep: state!.currentStep + 1);
     }
@@ -569,9 +675,10 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
         '(step1=${state?.isStep1Complete} step2=${state?.isStep2Complete} '
         'step3=${state?.isStep3Complete})',
       );
-      return const OnboardingResult(
+      return OnboardingResult(
         success: false,
         errorMessage: 'Please complete all required fields',
+        missingFields: state?.missingFields ?? const [],
       );
     }
 
@@ -640,9 +747,10 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
   /// Complete onboarding for an already-authenticated user.
   Future<OnboardingResult> completeAuthenticatedOnboarding() async {
     if (state == null || !state!.isComplete) {
-      return const OnboardingResult(
+      return OnboardingResult(
         success: false,
         errorMessage: 'Please complete all required fields',
+        missingFields: state?.missingFields ?? const [],
       );
     }
 
@@ -728,6 +836,7 @@ class OnboardingResult {
     this.user,
     this.error,
     this.errorMessage,
+    this.missingFields = const [],
     this.cancelled = false,
     this.isNetworkError = false,
   });
@@ -736,6 +845,10 @@ class OnboardingResult {
   final UserModel? user;
   final ApiError? error;
   final String? errorMessage;
+
+  /// Required onboarding fields still missing (when account creation is blocked
+  /// client-side). Lets the UI name them instead of showing a generic error.
+  final List<OnboardingField> missingFields;
   final bool cancelled;
   final bool isNetworkError;
 

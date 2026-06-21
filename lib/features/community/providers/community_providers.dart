@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_membership.dart';
@@ -155,6 +156,50 @@ final discoverCommunitiesProvider =
     FutureProvider.family<List<Community>, String?>((ref, type) =>
         ref.read(communityServiceProvider).getDiscoverCommunities(type: type));
 
+/// A single community by id (`GET /communities/{id}`), keyed by id. Drives the
+/// attendee-facing community profile screen. A Notifier (not FutureProvider) so
+/// the join CTA can refresh it directly after a join / request without relying
+/// on `ref.invalidate` (the kept-alive recompute caveat documented above).
+class CommunityByIdNotifier extends Notifier<AsyncValue<Community>> {
+  CommunityByIdNotifier(this.communityId);
+
+  final String communityId;
+
+  @override
+  AsyncValue<Community> build() {
+    Future.microtask(reload);
+    return const AsyncLoading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+        () => ref.read(communityServiceProvider).getCommunity(communityId));
+  }
+
+  /// Optimistically replace the held community (e.g. after a successful join)
+  /// so the CTA flips without a round-trip.
+  void setCommunity(Community community) => state = AsyncData(community);
+}
+
+final communityByIdProvider = NotifierProvider.family<CommunityByIdNotifier,
+    AsyncValue<Community>, String>(CommunityByIdNotifier.new);
+
+/// Resolves a raw community-type slug to its human label using the dynamic
+/// `/community-types` taxonomy (NEVER the placeholder `CommunityType` enum, per
+/// CANONICAL-LISTS). Returns null while the taxonomy is loading or when the slug
+/// is unknown, so callers can fall back to a generic label.
+final communityTypeLabelProvider =
+    Provider.family<String?, String?>((ref, slug) {
+  if (slug == null || slug.isEmpty) return null;
+  final types = ref.watch(communityTypesProvider).value;
+  if (types == null) return null;
+  for (final t in types) {
+    if (t.slug == slug) return t.name;
+  }
+  return null;
+});
+
 /// A specific community's tiers (`GET /communities/{id}/tiers`), keyed by id.
 /// Used by surfaces that need tiers for a community other than the leader's
 /// primary (e.g. the event create/edit tier-gate picker). Highest rank first.
@@ -163,3 +208,31 @@ final communityTiersProvider =
   final tiers = await ref.read(communityServiceProvider).getTiers(communityId);
   return [...tiers]..sort((a, b) => b.rank.compareTo(a.rank));
 });
+
+/// A specific community's roster (`GET /communities/{id}/members`), keyed by id.
+/// Used by the community detail Members tab for ANY community the viewer is in
+/// (not just the leader's primary — that's [communityManageProvider]). A
+/// Notifier so `reload()` sets state directly (kept-alive recompute caveat).
+class CommunityMembersByIdNotifier
+    extends Notifier<AsyncValue<List<CommunityMember>>> {
+  CommunityMembersByIdNotifier(this.communityId);
+
+  final String communityId;
+
+  @override
+  AsyncValue<List<CommunityMember>> build() {
+    Future.microtask(reload);
+    return const AsyncLoading();
+  }
+
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+        () => ref.read(communityServiceProvider).getMembers(communityId));
+  }
+}
+
+final communityMembersByIdProvider = NotifierProvider.family<
+    CommunityMembersByIdNotifier, AsyncValue<List<CommunityMember>>, String>(
+  CommunityMembersByIdNotifier.new,
+);

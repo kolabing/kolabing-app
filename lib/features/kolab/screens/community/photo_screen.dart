@@ -75,6 +75,9 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
       maxWidth: 1920,
       maxHeight: 1920,
       imageQuality: 85,
+      // Skip full metadata — on iOS it can force a memory jettison (app killed
+      // → cold start → bounced to login). We only need the image bytes.
+      requestFullMetadata: false,
     );
     if (image == null) return;
 

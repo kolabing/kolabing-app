@@ -45,12 +45,10 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
     final events = kolab.pastEvents;
     final canAdd = events.length < 5;
     final importableEvents = profileEventsState.events
-        .where(
-          (event) => !_containsImportedEvent(events, event),
-        )
+        .where((event) => !_containsImportedEvent(events, event))
         .toList(growable: false);
-    final showImportButton = canAdd &&
-        (profileEventsState.isLoading || importableEvents.isNotEmpty);
+    final showImportButton =
+        canAdd && (profileEventsState.isLoading || importableEvents.isNotEmpty);
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -163,12 +161,15 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).pastEventsAllAlreadyAdded)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pastEventsAllAlreadyAdded),
+        ),
       );
       return;
     }
 
-    final remainingSlots = 5 - ref.read(kolabFormProvider).kolab.pastEvents.length;
+    final remainingSlots =
+        5 - ref.read(kolabFormProvider).kolab.pastEvents.length;
     final selectedEvents = await ProfileEventPickerSheet.show(
       context,
       events: importableEvents,
@@ -179,16 +180,29 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
     }
 
     final notifier = ref.read(kolabFormProvider.notifier);
+    var trimmedAny = false;
     for (final event in selectedEvents) {
-      notifier.addPastEvent(_mapProfileEvent(event));
+      final mapped = _mapProfileEvent(event);
+      // A profile event can carry more media than a single past event allows
+      // (max 3 photos / 1 video). Cap it here and tell the user, instead of
+      // letting the backend reject the whole submit with a raw error.
+      if (mapped.exceedsMediaLimit) {
+        trimmedAny = true;
+      }
+      notifier.addPastEvent(mapped.capMedia());
     }
 
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          AppLocalizations.of(context).pastEventsImported(selectedEvents.length),
+          trimmedAny
+              ? l10n.pastEventsImportedMediaTrimmed(selectedEvents.length)
+              : l10n.pastEventsImported(selectedEvents.length),
         ),
-        backgroundColor: context.colors.success,
+        backgroundColor: trimmedAny
+            ? context.colors.warning
+            : context.colors.success,
       ),
     );
   }
@@ -233,7 +247,8 @@ String _eventKey({
   required String name,
   required DateTime date,
   String? partnerName,
-}) => '${name.trim().toLowerCase()}|'
+}) =>
+    '${name.trim().toLowerCase()}|'
     '${DateUtils.dateOnly(date).toIso8601String()}|'
     '${(partnerName ?? '').trim().toLowerCase()}';
 
@@ -348,7 +363,10 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _nameController,
-            decoration: _inputDecoration(context, hint: l10n.pastEventsEventNameHint),
+            decoration: _inputDecoration(
+              context,
+              hint: l10n.pastEventsEventNameHint,
+            ),
             style: _inputTextStyle(context),
             onChanged: (v) {
               widget.onUpdate(widget.event.copyWith(name: v));
@@ -380,7 +398,9 @@ class _PastEventEntryState extends State<_PastEventEntry> {
               ),
               child: Row(
                 children: [
-                  Expanded(child: Text(dateFormatted, style: _inputTextStyle(context))),
+                  Expanded(
+                    child: Text(dateFormatted, style: _inputTextStyle(context)),
+                  ),
                   Icon(
                     LucideIcons.calendar,
                     size: 18,
@@ -403,7 +423,10 @@ class _PastEventEntryState extends State<_PastEventEntry> {
           const SizedBox(height: KolabingSpacing.xs),
           TextField(
             controller: _partnerController,
-            decoration: _inputDecoration(context, hint: l10n.pastEventsPartnerNameHint),
+            decoration: _inputDecoration(
+              context,
+              hint: l10n.pastEventsPartnerNameHint,
+            ),
             style: _inputTextStyle(context),
             onChanged: (v) {
               widget.onUpdate(
@@ -449,9 +472,15 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 widget.onUpdate(widget.event.copyWith(photos: updated));
               } on Exception catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pastEventsUploadFailed(e.toString()))));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        ).pastEventsUploadFailed(e.toString()),
+                      ),
+                    ),
+                  );
                 }
               }
             },
@@ -492,9 +521,15 @@ class _PastEventEntryState extends State<_PastEventEntry> {
                 widget.onUpdate(widget.event.copyWith(videos: updated));
               } on Exception catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).pastEventsUploadFailed(e.toString()))));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        ).pastEventsUploadFailed(e.toString()),
+                      ),
+                    ),
+                  );
                 }
               }
             },

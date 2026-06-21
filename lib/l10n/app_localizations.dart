@@ -154,6 +154,66 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get commonErrorGeneric;
 
+  /// Error when account creation is blocked by missing onboarding fields; {fields} is a comma-separated list of field names
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete: {fields}'**
+  String onboardingCompleteMissingFields(String fields);
+
+  /// No description provided for @onboardingFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get onboardingFieldName;
+
+  /// No description provided for @onboardingFieldBusinessCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Business category'**
+  String get onboardingFieldBusinessCategory;
+
+  /// No description provided for @onboardingFieldVenueType.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue type'**
+  String get onboardingFieldVenueType;
+
+  /// No description provided for @onboardingFieldVenueCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue capacity'**
+  String get onboardingFieldVenueCapacity;
+
+  /// No description provided for @onboardingFieldVenuePhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue photos'**
+  String get onboardingFieldVenuePhotos;
+
+  /// No description provided for @onboardingFieldBusinessAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get onboardingFieldBusinessAddress;
+
+  /// No description provided for @onboardingFieldTargetCities.
+  ///
+  /// In en, this message translates to:
+  /// **'Cities'**
+  String get onboardingFieldTargetCities;
+
+  /// No description provided for @onboardingFieldCommunityType.
+  ///
+  /// In en, this message translates to:
+  /// **'Community type'**
+  String get onboardingFieldCommunityType;
+
+  /// No description provided for @onboardingFieldCommunityCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get onboardingFieldCommunityCity;
+
   /// Welcome screen — secondary text button for existing users to sign in.
   ///
   /// In en, this message translates to:
@@ -1197,6 +1257,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in with Google'**
   String get signInWithGoogle;
+
+  /// Apple social sign-in button label on auth screens.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Apple'**
+  String get signInWithApple;
+
+  /// Divider label above the social sign-in buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get authOrContinueWith;
 
   /// Leading text of the sign-up footer link on the sign-in screen.
   ///
@@ -2758,6 +2830,18 @@ abstract class AppLocalizations {
   /// **'Contact Info'**
   String get communityProfileContactInfoSection;
 
+  /// Community profile: section title for editable community details
+  ///
+  /// In en, this message translates to:
+  /// **'Community Details'**
+  String get communityProfileDetailsSection;
+
+  /// Community profile: placeholder when community size is not set
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get communityProfileSizeNotSet;
+
   /// Community profile: section title for notification preferences
   ///
   /// In en, this message translates to:
@@ -3741,6 +3825,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get attendeeNavProfile;
+
+  /// Attendee: title of the sheet showing the user's own profile QR code
+  ///
+  /// In en, this message translates to:
+  /// **'My profile QR'**
+  String get attendeeMyQrTitle;
+
+  /// Attendee: helper text under the user's own profile QR code
+  ///
+  /// In en, this message translates to:
+  /// **'Show this to a host to check in or connect.'**
+  String get attendeeMyQrSubtitle;
+
+  /// Attendee app bar: tooltip for the my-profile-QR action
+  ///
+  /// In en, this message translates to:
+  /// **'My QR code'**
+  String get attendeeMyQrTooltip;
+
+  /// Attendee: shown when the user's profile id/handle is missing so no QR can be rendered
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile QR isn\'t ready yet.'**
+  String get attendeeMyQrUnavailable;
 
   /// Attendee home greeting above the user name
   ///
@@ -4870,6 +4978,12 @@ abstract class AppLocalizations {
   /// **'Select all that apply'**
   String get offeringSelectAllThatApply;
 
+  /// Community needs picker section header
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT DO YOU NEED?'**
+  String get needsScreenTitle;
+
   /// Offering option: venue, title
   ///
   /// In en, this message translates to:
@@ -5085,6 +5199,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{Imported {count} profile event.} other{Imported {count} profile events.}}'**
   String pastEventsImported(num count);
+
+  /// Snackbar when imported events had media trimmed to the per-event limits
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Imported {count} profile event. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.} other{Imported {count} profile events. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.}}'**
+  String pastEventsImportedMediaTrimmed(num count);
 
   /// Header for each past event card
   ///
@@ -8075,7 +8195,7 @@ abstract class AppLocalizations {
   /// Monthly price value shown in plan details
   ///
   /// In en, this message translates to:
-  /// **'29 EUR/month'**
+  /// **'39.99 EUR/month'**
   String get subscriptionPriceMonthly;
 
   /// Detail row label: current billing period start
@@ -8141,7 +8261,7 @@ abstract class AppLocalizations {
   /// Subscribe button label with price (Android/Stripe)
   ///
   /// In en, this message translates to:
-  /// **'SUBSCRIBE FOR 29 EUR/MONTH'**
+  /// **'SUBSCRIBE FOR 39.99 EUR/MONTH'**
   String get subscriptionSubscribePricedButton;
 
   /// Button to update payment method when past due
@@ -8221,6 +8341,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'/ month'**
   String get subscriptionPaywallPerMonth;
+
+  /// No description provided for @subscriptionPlanMonthlyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get subscriptionPlanMonthlyLabel;
+
+  /// No description provided for @subscriptionPlanThreeMonthsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'3 months'**
+  String get subscriptionPlanThreeMonthsLabel;
+
+  /// No description provided for @subscriptionPlanBestValueBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST VALUE'**
+  String get subscriptionPlanBestValueBadge;
+
+  /// No description provided for @subscriptionPlanPer3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'/ 3 months'**
+  String get subscriptionPlanPer3Months;
+
+  /// Per-month-equivalent price for a multi-month plan
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {price}/mo'**
+  String subscriptionPlanPerMonthEq(String price);
+
+  /// Savings percent of a multi-month plan vs paying monthly
+  ///
+  /// In en, this message translates to:
+  /// **'Save {percent}%'**
+  String subscriptionPlanSavePercent(int percent);
 
   /// Paywall primary subscribe button label
   ///
@@ -8461,6 +8617,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete event'**
   String get eventHubDelete;
+
+  /// Event hub leader menu: open the QR scanner to check attendees in
+  ///
+  /// In en, this message translates to:
+  /// **'Scan check-ins'**
+  String get eventHubScanCheckIns;
 
   /// No description provided for @eventHubDeleteConfirmTitle.
   ///
@@ -8881,6 +9043,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photos uploaded.'**
   String get eventFormPhotosUploaded;
+
+  /// Gallery: too many photos selected in one batch
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to {max} photos at a time.'**
+  String eventPhotosMaxPerAdd(int max);
+
+  /// Gallery: total photo cap already reached
+  ///
+  /// In en, this message translates to:
+  /// **'This gallery already has {count} of {max} photos.'**
+  String eventPhotosTotalCapReached(int count, int max);
+
+  /// Gallery: only some of the picked photos fit under the total cap
+  ///
+  /// In en, this message translates to:
+  /// **'Only {allowed} more photos can be added (max {max} total).'**
+  String eventPhotosTotalCapPartial(int allowed, int max);
+
+  /// Event form: pick photos from the community's past-event gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from community gallery'**
+  String get eventFormAddFromCommunity;
+
+  /// Event form: title of the community gallery picker sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Community gallery'**
+  String get eventFormCommunityGalleryTitle;
+
+  /// Event form: empty state for the community gallery picker
+  ///
+  /// In en, this message translates to:
+  /// **'No photos in the community gallery yet.'**
+  String get eventFormCommunityGalleryEmpty;
+
+  /// Event form: confirm button for adding selected community-gallery photos
+  ///
+  /// In en, this message translates to:
+  /// **'Add {count} photos'**
+  String eventFormCommunityGalleryAdd(int count);
+
+  /// Community: action to share a join-invite link
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite'**
+  String get communityShareInvite;
+
+  /// Community: invite share message body
+  ///
+  /// In en, this message translates to:
+  /// **'Join {name} on Kolabing: {url}'**
+  String communityShareInviteMessage(String name, String url);
+
+  /// Community: invite link copied to clipboard fallback
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link copied.'**
+  String get communityShareInviteCopied;
 
   /// Notification settings screen title
   ///
@@ -10489,6 +10711,774 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'In {days} days'**
   String eventDateInDays(int days);
+
+  /// Error title on the attendee community profile screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load community'**
+  String get attendeeCommunityProfileErrorTitle;
+
+  /// Fallback label when a community's type slug can't be resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get attendeeCommunityProfileTypeFallback;
+
+  /// Member count under the community header.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No members yet} one{{count} member} other{{count} members}}'**
+  String attendeeCommunityProfileMemberCount(int count);
+
+  /// About section title on the attendee community profile.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get attendeeCommunityProfileAboutTitle;
+
+  /// Upcoming events section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming events'**
+  String get attendeeCommunityProfileUpcomingEventsTitle;
+
+  /// Action that opens the community detail on its Events tab.
+  ///
+  /// In en, this message translates to:
+  /// **'See all →'**
+  String get attendeeCommunityProfileSeeAll;
+
+  /// Empty state for the upcoming events section.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events yet.'**
+  String get attendeeCommunityProfileNoUpcomingEvents;
+
+  /// CTA to join an open community.
+  ///
+  /// In en, this message translates to:
+  /// **'Join community'**
+  String get attendeeCommunityProfileJoin;
+
+  /// Snackbar after a successful join.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined ✓'**
+  String get attendeeCommunityProfileJoinedSnack;
+
+  /// CTA to request joining an invite-only community.
+  ///
+  /// In en, this message translates to:
+  /// **'Request to join'**
+  String get attendeeCommunityProfileRequestToJoin;
+
+  /// Disabled CTA label when a join request is pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get attendeeCommunityProfileRequested;
+
+  /// Snackbar after a join request is sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get attendeeCommunityProfileRequestedSnack;
+
+  /// Notice when the join-request endpoint isn't deployed yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests aren\'t available yet. Try again later.'**
+  String get attendeeCommunityProfileRequestUnavailable;
+
+  /// CTA for an existing member to open the community detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Open community'**
+  String get attendeeCommunityProfileOpenCommunity;
+
+  /// Community detail tab: Rewards (goals, rewards, badges).
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get communityDetailTabRewards;
+
+  /// Header action that opens the chat screen for this community.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats →'**
+  String get communityDetailChatsAction;
+
+  /// Action that opens the tier editor from the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers'**
+  String get communityDetailTiersAction;
+
+  /// Section header for members without an assigned tier.
+  ///
+  /// In en, this message translates to:
+  /// **'No tier'**
+  String get communityMembersGroupNoTier;
+
+  /// Member count next to a tier section header.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No members} one{{count} member} other{{count} members}}'**
+  String communityMembersTierCount(int count);
+
+  /// Marker on the viewer's own roster row in member view.
+  ///
+  /// In en, this message translates to:
+  /// **'★ You'**
+  String get communityMembersYou;
+
+  /// Points shown on a member row.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} pt} other{{points} pts}}'**
+  String communityMembersPoints(int points);
+
+  /// Empty state title for the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'No members yet'**
+  String get communityMembersEmptyTitle;
+
+  /// Empty state body for the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Members appear here once people join this community.'**
+  String get communityMembersEmptyBody;
+
+  /// Error title for the Members tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load members'**
+  String get communityMembersLoadError;
+
+  /// App bar title of the Personal Rewards Screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get personalRewardsTitle;
+
+  /// Title of the global XP redemption card.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem your XP'**
+  String get personalRewardsRedeemXpTitle;
+
+  /// Unit label shown after the XP balance.
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get personalRewardsXpUnit;
+
+  /// Disabled CTA label on the Redeem your XP card (partner rewards not redeemable yet).
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get personalRewardsComingSoon;
+
+  /// XP cost of a partner reward.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} XP} other{{points} XP}}'**
+  String personalRewardsXpCost(int points);
+
+  /// The viewer's per-community points balance shown in a community section header.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} pt} other{{points} pts}}'**
+  String personalRewardsMyPoints(int points);
+
+  /// Empty state for a community with no rewards.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet.'**
+  String get personalRewardsNoRewards;
+
+  /// Title of the empty state when the viewer has no community reward sections.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet'**
+  String get personalRewardsEmptyTitle;
+
+  /// Body of the empty state on the Personal Rewards Screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Join communities and earn points to unlock rewards.'**
+  String get personalRewardsEmptyBody;
+
+  /// Error title on the Personal Rewards Screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load rewards'**
+  String get personalRewardsFailedToLoad;
+
+  /// Badge shown on the current user's leaderboard row.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get leaderboardEntryYou;
+
+  /// Number of badges shown on a leaderboard row.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} badge} other{{count} badges}}'**
+  String leaderboardEntryBadgeCount(int count);
+
+  /// Title shown when the rewards-hub endpoint isn't available yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards coming soon'**
+  String get communityRewardsComingSoonTitle;
+
+  /// Body shown when the rewards-hub endpoint isn't available yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals, badges and rewards for this community will appear here.'**
+  String get communityRewardsComingSoonBody;
+
+  /// Label on the member points card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your points'**
+  String get communityRewardsPointsLabel;
+
+  /// Tier label on the member points card.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier'**
+  String get communityRewardsTierLabel;
+
+  /// Shown when the member has no tier yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No tier yet'**
+  String get communityRewardsNoTier;
+
+  /// Goals section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get communityRewardsGoalsTitle;
+
+  /// Badges section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get communityRewardsBadgesTitle;
+
+  /// Rewards section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get communityRewardsRewardsTitle;
+
+  /// Reward points a goal grants.
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} pts'**
+  String communityRewardsGoalReward(int points);
+
+  /// Goal progress text.
+  ///
+  /// In en, this message translates to:
+  /// **'{progress} / {target}'**
+  String communityRewardsGoalProgress(int progress, int target);
+
+  /// Label on an earned badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned'**
+  String get communityRewardsBadgeEarned;
+
+  /// Label on a locked badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get communityRewardsBadgeLocked;
+
+  /// Button to redeem a reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get communityRewardsRedeem;
+
+  /// Cost of a reward in points.
+  ///
+  /// In en, this message translates to:
+  /// **'{points, plural, =1{{points} pt} other{{points} pts}}'**
+  String communityRewardsRewardCost(int points);
+
+  /// Remaining stock of a reward.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Out of stock} other{{count} left}}'**
+  String communityRewardsRewardStock(int count);
+
+  /// Confirm dialog title before redeeming.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem reward?'**
+  String get communityRewardsRedeemConfirmTitle;
+
+  /// Confirm dialog body before redeeming.
+  ///
+  /// In en, this message translates to:
+  /// **'This will spend {points} points on \"{title}\".'**
+  String communityRewardsRedeemConfirmBody(int points, String title);
+
+  /// Snackbar after a successful redemption.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeemed ✓'**
+  String get communityRewardsRedeemedSnack;
+
+  /// Empty state for the goals section.
+  ///
+  /// In en, this message translates to:
+  /// **'No goals yet.'**
+  String get communityRewardsGoalsEmpty;
+
+  /// Empty state for the badges section.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges yet.'**
+  String get communityRewardsBadgesEmpty;
+
+  /// Empty state for the rewards section.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards yet.'**
+  String get communityRewardsRewardsEmpty;
+
+  /// Leader action to add a goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get communityRewardsAddGoal;
+
+  /// Leader action to add a reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward'**
+  String get communityRewardsAddReward;
+
+  /// Leader action to add a badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge'**
+  String get communityRewardsAddBadge;
+
+  /// Title of the goal editor when creating.
+  ///
+  /// In en, this message translates to:
+  /// **'New goal'**
+  String get communityGoalEditorNewTitle;
+
+  /// Title of the goal editor when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal'**
+  String get communityGoalEditorEditTitle;
+
+  /// Goal title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get communityGoalTitleLabel;
+
+  /// Validation when the goal title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get communityGoalTitleRequired;
+
+  /// Goal earn-type field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn by'**
+  String get communityGoalEarnTypeLabel;
+
+  /// Goal earn type: event check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Event check-ins'**
+  String get communityGoalEarnTypeEventCheckIns;
+
+  /// Goal earn type: challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get communityGoalEarnTypeChallenge;
+
+  /// Goal earn type: days in community.
+  ///
+  /// In en, this message translates to:
+  /// **'Days in community'**
+  String get communityGoalEarnTypeDaysInCommunity;
+
+  /// Goal target field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get communityGoalTargetLabel;
+
+  /// Validation for the goal target.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a target greater than 0'**
+  String get communityGoalTargetRequired;
+
+  /// Goal reward-points field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward points'**
+  String get communityGoalRewardPointsLabel;
+
+  /// Validation for the goal reward points.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reward points'**
+  String get communityGoalRewardPointsRequired;
+
+  /// Title of the reward editor when creating.
+  ///
+  /// In en, this message translates to:
+  /// **'New reward'**
+  String get communityRewardEditorNewTitle;
+
+  /// Title of the reward editor when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit reward'**
+  String get communityRewardEditorEditTitle;
+
+  /// Reward title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get communityRewardTitleLabel;
+
+  /// Validation when the reward title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get communityRewardTitleRequired;
+
+  /// Reward description field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get communityRewardDescriptionLabel;
+
+  /// Reward cost field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost (points)'**
+  String get communityRewardCostLabel;
+
+  /// Validation for the reward cost.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a cost'**
+  String get communityRewardCostRequired;
+
+  /// Reward stock field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock (leave empty for unlimited)'**
+  String get communityRewardStockLabel;
+
+  /// Title of the badge editor when creating.
+  ///
+  /// In en, this message translates to:
+  /// **'New badge'**
+  String get communityBadgeEditorNewTitle;
+
+  /// Title of the badge editor when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit badge'**
+  String get communityBadgeEditorEditTitle;
+
+  /// Badge title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get communityBadgeTitleLabel;
+
+  /// Validation when the badge title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get communityBadgeTitleRequired;
+
+  /// Badge criteria-type field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Criteria'**
+  String get communityBadgeCriteriaLabel;
+
+  /// Badge criteria: points threshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Points threshold'**
+  String get communityBadgeCriteriaPointsThreshold;
+
+  /// Badge criteria: event check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Event check-ins'**
+  String get communityBadgeCriteriaEventCheckIns;
+
+  /// Badge criteria: days in community.
+  ///
+  /// In en, this message translates to:
+  /// **'Days in community'**
+  String get communityBadgeCriteriaDaysInCommunity;
+
+  /// Badge criteria: challenges completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges completed'**
+  String get communityBadgeCriteriaChallengesCompleted;
+
+  /// Badge criteria-value field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get communityBadgeValueLabel;
+
+  /// Validation for the badge value.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a value'**
+  String get communityBadgeValueRequired;
+
+  /// Label for the challenge picker on a badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get communityBadgeChallengesLabel;
+
+  /// Shown when no challenges can be picked.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges available yet.'**
+  String get communityBadgeChallengesEmpty;
+
+  /// Generic delete confirm title for goals/rewards/badges.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete?'**
+  String get communityRewardsDeleteTitle;
+
+  /// Generic delete confirm body.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{title}\"? This can\'t be undone.'**
+  String communityRewardsDeleteBody(String title);
+
+  /// Toggle option: the leader's own view of events.
+  ///
+  /// In en, this message translates to:
+  /// **'My view'**
+  String get communityEventsMyView;
+
+  /// Toggle option: preview events as an attendee sees them.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendee view'**
+  String get communityEventsAttendeeView;
+
+  /// Event visibility badge: public.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get communityEventVisibilityPublic;
+
+  /// Event visibility badge: members only.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get communityEventVisibilityMembers;
+
+  /// Event visibility badge: tier-gated.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier'**
+  String get communityEventVisibilityTier;
+
+  /// Business onboarding goal step: title
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your goal?'**
+  String get businessGoalTitle;
+
+  /// Business onboarding goal step: subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll tailor your setup based on what you want to achieve.'**
+  String get businessGoalSubtitle;
+
+  /// Business onboarding goal step: venue option title
+  ///
+  /// In en, this message translates to:
+  /// **'Fill my venue'**
+  String get businessGoalVenueTitle;
+
+  /// Business onboarding goal step: venue option description
+  ///
+  /// In en, this message translates to:
+  /// **'I have a physical place (bar, gym, shop, studio) and want communities to come.'**
+  String get businessGoalVenueDescription;
+
+  /// Business onboarding goal step: product option title
+  ///
+  /// In en, this message translates to:
+  /// **'Promote a product or service'**
+  String get businessGoalProductTitle;
+
+  /// Business onboarding goal step: product option description
+  ///
+  /// In en, this message translates to:
+  /// **'I want to reach communities in one or more cities, no physical venue needed.'**
+  String get businessGoalProductDescription;
+
+  /// Business product path identity step: title
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your brand'**
+  String get businessProductIdentityTitle;
+
+  /// Business product path identity step: subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Add your name, category and logo so communities know who you are.'**
+  String get businessProductIdentitySubtitle;
+
+  /// Business product path identity step: validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a name and at least one category.'**
+  String get businessProductIdentityIncomplete;
+
+  /// Business product path: brand name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Brand name'**
+  String get businessProductNameLabel;
+
+  /// Business product path: brand name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Your brand or company name'**
+  String get businessProductNameHint;
+
+  /// Business product path: category field label
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get businessProductCategoryLabel;
+
+  /// Business product path: category field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to 3 that best describe you.'**
+  String get businessProductCategoryHint;
+
+  /// Business product path: product-type picker label
+  ///
+  /// In en, this message translates to:
+  /// **'Product type'**
+  String get businessProductTypeLabel;
+
+  /// Business product path: product-type picker hint
+  ///
+  /// In en, this message translates to:
+  /// **'What kind of product or service is it?'**
+  String get businessProductTypeHint;
+
+  /// Business product path cities step: title
+  ///
+  /// In en, this message translates to:
+  /// **'Which cities do you want to reach?'**
+  String get businessProductCitiesTitle;
+
+  /// Business product path cities step: subtitle with free limit
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan: up to {limit} cities. Upgrade to Premium for unlimited reach.'**
+  String businessProductCitiesSubtitle(int limit);
+
+  /// Business product path cities step: validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one city.'**
+  String get businessProductCitiesRequired;
+
+  /// Business product path cities step: free limit reached toast
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan covers up to {limit} cities. Upgrade to Premium to add more.'**
+  String businessProductCitiesLimitReached(int limit);
+
+  /// Business product path cities step: selection counter
+  ///
+  /// In en, this message translates to:
+  /// **'{selected} of {limit} cities selected'**
+  String businessProductCitiesCounter(int selected, int limit);
+
+  /// Business product path about step: title
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few more details'**
+  String get businessProductAboutTitle;
+
+  /// Business product path about step: subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'All optional, but they help communities decide to work with you.'**
+  String get businessProductAboutSubtitle;
+
+  /// Business product path: offering field label
+  ///
+  /// In en, this message translates to:
+  /// **'What you offer'**
+  String get businessProductOfferingLabel;
+
+  /// Business product path: offering field hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 20% off for community members, free samples, sponsored prizes'**
+  String get businessProductOfferingHint;
+
+  /// Business product path: photos field label
+  ///
+  /// In en, this message translates to:
+  /// **'Photos (optional)'**
+  String get businessProductPhotosLabel;
+
+  /// Business product path: photos empty-state title (non-venue)
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos'**
+  String get businessProductPhotosEmptyTitle;
+
+  /// Business product path: photos empty-state description (non-venue)
+  ///
+  /// In en, this message translates to:
+  /// **'Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.'**
+  String get businessProductPhotosEmptyDescription;
+
+  /// Community onboarding step 1: community size helper text
+  ///
+  /// In en, this message translates to:
+  /// **'Roughly how many members are in your community?'**
+  String get communityStep1SizeHelper;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,8 @@ class VenuePhotoManager extends StatelessWidget {
     required this.onMovePhoto,
     super.key,
     this.isUploading = false,
+    this.emptyTitle,
+    this.emptyDescription,
   });
 
   final List<OnboardingPhoto> photos;
@@ -21,6 +23,11 @@ class VenuePhotoManager extends StatelessWidget {
   final ValueChanged<int> onRemovePhoto;
   final void Function(int fromIndex, int toIndex) onMovePhoto;
   final bool isUploading;
+
+  /// Optional empty-state copy overrides. When null the venue strings are used;
+  /// the product/service onboarding path passes generic (non-venue) copy.
+  final String? emptyTitle;
+  final String? emptyDescription;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,11 @@ class VenuePhotoManager extends StatelessWidget {
             child: LinearProgressIndicator(color: context.colors.primary),
           ),
         if (photos.isEmpty)
-          _EmptyPhotoState(onAddPhoto: onAddPhoto)
+          _EmptyPhotoState(
+            onAddPhoto: onAddPhoto,
+            title: emptyTitle,
+            description: emptyDescription,
+          )
         else
           Column(
             children: [
@@ -83,9 +94,15 @@ class VenuePhotoManager extends StatelessWidget {
 }
 
 class _EmptyPhotoState extends StatelessWidget {
-  const _EmptyPhotoState({required this.onAddPhoto});
+  const _EmptyPhotoState({
+    required this.onAddPhoto,
+    this.title,
+    this.description,
+  });
 
   final VoidCallback onAddPhoto;
+  final String? title;
+  final String? description;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -105,12 +122,12 @@ class _EmptyPhotoState extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          AppLocalizations.of(context).venuePhotoEmptyTitle,
+          title ?? AppLocalizations.of(context).venuePhotoEmptyTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
         ),
         const SizedBox(height: 6),
         Text(
-          AppLocalizations.of(context).venuePhotoEmptyDescription,
+          description ?? AppLocalizations.of(context).venuePhotoEmptyDescription,
           style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
           textAlign: TextAlign.center,
         ),

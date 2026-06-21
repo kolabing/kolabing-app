@@ -12,6 +12,7 @@ import '../../../../widgets/referral_code_field.dart';
 import '../../../auth/models/auth_response.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
+import '../../utils/onboarding_field_label.dart';
 import '../../widgets/summary_card.dart';
 
 /// Business Onboarding Final: Summary + Email/Password Registration
@@ -255,10 +256,18 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
       } else {
         // Surface every server-side detail in the persistent banner so QA
         // can read and copy it (snackbars disappear after 4 seconds).
-        final title = apiError?.message.isNotEmpty == true
-            ? apiError!.message
-            : (result.errorMessage ??
-                  AppLocalizations.of(context).businessFinalSignupFailed);
+        // When creation is blocked client-side by missing onboarding fields,
+        // name them instead of a generic "complete all required fields".
+        final missingMessage = missingFieldsMessage(
+          result.missingFields,
+          AppLocalizations.of(context),
+        );
+        final title =
+            missingMessage ??
+            (apiError?.message.isNotEmpty == true
+                ? apiError!.message
+                : (result.errorMessage ??
+                      AppLocalizations.of(context).businessFinalSignupFailed));
         final details = _buildBannerDetails(apiError);
         setState(() {
           _isLoading = false;
@@ -554,11 +563,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
 
-                          // Summary card (collapsed)
-                          SummaryCard(data: data),
-                          const SizedBox(height: 8),
+                          // Summary card (compact recap so the login fields
+                          // stay above the fold — see batch fix 2026-06-16).
+                          SummaryCard(data: data, compact: true),
+                          const SizedBox(height: 4),
 
                           // Edit button
                           TextButton(

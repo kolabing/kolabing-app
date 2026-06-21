@@ -1,0 +1,90 @@
+{
+  "identifier" : "B7E3A1F2",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_IE",
+    "_storefront" : "IRL",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21520941",
+      "localizations" : [
+
+      ],
+      "name" : "Kolabing Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "10000001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited collaborations and applications",
+              "displayName" : "Kolabing Premium (Monthly)",
+              "locale" : "en_IE"
+            }
+          ],
+          "productID" : "com.kolabing.kolabingApp.subscription.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Kolabing Premium Monthly",
+          "subscriptionGroupID" : "21520941",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "10000002",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited collaborations and applications",
+              "displayName" : "Kolabing Premium (3 Months)",
+              "locale" : "en_IE"
+            }
+          ],
+          "productID" : "com.kolabing.kolabingApp.subscription.three_months",
+          "recurringSubscriptionPeriod" : "P3M",
+          "referenceName" : "Kolabing Premium 3 Months",
+          "subscriptionGroupID" : "21520941",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

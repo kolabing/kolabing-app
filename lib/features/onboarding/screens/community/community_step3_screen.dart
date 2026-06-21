@@ -78,7 +78,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
     final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
-    final canContinue = data?.cityId != null;
+    final canContinue = data?.isStep3Complete ?? false;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -105,7 +105,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Title
                         Text(
                           l10n.communityStep3Title,
-                          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                          style: KolabingTextStyles.bodyLarge.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.onSurface,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
@@ -113,7 +117,9 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Subtitle
                         Text(
                           l10n.communityStep3Subtitle,
-                          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
@@ -126,10 +132,14 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                               _searchQuery = value;
                             });
                           },
-                          style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
+                          style: KolabingTextStyles.bodyMedium.copyWith(
+                            color: context.colors.onSurface,
+                          ),
                           decoration: InputDecoration(
                             hintText: l10n.communityStep3SearchHint,
-                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+                              color: context.colors.textTertiary,
+                            ),
                             prefixIcon: Icon(
                               LucideIcons.search,
                               size: 20,
@@ -154,7 +164,9 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             fillColor: context.colors.surfaceContainerLow,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: context.colors.outlineVariant),
+                              borderSide: BorderSide(
+                                color: context.colors.outlineVariant,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -170,7 +182,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               l10n.communityStep3PopularCities,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.textTertiary,
+                              ),
                             ),
                           ),
                       ],
@@ -187,7 +203,9 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           return Center(
                             child: Text(
                               l10n.communityStep3NoCitiesFound,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                color: context.colors.onSurfaceVariant,
+                              ),
                             ),
                           );
                         }
@@ -224,7 +242,9 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             const SizedBox(height: 16),
                             Text(
                               l10n.communityStep3LoadError,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                color: context.colors.onSurfaceVariant,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             TextButton(

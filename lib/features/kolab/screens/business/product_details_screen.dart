@@ -7,10 +7,13 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../enums/product_type.dart';
 import '../../models/kolab.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
 
 /// Step 0 for the product promotion flow: "YOUR PRODUCT OR SERVICE"
 ///
@@ -64,6 +67,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
     final l10n = AppLocalizations.of(context);
     final citiesAsync = ref.watch(citiesProvider);
+
+    // Admin-managed product-type list (GET /lookup/product-types); the service
+    // self-gates to the bundled list on 404/empty. Storage stays on the typed
+    // ProductType enum (the wire value), so the payload is unchanged.
+    final productTypeOptionsAsync = ref.watch(productTypesProvider);
+    final productTypeOptions = productTypeOptionsAsync.when(
+      data: (data) => data,
+      loading: () => const <OfferOption>[],
+      error: (_, _) => const <OfferOption>[],
+    );
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -123,8 +136,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         Wrap(
           spacing: KolabingSpacing.xs,
           runSpacing: KolabingSpacing.xs,
-          children: ProductType.values.map((type) {
+          children: productTypeOptions.map((option) {
+            // Map the admin slug onto the typed enum (the stored/wire value).
+            final type = ProductType.fromString(option.slug);
             final isSelected = kolab.productType == type;
+            // Prefer the admin-provided label; fall back to the enum name so a
+            // mid-flight empty name never renders blank.
+            final label = option.name.isNotEmpty
+                ? option.name
+                : type.displayName;
             return GestureDetector(
               onTap: () {
                 notifier.updateProductType(isSelected ? null : type);
@@ -149,16 +169,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      type.icon,
-                      size: 16,
-                      color: isSelected
-                          ? context.colors.onPrimary
-                          : context.colors.onSurface,
+                    CategoryIcon(
+                      name: option.name,
+                      iconUrl: option.iconUrl,
+                      size: 18,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                     Text(
-                      type.displayName,
+                      label,
                       style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
                             ? context.colors.onPrimary
                             : context.colors.onSurface),
@@ -169,6 +187,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             );
           }).toList(),
         ),
+        if (productTypeOptionsAsync.isLoading)
+          const Padding(
+            padding: EdgeInsets.only(top: KolabingSpacing.sm),
+            child: Center(child: CircularProgressIndicator()),
+          ),
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Description

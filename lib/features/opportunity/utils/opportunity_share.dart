@@ -1,4 +1,6 @@
-const String _kolabingShareHost = 'kolabing.com';
+import '../../../config/environment.dart';
+
+const String _kolabingShareHost = Environment.shareHost;
 
 String buildOpportunitySharePath(String opportunityId, {bool apply = false}) =>
     Uri(

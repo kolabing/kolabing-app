@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:kolabing_app/config/constants/api.dart';
 import 'package:kolabing_app/features/auth/services/auth_service.dart';
 import 'package:kolabing_app/services/upload_service.dart';
 
@@ -89,9 +90,7 @@ void main() {
         _QueuedResponse(
           statusCode: 201,
           body: jsonEncode(<String, dynamic>{
-            'data': <String, dynamic>{
-              'url': '/storage/kolabs/photo.jpg',
-            },
+            'data': <String, dynamic>{'url': '/storage/kolabs/photo.jpg'},
           }),
         ),
       ],
@@ -119,7 +118,12 @@ void main() {
       folder: 'kolabs',
     );
 
-    expect(url, 'https://kolabing.com/storage/kolabs/photo.jpg');
+    // Relative media URLs are absolutized against the API base origin, so derive
+    // the expected host from the SAME source the production code uses.
+    final expectedUrl = Uri.parse(
+      '${ApiConfig.baseUrl}/',
+    ).resolve('/storage/kolabs/photo.jpg').toString();
+    expect(url, expectedUrl);
   });
 }
 

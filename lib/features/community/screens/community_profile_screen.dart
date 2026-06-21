@@ -497,6 +497,11 @@ class _CommunityProfileScreenState
               const SizedBox(height: KolabingSpacing.md),
             ],
 
+            // Community details (editable: community size)
+            _buildCommunityDetailsSection(profile, state.isUpdating, isDark),
+
+            const SizedBox(height: KolabingSpacing.md),
+
             // Gallery Section
             const ProfileGallerySection(),
 
@@ -757,6 +762,128 @@ class _CommunityProfileScreenState
           ),
         ),
       );
+
+  Widget _buildCommunityDetailsSection(
+    UserModel profile,
+    bool isUpdating,
+    bool isDark,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    final size = profile.communityProfile?.communitySize;
+    final sizeLabel = size != null
+        ? '$size'
+        : l10n.communityProfileSizeNotSet;
+
+    return _SectionCard(
+      title: l10n.communityProfileDetailsSection,
+      child: InkWell(
+        onTap: isUpdating ? null : () => _handleEditCommunitySize(size),
+        borderRadius: KolabingRadius.borderRadiusSm,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.users,
+                size: 20,
+                color: isDark
+                    ? context.colors.textOnDark.withValues(alpha: 0.6)
+                    : context.colors.textTertiary,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.communityInfoCommunitySizeLabel,
+                      style: KolabingTextStyles.labelSmall.copyWith(
+                        color: context.colors.textTertiary,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      sizeLabel,
+                      style: KolabingTextStyles.bodyMedium.copyWith(
+                        color: isDark
+                            ? context.colors.textOnDark
+                            : context.colors.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                LucideIcons.pencil,
+                size: 16,
+                color: isDark
+                    ? context.colors.textOnDark.withValues(alpha: 0.6)
+                    : context.colors.textTertiary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleEditCommunitySize(int? current) async {
+    final l10n = AppLocalizations.of(context);
+    final controller = TextEditingController(
+      text: current != null ? '$current' : '',
+    );
+
+    final result = await showDialog<int?>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.communityInfoCommunitySizeLabel),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.communityStep1SizeHelper,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: l10n.communityInfoCommunitySizeHint,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext)
+                .pop(int.tryParse(controller.text.trim()) ?? -1),
+            child: Text(l10n.commonSave),
+          ),
+        ],
+      ),
+    );
+
+    controller.dispose();
+
+    // Dialog dismissed without saving.
+    if (result == null) return;
+    // -1 sentinel means the field was left empty / invalid; ignore.
+    if (result < 0) return;
+
+    await ref
+        .read(profileProvider.notifier)
+        .updateProfile({'community_size': result});
+  }
 
   Widget _buildContactInfoSection(UserModel profile, bool isDark) {
     final email = profile.email;

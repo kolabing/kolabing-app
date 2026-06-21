@@ -27,12 +27,74 @@ class IAPState {
   final bool isRestoring;
   final String? error;
 
-  /// The monthly subscription product from App Store
-  ProductDetails? get monthlyProduct =>
-      products.isEmpty ? null : products.first;
+  /// Resolve the loaded product for a plan, honouring its id priority.
+  ProductDetails? _productByPriority(SubscriptionPlan plan) {
+    for (final id in plan.productIdPriority) {
+      for (final p in products) {
+        if (p.id == id) return p;
+      }
+    }
+    return null;
+  }
 
-  /// Formatted price string (from App Store, e.g. "34,99 EUR")
-  String get priceString => monthlyProduct?.price ?? '30 EUR';
+  /// The monthly subscription product from App Store
+  ProductDetails? get monthlyProduct {
+    final byPriority = _productByPriority(SubscriptionPlan.monthly);
+    if (byPriority != null) return byPriority;
+    for (final p in products) {
+      if (!kThreeMonthsProductIdPriority.contains(p.id)) return p;
+    }
+    return null;
+  }
+
+  /// The 3-month subscription product from App Store
+  ProductDetails? get threeMonthsProduct =>
+      _productByPriority(SubscriptionPlan.threeMonths);
+
+  /// Resolve the product for a given plan.
+  ProductDetails? productFor(SubscriptionPlan plan) =>
+      plan == SubscriptionPlan.monthly ? monthlyProduct : threeMonthsProduct;
+
+  /// Kolabing is EUR-priced, so prices are always shown in euros (€) regardless
+  /// of the device's App Store storefront. Using the store-localized
+  /// `ProductDetails.price`/`currencySymbol` would render e.g. "$" on a US test
+  /// storefront, which misrepresents the (euro) charge.
+  static String formatEur(double amount) => '€${amount.toStringAsFixed(2)}';
+
+  /// EUR-formatted price for a plan's loaded product, or null if not loaded.
+  String? eurPriceFor(SubscriptionPlan plan) {
+    final product = productFor(plan);
+    return product == null ? null : formatEur(product.rawPrice);
+  }
+
+  /// Formatted monthly price string in euros (e.g. "€39.99").
+  String get priceString {
+    final product = monthlyProduct;
+    return product != null ? formatEur(product.rawPrice) : '€39.99';
+  }
+
+  /// Per-month equivalent for a multi-month plan, in euros (e.g. "€33.33").
+  /// Null for the monthly plan or if not loaded.
+  String? perMonthEquivalent(SubscriptionPlan plan) {
+    final product = productFor(plan);
+    if (product == null || plan.durationMonths <= 1) return null;
+    return formatEur(product.rawPrice / plan.durationMonths);
+  }
+
+  /// Savings percent of [plan] vs paying monthly for the same duration.
+  /// Null if either product is missing or there is no saving.
+  int? savingsPercent(SubscriptionPlan plan) {
+    final monthly = monthlyProduct;
+    final product = productFor(plan);
+    if (monthly == null || product == null || plan.durationMonths <= 1) {
+      return null;
+    }
+    final fullPrice = monthly.rawPrice * plan.durationMonths;
+    if (fullPrice <= 0) return null;
+    final saving = (fullPrice - product.rawPrice) / fullPrice * 100;
+    if (saving <= 0) return null;
+    return saving.round();
+  }
 
   /// Whether a purchase can be started immediately.
   bool get canPurchase =>
@@ -113,6 +175,15 @@ class IAPNotifier extends Notifier<IAPState> {
       onPending: () {
         state = state.copyWith(isPurchasing: true);
       },
+      onCancelled: () {
+        // User dismissed the App Store sheet — drop the loading state without
+        // showing an error so the Subscribe button returns to normal.
+        state = state.copyWith(
+          isPurchasing: false,
+          isRestoring: false,
+          clearError: true,
+        );
+      },
     );
   }
 
@@ -126,13 +197,16 @@ class IAPNotifier extends Notifier<IAPState> {
     );
   }
 
-  /// Purchase the monthly subscription
-  Future<PurchaseStartResult> purchase({String? referralCode}) async {
+  /// Purchase the given subscription [plan].
+  Future<PurchaseStartResult> purchase({
+    SubscriptionPlan plan = SubscriptionPlan.monthly,
+    String? referralCode,
+  }) async {
     if (state.isPurchasing) {
       return (started: false, validatedReferralCode: null);
     }
 
-    if (state.isAvailable && state.monthlyProduct == null) {
+    if (state.isAvailable && state.productFor(plan) == null) {
       await refreshProducts();
     }
 
@@ -146,6 +220,7 @@ class IAPNotifier extends Notifier<IAPState> {
 
     try {
       final result = await _iapService.purchaseSubscription(
+        plan: plan,
         referralCode: referralCode,
       );
       if (!result.started) {

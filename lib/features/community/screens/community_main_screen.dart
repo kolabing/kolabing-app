@@ -10,16 +10,19 @@ import '../../../widgets/navigation/navigation.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../application/providers/application_provider.dart';
 import '../../business/screens/explore_screen.dart';
+import '../../business/screens/my_kollabs_screen.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chats_screen.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
 import '../../dashboard/screens/community_dashboard_screen.dart';
+import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/screens/my_kolabs_hub_screen.dart';
-import '../../opportunity/providers/opportunity_provider.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
+import '../models/community_membership.dart';
+import '../providers/community_providers.dart';
+import 'community_detail_screen.dart';
 import 'community_hub_screen.dart';
-import 'my_opportunities_screen.dart';
 
 /// Community user main screen with bottom navigation
 ///
@@ -68,9 +71,12 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
     if (mounted) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
       if (mounted) {
+        // Offers list now reads /kolabs/me (kolab SoT migration, Phase 3), so
+        // refresh that provider — not the legacy opportunities one — after
+        // returning from create so a freshly created kolab appears immediately.
         ref
           ..invalidate(dashboardProvider)
-          ..invalidate(myOpportunitiesProvider);
+          ..invalidate(myKolabsProvider);
       }
     }
   }
@@ -155,7 +161,7 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           const _CommunityExploreTab(),
           _CommunityMyOppsTab(initialSubTab: widget.initialKolabsSubTab),
           const ChatsScreen(embedded: true),
-          const CommunityHubScreen(),
+          const _CommunityLeaderTab(),
         ],
       ),
       floatingActionButton:
@@ -211,9 +217,45 @@ class _CommunityMyOppsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MyKolabsHubScreen(
-    offersTab: const MyOpportunitiesScreen(embedded: true),
+    // Kolab SoT migration (Phase 3): the community Offers list now reads
+    // /kolabs/me via MyKollabsScreen (the same kolab list the create flow
+    // writes to) instead of the legacy /me/opportunities. A freshly created
+    // kolab therefore appears here immediately and edits go through the kolab
+    // flow (PUT /kolabs/{id}), so image/media changes persist. Trade-off:
+    // legacy [TEST] collab_opportunities with no backing kolab drop off this
+    // list (expected — applications still resolve via the backend bridge).
+    offersTab: const MyKollabsScreen(embedded: true),
     initialSubTab: initialSubTab,
   );
+}
+
+// -----------------------------------------------------------------------------
+// Leader COMMUNITY tab — the restructured tabbed CommunityDetailScreen for the
+// leader's own community (Rewards/Members/Events, canManage). Falls back to the
+// CommunityHubScreen's empty/create + loading/error states when they have none.
+// -----------------------------------------------------------------------------
+
+class _CommunityLeaderTab extends ConsumerWidget {
+  const _CommunityLeaderTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final communities = ref.watch(communityManageProvider).communities;
+    return communities.maybeWhen(
+      data: (list) {
+        if (list.isEmpty) return const CommunityHubScreen();
+        // v1: a leader runs one community (the free cap). Show it tabbed.
+        return CommunityDetailScreen(
+          membership: CommunityMembership(
+            community: list.first,
+            canManage: true,
+          ),
+          embedded: true,
+        );
+      },
+      orElse: () => const CommunityHubScreen(),
+    );
+  }
 }
 
 // -----------------------------------------------------------------------------

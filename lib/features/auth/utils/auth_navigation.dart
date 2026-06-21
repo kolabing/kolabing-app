@@ -6,7 +6,12 @@ import '../models/user_model.dart';
 /// Resolves the next in-app route after authentication or session restore.
 String resolveAuthDestination(UserModel user, {bool isNewUser = false}) {
   if (user.isAttendee) {
-    return KolabingRoutes.attendeeDashboard;
+    // A brand-new social attendee (Google/Apple is_new_user) runs the 4-step
+    // onboarding (name/handle/interests/join) just like the email/password
+    // path; an existing attendee goes straight to their dashboard.
+    return isNewUser
+        ? KolabingRoutes.attendeeOnboardingStep1
+        : KolabingRoutes.attendeeDashboard;
   }
 
   // Onboarding is mandatory at registration. Existing accounts always have it
