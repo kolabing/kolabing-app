@@ -72,11 +72,154 @@ Future<Collaboration?> _fetchCollaborationDetail(
   );
 }
 
+/// Known `error_code` values the backend returns from
+/// `POST /collaborations/{id}/complete` when the feedback gate is not satisfied
+/// (or the status transition is not allowed). These are stable wire contracts.
+class CollaborationCompletionErrorCode {
+  CollaborationCompletionErrorCode._();
+
+  /// The caller has not yet submitted their own `/feedback`.
+  static const awaitingOwnFeedback = 'awaiting_own_feedback';
+
+  /// The caller's feedback is in; the Kolab only completes once the partner
+  /// submits theirs too. This is a SOFT SUCCESS, not an error.
+  static const awaitingPartnerFeedback = 'awaiting_partner_feedback';
+
+  /// Generic "cannot complete" (e.g. already completed by the partner).
+  static const cannotComplete = 'cannot_complete';
+
+  /// The status cannot move to `completed` from its current value.
+  static const invalidStatusTransition = 'invalid_status_transition';
+}
+
+/// Thrown by [markCollaborationCompleted] when `/complete` fails the feedback
+/// gate or a status transition. Carries the backend `error_code` + `message`
+/// so the UI can surface a specific, localized message (and treat
+/// `awaiting_partner_feedback` as a soft success) instead of a generic error.
+class CollaborationCompletionException implements Exception {
+  const CollaborationCompletionException({
+    required this.errorCode,
+    required this.message,
+    this.statusCode,
+  });
+
+  /// One of [CollaborationCompletionErrorCode], or null if the body had none.
+  final String? errorCode;
+  final String message;
+  final int? statusCode;
+
+  @override
+  String toString() =>
+      'CollaborationCompletionException(errorCode: $errorCode, message: $message)';
+}
+
+/// Submit the REQUIRED post-Kolab feedback that satisfies the backend
+/// completion gate — `POST /api/v1/collaborations/{id}/feedback`.
+///
+/// `/complete` only succeeds once BOTH participant user types have POSTed this
+/// feedback. This is distinct from the public `POST /{id}/review` (a decoupled
+/// star review shown post-completion) — do not conflate the two.
+///
+/// Payload (per the backend contract):
+///   - `rating` (int 1-5, required)
+///   - `expectation_match` (bool, required)
+///   - `would_recommend` (bool, required)
+///   - `posts_reels` (int 0-10000, nullable) — both roles
+///   - BUSINESS only: `stories_posted` (int nullable), `revenue` (num nullable)
+///   - COMMUNITY only: `benefits` (string ≤2000, nullable)
+///
+/// Sending a field reserved for the other role is rejected (`prohibited`), so
+/// callers MUST pass the correct [isBusiness] for the signed-in user.
+///
+/// Returns normally on 201. If the caller already submitted feedback the
+/// backend errors; we swallow that as "already done" and return without
+/// throwing so the caller can proceed straight to `/complete`.
+Future<void> submitCollaborationFeedback(
+  String id, {
+  required bool isBusiness,
+  required int rating,
+  required bool expectationMatch,
+  required bool wouldRecommend,
+  int? postsReels,
+  int? storiesPosted,
+  num? revenue,
+  String? benefits,
+}) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/collaborations/$id/feedback';
+  final payload = <String, dynamic>{
+    'rating': rating,
+    'expectation_match': expectationMatch,
+    'would_recommend': wouldRecommend,
+    if (postsReels != null) 'posts_reels': postsReels,
+    if (isBusiness && storiesPosted != null) 'stories_posted': storiesPosted,
+    if (isBusiness && revenue != null) 'revenue': revenue,
+    if (!isBusiness && benefits != null && benefits.trim().isNotEmpty)
+      'benefits': benefits.trim(),
+  };
+  debugPrint('[D3] POST $url payload=$payload');
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(payload),
+  );
+
+  debugPrint('[D3] feedback response status=${response.statusCode}');
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    unawaited(
+      AnalyticsService.instance.capture(
+        AnalyticsEvents.feedbackSubmitted,
+        properties: {'collaboration_id': id, 'rating': rating},
+      ),
+    );
+    return;
+  }
+
+  final body = response.body.isEmpty
+      ? <String, dynamic>{}
+      : jsonDecode(response.body) as Map<String, dynamic>;
+  final message = (body['message'] as String?)?.toLowerCase() ?? '';
+  final errorCode = (body['error_code'] as String?)?.toLowerCase() ?? '';
+
+  // Already submitted → treat as "done" and let the caller proceed to /complete.
+  final alreadySubmitted =
+      message.contains('already') ||
+      errorCode.contains('already') ||
+      errorCode == 'feedback_already_submitted' ||
+      errorCode == 'feedback_exists';
+  if (alreadySubmitted) {
+    debugPrint('[D3] feedback already submitted — continuing to /complete');
+    return;
+  }
+
+  throw ApiException(
+    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  );
+}
+
 /// Mark a collaboration as completed (D3).
 ///
-/// `POST /api/v1/collaborations/{id}/complete` — empty body, returns the
-/// updated collaboration JSON. Backend enforces the `scheduled|active →
-/// completed` transition; repeat completion returns `422 invalid_status_transition`.
+/// `POST /api/v1/collaborations/{id}/complete` — empty body. On 200 it returns
+/// the updated collaboration JSON. On a 4xx the body is
+/// `{success:false, message, error_code, errors}`; this throws a
+/// [CollaborationCompletionException] carrying the parsed `error_code` +
+/// `message` so the UI can branch (notably treating
+/// `awaiting_partner_feedback` as a soft success).
+///
+/// The backend enforces a FEEDBACK GATE: `/complete` only succeeds once BOTH
+/// participant user types have POSTed `/feedback`. Call
+/// [submitCollaborationFeedback] first.
 ///
 /// Callers should `ref.invalidate(collaborationDetailProvider(id))` after
 /// awaiting this to refresh the detail screen.
@@ -131,8 +274,12 @@ Future<Collaboration> _markCompleted(
   final body = response.body.isEmpty
       ? <String, dynamic>{'message': 'Failed to complete collaboration'}
       : jsonDecode(response.body) as Map<String, dynamic>;
-  throw ApiException(
-    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  // The completion endpoint signals gate/transition failures via `error_code`.
+  // Surface it so the UI can branch (awaiting_partner_feedback = soft success).
+  throw CollaborationCompletionException(
+    errorCode: (body['error_code'] as String?)?.toLowerCase(),
+    message: (body['message'] as String?) ?? 'Failed to complete collaboration',
+    statusCode: response.statusCode,
   );
 }
 
