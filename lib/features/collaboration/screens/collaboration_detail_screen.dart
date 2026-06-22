@@ -18,7 +18,6 @@ import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
 import '../providers/collaborations_list_provider.dart';
 import '../widgets/kolab_completion_sheet.dart';
-import '../widgets/kolab_review_sheet.dart';
 import '../../../widgets/category_icon.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
@@ -241,16 +240,11 @@ class _CollaborationBody extends ConsumerWidget {
                   isToday: collaboration.isToday,
                 ),
 
-        // Post-completion: leave review CTA
-        if (interactive &&
-            collaboration.status == CollaborationStatus.completed)
-          _PostCompletionReviewSection(
-            collaborationId: collaborationId,
-            partnerName: isBusiness
-                ? collaboration.communityPartner.name
-                : collaboration.businessPartner.name,
-            hasReviewed: collaboration.hasReviewed,
-          ),
+        // Post-completion review CTA removed: the required completion feedback
+        // (KolabCompletionSheet → POST /feedback, which now carries
+        // would_collaborate_again) is mirrored by the backend into the public
+        // review automatically, so a separate "Leave a review" ask here would be
+        // a duplicate rating. `hasReviewed` parsing on the model is untouched.
 
         // Post-completion: community users see a reward nudge (+1 point earned,
         // prompt to post a review for another point).
@@ -2084,129 +2078,6 @@ class _AwaitingPartnerConfirmation extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-// =============================================================================
-// Post-completion review section
-// =============================================================================
-
-class _PostCompletionReviewSection extends ConsumerWidget {
-  const _PostCompletionReviewSection({
-    required this.collaborationId,
-    required this.partnerName,
-    required this.hasReviewed,
-  });
-
-  final String collaborationId;
-  final String partnerName;
-  final bool hasReviewed;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: hasReviewed ? context.colors.activeBg : context.colors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(
-          color: hasReviewed ? context.colors.activeBg : context.colors.darkBorder,
-        ),
-      ),
-      child: hasReviewed
-          ? _buildReviewed(context)
-          : _buildUnreviewed(context, ref),
-    );
-  }
-
-  Widget _buildReviewed(BuildContext context) => Row(
-    children: [
-      Icon(
-        Icons.check_circle_rounded,
-        color: context.colors.activeText,
-        size: 18,
-      ),
-      const SizedBox(width: 8),
-      Text(
-        AppLocalizations.of(context).collaborationDetailReviewSubmitted,
-        style: KolabingTextStyles.bodySmall.copyWith(
-          fontWeight: FontWeight.w600,
-          color: context.colors.activeText,
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildUnreviewed(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Row(
-        children: [
-          const Text('⭐', style: TextStyle(fontSize: 18)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              l10n.collaborationDetailLeaveReview,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.onSurface,
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.sm,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.primary.withValues(alpha: 0.15),
-              borderRadius: KolabingRadius.borderRadiusRound,
-            ),
-            child: Text(
-              l10n.collaborationDetailXpBadge,
-              style: KolabingTextStyles.labelSmall.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.onSurface,
-              ),
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 4),
-      Text(
-        l10n.collaborationDetailReviewHelp(partnerName),
-        style: KolabingTextStyles.captionSecondary.copyWith(
-          color: context.colors.onSurfaceVariant,
-        ),
-      ),
-      const SizedBox(height: 12),
-      SizedBox(
-        height: 44,
-        child: ElevatedButton(
-          onPressed: () async {
-            final submitted = await KolabReviewSheet.show(
-              context,
-              collaborationId: collaborationId,
-              partnerName: partnerName,
-            );
-            if (submitted) {
-              ref.invalidate(collaborationDetailProvider(collaborationId));
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-          ),
-          child: Text(
-            l10n.collaborationDetailLeaveReviewCta,
-            style: KolabingTextStyles.button,
-          ),
-        ),
-      ),
-    ],
     );
   }
 }

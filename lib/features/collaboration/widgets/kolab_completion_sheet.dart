@@ -85,6 +85,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
   int? _rating;
   bool? _expectationMatch;
   bool? _wouldRecommend;
+  bool? _wouldCollaborateAgain;
   final _postsReelsController = TextEditingController();
   final _storiesController = TextEditingController(); // business only
   final _revenueController = TextEditingController(); // business only
@@ -152,7 +153,11 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
     final rating = _rating;
     final expectationMatch = _expectationMatch;
     final wouldRecommend = _wouldRecommend;
-    if (rating == null || expectationMatch == null || wouldRecommend == null) {
+    final wouldCollaborateAgain = _wouldCollaborateAgain;
+    if (rating == null ||
+        expectationMatch == null ||
+        wouldRecommend == null ||
+        wouldCollaborateAgain == null) {
       return;
     }
 
@@ -171,6 +176,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
         rating: rating,
         expectationMatch: expectationMatch,
         wouldRecommend: wouldRecommend,
+        wouldCollaborateAgain: wouldCollaborateAgain,
         postsReels: _parseInt(_postsReelsController.text),
         storiesPosted: _isBusiness ? _parseInt(_storiesController.text) : null,
         revenue: _isBusiness ? _parseNum(_revenueController.text) : null,
@@ -299,7 +305,8 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       case 1:
         final canSubmit = _rating != null &&
             _expectationMatch != null &&
-            _wouldRecommend != null;
+            _wouldRecommend != null &&
+            _wouldCollaborateAgain != null;
         return _StepFeedback(
           key: const ValueKey(1),
           partnerName: widget.partnerName,
@@ -307,6 +314,7 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
           rating: _rating,
           expectationMatch: _expectationMatch,
           wouldRecommend: _wouldRecommend,
+          wouldCollaborateAgain: _wouldCollaborateAgain,
           postsReelsController: _postsReelsController,
           storiesController: _storiesController,
           revenueController: _revenueController,
@@ -316,6 +324,8 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
           onRatingChanged: (v) => setState(() => _rating = v),
           onExpectationChanged: (v) => setState(() => _expectationMatch = v),
           onRecommendChanged: (v) => setState(() => _wouldRecommend = v),
+          onCollaborateAgainChanged: (v) =>
+              setState(() => _wouldCollaborateAgain = v),
           onSubmit: canSubmit ? _onSubmitFeedback : null,
         );
       case 2:
@@ -439,6 +449,7 @@ class _StepFeedback extends StatelessWidget {
     required this.rating,
     required this.expectationMatch,
     required this.wouldRecommend,
+    required this.wouldCollaborateAgain,
     required this.postsReelsController,
     required this.storiesController,
     required this.revenueController,
@@ -448,6 +459,7 @@ class _StepFeedback extends StatelessWidget {
     required this.onRatingChanged,
     required this.onExpectationChanged,
     required this.onRecommendChanged,
+    required this.onCollaborateAgainChanged,
     required this.onSubmit,
   });
 
@@ -456,6 +468,7 @@ class _StepFeedback extends StatelessWidget {
   final int? rating;
   final bool? expectationMatch;
   final bool? wouldRecommend;
+  final bool? wouldCollaborateAgain;
   final TextEditingController postsReelsController;
   final TextEditingController storiesController;
   final TextEditingController revenueController;
@@ -465,6 +478,7 @@ class _StepFeedback extends StatelessWidget {
   final ValueChanged<int> onRatingChanged;
   final ValueChanged<bool> onExpectationChanged;
   final ValueChanged<bool> onRecommendChanged;
+  final ValueChanged<bool> onCollaborateAgainChanged;
   final VoidCallback? onSubmit;
 
   @override
@@ -523,6 +537,17 @@ class _StepFeedback extends StatelessWidget {
           label: l10n.kolabCompletionFeedbackWouldRecommend,
           value: wouldRecommend,
           onChanged: onRecommendChanged,
+          yesLabel: l10n.kolabCompletionFeedbackYes,
+          noLabel: l10n.kolabCompletionFeedbackNo,
+        ),
+        const SizedBox(height: 16),
+        // Would kolab again (required yes/no). This feedback now BECOMES the
+        // public review (backend auto-mirrors it), so we no longer ask the user
+        // to leave a separate review post-completion.
+        _YesNoQuestion(
+          label: l10n.kolabCompletionFeedbackWouldCollaborateAgain,
+          value: wouldCollaborateAgain,
+          onChanged: onCollaborateAgainChanged,
           yesLabel: l10n.kolabCompletionFeedbackYes,
           noLabel: l10n.kolabCompletionFeedbackNo,
         ),
