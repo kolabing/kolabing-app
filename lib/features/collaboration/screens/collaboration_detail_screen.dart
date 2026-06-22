@@ -1940,14 +1940,15 @@ class _CompleteKolabSection extends ConsumerWidget {
           const SizedBox(height: 12),
           GestureDetector(
             onTap: () async {
-              final result = await KolabCompletionSheet.show(
+              await KolabCompletionSheet.show(
                 context,
                 collaborationId: collaborationId,
                 partnerName: partnerName,
               );
-              if (result != null) {
-                ref.invalidate(collaborationDetailProvider(collaborationId));
-              }
+              // Always refresh: the sheet may have submitted feedback and/or
+              // completed the Kolab (full success OR awaiting-partner soft
+              // success), all of which change the collaboration's server state.
+              ref.invalidate(collaborationDetailProvider(collaborationId));
             },
             child: Container(
               height: 48,
