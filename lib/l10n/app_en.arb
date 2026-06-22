@@ -1784,17 +1784,26 @@
   "@collaborationDetailQrPlaceholder": {
     "description": "QR placeholder label."
   },
-  "collaborationDetailQrGeneratedOnDay": "Generated on event day",
-  "@collaborationDetailQrGeneratedOnDay": {
-    "description": "QR placeholder subtitle."
+  "collaborationDetailQrGeneratedOnDemand": "Generated on demand",
+  "@collaborationDetailQrGeneratedOnDemand": {
+    "description": "QR placeholder subtitle: the QR is generated when you tap the button."
   },
-  "collaborationDetailQrDescription": "Attendees scan this QR code at your event to check in and start completing challenges.",
+  "collaborationDetailQrDescription": "Tap below to generate your check-in QR. Attendees scan it at your event to check in and start completing challenges.",
   "@collaborationDetailQrDescription": {
     "description": "QR section description."
   },
-  "collaborationDetailQrUnavailable": "QR code will be available when the event is created",
-  "@collaborationDetailQrUnavailable": {
-    "description": "Snackbar when QR is not yet available."
+  "collaborationDetailQrGenerating": "GENERATING…",
+  "@collaborationDetailQrGenerating": {
+    "description": "QR button label while the QR is being generated."
+  },
+  "collaborationDetailQrGenerateError": "Couldn't generate the QR code: {error}",
+  "@collaborationDetailQrGenerateError": {
+    "description": "Snackbar when generating the check-in QR fails.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
   "collaborationDetailViewQr": "VIEW QR CODE",
   "@collaborationDetailViewQr": {
@@ -1862,6 +1871,23 @@
   "collaborationDetailItHappened": "Yes, it happened ✨",
   "@collaborationDetailItHappened": {
     "description": "Complete CTA button."
+  },
+  "collaborationDetailFeedbackConfirmedTitle": "You've confirmed ✓",
+  "@collaborationDetailFeedbackConfirmedTitle": {
+    "description": "Shown after the viewer submits feedback while the partner still has to."
+  },
+  "collaborationDetailFeedbackConfirmedBody": "Waiting for {partnerName} to confirm too. The Kolab completes once you both do.",
+  "@collaborationDetailFeedbackConfirmedBody": {
+    "description": "Body of the awaiting-partner confirmation state.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationCardWaitingForPartner": "You confirmed — waiting for partner",
+  "@collaborationCardWaitingForPartner": {
+    "description": "Subtle line on the My Kolabs Active card after the viewer submits feedback."
   },
   "collaborationDetailReviewSubmitted": "Review submitted ✓",
   "@collaborationDetailReviewSubmitted": {

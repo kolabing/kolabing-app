@@ -1412,16 +1412,19 @@ class AppLocalizationsCa extends AppLocalizations {
   String get collaborationDetailQrPlaceholder => 'Codi QR';
 
   @override
-  String get collaborationDetailQrGeneratedOnDay =>
-      'Es genera el dia de l\'esdeveniment';
+  String get collaborationDetailQrGeneratedOnDemand => 'Es genera a l\'instant';
 
   @override
   String get collaborationDetailQrDescription =>
-      'Els assistents escanegen aquest codi QR al teu esdeveniment per registrar-se i començar a completar reptes.';
+      'Toca a sota per generar el teu codi QR de registre. Els assistents l\'escanegen al teu esdeveniment per registrar-se i començar a completar reptes.';
 
   @override
-  String get collaborationDetailQrUnavailable =>
-      'El codi QR estarà disponible quan es creï l\'esdeveniment';
+  String get collaborationDetailQrGenerating => 'GENERANT…';
+
+  @override
+  String collaborationDetailQrGenerateError(String error) {
+    return 'No s\'ha pogut generar el codi QR: $error';
+  }
 
   @override
   String get collaborationDetailViewQr => 'VEURE EL CODI QR';
@@ -1470,6 +1473,18 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get collaborationDetailItHappened => 'Sí, s\'ha fet ✨';
+
+  @override
+  String get collaborationDetailFeedbackConfirmedTitle => 'Ho has confirmat ✓';
+
+  @override
+  String collaborationDetailFeedbackConfirmedBody(String partnerName) {
+    return 'Esperant que $partnerName també ho confirmi. El Kolab es completa quan ho feu tots dos.';
+  }
+
+  @override
+  String get collaborationCardWaitingForPartner =>
+      'Has confirmat — esperant el soci';
 
   @override
   String get collaborationDetailReviewSubmitted => 'Ressenya enviada ✓';

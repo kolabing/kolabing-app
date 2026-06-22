@@ -2596,23 +2596,29 @@ abstract class AppLocalizations {
   /// **'QR Code'**
   String get collaborationDetailQrPlaceholder;
 
-  /// QR placeholder subtitle.
+  /// QR placeholder subtitle: the QR is generated when you tap the button.
   ///
   /// In en, this message translates to:
-  /// **'Generated on event day'**
-  String get collaborationDetailQrGeneratedOnDay;
+  /// **'Generated on demand'**
+  String get collaborationDetailQrGeneratedOnDemand;
 
   /// QR section description.
   ///
   /// In en, this message translates to:
-  /// **'Attendees scan this QR code at your event to check in and start completing challenges.'**
+  /// **'Tap below to generate your check-in QR. Attendees scan it at your event to check in and start completing challenges.'**
   String get collaborationDetailQrDescription;
 
-  /// Snackbar when QR is not yet available.
+  /// QR button label while the QR is being generated.
   ///
   /// In en, this message translates to:
-  /// **'QR code will be available when the event is created'**
-  String get collaborationDetailQrUnavailable;
+  /// **'GENERATING…'**
+  String get collaborationDetailQrGenerating;
+
+  /// Snackbar when generating the check-in QR fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t generate the QR code: {error}'**
+  String collaborationDetailQrGenerateError(String error);
 
   /// Button to view the QR code.
   ///
@@ -2691,6 +2697,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, it happened ✨'**
   String get collaborationDetailItHappened;
+
+  /// Shown after the viewer submits feedback while the partner still has to.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve confirmed ✓'**
+  String get collaborationDetailFeedbackConfirmedTitle;
+
+  /// Body of the awaiting-partner confirmation state.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {partnerName} to confirm too. The Kolab completes once you both do.'**
+  String collaborationDetailFeedbackConfirmedBody(String partnerName);
+
+  /// Subtle line on the My Kolabs Active card after the viewer submits feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'You confirmed — waiting for partner'**
+  String get collaborationCardWaitingForPartner;
 
   /// Confirmation that a review was submitted.
   ///

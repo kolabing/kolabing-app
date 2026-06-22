@@ -358,6 +358,75 @@ Future<Collaboration> _patchSchedule(
   );
 }
 
+/// Result of generating a check-in QR for a collaboration.
+class CollaborationQr {
+  const CollaborationQr({required this.eventId, this.qrCodeUrl});
+
+  /// The event the QR belongs to. The backend creates the event on demand if
+  /// the collaboration had none yet, so this is always populated on success.
+  final String eventId;
+
+  /// Optional pre-rendered QR image URL the backend may return.
+  final String? qrCodeUrl;
+}
+
+/// Generate (or fetch) the check-in QR for a collaboration —
+/// `POST /api/v1/collaborations/{id}/qr-code`.
+///
+/// This endpoint is idempotent: it CREATES the underlying event on demand if
+/// the collaboration doesn't have one yet, generates the check-in token, and
+/// returns `{ event_id, qr_code_url }`. The app calls it whenever the user taps
+/// "View QR", so there is no "event must be created first" dead-end.
+///
+/// Callers should `ref.invalidate(collaborationDetailProvider(id))` afterwards
+/// so the freshly created `event_id` is reflected on the detail screen.
+Future<CollaborationQr> generateCollaborationQr(String id) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/collaborations/$id/qr-code';
+  debugPrint('[D3] POST $url');
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  debugPrint('[D3] qr-code response status=${response.statusCode}');
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    // Tolerate both a flat body and a `data`-wrapped body.
+    final data = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : json;
+    final eventId = data['event_id']?.toString();
+    if (eventId == null || eventId.isEmpty) {
+      throw const ApiException(
+        error: ApiError(message: 'QR code response was missing an event id'),
+      );
+    }
+    return CollaborationQr(
+      eventId: eventId,
+      qrCodeUrl: data['qr_code_url']?.toString(),
+    );
+  }
+
+  final body = response.body.isEmpty
+      ? <String, dynamic>{'message': 'Failed to generate QR code'}
+      : jsonDecode(response.body) as Map<String, dynamic>;
+  throw ApiException(
+    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  );
+}
+
 /// Provider for the system challenge catalogue (the pool a collaboration can
 /// pick from). Fetches the real backend list — `GET /api/v1/challenges/system`.
 final availableChallengesProvider = FutureProvider<List<Challenge>>((
@@ -533,5 +602,12 @@ Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
     'my_role': raw['my_role'],
     'has_reviewed': raw['has_reviewed'],
     'viewer_must_resubscribe': raw['viewer_must_resubscribe'],
+    // Two-sided feedback gate (Collaboration.fromJson reads these). Pass through
+    // verbatim; the model tolerates missing/null values with safe defaults.
+    if (raw.containsKey('viewer_must_submit_feedback'))
+      'viewer_must_submit_feedback': raw['viewer_must_submit_feedback'],
+    'own_feedback': raw['own_feedback'],
+    'partner_feedback': raw['partner_feedback'],
+    'pending_feedback_from': raw['pending_feedback_from'],
   };
 }
