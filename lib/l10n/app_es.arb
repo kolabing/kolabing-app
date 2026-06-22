@@ -364,6 +364,7 @@
   "kolabCompletionConfirmMutualNote": "Tanto tú como {partnerName} debéis confirmar para completar este Kolab. Primero compartirás una valoración rápida.",
   "kolabCompletionFeedbackExpectationMatch": "¿Cumplió tus expectativas?",
   "kolabCompletionFeedbackWouldRecommend": "¿Recomendarías a este partner?",
+  "kolabCompletionFeedbackWouldCollaborateAgain": "¿Volverías a kolaborar?",
   "kolabCompletionFeedbackMetricsOptional": "Resultados (opcional)",
   "kolabCompletionFeedbackPostsReels": "Posts / reels publicados",
   "kolabCompletionFeedbackStoriesPosted": "Stories publicadas",

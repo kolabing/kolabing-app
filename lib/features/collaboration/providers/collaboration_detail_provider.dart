@@ -124,6 +124,9 @@ class CollaborationCompletionException implements Exception {
 ///   - `rating` (int 1-5, required)
 ///   - `expectation_match` (bool, required)
 ///   - `would_recommend` (bool, required)
+///   - `would_collaborate_again` (bool, required) — the backend MIRRORS this
+///     feedback into the public review automatically, so the app no longer
+///     POSTs the separate `/review` at completion.
 ///   - `posts_reels` (int 0-10000, nullable) — both roles
 ///   - BUSINESS only: `stories_posted` (int nullable), `revenue` (num nullable)
 ///   - COMMUNITY only: `benefits` (string ≤2000, nullable)
@@ -140,6 +143,7 @@ Future<void> submitCollaborationFeedback(
   required int rating,
   required bool expectationMatch,
   required bool wouldRecommend,
+  required bool wouldCollaborateAgain,
   int? postsReels,
   int? storiesPosted,
   num? revenue,
@@ -156,6 +160,7 @@ Future<void> submitCollaborationFeedback(
     'rating': rating,
     'expectation_match': expectationMatch,
     'would_recommend': wouldRecommend,
+    'would_collaborate_again': wouldCollaborateAgain,
     if (postsReels != null) 'posts_reels': postsReels,
     if (isBusiness && storiesPosted != null) 'stories_posted': storiesPosted,
     if (isBusiness && revenue != null) 'revenue': revenue,

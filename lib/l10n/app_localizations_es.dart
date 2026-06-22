@@ -1226,6 +1226,10 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Recomendarías a este partner?';
 
   @override
+  String get kolabCompletionFeedbackWouldCollaborateAgain =>
+      '¿Volverías a kolaborar?';
+
+  @override
   String get kolabCompletionFeedbackMetricsOptional => 'Resultados (opcional)';
 
   @override

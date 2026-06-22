@@ -2284,6 +2284,12 @@ abstract class AppLocalizations {
   /// **'Would you recommend this partner?'**
   String get kolabCompletionFeedbackWouldRecommend;
 
+  /// Yes/No feedback question: would the user collaborate (kolab) with this partner again.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you kolab again?'**
+  String get kolabCompletionFeedbackWouldCollaborateAgain;
+
   /// Section header for optional metrics in the feedback form.
   ///
   /// In en, this message translates to:

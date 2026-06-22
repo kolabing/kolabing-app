@@ -1551,6 +1551,10 @@
   "@kolabCompletionFeedbackWouldRecommend": {
     "description": "Yes/No feedback question: would recommend."
   },
+  "kolabCompletionFeedbackWouldCollaborateAgain": "Would you kolab again?",
+  "@kolabCompletionFeedbackWouldCollaborateAgain": {
+    "description": "Yes/No feedback question: would the user collaborate (kolab) with this partner again."
+  },
   "kolabCompletionFeedbackMetricsOptional": "Results (optional)",
   "@kolabCompletionFeedbackMetricsOptional": {
     "description": "Section header for optional metrics in the feedback form."
