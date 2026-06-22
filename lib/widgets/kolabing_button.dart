@@ -140,7 +140,9 @@ class _KolabingButtonState extends State<KolabingButton>
   Color _fill(KolabingColorTokens colors) => switch (widget.variant) {
     KolabingButtonVariant.primary => colors.primary,
     KolabingButtonVariant.secondary => colors.surface,
-    KolabingButtonVariant.dark => colors.ink,
+    // Fixed dark fill (NOT the theme-adaptive colors.ink, which flips to
+    // near-white in dark mode and would leave the yellow label unreadable).
+    KolabingButtonVariant.dark => KolabingColors.ink,
   };
 
   // Always ink black on primary/secondary — never amber or tinted.

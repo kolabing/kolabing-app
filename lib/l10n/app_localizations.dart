@@ -7538,6 +7538,36 @@ abstract class AppLocalizations {
   /// **'Share referral code'**
   String get referralBannerShareButton;
 
+  /// Referral banner step 1 label (verb)
+  ///
+  /// In en, this message translates to:
+  /// **'Refer'**
+  String get referralBannerStepReferLabel;
+
+  /// Referral banner step 1 value (who to refer)
+  ///
+  /// In en, this message translates to:
+  /// **'3 businesses'**
+  String get referralBannerStepReferValue;
+
+  /// Referral banner step 2 label (verb)
+  ///
+  /// In en, this message translates to:
+  /// **'Earn'**
+  String get referralBannerStepEarnLabel;
+
+  /// Referral banner reward amount
+  ///
+  /// In en, this message translates to:
+  /// **'€75'**
+  String get referralBannerStepEarnAmount;
+
+  /// Referral banner reward suffix (e.g. cash)
+  ///
+  /// In en, this message translates to:
+  /// **'cash'**
+  String get referralBannerStepEarnSuffix;
+
   /// Title of the referral code bottom sheet
   ///
   /// In en, this message translates to:

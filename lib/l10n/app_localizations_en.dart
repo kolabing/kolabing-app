@@ -4171,6 +4171,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get referralBannerShareButton => 'Share referral code';
 
   @override
+  String get referralBannerStepReferLabel => 'Refer';
+
+  @override
+  String get referralBannerStepReferValue => '3 businesses';
+
+  @override
+  String get referralBannerStepEarnLabel => 'Earn';
+
+  @override
+  String get referralBannerStepEarnAmount => '€75';
+
+  @override
+  String get referralBannerStepEarnSuffix => 'cash';
+
+  @override
   String get referralSheetYourCode => 'YOUR REFERRAL CODE';
 
   @override

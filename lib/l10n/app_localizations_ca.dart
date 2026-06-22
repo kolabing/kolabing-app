@@ -4243,6 +4243,21 @@ class AppLocalizationsCa extends AppLocalizations {
   String get referralBannerShareButton => 'Comparteix el codi referral';
 
   @override
+  String get referralBannerStepReferLabel => 'Convida';
+
+  @override
+  String get referralBannerStepReferValue => '3 negocis';
+
+  @override
+  String get referralBannerStepEarnLabel => 'Guanya';
+
+  @override
+  String get referralBannerStepEarnAmount => '75 €';
+
+  @override
+  String get referralBannerStepEarnSuffix => 'en efectiu';
+
+  @override
   String get referralSheetYourCode => 'EL TEU CODI DE CONVIDANÇA';
 
   @override

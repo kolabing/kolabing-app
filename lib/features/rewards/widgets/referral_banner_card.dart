@@ -107,7 +107,8 @@ class ReferralBannerCard extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Refer',
+                          AppLocalizations.of(context)
+                              .referralBannerStepReferLabel,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -116,7 +117,8 @@ class ReferralBannerCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          '3 businesses',
+                          AppLocalizations.of(context)
+                              .referralBannerStepReferValue,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
@@ -165,7 +167,8 @@ class ReferralBannerCard extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Earn',
+                          AppLocalizations.of(context)
+                              .referralBannerStepEarnLabel,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -174,7 +177,8 @@ class ReferralBannerCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          '€75',
+                          AppLocalizations.of(context)
+                              .referralBannerStepEarnAmount,
                           style: KolabingTextStyles.displaySmall.copyWith(
                             fontSize: 32,
                             color: inkColor,
@@ -182,7 +186,8 @@ class ReferralBannerCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          'cash',
+                          AppLocalizations.of(context)
+                              .referralBannerStepEarnSuffix,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,

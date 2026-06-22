@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-// Design tokens for mission cards
-const _cardBg = Color(0xFFFFFFFF);
-const _cardBorder = Color(0xFFEDE5D5);
-const _inkDark = Color(0xFF19150F);
-const _mutedText = Color(0xFF9A8F7C);
+import '../../../config/theme/colors.dart';
+
+// Fixed brand colors for the status pills — intentionally identical in both
+// themes (the "Done" pill is a solid dark chip with a yellow check; both its
+// fill and label are fixed, so it stays legible in light AND dark mode).
 const _orangeAccent = Color(0xFFFF6114);
 const _softOrangeTint = Color(0xFFFFE7D6); // XP pill fill
 const _brandYellow = Color(0xFFFFE28C); // done pill text & icon
@@ -39,12 +39,13 @@ class EarnXpActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       decoration: BoxDecoration(
-        color: _cardBg,
+        color: c.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _cardBorder),
+        border: Border.all(color: c.hairline),
       ),
       child: Row(
         children: [
@@ -58,7 +59,7 @@ class EarnXpActionCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: _inkDark,
+                    color: c.onSurface,
                   ),
                 ),
                 const SizedBox(height: 1),
@@ -67,7 +68,7 @@ class EarnXpActionCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: _mutedText,
+                    color: c.onSurfaceVariant,
                   ),
                 ),
               ],

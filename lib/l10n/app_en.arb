@@ -5284,6 +5284,26 @@
   "@referralBannerShareButton": {
     "description": "Button on the referral banner that opens the share sheet"
   },
+  "referralBannerStepReferLabel": "Refer",
+  "@referralBannerStepReferLabel": {
+    "description": "Referral banner step 1 label (verb)"
+  },
+  "referralBannerStepReferValue": "3 businesses",
+  "@referralBannerStepReferValue": {
+    "description": "Referral banner step 1 value (who to refer)"
+  },
+  "referralBannerStepEarnLabel": "Earn",
+  "@referralBannerStepEarnLabel": {
+    "description": "Referral banner step 2 label (verb)"
+  },
+  "referralBannerStepEarnAmount": "€75",
+  "@referralBannerStepEarnAmount": {
+    "description": "Referral banner reward amount"
+  },
+  "referralBannerStepEarnSuffix": "cash",
+  "@referralBannerStepEarnSuffix": {
+    "description": "Referral banner reward suffix (e.g. cash)"
+  },
   "referralSheetYourCode": "YOUR REFERRAL CODE",
   "@referralSheetYourCode": {
     "description": "Title of the referral code bottom sheet"

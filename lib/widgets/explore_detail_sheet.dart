@@ -368,7 +368,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
       border: Border.all(color: context.colors.hairline),
     ),
@@ -454,7 +454,7 @@ class ExploreDetailSheet extends ConsumerWidget {
             Icon(
               LucideIcons.gift,
               size: 18,
-              color: context.colors.charcoal,
+              color: context.colors.onPrimary,
             ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
@@ -462,7 +462,7 @@ class ExploreDetailSheet extends ConsumerWidget {
                 opportunity.offerSummary,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: context.colors.charcoal,
+                  color: context.colors.onPrimary,
                 ),
               ),
             ),

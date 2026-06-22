@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
+import '../../../l10n/app_localizations.dart';
 import '../widgets/kolabing_logo.dart';
 
 // ---------------------------------------------------------------------------
@@ -263,6 +264,7 @@ class _TaglineRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final baseStyle = GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w700,
@@ -272,15 +274,17 @@ class _TaglineRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('MATCH', style: baseStyle.copyWith(color: _kMuted)),
+        Text(l10n.welcomeTaglineMatch, style: baseStyle.copyWith(color: _kMuted)),
         const SizedBox(width: 6),
-        Text('·', style: baseStyle.copyWith(color: Color(0xFFB5914A))),
+        Text(l10n.welcomeTaglineDot,
+            style: baseStyle.copyWith(color: const Color(0xFFB5914A))),
         const SizedBox(width: 6),
-        Text('KOLAB', style: baseStyle.copyWith(color: _kInk)),
+        Text(l10n.welcomeTaglineKolab, style: baseStyle.copyWith(color: _kInk)),
         const SizedBox(width: 6),
-        Text('·', style: baseStyle.copyWith(color: Color(0xFFB5914A))),
+        Text(l10n.welcomeTaglineDot,
+            style: baseStyle.copyWith(color: const Color(0xFFB5914A))),
         const SizedBox(width: 6),
-        Text('GROW', style: baseStyle.copyWith(color: _kMuted)),
+        Text(l10n.welcomeTaglineGrow, style: baseStyle.copyWith(color: _kMuted)),
       ],
     );
   }
