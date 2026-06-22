@@ -18,6 +18,23 @@ import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
+/// Destination for the chat "View opportunity" action.
+///
+/// The **opportunity creator** opens the applicant's submission
+/// (`ApplicationReviewScreen`) — what the counterparty gave us in the form.
+/// The **applicant** opens the offer they applied to, but with `canApply=false`
+/// so no "Apply now" CTA appears: the application is already accepted (the chat
+/// only exists afterwards) and the offer screen's own `has_applied`/`is_own`
+/// flags are unreliable in this payload.
+@visibleForTesting
+String chatViewOpportunityRoute({
+  required bool viewerIsCreator,
+  required String applicationId,
+  required String opportunityId,
+}) => viewerIsCreator
+    ? '/application/$applicationId'
+    : '/community/explore/offer/$opportunityId?canApply=false';
+
 /// Chat screen for application conversation
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({required this.applicationId, super.key});
@@ -132,7 +149,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         if (application == null) {
           return _buildScaffold(
             body: _buildErrorState(
-                AppLocalizations.of(context).chatApplicationNotFound),
+              AppLocalizations.of(context).chatApplicationNotFound,
+            ),
           );
         }
 
@@ -185,11 +203,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           child: Row(
             children: [
-              Icon(
-                LucideIcons.lock,
-                size: 16,
-                color: context.colors.onPrimary,
-              ),
+              Icon(LucideIcons.lock, size: 16, color: context.colors.onPrimary),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
                 child: Text(
@@ -268,9 +282,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
           onPressed: () => context.pop(),
-          color: isDark
-              ? context.colors.textOnDark
-              : context.colors.onSurface,
+          color: isDark ? context.colors.textOnDark : context.colors.onSurface,
         ),
         title: application != null
             ? Row(
@@ -363,17 +375,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         color: context.colors.primary.withValues(alpha: 0.1),
         border: Border(
           bottom: BorderSide(
-            color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+            color: isDark
+                ? context.colors.darkBorder
+                : context.colors.darkBorder,
           ),
         ),
       ),
       child: Row(
         children: [
-          Icon(
-            LucideIcons.briefcase,
-            size: 16,
-            color: context.colors.primary,
-          ),
+          Icon(LucideIcons.briefcase, size: 16, color: context.colors.primary),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
@@ -633,11 +643,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 48,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 48, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             error,
@@ -673,11 +679,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              LucideIcons.logIn,
-              size: 48,
-              color: context.colors.error,
-            ),
+            Icon(LucideIcons.logIn, size: 48, color: context.colors.error),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).chatSessionExpiredTitle,
@@ -770,24 +772,37 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               title: Text(AppLocalizations.of(context).chatViewOpportunity),
               onTap: () {
                 Navigator.pop(ctx);
-                if (application != null) {
-                  final authState = ref.read(authProvider);
-                  final isBusiness = authState.user?.isBusiness ?? false;
-                  final routePrefix = isBusiness
-                      ? '/business/explore/offer'
-                      : '/community/explore/offer';
-                  context.push(
-                    '$routePrefix/${application.opportunityId}',
-                    extra: application.opportunity,
-                  );
-                }
+                if (application == null) return;
+                // A chat is always between one business and one community
+                // (ROLES §2.5: chat exists only after an accepted application),
+                // so the viewer is the opportunity CREATOR exactly when their
+                // role matches the creator's. Profile-id comparison is
+                // unreliable here (user_id vs profile_id live in different id
+                // spaces — see community_offer_detail_screen). When the creator
+                // role is absent from the payload, fall back to the dominant
+                // flow: the business creates the kolab, the community applies.
+                final user = ref.read(authProvider).user;
+                final creatorType =
+                    application.opportunity?.creatorProfile?.userType
+                        .toLowerCase() ??
+                    '';
+                final viewerIsCreator = switch (creatorType) {
+                  'business' => user?.isBusiness ?? false,
+                  'community' => user?.isCommunity ?? false,
+                  _ => user?.isBusiness ?? false,
+                };
+                context.push(
+                  chatViewOpportunityRoute(
+                    viewerIsCreator: viewerIsCreator,
+                    applicationId: widget.applicationId,
+                    opportunityId: application.opportunityId,
+                  ),
+                  extra: viewerIsCreator ? null : application.opportunity,
+                );
               },
             ),
             ListTile(
-              leading: Icon(
-                LucideIcons.xCircle,
-                color: context.colors.error,
-              ),
+              leading: Icon(LucideIcons.xCircle, color: context.colors.error),
               title: Text(
                 AppLocalizations.of(context).chatCancelApplication,
                 style: TextStyle(color: context.colors.error),
@@ -809,9 +824,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.chatCancelDialogTitle),
-        content: Text(
-          l10n.chatCancelDialogBody,
-        ),
+        content: Text(l10n.chatCancelDialogBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),

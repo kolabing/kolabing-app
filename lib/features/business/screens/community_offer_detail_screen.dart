@@ -37,6 +37,7 @@ class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
   const CommunityOfferDetailScreen({
     required this.offerId,
     this.offer,
+    this.canApply = true,
     super.key,
   });
 
@@ -45,6 +46,13 @@ class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
 
   /// Optional pre-loaded opportunity data (for navigation optimization)
   final Opportunity? offer;
+
+  /// Whether the "Apply now" action may be shown. The viewer-scoped
+  /// `has_applied` / `is_own` flags are unreliable in some payloads (e.g. the
+  /// nested opportunity inside an application), so callers that already KNOW
+  /// applying is impossible — chiefly the chat "View opportunity" action on an
+  /// accepted application — pass `false` to hide the apply button outright.
+  final bool canApply;
 
   @override
   ConsumerState<CommunityOfferDetailScreen> createState() =>
@@ -237,13 +245,18 @@ class _CommunityOfferDetailScreenState
           ],
         ),
 
-        // Fixed bottom button
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: _buildBottomAction(opportunity, isPreviewMode: isPreviewMode),
-        ),
+        // Fixed bottom button — omitted entirely when the caller has disabled
+        // applying (e.g. opened from an accepted-application chat).
+        if (widget.canApply)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildBottomAction(
+              opportunity,
+              isPreviewMode: isPreviewMode,
+            ),
+          ),
       ],
     ),
   );
