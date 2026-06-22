@@ -1213,6 +1213,50 @@ class AppLocalizationsEs extends AppLocalizations {
   String get kolabCompletionDoneClose => 'Cerrar';
 
   @override
+  String kolabCompletionConfirmMutualNote(String partnerName) {
+    return 'Tanto tú como $partnerName debéis confirmar para completar este Kolab. Primero compartirás una valoración rápida.';
+  }
+
+  @override
+  String get kolabCompletionFeedbackExpectationMatch =>
+      '¿Cumplió tus expectativas?';
+
+  @override
+  String get kolabCompletionFeedbackWouldRecommend =>
+      '¿Recomendarías a este partner?';
+
+  @override
+  String get kolabCompletionFeedbackMetricsOptional => 'Resultados (opcional)';
+
+  @override
+  String get kolabCompletionFeedbackPostsReels => 'Posts / reels publicados';
+
+  @override
+  String get kolabCompletionFeedbackStoriesPosted => 'Stories publicadas';
+
+  @override
+  String get kolabCompletionFeedbackRevenue => 'Ingresos generados';
+
+  @override
+  String get kolabCompletionFeedbackBenefits => 'Beneficios recibidos';
+
+  @override
+  String get kolabCompletionAwaitingPartnerTitle =>
+      '¡Gracias! Tu valoración está enviada ✅';
+
+  @override
+  String kolabCompletionAwaitingPartnerBody(String partnerName) {
+    return 'Este Kolab se completará cuando $partnerName también lo confirme. Te avisaremos.';
+  }
+
+  @override
+  String get kolabCompletionAwaitingPartnerClose => 'Entendido';
+
+  @override
+  String get kolabCompletionAlreadyCompleted =>
+      'Este Kolab ya está completado.';
+
+  @override
   String get collaborationDetailNotFound => 'Kolab no encontrado';
 
   @override

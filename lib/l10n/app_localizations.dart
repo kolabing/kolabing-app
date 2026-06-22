@@ -2266,6 +2266,78 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get kolabCompletionDoneClose;
 
+  /// Pre-completion note explaining the mutual feedback requirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Both you and {partnerName} confirm to complete this Kolab. You will share quick feedback first.'**
+  String kolabCompletionConfirmMutualNote(String partnerName);
+
+  /// Yes/No feedback question: expectation match.
+  ///
+  /// In en, this message translates to:
+  /// **'Did it match your expectations?'**
+  String get kolabCompletionFeedbackExpectationMatch;
+
+  /// Yes/No feedback question: would recommend.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you recommend this partner?'**
+  String get kolabCompletionFeedbackWouldRecommend;
+
+  /// Section header for optional metrics in the feedback form.
+  ///
+  /// In en, this message translates to:
+  /// **'Results (optional)'**
+  String get kolabCompletionFeedbackMetricsOptional;
+
+  /// Optional metric: number of posts or reels published.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts / reels published'**
+  String get kolabCompletionFeedbackPostsReels;
+
+  /// Optional business metric: number of stories posted.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories posted'**
+  String get kolabCompletionFeedbackStoriesPosted;
+
+  /// Optional business metric: revenue generated.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue generated'**
+  String get kolabCompletionFeedbackRevenue;
+
+  /// Optional community metric: free-text benefits received.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits received'**
+  String get kolabCompletionFeedbackBenefits;
+
+  /// Soft-success title when the caller is done but the partner has not confirmed yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks! Your feedback is in ✅'**
+  String get kolabCompletionAwaitingPartnerTitle;
+
+  /// Soft-success body shown when waiting on the partner's feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'This Kolab completes once {partnerName} confirms too. We will let you know.'**
+  String kolabCompletionAwaitingPartnerBody(String partnerName);
+
+  /// Dismiss the awaiting-partner soft-success step.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get kolabCompletionAwaitingPartnerClose;
+
+  /// Shown when the partner already completed the Kolab.
+  ///
+  /// In en, this message translates to:
+  /// **'This Kolab is already completed.'**
+  String get kolabCompletionAlreadyCompleted;
+
   /// Shown when the collaboration cannot be loaded.
   ///
   /// In en, this message translates to:
