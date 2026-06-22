@@ -12,7 +12,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
-import '../../rewards/widgets/collaboration_reward_nudge.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
@@ -246,15 +245,9 @@ class _CollaborationBody extends ConsumerWidget {
         // review automatically, so a separate "Leave a review" ask here would be
         // a duplicate rating. `hasReviewed` parsing on the model is untouched.
 
-        // Post-completion: community users see a reward nudge (+1 point earned,
-        // prompt to post a review for another point).
-        if (interactive &&
-            collaboration.status == CollaborationStatus.completed &&
-            !isBusiness)
-          const Padding(
-            padding: EdgeInsets.only(bottom: KolabingSpacing.md),
-            child: CollaborationRewardNudge(),
-          ),
+        // (Removed the post-completion "Post a review" reward nudge: the
+        // completion feedback is mirrored into the public review by the backend,
+        // so a separate review ask here was a dead, duplicate CTA.)
 
         // Gamification: Challenges Setup
         _ChallengesSection(collaborationId: collaborationId),
