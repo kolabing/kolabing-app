@@ -7,9 +7,13 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/category_icon.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
 
 /// Step 2 (venue / product flows): "WHAT YOU'RE OFFERING"
 ///
@@ -23,58 +27,6 @@ class OfferingScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<OfferingScreen> createState() => _OfferingScreenState();
-
-  static const List<_OfferingOption> _options = [
-    _OfferingOption(
-      value: 'venue',
-      title: 'Venue',
-      subtitle: 'Provide your space for the kolab',
-      icon: LucideIcons.building2,
-    ),
-    _OfferingOption(
-      value: 'food_drink',
-      title: 'Food & Drink included',
-      subtitle: 'Meals or beverages for community members',
-      icon: LucideIcons.utensils,
-    ),
-    _OfferingOption(
-      value: 'discount',
-      title: 'Discount for community members',
-      subtitle: 'Exclusive pricing for participants',
-      icon: LucideIcons.percent,
-    ),
-    _OfferingOption(
-      value: 'products',
-      title: 'Products / Samples',
-      subtitle: 'Free product samples or giveaways',
-      icon: LucideIcons.gift,
-    ),
-    _OfferingOption(
-      value: 'social_media',
-      title: 'Social Media Exposure',
-      subtitle: 'Feature on your channels',
-      icon: LucideIcons.share2,
-    ),
-    _OfferingOption(
-      value: 'content_creation',
-      title: 'Content Creation',
-      subtitle: 'Professional photos/video',
-      icon: LucideIcons.camera,
-    ),
-    _OfferingOption(
-      value: 'sponsorship',
-      title: 'Sponsorship budget',
-      subtitle: 'Financial support for the kolab',
-      icon: LucideIcons.banknote,
-    ),
-    _OfferingOption(
-      value: 'other',
-      title: 'Other',
-      subtitle: 'Something else to offer',
-      icon: LucideIcons.moreHorizontal,
-    ),
-  ];
-
 }
 
 class _OfferingScreenState extends ConsumerState<OfferingScreen> {
@@ -105,6 +57,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
     final l10n = AppLocalizations.of(context);
     final isVenueFlow = formState.intentType == IntentType.venuePromotion;
     final offerings = kolab.offering;
+    final offeringOptionsAsync = ref.watch(offeringsProvider);
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -115,13 +68,13 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         // -- Section header
         Text(
           l10n.offeringTitle,
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
           l10n.offeringSelectAllThatApply,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -131,29 +84,50 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['offering']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
             ),
           ),
 
-        // -- Toggle cards
-        ...OfferingScreen._options.map((option) {
-          final isSelected = offerings.contains(option.value);
-          final isVenueLocked = isVenueFlow && option.value == 'venue';
+        // -- Toggle cards (admin-managed taxonomy via offeringsProvider; falls
+        //    back to the bundled list when the endpoint isn't deployed)
+        ...offeringOptionsAsync
+            .when(
+              data: (options) => options,
+              // While loading or on error the provider's service already returns
+              // the hardcoded fallback, but guard here too so the picker is never
+              // empty mid-flight.
+              loading: () => const <OfferOption>[],
+              error: (_, _) => const <OfferOption>[],
+            )
+            .map((option) {
+          final isSelected = offerings.contains(option.slug);
+          final isVenueLocked = isVenueFlow && option.slug == 'venue';
 
           return Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
             child: _ToggleCard(
-              title: _offeringTitle(l10n, option.value, option.title),
-              subtitle: _offeringSubtitle(l10n, option.value, option.subtitle),
-              icon: option.icon,
+              title: _offeringTitle(l10n, option.slug, option.name),
+              subtitle: _offeringSubtitle(
+                l10n,
+                option.slug,
+                option.description ?? '',
+              ),
+              iconName: option.name,
+              iconUrl: option.iconUrl,
               isSelected: isVenueLocked || isSelected,
               isLocked: isVenueLocked,
               onTap: isVenueLocked
                   ? null
-                  : () => notifier.toggleOffering(option.value),
+                  : () => notifier.toggleOffering(option.slug),
             ),
           );
         }),
+
+        if (offeringOptionsAsync.isLoading)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+            child: Center(child: CircularProgressIndicator()),
+          ),
 
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -162,7 +136,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.offeringBaseOfferHelper,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         TextField(
@@ -171,14 +145,14 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           maxLines: 3,
           onChanged: notifier.updateBaseOffer,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
           decoration: InputDecoration(
             hintText: l10n.offeringBaseOfferHint,
             filled: true,
-            fillColor: KolabingColors.surface,
+            fillColor: context.colors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: KolabingColors.darkBorder),
+              borderSide: BorderSide(color: context.colors.darkBorder),
             ),
           ),
         ),
@@ -190,7 +164,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.offeringExtraTermsHelper,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -204,15 +178,6 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             label: Text(
               l10n.offeringAddExtraTerm,
               style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
-            ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.primary,
-              side: BorderSide(
-                color: KolabingColors.primary.withValues(alpha: 0.5),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
             ),
           ),
         ),
@@ -310,7 +275,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
       );
 }
 
@@ -331,9 +296,9 @@ class _TriggerCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: KolabingColors.darkBorder),
+          border: Border.all(color: context.colors.darkBorder),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,12 +309,12 @@ class _TriggerCard extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context).offeringTriggerIfPrefix(condition),
-                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 0.5),
+                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     additionalOffer,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface, height: 1.4),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface, height: 1.4),
                   ),
                 ],
               ),
@@ -358,10 +323,10 @@ class _TriggerCard extends StatelessWidget {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               onPressed: onRemove,
-              icon: const Icon(
+              icon: Icon(
                 LucideIcons.x,
                 size: 18,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ],
@@ -392,9 +357,9 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
     final l10n = AppLocalizations.of(context);
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.fromLTRB(
         KolabingSpacing.lg,
@@ -411,7 +376,7 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -419,12 +384,12 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             l10n.offeringTriggerSheetTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.offeringTriggerSheetSubtitle,
-            style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
           TextField(
@@ -448,35 +413,23 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                final condition = _conditionController.text.trim();
-                final offer = _offerController.text.trim();
-                if (condition.isEmpty || offer.isEmpty) {
-                  return;
-                }
-                Navigator.of(context).pop(
-                  NegotiationTrigger(
-                    condition: condition,
-                    additionalOffer: offer,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+          KolabingButton(
+            label: l10n.offeringAddTerm,
+            onPressed: () {
+              final condition = _conditionController.text.trim();
+              final offer = _offerController.text.trim();
+              if (condition.isEmpty || offer.isEmpty) {
+                return;
+              }
+              Navigator.of(context).pop(
+                NegotiationTrigger(
+                  condition: condition,
+                  additionalOffer: offer,
                 ),
-                elevation: 0,
-              ),
-              child: Text(
-                l10n.offeringAddTerm,
-                style: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
-              ),
-            ),
+              );
+            },
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
           ),
         ],
       ),
@@ -484,23 +437,6 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
   }
 }
 
-// =============================================================================
-// Data class for offering options
-// =============================================================================
-
-class _OfferingOption {
-  const _OfferingOption({
-    required this.value,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
-
-  final String value;
-  final String title;
-  final String subtitle;
-  final IconData icon;
-}
 
 // =============================================================================
 // Toggle Card
@@ -510,15 +446,21 @@ class _ToggleCard extends StatelessWidget {
   const _ToggleCard({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.iconName,
     required this.isSelected,
+    this.iconUrl,
     this.isLocked = false,
     this.onTap,
   });
 
   final String title;
   final String subtitle;
-  final IconData icon;
+
+  /// Name used to resolve the personalised bundled category SVG.
+  final String iconName;
+
+  /// Admin-uploaded SVG URL; overrides the bundled asset when present.
+  final String? iconUrl;
   final bool isSelected;
   final bool isLocked;
   final VoidCallback? onTap;
@@ -531,13 +473,13 @@ class _ToggleCard extends StatelessWidget {
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
-              ? KolabingColors.softYellow
-              : KolabingColors.surface,
+              ? context.colors.softYellow
+              : context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
             color: isSelected
-                ? KolabingColors.primary
-                : KolabingColors.darkBorder,
+                ? context.colors.primary
+                : context.colors.darkBorder,
           ),
         ),
         child: Row(
@@ -549,13 +491,13 @@ class _ToggleCard extends StatelessWidget {
               height: 24,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? KolabingColors.primary
+                    ? context.colors.primary
                     : Colors.transparent,
                 borderRadius: KolabingRadius.borderRadiusXs,
                 border: Border.all(
                   color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.darkBorder,
+                      ? context.colors.primary
+                      : context.colors.darkBorder,
                   width: 1.5,
                 ),
               ),
@@ -563,20 +505,14 @@ class _ToggleCard extends StatelessWidget {
                   ? Icon(
                       isLocked ? LucideIcons.lock : LucideIcons.check,
                       size: 14,
-                      color: KolabingColors.onPrimary,
+                      color: context.colors.onPrimary,
                     )
                   : null,
             ),
             const SizedBox(width: KolabingSpacing.sm),
 
-            // Icon
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? KolabingColors.onSurface
-                  : KolabingColors.onSurfaceVariant,
-            ),
+            // Icon (personalised category SVG; admin icon_url overrides)
+            CategoryIcon(name: iconName, iconUrl: iconUrl, size: 24),
             const SizedBox(width: KolabingSpacing.sm),
 
             // Title + subtitle
@@ -586,12 +522,12 @@ class _ToggleCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                   ),
                 ],
               ),

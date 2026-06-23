@@ -40,7 +40,7 @@ class LanguageSelectorScreen extends ConsumerWidget {
           return ListTile(
             title: Text(option.label),
             trailing: selected
-                ? const Icon(LucideIcons.check, color: KolabingColors.primary)
+                ? Icon(LucideIcons.check, color: context.colors.primary)
                 : null,
             onTap: () => notifier.setLocale(option.locale),
           );

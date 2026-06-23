@@ -1,34 +1,24 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
-import '../../../config/theme/colors.dart';
-import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../widgets/auth_fade_slide.dart';
 import '../widgets/kolabing_logo.dart';
 
 // ---------------------------------------------------------------------------
-// Local theme tokens.
+// Warm sheet tokens
 // ---------------------------------------------------------------------------
 
-const Color _kBg = Color(0xFF000000);
-const Color _kMutedText = Color(0xCCFFFFFF); // ~80% white
-
-// Hero photos cycle through these in order. All sit in assets/images/.
-const List<String> _kHeroImages = <String>[
-  'assets/images/welcome_hero.png',
-  'assets/images/welcome_hero_coffee.png',
-  'assets/images/welcome_hero_yoga.png',
-  'assets/images/welcome_hero_bike.png',
-];
+const Color _kYellow = Color(0xFFFFE28C);
+const Color _kCream = Color(0xFFF6F1E7);
+const Color _kInk = Color(0xFF19150F);
+const Color _kMuted = Color(0xFF8C8474);
 
 // ---------------------------------------------------------------------------
-// WelcomeScreen — minimal, community-first layout.
+// WelcomeScreen — Warm sheet direction
 // ---------------------------------------------------------------------------
 
 class WelcomeScreen extends StatefulWidget {
@@ -39,69 +29,28 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late final AnimationController _entry;
-
-  // Entrance animations.
-  late final Animation<double> _heroFade;
-  late final Animation<double> _logoOpacity;
-  late final Animation<double> _headlineOpacity;
-  late final Animation<Offset> _headlineSlide;
-  late final Animation<double> _subtitleOpacity;
-  late final Animation<Offset> _subtitleSlide;
-  late final Animation<double> _ctaOpacity;
-  late final Animation<double> _loginOpacity;
+  late final Animation<double> _fadeIn;
 
   @override
   void initState() {
     super.initState();
     _entry = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 800),
     );
-    _initAnimations();
+    _fadeIn = CurvedAnimation(parent: _entry, curve: Curves.easeOut);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (reduce) {
-      _entry.duration = const Duration(milliseconds: 220);
-    }
+    if (reduce) _entry.duration = const Duration(milliseconds: 150);
     if (!_entry.isAnimating && _entry.status == AnimationStatus.dismissed) {
       _entry.forward();
     }
-  }
-
-  void _initAnimations() {
-    Animation<double> fade(double a, double b) =>
-        Tween<double>(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(
-            parent: _entry,
-            curve: Interval(a, b, curve: Curves.easeOutCubic),
-          ),
-        );
-
-    Animation<Offset> slide(
-      double a,
-      double b, {
-      Offset from = const Offset(0, 16),
-    }) => Tween<Offset>(begin: from, end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _entry,
-        curve: Interval(a, b, curve: Curves.easeOutCubic),
-      ),
-    );
-
-    _heroFade = fade(0.00, 0.30);
-    _logoOpacity = fade(0.10, 0.35);
-    _headlineOpacity = fade(0.20, 0.50);
-    _headlineSlide = slide(0.20, 0.50);
-    _subtitleOpacity = fade(0.40, 0.65);
-    _subtitleSlide = slide(0.40, 0.65, from: const Offset(0, 8));
-    _ctaOpacity = fade(0.70, 0.95);
-    _loginOpacity = fade(0.80, 1.00);
   }
 
   @override
@@ -123,96 +72,104 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final compact = size.height < 760;
+    final screenWidth = size.width;
+    final heroHeight = size.height * 0.40;
+    final waveHeight = 130.0 * screenWidth / 402.0;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: _kBg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: _kCream,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: _kBg,
-        body: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            // Hero photo + gradient overlay.
-            _HeroBackdrop(opacity: _heroFade),
+        backgroundColor: _kYellow,
+        body: FadeTransition(
+          opacity: _fadeIn,
+          child: Stack(
+            children: [
+              // Cream sheet background (bottom portion)
+              Positioned(
+                top: heroHeight,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(color: _kCream),
+              ),
 
-            // Foreground content. Scroll-safe so the fixed hero never
-            // overflows on small screens / large text scales.
-            SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          24,
-                          compact ? 12 : 18,
-                          24,
-                          compact ? 18 : 26,
+              // Wave transition — cream flowing up over yellow hero boundary
+              Positioned(
+                top: heroHeight - waveHeight + 12,
+                left: 0,
+                right: 0,
+                height: waveHeight,
+                child: CustomPaint(
+                  painter: _WavePainter(color: _kCream),
+                ),
+              ),
+
+              // Main layout
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Yellow hero — logo shifted above centre
+                  SafeArea(
+                    bottom: false,
+                    child: SizedBox(
+                      height: heroHeight,
+                      child: const Align(
+                        alignment: Alignment(0, -0.4),
+                        child: KolabingLogo(
+                          width: 158,
+                          variant: KolabingLogoVariant.onYellow,
                         ),
+                      ),
+                    ),
+                  ),
+
+                  // Cream sheet content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(30, 50, 30, 40),
+                      child: SafeArea(
+                        top: false,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            // Top bar — wordmark.
-                            AuthFadeOnly(
-                              opacity: _logoOpacity,
-                              child: const _TopBar(),
-                            ),
-
-                            SizedBox(height: compact ? 26 : 40),
-
-                            // Headline.
-                            AuthFadeSlide(
-                              opacity: _headlineOpacity,
-                              offset: _headlineSlide,
-                              child: _Headline(compact: compact),
-                            ),
-
-                            SizedBox(height: compact ? 12 : 16),
-
-                            // Subtitle.
-                            AuthFadeSlide(
-                              opacity: _subtitleOpacity,
-                              offset: _subtitleSlide,
-                              child: const _Subtitle(),
-                            ),
-
-                            // Hero fills remaining space.
-                            const Expanded(child: SizedBox.shrink()),
-
-                            // CTA.
-                            AuthFadeOnly(
-                              opacity: _ctaOpacity,
-                              child: _PrimaryCta(onPressed: _onPrimaryCta),
-                            ),
-                            const SizedBox(height: 10),
-                            FadeTransition(
-                              opacity: _loginOpacity,
-                              child: Center(
-                                child: TextButton(
-                                  onPressed: _onLogin,
-                                  style: TextButton.styleFrom(
-                                    minimumSize: const Size(88, 48),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
+                          children: [
+                            _WelcomeHeadline(),
+                            const SizedBox(height: 28),
+                            const _TaglineRow(),
+                            const SizedBox(height: 32),
+                            _PrimaryCta(onPressed: _onPrimaryCta),
+                            const SizedBox(height: 18),
+                            Center(
+                              child: GestureDetector(
+                                onTap: _onLogin,
+                                behavior: HitTestBehavior.opaque,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
                                   ),
-                                  child: Text(
-                                    AppLocalizations.of(context).welcomeLogIn,
-                                    style: KolabingTextStyles.bodySmall
-                                        .copyWith(
-                                          color: _kMutedText,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1.0,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: _kMuted,
+                                      ),
+                                      children: const [
+                                        TextSpan(text: 'Already in? '),
+                                        TextSpan(
+                                          text: 'Log in',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: _kInk,
+                                          ),
                                         ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -222,10 +179,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -233,242 +190,191 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 }
 
 // ---------------------------------------------------------------------------
-// Hero backdrop — full-bleed photo fading into pure black.
+// Headline — "where / businesses & communities / grow together"
 // ---------------------------------------------------------------------------
 
-class _HeroBackdrop extends StatefulWidget {
-  const _HeroBackdrop({required this.opacity});
-  final Animation<double> opacity;
-
-  @override
-  State<_HeroBackdrop> createState() => _HeroBackdropState();
-}
-
-class _HeroBackdropState extends State<_HeroBackdrop> {
-  int _index = 0;
-  Timer? _timer;
-  bool _precached = false;
-
-  static const Duration _interval = Duration(milliseconds: 5200);
-  static const Duration _fade = Duration(milliseconds: 1400);
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_precached) {
-      _precached = true;
-      for (final path in _kHeroImages) {
-        precacheImage(AssetImage(path), context);
-      }
-    }
-    final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (!reduce && _timer == null) {
-      _timer = Timer.periodic(_interval, (_) {
-        if (!mounted) return;
-        setState(() => _index = (_index + 1) % _kHeroImages.length);
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: IgnorePointer(
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          const ColoredBox(color: _kBg),
-          FadeTransition(
-            opacity: widget.opacity,
-            child: ShaderMask(
-              blendMode: BlendMode.dstIn,
-              shaderCallback: (Rect rect) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xCCFFFFFF),
-                  Color(0x80FFFFFF),
-                  Color(0x00FFFFFF),
-                ],
-                stops: <double>[0.0, 0.45, 0.85],
-              ).createShader(rect),
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  for (int i = 0; i < _kHeroImages.length; i++)
-                    AnimatedOpacity(
-                      duration: _fade,
-                      curve: Curves.easeInOut,
-                      opacity: i == _index ? 1.0 : 0.0,
-                      child: Image.asset(
-                        _kHeroImages[i],
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                        gaplessPlayback: true,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          // Soft warm bloom top.
-          Positioned(
-            top: -120,
-            left: -60,
-            right: -60,
-            height: 320,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0, -0.4),
-                  radius: 0.9,
-                  colors: <Color>[
-                    KolabingColors.primary.withValues(alpha: 0.12),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Bottom vignette for legibility.
-          const Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 240,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: <Color>[Colors.transparent, _kBg],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Top bar — tiny Kolabing wordmark, left-aligned.
-// ---------------------------------------------------------------------------
-
-class _TopBar extends StatelessWidget {
-  const _TopBar();
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: 'Kolabing',
-    child: const KolabingLogo(
-      width: 128,
-      variant: KolabingLogoVariant.yellowTransparent,
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Headline — two lines, Anton font.
-// ---------------------------------------------------------------------------
-
-class _Headline extends StatelessWidget {
-  const _Headline({required this.compact});
-
-  final bool compact;
+class _WelcomeHeadline extends StatelessWidget {
+  const _WelcomeHeadline();
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = compact ? 38.0 : 42.0;
-    final style = KolabingTextStyles.displayLarge.copyWith(
-      fontSize: fontSize,
-      letterSpacing: -0.5,
-      height: 1.02,
-      color: KolabingColors.textOnDark,
+    final style = GoogleFonts.inter(
+      fontSize: 24,
+      fontWeight: FontWeight.w700,
+      color: _kInk,
+      height: 1.14,
     );
-    final l10n = AppLocalizations.of(context);
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(l10n.welcomeHeadlineLine1, style: style),
-        Text(l10n.welcomeHeadlineLine2, style: style),
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('where', style: style),
+        Text('businesses & communities', style: style),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('grow ', style: style),
+            _YellowUnderlineText(text: 'together', style: style),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Renders text with a yellow swash underline behind the baseline.
+class _YellowUnderlineText extends StatelessWidget {
+  const _YellowUnderlineText({
+    required this.text,
+    required this.style,
+  });
+
+  final String text;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    alignment: Alignment.bottomLeft,
+    children: [
+      // Yellow swash behind the text
+      Positioned(
+        bottom: 1,
+        left: 0,
+        right: 0,
+        child: Container(
+          height: 9,
+          decoration: BoxDecoration(
+            color: _kYellow,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ),
+      Text(text, style: style),
+    ],
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Tagline — MATCH · KOLAB · GROW
+// ---------------------------------------------------------------------------
+
+class _TaglineRow extends StatelessWidget {
+  const _TaglineRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final baseStyle = GoogleFonts.inter(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 3.4,
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(l10n.welcomeTaglineMatch, style: baseStyle.copyWith(color: _kMuted)),
+        const SizedBox(width: 6),
+        Text(l10n.welcomeTaglineDot,
+            style: baseStyle.copyWith(color: const Color(0xFFB5914A))),
+        const SizedBox(width: 6),
+        Text(l10n.welcomeTaglineKolab, style: baseStyle.copyWith(color: _kInk)),
+        const SizedBox(width: 6),
+        Text(l10n.welcomeTaglineDot,
+            style: baseStyle.copyWith(color: const Color(0xFFB5914A))),
+        const SizedBox(width: 6),
+        Text(l10n.welcomeTaglineGrow, style: baseStyle.copyWith(color: _kMuted)),
       ],
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subtitle — Inter, muted white.
-// ---------------------------------------------------------------------------
-
-class _Subtitle extends StatelessWidget {
-  const _Subtitle();
-
-  @override
-  Widget build(BuildContext context) => Text(
-    AppLocalizations.of(context).welcomeSubtitle,
-    style: KolabingTextStyles.captionSecondary.copyWith(
-      color: _kMutedText,
-      height: 1.45,
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Primary CTA — full-width yellow "Get started" button.
+// Primary CTA — pill, yellow, ink text, arrow
 // ---------------------------------------------------------------------------
 
 class _PrimaryCta extends StatelessWidget {
   const _PrimaryCta({required this.onPressed});
+
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: AppLocalizations.of(context).welcomeGetStarted,
-    child: FilledButton(
-      onPressed: onPressed,
-      style: FilledButton.styleFrom(
-        backgroundColor: KolabingColors.primary,
-        foregroundColor: KolabingColors.onPrimary,
-        elevation: 0,
-        shadowColor: Colors.transparent,
-        minimumSize: const Size.fromHeight(54),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                AppLocalizations.of(context).welcomeGetStarted,
-                maxLines: 1,
-                softWrap: false,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  height: 1.0,
-                ),
+    label: 'Start kolabing',
+    child: GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onPressed();
+      },
+      child: Container(
+        height: 58,
+        decoration: BoxDecoration(
+          color: _kYellow,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF141210).withValues(alpha: 0.12),
+              blurRadius: 26,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Start kolabing',
+              style: GoogleFonts.inter(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: _kInk,
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          const Icon(
-            LucideIcons.arrowRight,
-            size: 18,
-            color: KolabingColors.onPrimary,
-          ),
-        ],
+            const SizedBox(width: 8),
+            const Icon(LucideIcons.arrowRight, size: 18, color: _kInk),
+          ],
+        ),
       ),
     ),
   );
+}
+
+// ---------------------------------------------------------------------------
+// Wave painter — cream sheet with organic wavy top edge
+// ---------------------------------------------------------------------------
+
+class _WavePainter extends CustomPainter {
+  const _WavePainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final sx = size.width / 402.0;
+    final sy = size.height / 130.0;
+
+    final path = Path()
+      ..moveTo(0, 130 * sy)
+      ..lineTo(0, 66 * sy)
+      ..cubicTo(
+        72 * sx, 22 * sy,
+        150 * sx, 52 * sy,
+        230 * sx, 60 * sy,
+      )
+      ..cubicTo(
+        300 * sx, 67 * sy,
+        352 * sx, 34 * sy,
+        402 * sx, 50 * sy,
+      )
+      ..lineTo(402 * sx, 130 * sy)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_WavePainter old) => old.color != color;
 }

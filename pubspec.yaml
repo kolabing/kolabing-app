@@ -2,7 +2,7 @@ name: kolabing_app
 description: "Kolabing - Collaboration marketplace connecting businesses and communities"
 publish_to: 'none'
 
-version: 1.5.0+14
+version: 1.5.1+19
 
 environment:
   sdk: ^3.10.7
@@ -55,6 +55,9 @@ dependencies:
   firebase_core: ^3.9.0
   firebase_messaging: ^15.2.4
   firebase_crashlytics: ^4.3.0
+
+  # Error & performance monitoring (kolabing-mobile Sentry project)
+  sentry_flutter: ^9.22.0
 
   # Local notifications (for foreground display on iOS)
   flutter_local_notifications: ^18.0.1

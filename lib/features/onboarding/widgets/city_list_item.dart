@@ -52,18 +52,18 @@ class _CityListItemState extends State<CityListItem> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? KolabingColors.softYellow
+                ? context.colors.softYellow
                 : (_isPressed
-                    ? KolabingColors.surfaceVariant
-                    : KolabingColors.surface),
+                    ? context.colors.surfaceVariant
+                    : context.colors.surface),
             border: Border(
               left: BorderSide(
                 color:
-                    widget.isSelected ? KolabingColors.primary : Colors.transparent,
+                    widget.isSelected ? context.colors.primary : Colors.transparent,
                 width: 4,
               ),
-              bottom: const BorderSide(
-                color: KolabingColors.darkBorder,
+              bottom: BorderSide(
+                color: context.colors.darkBorder,
                 width: 1,
               ),
             ),
@@ -75,8 +75,8 @@ class _CityListItemState extends State<CityListItem> {
                 LucideIcons.mapPin,
                 size: 24,
                 color: widget.isSelected
-                    ? KolabingColors.primary
-                    : KolabingColors.textTertiary,
+                    ? context.colors.primary
+                    : context.colors.textTertiary,
               ),
               const SizedBox(width: 12),
 
@@ -87,13 +87,13 @@ class _CityListItemState extends State<CityListItem> {
                   children: [
                     Text(
                       widget.name,
-                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     ),
                     if (widget.country != null) ...[
                       const SizedBox(height: 2),
                       Text(
                         widget.country!,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
                       ),
                     ],
                   ],
@@ -105,8 +105,8 @@ class _CityListItemState extends State<CityListItem> {
                 widget.isSelected ? LucideIcons.check : LucideIcons.chevronRight,
                 size: 20,
                 color: widget.isSelected
-                    ? KolabingColors.primary
-                    : KolabingColors.textTertiary,
+                    ? context.colors.primary
+                    : context.colors.textTertiary,
               ),
             ],
           ),

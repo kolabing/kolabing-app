@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 
 /// Button states for visual feedback
@@ -157,8 +158,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
           child: Container(
             height: widget.height,
             decoration: BoxDecoration(
-              color: const Color(0xFFF0EDE6),
-              borderRadius: BorderRadius.circular(12),
+              color: KolabingColors.buttonSecondary,
+              borderRadius: BorderRadius.circular(widget.height / 2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.08),
@@ -198,7 +199,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
             Text(
               widget.buttonText,
               style: KolabingTextStyles.button.copyWith(
-                color: const Color(0xFF1C1C16),
+                color: KolabingColors.onButtonSecondary,
                 letterSpacing: 0.2,
               ),
             ),

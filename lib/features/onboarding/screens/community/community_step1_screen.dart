@@ -22,6 +22,7 @@ class CommunityStep1Screen extends ConsumerStatefulWidget {
 class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
   final _nameController = TextEditingController();
   final _nameFocusNode = FocusNode();
+  final _communitySizeController = TextEditingController();
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -46,12 +47,16 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
     if (data?.name != null) {
       _nameController.text = data!.name!;
     }
+    if (data?.communitySize != null) {
+      _communitySizeController.text = '${data!.communitySize}';
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _nameFocusNode.dispose();
+    _communitySizeController.dispose();
     super.dispose();
   }
 
@@ -66,13 +71,17 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
           content: Text(
             AppLocalizations.of(context).communityStep1NameRequired,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
     }
 
-    ref.read(onboardingProvider.notifier).updateName(_nameController.text);
+    final notifier = ref.read(onboardingProvider.notifier);
+    notifier.updateName(_nameController.text);
+    notifier.updateCommunitySize(
+      int.tryParse(_communitySizeController.text.trim()),
+    );
     context.push('/onboarding/community/step2');
   }
 
@@ -83,7 +92,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
     final canContinue = _nameController.text.trim().isNotEmpty;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -107,7 +116,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     Center(
                       child: Text(
                         l10n.communityStep1Title,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -117,7 +126,7 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                     Center(
                       child: Text(
                         l10n.communityStep1Subtitle,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -140,12 +149,12 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                       children: [
                         Text(
                           l10n.communityStep1DisplayNameLabel,
-                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '*',
-                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.error),
+                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.error),
                         ),
                       ],
                     ),
@@ -160,24 +169,24 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                         setState(() {});
                         ref.read(onboardingProvider.notifier).updateName(value);
                       },
-                      style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
                       decoration: InputDecoration(
                         hintText: l10n.communityStep1NameHint,
-                        hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
+                        hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
                         filled: true,
-                        fillColor: KolabingColors.surfaceVariant,
+                        fillColor: context.colors.surfaceContainerLow,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: KolabingColors.primary,
+                          borderSide: BorderSide(
+                            color: context.colors.primary,
                             width: 2,
                           ),
                         ),
@@ -185,7 +194,57 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                           horizontal: 16,
                           vertical: 16,
                         ),
-                        counterStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                        counterStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Community size label
+                    Text(
+                      l10n.communityInfoCommunitySizeLabel,
+                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.communityStep1SizeHelper,
+                      style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Community size input
+                    TextField(
+                      controller: _communitySizeController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                      onChanged: (value) => ref
+                          .read(onboardingProvider.notifier)
+                          .updateCommunitySize(int.tryParse(value.trim())),
+                      style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
+                      decoration: InputDecoration(
+                        hintText: l10n.communityInfoCommunitySizeHint,
+                        hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+                        filled: true,
+                        fillColor: context.colors.surfaceContainerLow,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: context.colors.outlineVariant),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: context.colors.primary,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
                     ),
                   ],
@@ -202,15 +261,12 @@ class _CommunityStep1ScreenState extends ConsumerState<CommunityStep1Screen> {
                 child: ElevatedButton(
                   onPressed: canContinue ? _handleContinue : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
+                    backgroundColor: context.colors.primary,
+                    foregroundColor: context.colors.onPrimary,
                     disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
+                        context.colors.primary.withValues(alpha: 0.5),
                     disabledForegroundColor:
-                        KolabingColors.onPrimary.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                        context.colors.onPrimary.withValues(alpha: 0.5),
                     elevation: 0,
                   ),
                   child: Text(

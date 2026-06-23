@@ -14,6 +14,7 @@ import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../rewards/widgets/collaboration_reward_nudge.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
 import '../widgets/kolab_completion_sheet.dart';
@@ -32,7 +33,7 @@ class CollaborationDetailScreen extends ConsumerWidget {
     final asyncCollab = ref.watch(collaborationDetailProvider(collaborationId));
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: asyncCollab.when(
         loading: () => const _LoadingState(),
         error: (e, _) => _ErrorState(
@@ -85,13 +86,13 @@ class _CollaborationContent extends ConsumerWidget {
       slivers: [
         // App bar
         SliverAppBar(
-          backgroundColor: KolabingColors.surface,
+          backgroundColor: context.colors.surface,
           elevation: 0,
           pinned: true,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               LucideIcons.arrowLeft,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             onPressed: () => context.pop(),
           ),
@@ -100,7 +101,7 @@ class _CollaborationContent extends ConsumerWidget {
             style: KolabingTextStyles.bodyMedium.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           centerTitle: true,
@@ -276,31 +277,31 @@ class _StatusHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bgColor, textColor) = switch (collaboration.status) {
       CollaborationStatus.scheduled => (
-        KolabingColors.pendingBg,
-        KolabingColors.pendingText,
+        context.colors.pendingBg,
+        context.colors.pendingText,
       ),
       CollaborationStatus.inProgress => (
-        KolabingColors.activeBg,
-        KolabingColors.activeText,
+        context.colors.activeBg,
+        context.colors.activeText,
       ),
       CollaborationStatus.pendingConfirmation => (
-        const Color(0xFFFFF3CD),
-        const Color(0xFF856404),
+        context.colors.pendingBg,
+        context.colors.pendingText,
       ),
       CollaborationStatus.completed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
       ),
       CollaborationStatus.cancelled => (
-        KolabingColors.errorBg,
-        KolabingColors.errorText,
+        context.colors.errorBg,
+        context.colors.errorText,
       ),
     };
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -340,7 +341,7 @@ class _StatusHeader extends StatelessWidget {
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 if (collaboration.opportunity?.title != null) ...[
@@ -348,7 +349,7 @@ class _StatusHeader extends StatelessWidget {
                   Text(
                     collaboration.opportunity!.title,
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -429,9 +430,9 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
         SnackBar(
           content: Text(
             l10n.collaborationDetailScheduleUpdated,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
           ),
-          backgroundColor: KolabingColors.success,
+          backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -442,9 +443,9 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
         SnackBar(
           content: Text(
             l10n.collaborationDetailScheduleUpdateError(e.toString()),
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -471,7 +472,6 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
                 : TextButton.icon(
                     onPressed: _editSchedule,
                     style: TextButton.styleFrom(
-                      foregroundColor: KolabingColors.primary,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       minimumSize: const Size(0, 32),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -563,7 +563,7 @@ class _PartnerInfoCard extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.12),
+                  color: context.colors.primary.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: partner.profilePhoto != null
@@ -579,7 +579,7 @@ class _PartnerInfoCard extends StatelessWidget {
                               style: KolabingTextStyles.bodyLarge.copyWith(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
-                                color: KolabingColors.primary,
+                                color: context.colors.primary,
                               ),
                             ),
                           ),
@@ -591,7 +591,7 @@ class _PartnerInfoCard extends StatelessWidget {
                           style: KolabingTextStyles.bodyLarge.copyWith(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.primary,
+                            color: context.colors.primary,
                           ),
                         ),
                       ),
@@ -605,7 +605,7 @@ class _PartnerInfoCard extends StatelessWidget {
                       partner.name,
                       style: KolabingTextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                     if (partner.category != null) ...[
@@ -617,7 +617,7 @@ class _PartnerInfoCard extends StatelessWidget {
                           Text(
                             partner.category!,
                             style: KolabingTextStyles.captionSecondary.copyWith(
-                              color: KolabingColors.onSurfaceVariant,
+                              color: context.colors.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -627,17 +627,17 @@ class _PartnerInfoCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             LucideIcons.mapPin,
                             size: 12,
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           const SizedBox(width: 3),
                           Text(
                             partner.city!,
                             style: KolabingTextStyles.bodySmall.copyWith(
                               fontSize: 12,
-                              color: KolabingColors.textTertiary,
+                              color: context.colors.textTertiary,
                             ),
                           ),
                         ],
@@ -646,10 +646,10 @@ class _PartnerInfoCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 LucideIcons.chevronRight,
                 size: 18,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ],
           ),
@@ -721,14 +721,14 @@ class _OffersSection extends StatelessWidget {
                     Icon(
                       LucideIcons.checkCircle2,
                       size: 16,
-                      color: KolabingColors.success,
+                      color: context.colors.success,
                     ),
                     const SizedBox(width: KolabingSpacing.xs),
                     Expanded(
                       child: Text(
                         item.label,
                         style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                           height: 1.4,
                         ),
                       ),
@@ -795,17 +795,17 @@ class _DeliverablesSection extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       LucideIcons.checkCircle2,
                       size: 16,
-                      color: KolabingColors.info,
+                      color: context.colors.info,
                     ),
                     const SizedBox(width: KolabingSpacing.xs),
                     Expanded(
                       child: Text(
                         item.label,
                         style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                           height: 1.4,
                         ),
                       ),
@@ -882,12 +882,12 @@ class _ContactRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: KolabingColors.textTertiary),
+        Icon(icon, size: 16, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.xs),
         Text(
           '$label: ',
           style: KolabingTextStyles.captionSecondary.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         Expanded(
@@ -895,7 +895,7 @@ class _ContactRow extends StatelessWidget {
             value,
             style: KolabingTextStyles.captionSecondary.copyWith(
               fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
         ),
@@ -922,17 +922,17 @@ class _TimelineSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.gitBranch,
                 size: 16,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 l10n.collaborationDetailProcessTitle,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -960,19 +960,19 @@ class _TimelineStepWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final (dotColor, lineColor, textColor) = switch (step.status) {
       TimelineStepStatus.completed => (
-        KolabingColors.success,
-        KolabingColors.success.withValues(alpha: 0.3),
-        KolabingColors.onSurface,
+        context.colors.success,
+        context.colors.success.withValues(alpha: 0.3),
+        context.colors.onSurface,
       ),
       TimelineStepStatus.current => (
-        KolabingColors.primary,
-        KolabingColors.darkBorder,
-        KolabingColors.onSurface,
+        context.colors.primary,
+        context.colors.darkBorder,
+        context.colors.onSurface,
       ),
       TimelineStepStatus.upcoming => (
-        KolabingColors.darkBorder,
-        KolabingColors.darkBorder,
-        KolabingColors.textTertiary,
+        context.colors.darkBorder,
+        context.colors.darkBorder,
+        context.colors.textTertiary,
       ),
     };
 
@@ -993,7 +993,7 @@ class _TimelineStepWidget extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: step.status == TimelineStepStatus.current
                         ? Border.all(
-                            color: KolabingColors.primary.withValues(
+                            color: context.colors.primary.withValues(
                               alpha: 0.3,
                             ),
                             width: 3,
@@ -1001,10 +1001,10 @@ class _TimelineStepWidget extends StatelessWidget {
                         : null,
                   ),
                   child: step.status == TimelineStepStatus.completed
-                      ? const Icon(
+                      ? Icon(
                           LucideIcons.check,
                           size: 7,
-                          color: KolabingColors.textOnDark,
+                          color: context.colors.textOnDark,
                         )
                       : null,
                 ),
@@ -1036,8 +1036,8 @@ class _TimelineStepWidget extends StatelessWidget {
                     style: KolabingTextStyles.bodySmall.copyWith(
                       fontSize: 12,
                       color: step.status == TimelineStepStatus.upcoming
-                          ? KolabingColors.textTertiary
-                          : KolabingColors.onSurfaceVariant,
+                          ? context.colors.textTertiary
+                          : context.colors.onSurfaceVariant,
                     ),
                   ),
                   if (step.date != null) ...[
@@ -1045,7 +1045,7 @@ class _TimelineStepWidget extends StatelessWidget {
                     Text(
                       _formatDate(step.date!),
                       style: KolabingTextStyles.labelSmall.copyWith(
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                   ],
@@ -1105,17 +1105,17 @@ class _ChallengesSection extends ConsumerWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.trophy,
                 size: 16,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 l10n.collaborationDetailGamificationTitle,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -1124,7 +1124,7 @@ class _ChallengesSection extends ConsumerWidget {
                 l10n.collaborationDetailSelectedCount(selectedIds.length),
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
@@ -1136,16 +1136,16 @@ class _ChallengesSection extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(KolabingSpacing.sm),
           decoration: BoxDecoration(
-            color: KolabingColors.softYellow,
+            color: context.colors.softYellow,
             borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: KolabingColors.softYellowBorder),
+            border: Border.all(color: context.colors.softYellowBorder),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.info,
                 size: 14,
-                color: KolabingColors.onPrimary,
+                color: context.colors.onPrimary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
@@ -1153,7 +1153,7 @@ class _ChallengesSection extends ConsumerWidget {
                   l10n.collaborationDetailGamificationDescription,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                     height: 1.4,
                   ),
                 ),
@@ -1165,11 +1165,11 @@ class _ChallengesSection extends ConsumerWidget {
 
         // Challenge list
         if (isLoadingChallenges)
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(KolabingSpacing.lg),
             child: Center(
               child: CircularProgressIndicator(
-                color: KolabingColors.primary,
+                color: context.colors.primary,
                 strokeWidth: 2,
               ),
             ),
@@ -1204,22 +1204,13 @@ class _ChallengesSection extends ConsumerWidget {
                 SnackBar(
                   content: Text(
                     l10n.collaborationDetailCustomChallengeSoon,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
                   ),
-                  backgroundColor: KolabingColors.onSurfaceVariant,
+                  backgroundColor: context.colors.onSurfaceVariant,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: KolabingColors.primary,
-              side: BorderSide(
-                color: KolabingColors.primary.withValues(alpha: 0.5),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.md),
-              ),
-            ),
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
               l10n.collaborationDetailAddCustomChallenge,
@@ -1241,16 +1232,16 @@ class _EmptyChallenges extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(
         children: [
           Icon(
             LucideIcons.trophy,
             size: 32,
-            color: KolabingColors.textTertiary.withValues(alpha: 0.5),
+            color: context.colors.textTertiary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
@@ -1258,14 +1249,14 @@ class _EmptyChallenges extends StatelessWidget {
             style: KolabingTextStyles.bodyMedium.copyWith(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             AppLocalizations.of(context).collaborationDetailNoChallengesBody,
             style: KolabingTextStyles.captionSecondary.copyWith(
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -1290,23 +1281,23 @@ class _ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final (diffColor, diffBgColor) = switch (challenge.difficulty) {
       ChallengeDifficulty.easy => (
-        const Color(0xFF155724),
-        const Color(0xFFD4EDDA),
+        context.colors.activeText,
+        context.colors.activeBg,
       ),
       ChallengeDifficulty.medium => (
-        const Color(0xFF856404),
-        const Color(0xFFFFF3CD),
+        context.colors.pendingText,
+        context.colors.pendingBg,
       ),
       ChallengeDifficulty.hard => (
-        const Color(0xFF721C24),
-        const Color(0xFFF8D7DA),
+        context.colors.errorText,
+        context.colors.errorBg,
       ),
     };
 
     return Material(
       color: isSelected
-          ? KolabingColors.primary.withValues(alpha: 0.06)
-          : KolabingColors.surface,
+          ? context.colors.primary.withValues(alpha: 0.06)
+          : context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
       child: InkWell(
         onTap: onToggle,
@@ -1317,8 +1308,8 @@ class _ChallengeCard extends StatelessWidget {
             borderRadius: KolabingRadius.borderRadiusMd,
             border: Border.all(
               color: isSelected
-                  ? KolabingColors.primary
-                  : KolabingColors.darkBorder,
+                  ? context.colors.primary
+                  : context.colors.darkBorder,
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -1330,21 +1321,21 @@ class _ChallengeCard extends StatelessWidget {
                 height: 22,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? KolabingColors.primary
+                      ? context.colors.primary
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isSelected
-                        ? KolabingColors.primary
-                        : KolabingColors.darkBorder,
+                        ? context.colors.primary
+                        : context.colors.darkBorder,
                     width: 1.5,
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(
+                    ? Icon(
                         LucideIcons.check,
                         size: 14,
-                        color: KolabingColors.onPrimary,
+                        color: context.colors.onPrimary,
                       )
                     : null,
               ),
@@ -1362,7 +1353,7 @@ class _ChallengeCard extends StatelessWidget {
                             challenge.name,
                             style: KolabingTextStyles.bodySmall.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: KolabingColors.onSurface,
+                              color: context.colors.onSurface,
                             ),
                           ),
                         ),
@@ -1394,7 +1385,7 @@ class _ChallengeCard extends StatelessWidget {
                         challenge.description!,
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontSize: 12,
-                          color: KolabingColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -1412,14 +1403,14 @@ class _ChallengeCard extends StatelessWidget {
                     '${challenge.points}',
                     style: KolabingTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                     ),
                   ),
                   Text(
                     AppLocalizations.of(context).collaborationDetailPoints,
                     style: KolabingTextStyles.labelSmall.copyWith(
                       fontSize: 10,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ],
@@ -1452,17 +1443,17 @@ class _QRCodeSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: KolabingSpacing.xxs),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.qrCode,
                 size: 16,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 l10n.collaborationDetailQrTitle,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -1475,9 +1466,9 @@ class _QRCodeSection extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(KolabingSpacing.lg),
           decoration: BoxDecoration(
-            color: KolabingColors.surface,
+            color: context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusLg,
-            border: Border.all(color: KolabingColors.darkBorder),
+            border: Border.all(color: context.colors.darkBorder),
           ),
           child: Column(
             children: [
@@ -1486,9 +1477,9 @@ class _QRCodeSection extends StatelessWidget {
                 width: 180,
                 height: 180,
                 decoration: BoxDecoration(
-                  color: KolabingColors.background,
+                  color: context.colors.background,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: KolabingColors.darkBorder, width: 2),
+                  border: Border.all(color: context.colors.darkBorder, width: 2),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1496,20 +1487,20 @@ class _QRCodeSection extends StatelessWidget {
                     Icon(
                       LucideIcons.qrCode,
                       size: 64,
-                      color: KolabingColors.textTertiary.withValues(alpha: 0.4),
+                      color: context.colors.textTertiary.withValues(alpha: 0.4),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
                     Text(
                       l10n.collaborationDetailQrPlaceholder,
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                     Text(
                       l10n.collaborationDetailQrGeneratedOnDay,
                       style: KolabingTextStyles.labelSmall.copyWith(
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                   ],
@@ -1521,7 +1512,7 @@ class _QRCodeSection extends StatelessWidget {
               Text(
                 l10n.collaborationDetailQrDescription,
                 style: KolabingTextStyles.captionSecondary.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -1530,45 +1521,29 @@ class _QRCodeSection extends StatelessWidget {
               const SizedBox(height: KolabingSpacing.md),
 
               // Generate QR button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    if (eventId != null) {
-                      context.push(
-                        '/attendee/events/$eventId/qr?name=Collaboration%20Event',
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            l10n.collaborationDetailQrUnavailable,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
-                          ),
-                          backgroundColor: KolabingColors.onSurfaceVariant,
-                          behavior: SnackBarBehavior.floating,
+              KolabingButton(
+                label: l10n.collaborationDetailViewQr,
+                onPressed: () {
+                  if (eventId != null) {
+                    context.push(
+                      '/attendee/events/$eventId/qr?name=Collaboration%20Event',
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          l10n.collaborationDetailQrUnavailable,
+                          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
                         ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(KolabingRadius.md),
-                    ),
-                    elevation: 0,
-                  ),
-                  icon: const Icon(LucideIcons.qrCode, size: 18),
-                  label: Text(
-                    l10n.collaborationDetailViewQr,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
+                        backgroundColor: context.colors.onSurfaceVariant,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
+                icon: const Icon(LucideIcons.qrCode),
               ),
             ],
           ),
@@ -1603,7 +1578,7 @@ class _SectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         boxShadow: [
           BoxShadow(
@@ -1618,13 +1593,13 @@ class _SectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: KolabingColors.textTertiary),
+              Icon(icon, size: 16, color: context.colors.textTertiary),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 title,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -1654,12 +1629,12 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: KolabingColors.textTertiary),
+        Icon(icon, size: 16, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.xs),
         Text(
           '$label: ',
           style: KolabingTextStyles.captionSecondary.copyWith(
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         Expanded(
@@ -1667,7 +1642,7 @@ class _InfoRow extends StatelessWidget {
             value,
             style: KolabingTextStyles.captionSecondary.copyWith(
               fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
         ),
@@ -1718,19 +1693,19 @@ class _ResubscribePrompt extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.softYellow,
+        color: context.colors.softYellow,
         borderRadius: BorderRadius.circular(KolabingRadius.lg),
-        border: Border.all(color: KolabingColors.softYellowBorder),
+        border: Border.all(color: context.colors.softYellowBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.lock,
                 size: 18,
-                color: KolabingColors.onPrimary,
+                color: context.colors.onPrimary,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -1738,7 +1713,7 @@ class _ResubscribePrompt extends StatelessWidget {
                   l10n.collaborationDetailResubscribeTitle,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
               ),
@@ -1748,33 +1723,17 @@ class _ResubscribePrompt extends StatelessWidget {
           Text(
             l10n.collaborationDetailResubscribeBody,
             style: KolabingTextStyles.captionSecondary.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
               height: 1.4,
             ),
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 46,
-            child: ElevatedButton.icon(
-              onPressed: () => context.push(KolabingRoutes.businessPlans),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(KolabingRadius.md),
-                ),
-                elevation: 0,
-              ),
-              icon: const Icon(LucideIcons.creditCard, size: 18),
-              label: Text(
-                l10n.collaborationDetailResubscribeCta,
-                style: KolabingTextStyles.button.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
+          KolabingButton(
+            label: l10n.collaborationDetailResubscribeCta,
+            onPressed: () => context.push(KolabingRoutes.businessPlans),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.creditCard),
           ),
         ],
       ),
@@ -1791,8 +1750,8 @@ class _LoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(color: KolabingColors.primary),
+    return Center(
+      child: CircularProgressIndicator(color: context.colors.primary),
     );
   }
 }
@@ -1814,10 +1773,10 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
@@ -1825,7 +1784,7 @@ class _ErrorState extends StatelessWidget {
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
@@ -1834,7 +1793,7 @@ class _ErrorState extends StatelessWidget {
               child: Text(
                 l10n.commonRetry,
                 style: KolabingTextStyles.labelLarge.copyWith(
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                 ),
               ),
             ),
@@ -1860,9 +1819,9 @@ class _TodayScheduledBanner extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withOpacity(0.12),
+        color: context.colors.primary.withOpacity(0.12),
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.primaryDark.withOpacity(0.4)),
+        border: Border.all(color: context.colors.primaryDark.withOpacity(0.4)),
       ),
       child: Row(
         children: [
@@ -1876,7 +1835,7 @@ class _TodayScheduledBanner extends StatelessWidget {
                   l10n.collaborationDetailTodayBannerTitle,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -1884,7 +1843,7 @@ class _TodayScheduledBanner extends StatelessWidget {
                   l10n.collaborationDetailTodayBannerBody(partnerName),
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                     height: 1.4,
                   ),
                 ),
@@ -1920,13 +1879,13 @@ class _CompleteKolabSection extends ConsumerWidget {
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
         color: isToday
-            ? KolabingColors.primary.withOpacity(0.12)
-            : KolabingColors.surface,
+            ? context.colors.primary.withOpacity(0.12)
+            : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
           color: isToday
-              ? KolabingColors.primaryDark.withOpacity(0.4)
-              : KolabingColors.darkBorder,
+              ? context.colors.primaryDark.withOpacity(0.4)
+              : context.colors.darkBorder,
         ),
       ),
       child: Column(
@@ -1943,7 +1902,7 @@ class _CompleteKolabSection extends ConsumerWidget {
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
             ],
@@ -1954,7 +1913,7 @@ class _CompleteKolabSection extends ConsumerWidget {
                 ? l10n.collaborationDetailCompleteBodyToday(partnerName)
                 : l10n.collaborationDetailCompleteBody(partnerName),
             style: KolabingTextStyles.captionSecondary.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 12),
@@ -1972,8 +1931,8 @@ class _CompleteKolabSection extends ConsumerWidget {
             child: Container(
               height: 48,
               decoration: BoxDecoration(
-                color: KolabingColors.primary,
-                borderRadius: BorderRadius.circular(12),
+                color: context.colors.primary,
+                borderRadius: BorderRadius.circular(KolabingRadius.md),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -1983,7 +1942,7 @@ class _CompleteKolabSection extends ConsumerWidget {
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
             ),
@@ -2015,10 +1974,10 @@ class _PostCompletionReviewSection extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: hasReviewed ? KolabingColors.activeBg : KolabingColors.surface,
+        color: hasReviewed ? context.colors.activeBg : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
-          color: hasReviewed ? KolabingColors.activeBg : KolabingColors.darkBorder,
+          color: hasReviewed ? context.colors.activeBg : context.colors.darkBorder,
         ),
       ),
       child: hasReviewed
@@ -2029,9 +1988,9 @@ class _PostCompletionReviewSection extends ConsumerWidget {
 
   Widget _buildReviewed(BuildContext context) => Row(
     children: [
-      const Icon(
+      Icon(
         Icons.check_circle_rounded,
-        color: KolabingColors.activeText,
+        color: context.colors.activeText,
         size: 18,
       ),
       const SizedBox(width: 8),
@@ -2039,7 +1998,7 @@ class _PostCompletionReviewSection extends ConsumerWidget {
         AppLocalizations.of(context).collaborationDetailReviewSubmitted,
         style: KolabingTextStyles.bodySmall.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.activeText,
+          color: context.colors.activeText,
         ),
       ),
     ],
@@ -2059,7 +2018,7 @@ class _PostCompletionReviewSection extends ConsumerWidget {
               l10n.collaborationDetailLeaveReview,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
           ),
@@ -2069,14 +2028,14 @@ class _PostCompletionReviewSection extends ConsumerWidget {
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.15),
+              color: context.colors.primary.withValues(alpha: 0.15),
               borderRadius: KolabingRadius.borderRadiusRound,
             ),
             child: Text(
               l10n.collaborationDetailXpBadge,
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
           ),
@@ -2086,36 +2045,24 @@ class _PostCompletionReviewSection extends ConsumerWidget {
       Text(
         l10n.collaborationDetailReviewHelp(partnerName),
         style: KolabingTextStyles.captionSecondary.copyWith(
-          color: KolabingColors.onSurfaceVariant,
+          color: context.colors.onSurfaceVariant,
         ),
       ),
       const SizedBox(height: 12),
-      SizedBox(
-        height: 44,
-        child: ElevatedButton(
-          onPressed: () async {
-            final submitted = await KolabReviewSheet.show(
-              context,
-              collaborationId: collaborationId,
-              partnerName: partnerName,
-            );
-            if (submitted) {
-              ref.invalidate(collaborationDetailProvider(collaborationId));
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-            elevation: 0,
-          ),
-          child: Text(
-            l10n.collaborationDetailLeaveReviewCta,
-            style: KolabingTextStyles.button,
-          ),
-        ),
+      KolabingButton(
+        label: l10n.collaborationDetailLeaveReviewCta,
+        onPressed: () async {
+          final submitted = await KolabReviewSheet.show(
+            context,
+            collaborationId: collaborationId,
+            partnerName: partnerName,
+          );
+          if (submitted) {
+            ref.invalidate(collaborationDetailProvider(collaborationId));
+          }
+        },
+        variant: KolabingButtonVariant.primary,
+        size: KolabingButtonSize.compact,
       ),
     ],
     );

@@ -78,19 +78,19 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
             duration: const Duration(milliseconds: 180),
             decoration: BoxDecoration(
               color: widget.isSelected
-                  ? KolabingColors.softYellow
+                  ? context.colors.softYellow
                   : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: widget.isSelected
-                    ? KolabingColors.primary
+                    ? context.colors.primary
                     : const Color(0xFFE2E8F0),
                 width: widget.isSelected ? 2.5 : 1.5,
               ),
               boxShadow: [
                 BoxShadow(
                   color: widget.isSelected
-                      ? KolabingColors.primary.withValues(alpha: 0.18)
+                      ? context.colors.primary.withValues(alpha: 0.18)
                       : Colors.black.withValues(alpha: 0.05),
                   blurRadius: widget.isSelected ? 12 : 6,
                   offset: const Offset(0, 3),
@@ -108,7 +108,7 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
                   // Name — full text, up to 2 lines, centred
                   Text(
                     widget.name,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, height: 1.25),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurface, height: 1.25),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -119,8 +119,8 @@ class _TypeSelectionCardState extends State<TypeSelectionCard>
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: KolabingColors.primary,
+                      decoration: BoxDecoration(
+                        color: context.colors.primary,
                         shape: BoxShape.circle,
                       ),
                     ),

@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/kolabing_top_bar.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
@@ -63,22 +66,10 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
         isBusiness && !profileState.isSubscribed;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
-      appBar: AppBar(
-        backgroundColor: KolabingColors.surface,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            LucideIcons.arrowLeft,
-            color: KolabingColors.onSurface,
-          ),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          l10n.intentSelectionAppBarTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 1.0),
-        ),
-        centerTitle: true,
+      backgroundColor: context.colors.background,
+      appBar: KolabingTopBar(
+        title: l10n.intentSelectionAppBarTitle,
+        onBack: () => context.pop(),
       ),
       body: SafeArea(
         child: isProfileStillResolving
@@ -103,19 +94,23 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: KolabingSpacing.lg),
+                    const SizedBox(height: KolabingSpacing.sm),
                     Text(
                       isCommunity
                           ? l10n.intentSelectionCommunityTitle
                           : l10n.intentSelectionBusinessTitle,
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                      style: KolabingTextStyles.displayTitle.copyWith(
+                        color: context.colors.ink,
+                      ),
                     ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       isCommunity
                           ? l10n.intentSelectionCommunitySubtitle
                           : l10n.intentSelectionBusinessSubtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: KolabingSpacing.xl),
                     if (isCommunity) ...[
@@ -124,7 +119,6 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                         title: l10n.intentSelectionFindVenueTitle,
                         subtitle: l10n.intentSelectionFindVenueSubtitle,
                         badge: l10n.intentSelectionBadgeFree,
-                        badgeColor: KolabingColors.success,
                         onTap: () {
                           ref
                               .read(kolabFormProvider.notifier)
@@ -166,29 +160,34 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         LucideIcons.alertCircle,
                         size: 40,
-                        color: KolabingColors.onSurfaceVariant,
+                        color: context.colors.onSurfaceVariant,
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
                         profileState.error ?? l10n.intentSelectionProfileLoadError,
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.titleMedium.copyWith(
+                          color: context.colors.onSurface,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         l10n.intentSelectionProfileLoadErrorHint,
                         textAlign: TextAlign.center,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.lg),
-                      ElevatedButton(
+                      KolabingButton(
+                        label: l10n.commonRetry,
                         onPressed: () {
                           ref.read(profileProvider.notifier).loadProfile();
                         },
-                        child: Text(l10n.commonRetry),
+                        variant: KolabingButtonVariant.primary,
                       ),
                     ],
                   ),
@@ -199,7 +198,6 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
   }
 }
 
-/// A single intent option card
 class _LockedBusinessCreateState extends StatelessWidget {
   const _LockedBusinessCreateState({required this.onUpgrade});
 
@@ -216,36 +214,41 @@ class _LockedBusinessCreateState extends StatelessWidget {
           Container(
             width: 72,
             height: 72,
-            decoration: const BoxDecoration(
-              color: KolabingColors.softYellow,
+            decoration: BoxDecoration(
+              color: context.colors.primaryTint,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.crown,
               size: 34,
-              color: KolabingColors.primary,
+              color: context.colors.ink,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             l10n.intentSelectionLockedTitle,
             textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             l10n.intentSelectionLockedSubtitle,
             textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant, height: 1.5),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xl),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: onUpgrade,
-              icon: const Icon(LucideIcons.crown, size: 18),
-              label: Text(l10n.intentSelectionUpgradeButton),
-            ),
+          KolabingButton(
+            label: l10n.intentSelectionUpgradeButton,
+            onPressed: onUpgrade,
+            variant: KolabingButtonVariant.primary,
+            icon: const Icon(LucideIcons.crown, size: 18),
           ),
         ],
       ),
@@ -261,7 +264,6 @@ class _IntentOption extends StatelessWidget {
     required this.subtitle,
     required this.onTap,
     this.badge,
-    this.badgeColor,
   });
 
   final IconData icon;
@@ -269,72 +271,77 @@ class _IntentOption extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
   final String? badge;
-  final Color? badgeColor;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.darkBorder),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
-              borderRadius: KolabingRadius.borderRadiusMd,
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: KolabingRadius.borderRadiusOptionCard,
+          border: Border.all(color: c.hairline),
+          boxShadow: KolabingShadows.designCardShadow,
+        ),
+        child: Row(
+          children: [
+            // Icon block — yellow fill, dark icon
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: c.primary,
+                borderRadius: BorderRadius.circular(KolabingRadius.thumbnail),
+              ),
+              child: Icon(icon, color: c.ink, size: 28),
             ),
-            child: Icon(icon, color: KolabingColors.onSurface, size: 24),
-          ),
-          const SizedBox(width: KolabingSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
-                ),
-                if (badge != null) ...[
-                  const SizedBox(height: KolabingSpacing.xs),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: KolabingSpacing.xs,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: (badgeColor ?? KolabingColors.primary).withValues(
-                        alpha: 0.2,
-                      ),
-                      borderRadius: KolabingRadius.borderRadiusSm,
-                    ),
-                    child: Text(
-                      badge!,
-                      style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 0.5),
+            const SizedBox(width: KolabingSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: KolabingTextStyles.nameBold.copyWith(color: c.ink),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: c.onSurfaceVariant,
                     ),
                   ),
+                  if (badge != null) ...[
+                    const SizedBox(height: KolabingSpacing.xs),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: c.primaryTint,
+                        borderRadius: BorderRadius.circular(KolabingRadius.pill),
+                      ),
+                      child: Text(
+                        badge!,
+                        style: KolabingTextStyles.nameBold.copyWith(
+                          fontSize: 11,
+                          color: c.amber,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          const Icon(
-            LucideIcons.chevronRight,
-            color: KolabingColors.textTertiary,
-            size: 20,
-          ),
-        ],
+            const SizedBox(width: KolabingSpacing.xs),
+            Icon(LucideIcons.chevronRight, color: c.inkBody, size: 20),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

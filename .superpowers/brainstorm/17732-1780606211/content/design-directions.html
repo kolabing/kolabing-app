@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Permission Screen — Design Directions</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    background: #1a1a1a;
+    color: #f5f5f5;
+    padding: 24px 16px 48px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #fff; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 32px; }
+
+  .grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .option-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .option-wrap:hover .phone { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .option-wrap.selected .phone { outline: 3px solid #FFE28C; }
+
+  .phone {
+    width: 220px;
+    height: 476px;
+    border-radius: 36px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+
+  .label-wrap {
+    text-align: center;
+  }
+  .label-letter {
+    display: inline-block;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: 1.5px solid #444;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 25px;
+    text-align: center;
+    color: #ccc;
+    margin-bottom: 6px;
+  }
+  .option-wrap.selected .label-letter {
+    background: #FFE28C;
+    border-color: #FFE28C;
+    color: #5C4A12;
+  }
+  .label-name { font-size: 14px; font-weight: 600; color: #eee; }
+  .label-desc { font-size: 12px; color: #888; margin-top: 2px; max-width: 200px; text-align: center; }
+
+  /* ── OPTION A: Soft & Elevated (current + polished) ── */
+  .a-bg {
+    background: #FDF9F0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px 20px;
+    height: 100%;
+  }
+  .a-icon-wrap {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255,226,140,0.2);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .a-icon { font-size: 28px; }
+  .a-title { font-family: 'Anton', Impact, sans-serif; font-size: 22px; letter-spacing: 1px; color: #232323; text-transform: uppercase; text-align: center; margin-bottom: 6px; }
+  .a-sub { font-size: 11px; color: #888; text-align: center; line-height: 1.4; margin-bottom: 18px; padding: 0 8px; }
+  .a-card {
+    background: #fff;
+    border: 1px solid #EAE3D4;
+    border-radius: 14px;
+    padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  .a-card-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .a-card-text { flex: 1; }
+  .a-card-title { font-size: 12px; font-weight: 700; color: #232323; margin-bottom: 2px; }
+  .a-card-desc { font-size: 10px; color: #888; line-height: 1.3; }
+  .a-allow {
+    background: #FFE28C; color: #5C4A12;
+    border: none; border-radius: 8px;
+    padding: 6px 14px; font-size: 11px; font-weight: 700;
+    font-family: 'Hanken Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .a-btn {
+    background: #FFE28C; color: #5C4A12;
+    border: none; border-radius: 10px;
+    height: 42px; width: 100%;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    margin-top: 4px; cursor: pointer;
+  }
+  .a-hint { font-size: 9px; color: #aaa; text-align: center; margin-top: 8px; }
+
+  /* ── OPTION B: Dark / Dramatic ── */
+  .b-bg {
+    background: #0F0F0F;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 28px 16px 20px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .b-glow {
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,226,140,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .b-icon-wrap {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255,226,140,0.1);
+    border: 1px solid rgba(255,226,140,0.25);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .b-icon { font-size: 28px; }
+  .b-title { font-family: 'Anton', Impact, sans-serif; font-size: 22px; letter-spacing: 1px; color: #fff; text-transform: uppercase; text-align: center; margin-bottom: 6px; position: relative; z-index: 1; }
+  .b-sub { font-size: 11px; color: #666; text-align: center; line-height: 1.4; margin-bottom: 18px; padding: 0 8px; position: relative; z-index: 1; }
+  .b-card {
+    background: #1C1C1C;
+    border: 1px solid #2A2A2A;
+    border-radius: 14px;
+    padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    position: relative; z-index: 1;
+  }
+  .b-card-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .b-card-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+  .b-card-desc { font-size: 10px; color: #666; line-height: 1.3; }
+  .b-allow {
+    background: #FFE28C; color: #0F0F0F;
+    border: none; border-radius: 8px;
+    padding: 6px 14px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .b-btn {
+    background: #FFE28C; color: #0F0F0F;
+    border: none; border-radius: 10px;
+    height: 42px; width: 100%;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    margin-top: 4px; cursor: pointer;
+    position: relative; z-index: 1;
+  }
+  .b-hint { font-size: 9px; color: #444; text-align: center; margin-top: 8px; position: relative; z-index: 1; }
+
+  /* ── OPTION C: Bold Editorial / Full-Bleed ── */
+  .c-bg {
+    background: #FDF9F0;
+    display: flex; flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .c-hero {
+    background: #232323;
+    height: 160px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .c-hero-glow {
+    position: absolute;
+    bottom: -40px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,226,140,0.3) 0%, transparent 70%);
+  }
+  .c-hero-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(255,226,140,0.15);
+    border: 1.5px solid rgba(255,226,140,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    position: relative; z-index: 1;
+    margin-bottom: 10px;
+  }
+  .c-hero-title { font-family: 'Anton', Impact, sans-serif; font-size: 20px; letter-spacing: 2px; color: #FFE28C; text-transform: uppercase; position: relative; z-index: 1; }
+  .c-body {
+    padding: 16px 14px 0;
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .c-sub { font-size: 11px; color: #888; text-align: center; line-height: 1.4; margin-bottom: 16px; }
+  .c-card {
+    background: #fff;
+    border: 1px solid #EAE3D4;
+    border-radius: 14px;
+    padding: 12px 12px 12px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    position: relative;
+  }
+  .c-card-accent {
+    position: absolute; left: 0; top: 14px; bottom: 14px;
+    width: 3px; border-radius: 0 3px 3px 0;
+  }
+  .c-card-content { flex: 1; }
+  .c-card-title { font-size: 12px; font-weight: 700; color: #232323; margin-bottom: 3px; }
+  .c-card-desc { font-size: 10px; color: #888; line-height: 1.3; }
+  .c-allow {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid #EAE3D4;
+    border-radius: 7px;
+    padding: 6px 0; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-top: 6px; cursor: pointer;
+    color: #5C4A12; text-align: center;
+  }
+  .c-allow.granted {
+    background: rgba(122,231,163,0.15);
+    border-color: rgba(122,231,163,0.4);
+    color: #1A6644;
+  }
+  .c-footer { padding: 0 14px 16px; margin-top: auto; }
+  .c-btn {
+    background: #FFE28C; color: #5C4A12;
+    border: none; border-radius: 10px;
+    height: 42px; width: 100%;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer;
+  }
+  .c-hint { font-size: 9px; color: #aaa; text-align: center; margin-top: 8px; }
+
+  .selected-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #FFE28C; color: #5C4A12;
+    padding: 14px; text-align: center;
+    font-size: 14px; font-weight: 700;
+    display: none;
+  }
+  .selected-bar.visible { display: block; }
+</style>
+</head>
+<body>
+
+<h1>Permission Screen — Design Directions</h1>
+<p class="subtitle">Click a design to select it. Same content, three distinct visual personalities.</p>
+
+<div class="grid">
+
+  <!-- OPTION A -->
+  <div class="option-wrap" id="opt-a" onclick="select('a')">
+    <div class="phone">
+      <div class="a-bg">
+        <div class="a-icon-wrap"><div class="a-icon">🛡️</div></div>
+        <div class="a-title">Enable Permissions</div>
+        <div class="a-sub">To get the best experience, Kolabing needs a few permissions.</div>
+
+        <div class="a-card">
+          <div class="a-card-icon" style="background:rgba(76,175,80,0.12);">📍</div>
+          <div class="a-card-text">
+            <div class="a-card-title">Location</div>
+            <div class="a-card-desc">Find nearby kolab opportunities and connect with local communities.</div>
+          </div>
+          <button class="a-allow">Allow</button>
+        </div>
+
+        <div class="a-card">
+          <div class="a-card-icon" style="background:rgba(255,152,0,0.12);">🔔</div>
+          <div class="a-card-text">
+            <div class="a-card-title">Notifications</div>
+            <div class="a-card-desc">Get notified about new applications, messages, and updates.</div>
+          </div>
+          <button class="a-allow">Allow</button>
+        </div>
+
+        <div style="flex:1"></div>
+        <button class="a-btn">Continue</button>
+        <div class="a-hint">You can change these later in your device settings.</div>
+      </div>
+    </div>
+    <div class="label-wrap">
+      <div class="label-letter">A</div>
+      <div class="label-name">Refined Parchment</div>
+      <div class="label-desc">Current style, elevated. Warm #FDF9F0 background, Anton title, hairline cards.</div>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="option-wrap" id="opt-b" onclick="select('b')">
+    <div class="phone">
+      <div class="b-bg">
+        <div class="b-glow"></div>
+        <div class="b-icon-wrap"><div class="b-icon">🛡️</div></div>
+        <div class="b-title">Enable Permissions</div>
+        <div class="b-sub">To get the best experience, Kolabing needs a few permissions.</div>
+
+        <div class="b-card">
+          <div class="b-card-icon" style="background:rgba(76,175,80,0.1);">📍</div>
+          <div style="flex:1">
+            <div class="b-card-title">Location</div>
+            <div class="b-card-desc">Find nearby kolab opportunities and connect with local communities.</div>
+          </div>
+          <button class="b-allow">Allow</button>
+        </div>
+
+        <div class="b-card">
+          <div class="b-card-icon" style="background:rgba(255,152,0,0.1);">🔔</div>
+          <div style="flex:1">
+            <div class="b-card-title">Notifications</div>
+            <div class="b-card-desc">Get notified about new applications, messages, and updates.</div>
+          </div>
+          <button class="b-allow">Allow</button>
+        </div>
+
+        <div style="flex:1"></div>
+        <button class="b-btn">Continue</button>
+        <div class="b-hint">You can change these later in your device settings.</div>
+      </div>
+    </div>
+    <div class="label-wrap">
+      <div class="label-letter">B</div>
+      <div class="label-name">Dark & Dramatic</div>
+      <div class="label-desc">Black bg with a yellow glow halo, white cards, premium auth-screen energy.</div>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="option-wrap" id="opt-c" onclick="select('c')">
+    <div class="phone">
+      <div class="c-bg">
+        <div class="c-hero">
+          <div class="c-hero-glow"></div>
+          <div class="c-hero-icon">🛡️</div>
+          <div class="c-hero-title">Enable Permissions</div>
+        </div>
+        <div class="c-body">
+          <div class="c-sub" style="margin-top:12px">To get the best experience, Kolabing needs a few permissions.</div>
+
+          <div class="c-card">
+            <div class="c-card-accent" style="background:#4CAF50;"></div>
+            <div class="c-card-content">
+              <div class="c-card-title">📍 Location</div>
+              <div class="c-card-desc">Find nearby kolab opportunities and connect with local communities.</div>
+              <button class="c-allow">Allow Access</button>
+            </div>
+          </div>
+
+          <div class="c-card">
+            <div class="c-card-accent" style="background:#FF9800;"></div>
+            <div class="c-card-content">
+              <div class="c-card-title">🔔 Notifications</div>
+              <div class="c-card-desc">Get notified about new applications, messages, and updates.</div>
+              <button class="c-allow">Allow Access</button>
+            </div>
+          </div>
+
+          <div style="flex:1;min-height:12px"></div>
+        </div>
+        <div class="c-footer">
+          <button class="c-btn">Continue</button>
+          <div class="c-hint">You can change these later in your device settings.</div>
+        </div>
+      </div>
+    </div>
+    <div class="label-wrap">
+      <div class="label-letter">C</div>
+      <div class="label-name">Editorial Split-Hero</div>
+      <div class="label-desc">Dark hero banner with yellow title, parchment body, color-accent left-border cards.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="selected-bar" id="selected-bar"></div>
+
+<script>
+  let selected = null;
+  function select(choice) {
+    ['a','b','c'].forEach(c => document.getElementById('opt-' + c).classList.remove('selected'));
+    document.getElementById('opt-' + choice).classList.add('selected');
+    selected = choice;
+    const names = { a: 'A — Refined Parchment', b: 'B — Dark & Dramatic', c: 'C — Editorial Split-Hero' };
+    const bar = document.getElementById('selected-bar');
+    bar.textContent = '✓ Selected: ' + names[choice] + ' — tell me in the terminal!';
+    bar.classList.add('visible');
+  }
+</script>
+
+</body>
+</html>

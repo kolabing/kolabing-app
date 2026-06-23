@@ -108,7 +108,7 @@ class _UserTypeToggleState extends State<UserTypeToggle>
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -129,7 +129,7 @@ class _UserTypeToggleState extends State<UserTypeToggle>
                         width: segmentWidth,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: KolabingColors.primary,
+                            color: context.colors.primary,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
@@ -182,8 +182,8 @@ class _UserTypeToggleState extends State<UserTypeToggle>
             duration: const Duration(milliseconds: 200),
             style: KolabingTextStyles.labelLarge.copyWith(
               color: isSelected
-                  ? KolabingColors.onPrimary
-                  : KolabingColors.textOnDark,
+                  ? context.colors.onPrimary
+                  : context.colors.textOnDark,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               letterSpacing: 0.8,
             ),

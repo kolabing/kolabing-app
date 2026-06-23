@@ -4,6 +4,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/cards/kolabing_cards.dart';
 import '../models/dashboard_model.dart';
 
 /// A card widget displaying an upcoming collaboration item.
@@ -23,18 +24,30 @@ class UpcomingCollaborationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+    if (isDark) {
+      return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          decoration: BoxDecoration(
+            color: context.colors.darkSurface,
+            borderRadius: KolabingRadius.borderRadiusMd,
+            border: Border.all(color: context.colors.darkBorder),
           ),
+          child: _content(context, isDark),
         ),
-        child: Row(
+      );
+    }
+
+    return CompactListCard(
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      onTap: onTap,
+      child: _content(context, isDark),
+    );
+  }
+
+  Widget _content(BuildContext context, bool isDark) {
+    return Row(
           children: [
             // Partner avatar
             _PartnerAvatar(partner: collaboration.partner),
@@ -49,8 +62,8 @@ class UpcomingCollaborationCard extends StatelessWidget {
                   Text(
                     collaboration.partner.name ?? 'Unknown Partner',
                     style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.onSurface),
+                          ? context.colors.textOnDark
+                          : context.colors.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -59,7 +72,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
                   // Opportunity title
                   Text(
                     collaboration.opportunity.title,
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -78,9 +91,7 @@ class UpcomingCollaborationCard extends StatelessWidget {
             // Status badge
             _StatusBadge(status: collaboration.status),
           ],
-        ),
-      ),
-    );
+        );
   }
 }
 
@@ -96,13 +107,13 @@ class _PartnerAvatar extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.15),
+        color: context.colors.primary.withValues(alpha: 0.15),
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
       child: Text(
         partner.initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
+        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onPrimary),
       ),
     );
   }
@@ -124,13 +135,13 @@ class _DateChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? KolabingColors.darkBorder
-            : KolabingColors.surfaceVariant,
+            ? context.colors.darkBorder
+            : context.colors.surfaceVariant,
         borderRadius: KolabingRadius.borderRadiusXs,
       ),
       child: Text(
         dateText,
-        style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.onSurfaceVariant),
+        style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
       ),
     );
   }
@@ -153,13 +164,18 @@ class _StatusBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isActive
-            ? KolabingColors.info.withValues(alpha: 0.1)
-            : KolabingColors.success.withValues(alpha: 0.1),
+            ? context.colors.primary.withValues(alpha: 0.85)
+            : context.colors.categoryOrangeBg,
         borderRadius: KolabingRadius.borderRadiusXs,
       ),
       child: Text(
         status.displayName,
-        style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isActive ? KolabingColors.info : const Color(0xFF155724), letterSpacing: 0.5),
+        style: KolabingTextStyles.labelSmall.copyWith(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: isActive ? context.colors.charcoal : context.colors.categoryOrangeText,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }

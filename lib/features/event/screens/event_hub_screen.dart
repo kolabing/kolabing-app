@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
+import '../../gamification/screens/qr_scanner_screen.dart';
 import '../models/event.dart';
 import '../models/event_signup.dart';
 import '../providers/event_provider.dart';
@@ -111,6 +112,20 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     }
   }
 
+  // Leader: scan attendee check-in QR codes ---------------------------------
+
+  /// Open the QR scanner so the leader can scan attendee check-in codes.
+  /// (The scanner left the attendee bottom nav; it stays reachable here.)
+  Future<void> _scanCheckIns() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const QRScannerScreen(),
+    );
+  }
+
   // Leader: edit + add photos ------------------------------------------------
 
   Future<void> _edit() async {
@@ -134,14 +149,37 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
 
   Future<void> _addPhotos() async {
     if (_uploadingPhotos) return;
+
+    // Gallery caps: up to [kEventGalleryMaxPerAdd] picked per add, and never
+    // more than [kEventGalleryMaxTotal] photos on the event in total.
+    final existing = _event.photos.length;
+    if (existing >= kEventGalleryMaxTotal) {
+      _snack(_l10n.eventPhotosTotalCapReached(existing, kEventGalleryMaxTotal));
+      return;
+    }
+
     final picker = ImagePicker();
-    final picked = await picker.pickMultiImage();
+    final picked = await picker.pickMultiImage(limit: kEventGalleryMaxPerAdd);
     if (picked.isEmpty || !mounted) return;
+
+    var toUpload = picked;
+    if (picked.length > kEventGalleryMaxPerAdd) {
+      _snack(_l10n.eventPhotosMaxPerAdd(kEventGalleryMaxPerAdd));
+      toUpload = picked.take(kEventGalleryMaxPerAdd).toList();
+    }
+
+    final remaining = kEventGalleryMaxTotal - existing;
+    if (toUpload.length > remaining) {
+      _snack(_l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal));
+      toUpload = toUpload.take(remaining).toList();
+    }
+    if (toUpload.isEmpty) return;
+
     setState(() => _uploadingPhotos = true);
     try {
       final updated = await ref
           .read(eventServiceProvider)
-          .addEventPhotos(_event.id, picked.map((x) => x.path).toList());
+          .addEventPhotos(_event.id, toUpload.map((x) => x.path).toList());
       if (!mounted) return;
       setState(() {
         _event = updated;
@@ -243,7 +281,7 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
   Widget build(BuildContext context) {
     final e = _event;
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(e.name, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
@@ -257,8 +295,20 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
               onSelected: (v) {
                 if (v == 'delete') _delete();
                 if (v == 'extend') _extend();
+                if (v == 'scan') _scanCheckIns();
               },
               itemBuilder: (context) => [
+                PopupMenuItem<String>(
+                  value: 'scan',
+                  child: Row(
+                    children: [
+                      const Icon(LucideIcons.qrCode,
+                          size: 18, color: KolabingColors.onSurface),
+                      const SizedBox(width: KolabingSpacing.sm),
+                      Text(_l10n.eventHubScanCheckIns),
+                    ],
+                  ),
+                ),
                 if (_event.isRecurring)
                   PopupMenuItem<String>(
                     value: 'extend',
@@ -275,8 +325,8 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                   value: 'delete',
                   child: Row(
                     children: [
-                      const Icon(LucideIcons.trash2,
-                          size: 18, color: KolabingColors.error),
+                      Icon(LucideIcons.trash2,
+                          size: 18, color: context.colors.error),
                       const SizedBox(width: KolabingSpacing.sm),
                       Text(_l10n.eventHubDelete),
                     ],
@@ -334,7 +384,7 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                 child: Text(
                   _l10n.eventHubWaitlistPosition(e.waitlistPosition!),
                   style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                      .copyWith(color: context.colors.onSurfaceVariant),
                 ),
               ),
             ],
@@ -367,8 +417,8 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
         child: FilledButton.icon(
           onPressed: _openingChat ? null : _openChat,
           style: FilledButton.styleFrom(
-            backgroundColor: KolabingColors.surfaceContainerHigh,
-            foregroundColor: KolabingColors.onSurface,
+            backgroundColor: context.colors.surfaceContainerHigh,
+            foregroundColor: context.colors.onSurface,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -399,20 +449,20 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
       _ when e.isWaitlisted => (
           _l10n.eventHubOnWaitlistTapToLeave,
           LucideIcons.clock,
-          KolabingColors.surfaceContainerHigh,
-          KolabingColors.onSurface,
+          context.colors.surfaceContainerHigh,
+          context.colors.onSurface,
         ),
       _ when e.isFull => (
           _l10n.eventHubJoinWaitlist,
           LucideIcons.userPlus,
-          KolabingColors.surfaceContainerHigh,
-          KolabingColors.onSurface,
+          context.colors.surfaceContainerHigh,
+          context.colors.onSurface,
         ),
       _ => (
           _l10n.eventHubImGoing,
           LucideIcons.check,
-          KolabingColors.primary,
-          KolabingColors.onPrimary,
+          context.colors.primary,
+          context.colors.onPrimary,
         ),
     };
     return SizedBox(
@@ -423,7 +473,6 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
         style: FilledButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         icon: _busy
             ? const SizedBox(
@@ -469,7 +518,7 @@ class _AttendeesSection extends ConsumerWidget {
         child: Text(
           l10n.eventHubNoAttendees,
           style: KolabingTextStyles.bodySmall
-              .copyWith(color: KolabingColors.onSurfaceVariant),
+              .copyWith(color: context.colors.onSurfaceVariant),
         ),
       ),
       data: (signups) {
@@ -477,7 +526,7 @@ class _AttendeesSection extends ConsumerWidget {
           return Text(
             l10n.eventHubNoAttendees,
             style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+                .copyWith(color: context.colors.onSurfaceVariant),
           );
         }
         return Column(
@@ -510,7 +559,7 @@ class _AttendeeTile extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
-        backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
+        backgroundColor: context.colors.primary.withValues(alpha: 0.2),
         backgroundImage:
             signup.avatarUrl != null ? NetworkImage(signup.avatarUrl!) : null,
         child: signup.avatarUrl == null
@@ -529,7 +578,7 @@ class _AttendeeTile extends StatelessWidget {
       trailing: signup.isWaitlisted && signup.waitlistPosition != null
           ? Text('#${signup.waitlistPosition}',
               style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant))
+                  .copyWith(color: context.colors.onSurfaceVariant))
           : null,
     );
   }
@@ -548,7 +597,7 @@ class _SectionLabel extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       );
@@ -579,9 +628,9 @@ class _Gallery extends StatelessWidget {
               errorBuilder: (_, __, ___) => Container(
                 width: 96,
                 height: 96,
-                color: KolabingColors.surfaceVariant,
-                child: const Icon(LucideIcons.image,
-                    color: KolabingColors.textTertiary),
+                color: context.colors.surfaceVariant,
+                child: Icon(LucideIcons.image,
+                    color: context.colors.textTertiary),
               ),
             ),
           );
@@ -601,7 +650,7 @@ class _InfoRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: KolabingColors.onSurfaceVariant),
+            Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(child: Text(text, style: KolabingTextStyles.bodyMedium)),
           ],

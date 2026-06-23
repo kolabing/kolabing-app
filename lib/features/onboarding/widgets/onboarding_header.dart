@@ -57,7 +57,7 @@ class OnboardingHeader extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               'Step $currentStep of $totalSteps',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.textTertiary),
             ),
           ),
 
@@ -102,15 +102,15 @@ class _BackButtonState extends State<_BackButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 20,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'Back',
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
                 ),
               ],
             ),
@@ -148,7 +148,7 @@ class _SkipButtonState extends State<_SkipButton> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Text(
               'Skip',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: KolabingColors.textTertiary),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.textTertiary),
             ),
           ),
         ),

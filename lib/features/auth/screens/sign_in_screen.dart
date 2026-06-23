@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,8 +37,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
 
   /// Individual element animations
   late final Animation<double> _logoAnimation;
-  late final Animation<double> _titleAnimation;
-  late final Animation<double> _subtitleAnimation;
   late final Animation<double> _buttonAnimation;
   late final Animation<double> _linkAnimation;
   late final Animation<double> _exitAnimation;
@@ -45,12 +45,31 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   bool _isLoading = false;
   bool _showSuccess = false;
 
+  /// Rotating brand phrases
+  static const _brandPhrases = [
+    'brand love',
+    'word of mouth',
+    'local growth',
+    'experiences',
+    'new customers',
+    'authentic content',
+    'community',
+    'real engagement',
+    'partnerships',
+    'ugc',
+    'visibility',
+  ];
+  int _phraseIndex = 0;
+  double _phraseOpacity = 1.0;
+  Timer? _phraseTimer;
+
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
     _configureSystemUI();
     _startEntryAnimation();
+    _startPhraseRotation();
   }
 
   void _initializeAnimations() {
@@ -66,8 +85,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
 
     // Staggered entry animations
     _logoAnimation = _createStaggeredAnimation(0.0, 0.5);
-    _titleAnimation = _createStaggeredAnimation(0.15, 0.65);
-    _subtitleAnimation = _createStaggeredAnimation(0.25, 0.75);
     _buttonAnimation = _createStaggeredAnimation(0.35, 0.85);
     _linkAnimation = _createStaggeredAnimation(0.5, 1.0);
 
@@ -91,7 +108,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: KolabingColors.surface,
+        systemNavigationBarColor: Colors.black,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -101,10 +118,25 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
     _entryController.forward();
   }
 
+  void _startPhraseRotation() {
+    _phraseTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      // Fade out quickly
+      setState(() => _phraseOpacity = 0.0);
+      Future<void>.delayed(const Duration(milliseconds: 180), () {
+        if (!mounted) return;
+        setState(() {
+          _phraseIndex = (_phraseIndex + 1) % _brandPhrases.length;
+          _phraseOpacity = 1.0;
+        });
+      });
+    });
+  }
+
   @override
   void dispose() {
     _entryController.dispose();
     _exitController.dispose();
+    _phraseTimer?.cancel();
     super.dispose();
   }
 
@@ -172,7 +204,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   void _showUserTypeMismatchDialog(UserType? existingType) {
     showDialog<void>(
       context: context,
-      barrierColor: KolabingColors.overlayDark60,
+      barrierColor: context.colors.overlayDark60,
       builder: (context) => _UserTypeMismatchDialog(
         existingType: existingType,
         onGotIt: () => Navigator.of(context).pop(),
@@ -185,9 +217,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -195,21 +227,21 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: context.colors.textOnDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: _handleGoogleSignIn,
         ),
       ),
@@ -222,18 +254,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: context.colors.textOnDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonDismiss,
-          textColor: KolabingColors.textOnDark,
+          textColor: context.colors.textOnDark,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },
@@ -250,15 +282,38 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
   Widget build(BuildContext context) => PopScope(
     canPop: !_isLoading,
     child: Scaffold(
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       body: AnimatedBuilder(
         animation: _exitController,
         builder: (context, child) =>
             Opacity(opacity: _exitAnimation.value, child: child),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
+        child: Stack(
+          children: [
+            // Rotating brand phrase — upper-right atmospheric layer
+            Positioned(
+              top: 300,
+              right: 90,
+              child: AnimatedOpacity(
+                opacity: _phraseOpacity * 0.38,
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeInOut,
+                child: Text(
+                  _brandPhrases[_phraseIndex],
+                  style: const TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFFD4C9A8),
+                    letterSpacing: 0.4,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
               children: [
                 const Spacer(flex: 2),
 
@@ -266,38 +321,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                 _AnimatedElement(
                   animation: _logoAnimation,
                   child: const KolabingLogo(
-                    width: 200,
-                    variant: KolabingLogoVariant.onDark,
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Title
-                _AnimatedElement(
-                  animation: _titleAnimation,
-                  slideUp: true,
-                  child: Text(
-                    AppLocalizations.of(context).signInTitle,
-                    style: KolabingTextStyles.displayLarge.copyWith(
-                      color: KolabingColors.textOnDark,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // Subtitle
-                _AnimatedElement(
-                  animation: _subtitleAnimation,
-                  slideUp: true,
-                  child: Text(
-                    AppLocalizations.of(context).signInSubtitle,
-                    style: KolabingTextStyles.bodyLarge.copyWith(
-                      color: KolabingColors.textTertiary,
-                    ),
-                    textAlign: TextAlign.center,
+                    width: 220,
+                    variant: KolabingLogoVariant.yellowTransparent,
                   ),
                 ),
 
@@ -333,6 +358,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
               ],
             ),
           ),
+        ),
+          ],
         ),
       ),
     ),
@@ -374,7 +401,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-    backgroundColor: KolabingColors.darkSurface,
+    backgroundColor: context.colors.darkSurface,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Padding(
       padding: const EdgeInsets.all(24),
@@ -384,7 +411,7 @@ class _UserTypeMismatchDialog extends StatelessWidget {
           Text(
             AppLocalizations.of(context).signInTypeMismatchTitle,
             style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.textOnDark,
+              color: context.colors.textOnDark,
             ),
             textAlign: TextAlign.center,
           ),
@@ -406,13 +433,6 @@ class _UserTypeMismatchDialog extends StatelessWidget {
             height: 48,
             child: ElevatedButton(
               onPressed: onGotIt,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: Text(
                 AppLocalizations.of(context).commonGotIt,
                 style: KolabingTextStyles.button.copyWith(

@@ -92,18 +92,18 @@ class _AuthLinkState extends State<AuthLink> {
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
+                      color: context.colors.textOnDark,
                     ),
                     children: [
                       TextSpan(text: '${widget.leadingText} '),
                       TextSpan(
                         text: widget.actionText,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                           fontWeight: FontWeight.w600,
                           decoration:
                               _isPressed ? TextDecoration.underline : null,
-                          decorationColor: KolabingColors.primary,
+                          decorationColor: context.colors.primary,
                         ),
                       ),
                     ],

@@ -265,6 +265,65 @@ class OnboardingService {
   /// Complete business onboarding
   ///
   /// PUT /onboarding/business
+  /// New onboarding fields whose backend columns are being added separately.
+  /// While the migration is in flight a 422 on ONLY these fields is tolerated
+  /// by stripping them and retrying once (see [_putOnboarding]).
+  static const Set<String> _onboardingFieldsToStrip = {
+    'has_venue',
+    'target_city_ids',
+    'offering',
+    'offer_photos',
+    'community_size',
+  };
+
+  /// PUT an onboarding payload, tolerating not-yet-migrated fields.
+  Future<void> _putOnboarding(
+    String url,
+    String token,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _httpClient.put(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) return;
+
+    final apiError = ApiError.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+      statusCode: response.statusCode,
+    );
+
+    if (response.statusCode == 422 &&
+        apiError.errors != null &&
+        apiError.errors!.isNotEmpty) {
+      final failingKeys = apiError.errors!.keys
+          .map((k) => k.split('.').first)
+          .toSet();
+      final onlyNewFields = failingKeys.isNotEmpty &&
+          failingKeys.every(_onboardingFieldsToStrip.contains);
+      final bodyHasNewFields =
+          body.keys.any(_onboardingFieldsToStrip.contains);
+
+      if (onlyNewFields && bodyHasNewFields) {
+        debugPrint(
+          'Onboarding PUT 422 on not-yet-migrated fields ($failingKeys) — '
+          'stripping and retrying.',
+        );
+        final retryBody = Map<String, dynamic>.from(body)
+          ..removeWhere((key, _) => _onboardingFieldsToStrip.contains(key));
+        return _putOnboarding(url, token, retryBody);
+      }
+    }
+
+    throw ApiException(error: apiError);
+  }
+
   Future<void> completeBusinessOnboarding(
     String token,
     OnboardingData data,
@@ -275,24 +334,11 @@ class OnboardingService {
     }
 
     try {
-      final response = await _httpClient.put(
-        Uri.parse('$_baseUrl/onboarding/business'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(data.toBusinessPayload()),
+      await _putOnboarding(
+        '$_baseUrl/onboarding/business',
+        token,
+        data.toBusinessPayload(),
       );
-
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        throw ApiException(
-          error: ApiError.fromJson(
-            jsonDecode(response.body) as Map<String, dynamic>,
-            statusCode: response.statusCode,
-          ),
-        );
-      }
     } catch (e) {
       if (e is ApiException) rethrow;
       debugPrint('Complete business onboarding error: $e');
@@ -313,24 +359,11 @@ class OnboardingService {
     }
 
     try {
-      final response = await _httpClient.put(
-        Uri.parse('$_baseUrl/onboarding/community'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(data.toCommunityPayload()),
+      await _putOnboarding(
+        '$_baseUrl/onboarding/community',
+        token,
+        data.toCommunityPayload(),
       );
-
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        throw ApiException(
-          error: ApiError.fromJson(
-            jsonDecode(response.body) as Map<String, dynamic>,
-            statusCode: response.statusCode,
-          ),
-        );
-      }
     } catch (e) {
       if (e is ApiException) rethrow;
       debugPrint('Complete community onboarding error: $e');

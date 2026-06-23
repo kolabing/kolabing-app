@@ -79,7 +79,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(title: Text(l10n.createCommunityTitle)),
       body: Form(
         key: _formKey,
@@ -141,17 +141,17 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
             FilledButton(
               onPressed: _submitting ? null : _submit,
               style: FilledButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
+                backgroundColor: context.colors.primary,
+                foregroundColor: context.colors.onPrimary,
                 minimumSize: const Size.fromHeight(52),
               ),
               child: _submitting
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     )
                   : Text(l10n.createCommunitySubmit),

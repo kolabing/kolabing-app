@@ -10,13 +10,18 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/wallet_provider.dart';
+import '../../../widgets/kolabing_button.dart';
 
 /// A banner card prompting the user to reveal and share their referral code.
 ///
 /// Reads the [referralCode] from [walletProvider] and opens a bottom sheet
 /// where the user can copy or share the code.
+///
+/// When [usePastelStyle] is true, uses a pastel yellow background and border.
 class ReferralBannerCard extends ConsumerWidget {
-  const ReferralBannerCard({super.key});
+  const ReferralBannerCard({super.key, this.usePastelStyle = false});
+
+  final bool usePastelStyle;
 
   // ---------------------------------------------------------------------------
   // Build
@@ -33,68 +38,181 @@ class ReferralBannerCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    const inkColor = Color(0xFF19150F);
+    const amberLabel = Color(0xFF9A7C28);
+    const stepBoxFill = Color(0xFFFFF9E6);
+    const badgeFill = Color(0xFFFFE28C);
+    const arrowCircleFill = Color(0xFFFFFDF5);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: KolabingColors.surfaceContainerLow,
-        borderRadius: KolabingRadius.borderRadiusLg,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+      decoration: const BoxDecoration(
+        color: KolabingColors.primary,
+        borderRadius: BorderRadius.all(Radius.circular(24)),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Left content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppLocalizations.of(context).referralBannerEarnBySharing,
-                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.secondary, letterSpacing: 1.0),
+          // Top row: label + gift icon
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context).referralBannerEarnBySharing,
+                style: KolabingTextStyles.labelSmall.copyWith(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: amberLabel,
+                  letterSpacing: 1.6,
                 ),
-                const SizedBox(height: KolabingSpacing.xxs),
-                Text(
-                  AppLocalizations.of(context).referralBannerTagline,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
-                ),
-                const SizedBox(height: KolabingSpacing.sm),
-                OutlinedButton(
-                  onPressed: () =>
-                      _showReferralCodeSheet(context, referralCode),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: KolabingColors.onSurface,
-                    side: const BorderSide(color: KolabingColors.onSurface),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: KolabingRadius.borderRadiusSm,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: KolabingSpacing.md,
-                      vertical: KolabingSpacing.xs,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              const Spacer(),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: arrowCircleFill,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: KolabingColors.softYellowBorder,
+                    width: 1,
                   ),
-                  child: Text(
-                    AppLocalizations.of(context).referralBannerShareButton,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                ),
+                child: const Icon(
+                  LucideIcons.gift,
+                  size: 17,
+                  color: inkColor,
+                  semanticLabel: '',
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 2-step flow row
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Step 1 box
+                Expanded(
+                  child: _StepBox(
+                    stepNumber: '1',
+                    badgeFill: badgeFill,
+                    fill: stepBoxFill,
+                    inkColor: inkColor,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)
+                              .referralBannerStepReferLabel,
+                          style: KolabingTextStyles.bodyMedium.copyWith(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: inkColor.withValues(alpha: 0.55),
+                            height: 1.2,
+                          ),
+                        ),
+                        Text(
+                          AppLocalizations.of(context)
+                              .referralBannerStepReferValue,
+                          style: KolabingTextStyles.bodyMedium.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: inkColor,
+                            height: 1.25,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Center arrow connector
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Center(
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: arrowCircleFill,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: KolabingColors.hairline,
+                          width: 1,
+                        ),
+                      ),
+                      child: const Icon(
+                        LucideIcons.arrowRight,
+                        size: 16,
+                        color: inkColor,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Step 2 box
+                Expanded(
+                  child: _StepBox(
+                    stepNumber: '2',
+                    badgeFill: badgeFill,
+                    fill: stepBoxFill,
+                    inkColor: inkColor,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)
+                              .referralBannerStepEarnLabel,
+                          style: KolabingTextStyles.bodyMedium.copyWith(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: inkColor.withValues(alpha: 0.55),
+                            height: 1.2,
+                          ),
+                        ),
+                        Text(
+                          AppLocalizations.of(context)
+                              .referralBannerStepEarnAmount,
+                          style: KolabingTextStyles.displaySmall.copyWith(
+                            fontSize: 32,
+                            color: inkColor,
+                            height: 1.05,
+                          ),
+                        ),
+                        Text(
+                          AppLocalizations.of(context)
+                              .referralBannerStepEarnSuffix,
+                          style: KolabingTextStyles.bodyMedium.copyWith(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: inkColor.withValues(alpha: 0.55),
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: KolabingSpacing.md),
-          // Right icon
-          Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: KolabingColors.softYellow,
-            ),
-            child: const Icon(
-              LucideIcons.gift,
-              size: 28,
-              color: KolabingColors.onSurface,
-            ),
+
+          const SizedBox(height: 16),
+
+          // CTA button
+          KolabingButton(
+            label: AppLocalizations.of(context).referralBannerShareButton,
+            onPressed: () => _showReferralCodeSheet(context, referralCode),
+            variant: KolabingButtonVariant.dark,
+            icon: const Icon(LucideIcons.share2),
+            width: double.infinity,
+            height: 48,
           ),
         ],
       ),
@@ -114,6 +232,80 @@ class ReferralBannerCard extends ConsumerWidget {
       );
 }
 
+// ---------------------------------------------------------------------------
+// Step box widget — soft inset rounded box with numbered badge
+// ---------------------------------------------------------------------------
+
+class _StepBox extends StatelessWidget {
+  const _StepBox({
+    required this.stepNumber,
+    required this.badgeFill,
+    required this.fill,
+    required this.inkColor,
+    required this.child,
+  });
+
+  final String stepNumber;
+  final Color badgeFill;
+  final Color fill;
+  final Color inkColor;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(12, 20, 12, 16),
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: KolabingColors.softYellowBorder.withValues(alpha: 0.6),
+              width: 1,
+            ),
+          ),
+          child: child,
+        ),
+        // Step number badge — top-center
+        Positioned(
+          top: -10,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: badgeFill,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: KolabingColors.primary,
+                  width: 1.5,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  stepNumber,
+                  style: TextStyle(
+                    fontFamily: KolabingTypography.fontLabel,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: inkColor,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ReferralCodeSheet extends StatelessWidget {
   const _ReferralCodeSheet({required this.code});
 
@@ -127,8 +319,8 @@ class _ReferralCodeSheet extends StatelessWidget {
       KolabingSpacing.lg,
       KolabingSpacing.lg,
     ),
-    decoration: const BoxDecoration(
-      color: KolabingColors.surface,
+    decoration: BoxDecoration(
+      color: context.colors.surface,
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
     ),
     child: SafeArea(
@@ -140,14 +332,14 @@ class _ReferralCodeSheet extends StatelessWidget {
             width: 44,
             height: 4,
             decoration: BoxDecoration(
-              color: KolabingColors.darkBorder,
+              color: context.colors.darkBorder,
               borderRadius: BorderRadius.circular(999),
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).referralSheetYourCode,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.textTertiary, letterSpacing: 1.2),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Container(
@@ -157,14 +349,14 @@ class _ReferralCodeSheet extends StatelessWidget {
               vertical: KolabingSpacing.lg,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: KolabingRadius.borderRadiusLg,
-              border: Border.all(color: KolabingColors.softYellowBorder),
+              border: Border.all(color: context.colors.softYellowBorder),
             ),
             child: Text(
               code,
               textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: KolabingColors.onSurface, letterSpacing: 2.5),
+              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 2.5),
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -172,50 +364,24 @@ class _ReferralCodeSheet extends StatelessWidget {
             AppLocalizations.of(context).referralSheetInstructions,
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            width: double.infinity,
+          KolabingButton(
+            label: AppLocalizations.of(context).referralSheetCopyCode,
+            onPressed: () => _copyCode(context),
+            variant: KolabingButtonVariant.secondary,
+            icon: const Icon(LucideIcons.copy),
             height: 48,
-            child: OutlinedButton.icon(
-              onPressed: () => _copyCode(context),
-              icon: const Icon(LucideIcons.copy, size: 18),
-              label: Text(
-                AppLocalizations.of(context).referralSheetCopyCode,
-                style: KolabingTextStyles.buttonSmall,
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: KolabingColors.onSurface,
-                side: const BorderSide(color: KolabingColors.darkBorder),
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
-          SizedBox(
-            width: double.infinity,
+          KolabingButton(
+            label: AppLocalizations.of(context).referralSheetShareCode,
+            onPressed: () => _shareCode(context),
+            variant: KolabingButtonVariant.primary,
+            icon: const Icon(LucideIcons.share2),
             height: 48,
-            child: ElevatedButton.icon(
-              onPressed: () => _shareCode(context),
-              icon: const Icon(LucideIcons.share2, size: 18),
-              label: Text(
-                AppLocalizations.of(context).referralSheetShareCode,
-                style: KolabingTextStyles.buttonSmall.copyWith(
-                  color: KolabingColors.onPrimary,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                ),
-              ),
-            ),
           ),
         ],
       ),
@@ -228,7 +394,7 @@ class _ReferralCodeSheet extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context).referralCodeCopied),
-        backgroundColor: KolabingColors.success,
+        backgroundColor: context.colors.success,
       ),
     );
   }
@@ -255,7 +421,7 @@ class _ReferralCodeSheet extends StatelessWidget {
               content: Text(
                 AppLocalizations.of(context).referralSheetShareUnavailable,
               ),
-              backgroundColor: KolabingColors.onSurface,
+              backgroundColor: context.colors.onSurface,
             ),
           );
         }
@@ -268,7 +434,7 @@ class _ReferralCodeSheet extends StatelessWidget {
             content: Text(
               AppLocalizations.of(context).referralSheetShareFailed,
             ),
-            backgroundColor: KolabingColors.onSurface,
+            backgroundColor: context.colors.onSurface,
           ),
         );
       }

@@ -22,7 +22,8 @@ class AttendeeStep1Screen extends ConsumerStatefulWidget {
   const AttendeeStep1Screen({super.key});
 
   @override
-  ConsumerState<AttendeeStep1Screen> createState() => _AttendeeStep1ScreenState();
+  ConsumerState<AttendeeStep1Screen> createState() =>
+      _AttendeeStep1ScreenState();
 }
 
 class _AttendeeStep1ScreenState extends ConsumerState<AttendeeStep1Screen> {
@@ -55,9 +56,9 @@ class _AttendeeStep1ScreenState extends ConsumerState<AttendeeStep1Screen> {
       imageQuality: 85,
     );
     if (picked == null) return;
-    await ref.read(attendeeOnboardingProvider.notifier).updatePhoto(
-      File(picked.path),
-    );
+    await ref
+        .read(attendeeOnboardingProvider.notifier)
+        .updatePhoto(File(picked.path));
   }
 
   void _continue() {
@@ -148,10 +149,10 @@ class _AttendeeStep1ScreenState extends ConsumerState<AttendeeStep1Screen> {
             decoration: InputDecoration(
               hintText: l10n.attendeeOnboardingNameHint,
               filled: true,
-              fillColor: KolabingColors.surfaceVariant,
+              fillColor: KolabingColors.surfaceContainerLow,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(KolabingRadius.sm),
-                borderSide: BorderSide.none,
+                borderSide: BorderSide(color: KolabingColors.outlineVariant),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.md,

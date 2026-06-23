@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_input.dart';
+import '../../../../widgets/kolabing_selectable_chip.dart';
 import '../../providers/kolab_form_provider.dart';
 
-/// Community step 1: "YOUR COMMUNITY TYPE"
+/// Community step 1: expected attendees for THIS kolab.
 ///
-/// Lets the user pick up to 3 community type categories,
-/// enter community size and expected attendees.
+/// Community type and community size are NOT asked here — they are
+/// self-describing fields that already live on the community profile (set at
+/// onboarding, editable from the profile) and are inherited by the backend
+/// (KolabService::enrichCommunitySeekingData). Only `typical_attendance` is a
+/// genuine per-kolab input (it varies per event), so it pre-fills from the last
+/// kolab but stays editable here.
 class CommunityInfoScreen extends ConsumerStatefulWidget {
   const CommunityInfoScreen({super.key});
 
@@ -22,26 +27,7 @@ class CommunityInfoScreen extends ConsumerStatefulWidget {
 }
 
 class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
-  final _communitySizeController = TextEditingController();
   final _attendanceController = TextEditingController();
-
-  static const _communityTypeOptions = [
-    'Food & Drink',
-    'Sports',
-    'Wellness',
-    'Culture',
-    'Technology',
-    'Education',
-    'Entertainment',
-    'Fashion',
-    'Music',
-    'Art',
-    'Travel',
-    'Networking',
-    'Fitness',
-    'Social',
-    'Gaming',
-  ];
 
   @override
   void initState() {
@@ -53,10 +39,6 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   void _syncControllers() {
     final kolab = ref.read(kolabFormProvider).kolab;
-    final sizeText = kolab.communitySize?.toString() ?? '';
-    if (_communitySizeController.text != sizeText) {
-      _communitySizeController.text = sizeText;
-    }
     final attendanceText = kolab.typicalAttendance?.toString() ?? '';
     if (_attendanceController.text != attendanceText) {
       _attendanceController.text = attendanceText;
@@ -65,7 +47,6 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   @override
   void dispose() {
-    _communitySizeController.dispose();
     _attendanceController.dispose();
     super.dispose();
   }
@@ -74,126 +55,16 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(kolabFormProvider);
-    final kolab = state.kolab;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header
-          Text(
-            l10n.communityInfoTypeHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
-          ),
-          const SizedBox(height: KolabingSpacing.xxs),
-          Text(
-            l10n.communityInfoTypeSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
-          ),
-
-          // Community types error
-          if (state.fieldErrors['community_types'] != null) ...[
-            const SizedBox(height: KolabingSpacing.sm),
-            _buildFieldError(state.fieldErrors['community_types']!),
-          ],
-
-          const SizedBox(height: KolabingSpacing.md),
-
-          // Community type chips
-          Wrap(
-            spacing: KolabingSpacing.xs,
-            runSpacing: KolabingSpacing.xs,
-            children: _communityTypeOptions.map((type) {
-              final isSelected = kolab.communityTypes.contains(type);
-              final isMaxReached =
-                  kolab.communityTypes.length >= 3 && !isSelected;
-
-              return GestureDetector(
-                onTap: isMaxReached
-                    ? null
-                    : () => ref
-                        .read(kolabFormProvider.notifier)
-                        .toggleCommunityType(type),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.sm,
-                    vertical: KolabingSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? KolabingColors.softYellow
-                        : KolabingColors.surface,
-                    borderRadius: KolabingRadius.borderRadiusSm,
-                    border: Border.all(
-                      color: isSelected
-                          ? KolabingColors.primary
-                          : KolabingColors.darkBorder,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Text(
-                    type,
-                    style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isMaxReached
-                          ? KolabingColors.textTertiary
-                          : isSelected
-                              ? KolabingColors.onSurface
-                              : KolabingColors.onSurfaceVariant),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-
-          const SizedBox(height: KolabingSpacing.lg),
-
-          // Community Size
-          _buildLabel(l10n.communityInfoCommunitySizeLabel),
-          const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
-            controller: _communitySizeController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            // C1: number-pad has no return key — tap-outside is the only way out.
-            onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            onChanged: (value) {
-              final parsed = int.tryParse(value);
-              ref.read(kolabFormProvider.notifier).updateCommunitySize(parsed);
-            },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
-            decoration: InputDecoration(
-              hintText: l10n.communityInfoCommunitySizeHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
-              filled: true,
-              fillColor: KolabingColors.surface,
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.error),
-              ),
-              errorText: state.fieldErrors['community_size'],
-            ),
-          ),
-
-          const SizedBox(height: KolabingSpacing.md),
-
-          // Expected Attendees
+          // Expected Attendees (per-kolab; type + size come from the profile)
           _buildLabel(l10n.communityInfoExpectedAttendeesLabel),
           const SizedBox(height: KolabingSpacing.xxs),
-          TextFormField(
+          KolabingInput(
             controller: _attendanceController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -205,31 +76,8 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
                   .read(kolabFormProvider.notifier)
                   .updateTypicalAttendance(parsed);
             },
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: KolabingColors.onSurface),
-            decoration: InputDecoration(
-              hintText: l10n.communityInfoExpectedAttendeesHint,
-              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
-              filled: true,
-              fillColor: KolabingColors.surface,
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide:
-                    const BorderSide(color: KolabingColors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusSm,
-                borderSide: const BorderSide(color: KolabingColors.error),
-              ),
-              errorText: state.fieldErrors['typical_attendance'],
-            ),
+            hint: l10n.communityInfoExpectedAttendeesHint,
+            errorText: state.fieldErrors['typical_attendance'],
           ),
         ],
       ),
@@ -238,33 +86,10 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
 
   Widget _buildLabel(String label) => Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
-      );
-
-  Widget _buildFieldError(String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: KolabingColors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 14,
-              color: KolabingColors.error,
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.error),
-              ),
-            ),
-          ],
+        style: KolabingTextStyles.bodySmall.copyWith(
+          fontWeight: FontWeight.w700,
+          color: context.colors.onSurfaceVariant,
+          letterSpacing: 1.0,
         ),
       );
 }

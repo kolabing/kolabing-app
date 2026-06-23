@@ -90,13 +90,13 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- Section header
           Text(
             'IDEAL COMMUNITY',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
           Text(
             'What kind of communities would be a great fit?',
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
@@ -113,7 +113,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- Minimum Community Size
           Text(
             'MINIMUM COMMUNITY SIZE (OPTIONAL)',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
@@ -123,10 +123,11 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: _inputDecoration(
+              context,
               hint: 'e.g. 500',
               error: errors['min_community_size'],
             ),
-            style: _inputTextStyle,
+            style: _inputTextStyle(context),
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             onSubmitted: (_) => FocusScope.of(context).unfocus(),
             onChanged: (v) {
@@ -139,7 +140,7 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- What you expect from the community
           Text(
             'WHAT DO YOU EXPECT FROM THE COMMUNITY?',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
@@ -167,44 +168,45 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
 // Shared helpers (file-private)
 // =============================================================================
 
-InputDecoration _inputDecoration({
+InputDecoration _inputDecoration(
+  BuildContext context, {
   required String hint,
   String? error,
 }) => InputDecoration(
   hintText: hint,
-  hintStyle: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textTertiary),
+  hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
   errorText: error,
   errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
   filled: true,
-  fillColor: KolabingColors.surface,
+  fillColor: context.colors.surface,
   contentPadding: const EdgeInsets.symmetric(
     horizontal: KolabingSpacing.md,
     vertical: 14,
   ),
   border: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    borderSide: BorderSide(color: context.colors.darkBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.darkBorder),
+    borderSide: BorderSide(color: context.colors.darkBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.borderFocus, width: 1.5),
+    borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
   ),
   errorBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.borderError),
+    borderSide: BorderSide(color: context.colors.borderError),
   ),
   focusedErrorBorder: OutlineInputBorder(
     borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: const BorderSide(color: KolabingColors.borderError, width: 1.5),
+    borderSide: BorderSide(color: context.colors.borderError, width: 1.5),
   ),
 );
 
-TextStyle get _inputTextStyle =>
-    KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurface);
+TextStyle _inputTextStyle(BuildContext context) =>
+    KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
 
 // =============================================================================
 // Toggle Card
@@ -230,10 +232,10 @@ class _ToggleCard extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isSelected ? KolabingColors.softYellow : KolabingColors.surface,
+        color: isSelected ? context.colors.softYellow : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? KolabingColors.primary : KolabingColors.darkBorder,
+          color: isSelected ? context.colors.primary : context.colors.darkBorder,
         ),
       ),
       child: Row(
@@ -244,20 +246,20 @@ class _ToggleCard extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: isSelected ? KolabingColors.primary : Colors.transparent,
+              color: isSelected ? context.colors.primary : Colors.transparent,
               borderRadius: KolabingRadius.borderRadiusXs,
               border: Border.all(
                 color: isSelected
-                    ? KolabingColors.primary
-                    : KolabingColors.darkBorder,
+                    ? context.colors.primary
+                    : context.colors.darkBorder,
                 width: 1.5,
               ),
             ),
             child: isSelected
-                ? const Icon(
+                ? Icon(
                     LucideIcons.check,
                     size: 14,
-                    color: KolabingColors.onPrimary,
+                    color: context.colors.onPrimary,
                   )
                 : null,
           ),
@@ -270,12 +272,12 @@ class _ToggleCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
                 ),
               ],
             ),

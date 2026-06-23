@@ -4,22 +4,32 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../models/leaderboard.dart';
 
-/// Tile displaying a leaderboard entry
+/// Tile displaying a leaderboard entry.
+///
+/// P3: renders the row's [LeaderboardEntry.tier] + badge count under the name,
+/// and per-community points. Tapping the current user's row opens the Personal
+/// Rewards Screen (wired via [onTap]).
 class LeaderboardEntryTile extends StatelessWidget {
   const LeaderboardEntryTile({
     super.key,
     required this.entry,
     this.isCurrentUser = false,
+    this.onTap,
   });
 
   final LeaderboardEntry entry;
   final bool isCurrentUser;
 
+  /// Tapped → open Personal Rewards (current user) or a light peek (others).
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final l10n = AppLocalizations.of(context);
+    final tile = Container(
       margin: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.md,
         vertical: KolabingSpacing.xs,
@@ -27,11 +37,11 @@ class LeaderboardEntryTile extends StatelessWidget {
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
         color: isCurrentUser
-            ? KolabingColors.primary.withValues(alpha: 0.1)
-            : KolabingColors.surface,
+            ? context.colors.primary.withValues(alpha: 0.1)
+            : context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: isCurrentUser
-            ? Border.all(color: KolabingColors.primary.withValues(alpha: 0.3))
+            ? Border.all(color: context.colors.primary.withValues(alpha: 0.3))
             : null,
         boxShadow: [
           BoxShadow(
@@ -49,8 +59,8 @@ class LeaderboardEntryTile extends StatelessWidget {
             child: Text(
               '#${entry.rank}',
               style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: isCurrentUser
-                    ? KolabingColors.primary
-                    : KolabingColors.onSurfaceVariant),
+                    ? context.colors.primary
+                    : context.colors.onSurfaceVariant),
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -58,7 +68,7 @@ class LeaderboardEntryTile extends StatelessWidget {
           // Avatar
           CircleAvatar(
             radius: 20,
-            backgroundColor: KolabingColors.primary.withValues(alpha: 0.1),
+            backgroundColor: context.colors.primary.withValues(alpha: 0.1),
             backgroundImage: entry.profilePhoto != null
                 ? NetworkImage(entry.profilePhoto!)
                 : null,
@@ -67,13 +77,13 @@ class LeaderboardEntryTile extends StatelessWidget {
                     entry.displayName.isNotEmpty
                         ? entry.displayName[0].toUpperCase()
                         : '?',
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
                   )
                 : null,
           ),
           const SizedBox(width: KolabingSpacing.md),
 
-          // Name
+          // Name + tier/badge subtitle
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +93,7 @@ class LeaderboardEntryTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         entry.displayName,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -96,39 +106,88 @@ class LeaderboardEntryTile extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'You',
-                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: KolabingColors.onPrimary),
+                          l10n.leaderboardEntryYou,
+                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: context.colors.onPrimary),
                         ),
                       ),
                     ],
                   ],
                 ),
+                if (entry.tier != null ||
+                    (entry.badgeCount != null && entry.badgeCount! > 0)) ...[
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      if (entry.tier != null) ...[
+                        Icon(LucideIcons.award,
+                            size: 12, color: context.colors.onSurfaceVariant),
+                        const SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            entry.tier!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 11,
+                                color: context.colors.onSurfaceVariant),
+                          ),
+                        ),
+                      ],
+                      if (entry.badgeCount != null &&
+                          entry.badgeCount! > 0) ...[
+                        if (entry.tier != null)
+                          const SizedBox(width: KolabingSpacing.sm),
+                        Icon(LucideIcons.medal,
+                            size: 12, color: context.colors.onSurfaceVariant),
+                        const SizedBox(width: 3),
+                        Text(
+                          l10n.leaderboardEntryBadgeCount(entry.badgeCount!),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 11,
+                              color: context.colors.onSurfaceVariant),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
 
-          // Points
+          // Points (per-community points when present, else total)
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.star,
                 size: 16,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
               const SizedBox(width: 4),
               Text(
-                '${entry.totalPoints}',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                '${entry.displayPoints}',
+                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
               ),
+              if (onTap != null && isCurrentUser) ...[
+                const SizedBox(width: 4),
+                Icon(LucideIcons.chevronRight,
+                    size: 16, color: context.colors.onSurfaceVariant),
+              ],
             ],
           ),
         ],
       ),
+    );
+
+    if (onTap == null) return tile;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: tile,
     );
   }
 }

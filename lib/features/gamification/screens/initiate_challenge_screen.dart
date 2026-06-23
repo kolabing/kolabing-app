@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 
@@ -80,13 +82,13 @@ class _InitiateChallengeScreenState
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: KolabingColors.success.withValues(alpha: 0.15),
+                  color: context.colors.success.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.check,
                   size: 40,
-                  color: KolabingColors.success,
+                  color: context.colors.success,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -95,14 +97,14 @@ class _InitiateChallengeScreenState
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 AppLocalizations.of(context).initiateChallengeSuccessBody,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -115,12 +117,9 @@ class _InitiateChallengeScreenState
                     context.pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.success,
-                    foregroundColor: Colors.white,
+                    backgroundColor: context.colors.success,
+                    foregroundColor: KolabingColors.textOnDark,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: Text(
                     AppLocalizations.of(context).commonDone,
@@ -142,9 +141,9 @@ class _InitiateChallengeScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
       ),
     );
   }
@@ -155,14 +154,14 @@ class _InitiateChallengeScreenState
     final initiateState = ref.watch(initiateChallengeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
-        ? KolabingColors.surface
-        : KolabingColors.background;
+        ? context.colors.surface
+        : context.colors.background;
     final textColor = isDark
-        ? KolabingColors.textOnDark
-        : KolabingColors.onSurface;
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
     final surfaceColor = isDark
-        ? KolabingColors.darkSurface
-        : KolabingColors.surface;
+        ? context.colors.darkSurface
+        : context.colors.surface;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -200,8 +199,8 @@ class _InitiateChallengeScreenState
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark
-                            ? KolabingColors.darkBorder
-                            : KolabingColors.darkBorder,
+                            ? context.colors.darkBorder
+                            : context.colors.darkBorder,
                       ),
                     ),
                     child: Row(
@@ -210,15 +209,15 @@ class _InitiateChallengeScreenState
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: KolabingColors.primary.withValues(
+                            color: context.colors.primary.withValues(
                               alpha: 0.15,
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             LucideIcons.target,
                             size: 24,
-                            color: KolabingColors.primary,
+                            color: context.colors.primary,
                           ),
                         ),
                         const SizedBox(width: KolabingSpacing.sm),
@@ -241,7 +240,7 @@ class _InitiateChallengeScreenState
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: KolabingColors.primary,
+                                      color: context.colors.primary,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -249,7 +248,7 @@ class _InitiateChallengeScreenState
                                       style: KolabingTextStyles.bodySmall.copyWith(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w700,
-                                        color: KolabingColors.onPrimary,
+                                        color: context.colors.onPrimary,
                                       ),
                                     ),
                                   ),
@@ -258,7 +257,7 @@ class _InitiateChallengeScreenState
                                     widget.challenge!.difficulty.label,
                                     style: KolabingTextStyles.bodySmall.copyWith(
                                       fontSize: 12,
-                                      color: KolabingColors.onSurfaceVariant,
+                                      color: context.colors.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
@@ -312,11 +311,11 @@ class _InitiateChallengeScreenState
                   decoration: InputDecoration(
                     hintText: l10n.initiateChallengeVerifierHint,
                     hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       LucideIcons.user,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                     filled: true,
                     fillColor: surfaceColor,
@@ -324,28 +323,28 @@ class _InitiateChallengeScreenState
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
                         color: isDark
-                            ? KolabingColors.darkBorder
-                            : KolabingColors.darkBorder,
+                            ? context.colors.darkBorder
+                            : context.colors.darkBorder,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
                         color: isDark
-                            ? KolabingColors.darkBorder
-                            : KolabingColors.darkBorder,
+                            ? context.colors.darkBorder
+                            : context.colors.darkBorder,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: KolabingColors.primary,
+                      borderSide: BorderSide(
+                        color: context.colors.primary,
                         width: 2,
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: KolabingColors.error),
+                      borderSide: BorderSide(color: context.colors.error),
                     ),
                   ),
                   validator: (value) {
@@ -361,47 +360,18 @@ class _InitiateChallengeScreenState
                   l10n.initiateChallengeVerifierHelper,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ),
 
                 const SizedBox(height: KolabingSpacing.xl),
 
                 // Submit button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: initiateState.isLoading ? null : _handleInitiate,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
-                      disabledBackgroundColor: KolabingColors.primary
-                          .withValues(alpha: 0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: initiateState.isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                KolabingColors.onPrimary,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            l10n.initiateChallengeSubmit,
-                            style: KolabingTextStyles.button.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                  ),
+                KolabingButton(
+                  label: l10n.initiateChallengeSubmit,
+                  onPressed: initiateState.isLoading ? null : _handleInitiate,
+                  variant: KolabingButtonVariant.primary,
+                  isLoading: initiateState.isLoading,
                 ),
               ],
             ),
@@ -428,7 +398,7 @@ class _InstructionStep extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.15),
+              color: context.colors.primary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -437,7 +407,7 @@ class _InstructionStep extends StatelessWidget {
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.primary,
+                  color: context.colors.primary,
                 ),
               ),
             ),
@@ -447,7 +417,7 @@ class _InstructionStep extends StatelessWidget {
             child: Text(
               text,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ),

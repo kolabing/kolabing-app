@@ -12,6 +12,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/models/user_model.dart';
@@ -36,6 +37,7 @@ class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
   const CommunityOfferDetailScreen({
     required this.offerId,
     this.offer,
+    this.canApply = true,
     super.key,
   });
 
@@ -44,6 +46,13 @@ class CommunityOfferDetailScreen extends ConsumerStatefulWidget {
 
   /// Optional pre-loaded opportunity data (for navigation optimization)
   final Opportunity? offer;
+
+  /// Whether the "Apply now" action may be shown. The viewer-scoped
+  /// `has_applied` / `is_own` flags are unreliable in some payloads (e.g. the
+  /// nested opportunity inside an application), so callers that already KNOW
+  /// applying is impossible — chiefly the chat "View opportunity" action on an
+  /// accepted application — pass `false` to hide the apply button outright.
+  final bool canApply;
 
   @override
   ConsumerState<CommunityOfferDetailScreen> createState() =>
@@ -142,17 +151,19 @@ class _CommunityOfferDetailScreenState
   }
 
   bool _isPreviewMode(UserModel? user, Opportunity opportunity) {
-    final communityProfileId = user?.communityProfile?.id;
-    if (user == null || !user.isCommunity || communityProfileId == null) {
-      return false;
-    }
-
+    if (user == null) return false;
     if (opportunity.status != OpportunityStatus.published) {
       return false;
     }
 
+    // Own post = the viewer's profile is the creator, for EITHER role. Previously
+    // only communities were detected, so a business viewing its own kolab still
+    // saw an Apply button (and could apply to itself).
+    final myProfileId = user.communityProfile?.id ?? user.businessProfile?.id;
     return opportunity.isOwn == true ||
-        opportunity.creatorProfile?.id == communityProfileId;
+        (myProfileId != null &&
+            myProfileId.isNotEmpty &&
+            opportunity.creatorProfile?.id == myProfileId);
   }
 
   Widget _buildContent(
@@ -160,14 +171,14 @@ class _CommunityOfferDetailScreenState
     required bool isPreviewMode,
     bool hideCreatorIdentity = false,
   }) => Scaffold(
-    backgroundColor: KolabingColors.background,
+    backgroundColor: context.colors.background,
     body: Stack(
       children: [
         CustomScrollView(
           slivers: [
             // App bar with back button
             SliverAppBar(
-              backgroundColor: KolabingColors.primary,
+              backgroundColor: context.colors.primary,
               expandedHeight: 200,
               pinned: true,
               leading: IconButton(
@@ -177,9 +188,9 @@ class _CommunityOfferDetailScreenState
                     color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LucideIcons.arrowLeft,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                     size: 20,
                   ),
                 ),
@@ -234,13 +245,18 @@ class _CommunityOfferDetailScreenState
           ],
         ),
 
-        // Fixed bottom button
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: _buildBottomAction(opportunity, isPreviewMode: isPreviewMode),
-        ),
+        // Fixed bottom button — omitted entirely when the caller has disabled
+        // applying (e.g. opened from an accepted-application chat).
+        if (widget.canApply)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildBottomAction(
+              opportunity,
+              isPreviewMode: isPreviewMode,
+            ),
+          ),
       ],
     ),
   );
@@ -254,8 +270,8 @@ class _CommunityOfferDetailScreenState
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          KolabingColors.primary,
-          KolabingColors.primary.withValues(alpha: 0.7),
+          context.colors.primary,
+          context.colors.primary.withValues(alpha: 0.7),
         ],
       ),
     ),
@@ -314,7 +330,7 @@ class _CommunityOfferDetailScreenState
                               style: KolabingTextStyles.bodyLarge.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                color: KolabingColors.onSurface,
+                                color: context.colors.onSurface,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -328,7 +344,7 @@ class _CommunityOfferDetailScreenState
                                 : (opportunity.creatorProfile?.userType ?? ''),
                             style: KolabingTextStyles.bodySmall.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: KolabingColors.onSurfaceVariant,
+                              color: context.colors.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -350,7 +366,7 @@ class _CommunityOfferDetailScreenState
     margin: const EdgeInsets.all(KolabingSpacing.md),
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
       boxShadow: [
         BoxShadow(
@@ -369,7 +385,7 @@ class _CommunityOfferDetailScreenState
           style: KolabingTextStyles.bodyLarge.copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
             height: 1.3,
           ),
         ),
@@ -382,14 +398,14 @@ class _CommunityOfferDetailScreenState
             vertical: KolabingSpacing.xxs,
           ),
           decoration: BoxDecoration(
-            color: KolabingColors.primary.withValues(alpha: 0.15),
+            color: context.colors.primary.withValues(alpha: 0.15),
             borderRadius: KolabingRadius.borderRadiusRound,
           ),
           child: Text(
             opportunity.availabilityMode.displayName.toUpperCase(),
             style: KolabingTextStyles.labelSmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
               letterSpacing: 0.5,
             ),
           ),
@@ -407,18 +423,18 @@ class _CommunityOfferDetailScreenState
             ),
             margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
             decoration: BoxDecoration(
-              color: KolabingColors.softYellow,
+              color: context.colors.softYellow,
               borderRadius: BorderRadius.circular(KolabingRadius.sm),
               border: Border.all(
-                color: KolabingColors.primary.withValues(alpha: 0.3),
+                color: context.colors.primary.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.zap,
                   size: 16,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
                 const SizedBox(width: KolabingSpacing.xs),
                 Expanded(
@@ -426,7 +442,7 @@ class _CommunityOfferDetailScreenState
                     opportunity.offerHeadline!,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: KolabingColors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                   ),
                 ),
@@ -440,7 +456,7 @@ class _CommunityOfferDetailScreenState
           opportunity.description,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 15,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
             height: 1.6,
           ),
         ),
@@ -469,10 +485,10 @@ class _CommunityOfferDetailScreenState
           const SizedBox(height: KolabingSpacing.md),
           Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.users,
                 size: 16,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               const SizedBox(width: KolabingSpacing.xxs),
               Text(
@@ -483,7 +499,7 @@ class _CommunityOfferDetailScreenState
                 ),
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
@@ -502,7 +518,7 @@ class _CommunityOfferDetailScreenState
           AppLocalizations.of(context).communityOfferDetailCategories,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
             letterSpacing: 1,
           ),
         ),
@@ -518,14 +534,14 @@ class _CommunityOfferDetailScreenState
                     vertical: KolabingSpacing.xxs,
                   ),
                   decoration: BoxDecoration(
-                    color: KolabingColors.primary.withValues(alpha: 0.1),
+                    color: context.colors.primary.withValues(alpha: 0.1),
                     borderRadius: KolabingRadius.borderRadiusRound,
                   ),
                   child: Text(
                     cat,
                     style: KolabingTextStyles.captionSecondary.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                   ),
                 ),
@@ -541,26 +557,22 @@ class _CommunityOfferDetailScreenState
     margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.success.withValues(alpha: 0.05),
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusLg,
-      border: Border.all(color: KolabingColors.success.withValues(alpha: 0.2)),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
-              LucideIcons.gift,
-              size: 18,
-              color: KolabingColors.activeText,
-            ),
+            Icon(LucideIcons.gift, size: 18, color: context.colors.activeText),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).communityOfferDetailBusinessOffer,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w700,
-                color: KolabingColors.activeText,
+                color: context.colors.activeText,
                 letterSpacing: 1,
               ),
             ),
@@ -603,14 +615,14 @@ class _CommunityOfferDetailScreenState
     padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
     child: Row(
       children: [
-        Icon(icon, size: 16, color: KolabingColors.activeText),
+        Icon(icon, size: 16, color: context.colors.activeText),
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
           child: Text(
             text,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
         ),
@@ -624,19 +636,19 @@ class _CommunityOfferDetailScreenState
       margin: const EdgeInsets.all(KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 LucideIcons.checkCircle,
                 size: 18,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
@@ -645,7 +657,7 @@ class _CommunityOfferDetailScreenState
                 ).communityOfferDetailExpectedDeliverables,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                   letterSpacing: 1,
                 ),
               ),
@@ -688,14 +700,14 @@ class _CommunityOfferDetailScreenState
     padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
     child: Row(
       children: [
-        Icon(icon, size: 16, color: KolabingColors.textTertiary),
+        Icon(icon, size: 16, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
           child: Text(
             text,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
         ),
@@ -712,7 +724,7 @@ class _CommunityOfferDetailScreenState
       margin: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -729,7 +741,7 @@ class _CommunityOfferDetailScreenState
             AppLocalizations.of(context).communityOfferDetailLocationTitle,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
               letterSpacing: 1,
             ),
           ),
@@ -779,13 +791,13 @@ class _CommunityOfferDetailScreenState
     required String value,
   }) => Row(
     children: [
-      Icon(icon, size: 18, color: KolabingColors.textTertiary),
+      Icon(icon, size: 18, color: context.colors.textTertiary),
       const SizedBox(width: KolabingSpacing.xs),
       Text(
         '$label: ',
         style: KolabingTextStyles.bodySmall.copyWith(
           fontWeight: FontWeight.w500,
-          color: KolabingColors.textTertiary,
+          color: context.colors.textTertiary,
         ),
       ),
       Expanded(
@@ -793,7 +805,7 @@ class _CommunityOfferDetailScreenState
           value,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w600,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
       ),
@@ -811,31 +823,12 @@ class _CommunityOfferDetailScreenState
 
     if (isPreviewMode) {
       return _buildBottomButtonShell(
-        child: ElevatedButton(
+        child: KolabingButton(
+          label: AppLocalizations.of(context).communityOfferDetailPreviewMode,
           onPressed: null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.surfaceVariant,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(LucideIcons.eye, size: 18),
-              const SizedBox(width: KolabingSpacing.xs),
-              Text(
-                AppLocalizations.of(context).communityOfferDetailPreviewMode,
-                style: KolabingTextStyles.button.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
-                  color: KolabingColors.textTertiary,
-                ),
-              ),
-            ],
-          ),
+          variant: KolabingButtonVariant.secondary,
+          icon: const Icon(LucideIcons.eye),
+          isDisabled: true,
         ),
       );
     }
@@ -843,54 +836,21 @@ class _CommunityOfferDetailScreenState
     // If user has already applied
     if (opportunity.hasApplied == true) {
       return _buildBottomButtonShell(
-        child: ElevatedButton(
+        child: KolabingButton(
+          label: AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
           onPressed: null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.surfaceVariant,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-          ),
-          child: Text(
-            AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
-            style: KolabingTextStyles.button.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1,
-              color: KolabingColors.textTertiary,
-            ),
-          ),
+          variant: KolabingButtonVariant.secondary,
+          isDisabled: true,
         ),
       );
     }
 
     return _buildBottomButtonShell(
-      child: ElevatedButton(
+      child: KolabingButton(
+        label: AppLocalizations.of(context).communityOfferDetailApplyNow,
         onPressed: () => _handleApply(opportunity),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: KolabingColors.primary,
-          foregroundColor: KolabingColors.onPrimary,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: KolabingRadius.borderRadiusMd,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(LucideIcons.send, size: 18),
-            const SizedBox(width: KolabingSpacing.xs),
-            Text(
-              AppLocalizations.of(context).communityOfferDetailApplyNow,
-              style: KolabingTextStyles.button.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1,
-              ),
-            ),
-          ],
-        ),
+        variant: KolabingButtonVariant.primary,
+        icon: const Icon(LucideIcons.send),
       ),
     );
   }
@@ -899,7 +859,7 @@ class _CommunityOfferDetailScreenState
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -916,17 +876,17 @@ class _CommunityOfferDetailScreenState
   }
 
   Widget _buildLoadingState() => Scaffold(
-    backgroundColor: KolabingColors.background,
+    backgroundColor: context.colors.background,
     appBar: AppBar(
-      backgroundColor: KolabingColors.primary,
+      backgroundColor: context.colors.primary,
       leading: IconButton(
         icon: const Icon(LucideIcons.arrowLeft),
         onPressed: () => context.pop(),
       ),
     ),
     body: Shimmer.fromColors(
-      baseColor: KolabingColors.surfaceVariant,
-      highlightColor: KolabingColors.surface,
+      baseColor: context.colors.surfaceVariant,
+      highlightColor: context.colors.surface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
@@ -936,7 +896,7 @@ class _CommunityOfferDetailScreenState
               height: 24,
               width: 200,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusSm,
               ),
             ),
@@ -944,7 +904,7 @@ class _CommunityOfferDetailScreenState
             Container(
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surfaceContainer,
                 borderRadius: KolabingRadius.borderRadiusLg,
               ),
             ),
@@ -955,9 +915,9 @@ class _CommunityOfferDetailScreenState
   );
 
   Widget _buildErrorState(String error) => Scaffold(
-    backgroundColor: KolabingColors.background,
+    backgroundColor: context.colors.background,
     appBar: AppBar(
-      backgroundColor: KolabingColors.primary,
+      backgroundColor: context.colors.primary,
       leading: IconButton(
         icon: const Icon(LucideIcons.arrowLeft),
         onPressed: () => context.pop(),
@@ -966,7 +926,7 @@ class _CommunityOfferDetailScreenState
         AppLocalizations.of(context).communityOfferDetailTitle,
         style: KolabingTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
     ),
@@ -976,9 +936,9 @@ class _CommunityOfferDetailScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const DecoratedBox(
+            DecoratedBox(
               decoration: BoxDecoration(
-                color: KolabingColors.errorBg,
+                color: context.colors.errorBg,
                 shape: BoxShape.circle,
               ),
               child: SizedBox(
@@ -987,7 +947,7 @@ class _CommunityOfferDetailScreenState
                 child: Icon(
                   LucideIcons.alertCircle,
                   size: 36,
-                  color: KolabingColors.error,
+                  color: context.colors.error,
                 ),
               ),
             ),
@@ -997,14 +957,14 @@ class _CommunityOfferDetailScreenState
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1015,10 +975,6 @@ class _CommunityOfferDetailScreenState
               },
               icon: const Icon(LucideIcons.rotateCcw, size: 16),
               label: Text(AppLocalizations.of(context).commonRetry),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-              ),
             ),
           ],
         ),
@@ -1041,22 +997,22 @@ class _PreviewModeBanner extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.12),
+        color: context.colors.primary.withValues(alpha: 0.12),
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
-          color: KolabingColors.primary.withValues(alpha: 0.24),
+          color: context.colors.primary.withValues(alpha: 0.24),
         ),
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.eye, color: KolabingColors.primary, size: 18),
+          Icon(LucideIcons.eye, color: context.colors.primary, size: 18),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: Text(
               AppLocalizations.of(context).communityOfferDetailPreviewBanner,
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
             ),
           ),
@@ -1093,7 +1049,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
           ),
           padding: const EdgeInsets.all(KolabingSpacing.md),
           decoration: BoxDecoration(
-            color: KolabingColors.surface,
+            color: context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusLg,
             boxShadow: [
               BoxShadow(
@@ -1111,7 +1067,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -1120,7 +1076,7 @@ class _CommunityPastEventsSection extends ConsumerWidget {
                   context,
                 ).communityOfferDetailPastEventsSubtitle,
                 style: KolabingTextStyles.captionSecondary.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -1172,7 +1128,7 @@ class _CreatorAvatar extends StatelessWidget {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       shape: BoxShape.circle,
       border: Border.all(color: Colors.white, width: 3),
       boxShadow: [
@@ -1190,19 +1146,20 @@ class _CreatorAvatar extends StatelessWidget {
               width: size,
               height: size,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => _buildInitial(),
+              errorBuilder: (context, error, stackTrace) =>
+                  _buildInitial(context),
             ),
           )
-        : _buildInitial(),
+        : _buildInitial(context),
   );
 
-  Widget _buildInitial() => Center(
+  Widget _buildInitial(BuildContext context) => Center(
     child: Text(
       initial,
       style: KolabingTextStyles.bodyMedium.copyWith(
         fontSize: size * 0.4,
         fontWeight: FontWeight.w600,
-        color: KolabingColors.onSurface,
+        color: context.colors.onSurface,
       ),
     ),
   );
@@ -1218,20 +1175,20 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (backgroundColor, textColor) = switch (status) {
       OpportunityStatus.published => (
-        KolabingColors.activeBg,
-        KolabingColors.activeText,
+        context.colors.activeBg,
+        context.colors.activeText,
       ),
       OpportunityStatus.draft => (
-        KolabingColors.pendingBg,
-        KolabingColors.pendingText,
+        context.colors.pendingBg,
+        context.colors.pendingText,
       ),
       OpportunityStatus.closed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
       ),
       OpportunityStatus.completed => (
-        KolabingColors.completedBg,
-        KolabingColors.completedText,
+        context.colors.completedBg,
+        context.colors.completedText,
       ),
     };
 
@@ -1269,27 +1226,23 @@ class _BaseOfferCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(KolabingRadius.md),
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
-              LucideIcons.gift,
-              size: 16,
-              color: KolabingColors.primary,
-            ),
+            Icon(LucideIcons.gift, size: 16, color: context.colors.primary),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).communityOfferDetailTheOffer,
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
             ),
           ],
@@ -1298,7 +1251,7 @@ class _BaseOfferCard extends StatelessWidget {
         Text(
           text,
           style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
             height: 1.5,
           ),
         ),
@@ -1318,27 +1271,23 @@ class _NegotiationTriggersSection extends StatelessWidget {
     decoration: BoxDecoration(
       // Slightly different background so it reads as "extra terms unlocked
       // for you" rather than the standard public offer card.
-      color: KolabingColors.primary.withValues(alpha: 0.06),
+      color: context.colors.primary.withValues(alpha: 0.06),
       borderRadius: BorderRadius.circular(KolabingRadius.md),
-      border: Border.all(color: KolabingColors.primary.withValues(alpha: 0.25)),
+      border: Border.all(color: context.colors.primary.withValues(alpha: 0.25)),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(
-              LucideIcons.unlock,
-              size: 16,
-              color: KolabingColors.primary,
-            ),
+            Icon(LucideIcons.unlock, size: 16, color: context.colors.primary),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).communityOfferDetailExtraTerms,
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
             ),
           ],
@@ -1348,7 +1297,7 @@ class _NegotiationTriggersSection extends StatelessWidget {
           AppLocalizations.of(context).communityOfferDetailExtraTermsSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
-            color: KolabingColors.onSurfaceVariant,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
@@ -1359,43 +1308,43 @@ class _NegotiationTriggersSection extends StatelessWidget {
 
   Widget _buildTriggerRow(BuildContext context, NegotiationTrigger trigger) =>
       Padding(
-    padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '• ',
-          style: KolabingTextStyles.bodySmall.copyWith(
-            color: KolabingColors.primary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(
-                  context,
-                ).communityOfferDetailTriggerCondition(trigger.condition),
-                style: KolabingTextStyles.labelSmall.copyWith(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                  color: KolabingColors.textTertiary,
-                ),
+        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '• ',
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.primary,
+                fontWeight: FontWeight.w700,
               ),
-              Text(
-                trigger.additionalOffer,
-                style: KolabingTextStyles.captionSecondary.copyWith(
-                  color: KolabingColors.onSurface,
-                  height: 1.4,
-                ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(
+                      context,
+                    ).communityOfferDetailTriggerCondition(trigger.condition),
+                    style: KolabingTextStyles.labelSmall.copyWith(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: context.colors.textTertiary,
+                    ),
+                  ),
+                  Text(
+                    trigger.additionalOffer,
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: context.colors.onSurface,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }

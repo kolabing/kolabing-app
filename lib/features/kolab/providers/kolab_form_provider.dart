@@ -342,9 +342,24 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   // ---------------------------------------------------------------------------
 
   void updateAvailabilityMode(AvailabilityMode mode) {
+    final kolab = state.kolab;
+    var start = kolab.availabilityStart;
+    var end = kolab.availabilityEnd;
+
+    // Pre-fill a one-time kolab with sensible default dates (tomorrow → one
+    // month later) so the range isn't empty; still fully editable.
+    if (mode == AvailabilityMode.oneTime && start == null) {
+      final tomorrow =
+          DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
+      start = tomorrow;
+      end ??= DateTime(tomorrow.year, tomorrow.month + 1, tomorrow.day);
+    }
+
     state = state.copyWith(
-      kolab: state.kolab.copyWith(
+      kolab: kolab.copyWith(
         availabilityMode: mode,
+        availabilityStart: start,
+        availabilityEnd: end,
         recurringDays: mode != AvailabilityMode.recurring ? const [] : null,
       ),
       clearError: true,
@@ -688,12 +703,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['needs'] = 'Select at least 1 need';
         }
       case 1: // About your community
-        if (kolab.communityTypes.isEmpty) {
-          errors['community_types'] = 'Select at least 1 community type';
-        }
-        if (kolab.communitySize == null || kolab.communitySize! <= 0) {
-          errors['community_size'] = 'Community size must be greater than 0';
-        }
+        // community_types + community_size are inherited from the community
+        // profile (set at onboarding), so they are NOT asked/validated here.
+        // Only typical_attendance is a per-kolab input.
         if (kolab.typicalAttendance == null || kolab.typicalAttendance! <= 0) {
           errors['typical_attendance'] =
               'Typical attendance must be greater than 0';

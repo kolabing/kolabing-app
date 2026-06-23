@@ -1,3 +1,9 @@
+/// Max photos that can be picked in a single "add photos" action.
+const int kEventGalleryMaxPerAdd = 5;
+
+/// Hard cap on the total number of photos an event gallery can hold.
+const int kEventGalleryMaxTotal = 20;
+
 /// Event model representing a past collaboration event
 class Event {
   final String id;
@@ -30,6 +36,11 @@ class Event {
   final String? seriesId;
   final int? occurrenceIndex;
 
+  /// Who can see this event (#1): `public` | `members` | `tier`. `public`
+  /// events surface in city discovery. Null for legacy events (treated as
+  /// members by the backend default).
+  final String? visibility;
+
   const Event({
     required this.id,
     required this.name,
@@ -52,6 +63,7 @@ class Event {
     this.canAccess = true,
     this.seriesId,
     this.occurrenceIndex,
+    this.visibility,
   });
 
   /// True when this event belongs to a recurring series.
@@ -112,6 +124,7 @@ class Event {
       canAccess: json['can_access'] as bool? ?? true,
       seriesId: json['series_id'] as String?,
       occurrenceIndex: (json['occurrence_index'] as num?)?.toInt(),
+      visibility: json['visibility'] as String?,
       photos:
           (json['photos'] as List<dynamic>?)
               ?.map((e) => EventPhoto.fromJson(e as Map<String, dynamic>))
@@ -163,6 +176,7 @@ class Event {
     bool? canAccess,
     String? seriesId,
     int? occurrenceIndex,
+    String? visibility,
   }) => Event(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -185,6 +199,7 @@ class Event {
     canAccess: canAccess ?? this.canAccess,
     seriesId: seriesId ?? this.seriesId,
     occurrenceIndex: occurrenceIndex ?? this.occurrenceIndex,
+    visibility: visibility ?? this.visibility,
   );
 
   /// Returns the best available cover media thumbnail.

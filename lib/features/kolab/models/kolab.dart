@@ -134,11 +134,28 @@ class PastEvent {
         : const [],
   );
 
+  /// Backend limits per past event (`past_events.*.photos` is `max:3`,
+  /// `past_events.*.videos` is `max:1`). Enforced client-side so the user is
+  /// told at the point of input instead of via a raw validation error on submit.
+  static const int maxPhotos = 3;
+  static const int maxVideos = 1;
+
   final String name;
   final DateTime date;
   final String? partnerName;
   final List<String> photos;
   final List<String> videos;
+
+  /// True when photos/videos exceed the backend limits (e.g. after importing a
+  /// profile event that has more media than a single past event may carry).
+  bool get exceedsMediaLimit =>
+      photos.length > maxPhotos || videos.length > maxVideos;
+
+  /// Returns a copy trimmed to the backend media limits, preserving order.
+  PastEvent capMedia() => copyWith(
+    photos: photos.take(maxPhotos).toList(growable: false),
+    videos: videos.take(maxVideos).toList(growable: false),
+  );
 
   Map<String, dynamic> toJson() => {
     'name': name,
@@ -249,6 +266,7 @@ class Kolab {
     this.description = '',
     this.preferredCity = '',
     this.area,
+    this.offerPhoto,
     this.media = const [],
     this.availabilityMode,
     this.availabilityStart,
@@ -310,6 +328,9 @@ class Kolab {
     description: json['description']?.toString() ?? '',
     preferredCity: json['preferred_city']?.toString() ?? '',
     area: json['area']?.toString(),
+    offerPhoto: ((json['offer_photo'] as String?)?.trim().isNotEmpty ?? false)
+        ? normalizeRemoteMediaUrl(json['offer_photo'].toString())
+        : null,
     media: json['media'] is List
         ? (json['media'] as List)
               .map((e) => KolabMedia.fromJson(e as Map<String, dynamic>))
@@ -401,6 +422,10 @@ class Kolab {
   final String description;
   final String preferredCity;
   final String? area;
+
+  /// Offer cover photo (collab_opportunities.offer_photo). Preferred thumbnail
+  /// for offer/kolab cards; falls back to [media] then the owner's photo.
+  final String? offerPhoto;
   final List<KolabMedia> media;
 
   // Availability
@@ -461,6 +486,7 @@ class Kolab {
     'description': description,
     'preferred_city': preferredCity,
     if (area != null && area!.isNotEmpty) 'area': area,
+    if (offerPhoto != null) 'offer_photo': offerPhoto,
     if (media.isNotEmpty) 'media': media.map((m) => m.toJson()).toList(),
     if (availabilityMode != null)
       'availability_mode': availabilityMode!.toApiValue(),
@@ -524,6 +550,7 @@ class Kolab {
     String? description,
     String? preferredCity,
     String? area,
+    String? offerPhoto,
     List<KolabMedia>? media,
     AvailabilityMode? availabilityMode,
     DateTime? availabilityStart,
@@ -582,6 +609,7 @@ class Kolab {
     description: description ?? this.description,
     preferredCity: preferredCity ?? this.preferredCity,
     area: clearArea ? null : (area ?? this.area),
+    offerPhoto: offerPhoto ?? this.offerPhoto,
     media: media ?? this.media,
     availabilityMode: clearAvailabilityMode
         ? null

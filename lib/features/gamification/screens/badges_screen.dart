@@ -30,13 +30,13 @@ class BadgesScreen extends ConsumerWidget {
       body: allBadgesAsync.when(
         data: (allBadges) => myBadgesAsync.when(
           data: (myBadges) => _buildContent(context, ref, allBadges, myBadges),
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: KolabingColors.primary),
+          loading: () => Center(
+            child: CircularProgressIndicator(color: context.colors.primary),
           ),
           error: (error, stack) => _buildErrorState(context, ref, error.toString()),
         ),
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: KolabingColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (error, stack) => _buildErrorState(context, ref, error.toString()),
       ),
@@ -60,7 +60,7 @@ class BadgesScreen extends ConsumerWidget {
         ref.invalidate(allBadgesProvider);
         ref.invalidate(myBadgesProvider);
       },
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: CustomScrollView(
         slivers: [
           // Stats header
@@ -80,7 +80,7 @@ class BadgesScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   AppLocalizations.of(context).badgesScreenEarnedBadges,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -119,7 +119,7 @@ class BadgesScreen extends ConsumerWidget {
               ),
               child: Text(
                 AppLocalizations.of(context).badgesScreenAllBadges,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
               ),
             ),
           ),
@@ -166,8 +166,8 @@ class BadgesScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            KolabingColors.primary,
-            KolabingColors.primary.withValues(alpha: 0.8),
+            context.colors.primary,
+            context.colors.primary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -175,7 +175,7 @@ class BadgesScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -191,10 +191,10 @@ class BadgesScreen extends ConsumerWidget {
               color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               LucideIcons.award,
               size: 32,
-              color: KolabingColors.onPrimary,
+              color: context.colors.onPrimary,
             ),
           ),
           const SizedBox(width: KolabingSpacing.lg),
@@ -203,11 +203,11 @@ class BadgesScreen extends ConsumerWidget {
             children: [
               Text(
                 '${myBadges.badges.length}',
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: context.colors.onPrimary),
               ),
               Text(
                 AppLocalizations.of(context).badgesScreenBadgesEarned,
-                style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
+                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onPrimary.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -227,17 +227,17 @@ class BadgesScreen extends ConsumerWidget {
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error.withValues(alpha: 0.7),
+              color: context.colors.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).badgesScreenFailedToLoad,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -249,7 +249,7 @@ class BadgesScreen extends ConsumerWidget {
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).gamificationTryAgain),
               style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
+                foregroundColor: context.colors.primary,
               ),
             ),
           ],

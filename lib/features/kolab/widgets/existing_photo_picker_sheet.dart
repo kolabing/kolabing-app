@@ -9,6 +9,7 @@ import '../../../config/theme/typography.dart';
 import '../../../features/profile/providers/gallery_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../utils/remote_media_url.dart';
+import '../../../widgets/kolabing_button.dart';
 
 class ExistingPhotoPickerSheet extends ConsumerStatefulWidget {
   const ExistingPhotoPickerSheet({
@@ -80,8 +81,8 @@ class _ExistingPhotoPickerSheetState
       child: Padding(
         padding: const EdgeInsets.only(top: 48),
         child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: KolabingColors.surface,
+          decoration: BoxDecoration(
+            color: context.colors.surface,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(KolabingRadius.lg),
             ),
@@ -98,7 +99,7 @@ class _ExistingPhotoPickerSheetState
                       width: 42,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: KolabingColors.darkBorder,
+                        color: context.colors.darkBorder,
                         borderRadius: BorderRadius.circular(999),
                       ),
                     ),
@@ -106,12 +107,12 @@ class _ExistingPhotoPickerSheetState
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     widget.title,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     l10n.existingPhotoPickerSubtitle(widget.maxSelection),
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Expanded(
@@ -132,15 +133,13 @@ class _ExistingPhotoPickerSheetState
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Expanded(
-                        child: ElevatedButton(
+                        child: KolabingButton(
+                          label: widget.confirmLabel,
                           onPressed: selectedPhotos.isEmpty
                               ? null
                               : () => Navigator.of(context).pop(selectedPhotos),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: KolabingColors.primary,
-                            foregroundColor: KolabingColors.onPrimary,
-                          ),
-                          child: Text(widget.confirmLabel),
+                          variant: KolabingButtonVariant.primary,
+                          size: KolabingButtonSize.compact,
                         ),
                       ),
                     ],
@@ -160,8 +159,8 @@ class _ExistingPhotoPickerSheetState
     required List<GalleryPhoto> mergedPhotos,
   }) {
     if (galleryState.isLoading && mergedPhotos.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: KolabingColors.primary),
+      return Center(
+        child: CircularProgressIndicator(color: context.colors.primary),
       );
     }
 
@@ -169,7 +168,7 @@ class _ExistingPhotoPickerSheetState
       return Center(
         child: Text(
           AppLocalizations.of(context).existingPhotoPickerEmpty,
-          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
       );
     }
@@ -195,11 +194,11 @@ class _ExistingPhotoPickerSheetState
                   photo.url,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: KolabingColors.surfaceVariant,
+                    color: context.colors.surfaceVariant,
                     alignment: Alignment.center,
-                    child: const Icon(
+                    child: Icon(
                       LucideIcons.imageOff,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ),
@@ -208,26 +207,26 @@ class _ExistingPhotoPickerSheetState
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: isSelected
-                          ? KolabingColors.primary
+                          ? context.colors.primary
                           : Colors.transparent,
                       width: 3,
                     ),
                     color: isSelected
-                        ? KolabingColors.primary.withValues(alpha: 0.14)
+                        ? context.colors.primary.withValues(alpha: 0.14)
                         : Colors.transparent,
                   ),
                 ),
                 if (isSelected)
-                  const Positioned(
+                  Positioned(
                     top: 8,
                     right: 8,
                     child: CircleAvatar(
                       radius: 12,
-                      backgroundColor: KolabingColors.primary,
+                      backgroundColor: context.colors.primary,
                       child: Icon(
                         Icons.check,
                         size: 14,
-                        color: KolabingColors.onPrimary,
+                        color: context.colors.onPrimary,
                       ),
                     ),
                   ),

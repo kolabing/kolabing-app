@@ -41,6 +41,7 @@ class PastEventsSection extends ConsumerWidget {
     // Own profile → use global notifier provider
     final state = ref.watch(eventsProvider);
     return _buildContainer(
+      context: context,
       isDark: isDark,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,6 +64,7 @@ class PastEventsSection extends ConsumerWidget {
 
     return asyncEvents.when(
       loading: () => _buildContainer(
+        context: context,
         isDark: isDark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,11 +72,12 @@ class PastEventsSection extends ConsumerWidget {
           children: [
             _buildHeader(context, ref, const [], isDark),
             const SizedBox(height: KolabingSpacing.md),
-            _buildLoadingState(isDark),
+            _buildLoadingState(context, isDark),
           ],
         ),
       ),
       error: (error, _) => _buildContainer(
+        context: context,
         isDark: isDark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,6 +94,7 @@ class PastEventsSection extends ConsumerWidget {
         if (events.isEmpty) return const SizedBox.shrink();
 
         return _buildContainer(
+          context: context,
           isDark: isDark,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,11 +114,14 @@ class PastEventsSection extends ConsumerWidget {
   // Shared container
   // ---------------------------------------------------------------------------
 
-  Widget _buildContainer({required bool isDark, required Widget child}) {
+  Widget _buildContainer(
+      {required BuildContext context,
+      required bool isDark,
+      required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: isDark
             ? null
@@ -138,17 +145,17 @@ class PastEventsSection extends ConsumerWidget {
       BuildContext context, WidgetRef ref, List<Event> events, bool isDark) {
     return Row(
       children: [
-        const Icon(
+        Icon(
           LucideIcons.calendar,
           size: 20,
-          color: KolabingColors.primary,
+          color: context.colors.primary,
         ),
         const SizedBox(width: KolabingSpacing.xs),
         Text(
           AppLocalizations.of(context).pastEventsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
             color:
-                isDark ? KolabingColors.textOnDark : KolabingColors.onSurface,
+                isDark ? context.colors.textOnDark : context.colors.onSurface,
           ),
         ),
         if (events.isNotEmpty) ...[
@@ -159,13 +166,13 @@ class PastEventsSection extends ConsumerWidget {
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.1),
+              color: context.colors.primary.withValues(alpha: 0.1),
               borderRadius: KolabingRadius.borderRadiusSm,
             ),
             child: Text(
               '${events.length}',
               style: KolabingTextStyles.labelSmall.copyWith(
-                color: KolabingColors.primary,
+                color: context.colors.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -179,7 +186,7 @@ class PastEventsSection extends ConsumerWidget {
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(AppLocalizations.of(context).pastEventsAddButton),
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.primary,
+              foregroundColor: context.colors.primary,
               padding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.sm,
                 vertical: KolabingSpacing.xs,
@@ -199,7 +206,7 @@ class PastEventsSection extends ConsumerWidget {
   Widget _buildOwnContent(
       BuildContext context, WidgetRef ref, EventsState state, bool isDark) {
     if (state.isLoading) {
-      return _buildLoadingState(isDark);
+      return _buildLoadingState(context, isDark);
     }
 
     if (state.error != null && state.events.isEmpty) {
@@ -217,7 +224,7 @@ class PastEventsSection extends ConsumerWidget {
   // Shared widgets
   // ---------------------------------------------------------------------------
 
-  Widget _buildLoadingState(bool isDark) {
+  Widget _buildLoadingState(BuildContext context, bool isDark) {
     return SizedBox(
       height: 220,
       child: ListView.separated(
@@ -226,14 +233,14 @@ class PastEventsSection extends ConsumerWidget {
         separatorBuilder: (_, __) => const SizedBox(width: KolabingSpacing.sm),
         itemBuilder: (context, index) => Shimmer.fromColors(
           baseColor: isDark
-              ? KolabingColors.darkSurface
-              : KolabingColors.surfaceVariant,
+              ? context.colors.darkSurface
+              : context.colors.surfaceVariant,
           highlightColor:
-              isDark ? KolabingColors.darkBorder : KolabingColors.surface,
+              isDark ? context.colors.darkBorder : context.colors.surface,
           child: Container(
             width: 180,
             decoration: BoxDecoration(
-              color: isDark ? KolabingColors.darkSurface : Colors.white,
+              color: isDark ? context.colors.darkSurface : Colors.white,
               borderRadius: KolabingRadius.borderRadiusLg,
             ),
           ),
@@ -249,16 +256,16 @@ class PastEventsSection extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             LucideIcons.alertCircle,
             size: 32,
-            color: KolabingColors.error,
+            color: context.colors.error,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             AppLocalizations.of(context).pastEventsLoadError,
             style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -288,16 +295,16 @@ class PastEventsSection extends ConsumerWidget {
             height: 64,
             decoration: BoxDecoration(
               color: isDark
-                  ? KolabingColors.darkBorder
-                  : KolabingColors.surfaceVariant,
+                  ? context.colors.darkBorder
+                  : context.colors.surfaceVariant,
               shape: BoxShape.circle,
             ),
             child: Icon(
               LucideIcons.calendarX,
               size: 28,
               color: isDark
-                  ? KolabingColors.textOnDark.withValues(alpha: 0.6)
-                  : KolabingColors.textTertiary,
+                  ? context.colors.textOnDark.withValues(alpha: 0.6)
+                  : context.colors.textTertiary,
             ),
           ),
           const SizedBox(height: KolabingSpacing.md),
@@ -305,15 +312,15 @@ class PastEventsSection extends ConsumerWidget {
             AppLocalizations.of(context).pastEventsEmptyTitle,
             style: KolabingTextStyles.titleSmall.copyWith(
               color: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             AppLocalizations.of(context).pastEventsEmptySubtitle,
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -326,7 +333,7 @@ class PastEventsSection extends ConsumerWidget {
               style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: KolabingColors.onSurfaceVariant,
+              foregroundColor: context.colors.onSurfaceVariant,
             ),
           ),
         ],

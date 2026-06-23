@@ -3,6 +3,20 @@ import '../../auth/models/user_model.dart';
 import 'onboarding_photo.dart';
 import 'place_suggestion.dart';
 
+/// A required onboarding field, surfaced when account creation is blocked so
+/// the user is told exactly what to complete (instead of a generic message).
+enum OnboardingField {
+  name,
+  businessCategory,
+  venueType,
+  venueCapacity,
+  venuePhotos,
+  businessAddress,
+  targetCities,
+  communityType,
+  communityCity,
+}
+
 /// Onboarding data state
 class OnboardingData {
   const OnboardingData({
@@ -17,6 +31,12 @@ class OnboardingData {
     this.businessTypeIds = const [],
     this.businessTypeSlugs = const [],
     this.businessTypeNames = const [],
+    this.hasVenue,
+    this.targetCityIds = const [],
+    this.targetCityNames = const [],
+    this.offering,
+    this.productType,
+    this.communitySize,
     this.cityId,
     this.cityName,
     this.location,
@@ -74,6 +94,39 @@ class OnboardingData {
 
   /// Business category display names (business only, up to 3)
   final List<String> businessTypeNames;
+
+  /// Goal selected on the first business onboarding step.
+  ///
+  /// `true`  -> "Fill my venue" (venue path: Google Places lookup, etc.).
+  /// `false` -> "Promote a product/service" (product path: no physical venue).
+  /// `null`  -> not chosen yet. Sent to the backend as `has_venue`; the column
+  /// is being added server-side separately, so the submit is guarded against a
+  /// 422 on the unknown field (see [OnboardingNotifier.completeWithEmail]).
+  final bool? hasVenue;
+
+  /// Target city ids for the product path (business with no venue).
+  ///
+  /// Free businesses may pick up to 3 cities; Premium is unlimited. The UI
+  /// enforces the free limit. Sent to the backend as `target_city_ids[]`.
+  final List<String> targetCityIds;
+
+  /// Display names for [targetCityIds], parallel-indexed (for summaries/chips).
+  final List<String> targetCityNames;
+
+  /// Optional free-text "what you offer" (product path, business only).
+  final String? offering;
+
+  /// Product-type slug (product path, business only). Drives the backend
+  /// auto-offer category. Admin-managed via `GET /lookup/product-types`; slugs
+  /// match `ProductType.toApiValue()`. Sent as `product_type`; the field is
+  /// being added server-side, so the submit is guarded against a 422 on the
+  /// unknown field (see [OnboardingNotifier.completeWithEmail]).
+  final String? productType;
+
+  /// Stable community size captured during community onboarding (community
+  /// only). Sent as `community_size`; the column is being added server-side, so
+  /// the submit is guarded against a 422 on the unknown field.
+  final int? communitySize;
 
   /// Selected city ID
   final String? cityId;
@@ -172,8 +225,19 @@ class OnboardingData {
     return names.join(' · ');
   }
 
+  /// True when this is a business that chose the "promote a product/service"
+  /// goal (no physical venue). Used to branch onboarding completeness and
+  /// navigation between the venue path and the product path.
+  bool get isProductBusiness => isBusiness && hasVenue == false;
+
   /// Check if step 1 is complete (name is required)
   bool get isStep1Complete {
+    if (isProductBusiness) {
+      // Product path step 1 is identity: name + at least one category.
+      return name != null &&
+          name!.trim().isNotEmpty &&
+          selectedBusinessTypeSlugs.isNotEmpty;
+    }
     if (isBusiness) {
       return location != null &&
           location!.city.trim().isNotEmpty &&
@@ -188,6 +252,10 @@ class OnboardingData {
   /// requiring business name, at least one business type, venue type and
   /// capacity. The venue name is mirrored from the business name.
   bool get isStep2Complete {
+    if (isProductBusiness) {
+      // Product path step 2 is the multi-select cities step.
+      return targetCityIds.isNotEmpty;
+    }
     if (isBusiness) {
       return name != null &&
           name!.trim().isNotEmpty &&
@@ -202,6 +270,11 @@ class OnboardingData {
 
   /// Check if step 3 is complete (city is required)
   bool get isStep3Complete {
+    if (isProductBusiness) {
+      // Product path step 3 (about/contact + optional offer photos) has no hard
+      // requirement beyond steps 1-2; about and photos are optional.
+      return true;
+    }
     if (isBusiness) {
       return venuePhotos.isNotEmpty;
     }
@@ -214,6 +287,7 @@ class OnboardingData {
   /// step 2, so this delegates to [isStep2Complete] and is kept for
   /// compatibility with [canProceed] / [isComplete].
   bool get isStep4Complete {
+    if (isProductBusiness) return true;
     if (isBusiness) return isStep2Complete;
     return true;
   }
@@ -221,6 +295,47 @@ class OnboardingData {
   /// Check if all required fields are complete
   bool get isComplete =>
       isStep1Complete && isStep2Complete && isStep3Complete && isStep4Complete;
+
+  /// The required fields still missing, per user type / path. Mirrors the
+  /// `isStepNComplete` rules so [isComplete] is true exactly when this is empty.
+  /// Used to tell the user which field to complete instead of a generic error.
+  List<OnboardingField> get missingFields {
+    final missing = <OnboardingField>[];
+    bool blank(String? v) => v == null || v.trim().isEmpty;
+
+    if (isProductBusiness) {
+      if (blank(name)) missing.add(OnboardingField.name);
+      if (selectedBusinessTypeSlugs.isEmpty) {
+        missing.add(OnboardingField.businessCategory);
+      }
+      if (targetCityIds.isEmpty) missing.add(OnboardingField.targetCities);
+      return missing;
+    }
+
+    if (isBusiness) {
+      if (location == null ||
+          blank(location!.city) ||
+          blank(location!.formattedAddress)) {
+        missing.add(OnboardingField.businessAddress);
+      }
+      if (blank(name)) missing.add(OnboardingField.name);
+      if (selectedBusinessTypeSlugs.isEmpty) {
+        missing.add(OnboardingField.businessCategory);
+      }
+      if (blank(venueType)) missing.add(OnboardingField.venueType);
+      if (venueCapacity == null || venueCapacity! <= 0) {
+        missing.add(OnboardingField.venueCapacity);
+      }
+      if (venuePhotos.isEmpty) missing.add(OnboardingField.venuePhotos);
+      return missing;
+    }
+
+    // Community
+    if (blank(name)) missing.add(OnboardingField.name);
+    if (blank(type)) missing.add(OnboardingField.communityType);
+    if (blank(cityId)) missing.add(OnboardingField.communityCity);
+    return missing;
+  }
 
   /// Is business user
   bool get isBusiness => userType == UserType.business;
@@ -240,6 +355,11 @@ class OnboardingData {
     List<String>? businessTypeIds,
     List<String>? businessTypeSlugs,
     List<String>? businessTypeNames,
+    bool? hasVenue,
+    List<String>? targetCityIds,
+    List<String>? targetCityNames,
+    String? offering,
+    int? communitySize,
     String? cityId,
     String? cityName,
     PlaceSuggestion? location,
@@ -256,6 +376,7 @@ class OnboardingData {
     double? venueRating,
     int? venueUserRatingsTotal,
     List<String>? venueGooglePlaceTypes,
+    String? productType,
     String? about,
     String? phone,
     String? instagram,
@@ -263,6 +384,7 @@ class OnboardingData {
     String? website,
     String? referralCode,
     int? currentStep,
+    bool clearProductType = false,
     bool clearPhoto = false,
     bool clearAbout = false,
     bool clearPhone = false,
@@ -282,6 +404,8 @@ class OnboardingData {
     bool clearVenueUserRatingsTotal = false,
     bool clearTypeSelection = false,
     bool clearReferralCode = false,
+    bool clearOffering = false,
+    bool clearCommunitySize = false,
   }) => OnboardingData(
     userType: userType ?? this.userType,
     name: name ?? this.name,
@@ -294,6 +418,14 @@ class OnboardingData {
     businessTypeIds: businessTypeIds ?? this.businessTypeIds,
     businessTypeSlugs: businessTypeSlugs ?? this.businessTypeSlugs,
     businessTypeNames: businessTypeNames ?? this.businessTypeNames,
+    hasVenue: hasVenue ?? this.hasVenue,
+    targetCityIds: targetCityIds ?? this.targetCityIds,
+    targetCityNames: targetCityNames ?? this.targetCityNames,
+    offering: clearOffering ? null : (offering ?? this.offering),
+    productType: clearProductType ? null : (productType ?? this.productType),
+    communitySize: clearCommunitySize
+        ? null
+        : (communitySize ?? this.communitySize),
     cityId: cityId ?? this.cityId,
     cityName: cityName ?? this.cityName,
     location: clearLocation ? null : (location ?? this.location),
@@ -348,6 +480,15 @@ class OnboardingData {
         : cityName;
     final resolvedBusinessSlugs = selectedBusinessTypeSlugs;
     final normalizedReferralCode = normalizeReferralCode(referralCode);
+    // Product path uses the first selected target city as the profile city when
+    // there is no venue to derive it from.
+    final productCityId = (resolvedCityId == null || resolvedCityId.isEmpty)
+        ? (targetCityIds.isNotEmpty ? targetCityIds.first : null)
+        : resolvedCityId;
+    final productCityName =
+        (resolvedCityName == null || resolvedCityName.isEmpty)
+        ? (targetCityNames.isNotEmpty ? targetCityNames.first : null)
+        : resolvedCityName;
 
     return {
       'name': name?.trim(),
@@ -357,10 +498,32 @@ class OnboardingData {
       if (resolvedBusinessSlugs.isNotEmpty)
         'business_types': resolvedBusinessSlugs,
       if (resolvedBusinessSlugs.isNotEmpty) 'categories': resolvedBusinessSlugs,
-      if (resolvedCityId != null && resolvedCityId.isNotEmpty)
-        'city_id': resolvedCityId,
-      if (resolvedCityName != null && resolvedCityName.isNotEmpty)
-        'city_name': resolvedCityName,
+      // Goal flag — backend column `business_profiles.has_venue` (being added
+      // separately). Only sent when a goal was actually chosen.
+      if (hasVenue != null) 'has_venue': hasVenue,
+      if (isProductBusiness) ...{
+        if (productCityId != null && productCityId.isNotEmpty)
+          'city_id': productCityId,
+        if (productCityName != null && productCityName.isNotEmpty)
+          'city_name': productCityName,
+        if (targetCityIds.isNotEmpty) 'target_city_ids': targetCityIds,
+        if (offering != null && offering!.trim().isNotEmpty)
+          'offering': offering!.trim(),
+        // Drives the backend auto-offer category. Guarded by the 422-strip
+        // retry so onboarding still completes if the field isn't deployed.
+        if (productType != null && productType!.trim().isNotEmpty)
+          'product_type': productType!.trim(),
+        if (venuePhotos.isNotEmpty)
+          'offer_photos': venuePhotos
+              .map((photo) => photo.payloadValue)
+              .where((value) => value.trim().isNotEmpty)
+              .toList(),
+      } else ...{
+        if (resolvedCityId != null && resolvedCityId.isNotEmpty)
+          'city_id': resolvedCityId,
+        if (resolvedCityName != null && resolvedCityName.isNotEmpty)
+          'city_name': resolvedCityName,
+      },
       if (about != null && about!.isNotEmpty) 'about': about?.trim(),
       if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
       if (instagram != null && instagram!.isNotEmpty)
@@ -368,36 +531,38 @@ class OnboardingData {
       if (website != null && website!.isNotEmpty) 'website': website?.trim(),
       if (normalizedReferralCode != null)
         'referral_code': normalizedReferralCode,
-      'primary_venue': {
-        'name': venueName?.trim(),
-        'venue_type': venueType,
-        'capacity': venueCapacity,
-        'place_id': location?.placeId,
-        'formatted_address': location?.formattedAddress,
-        'city': location?.city,
-        if (location?.country != null) 'country': location?.country,
-        if (location?.latitude != null) 'latitude': location?.latitude,
-        if (location?.longitude != null) 'longitude': location?.longitude,
-        if (venuePhone != null && venuePhone!.isNotEmpty)
-          'phone_number': venuePhone?.trim(),
-        if (venueWebsite != null && venueWebsite!.isNotEmpty)
-          'website': venueWebsite?.trim(),
-        if (venueOpeningHours.isNotEmpty) 'opening_hours': venueOpeningHours,
-        if (venueDescription != null && venueDescription!.isNotEmpty)
-          'description': venueDescription?.trim(),
-        if (venuePriceLevel != null && venuePriceLevel!.isNotEmpty)
-          'price_level': venuePriceLevel,
-        if (venueRating != null) 'rating': venueRating,
-        if (venueUserRatingsTotal != null)
-          'user_ratings_total': venueUserRatingsTotal,
-        if (venueGooglePlaceTypes.isNotEmpty)
-          'google_place_types': venueGooglePlaceTypes,
-        if (venuePhotos.isNotEmpty)
-          'photos': venuePhotos
-              .map((photo) => photo.payloadValue)
-              .where((value) => value.trim().isNotEmpty)
-              .toList(),
-      },
+      // Venue path only — product businesses have no physical venue.
+      if (!isProductBusiness)
+        'primary_venue': {
+          'name': venueName?.trim(),
+          'venue_type': venueType,
+          'capacity': venueCapacity,
+          'place_id': location?.placeId,
+          'formatted_address': location?.formattedAddress,
+          'city': location?.city,
+          if (location?.country != null) 'country': location?.country,
+          if (location?.latitude != null) 'latitude': location?.latitude,
+          if (location?.longitude != null) 'longitude': location?.longitude,
+          if (venuePhone != null && venuePhone!.isNotEmpty)
+            'phone_number': venuePhone?.trim(),
+          if (venueWebsite != null && venueWebsite!.isNotEmpty)
+            'website': venueWebsite?.trim(),
+          if (venueOpeningHours.isNotEmpty) 'opening_hours': venueOpeningHours,
+          if (venueDescription != null && venueDescription!.isNotEmpty)
+            'description': venueDescription?.trim(),
+          if (venuePriceLevel != null && venuePriceLevel!.isNotEmpty)
+            'price_level': venuePriceLevel,
+          if (venueRating != null) 'rating': venueRating,
+          if (venueUserRatingsTotal != null)
+            'user_ratings_total': venueUserRatingsTotal,
+          if (venueGooglePlaceTypes.isNotEmpty)
+            'google_place_types': venueGooglePlaceTypes,
+          if (venuePhotos.isNotEmpty)
+            'photos': venuePhotos
+                .map((photo) => photo.payloadValue)
+                .where((value) => value.trim().isNotEmpty)
+                .toList(),
+        },
     };
   }
 
@@ -407,6 +572,10 @@ class OnboardingData {
     if (_profilePhotoDataUri != null) 'profile_photo': _profilePhotoDataUri,
     'community_type': typeSlug,
     'city_id': cityId,
+    // Stable community size — backend column `community_profiles.community_size`
+    // (being added separately). Guarded against a 422 on the unknown field at
+    // the submit layer.
+    if (communitySize != null) 'community_size': communitySize,
     if (about != null && about!.isNotEmpty) 'about': about?.trim(),
     if (phone != null && phone!.isNotEmpty) 'phone_number': phone?.trim(),
     if (instagram != null && instagram!.isNotEmpty)

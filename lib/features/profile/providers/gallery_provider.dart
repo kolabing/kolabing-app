@@ -165,12 +165,14 @@ final galleryServiceProvider = Provider<GalleryService>((ref) {
 class GalleryNotifier extends Notifier<GalleryState>
     with AuthScopeGuard<GalleryState> {
   final ImagePicker _imagePicker = ImagePicker();
-  late final GalleryService _galleryService;
+  // Getter, NOT a `late final` assigned in build(): galleryProvider is
+  // invalidated on session reset, which re-runs build() on the same Notifier
+  // instance — reassigning a `late final` would throw LateInitializationError.
+  GalleryService get _galleryService => ref.read(galleryServiceProvider);
   int _activeRequestGeneration = 0;
 
   @override
   GalleryState build() {
-    _galleryService = ref.read(galleryServiceProvider);
     ref.listen<AuthState>(authProvider, (previous, next) {
       handleAuthStateChange(
         previous,

@@ -34,7 +34,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -89,7 +89,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-        backgroundColor: KolabingColors.background,
+        backgroundColor: context.colors.background,
         body: SafeArea(
           child: Column(
             children: [
@@ -117,7 +117,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                           style: KolabingTextStyles.bodyLarge.copyWith(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
-                            color: KolabingColors.onSurface,
+                            color: context.colors.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -129,7 +129,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         child: Text(
                           l10n.communityStep4Subtitle,
                           style: KolabingTextStyles.bodySmall.copyWith(
-                            color: KolabingColors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -141,7 +141,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         l10n.communityStep4AboutLabel,
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -151,23 +151,23 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         maxLines: 5,
                         minLines: 3,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: l10n.communityStep4AboutHint,
                           hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: KolabingColors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.all(16),
                           counterStyle: KolabingTextStyles.bodySmall.copyWith(
                             fontSize: 12,
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                         ),
                       ),
@@ -178,34 +178,34 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         'Instagram',
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _instagramController,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: l10n.communityStep4UsernameHint,
                           hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             LucideIcons.instagram,
                             size: 20,
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           prefixText: '@ ',
                           prefixStyle: KolabingTextStyles.bodyMedium.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: KolabingColors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -220,34 +220,34 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         'TikTok',
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _tiktokController,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: l10n.communityStep4UsernameHint,
                           hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             LucideIcons.music,
                             size: 20,
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           prefixText: '@ ',
                           prefixStyle: KolabingTextStyles.bodyMedium.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: KolabingColors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -262,7 +262,7 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         l10n.communityStep4WebsiteLabel,
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -270,23 +270,23 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                         controller: _websiteController,
                         keyboardType: TextInputType.url,
                         style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: KolabingColors.onSurface,
+                          color: context.colors.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: l10n.communityStep4WebsiteHint,
                           hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             LucideIcons.globe,
                             size: 20,
-                            color: KolabingColors.textTertiary,
+                            color: context.colors.textTertiary,
                           ),
                           filled: true,
-                          fillColor: KolabingColors.surfaceVariant,
+                          fillColor: context.colors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(color: context.colors.outlineVariant),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -309,11 +309,6 @@ class _CommunityStep4ScreenState extends ConsumerState<CommunityStep4Screen> {
                   child: ElevatedButton(
                     onPressed: _handleContinue,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: KolabingColors.primary,
-                      foregroundColor: KolabingColors.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                       elevation: 0,
                     ),
                     child: Text(

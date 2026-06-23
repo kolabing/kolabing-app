@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../config/constants/radius.dart';
 import '../../config/theme/colors.dart';
 import '../../config/theme/typography.dart';
 import '../ui_icon.dart';
@@ -23,15 +22,14 @@ class NavItem {
   final bool showDot;
 
   /// Optional UiIconSlug. When provided, [UiIcon] is rendered instead of
-  /// the Lucide [icon]/[activeIcon] IconData, allowing custom SVG branding
-  /// in the bottom nav while keeping backward compatibility.
+  /// the Lucide [icon]/[activeIcon] IconData.
   final UiIconSlug? iconSlug;
 }
 
 /// Kolabing custom bottom navigation bar
 ///
-/// A styled bottom navigation bar following the design system.
-/// Supports numeric badges and dot indicators.
+/// White background with rounded top corners. Each tab shows icon + label.
+/// Active tab uses charcoal icon/label + short underline indicator.
 class KolabingBottomNavBar extends StatelessWidget {
   const KolabingBottomNavBar({
     required this.items,
@@ -50,20 +48,23 @@ class KolabingBottomNavBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: KolabingColors.navBarBackground,
+        color: context.colors.navBarBackground,
         border: Border(
-          top: BorderSide(
-            color: KolabingColors.charcoal.withValues(alpha: 0.08),
-            width: 1,
-          ),
+          top: BorderSide(color: context.colors.hairline, width: 1),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 64,
+          height: 68,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
               items.length,
               (index) => _NavBarItem(
@@ -95,87 +96,65 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = isSelected
-        ? KolabingColors.navBarBackground
-        : KolabingColors.navInactive;
-    final labelColor = isSelected
-        ? KolabingColors.navBarBackground
-        : KolabingColors.navInactive;
+    final iconColor =
+        isSelected ? context.colors.ink : context.colors.navInactive;
+    final labelColor =
+        isSelected ? context.colors.ink : context.colors.navInactive;
 
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
         child: SizedBox(
-          height: 64,
-          child: Center(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              padding: EdgeInsets.symmetric(
-                horizontal: isSelected ? 10 : 14,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? KolabingColors.charcoal
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(KolabingRadius.round),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+          height: 68,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      if (item.iconSlug != null)
-                        UiIcon(
-                          icon: item.iconSlug!,
-                          size: 20,
-                          color: iconColor,
-                        )
-                      else
-                        Icon(
-                          isSelected ? item.activeIcon : item.icon,
-                          color: iconColor,
-                          size: 20,
-                        ),
-                      if (item.badgeCount != null && item.badgeCount! > 0)
-                        Positioned(
-                          right: -8,
-                          top: -4,
-                          child: _NumericBadge(count: item.badgeCount!),
-                        ),
-                      if (item.showDot && item.badgeCount == null)
-                        Positioned(
-                          right: -2,
-                          top: -2,
-                          child: _DotBadge(),
-                        ),
-                    ],
-                  ),
-                  if (isSelected) ...[
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          item.label.toUpperCase(),
-                          style: KolabingTextStyles.labelSmall.copyWith(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: labelColor,
-                            letterSpacing: 0.5,
-                          ),
-                          maxLines: 1,
-                          softWrap: false,
-                        ),
-                      ),
+                  if (item.iconSlug != null)
+                    UiIcon(
+                      icon: item.iconSlug!,
+                      size: 22,
+                      color: iconColor,
+                    )
+                  else
+                    Icon(
+                      isSelected ? item.activeIcon : item.icon,
+                      color: iconColor,
+                      size: 22,
                     ),
-                  ],
+                  if (item.badgeCount != null && item.badgeCount! > 0)
+                    Positioned(
+                      right: -8,
+                      top: -4,
+                      child: _NumericBadge(count: item.badgeCount!),
+                    ),
+                  if (item.showDot && item.badgeCount == null)
+                    Positioned(
+                      right: -2,
+                      top: -2,
+                      child: _DotBadge(),
+                    ),
                 ],
               ),
-            ),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  item.label.toUpperCase(),
+                  style: KolabingTextStyles.labelSmall.copyWith(
+                    fontSize: 9,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: labelColor,
+                    letterSpacing: 0.4,
+                  ),
+                  maxLines: 1,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -196,7 +175,7 @@ class _NumericBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       constraints: const BoxConstraints(minWidth: 18),
       decoration: BoxDecoration(
-        color: KolabingColors.error,
+        color: context.colors.error,
         borderRadius: BorderRadius.circular(9),
       ),
       child: Text(
@@ -216,14 +195,14 @@ class _DotBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 8,
-      height: 8,
+      width: 7,
+      height: 7,
       decoration: BoxDecoration(
-        color: KolabingColors.charcoal,
+        color: context.colors.error,
         shape: BoxShape.circle,
         border: Border.all(
-          color: KolabingColors.navBarBackground,
-          width: 2,
+          color: context.colors.navBarBackground,
+          width: 1.5,
         ),
       ),
     );

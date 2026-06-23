@@ -18,7 +18,8 @@ class AttendeeStep2Screen extends ConsumerStatefulWidget {
   const AttendeeStep2Screen({super.key});
 
   @override
-  ConsumerState<AttendeeStep2Screen> createState() => _AttendeeStep2ScreenState();
+  ConsumerState<AttendeeStep2Screen> createState() =>
+      _AttendeeStep2ScreenState();
 }
 
 class _AttendeeStep2ScreenState extends ConsumerState<AttendeeStep2Screen> {
@@ -79,7 +80,9 @@ class _AttendeeStep2ScreenState extends ConsumerState<AttendeeStep2Screen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: const LinearProgressIndicator(
@@ -121,10 +124,12 @@ class _AttendeeStep2ScreenState extends ConsumerState<AttendeeStep2Screen> {
                       hintText: l10n.editProfileCitySearchHint,
                       prefixIcon: const Icon(LucideIcons.search, size: 20),
                       filled: true,
-                      fillColor: KolabingColors.surfaceVariant,
+                      fillColor: KolabingColors.surfaceContainerLow,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(KolabingRadius.sm),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(
+                          color: KolabingColors.outlineVariant,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: KolabingSpacing.md,
@@ -171,7 +176,9 @@ class _AttendeeStep2ScreenState extends ConsumerState<AttendeeStep2Screen> {
                   );
                 },
                 loading: () => const Center(
-                  child: CircularProgressIndicator(color: KolabingColors.primary),
+                  child: CircularProgressIndicator(
+                    color: KolabingColors.primary,
+                  ),
                 ),
                 error: (_, _) => Center(
                   child: Column(

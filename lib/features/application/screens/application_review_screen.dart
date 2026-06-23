@@ -13,6 +13,7 @@ import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 import '../../../widgets/category_icon.dart';
+import '../../../widgets/kolabing_button.dart';
 
 /// Application review screen — shown when tapping a received application.
 /// Displays the applicant's profile like a "CV card" with their message,
@@ -42,14 +43,14 @@ class _ApplicationReviewScreenState
         ref.watch(applicationDetailProvider(widget.applicationId));
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: KolabingColors.surface,
+        backgroundColor: context.colors.surface,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft,
-              color: KolabingColors.onSurface),
+          icon: Icon(LucideIcons.arrowLeft,
+              color: context.colors.onSurface),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -57,13 +58,13 @@ class _ApplicationReviewScreenState
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.onSurface,
+            color: context.colors.onSurface,
           ),
         ),
       ),
       body: asyncApplication.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: KolabingColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (e, _) => Center(
           child: Padding(
@@ -71,15 +72,15 @@ class _ApplicationReviewScreenState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(LucideIcons.alertCircle,
-                    size: 48, color: KolabingColors.error),
+                Icon(LucideIcons.alertCircle,
+                    size: 48, color: context.colors.error),
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
                   AppLocalizations.of(context).applicationReviewLoadError,
                   style: KolabingTextStyles.bodyMedium.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
@@ -88,7 +89,7 @@ class _ApplicationReviewScreenState
                       applicationDetailProvider(widget.applicationId)),
                   child: Text(AppLocalizations.of(context).commonRetry,
                       style: KolabingTextStyles.labelLarge.copyWith(
-                          color: KolabingColors.primary)),
+                          color: context.colors.primary)),
                 ),
               ],
             ),
@@ -135,8 +136,8 @@ class _ApplicationReviewScreenState
                         : AppLocalizations.of(context).applicationReviewNoMessage,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.message.isNotEmpty
-                          ? KolabingColors.onSurface
-                          : KolabingColors.textTertiary,
+                          ? context.colors.onSurface
+                          : context.colors.textTertiary,
                       height: 1.5,
                     ),
                   ),
@@ -153,8 +154,8 @@ class _ApplicationReviewScreenState
                         : AppLocalizations.of(context).applicationReviewNotSpecified,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.availability.isNotEmpty
-                          ? KolabingColors.onSurface
-                          : KolabingColors.textTertiary,
+                          ? context.colors.onSurface
+                          : context.colors.textTertiary,
                       height: 1.5,
                     ),
                   ),
@@ -168,7 +169,7 @@ class _ApplicationReviewScreenState
                   child: Text(
                     application.createdAtDisplay,
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -195,13 +196,13 @@ class _ApplicationReviewScreenState
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: KolabingColors.softYellow,
+        color: context.colors.softYellow,
         borderRadius: KolabingRadius.borderRadiusSm,
-        border: Border.all(color: KolabingColors.softYellowBorder),
+        border: Border.all(color: context.colors.softYellowBorder),
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.briefcase, size: 18, color: KolabingColors.onPrimary),
+          Icon(LucideIcons.briefcase, size: 18, color: context.colors.onPrimary),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
@@ -209,7 +210,7 @@ class _ApplicationReviewScreenState
                   AppLocalizations.of(context).applicationReviewUnknownOpportunity,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurface,
+                color: context.colors.onSurface,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -225,7 +226,7 @@ class _ApplicationReviewScreenState
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         boxShadow: [
           BoxShadow(
@@ -242,7 +243,7 @@ class _ApplicationReviewScreenState
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: KolabingColors.primary.withValues(alpha: 0.12),
+              color: context.colors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: profile?.avatarUrl != null
@@ -265,7 +266,7 @@ class _ApplicationReviewScreenState
             style: KolabingTextStyles.bodyLarge.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -279,7 +280,7 @@ class _ApplicationReviewScreenState
                 vertical: 3,
               ),
               decoration: BoxDecoration(
-                color: KolabingColors.accentOrange.withValues(alpha: 0.3),
+                color: context.colors.accentOrange.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -291,7 +292,7 @@ class _ApplicationReviewScreenState
                     profile.category!,
                     style: KolabingTextStyles.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.accentOrangeText,
+                      color: context.colors.accentOrangeText,
                     ),
                   ),
                 ],
@@ -305,13 +306,13 @@ class _ApplicationReviewScreenState
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(LucideIcons.mapPin,
-                    size: 14, color: KolabingColors.textTertiary),
+                Icon(LucideIcons.mapPin,
+                    size: 14, color: context.colors.textTertiary),
                 const SizedBox(width: 4),
                 Text(
                   profile.city!,
                   style: KolabingTextStyles.captionSecondary.copyWith(
-                    color: KolabingColors.onSurfaceVariant,
+                    color: context.colors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -331,9 +332,9 @@ class _ApplicationReviewScreenState
               AppLocalizations.of(context).applicationReviewViewFullProfile,
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
                 decoration: TextDecoration.underline,
-                decorationColor: KolabingColors.primary,
+                decorationColor: context.colors.primary,
               ),
             ),
           ),
@@ -350,7 +351,7 @@ class _ApplicationReviewScreenState
         style: KolabingTextStyles.bodyLarge.copyWith(
           fontSize: 28,
           fontWeight: FontWeight.w600,
-          color: KolabingColors.primary,
+          color: context.colors.primary,
         ),
       ),
     );
@@ -364,7 +365,7 @@ class _ApplicationReviewScreenState
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         boxShadow: [
           BoxShadow(
@@ -379,13 +380,13 @@ class _ApplicationReviewScreenState
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: KolabingColors.textTertiary),
+              Icon(icon, size: 16, color: context.colors.textTertiary),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 title,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -403,13 +404,13 @@ class _ApplicationReviewScreenState
     final (icon, color, label, description) = switch (application.status) {
       ApplicationStatus.accepted => (
           LucideIcons.checkCircle,
-          KolabingColors.success,
+          context.colors.success,
           l10n.applicationReviewStatusAccepted,
           l10n.applicationReviewStatusAcceptedDesc,
         ),
       ApplicationStatus.declined => (
           LucideIcons.xCircle,
-          KolabingColors.error,
+          context.colors.error,
           l10n.applicationReviewStatusDeclined,
           application.declineReason != null
               ? l10n.applicationReviewStatusDeclinedReason(application.declineReason!)
@@ -417,13 +418,13 @@ class _ApplicationReviewScreenState
         ),
       ApplicationStatus.withdrawn => (
           LucideIcons.minusCircle,
-          KolabingColors.textTertiary,
+          context.colors.textTertiary,
           l10n.applicationReviewStatusWithdrawn,
           l10n.applicationReviewStatusWithdrawnDesc,
         ),
       _ => (
           LucideIcons.clock,
-          KolabingColors.pendingText,
+          context.colors.pendingText,
           l10n.applicationReviewStatusPending,
           '',
         ),
@@ -456,7 +457,7 @@ class _ApplicationReviewScreenState
                   Text(
                     description,
                     style: KolabingTextStyles.captionSecondary.copyWith(
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -472,30 +473,11 @@ class _ApplicationReviewScreenState
     // If already decided, show a "Go to Chat" button
     if (application.status.isAccepted) {
       return _buildBottomBar(
-        child: SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton.icon(
-            onPressed: () =>
-                context.push('/application/${application.id}/chat'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 0,
-            ),
-            icon: const Icon(LucideIcons.messageCircle, size: 18),
-            label: Text(
-              AppLocalizations.of(context).applicationReviewOpenChat,
-              style: KolabingTextStyles.button.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
+        child: KolabingButton(
+          label: AppLocalizations.of(context).applicationReviewOpenChat,
+          onPressed: () => context.push('/application/${application.id}/chat'),
+          variant: KolabingButtonVariant.primary,
+          icon: const Icon(LucideIcons.messageCircle),
         ),
       );
     }
@@ -520,18 +502,15 @@ class _ApplicationReviewScreenState
                         ? null
                         : () => _showDeclineDialog(application),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: KolabingColors.error,
-                  side: const BorderSide(color: KolabingColors.error),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  foregroundColor: context.colors.error,
+                  side: BorderSide(color: context.colors.error),
                 ),
                 icon: _isDeclining
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: KolabingColors.error),
+                            strokeWidth: 2, color: context.colors.error),
                       )
                     : const Icon(LucideIcons.x, size: 18),
                 label: Text(
@@ -550,38 +529,13 @@ class _ApplicationReviewScreenState
           // Accept button
           Expanded(
             flex: 3,
-            child: SizedBox(
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed:
-                    _isAccepting || _isDeclining
-                        ? null
-                        : () => _handleAccept(application),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: KolabingColors.primary,
-                  foregroundColor: KolabingColors.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                icon: _isAccepting
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: KolabingColors.onPrimary),
-                      )
-                    : const Icon(LucideIcons.check, size: 18),
-                label: Text(
-                  AppLocalizations.of(context).applicationReviewAccept,
-                  style: KolabingTextStyles.button.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
+            child: KolabingButton(
+              label: AppLocalizations.of(context).applicationReviewAccept,
+              onPressed: _isAccepting || _isDeclining ? null : () => _handleAccept(application),
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.check),
+              isLoading: _isAccepting,
             ),
           ),
         ],
@@ -598,7 +552,7 @@ class _ApplicationReviewScreenState
         MediaQuery.of(context).padding.bottom + KolabingSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -651,7 +605,7 @@ class _ApplicationReviewScreenState
             Text(
               l10n.applicationReviewDeclineDialogBody(application.applicantName),
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -661,20 +615,20 @@ class _ApplicationReviewScreenState
               decoration: InputDecoration(
                 hintText: l10n.applicationReviewDeclineReasonHint,
                 hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                  borderSide: BorderSide(color: context.colors.darkBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                  borderSide: BorderSide(color: context.colors.darkBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide:
-                      const BorderSide(color: KolabingColors.borderFocus),
+                      BorderSide(color: context.colors.borderFocus),
                 ),
               ),
             ),
@@ -685,16 +639,14 @@ class _ApplicationReviewScreenState
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               l10n.commonCancel,
-              style: KolabingTextStyles.labelLarge.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurfaceVariant),
             ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.error,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              backgroundColor: context.colors.error,
+              foregroundColor: KolabingColors.textOnDark,
               elevation: 0,
             ),
             child: Text(
@@ -729,9 +681,9 @@ class _ApplicationReviewScreenState
         SnackBar(
           content: Text(
             l10n.applicationReviewDeclinedSnack,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
           ),
-          backgroundColor: KolabingColors.onSurfaceVariant,
+          backgroundColor: context.colors.onSurfaceVariant,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -745,9 +697,9 @@ class _ApplicationReviewScreenState
         SnackBar(
           content: Text(
             _parseError(e),
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -842,8 +794,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Padding(
@@ -864,7 +816,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: KolabingColors.darkBorder,
+                    color: context.colors.darkBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -877,14 +829,14 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 AppLocalizations.of(context).acceptFormSubtitle,
                 style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.lg),
@@ -894,7 +846,7 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 AppLocalizations.of(context).acceptFormScheduledDate,
                 style: KolabingTextStyles.eyebrow.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -904,13 +856,13 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 Container(
                   padding: const EdgeInsets.all(KolabingSpacing.md),
                   decoration: BoxDecoration(
-                    color: KolabingColors.surfaceVariant,
+                    color: context.colors.surfaceVariant,
                     borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Text(
                     AppLocalizations.of(context).acceptFormNoDates,
                     style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 )
@@ -940,13 +892,13 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 Container(
                   padding: const EdgeInsets.all(KolabingSpacing.sm),
                   decoration: BoxDecoration(
-                    color: KolabingColors.errorBg,
+                    color: context.colors.errorBg,
                     borderRadius: KolabingRadius.borderRadiusSm,
                   ),
                   child: Text(
                     _error!,
                     style: KolabingTextStyles.captionSecondary.copyWith(
-                      color: KolabingColors.error,
+                      color: context.colors.error,
                     ),
                   ),
                 ),
@@ -954,37 +906,13 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ],
 
               // Submit button
-              SizedBox(
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: _isValid && !_isSubmitting ? _submit : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  icon: _isSubmitting
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: KolabingColors.onPrimary),
-                        )
-                      : const Icon(LucideIcons.check, size: 18),
-                  label: Text(
-                    AppLocalizations.of(context).acceptFormConfirm,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
+              KolabingButton(
+                label: AppLocalizations.of(context).acceptFormConfirm,
+                onPressed: _isValid && !_isSubmitting ? _submit : null,
+                variant: KolabingButtonVariant.primary,
+                icon: const Icon(LucideIcons.check),
+                isLoading: _isSubmitting,
+                isDisabled: !_isValid,
               ),
             ],
           ),
@@ -1006,12 +934,12 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
         width: 60,
         decoration: BoxDecoration(
           color: isSelected
-              ? KolabingColors.primary
-              : KolabingColors.surfaceVariant,
+              ? context.colors.primary
+              : context.colors.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null
-              : Border.all(color: KolabingColors.darkBorder),
+              : Border.all(color: context.colors.darkBorder),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1021,8 +949,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               style: KolabingTextStyles.labelSmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isSelected
-                    ? KolabingColors.onPrimary
-                    : KolabingColors.textTertiary,
+                    ? context.colors.onPrimary
+                    : context.colors.textTertiary,
               ),
             ),
             const SizedBox(height: 2),
@@ -1032,16 +960,16 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: isSelected
-                    ? KolabingColors.onPrimary
-                    : KolabingColors.onSurface,
+                    ? context.colors.onPrimary
+                    : context.colors.onSurface,
               ),
             ),
             Text(
               monthNames[date.month - 1],
               style: KolabingTextStyles.labelSmall.copyWith(
                 color: isSelected
-                    ? KolabingColors.onPrimary
-                    : KolabingColors.textTertiary,
+                    ? context.colors.onPrimary
+                    : context.colors.textTertiary,
               ),
             ),
           ],
@@ -1085,9 +1013,9 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
         SnackBar(
           content: Text(
             l10n.acceptFormAcceptedSnack,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
           ),
-          backgroundColor: KolabingColors.success,
+          backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),

@@ -33,7 +33,11 @@ class AuthService {
     FlutterSecureStorage? secureStorage,
     GoogleSignIn? googleSignIn,
     http.Client? httpClient,
-  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage(
+           iOptions: IOSOptions(
+             accessibility: KeychainAccessibility.first_unlock,
+           ),
+         ),
        _googleSignIn =
            googleSignIn ??
            GoogleSignIn(
@@ -226,31 +230,7 @@ class AuthService {
         'upload=$uploadCount google=$googleCount hosted=$hostedCount',
       );
 
-      final response = await _httpClient.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(body),
-      );
-
-      debugPrint('🔐 Response status: ${response.statusCode}');
-      debugPrint(
-        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final authResponse = AuthResponse.fromJson(json);
-        await _saveAuthData(authResponse);
-        return authResponse;
-      } else {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: response.statusCode),
-        );
-      }
+      return await _postRegistration(url, body, label: 'business');
     } catch (e) {
       if (e is ApiException || e is NetworkException) {
         rethrow;
@@ -283,6 +263,10 @@ class AuthService {
         'name': onboardingData.name?.trim(),
         'community_type': onboardingData.typeSlug,
         'city_id': onboardingData.cityId,
+        // Stable community size — backend column being added separately, so the
+        // unknown-field 422 is tolerated by [_onboardingFieldsToStrip] below.
+        if (onboardingData.communitySize != null)
+          'community_size': onboardingData.communitySize,
         if (onboardingData.about != null && onboardingData.about!.isNotEmpty)
           'about': onboardingData.about,
         if (onboardingData.phone != null && onboardingData.phone!.isNotEmpty)
@@ -301,31 +285,7 @@ class AuthService {
 
       debugPrint('🔐 Request body keys: ${body.keys.toList()}');
 
-      final response = await _httpClient.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode(body),
-      );
-
-      debugPrint('🔐 Response status: ${response.statusCode}');
-      debugPrint(
-        '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        final authResponse = AuthResponse.fromJson(json);
-        await _saveAuthData(authResponse);
-        return authResponse;
-      } else {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw ApiException(
-          error: ApiError.fromJson(json, statusCode: response.statusCode),
-        );
-      }
+      return await _postRegistration(url, body, label: 'community');
     } catch (e) {
       if (e is ApiException || e is NetworkException) {
         rethrow;
@@ -333,6 +293,77 @@ class AuthService {
       debugPrint('🔐 Register community error: $e');
       throw NetworkException('Failed to connect to server: $e');
     }
+  }
+
+  /// New onboarding fields whose backend columns are being added separately.
+  ///
+  /// While the migration is in flight the API may 422 on these unknown fields.
+  /// When a 422 mentions ONLY these keys we strip them and retry once, so
+  /// onboarding still completes. Once the columns ship this is a harmless no-op.
+  static const Set<String> _onboardingFieldsToStrip = {
+    'has_venue',
+    'target_city_ids',
+    'offering',
+    'offer_photos',
+    'product_type',
+    'community_size',
+  };
+
+  /// POST a registration body, tolerating not-yet-migrated onboarding fields.
+  Future<AuthResponse> _postRegistration(
+    String url,
+    Map<String, dynamic> body, {
+    required String label,
+  }) async {
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    debugPrint('🔐 Response status: ${response.statusCode}');
+    debugPrint(
+      '🔐 Response body (first 500 chars): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final authResponse = AuthResponse.fromJson(json);
+      await _saveAuthData(authResponse);
+      return authResponse;
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final apiError = ApiError.fromJson(json, statusCode: response.statusCode);
+
+    // If the only validation failures are the new (not-yet-migrated) fields,
+    // strip them and retry once so onboarding still completes.
+    if (response.statusCode == 422 &&
+        apiError.errors != null &&
+        apiError.errors!.isNotEmpty) {
+      final failingKeys = apiError.errors!.keys
+          .map((k) => k.split('.').first)
+          .toSet();
+      final onlyNewFields = failingKeys.isNotEmpty &&
+          failingKeys.every(_onboardingFieldsToStrip.contains);
+      final bodyHasNewFields =
+          body.keys.any(_onboardingFieldsToStrip.contains);
+
+      if (onlyNewFields && bodyHasNewFields) {
+        debugPrint(
+          '🔐 Register $label 422 on not-yet-migrated fields '
+          '($failingKeys) — stripping and retrying.',
+        );
+        final retryBody = Map<String, dynamic>.from(body)
+          ..removeWhere((key, _) => _onboardingFieldsToStrip.contains(key));
+        return _postRegistration(url, retryBody, label: '$label-retry');
+      }
+    }
+
+    throw ApiException(error: apiError);
   }
 
   /// Build profile photo data URI
@@ -755,15 +786,19 @@ class AuthService {
     }
   }
 
-  /// Login with Apple.
+  /// Login / sign up with Apple.
   ///
   /// POST /api/v1/auth/apple
-  Future<AuthResponse> loginWithApple() async {
+  ///
+  /// [userType] (api value e.g. `'attendee'`) is forwarded so the backend can
+  /// create a new account with the requested role. Harmless for existing users.
+  Future<AuthResponse> loginWithApple({String? userType}) async {
     try {
       final credential = await getAppleCredential();
-      return await _authenticateWithApple(
+      return await authenticateWithApple(
         credential.identityToken,
         credential.fullName,
+        userType: userType,
       );
     } on AuthCancelledException {
       rethrow;
@@ -776,10 +811,12 @@ class AuthService {
     }
   }
 
-  Future<AuthResponse> _authenticateWithApple(
+  @visibleForTesting
+  Future<AuthResponse> authenticateWithApple(
     String identityToken,
-    String? fullName,
-  ) async {
+    String? fullName, {
+    String? userType,
+  }) async {
     final url = '$_baseUrl/auth/apple';
     debugPrint('[Apple] Login: POST $url');
 
@@ -790,9 +827,10 @@ class AuthService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
+        body: jsonEncode(<String, dynamic>{
           'identity_token': identityToken,
           if (fullName != null) 'name': fullName,
+          if (userType != null) 'user_type': userType,
         }),
       );
 
@@ -888,7 +926,7 @@ class AuthService {
       return _cachedUser!;
     }
 
-    final userJson = await _secureStorage.read(key: _userKey);
+    final userJson = await _secureRead(_userKey);
     if (userJson != null) {
       final json = jsonDecode(userJson) as Map<String, dynamic>;
       _cachedUser = UserModel.fromJson(json);
@@ -935,7 +973,7 @@ class AuthService {
       return _cachedToken;
     }
 
-    return _cachedToken = await _secureStorage.read(key: _tokenKey);
+    return _cachedToken = await _secureRead(_tokenKey);
   }
 
   /// Get stored refresh token.
@@ -945,9 +983,7 @@ class AuthService {
       return _cachedRefreshToken;
     }
 
-    return _cachedRefreshToken = await _secureStorage.read(
-      key: _refreshTokenKey,
-    );
+    return _cachedRefreshToken = await _secureRead(_refreshTokenKey);
   }
 
   /// Check if user is authenticated
@@ -1083,18 +1119,48 @@ class AuthService {
     String? refreshToken,
   }) async {
     _cachedToken = token;
-    await _secureStorage.write(key: _tokenKey, value: token);
+    await _secureWrite(_tokenKey, token);
 
     if (refreshToken != null && refreshToken.isNotEmpty) {
       _cachedRefreshToken = refreshToken;
-      await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+      await _secureWrite(_refreshTokenKey, refreshToken);
     }
   }
 
   Future<void> _saveUser(UserModel user) async {
     _cachedUser = user;
-    await _secureStorage.write(key: _userKey, value: jsonEncode(user.toJson()));
+    await _secureWrite(_userKey, jsonEncode(user.toJson()));
   }
+
+  Future<void> _secureWrite(String key, String value) async {
+    try {
+      await _secureStorage.write(key: key, value: value);
+    } catch (e) {
+      debugPrint('[AUTH] keychain write unavailable ($key): $e');
+    }
+  }
+
+  Future<String?> _secureRead(String key) async {
+    try {
+      return await _secureStorage.read(key: key);
+    } catch (e) {
+      debugPrint('[AUTH] keychain read unavailable ($key): $e');
+      return null;
+    }
+  }
+
+  Future<void> _secureDelete(String key) async {
+    try {
+      await _secureStorage.delete(key: key);
+    } catch (e) {
+      debugPrint('[AUTH] keychain delete unavailable ($key): $e');
+    }
+  }
+
+  /// Persist a freshly-fetched user into the in-memory + secure-storage cache.
+  /// Used when a flow (e.g. picking a city on home) already holds the updated
+  /// [UserModel] and wants it reflected without a full re-fetch.
+  Future<void> cacheUser(UserModel user) => _saveUser(user);
 
   /// Get cached user
   UserModel? get cachedUser {
@@ -1108,7 +1174,7 @@ class AuthService {
     if (_cachedUser != null) return _cachedUser;
 
     try {
-      final userJson = await _secureStorage.read(key: _userKey);
+      final userJson = await _secureRead(_userKey);
       if (userJson != null) {
         final json = jsonDecode(userJson) as Map<String, dynamic>;
         _cachedUser = UserModel.fromJson(json);
@@ -1142,9 +1208,9 @@ class AuthService {
 
   Future<void> _purgeSession() async {
     _invalidateSharedSession();
-    await _secureStorage.delete(key: _tokenKey);
-    await _secureStorage.delete(key: _refreshTokenKey);
-    await _secureStorage.delete(key: _userKey);
+    await _secureDelete(_tokenKey);
+    await _secureDelete(_refreshTokenKey);
+    await _secureDelete(_userKey);
     _sessionChangesController.add(AuthSessionChange.cleared);
   }
 }

@@ -47,9 +47,9 @@ class EventCard extends StatelessWidget {
                     ? Image.network(
                         event.coverPhotoUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                        errorBuilder: (_, __, ___) => _buildPlaceholder(context),
                       )
-                    : _buildPlaceholder(),
+                    : _buildPlaceholder(context),
               ),
 
               // Gradient overlay
@@ -204,9 +204,9 @@ class EventCard extends StatelessWidget {
                                     event.partner.profilePhoto!,
                                     fit: BoxFit.cover,
                                     errorBuilder: (_, __, ___) =>
-                                        _buildPartnerPlaceholder(),
+                                        _buildPartnerPlaceholder(context),
                                   )
-                                : _buildPartnerPlaceholder(),
+                                : _buildPartnerPlaceholder(context),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -255,24 +255,24 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholder() => Container(
-    color: KolabingColors.surfaceVariant,
-    child: const Center(
+  Widget _buildPlaceholder(BuildContext context) => Container(
+    color: context.colors.surfaceVariant,
+    child: Center(
       child: Icon(
         LucideIcons.image,
         size: 32,
-        color: KolabingColors.textTertiary,
+        color: context.colors.textTertiary,
       ),
     ),
   );
 
-  Widget _buildPartnerPlaceholder() => Container(
-    color: KolabingColors.primary,
+  Widget _buildPartnerPlaceholder(BuildContext context) => Container(
+    color: context.colors.primary,
     child: Center(
       child: Text(
         event.partner.name.isNotEmpty ? event.partner.name[0] : '?',
-        style: const TextStyle(
-          color: KolabingColors.onPrimary,
+        style: TextStyle(
+          color: context.colors.onPrimary,
           fontSize: 10,
           fontWeight: FontWeight.bold,
         ),

@@ -128,8 +128,8 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.82,
         ),
-        decoration: const BoxDecoration(
-          color: KolabingColors.surface,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(KolabingRadius.xxl),
           ),
@@ -372,7 +372,7 @@ class _DragHandle extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: KolabingColors.darkBorder,
+          color: context.colors.darkBorder,
           borderRadius: BorderRadius.circular(KolabingRadius.round),
         ),
       ),
@@ -398,7 +398,7 @@ class _HeaderRow extends StatelessWidget {
         AppLocalizations.of(context).exploreFilterTitle,
         style: KolabingTextStyles.bodyLarge.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
       const Spacer(),
@@ -415,7 +415,7 @@ class _HeaderRow extends StatelessWidget {
               AppLocalizations.of(context).exploreFilterClearAll,
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w500,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
             ),
           ),
@@ -424,12 +424,12 @@ class _HeaderRow extends StatelessWidget {
       GestureDetector(
         onTap: onClose,
         behavior: HitTestBehavior.opaque,
-        child: const Padding(
+        child: Padding(
           padding: EdgeInsets.all(KolabingSpacing.xxs),
           child: Icon(
             LucideIcons.x,
             size: 22,
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
           ),
         ),
       ),
@@ -466,46 +466,46 @@ class _FilterTextField extends StatelessWidget {
             focusNode: focusNode,
             onChanged: onChanged,
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               prefixIcon: Icon(
                 icon,
                 size: 18,
-                color: KolabingColors.textTertiary,
+                color: context.colors.textTertiary,
               ),
               suffixIcon: hasText
                   ? GestureDetector(
                       onTap: onClear,
-                      child: const Icon(
+                      child: Icon(
                         LucideIcons.x,
                         size: 18,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     )
                   : null,
               filled: true,
-              fillColor: KolabingColors.surfaceVariant,
+              fillColor: context.colors.surfaceVariant,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: KolabingSpacing.md,
                 vertical: KolabingSpacing.sm,
               ),
               border: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(color: KolabingColors.darkBorder),
+                borderSide: BorderSide(color: context.colors.darkBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: const BorderSide(
-                  color: KolabingColors.primary,
+                borderSide: BorderSide(
+                  color: context.colors.primary,
                   width: 1.5,
                 ),
               ),
@@ -547,15 +547,15 @@ class _CityAutocompleteResults extends ConsumerWidget {
         return Container(
           height: listHeight,
           decoration: BoxDecoration(
-            color: KolabingColors.surface,
+            color: context.colors.surface,
             borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(color: KolabingColors.darkBorder),
+            border: Border.all(color: context.colors.darkBorder),
           ),
           child: ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: visibleCities.length,
             separatorBuilder: (BuildContext context, int index) =>
-                const Divider(height: 1, color: KolabingColors.darkBorder),
+                Divider(height: 1, color: context.colors.darkBorder),
             itemBuilder: (BuildContext context, int index) {
               final city = visibleCities[index];
               final isSelected = selectedCity == city.name;
@@ -566,14 +566,14 @@ class _CityAutocompleteResults extends ConsumerWidget {
                   isSelected ? LucideIcons.checkCircle2 : LucideIcons.mapPin,
                   size: 18,
                   color: isSelected
-                      ? KolabingColors.primary
-                      : KolabingColors.textTertiary,
+                      ? context.colors.primary
+                      : context.colors.textTertiary,
                 ),
                 title: Text(
                   city.name,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
                 subtitle: city.country == null
@@ -582,7 +582,7 @@ class _CityAutocompleteResults extends ConsumerWidget {
                         city.country!,
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontSize: 12,
-                          color: KolabingColors.onSurfaceVariant,
+                          color: context.colors.onSurfaceVariant,
                         ),
                       ),
                 onTap: () => onSelected(city.name),
@@ -591,13 +591,13 @@ class _CityAutocompleteResults extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const _CityAutocompleteMessage(
+      loading: () => _CityAutocompleteMessage(
         child: SizedBox(
           width: 18,
           height: 18,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
           ),
         ),
       ),
@@ -627,9 +627,9 @@ class _CityAutocompleteMessage extends StatelessWidget {
       vertical: KolabingSpacing.sm,
     ),
     decoration: BoxDecoration(
-      color: KolabingColors.surface,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Center(
       child:
@@ -637,7 +637,7 @@ class _CityAutocompleteMessage extends StatelessWidget {
           Text(
             message!,
             style: KolabingTextStyles.captionSecondary.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
           ),
     ),
@@ -654,7 +654,7 @@ class _SectionLabel extends StatelessWidget {
     label,
     style: KolabingTextStyles.captionSecondary.copyWith(
       fontWeight: FontWeight.w600,
-      color: KolabingColors.onSurfaceVariant,
+      color: context.colors.onSurfaceVariant,
     ),
   );
 }
@@ -734,9 +734,11 @@ class _SheetChip extends StatelessWidget {
         vertical: KolabingSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? KolabingColors.primary : KolabingColors.surface,
+        color: isSelected ? context.colors.primary : Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected ? null : Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(
+          color: isSelected ? context.colors.primaryDark : context.colors.hairline,
+        ),
       ),
       child: Text(
         label,
@@ -744,8 +746,8 @@ class _SheetChip extends StatelessWidget {
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isSelected
-              ? KolabingColors.onPrimary
-              : KolabingColors.onSurface,
+              ? context.colors.onPrimary
+              : context.colors.onSurface,
         ),
       ),
     ),
@@ -763,7 +765,7 @@ class _ResultsCount extends StatelessWidget {
       AppLocalizations.of(context).exploreFilterResultsCount(total),
       style: KolabingTextStyles.captionSecondary.copyWith(
         fontWeight: FontWeight.w500,
-        color: KolabingColors.textTertiary,
+        color: context.colors.textTertiary,
       ),
     ),
   );

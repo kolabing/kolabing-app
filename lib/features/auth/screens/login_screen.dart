@@ -1,28 +1,33 @@
-import 'dart:ui' as ui;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/permission_service.dart';
-import '../../../widgets/keyboard_avoiding_content.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
 import '../widgets/google_sign_in_button.dart';
 import '../widgets/kolabing_logo.dart';
 
-const Color _kLoginBg = Color(0xFF000000);
-const Color _kLoginPanel = Color(0xB3121212);
-const Color _kLoginPanelBorder = Color(0x26FFFFFF);
-const Color _kLoginFieldFill = Color(0x14FFFFFF);
-const Color _kLoginFieldBorder = Color(0x40FFFFFF);
-const Color _kLoginTextMuted = Color(0xCCFFFFFF);
-const Color _kLoginTextSoft = Color(0x8AFFFFFF);
-const String _kLoginHeroImage = 'assets/images/welcome_hero.png';
+// ---------------------------------------------------------------------------
+// Warm sheet tokens
+// ---------------------------------------------------------------------------
+
+const Color _kYellow = Color(0xFFFFE28C);
+const Color _kCream = Color(0xFFF6F1E7);
+const Color _kInk = Color(0xFF19150F);
+const Color _kMuted = Color(0xFF8C8474);
+const Color _kInputBorder = Color(0xFFE4DCCB);
+const Color _kInputFill = Color(0xFFFFFFFF);
+const Color _kDivider = Color(0xFFE1D9C8);
+
 const String _kWelcomeRoute = '/auth/welcome';
 const String _kUserTypeSelectionRoute = '/auth/user-type';
 const String _kForgotPasswordRoute = '/auth/forgot-password';
@@ -30,10 +35,10 @@ const String _kBusinessDashboardRoute = '/business';
 const String _kCommunityDashboardRoute = '/community';
 const String _kPermissionsRoute = '/permissions';
 
-/// Login Screen for existing users
-///
-/// Dark themed screen with email/password login and Google Sign In option.
-/// Google login is for existing users only.
+// ---------------------------------------------------------------------------
+// LoginScreen
+// ---------------------------------------------------------------------------
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -51,21 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   late final AnimationController _entryController;
   late final AnimationController _exitController;
-
-  // Staggered animations
-  late final Animation<double> _logoAnimation;
-  late final Animation<double> _headlineAnimation;
-  late final Animation<double> _formAnimation;
-  late final Animation<double> _buttonAnimation;
-  late final Animation<double> _dividerAnimation;
-  late final Animation<double> _googleAnimation;
-
-  // Slide animations
-  late final Animation<Offset> _logoSlideAnimation;
-  late final Animation<Offset> _headlineSlideAnimation;
-  late final Animation<Offset> _formSlideAnimation;
-  late final Animation<Offset> _buttonSlideAnimation;
-
+  late final Animation<double> _fadeIn;
   late final Animation<double> _exitAnimation;
 
   bool _isLoading = false;
@@ -78,72 +69,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void initState() {
     super.initState();
     _configureSystemUI();
-    _initializeAnimations();
-    _startEntryAnimation();
+
+    _entryController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _exitController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeIn = CurvedAnimation(parent: _entryController, curve: Curves.easeOut);
+    _exitAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _exitController, curve: Curves.easeIn),
+    );
+
+    _entryController.forward();
   }
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: _kLoginBg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: _kCream,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-  }
-
-  void _initializeAnimations() {
-    _entryController = AnimationController(
-      duration: const Duration(milliseconds: 700),
-      vsync: this,
-    );
-
-    _exitController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    // Staggered opacity animations
-    _logoAnimation = _createOpacityAnimation(0.0, 0.4);
-    _headlineAnimation = _createOpacityAnimation(0.1, 0.5);
-    _formAnimation = _createOpacityAnimation(0.2, 0.6);
-    _buttonAnimation = _createOpacityAnimation(0.3, 0.7);
-    _dividerAnimation = _createOpacityAnimation(0.4, 0.8);
-    _googleAnimation = _createOpacityAnimation(0.5, 0.9);
-
-    // Slide animations (30dp up as per spec)
-    _logoSlideAnimation = _createSlideAnimation(0.0, 0.4);
-    _headlineSlideAnimation = _createSlideAnimation(0.1, 0.5);
-    _formSlideAnimation = _createSlideAnimation(0.2, 0.6);
-    _buttonSlideAnimation = _createSlideAnimation(0.3, 0.7);
-
-    // Exit fade animation
-    _exitAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
-  }
-
-  Animation<double> _createOpacityAnimation(double begin, double end) =>
-      Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _entryController,
-          curve: Interval(begin, end, curve: Curves.easeOut),
-        ),
-      );
-
-  Animation<Offset> _createSlideAnimation(double begin, double end) =>
-      Tween<Offset>(begin: const Offset(0, 30), end: Offset.zero).animate(
-        CurvedAnimation(
-          parent: _entryController,
-          curve: Interval(begin, end, curve: Curves.easeOut),
-        ),
-      );
-
-  void _startEntryAnimation() {
-    _entryController.forward();
   }
 
   @override
@@ -158,7 +110,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   void _handleBack() {
-    context.pop();
+    // Login can be the navigation root (post-logout redirect, deep link, or
+    // initial route), where there is nothing to pop. Calling pop() then throws
+    // GoError("There is nothing to pop"), so fall back to the welcome screen.
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(_kWelcomeRoute);
+    }
   }
 
   void _navigateToSignUp() {
@@ -187,12 +146,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<void> _handleEmailLogin() async {
     if (_isLoading || _isGoogleLoading || _showSuccess) return;
-
     if (!_formKey.currentState!.validate()) return;
 
-    // Dismiss keyboard
     FocusScope.of(context).unfocus();
-
     setState(() => _isLoading = true);
 
     try {
@@ -210,29 +166,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           _isLoading = false;
           _showSuccess = true;
         });
-
         await Future<void>.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
-
         await _exitController.forward();
         if (!mounted) return;
-
         final route = await _getNavigationRoute(result);
-        debugPrint(
-          '[B2] login success → routing to "$route" '
-          '(userType=${result.user?.userType} isNewUser=${result.isNewUser})',
-        );
         if (!mounted) return;
         context.go(route);
       } else if (result.isNetworkError) {
-        debugPrint('[B2] login network error: ${result.errorMessage}');
         setState(() => _isLoading = false);
         _showNetworkErrorSnackBar(isGoogle: false);
       } else {
-        debugPrint(
-          '[B2] login failed: status=${result.error?.statusCode} '
-          'message=${result.displayError}',
-        );
         setState(() => _isLoading = false);
         _showErrorSnackBar(result.displayError);
       }
@@ -248,9 +192,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _handleGoogleSignIn() async {
     if (_isLoading || _isGoogleLoading || _showSuccess) return;
 
-    // Dismiss keyboard
     FocusScope.of(context).unfocus();
-
     setState(() => _isGoogleLoading = true);
 
     try {
@@ -263,13 +205,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           _isGoogleLoading = false;
           _showSuccess = true;
         });
-
         await Future<void>.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
-
         await _exitController.forward();
         if (!mounted) return;
-
         final route = await _getNavigationRoute(result);
         if (!mounted) return;
         context.go(route);
@@ -342,9 +281,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<String> _getNavigationRoute(AuthResult result) async {
     final user = result.user;
-    if (user == null) {
-      return _kWelcomeRoute;
-    }
+    if (user == null) return _kWelcomeRoute;
 
     final destination = resolveAuthDestination(
       user,
@@ -355,8 +292,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       return destination;
     }
 
-    final hasShownPermissions = await PermissionService.instance
-        .hasShownPermissionScreen();
+    final hasShownPermissions =
+        await PermissionService.instance.hasShownPermissionScreen();
     if (!hasShownPermissions) {
       return '$_kPermissionsRoute?destination='
           '${Uri.encodeComponent(destination)}';
@@ -367,7 +304,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void _showUserNotFoundDialog() {
     showDialog<void>(
       context: context,
-      barrierColor: KolabingColors.overlayDark60,
       builder: (context) => _UserNotFoundDialog(
         onCreateAccount: () {
           Navigator.of(context).pop();
@@ -383,31 +319,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(
-              Icons.wifi_off_rounded,
-              color: KolabingColors.textOnDark,
-              size: 20,
-            ),
+            const Icon(Icons.wifi_off_rounded, color: Colors.white, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 AppLocalizations.of(context).authNoInternet,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.textOnDark,
+                  color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: AppLocalizations.of(context).commonRetry,
-          textColor: KolabingColors.textOnDark,
+          textColor: Colors.white,
           onPressed: isGoogle ? _handleGoogleSignIn : _handleEmailLogin,
         ),
       ),
@@ -420,11 +352,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         content: Text(
           message,
           style: KolabingTextStyles.bodyMedium.copyWith(
-            color: KolabingColors.textOnDark,
+            color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: KolabingColors.error,
+        backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -436,570 +368,490 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool get _anyLoading => _isLoading || _isGoogleLoading || _isAppleLoading;
 
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: !_anyLoading,
-    child: Scaffold(
-      backgroundColor: _kLoginBg,
-      resizeToAvoidBottomInset: false,
-      body: AnimatedBuilder(
-        animation: _exitController,
-        builder: (context, child) =>
-            Opacity(opacity: _exitAnimation.value, child: child),
-        child: KeyboardAvoidingContent(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxHeight < 760;
-              final ultraCompact = constraints.maxHeight < 680;
-              final horizontalPadding = compact ? 20.0 : 24.0;
-              final verticalPadding = ultraCompact
-                  ? 8.0
-                  : (compact ? 10.0 : 14.0);
-              final logoWidth = ultraCompact
-                  ? 126.0
-                  : (compact ? 138.0 : 152.0);
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  const _LoginBackdrop(),
-                  SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        horizontalPadding,
-                        verticalPadding,
-                        horizontalPadding,
-                        ultraCompact ? 10 : (compact ? 14 : 18),
+  Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final screenWidth = size.width;
+    final heroHeight = size.height * 0.32;
+    final waveHeight = 130.0 * screenWidth / 402.0;
+
+    return PopScope(
+      canPop: !_anyLoading,
+      child: Scaffold(
+        backgroundColor: _kYellow,
+        resizeToAvoidBottomInset: true,
+        body: AnimatedBuilder(
+          animation: _exitController,
+          builder: (context, child) =>
+              Opacity(opacity: _exitAnimation.value, child: child),
+          child: FadeTransition(
+            opacity: _fadeIn,
+            child: Stack(
+              children: [
+                // Cream sheet background
+                Positioned(
+                  top: heroHeight,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(color: _kCream),
+                ),
+
+                // Wave transition
+                Positioned(
+                  top: heroHeight - waveHeight + 12,
+                  left: 0,
+                  right: 0,
+                  height: waveHeight,
+                  child: CustomPaint(
+                    painter: _WavePainter(color: _kCream),
+                  ),
+                ),
+
+                // Main layout
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Yellow hero with top nav + logo
+                    SafeArea(
+                      bottom: false,
+                      child: SizedBox(
+                        height: heroHeight,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              // Top nav row
+                              SizedBox(
+                                height: 48,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    _HeroButton(
+                                      onTap: _handleBack,
+                                      isEnabled:
+                                          !_anyLoading && !_showSuccess,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.arrow_back_ios_new_rounded,
+                                            size: 13,
+                                            color: _kInk,
+                                          ),
+                                          const SizedBox(width: 3),
+                                          Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            ).commonBack,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: _kInk,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    _HeroButton(
+                                      onTap: _navigateToSignUp,
+                                      isEnabled:
+                                          !_anyLoading && !_showSuccess,
+                                      child: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        ).loginSignUpLink,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          color: _kInk,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Space where the logo used to live — now overlaid on the seam
+                              // Logo centred in remaining hero space, shifted slightly above centre
+                              // to match the welcome screen's logo position.
+                              const Expanded(
+                                child: Align(
+                                  alignment: Alignment(0, -0.5),
+                                  child: KolabingLogo(
+                                    width: 158,
+                                    variant: KolabingLogoVariant.onYellow,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          AnimatedBuilder(
-                            animation: _logoAnimation,
-                            builder: (context, child) => Opacity(
-                              opacity: _logoAnimation.value,
-                              child: child,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+
+                    // Cream sheet — scrollable form
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(28, 48, 28, 32),
+                        child: SafeArea(
+                          top: false,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _BackButton(
-                                  onPressed: _handleBack,
-                                  isEnabled: !_anyLoading && !_showSuccess,
+                                // Heading
+                                Text(
+                                  'WELCOME BACK.',
+                                  style: KolabingTextStyles.displayMedium
+                                      .copyWith(
+                                    color: _kInk,
+                                    height: 0.98,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
-                                _SignUpLink(
-                                  onTap: _navigateToSignUp,
-                                  isEnabled: !_anyLoading && !_showSuccess,
+                                const SizedBox(height: 6),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  ).loginPanelSubtitle,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: _kMuted,
+                                  ),
                                 ),
+                                const SizedBox(height: 24),
+
+                                // Email field
+                                TextFormField(
+                                  controller: _emailController,
+                                  focusNode: _emailFocusNode,
+                                  keyboardType: TextInputType.emailAddress,
+                                  autocorrect: false,
+                                  enableSuggestions: false,
+                                  autofillHints: const [AutofillHints.email],
+                                  enabled: !_anyLoading,
+                                  validator: _validateEmail,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) =>
+                                      _passwordFocusNode.requestFocus(),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: _kInk,
+                                  ),
+                                  cursorColor: _kInk,
+                                  decoration: _fieldDecoration(
+                                    hint: AppLocalizations.of(
+                                      context,
+                                    ).authEmailLabel,
+                                    prefixIcon: Icons.alternate_email_rounded,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+
+                                // Password field
+                                TextFormField(
+                                  controller: _passwordController,
+                                  focusNode: _passwordFocusNode,
+                                  obscureText: _obscurePassword,
+                                  enabled: !_anyLoading,
+                                  validator: _validatePassword,
+                                  autofillHints: const [
+                                    AutofillHints.password,
+                                  ],
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => _handleEmailLogin(),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: _kInk,
+                                  ),
+                                  cursorColor: _kInk,
+                                  decoration: _fieldDecoration(
+                                    hint: AppLocalizations.of(
+                                      context,
+                                    ).authPasswordLabel,
+                                    prefixIcon: Icons.lock_outline_rounded,
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                        color: _kMuted,
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        setState(
+                                          () => _obscurePassword =
+                                              !_obscurePassword,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Sign in CTA
+                                _SignInCta(
+                                  isLoading: _isLoading,
+                                  showSuccess: _showSuccess,
+                                  isEnabled: !_anyLoading,
+                                  onPressed: _handleEmailLogin,
+                                ),
+
+                                // Forgot password
+                                const SizedBox(height: 4),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
+                                    onPressed: _anyLoading || _showSuccess
+                                        ? null
+                                        : () =>
+                                            context.push(_kForgotPasswordRoute),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: _kMuted,
+                                      minimumSize: const Size(0, 32),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      ).loginForgotPassword,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: _kMuted,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Divider
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                      child: Divider(
+                                        color: _kDivider,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                      ),
+                                      child: Text(
+                                        'or',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                          color: _kMuted,
+                                        ),
+                                      ),
+                                    ),
+                                    const Expanded(
+                                      child: Divider(
+                                        color: _kDivider,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Social buttons — Google + Apple pills
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: GoogleSignInButton(
+                                        onPressed: _handleGoogleSignIn,
+                                        buttonText: 'Google',
+                                        isLoading: _isGoogleLoading,
+                                        showSuccess: _showSuccess,
+                                        isEnabled:
+                                            !_anyLoading && !_showSuccess,
+                                        height: 52,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: AppleSignInButton(
+                                        onPressed: _handleAppleSignIn,
+                                        buttonText: 'Apple',
+                                        isLoading: _isAppleLoading,
+                                        showSuccess: _showSuccess,
+                                        isEnabled:
+                                            !_anyLoading && !_showSuccess,
+                                        height: 52,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 12),
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: ultraCompact ? 8 : (compact ? 10 : 14),
-                          ),
-                          _AnimatedElement(
-                            opacityAnimation: _logoAnimation,
-                            slideAnimation: _logoSlideAnimation,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: _HeroLogo(
-                                width: logoWidth,
-                                variant: KolabingLogoVariant.yellowTransparent,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: _AnimatedElement(
-                                opacityAnimation: _headlineAnimation,
-                                slideAnimation: _headlineSlideAnimation,
-                                child: _HeroCopy(
-                                  headlineSize: ultraCompact ? 28.0 : (compact ? 32.0 : 36.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: ultraCompact ? 10 : (compact ? 12 : 18),
-                          ),
-                          _AnimatedElement(
-                            opacityAnimation: _formAnimation,
-                            slideAnimation: _formSlideAnimation,
-                            child: _buildAuthPanel(
-                              compact: compact,
-                              ultraCompact: ultraCompact,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget _buildAuthPanel({
-    required bool compact,
-    required bool ultraCompact,
-  }) => Align(
-    alignment: Alignment.bottomCenter,
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 560),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            padding: EdgeInsets.all(ultraCompact ? 14 : (compact ? 16 : 18)),
-            decoration: BoxDecoration(
-              color: _kLoginPanel,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: _kLoginPanelBorder),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.20),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
+                  ],
                 ),
               ],
             ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).loginPanelTitle,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
-                      fontSize: ultraCompact ? 14 : (compact ? 15 : 16),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    AppLocalizations.of(context).loginPanelSubtitle,
-                    style: KolabingTextStyles.labelMedium.copyWith(
-                      color: _kLoginTextMuted,
-                      fontSize: ultraCompact ? 11.5 : 12.5,
-                      fontWeight: FontWeight.w400,
-                      height: 1.35,
-                    ),
-                  ),
-                  SizedBox(height: ultraCompact ? 10 : 12),
-                  TextFormField(
-                    controller: _emailController,
-                    focusNode: _emailFocusNode,
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    autofillHints: const [AutofillHints.email],
-                    enabled: !_anyLoading,
-                    validator: _validateEmail,
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    cursorColor: KolabingColors.primary,
-                    decoration: _inputDecoration(
-                      hint: AppLocalizations.of(context).authEmailLabel,
-                      prefixIcon: Icons.alternate_email_rounded,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _passwordController,
-                    focusNode: _passwordFocusNode,
-                    obscureText: _obscurePassword,
-                    enabled: !_anyLoading,
-                    validator: _validatePassword,
-                    autofillHints: const [AutofillHints.password],
-                    textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (_) => _handleEmailLogin(),
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: KolabingColors.textOnDark,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    cursorColor: KolabingColors.primary,
-                    decoration: _inputDecoration(
-                      hint: AppLocalizations.of(context).authPasswordLabel,
-                      prefixIcon: Icons.lock_outline_rounded,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: _kLoginTextMuted,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: ultraCompact ? 10 : 12),
-                  _AnimatedElement(
-                    opacityAnimation: _buttonAnimation,
-                    slideAnimation: _buttonSlideAnimation,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: ultraCompact ? 44 : (compact ? 46 : 48),
-                      child: ElevatedButton(
-                        onPressed: _anyLoading ? null : _handleEmailLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: KolabingColors.primary,
-                          foregroundColor: KolabingColors.onPrimary,
-                          disabledBackgroundColor: KolabingColors.primary.withValues(
-                            alpha: 0.70,
-                          ),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    KolabingColors.onPrimary,
-                                  ),
-                                ),
-                              )
-                            : _showSuccess
-                            ? const Icon(
-                                Icons.check_rounded,
-                                size: 24,
-                                color: KolabingColors.onPrimary,
-                              )
-                            : Text(
-                                AppLocalizations.of(context).loginSignInButton,
-                                style: KolabingTextStyles.button.copyWith(
-                                  fontSize: compact ? 15 : 16,
-                                  letterSpacing: 0.2,
-                                  color: KolabingColors.onPrimary,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedBuilder(
-                    animation: _dividerAnimation,
-                    builder: (context, child) =>
-                        Opacity(opacity: _dividerAnimation.value, child: child),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: _anyLoading || _showSuccess
-                            ? null
-                            : () => context.push(_kForgotPasswordRoute),
-                        style: TextButton.styleFrom(
-                          foregroundColor: KolabingColors.primary,
-                          minimumSize: const Size(0, 32),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          padding: EdgeInsets.zero,
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context).loginForgotPassword,
-                          style: KolabingTextStyles.labelMedium.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: KolabingColors.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  AnimatedBuilder(
-                    animation: _googleAnimation,
-                    builder: (context, child) =>
-                        Opacity(opacity: _googleAnimation.value, child: child),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GoogleSignInButton(
-                            onPressed: _handleGoogleSignIn,
-                            buttonText: 'Google',
-                            isLoading: _isGoogleLoading,
-                            showSuccess: _showSuccess,
-                            isEnabled: !_anyLoading && !_showSuccess,
-                            height: ultraCompact ? 42 : 44,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: AppleSignInButton(
-                            onPressed: _handleAppleSignIn,
-                            buttonText: 'Apple',
-                            isLoading: _isAppleLoading,
-                            showSuccess: _showSuccess,
-                            isEnabled: !_anyLoading && !_showSuccess,
-                            height: ultraCompact ? 42 : 44,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
-  InputDecoration _inputDecoration({
+  InputDecoration _fieldDecoration({
     required String hint,
     required IconData prefixIcon,
     Widget? suffixIcon,
   }) => InputDecoration(
     hintText: hint,
-    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-      color: _kLoginTextSoft,
+    hintStyle: GoogleFonts.inter(
       fontSize: 15,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w400,
+      color: _kMuted,
     ),
-    prefixIcon: Icon(prefixIcon, color: _kLoginTextMuted, size: 20),
-    prefixIconConstraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+    prefixIcon: Icon(prefixIcon, color: _kMuted, size: 19),
+    prefixIconConstraints: const BoxConstraints(minWidth: 50, minHeight: 56),
     suffixIcon: suffixIcon,
-    isDense: true,
+    isDense: false,
     filled: true,
-    fillColor: _kLoginFieldFill,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    fillColor: _kInputFill,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: _kLoginFieldBorder),
+      borderRadius: BorderRadius.circular(24),
+      borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: _kLoginFieldBorder),
+      borderRadius: BorderRadius.circular(24),
+      borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.primary, width: 1.6),
+      borderRadius: BorderRadius.circular(24),
+      borderSide: const BorderSide(color: _kInk, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.error),
+      borderRadius: BorderRadius.circular(24),
+      borderSide: BorderSide(color: context.colors.error),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: KolabingColors.error, width: 1.6),
+      borderRadius: BorderRadius.circular(24),
+      borderSide: BorderSide(color: context.colors.error, width: 1.5),
     ),
-    errorStyle: KolabingTextStyles.labelSmall.copyWith(
+    errorStyle: GoogleFonts.inter(
       fontSize: 11.5,
-      fontWeight: FontWeight.w600,
-      color: const Color(0xFFFFA7B8),
+      fontWeight: FontWeight.w500,
+      color: context.colors.error,
     ),
   );
 }
 
-/// Animated wrapper for staggered entry
-class _AnimatedElement extends StatelessWidget {
-  const _AnimatedElement({
-    required this.opacityAnimation,
-    required this.slideAnimation,
-    required this.child,
+// ---------------------------------------------------------------------------
+// Sign in CTA — pill button, yellow fill
+// ---------------------------------------------------------------------------
+
+class _SignInCta extends StatelessWidget {
+  const _SignInCta({
+    required this.isLoading,
+    required this.showSuccess,
+    required this.isEnabled,
+    required this.onPressed,
   });
 
-  final Animation<double> opacityAnimation;
-  final Animation<Offset> slideAnimation;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: opacityAnimation,
-    builder: (context, child) => Transform.translate(
-      offset: slideAnimation.value,
-      child: Opacity(opacity: opacityAnimation.value, child: child),
-    ),
-    child: child,
-  );
-}
-
-class _HeroLogo extends StatelessWidget {
-  const _HeroLogo({required this.width, required this.variant});
-
-  final double width;
-  final KolabingLogoVariant variant;
+  final bool isLoading;
+  final bool showSuccess;
+  final bool isEnabled;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: width,
-    height: width * 0.34,
-    child: ClipRect(
-      child: OverflowBox(
-        maxWidth: width * 1.9,
-        maxHeight: width * 1.9,
-        alignment: Alignment.bottomLeft,
-        child: Transform.translate(
-          offset: Offset(-width * 0.05, 0),
-          child: KolabingLogo(width: width * 1.9, variant: variant),
-        ),
-      ),
-    ),
-  );
-}
-
-class _LoginBackdrop extends StatelessWidget {
-  const _LoginBackdrop();
-
-  @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        const ColoredBox(color: _kLoginBg),
-        Image.asset(_kLoginHeroImage, fit: BoxFit.cover),
-        DecoratedBox(
+    width: double.infinity,
+    height: 54,
+    child: GestureDetector(
+      onTap: isEnabled ? onPressed : null,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 150),
+        opacity: isEnabled ? 1.0 : 0.65,
+        child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.24),
-                Colors.black.withValues(alpha: 0.42),
-                Colors.black.withValues(alpha: 0.72),
-                _kLoginBg,
-              ],
-              stops: const [0.0, 0.28, 0.62, 1.0],
-            ),
-          ),
-        ),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.black.withValues(alpha: 0.24),
-                Colors.transparent,
-                Colors.black.withValues(alpha: 0.14),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _HeroCopy extends StatelessWidget {
-  const _HeroCopy({required this.headlineSize});
-
-  final double headlineSize;
-
-  @override
-  Widget build(BuildContext context) => Text(
-    AppLocalizations.of(context).loginHeroWelcome,
-    style: KolabingTextStyles.displayLarge.copyWith(
-      color: KolabingColors.textOnDark,
-      fontSize: headlineSize,
-      height: 1.0,
-      letterSpacing: 0.3,
-    ),
-  );
-}
-
-/// Back button for dark theme
-class _BackButton extends StatefulWidget {
-  const _BackButton({required this.onPressed, this.isEnabled = true});
-
-  final VoidCallback onPressed;
-  final bool isEnabled;
-
-  @override
-  State<_BackButton> createState() => _BackButtonState();
-}
-
-class _BackButtonState extends State<_BackButton> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTapDown: (_) {
-      if (widget.isEnabled) setState(() => _isPressed = true);
-    },
-    onTapUp: (_) {
-      if (widget.isEnabled) setState(() => _isPressed = false);
-    },
-    onTapCancel: () {
-      if (widget.isEnabled) setState(() => _isPressed = false);
-    },
-    onTap: () {
-      if (widget.isEnabled) {
-        HapticFeedback.lightImpact();
-        widget.onPressed();
-      }
-    },
-    child: AnimatedOpacity(
-      duration: const Duration(milliseconds: 100),
-      opacity: widget.isEnabled ? (_isPressed ? 0.6 : 1.0) : 0.4,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 14,
-              color: KolabingColors.textOnDark,
-            ),
-            const SizedBox(width: 2),
-            Text(
-              AppLocalizations.of(context).commonBack,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.textOnDark,
+            color: _kYellow,
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF141210).withValues(alpha: 0.12),
+                blurRadius: 26,
+                offset: const Offset(0, 12),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Center(
+            child: isLoading
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(_kInk),
+                    ),
+                  )
+                : showSuccess
+                ? const Icon(Icons.check_rounded, size: 22, color: _kInk)
+                : Text(
+                    AppLocalizations.of(context).loginSignInButton,
+                    style: GoogleFonts.inter(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: _kInk,
+                    ),
+                  ),
+          ),
         ),
       ),
     ),
   );
 }
 
-/// Sign Up link in top right
-class _SignUpLink extends StatefulWidget {
-  const _SignUpLink({required this.onTap, this.isEnabled = true});
+// ---------------------------------------------------------------------------
+// Hero tap button (Back / Sign up in yellow hero)
+// ---------------------------------------------------------------------------
+
+class _HeroButton extends StatefulWidget {
+  const _HeroButton({
+    required this.onTap,
+    required this.child,
+    this.isEnabled = true,
+  });
 
   final VoidCallback onTap;
+  final Widget child;
   final bool isEnabled;
 
   @override
-  State<_SignUpLink> createState() => _SignUpLinkState();
+  State<_HeroButton> createState() => _HeroButtonState();
 }
 
-class _SignUpLinkState extends State<_SignUpLink> {
-  bool _isPressed = false;
+class _HeroButtonState extends State<_HeroButton> {
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTapDown: (_) {
-      if (widget.isEnabled) setState(() => _isPressed = true);
+      if (widget.isEnabled) setState(() => _pressed = true);
     },
     onTapUp: (_) {
-      if (widget.isEnabled) setState(() => _isPressed = false);
+      if (widget.isEnabled) setState(() => _pressed = false);
     },
     onTapCancel: () {
-      if (widget.isEnabled) setState(() => _isPressed = false);
+      if (widget.isEnabled) setState(() => _pressed = false);
     },
     onTap: () {
       if (widget.isEnabled) {
@@ -1009,25 +861,57 @@ class _SignUpLinkState extends State<_SignUpLink> {
     },
     child: AnimatedOpacity(
       duration: const Duration(milliseconds: 100),
-      opacity: widget.isEnabled ? (_isPressed ? 0.6 : 1.0) : 0.4,
+      opacity: widget.isEnabled ? (_pressed ? 0.5 : 1.0) : 0.35,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-        child: Text(
-          AppLocalizations.of(context).loginSignUpLink,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.primary,
-            decoration: _isPressed ? TextDecoration.underline : null,
-            decorationColor: KolabingColors.primary,
-          ),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        child: widget.child,
       ),
     ),
   );
 }
 
-/// Dialog for user not found with Google login
+// ---------------------------------------------------------------------------
+// Wave painter — cream sheet with organic wavy top edge
+// ---------------------------------------------------------------------------
+
+class _WavePainter extends CustomPainter {
+  const _WavePainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final sx = size.width / 402.0;
+    final sy = size.height / 130.0;
+
+    final path = Path()
+      ..moveTo(0, 130 * sy)
+      ..lineTo(0, 66 * sy)
+      ..cubicTo(
+        72 * sx, 22 * sy,
+        150 * sx, 52 * sy,
+        230 * sx, 60 * sy,
+      )
+      ..cubicTo(
+        300 * sx, 67 * sy,
+        352 * sx, 34 * sy,
+        402 * sx, 50 * sy,
+      )
+      ..lineTo(402 * sx, 130 * sy)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_WavePainter old) => old.color != color;
+}
+
+// ---------------------------------------------------------------------------
+// "User not found" dialog
+// ---------------------------------------------------------------------------
+
 class _UserNotFoundDialog extends StatelessWidget {
   const _UserNotFoundDialog({
     required this.onCreateAccount,
@@ -1039,31 +923,27 @@ class _UserNotFoundDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Dialog(
-    backgroundColor: KolabingColors.darkSurface,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    backgroundColor: _kCream,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     child: Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.person_off_outlined,
-            size: 48,
-            color: KolabingColors.primary,
-          ),
+          const Icon(Icons.person_off_outlined, size: 48, color: _kInk),
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context).loginUserNotFoundTitle,
-            style: KolabingTextStyles.headlineMedium.copyWith(
-              color: KolabingColors.onSurface,
-            ),
+            style: KolabingTextStyles.headlineMedium.copyWith(color: _kInk),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
           Text(
             AppLocalizations.of(context).loginUserNotFoundMessage,
-            style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: _kMuted,
               height: 1.6,
             ),
             textAlign: TextAlign.center,
@@ -1071,20 +951,23 @@ class _UserNotFoundDialog extends StatelessWidget {
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: onCreateAccount,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            height: 50,
+            child: GestureDetector(
+              onTap: onCreateAccount,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _kYellow,
+                  borderRadius: BorderRadius.circular(999),
                 ),
-              ),
-              child: Text(
-                AppLocalizations.of(context).loginCreateAccountButton,
-                style: KolabingTextStyles.button.copyWith(
-                  color: KolabingColors.onPrimary,
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context).loginCreateAccountButton,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: _kInk,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1094,8 +977,10 @@ class _UserNotFoundDialog extends StatelessWidget {
             onPressed: onGotIt,
             child: Text(
               AppLocalizations.of(context).commonCancel,
-              style: KolabingTextStyles.labelLarge.copyWith(
-                color: KolabingColors.textTertiary,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: _kMuted,
               ),
             ),
           ),

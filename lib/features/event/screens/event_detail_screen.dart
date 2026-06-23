@@ -8,7 +8,10 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../config/routes/routes.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../auth/models/user_model.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -31,6 +34,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   final PageController _pageController = PageController();
   int _currentPhotoIndex = 0;
 
+  /// Local mutable copy of the event so RSVP toggles reflect immediately. Seeded
+  /// from whichever source first resolves (cached list or the detail fetch); the
+  /// fetch is authoritative for signup state (`my_signup`, counts).
+  Event? _event;
+  bool _rsvpBusy = false;
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -45,15 +54,46 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     }
   }
 
+  AppLocalizations get _l10n => AppLocalizations.of(context);
+
+  void _snack(String message) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(message)));
+
+  // RSVP / sign-up (attendee / public viewer) --------------------------------
+
+  Future<void> _toggleRsvp(Event event) async {
+    if (_rsvpBusy) return;
+    setState(() => _rsvpBusy = true);
+    final svc = ref.read(eventServiceProvider);
+    final wasIn = event.isGoing || event.isWaitlisted;
+    try {
+      final updated = wasIn
+          ? await svc.cancelSignup(event.id)
+          : await svc.signup(event.id);
+      if (!mounted) return;
+      setState(() {
+        _event = updated;
+        _rsvpBusy = false;
+      });
+      final cid = updated.communityId;
+      if (cid != null) {
+        ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _rsvpBusy = false);
+      _snack(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
   Future<void> _handleDelete(Event event) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.eventDetailDeleteTitle),
-        content: Text(
-          l10n.eventDetailDeleteConfirm(event.name),
-        ),
+        content: Text(l10n.eventDetailDeleteConfirm(event.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -61,7 +101,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(l10n.eventDetailDeleteAction),
           ),
         ],
@@ -77,7 +117,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.eventDetailDeletedSnack),
-            backgroundColor: KolabingColors.success,
+            backgroundColor: context.colors.success,
           ),
         );
       }
@@ -86,99 +126,109 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(eventsProvider);
-    final cachedEvent = _getEvent(state);
     final canDelete = !widget.isReadOnly;
 
-    if (cachedEvent != null) {
-      return _buildContent(cachedEvent, canDelete: canDelete);
+    // A local RSVP toggle already produced an updated event — render it.
+    if (_event != null) {
+      return _buildContent(_event!, canDelete: canDelete);
     }
 
+    // Always fetch detail for authoritative signup state (my_signup + counts).
+    // The cached list event is only a fallback while the fetch is in flight.
     final asyncEvent = ref.watch(eventDetailProvider(widget.eventId));
 
     return asyncEvent.when(
-      loading: _buildLoadingState,
-      error: (error, _) => _buildMissingState(
-        title: AppLocalizations.of(context).eventDetailNotFound,
-        message: error.toString(),
-      ),
+      loading: () {
+        final cached = _getEvent(ref.watch(eventsProvider));
+        if (cached != null) {
+          return _buildContent(cached, canDelete: canDelete);
+        }
+        return _buildLoadingState();
+      },
+      error: (error, _) {
+        final cached = _getEvent(ref.watch(eventsProvider));
+        if (cached != null) {
+          return _buildContent(cached, canDelete: canDelete);
+        }
+        return _buildMissingState(
+          title: AppLocalizations.of(context).eventDetailNotFound,
+          message: error.toString(),
+        );
+      },
       data: (event) => _buildContent(event, canDelete: canDelete),
     );
   }
 
   Widget _buildLoadingState() {
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(LucideIcons.arrowLeft),
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
-      body: const Center(
-        child: CircularProgressIndicator(color: KolabingColors.primary),
+      body: Center(
+        child: CircularProgressIndicator(color: context.colors.primary),
       ),
     );
   }
 
-  Widget _buildMissingState({
-    required String title,
-    String? message,
-  }) {
+  Widget _buildMissingState({required String title, String? message}) {
     return Scaffold(
-        backgroundColor: KolabingColors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(LucideIcons.arrowLeft),
-            color: KolabingColors.onSurface,
-          ),
+      backgroundColor: context.colors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(LucideIcons.arrowLeft),
+          color: context.colors.onSurface,
         ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                LucideIcons.calendarX,
-                size: 48,
-                color: KolabingColors.textTertiary,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              LucideIcons.calendarX,
+              size: 48,
+              color: context.colors.textTertiary,
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+            Text(
+              title,
+              style: KolabingTextStyles.titleMedium.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
-              const SizedBox(height: KolabingSpacing.md),
-              Text(
-                title,
-                style: KolabingTextStyles.titleMedium.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
+            ),
+            if (message != null) ...[
+              const SizedBox(height: KolabingSpacing.xs),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.lg,
+                ),
+                child: Text(
+                  message,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.textTertiary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              if (message != null) ...[
-                const SizedBox(height: KolabingSpacing.xs),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.lg,
-                  ),
-                  child: Text(
-                    message,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: KolabingColors.textTertiary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
             ],
-          ),
+          ],
         ),
-      );
+      ),
+    );
   }
 
   Widget _buildContent(Event event, {required bool canDelete}) {
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           // App Bar with Hero Image
@@ -195,7 +245,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   Text(
                     event.name,
                     style: KolabingTextStyles.headlineMedium.copyWith(
-                      color: KolabingColors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                   ),
 
@@ -204,6 +254,26 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   // Info Cards
                   _buildInfoCard(event),
 
+                  // RSVP / sign-up for upcoming, signup-able events.
+                  if (event.isUpcoming) ...[
+                    const SizedBox(height: KolabingSpacing.lg),
+                    _buildRsvpButton(event),
+                    if (event.isWaitlisted &&
+                        event.waitlistPosition != null) ...[
+                      const SizedBox(height: KolabingSpacing.sm),
+                      Center(
+                        child: Text(
+                          _l10n.eventHubWaitlistPosition(
+                            event.waitlistPosition!,
+                          ),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: KolabingColors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+
                   const SizedBox(height: KolabingSpacing.lg),
 
                   // Photo Gallery
@@ -211,7 +281,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     Text(
                       AppLocalizations.of(context).eventDetailPhotosTitle,
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -223,7 +293,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     Text(
                       AppLocalizations.of(context).eventDetailVideosTitle,
                       style: KolabingTextStyles.titleMedium.copyWith(
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -236,10 +306,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     OutlinedButton.icon(
                       onPressed: () => _handleDelete(event),
                       icon: const Icon(LucideIcons.trash2, size: 18),
-                      label: Text(AppLocalizations.of(context).eventDetailDeleteButton),
+                      label: Text(
+                        AppLocalizations.of(context).eventDetailDeleteButton,
+                      ),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: KolabingColors.error,
-                        side: const BorderSide(color: KolabingColors.error),
+                        foregroundColor: context.colors.error,
+                        side: BorderSide(color: context.colors.error),
                         padding: const EdgeInsets.symmetric(
                           vertical: KolabingSpacing.sm,
                         ),
@@ -257,11 +329,69 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     );
   }
 
+  /// RSVP button mirroring `event_hub_screen._rsvpButton`: going (mint
+  /// active-state tokens) / waitlisted / join-waitlist (full) / I'm going.
+  Widget _buildRsvpButton(Event event) {
+    final (String label, IconData icon, Color bg, Color fg) = switch (event) {
+      _ when event.isGoing => (
+        _l10n.eventHubGoingTapToLeave,
+        LucideIcons.check,
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+      ),
+      _ when event.isWaitlisted => (
+        _l10n.eventHubOnWaitlistTapToLeave,
+        LucideIcons.clock,
+        KolabingColors.surfaceContainerHigh,
+        KolabingColors.onSurface,
+      ),
+      _ when event.isFull => (
+        _l10n.eventHubJoinWaitlist,
+        LucideIcons.userPlus,
+        KolabingColors.surfaceContainerHigh,
+        KolabingColors.onSurface,
+      ),
+      _ => (
+        _l10n.eventHubImGoing,
+        LucideIcons.check,
+        KolabingColors.primary,
+        KolabingColors.onPrimary,
+      ),
+    };
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: FilledButton.icon(
+        onPressed: _rsvpBusy ? null : () => _toggleRsvp(event),
+        style: FilledButton.styleFrom(
+          backgroundColor: bg,
+          foregroundColor: fg,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: _rsvpBusy
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Icon(icon, size: 18),
+        label: Text(
+          label,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSliverAppBar(Event event) {
     return SliverAppBar(
       expandedHeight: 300,
       pinned: true,
-      backgroundColor: KolabingColors.surface,
+      backgroundColor: context.colors.surface,
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Container(
@@ -293,12 +423,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   photo.url,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
-                    color: KolabingColors.surfaceVariant,
-                    child: const Center(
+                    color: context.colors.surfaceVariant,
+                    child: Center(
                       child: Icon(
                         LucideIcons.image,
                         size: 48,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                   ),
@@ -340,7 +470,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
                         color: _currentPhotoIndex == index
-                            ? KolabingColors.primary
+                            ? context.colors.primary
                             : Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -358,7 +488,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: [
           BoxShadow(
@@ -370,74 +500,14 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       ),
       child: Column(
         children: [
-          // Partner
+          // Partner / host community (tappable → public profile when known).
           _buildInfoRow(
             icon: LucideIcons.users,
             label: AppLocalizations.of(context).eventDetailKolabWithLabel,
-            child: Row(
-              children: [
-                // Partner avatar
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: KolabingColors.darkBorder, width: 1),
-                  ),
-                  child: ClipOval(
-                    child: event.partner.profilePhoto != null
-                        ? Image.network(
-                            event.partner.profilePhoto!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                _buildPartnerPlaceholder(event.partner.name),
-                          )
-                        : _buildPartnerPlaceholder(event.partner.name),
-                  ),
-                ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.partner.name,
-                        style: KolabingTextStyles.titleSmall.copyWith(
-                          color: KolabingColors.onSurface,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: KolabingSpacing.xs,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: event.partner.type == PartnerType.business
-                              ? KolabingColors.softYellow
-                              : KolabingColors.info.withValues(alpha: 0.1),
-                          borderRadius: KolabingRadius.borderRadiusSm,
-                        ),
-                        child: Text(
-                          event.partner.type.name.toUpperCase(),
-                          style: KolabingTextStyles.labelSmall.copyWith(
-                            color: event.partner.type == PartnerType.business
-                                ? KolabingColors.accentOrangeText
-                                : KolabingColors.info,
-                            fontSize: 9,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: _buildPartnerChild(event),
           ),
 
-          const Divider(
-            height: KolabingSpacing.lg,
-            color: KolabingColors.darkBorder,
-          ),
+          Divider(height: KolabingSpacing.lg, color: context.colors.darkBorder),
 
           // Date
           _buildInfoRow(
@@ -446,18 +516,119 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             value: event.formattedDate,
           ),
 
-          const Divider(
-            height: KolabingSpacing.lg,
-            color: KolabingColors.darkBorder,
-          ),
+          Divider(height: KolabingSpacing.lg, color: context.colors.darkBorder),
 
           // Attendees
           _buildInfoRow(
             icon: LucideIcons.userCheck,
             label: AppLocalizations.of(context).eventDetailAttendeesLabel,
-            value: AppLocalizations.of(context).eventDetailAttendeesCount(event.attendeeCount),
+            value: AppLocalizations.of(
+              context,
+            ).eventDetailAttendeesCount(event.attendeeCount),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Open the host community when the partner row is tapped. The destination is
+  /// viewer-scoped: a BUSINESS viewer keeps the existing profile-id-keyed
+  /// `PublicProfileScreen` (Send-Kolab flow); an attendee / community viewer
+  /// gets the community-keyed [AttendeeCommunityProfileScreen] (events + join).
+  void _openHostCommunity(String communityId) {
+    final isBusiness =
+        ref.read(authProvider).user?.userType == UserType.business;
+    if (isBusiness) {
+      context.push('/profile/$communityId');
+    } else {
+      context.push(KolabingRoutes.buildCommunityProfilePath(communityId));
+    }
+  }
+
+  /// The host partner block. When the event carries a `communityId`, the whole
+  /// row becomes tappable and opens the host community (viewer-scoped, see
+  /// [_openHostCommunity]); otherwise it renders inert.
+  Widget _buildPartnerChild(Event event) {
+    final communityId = event.communityId;
+    final tappable = communityId != null && communityId.isNotEmpty;
+
+    final row = Row(
+      children: [
+        // Partner avatar
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: KolabingColors.darkBorder, width: 1),
+          ),
+          child: ClipOval(
+            child: event.partner.profilePhoto != null
+                ? Image.network(
+                    event.partner.profilePhoto!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        _buildPartnerPlaceholder(event.partner.name),
+                  )
+                : _buildPartnerPlaceholder(event.partner.name),
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                event.partner.name,
+                style: KolabingTextStyles.titleSmall.copyWith(
+                  color: KolabingColors.onSurface,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.xs,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: event.partner.type == PartnerType.business
+                      ? KolabingColors.softYellow
+                      : KolabingColors.info.withValues(alpha: 0.1),
+                  borderRadius: KolabingRadius.borderRadiusSm,
+                ),
+                child: Text(
+                  event.partner.type.name.toUpperCase(),
+                  style: KolabingTextStyles.labelSmall.copyWith(
+                    color: event.partner.type == PartnerType.business
+                        ? KolabingColors.accentOrangeText
+                        : KolabingColors.info,
+                    fontSize: 9,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (tappable)
+          Padding(
+            padding: const EdgeInsets.only(left: KolabingSpacing.xs),
+            child: Icon(
+              LucideIcons.chevronRight,
+              size: 18,
+              color: KolabingColors.textTertiary,
+              semanticLabel: _l10n.eventDetailViewCommunity,
+            ),
+          ),
+      ],
+    );
+
+    if (!tappable) return row;
+
+    return InkWell(
+      onTap: () => _openHostCommunity(communityId),
+      borderRadius: KolabingRadius.borderRadiusMd,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: row,
       ),
     );
   }
@@ -476,9 +647,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(KolabingSpacing.sm),
               decoration: BoxDecoration(
-                color: KolabingColors.surface,
+                color: context.colors.surface,
                 borderRadius: KolabingRadius.borderRadiusMd,
-                border: Border.all(color: KolabingColors.darkBorder),
+                border: Border.all(color: context.colors.darkBorder),
               ),
               child: Row(
                 children: [
@@ -486,7 +657,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: KolabingColors.primary.withValues(alpha: 0.1),
+                      color: context.colors.primary.withValues(alpha: 0.1),
                       borderRadius: KolabingRadius.borderRadiusMd,
                       image: video.thumbnailUrl != null
                           ? DecorationImage(
@@ -496,9 +667,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                           : null,
                     ),
                     child: video.thumbnailUrl == null
-                        ? const Icon(
+                        ? Icon(
                             LucideIcons.playCircle,
-                            color: KolabingColors.primary,
+                            color: context.colors.primary,
                           )
                         : null,
                   ),
@@ -508,25 +679,29 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context).eventDetailRecapVideoTitle(index + 1),
+                          AppLocalizations.of(
+                            context,
+                          ).eventDetailRecapVideoTitle(index + 1),
                           style: KolabingTextStyles.titleSmall.copyWith(
-                            color: KolabingColors.onSurface,
+                            color: context.colors.onSurface,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          AppLocalizations.of(context).eventDetailRecapVideoSubtitle,
+                          AppLocalizations.of(
+                            context,
+                          ).eventDetailRecapVideoSubtitle,
                           style: KolabingTextStyles.bodySmall.copyWith(
-                            color: KolabingColors.onSurfaceVariant,
+                            color: context.colors.onSurfaceVariant,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     LucideIcons.externalLink,
                     size: 16,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ],
               ),
@@ -548,7 +723,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).eventDetailVideoOpenError),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
     }
@@ -567,10 +742,10 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: KolabingColors.primary.withValues(alpha: 0.1),
+            color: context.colors.primary.withValues(alpha: 0.1),
             borderRadius: KolabingRadius.borderRadiusSm,
           ),
-          child: Icon(icon, size: 20, color: KolabingColors.primary),
+          child: Icon(icon, size: 20, color: context.colors.primary),
         ),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
@@ -580,7 +755,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               Text(
                 label,
                 style: KolabingTextStyles.labelSmall.copyWith(
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ),
               const SizedBox(height: 2),
@@ -590,7 +765,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 Text(
                   value,
                   style: KolabingTextStyles.titleSmall.copyWith(
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
             ],
@@ -601,12 +776,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   }
 
   Widget _buildPartnerPlaceholder(String name) => Container(
-    color: KolabingColors.primary,
+    color: context.colors.primary,
     child: Center(
       child: Text(
         name.isNotEmpty ? name[0] : '?',
-        style: const TextStyle(
-          color: KolabingColors.onPrimary,
+        style: TextStyle(
+          color: context.colors.onPrimary,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
@@ -640,7 +815,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               borderRadius: KolabingRadius.borderRadiusSm,
               border: Border.all(
                 color: _currentPhotoIndex == index
-                    ? KolabingColors.primary
+                    ? context.colors.primary
                     : Colors.transparent,
                 width: 2,
               ),
@@ -651,10 +826,10 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 photo.thumbnailUrl ?? photo.url,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
-                  color: KolabingColors.surfaceVariant,
-                  child: const Icon(
+                  color: context.colors.surfaceVariant,
+                  child: Icon(
                     LucideIcons.image,
-                    color: KolabingColors.textTertiary,
+                    color: context.colors.textTertiary,
                   ),
                 ),
               ),

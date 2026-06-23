@@ -27,7 +27,7 @@ class DiscoveredEventCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -45,7 +45,7 @@ class DiscoveredEventCard extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: KolabingColors.primary.withValues(alpha: 0.1),
+                color: context.colors.primary.withValues(alpha: 0.1),
                 image: event.photos.isNotEmpty
                     ? DecorationImage(
                         image: NetworkImage(event.photos.first),
@@ -54,10 +54,10 @@ class DiscoveredEventCard extends StatelessWidget {
                     : null,
               ),
               child: event.photos.isEmpty
-                  ? const Icon(
+                  ? Icon(
                       LucideIcons.calendar,
                       size: 32,
-                      color: KolabingColors.primary,
+                      color: context.colors.primary,
                     )
                   : null,
             ),
@@ -76,8 +76,8 @@ class DiscoveredEventCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: event.isBusiness
-                          ? KolabingColors.info.withValues(alpha: 0.1)
-                          : KolabingColors.success.withValues(alpha: 0.1),
+                          ? context.colors.info.withValues(alpha: 0.1)
+                          : context.colors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -85,8 +85,8 @@ class DiscoveredEventCard extends StatelessWidget {
                           ? l10n.eventPartnerBusiness
                           : l10n.eventPartnerCommunity,
                       style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: event.isBusiness
-                            ? KolabingColors.info
-                            : KolabingColors.success),
+                            ? context.colors.info
+                            : context.colors.success),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -94,7 +94,7 @@ class DiscoveredEventCard extends StatelessWidget {
                   // Event name
                   Text(
                     event.name,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -114,7 +114,7 @@ class DiscoveredEventCard extends StatelessWidget {
                       Icon(
                         LucideIcons.calendar,
                         size: 12,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -125,12 +125,12 @@ class DiscoveredEventCard extends StatelessWidget {
                       Icon(
                         LucideIcons.users,
                         size: 12,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${event.attendeeCount}',
-                        style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
                       ),
                     ],
                   ),
@@ -145,21 +145,21 @@ class DiscoveredEventCard extends StatelessWidget {
                 vertical: KolabingSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.1),
+                color: context.colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     LucideIcons.mapPin,
                     size: 16,
-                    color: KolabingColors.primary,
+                    color: context.colors.primary,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     event.distanceDisplay,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.primary),
                   ),
                 ],
               ),

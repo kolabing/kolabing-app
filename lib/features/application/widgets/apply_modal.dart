@@ -6,7 +6,9 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_input.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -200,8 +202,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.9,
       ),
-      decoration: const BoxDecoration(
-        color: KolabingColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -214,7 +216,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: KolabingColors.darkBorder,
+                color: context.colors.darkBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -232,7 +234,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     style: KolabingTextStyles.labelSmall.copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
-                      color: KolabingColors.textTertiary,
+                      color: context.colors.textTertiary,
                     ),
                   ),
                 ),
@@ -241,7 +243,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(LucideIcons.x),
                   style: IconButton.styleFrom(
-                    foregroundColor: KolabingColors.textTertiary,
+                    foregroundColor: context.colors.textTertiary,
                   ),
                 ),
               ],
@@ -268,25 +270,25 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(KolabingSpacing.md),
                         decoration: BoxDecoration(
-                          color: KolabingColors.error.withValues(alpha: 0.1),
+                          color: context.colors.error.withValues(alpha: 0.1),
                           borderRadius: KolabingRadius.borderRadiusMd,
                           border: Border.all(
-                            color: KolabingColors.error.withValues(alpha: 0.3),
+                            color: context.colors.error.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               LucideIcons.alertCircle,
                               size: 18,
-                              color: KolabingColors.error,
+                              color: context.colors.error,
                             ),
                             const SizedBox(width: KolabingSpacing.sm),
                             Expanded(
                               child: Text(
                                 _errorMessage!,
                                 style: KolabingTextStyles.bodySmall.copyWith(
-                                  color: KolabingColors.error,
+                                  color: context.colors.error,
                                 ),
                               ),
                             ),
@@ -324,22 +326,17 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       style: KolabingTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.w400,
                         height: 1.5,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
-                    TextFormField(
+                    KolabingInput(
                       controller: _messageController,
                       maxLength: 1000,
                       maxLines: 5,
                       minLines: 4,
-                      decoration: _buildInputDecoration(
-                        hintText:
-                            AppLocalizations.of(context).applyModalMessageHint,
-                      ),
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        color: KolabingColors.onSurface,
-                      ),
+                      hint: AppLocalizations.of(context).applyModalMessageHint,
+                      fillColor: context.colors.background,
                     ),
 
                     const SizedBox(height: KolabingSpacing.lg),
@@ -353,7 +350,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       AppLocalizations.of(context).applyModalSelectDatesHelp,
                       style: KolabingTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                     const SizedBox(height: KolabingSpacing.sm),
@@ -366,7 +363,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         _availabilityError!,
                         style: KolabingTextStyles.labelMedium.copyWith(
                           fontWeight: FontWeight.w400,
-                          color: KolabingColors.error,
+                          color: context.colors.error,
                         ),
                       ),
                     ],
@@ -379,63 +376,31 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                         AppLocalizations.of(context).applyModalNotesLabel,
                         style: KolabingTextStyles.labelMedium.copyWith(
                           fontWeight: FontWeight.w400,
-                          color: KolabingColors.textTertiary,
+                          color: context.colors.textTertiary,
                         ),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
-                      TextFormField(
+                      KolabingInput(
                         controller: _availabilityNotesController,
                         maxLength: 200,
                         maxLines: 2,
                         minLines: 1,
-                        decoration: _buildInputDecoration(
-                          hintText:
-                              AppLocalizations.of(context).applyModalNotesHint,
-                        ),
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurface,
-                        ),
+                        hint: AppLocalizations.of(context).applyModalNotesHint,
+                        fillColor: context.colors.background,
                       ),
                     ],
 
                     const SizedBox(height: KolabingSpacing.xl),
 
                     // Single full-width primary action (X in header is the escape)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton.icon(
-                        onPressed: _isSubmitting ? null : _handleSubmit,
-                        icon: _isSubmitting
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: KolabingColors.onPrimary,
-                                ),
-                              )
-                            : const Icon(LucideIcons.send, size: 18),
-                        label: Text(
-                          _isSubmitting
-                              ? AppLocalizations.of(context).applyModalSending
-                              : AppLocalizations.of(context).applyModalSend,
-                          style: KolabingTextStyles.button.copyWith(
-                            fontSize: 15,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: KolabingColors.primary,
-                          foregroundColor: KolabingColors.onPrimary,
-                          disabledBackgroundColor: KolabingColors.primary
-                              .withValues(alpha: 0.6),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: KolabingRadius.borderRadiusMd,
-                          ),
-                        ),
-                      ),
+                    KolabingButton(
+                      label: _isSubmitting
+                          ? AppLocalizations.of(context).applyModalSending
+                          : AppLocalizations.of(context).applyModalSend,
+                      onPressed: _isSubmitting ? null : _handleSubmit,
+                      variant: KolabingButtonVariant.primary,
+                      icon: const Icon(LucideIcons.send),
+                      isLoading: _isSubmitting,
                     ),
                   ],
                 ),
@@ -457,17 +422,17 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         width: double.infinity,
         padding: const EdgeInsets.all(KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.error.withValues(alpha: 0.05),
+          color: context.colors.error.withValues(alpha: 0.05),
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color: KolabingColors.error.withValues(alpha: 0.2),
+            color: context.colors.error.withValues(alpha: 0.2),
           ),
         ),
         child: Text(
           AppLocalizations.of(context).applyModalNoDates,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 13,
-            color: KolabingColors.error,
+            color: context.colors.error,
           ),
           textAlign: TextAlign.center,
         ),
@@ -504,15 +469,15 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               width: 56,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? KolabingColors.primary
-                    : KolabingColors.background,
+                    ? context.colors.primary
+                    : context.colors.background,
                 borderRadius: KolabingRadius.borderRadiusSm,
                 border: Border.all(
                   color: isSelected
-                      ? KolabingColors.primary
+                      ? context.colors.primary
                       : _availabilityError != null
-                      ? KolabingColors.error
-                      : KolabingColors.darkBorder,
+                      ? context.colors.error
+                      : context.colors.darkBorder,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -523,8 +488,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     dayLabel,
                     style: KolabingTextStyles.labelSmall.copyWith(
                       color: isSelected
-                          ? KolabingColors.onPrimary
-                          : KolabingColors.textTertiary,
+                          ? context.colors.onPrimary
+                          : context.colors.textTertiary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -534,8 +499,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: isSelected
-                          ? KolabingColors.onPrimary
-                          : KolabingColors.onSurface,
+                          ? context.colors.onPrimary
+                          : context.colors.onSurface,
                     ),
                   ),
                   Text(
@@ -543,8 +508,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     style: KolabingTextStyles.labelSmall.copyWith(
                       fontSize: 10,
                       color: isSelected
-                          ? KolabingColors.onPrimary.withValues(alpha: 0.8)
-                          : KolabingColors.textTertiary,
+                          ? context.colors.onPrimary.withValues(alpha: 0.8)
+                          : context.colors.textTertiary,
                     ),
                   ),
                 ],
@@ -559,16 +524,16 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   Widget _buildTimeRangePicker() => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.background,
+      color: context.colors.background,
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.darkBorder),
+      border: Border.all(color: context.colors.darkBorder),
     ),
     child: Row(
       children: [
-        const Icon(
+        Icon(
           LucideIcons.clock,
           size: 18,
-          color: KolabingColors.textTertiary,
+          color: context.colors.textTertiary,
         ),
         const SizedBox(width: KolabingSpacing.sm),
         // Start time
@@ -579,12 +544,12 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             onTap: () => _pickTime(isStart: true),
           ),
         ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: KolabingSpacing.sm),
           child: Icon(
             LucideIcons.arrowRight,
             size: 16,
-            color: KolabingColors.textTertiary,
+            color: context.colors.textTertiary,
           ),
         ),
         // End time
@@ -611,9 +576,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         vertical: KolabingSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusSm,
-        border: Border.all(color: KolabingColors.darkBorder),
+        border: Border.all(color: context.colors.darkBorder),
       ),
       child: Column(
         children: [
@@ -621,7 +586,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             label,
             style: KolabingTextStyles.labelSmall.copyWith(
               fontSize: 10,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
           const SizedBox(height: 2),
@@ -629,7 +594,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             _formatTime(time),
             style: KolabingTextStyles.labelLarge.copyWith(
               fontSize: 15,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
         ],
@@ -669,7 +634,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         title,
         style: KolabingTextStyles.labelLarge.copyWith(
           fontWeight: FontWeight.w700,
-          color: KolabingColors.onSurface,
+          color: context.colors.onSurface,
         ),
       ),
       if (required) ...[
@@ -677,7 +642,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         Text(
           '*',
           style: KolabingTextStyles.labelLarge.copyWith(
-            color: KolabingColors.error,
+            color: context.colors.error,
           ),
         ),
       ],
@@ -686,7 +651,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: KolabingColors.surfaceVariant,
+            color: context.colors.surfaceVariant,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
@@ -694,47 +659,13 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             style: KolabingTextStyles.labelSmall.copyWith(
               fontSize: 10,
               letterSpacing: 0.4,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
         ),
       ],
     ],
   );
-
-  InputDecoration _buildInputDecoration({required String hintText}) =>
-      InputDecoration(
-        hintText: hintText,
-        hintStyle: KolabingTextStyles.bodySmall.copyWith(
-          color: KolabingColors.textTertiary,
-        ),
-        filled: true,
-        fillColor: KolabingColors.background,
-        border: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(color: KolabingColors.darkBorder),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(color: KolabingColors.darkBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(
-            color: KolabingColors.primary,
-            width: 1.5,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          borderSide: const BorderSide(color: KolabingColors.error),
-        ),
-        contentPadding: const EdgeInsets.all(KolabingSpacing.md),
-        counterStyle: KolabingTextStyles.labelMedium.copyWith(
-          fontWeight: FontWeight.w400,
-          color: KolabingColors.textTertiary,
-        ),
-      );
 
   Widget _buildHeroCard() {
     final creator = widget.opportunity.creatorProfile;
@@ -747,10 +678,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.08),
+        color: context.colors.primary.withValues(alpha: 0.08),
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: KolabingColors.primary.withValues(alpha: 0.25),
+          color: context.colors.primary.withValues(alpha: 0.25),
         ),
       ),
       child: Column(
@@ -764,10 +695,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: KolabingColors.surface,
+                  color: context.colors.surface,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: KolabingColors.primary.withValues(alpha: 0.4),
+                    color: context.colors.primary.withValues(alpha: 0.4),
                   ),
                 ),
                 child:
@@ -795,7 +726,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                             style: KolabingTextStyles.bodyLarge.copyWith(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              color: KolabingColors.onSurface,
+                              color: context.colors.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -808,7 +739,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: KolabingColors.primary,
+                            color: context.colors.primary,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -817,7 +748,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.4,
-                              color: KolabingColors.onPrimary,
+                              color: context.colors.onPrimary,
                             ),
                           ),
                         ),
@@ -827,7 +758,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                     Text(
                       AppLocalizations.of(context).applyModalApplyingTo,
                       style: KolabingTextStyles.labelSmall.copyWith(
-                        color: KolabingColors.textTertiary,
+                        color: context.colors.textTertiary,
                       ),
                     ),
                   ],
@@ -841,7 +772,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             style: KolabingTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
               height: 1.3,
-              color: KolabingColors.onSurface,
+              color: context.colors.onSurface,
             ),
           ),
           if (widget.opportunity.description.isNotEmpty) ...[
@@ -853,7 +784,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 13,
                 height: 1.5,
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -885,19 +816,19 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 vertical: KolabingSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: KolabingColors.surfaceVariant,
+                color: context.colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(KolabingRadius.round),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(f.icon, size: 13, color: KolabingColors.onSurfaceVariant),
+                  Icon(f.icon, size: 13, color: context.colors.onSurfaceVariant),
                   const SizedBox(width: 4),
                   Text(
                     f.label,
                     style: KolabingTextStyles.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: KolabingColors.onSurfaceVariant,
+                      color: context.colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -911,14 +842,14 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   Widget _buildOfferHighlight() => Container(
     padding: const EdgeInsets.all(KolabingSpacing.md),
     decoration: BoxDecoration(
-      color: KolabingColors.success.withValues(alpha: 0.1),
+      color: context.colors.success.withValues(alpha: 0.1),
       borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: KolabingColors.success.withValues(alpha: 0.3)),
+      border: Border.all(color: context.colors.success.withValues(alpha: 0.3)),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(LucideIcons.gift, size: 18, color: KolabingColors.success),
+        Icon(LucideIcons.gift, size: 18, color: context.colors.success),
         const SizedBox(width: KolabingSpacing.sm),
         Expanded(
           child: Column(
@@ -929,7 +860,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
-                  color: KolabingColors.success,
+                  color: context.colors.success,
                 ),
               ),
               const SizedBox(height: 2),
@@ -938,7 +869,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   height: 1.4,
-                  color: KolabingColors.onSurface,
+                  color: context.colors.onSurface,
                 ),
               ),
             ],
@@ -951,16 +882,16 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   Widget _buildTipCard() => Container(
     padding: const EdgeInsets.all(KolabingSpacing.sm),
     decoration: BoxDecoration(
-      color: KolabingColors.surfaceVariant,
+      color: context.colors.surfaceVariant,
       borderRadius: KolabingRadius.borderRadiusSm,
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
+        Icon(
           LucideIcons.sparkles,
           size: 16,
-          color: KolabingColors.textTertiary,
+          color: context.colors.textTertiary,
         ),
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
@@ -969,7 +900,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
             style: KolabingTextStyles.labelMedium.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.5,
-              color: KolabingColors.textTertiary,
+              color: context.colors.textTertiary,
             ),
           ),
         ),
@@ -1010,7 +941,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
       widget.opportunity.creatorProfile?.initial ?? '?',
       style: KolabingTextStyles.bodyMedium.copyWith(
         fontWeight: FontWeight.w700,
-        color: KolabingColors.primary,
+        color: context.colors.primary,
       ),
     ),
   );

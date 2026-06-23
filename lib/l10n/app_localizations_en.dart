@@ -36,6 +36,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
+  String onboardingCompleteMissingFields(String fields) {
+    return 'Please complete: $fields';
+  }
+
+  @override
+  String get onboardingFieldName => 'Name';
+
+  @override
+  String get onboardingFieldBusinessCategory => 'Business category';
+
+  @override
+  String get onboardingFieldVenueType => 'Venue type';
+
+  @override
+  String get onboardingFieldVenueCapacity => 'Venue capacity';
+
+  @override
+  String get onboardingFieldVenuePhotos => 'Venue photos';
+
+  @override
+  String get onboardingFieldBusinessAddress => 'Address';
+
+  @override
+  String get onboardingFieldTargetCities => 'Cities';
+
+  @override
+  String get onboardingFieldCommunityType => 'Community type';
+
+  @override
+  String get onboardingFieldCommunityCity => 'City';
+
+  @override
   String get welcomeLogIn => 'Log in';
 
   @override
@@ -50,6 +82,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcomeGetStarted => 'Get started';
+
+  @override
+  String get welcomeStartKolabing => 'Start kolabing';
+
+  @override
+  String get welcomeHeroWhere => 'Where';
+
+  @override
+  String get welcomeHeroBusinesses => 'businesses';
+
+  @override
+  String get welcomeHeroAnd => 'and';
+
+  @override
+  String get welcomeHeroCommunities => 'communities';
+
+  @override
+  String get welcomeHeroGrow => 'grow';
+
+  @override
+  String get welcomeHeroTogether => 'together';
+
+  @override
+  String get welcomeTaglineMatch => 'MATCH';
+
+  @override
+  String get welcomeTaglineDot => '·';
+
+  @override
+  String get welcomeTaglineKolab => 'KOLAB';
+
+  @override
+  String get welcomeTaglineGrow => 'GROW';
+
+  @override
+  String get welcomeFloatingEvents => 'events';
+
+  @override
+  String get welcomeFloatingUgc => 'UGC';
+
+  @override
+  String get welcomeFloatingReviews => 'reviews';
+
+  @override
+  String get welcomeFloatingGrowth => 'growth';
+
+  @override
+  String get welcomeFloatingCommunity => 'community';
+
+  @override
+  String get welcomeFloatingBrands => 'brands';
+
+  @override
+  String get welcomeFloatingPeople => 'people';
+
+  @override
+  String get welcomeFloatingConnection => 'connection';
 
   @override
   String get settingsLanguage => 'Language';
@@ -536,6 +625,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInWithGoogle => 'Sign in with Google';
 
   @override
+  String get signInWithApple => 'Sign in with Apple';
+
+  @override
+  String get authOrContinueWith => 'or continue with';
+
+  @override
   String get signInNoAccount => 'Don\'t have an account?';
 
   @override
@@ -564,13 +659,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kolabingLogoSemanticLabel => 'Kolabing logo';
 
   @override
-  String get selectionCardBusinessTitle => 'I\'M A BUSINESS';
+  String get selectionCardBusinessTitle => 'I\'m a business';
 
   @override
-  String get selectionCardCommunityTitle => 'I\'M A COMMUNITY';
+  String get selectionCardCommunityTitle => 'I\'m a community';
 
   @override
-  String get selectionCardAttendeeTitle => 'I\'M AN ATTENDEE';
+  String get selectionCardAttendeeTitle => 'I\'m an attendee';
 
   @override
   String get selectionCardBusinessDescription =>
@@ -815,13 +910,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityOfferDetailMode => 'Mode';
 
   @override
-  String get communityOfferDetailPreviewMode => 'PREVIEW MODE';
+  String get communityOfferDetailPreviewMode => 'Preview mode';
 
   @override
-  String get communityOfferDetailAlreadyApplied => 'ALREADY APPLIED';
+  String get communityOfferDetailAlreadyApplied => 'Already applied';
 
   @override
-  String get communityOfferDetailApplyNow => 'APPLY NOW';
+  String get communityOfferDetailApplyNow => 'Apply now';
 
   @override
   String get communityOfferDetailTitle => 'Opportunity Details';
@@ -1270,7 +1365,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'QR code will be available when the event is created';
 
   @override
-  String get collaborationDetailViewQr => 'VIEW QR CODE';
+  String get collaborationDetailViewQr => 'View QR code';
 
   @override
   String get collaborationDetailResubscribeTitle => 'Resubscribe to continue';
@@ -1429,6 +1524,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityProfileContactInfoSection => 'Contact Info';
+
+  @override
+  String get communityProfileDetailsSection => 'Community Details';
+
+  @override
+  String get communityProfileSizeNotSet => 'Not set';
 
   @override
   String get communityProfileNotificationsSection => 'Notifications';
@@ -1817,7 +1918,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get opportunityPublishSuccessViewOpportunities =>
-      'VIEW MY OPPORTUNITIES';
+      'View my opportunities';
 
   @override
   String get eventDetailDeleteTitle => 'Delete Event';
@@ -1978,6 +2079,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeNavProfile => 'Profile';
+
+  @override
+  String get attendeeMyQrTitle => 'My profile QR';
+
+  @override
+  String get attendeeMyQrSubtitle =>
+      'Show this to a host to check in or connect.';
+
+  @override
+  String get attendeeMyQrTooltip => 'My QR code';
+
+  @override
+  String get attendeeMyQrUnavailable => 'Your profile QR isn\'t ready yet.';
 
   @override
   String get attendeeHomeWelcomeBack => 'Welcome back';
@@ -2603,6 +2717,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offeringSelectAllThatApply => 'Select all that apply';
 
   @override
+  String get needsScreenTitle => 'WHAT DO YOU NEED?';
+
+  @override
   String get offeringVenueTitle => 'Venue';
 
   @override
@@ -2724,6 +2841,19 @@ class AppLocalizationsEn extends AppLocalizations {
       locale: localeName,
       other: 'Imported $count profile events.',
       one: 'Imported $count profile event.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pastEventsImportedMediaTrimmed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Imported $count profile events. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.',
+      one:
+          'Imported $count profile event. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.',
     );
     return '$_temp0';
   }
@@ -3346,10 +3476,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessFinalCopyDetails => 'Copy details';
 
   @override
-  String get businessFinalTitleAuthenticated => 'FINISH BUSINESS ONBOARDING';
+  String get businessFinalTitleAuthenticated => 'Finish business onboarding';
 
   @override
-  String get businessFinalTitleNewAccount => 'CREATE YOUR ACCOUNT';
+  String get businessFinalTitleNewAccount => 'Create your account';
 
   @override
   String get businessFinalSubtitleAuthenticated =>
@@ -3425,7 +3555,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessStep2PhoneTooLong => 'Phone number too long';
 
   @override
-  String get businessStep2Title => 'REVIEW YOUR BUSINESS DETAILS';
+  String get businessStep2Title => 'Review your business details';
 
   @override
   String get businessStep2Subtitle =>
@@ -3505,7 +3635,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add at least one venue photo to continue';
 
   @override
-  String get businessStep3Title => 'ADD VENUE PHOTOS';
+  String get businessStep3Title => 'Add venue photos';
 
   @override
   String get businessStep3Subtitle =>
@@ -3523,7 +3653,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'We couldn\'t import from Google, please fill in manually.';
 
   @override
-  String get businessStep5Title => 'CHOOSE YOUR VENUE';
+  String get businessStep5Title => 'Choose your venue';
 
   @override
   String get businessStep5Subtitle =>
@@ -3549,7 +3679,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Importing your business info from Google';
 
   @override
-  String get businessStep5PreviewTitle => 'PHOTOS FROM GOOGLE';
+  String get businessStep5PreviewTitle => 'Photos from Google';
 
   @override
   String get businessStep5PreviewSubtitle =>
@@ -3563,7 +3693,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessStep5SelectedAddress => 'Selected address';
 
   @override
-  String get communityFinalTitle => 'CREATE YOUR ACCOUNT';
+  String get communityFinalTitle => 'Create your account';
 
   @override
   String get communityFinalSubtitle =>
@@ -3622,7 +3752,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'By creating an account, you agree to our Terms of Service and Privacy Policy';
 
   @override
-  String get communityStep1Title => 'TELL US ABOUT YOU';
+  String get communityStep1Title => 'Tell us about you';
 
   @override
   String get communityStep1Subtitle => 'Let\'s create your profile';
@@ -3650,7 +3780,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityStep2LoadError => 'Failed to load community types';
 
   @override
-  String get communityStep3Title => 'WHERE ARE YOU LOCATED?';
+  String get communityStep3Title => 'Where are you located?';
 
   @override
   String get communityStep3Subtitle => 'Find opportunities in your area';
@@ -3671,7 +3801,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityStep3CityRequired => 'Please select a city';
 
   @override
-  String get communityStep4Title => 'COMPLETE YOUR PROFILE';
+  String get communityStep4Title => 'Complete your profile';
 
   @override
   String get communityStep4Subtitle => 'Add your social links (all optional)';
@@ -4038,7 +4168,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get referralBannerTagline => 'Refer 3 businesses → earn €75 cash';
 
   @override
-  String get referralBannerShareButton => 'SHARE REFERRAL CODE';
+  String get referralBannerShareButton => 'Share referral code';
+
+  @override
+  String get referralBannerStepReferLabel => 'Refer';
+
+  @override
+  String get referralBannerStepReferValue => '3 businesses';
+
+  @override
+  String get referralBannerStepEarnLabel => 'Earn';
+
+  @override
+  String get referralBannerStepEarnAmount => '€75';
+
+  @override
+  String get referralBannerStepEarnSuffix => 'cash';
 
   @override
   String get referralSheetYourCode => 'YOUR REFERRAL CODE';
@@ -4299,7 +4444,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreDetailUnlockToApply => 'UNLOCK TO APPLY';
 
   @override
-  String get exploreDetailApplyNow => 'APPLY NOW';
+  String get exploreDetailApplyNow => 'Apply now';
 
   @override
   String get exploreDetailViewCreatorProfile => 'View creator profile';
@@ -4415,7 +4560,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Price';
 
   @override
-  String get subscriptionPriceMonthly => '29 EUR/month';
+  String get subscriptionPriceMonthly => '39.99 EUR/month';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Current Period';
@@ -4459,7 +4604,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionSubscribeButton => 'SUBSCRIBE';
 
   @override
-  String get subscriptionSubscribePricedButton => 'SUBSCRIBE FOR 29 EUR/MONTH';
+  String get subscriptionSubscribePricedButton =>
+      'SUBSCRIBE FOR 39.99 EUR/MONTH';
 
   @override
   String get subscriptionUpdatePaymentButton => 'UPDATE PAYMENT METHOD';
@@ -4507,6 +4653,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionPaywallPerMonth => '/ month';
+
+  @override
+  String get subscriptionPlanMonthlyLabel => 'Monthly';
+
+  @override
+  String get subscriptionPlanThreeMonthsLabel => '3 months';
+
+  @override
+  String get subscriptionPlanBestValueBadge => 'BEST VALUE';
+
+  @override
+  String get subscriptionPlanPer3Months => '/ 3 months';
+
+  @override
+  String subscriptionPlanPerMonthEq(String price) {
+    return '≈ $price/mo';
+  }
+
+  @override
+  String subscriptionPlanSavePercent(int percent) {
+    return 'Save $percent%';
+  }
 
   @override
   String get subscriptionPaywallSubscribeButton => 'SUBSCRIBE NOW';
@@ -4561,10 +4729,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardCreateKolabRequest => 'CREATE KOLAB REQUEST';
 
   @override
-  String get dashboardFindAKolab => 'FIND A KOLAB';
+  String get dashboardFindAKolab => 'Find a Kolab';
 
   @override
-  String get dashboardMyApplications => 'MY APPLICATIONS';
+  String get dashboardMyApplications => 'My applications';
 
   @override
   String get dashboardUpcomingKolabs => 'UPCOMING KOLABS';
@@ -4631,6 +4799,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get eventDetailViewCommunity => 'View community';
+
+  @override
   String get eventHubEdit => 'Edit';
 
   @override
@@ -4638,6 +4809,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventHubDelete => 'Delete event';
+
+  @override
+  String get eventHubScanCheckIns => 'Scan check-ins';
 
   @override
   String get eventHubDeleteConfirmTitle => 'Delete this event?';
@@ -4764,6 +4938,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFormLocationHint => 'Ciutadella Park';
 
   @override
+  String get eventFormCityLabel => 'City (optional)';
+
+  @override
+  String get eventFormCityHint => 'Select a city';
+
+  @override
+  String get eventFormLocationSearchHint => 'Search venue or address';
+
+  @override
+  String get eventFormLocationStartTyping =>
+      'Start typing the venue or address to see suggestions.';
+
+  @override
+  String get eventFormLocationNoMatches =>
+      'No matches yet. Try adding the city to the address.';
+
+  @override
+  String get eventFormLocationError =>
+      'We could not load location suggestions right now.';
+
+  @override
+  String eventFormCityDetected(String city) {
+    return 'City: $city';
+  }
+
+  @override
+  String get eventFormCityNotDetected =>
+      'No city detected for this place. The event won\'t appear in city discovery.';
+
+  @override
   String get eventFormCapacityLabel => 'Capacity (optional)';
 
   @override
@@ -4777,6 +4981,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventFormSelectedTiers => 'Selected tiers';
+
+  @override
+  String get eventFormVisibilityLabel => 'Visibility';
+
+  @override
+  String get eventFormVisibilityPublic => 'Public';
+
+  @override
+  String get eventFormVisibilityPublicHint =>
+      'Appears in city discovery — anyone can find it.';
+
+  @override
+  String get eventFormVisibilityMembers => 'Members';
+
+  @override
+  String get eventFormVisibilityMembersHint =>
+      'Only your community members can see it.';
+
+  @override
+  String get eventFormVisibilityTier => 'Specific tier';
+
+  @override
+  String get eventFormVisibilityTierHint =>
+      'Only members on the selected tiers can see it.';
 
   @override
   String get eventFormPhotos => 'Photos';
@@ -4805,7 +5033,51 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter a valid capacity, or turn off the limit.';
 
   @override
+  String get eventFormErrTier => 'Select at least one tier for this event.';
+
+  @override
   String get eventFormPhotosUploaded => 'Photos uploaded.';
+
+  @override
+  String eventPhotosMaxPerAdd(int max) {
+    return 'You can add up to $max photos at a time.';
+  }
+
+  @override
+  String eventPhotosTotalCapReached(int count, int max) {
+    return 'This gallery already has $count of $max photos.';
+  }
+
+  @override
+  String eventPhotosTotalCapPartial(int allowed, int max) {
+    return 'Only $allowed more photos can be added (max $max total).';
+  }
+
+  @override
+  String get eventFormAddFromCommunity => 'Choose from community gallery';
+
+  @override
+  String get eventFormCommunityGalleryTitle => 'Community gallery';
+
+  @override
+  String get eventFormCommunityGalleryEmpty =>
+      'No photos in the community gallery yet.';
+
+  @override
+  String eventFormCommunityGalleryAdd(int count) {
+    return 'Add $count photos';
+  }
+
+  @override
+  String get communityShareInvite => 'Share invite';
+
+  @override
+  String communityShareInviteMessage(String name, String url) {
+    return 'Join $name on Kolabing: $url';
+  }
+
+  @override
+  String get communityShareInviteCopied => 'Invite link copied.';
 
   @override
   String get notifSettingsTitle => 'Notifications';
@@ -4850,6 +5122,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatThreadFallbackTitle => 'Chat';
+
+  @override
+  String get chatSenderFallback => 'Member';
 
   @override
   String get chatThreadTapToOpen => 'Tap to open';
@@ -5656,6 +5931,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendeeHomeFilterToday => 'Today';
 
   @override
+  String get attendeeHomeFilterDate => 'When';
+
+  @override
+  String get attendeeHomeFilterUpcoming => 'Upcoming';
+
+  @override
+  String get attendeeHomeFilterThisWeek => 'This week';
+
+  @override
+  String get attendeeHomeFilterThisWeekend => 'This weekend';
+
+  @override
+  String get attendeeHomeFilterThisMonth => 'This month';
+
+  @override
   String get attendeeHomeFilterType => 'Type';
 
   @override
@@ -5694,4 +5984,486 @@ class AppLocalizationsEn extends AppLocalizations {
   String eventDateInDays(int days) {
     return 'In $days days';
   }
+
+  @override
+  String get attendeeCommunityProfileErrorTitle => 'Couldn\'t load community';
+
+  @override
+  String get attendeeCommunityProfileTypeFallback => 'Community';
+
+  @override
+  String attendeeCommunityProfileMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+      zero: 'No members yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendeeCommunityProfileAboutTitle => 'About';
+
+  @override
+  String get attendeeCommunityProfileUpcomingEventsTitle => 'Upcoming events';
+
+  @override
+  String get attendeeCommunityProfileSeeAll => 'See all →';
+
+  @override
+  String get attendeeCommunityProfileNoUpcomingEvents =>
+      'No upcoming events yet.';
+
+  @override
+  String get attendeeCommunityProfileJoin => 'Join community';
+
+  @override
+  String get attendeeCommunityProfileJoinedSnack => 'Joined ✓';
+
+  @override
+  String get attendeeCommunityProfileRequestToJoin => 'Request to join';
+
+  @override
+  String get attendeeCommunityProfileRequested => 'Requested';
+
+  @override
+  String get attendeeCommunityProfileRequestedSnack => 'Request sent';
+
+  @override
+  String get attendeeCommunityProfileRequestUnavailable =>
+      'Requests aren\'t available yet. Try again later.';
+
+  @override
+  String get attendeeCommunityProfileOpenCommunity => 'Open community';
+
+  @override
+  String get communityDetailTabRewards => 'Rewards';
+
+  @override
+  String get communityDetailChatsAction => 'Chats →';
+
+  @override
+  String get communityDetailTiersAction => 'Tiers';
+
+  @override
+  String get communityMembersGroupNoTier => 'No tier';
+
+  @override
+  String communityMembersTierCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+      zero: 'No members',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersYou => '★ You';
+
+  @override
+  String communityMembersPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityMembersEmptyTitle => 'No members yet';
+
+  @override
+  String get communityMembersEmptyBody =>
+      'Members appear here once people join this community.';
+
+  @override
+  String get communityMembersLoadError => 'Couldn\'t load members';
+
+  @override
+  String get personalRewardsTitle => 'Rewards';
+
+  @override
+  String get personalRewardsRedeemXpTitle => 'Redeem your XP';
+
+  @override
+  String get personalRewardsXpUnit => 'XP';
+
+  @override
+  String get personalRewardsComingSoon => 'Coming soon';
+
+  @override
+  String personalRewardsXpCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points XP',
+      one: '$points XP',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String personalRewardsMyPoints(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get personalRewardsNoRewards => 'No rewards yet.';
+
+  @override
+  String get personalRewardsEmptyTitle => 'No rewards yet';
+
+  @override
+  String get personalRewardsEmptyBody =>
+      'Join communities and earn points to unlock rewards.';
+
+  @override
+  String get personalRewardsFailedToLoad => 'Couldn\'t load rewards';
+
+  @override
+  String get leaderboardEntryYou => 'You';
+
+  @override
+  String leaderboardEntryBadgeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count badges',
+      one: '$count badge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsComingSoonTitle => 'Rewards coming soon';
+
+  @override
+  String get communityRewardsComingSoonBody =>
+      'Goals, badges and rewards for this community will appear here.';
+
+  @override
+  String get communityRewardsPointsLabel => 'Your points';
+
+  @override
+  String get communityRewardsTierLabel => 'Tier';
+
+  @override
+  String get communityRewardsNoTier => 'No tier yet';
+
+  @override
+  String get communityRewardsGoalsTitle => 'Goals';
+
+  @override
+  String get communityRewardsBadgesTitle => 'Badges';
+
+  @override
+  String get communityRewardsRewardsTitle => 'Rewards';
+
+  @override
+  String communityRewardsGoalReward(int points) {
+    return '+$points pts';
+  }
+
+  @override
+  String communityRewardsGoalProgress(int progress, int target) {
+    return '$progress / $target';
+  }
+
+  @override
+  String get communityRewardsBadgeEarned => 'Earned';
+
+  @override
+  String get communityRewardsBadgeLocked => 'Locked';
+
+  @override
+  String get communityRewardsRedeem => 'Redeem';
+
+  @override
+  String communityRewardsRewardCost(int points) {
+    String _temp0 = intl.Intl.pluralLogic(
+      points,
+      locale: localeName,
+      other: '$points pts',
+      one: '$points pt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String communityRewardsRewardStock(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count left',
+      zero: 'Out of stock',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityRewardsRedeemConfirmTitle => 'Redeem reward?';
+
+  @override
+  String communityRewardsRedeemConfirmBody(int points, String title) {
+    return 'This will spend $points points on \"$title\".';
+  }
+
+  @override
+  String get communityRewardsRedeemedSnack => 'Redeemed ✓';
+
+  @override
+  String get communityRewardsGoalsEmpty => 'No goals yet.';
+
+  @override
+  String get communityRewardsBadgesEmpty => 'No badges yet.';
+
+  @override
+  String get communityRewardsRewardsEmpty => 'No rewards yet.';
+
+  @override
+  String get communityRewardsAddGoal => 'Goal';
+
+  @override
+  String get communityRewardsAddReward => 'Reward';
+
+  @override
+  String get communityRewardsAddBadge => 'Badge';
+
+  @override
+  String get communityGoalEditorNewTitle => 'New goal';
+
+  @override
+  String get communityGoalEditorEditTitle => 'Edit goal';
+
+  @override
+  String get communityGoalTitleLabel => 'Title';
+
+  @override
+  String get communityGoalTitleRequired => 'Enter a title';
+
+  @override
+  String get communityGoalEarnTypeLabel => 'Earn by';
+
+  @override
+  String get communityGoalEarnTypeEventCheckIns => 'Event check-ins';
+
+  @override
+  String get communityGoalEarnTypeChallenge => 'Challenge';
+
+  @override
+  String get communityGoalEarnTypeDaysInCommunity => 'Days in community';
+
+  @override
+  String get communityGoalTargetLabel => 'Target';
+
+  @override
+  String get communityGoalTargetRequired => 'Enter a target greater than 0';
+
+  @override
+  String get communityGoalRewardPointsLabel => 'Reward points';
+
+  @override
+  String get communityGoalRewardPointsRequired => 'Enter reward points';
+
+  @override
+  String get communityRewardEditorNewTitle => 'New reward';
+
+  @override
+  String get communityRewardEditorEditTitle => 'Edit reward';
+
+  @override
+  String get communityRewardTitleLabel => 'Title';
+
+  @override
+  String get communityRewardTitleRequired => 'Enter a title';
+
+  @override
+  String get communityRewardDescriptionLabel => 'Description';
+
+  @override
+  String get communityRewardCostLabel => 'Cost (points)';
+
+  @override
+  String get communityRewardCostRequired => 'Enter a cost';
+
+  @override
+  String get communityRewardStockLabel => 'Stock (leave empty for unlimited)';
+
+  @override
+  String get communityBadgeEditorNewTitle => 'New badge';
+
+  @override
+  String get communityBadgeEditorEditTitle => 'Edit badge';
+
+  @override
+  String get communityBadgeTitleLabel => 'Title';
+
+  @override
+  String get communityBadgeTitleRequired => 'Enter a title';
+
+  @override
+  String get communityBadgeCriteriaLabel => 'Criteria';
+
+  @override
+  String get communityBadgeCriteriaPointsThreshold => 'Points threshold';
+
+  @override
+  String get communityBadgeCriteriaEventCheckIns => 'Event check-ins';
+
+  @override
+  String get communityBadgeCriteriaDaysInCommunity => 'Days in community';
+
+  @override
+  String get communityBadgeCriteriaChallengesCompleted =>
+      'Challenges completed';
+
+  @override
+  String get communityBadgeValueLabel => 'Value';
+
+  @override
+  String get communityBadgeValueRequired => 'Enter a value';
+
+  @override
+  String get communityBadgeChallengesLabel => 'Challenges';
+
+  @override
+  String get communityBadgeChallengesEmpty => 'No challenges available yet.';
+
+  @override
+  String get communityRewardsDeleteTitle => 'Delete?';
+
+  @override
+  String communityRewardsDeleteBody(String title) {
+    return 'Delete \"$title\"? This can\'t be undone.';
+  }
+
+  @override
+  String get communityEventsMyView => 'My view';
+
+  @override
+  String get communityEventsAttendeeView => 'Attendee view';
+
+  @override
+  String get communityEventVisibilityPublic => 'Public';
+
+  @override
+  String get communityEventVisibilityMembers => 'Members';
+
+  @override
+  String get communityEventVisibilityTier => 'Tier';
+
+  @override
+  String get businessGoalTitle => 'What\'s your goal?';
+
+  @override
+  String get businessGoalSubtitle =>
+      'We\'ll tailor your setup based on what you want to achieve.';
+
+  @override
+  String get businessGoalVenueTitle => 'Fill my venue';
+
+  @override
+  String get businessGoalVenueDescription =>
+      'I have a physical place (bar, gym, shop, studio) and want communities to come.';
+
+  @override
+  String get businessGoalProductTitle => 'Promote a product or service';
+
+  @override
+  String get businessGoalProductDescription =>
+      'I want to reach communities in one or more cities, no physical venue needed.';
+
+  @override
+  String get businessProductIdentityTitle => 'Tell us about your brand';
+
+  @override
+  String get businessProductIdentitySubtitle =>
+      'Add your name, category and logo so communities know who you are.';
+
+  @override
+  String get businessProductIdentityIncomplete =>
+      'Please add a name and at least one category.';
+
+  @override
+  String get businessProductNameLabel => 'Brand name';
+
+  @override
+  String get businessProductNameHint => 'Your brand or company name';
+
+  @override
+  String get businessProductCategoryLabel => 'Category';
+
+  @override
+  String get businessProductCategoryHint =>
+      'Pick up to 3 that best describe you.';
+
+  @override
+  String get businessProductTypeLabel => 'Product type';
+
+  @override
+  String get businessProductTypeHint =>
+      'What kind of product or service is it?';
+
+  @override
+  String get businessProductCitiesTitle => 'Which cities do you want to reach?';
+
+  @override
+  String businessProductCitiesSubtitle(int limit) {
+    return 'Free plan: up to $limit cities. Upgrade to Premium for unlimited reach.';
+  }
+
+  @override
+  String get businessProductCitiesRequired =>
+      'Please select at least one city.';
+
+  @override
+  String businessProductCitiesLimitReached(int limit) {
+    return 'Free plan covers up to $limit cities. Upgrade to Premium to add more.';
+  }
+
+  @override
+  String businessProductCitiesCounter(int selected, int limit) {
+    return '$selected of $limit cities selected';
+  }
+
+  @override
+  String get businessProductAboutTitle => 'Add a few more details';
+
+  @override
+  String get businessProductAboutSubtitle =>
+      'All optional, but they help communities decide to work with you.';
+
+  @override
+  String get businessProductOfferingLabel => 'What you offer';
+
+  @override
+  String get businessProductOfferingHint =>
+      'e.g., 20% off for community members, free samples, sponsored prizes';
+
+  @override
+  String get businessProductPhotosLabel => 'Photos (optional)';
+
+  @override
+  String get businessProductPhotosEmptyTitle => 'Add photos';
+
+  @override
+  String get businessProductPhotosEmptyDescription =>
+      'Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.';
+
+  @override
+  String get communityStep1SizeHelper =>
+      'Roughly how many members are in your community?';
 }

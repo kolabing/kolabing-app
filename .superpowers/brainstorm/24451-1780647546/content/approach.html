@@ -1,0 +1,40 @@
+<h2>How should Night Mode tokens be delivered to widgets?</h2>
+<p class="subtitle">144 files currently hardcode <code>KolabingColors.xxx</code>. The night mode spec requires these resolve differently at runtime. Three approaches:</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>BuildContext Extension — <code>context.colors.ink</code></h3>
+      <p>Add a <strong>KolabingNightColors</strong> class (all night tokens) and a <code>context.colors</code> extension that returns the right set based on <code>Theme.of(context).brightness</code>. Migrate only the 4 target screens to use <code>context.colors.xxx</code>. All 140 other files stay untouched and keep rendering in light mode regardless of system preference.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Zero risk to existing screens</li><li>Clean, self-contained night set</li><li>Easy to extend later</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Two color APIs coexist (<code>KolabingColors</code> vs <code>context.colors</code>)</li><li>Non-target screens stay light even in night mode</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>ColorScheme Mapping — Flutter dark ThemeData</h3>
+      <p>Fill out <strong>KolabingTheme.darkTheme</strong> with a proper <code>ColorScheme.dark</code> using the night tokens. Widgets that use <code>Theme.of(context).colorScheme.xxx</code> get night mode automatically. Widgets that still hardcode <code>KolabingColors.xxx</code> need to be migrated one by one.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Idiomatic Flutter M3 pattern</li><li>Chips, buttons, inputs inherit dark theme automatically</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Many night tokens don't map cleanly to ColorScheme slots</li><li>Still need per-widget migration for custom colors (XP card, mission tiles, etc.)</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>InheritedWidget Theme Extension — fully custom token bag</h3>
+      <p>Register a <strong>KolabingColorExtension</strong> as a Flutter <code>ThemeExtension</code>. Define it for both light and dark in ThemeData. All widgets call <code>Theme.of(context).extension&lt;KolabingColorExtension&gt;()!.ink</code>. Full migration of all 144 files required.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Single source of truth for both themes</li><li>Lerps automatically on theme transitions</li><li>Most architecturally pure</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Requires migrating all 144 files</li><li>Highest upfront effort</li><li>Verbose call site</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

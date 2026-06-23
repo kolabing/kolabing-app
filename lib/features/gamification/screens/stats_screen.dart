@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -36,8 +37,8 @@ class StatsScreen extends ConsumerWidget {
       ),
       body: statsAsync.when(
         data: (stats) => _buildContent(context, ref, stats),
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: KolabingColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (error, stack) => _buildErrorState(context, ref, error.toString()),
       ),
@@ -53,7 +54,7 @@ class StatsScreen extends ConsumerWidget {
       onRefresh: () async {
         ref.invalidate(myStatsProvider);
       },
-      color: KolabingColors.primary,
+      color: context.colors.primary,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         child: Column(
@@ -85,8 +86,8 @@ class StatsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            KolabingColors.primary,
-            KolabingColors.primary.withValues(alpha: 0.8),
+            context.colors.primary,
+            context.colors.primary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -94,7 +95,7 @@ class StatsScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: KolabingColors.primary.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -105,21 +106,21 @@ class StatsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const UiIcon(
+              UiIcon(
                 icon: UiIconSlug.star,
                 size: 32,
-                color: KolabingColors.onPrimary,
+                color: context.colors.onPrimary,
               ),
               const SizedBox(width: KolabingSpacing.sm),
               Text(
                 '${stats.totalPoints}',
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 48, fontWeight: FontWeight.w700, color: KolabingColors.onPrimary),
+                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 48, fontWeight: FontWeight.w700, color: context.colors.onPrimary),
               ),
             ],
           ),
           Text(
             AppLocalizations.of(context).statsScreenTotalPoints,
-            style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onPrimary.withValues(alpha: 0.9),
+            style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -135,7 +136,7 @@ class StatsScreen extends ConsumerWidget {
           child: StatCard(
             icon: LucideIcons.calendar,
             iconSlug: UiIconSlug.calendar,
-            iconColor: KolabingColors.info,
+            iconColor: context.colors.info,
             label: l10n.statsScreenEvents,
             value: '${stats.totalEventsAttended}',
           ),
@@ -145,7 +146,7 @@ class StatsScreen extends ConsumerWidget {
           child: StatCard(
             icon: LucideIcons.target,
             iconSlug: UiIconSlug.target,
-            iconColor: KolabingColors.success,
+            iconColor: context.colors.success,
             label: l10n.statsScreenChallenges,
             value: '${stats.totalChallengesCompleted}',
           ),
@@ -155,7 +156,7 @@ class StatsScreen extends ConsumerWidget {
           child: StatCard(
             icon: LucideIcons.award,
             iconSlug: UiIconSlug.award,
-            iconColor: KolabingColors.warning,
+            iconColor: context.colors.warning,
             label: l10n.statsScreenBadges,
             value: '${stats.totalBadgesEarned}',
           ),
@@ -169,7 +170,7 @@ class StatsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: KolabingColors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -184,40 +185,44 @@ class StatsScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.statsScreenDetailedStats,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
+            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
           _buildStatRow(
+            context,
             LucideIcons.gift,
             l10n.statsScreenRewardsWon,
             '${stats.totalRewardsWon}',
-            KolabingColors.primary,
+            context.colors.primary,
             iconSlug: UiIconSlug.gift,
           ),
           const Divider(height: KolabingSpacing.lg),
 
           _buildStatRow(
+            context,
             LucideIcons.checkCircle,
             l10n.statsScreenRewardsRedeemed,
             '${stats.totalRewardsRedeemed}',
-            KolabingColors.success,
+            context.colors.success,
           ),
           const Divider(height: KolabingSpacing.lg),
 
           _buildStatRow(
+            context,
             LucideIcons.mapPin,
             l10n.statsScreenEventsDiscovered,
             '${stats.totalEventsDiscovered}',
-            KolabingColors.info,
+            context.colors.info,
           ),
           const Divider(height: KolabingSpacing.lg),
 
           _buildStatRow(
+            context,
             LucideIcons.clock,
             l10n.statsScreenSpinsUsed,
             '${stats.totalSpins}',
-            KolabingColors.warning,
+            context.colors.warning,
             iconSlug: UiIconSlug.clock,
           ),
         ],
@@ -226,6 +231,7 @@ class StatsScreen extends ConsumerWidget {
   }
 
   Widget _buildStatRow(
+    BuildContext context,
     IconData icon,
     String label,
     String value,
@@ -251,12 +257,12 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: Text(
             label,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
         ),
         Text(
           value,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: KolabingColors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
         ),
       ],
     );
@@ -268,7 +274,7 @@ class StatsScreen extends ConsumerWidget {
       children: [
         Text(
           AppLocalizations.of(context).statsScreenQuickActions,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: KolabingColors.onSurfaceVariant, letterSpacing: 1.2),
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Row(
@@ -307,26 +313,26 @@ class StatsScreen extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(KolabingRadius.md),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
         decoration: BoxDecoration(
-          color: KolabingColors.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: KolabingColors.darkBorder,
+            color: context.colors.darkBorder,
           ),
         ),
         child: Column(
           children: [
             if (iconSlug != null)
-              UiIcon(icon: iconSlug, size: 24, color: KolabingColors.primary)
+              UiIcon(icon: iconSlug, size: 24, color: context.colors.primary)
             else
-              Icon(icon, size: 24, color: KolabingColors.primary),
+              Icon(icon, size: 24, color: context.colors.primary),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               label,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
           ],
         ),
@@ -339,9 +345,9 @@ class StatsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context).statsScreenShareComingSoon),
-        backgroundColor: KolabingColors.info,
+        backgroundColor: context.colors.info,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
       ),
     );
   }
@@ -356,17 +362,17 @@ class StatsScreen extends ConsumerWidget {
             Icon(
               LucideIcons.alertCircle,
               size: 48,
-              color: KolabingColors.error.withValues(alpha: 0.7),
+              color: context.colors.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).statsScreenFailedToLoad,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -374,9 +380,6 @@ class StatsScreen extends ConsumerWidget {
               onPressed: () => ref.invalidate(myStatsProvider),
               icon: const Icon(LucideIcons.refreshCw, size: 16),
               label: Text(AppLocalizations.of(context).gamificationTryAgain),
-              style: TextButton.styleFrom(
-                foregroundColor: KolabingColors.primary,
-              ),
             ),
           ],
         ),

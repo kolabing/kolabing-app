@@ -25,11 +25,11 @@ class ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor =
-        isDark ? KolabingColors.darkSurface : KolabingColors.surface;
+        isDark ? context.colors.darkSurface : context.colors.surface;
     final textColor =
-        isDark ? KolabingColors.textOnDark : KolabingColors.onSurface;
+        isDark ? context.colors.textOnDark : context.colors.onSurface;
     final secondaryTextColor =
-        isDark ? KolabingColors.textTertiary : KolabingColors.onSurfaceVariant;
+        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -42,7 +42,7 @@ class ChallengeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+              color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
             ),
           ),
           child: Row(
@@ -87,12 +87,12 @@ class ChallengeCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: KolabingColors.info.withValues(alpha: 0.15),
+                              color: context.colors.info.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               'SYSTEM',
-                              style: KolabingTextStyles.labelSmall.copyWith(fontSize: 9, fontWeight: FontWeight.w700, color: KolabingColors.info, letterSpacing: 0.5),
+                              style: KolabingTextStyles.labelSmall.copyWith(fontSize: 9, fontWeight: FontWeight.w700, color: context.colors.info, letterSpacing: 0.5),
                             ),
                           ),
                       ],
@@ -127,7 +127,7 @@ class ChallengeCard extends StatelessWidget {
                 Icon(
                   LucideIcons.chevronRight,
                   size: 20,
-                  color: KolabingColors.textTertiary,
+                  color: context.colors.textTertiary,
                 ),
               ],
             ],
@@ -140,22 +140,22 @@ class ChallengeCard extends StatelessWidget {
   Color _getDifficultyBgColor(ChallengeDifficulty difficulty) {
     switch (difficulty) {
       case ChallengeDifficulty.easy:
-        return const Color(0xFFD4EDDA);
+        return KolabingColors.activeBg;
       case ChallengeDifficulty.medium:
-        return const Color(0xFFFFF3CD);
+        return KolabingColors.pendingBg;
       case ChallengeDifficulty.hard:
-        return const Color(0xFFF8D7DA);
+        return KolabingColors.errorBg;
     }
   }
 
   Color _getDifficultyColor(ChallengeDifficulty difficulty) {
     switch (difficulty) {
       case ChallengeDifficulty.easy:
-        return const Color(0xFF155724);
+        return KolabingColors.activeText;
       case ChallengeDifficulty.medium:
-        return const Color(0xFF856404);
+        return KolabingColors.pendingText;
       case ChallengeDifficulty.hard:
-        return const Color(0xFF721C24);
+        return KolabingColors.errorText;
     }
   }
 

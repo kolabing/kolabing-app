@@ -80,8 +80,8 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
+          ? context.colors.surface
+          : context.colors.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,23 +94,18 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 KolabingSpacing.xs,
               ),
               child: Text(
-                l10n.myKolabsHubTitle,
-                style: KolabingTextStyles.bodyLarge.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                  color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                l10n.myKolabsHubTitle.toUpperCase(),
+                style: KolabingTextStyles.displayTitle.copyWith(
+                  color: context.colors.titleInk,
                 ),
               ),
             ),
             TabBar(
               controller: _tabController,
               labelStyle: KolabingTextStyles.labelLarge,
-              labelColor: KolabingColors.charcoal,
-              unselectedLabelColor: KolabingColors.navInactive,
-              indicatorColor: KolabingColors.navBarBackground,
+              labelColor: context.colors.charcoal,
+              unselectedLabelColor: context.colors.navInactive,
+              indicatorColor: context.colors.charcoal,
               indicatorWeight: 3,
               tabs: [
                 Tab(text: l10n.myKolabsHubTabOffers),

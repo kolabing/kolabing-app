@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kolabing — Glass Button Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #FDF9F0;
+    color: #1C1C16;
+    min-height: 100vh;
+    padding: 32px 24px 64px;
+  }
+
+  h1 {
+    font-family: 'Anton', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.5px;
+    color: #857E70;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .subtitle { font-size: 13px; color: #8C8A82; margin-bottom: 40px; }
+
+  section { margin-bottom: 48px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #8C8A82;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #E8E2D6;
+  }
+
+  /* ── Glass button shared ── */
+  .glass-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.78);
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 5px 14px rgba(150,120,30,0.10);
+    transition: opacity 0.15s, transform 0.12s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .glass-btn:active { opacity: 0.82; transform: scale(0.975); }
+
+  /* top sheen */
+  .glass-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
+    pointer-events: none;
+  }
+
+  /* intents */
+  .glass-btn.primary {
+    background: rgba(255,244,194,0.34);
+    color: #57534B;
+  }
+  .glass-btn.neutral {
+    background: rgba(255,255,255,0.30);
+    color: #57534B;
+  }
+  .glass-btn.destructive {
+    background: rgba(155,59,59,0.10);
+    border-color: rgba(155,59,59,0.35);
+    color: #9B3B3B;
+  }
+
+  .glass-btn svg { flex-shrink: 0; }
+
+  /* full-width */
+  .glass-btn.full { width: 100%; }
+
+  /* ── Glass icon button ── */
+  .glass-icon-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.78);
+    background: rgba(255,255,255,0.30);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(120,90,40,0.08);
+    transition: opacity 0.15s, transform 0.12s;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .glass-icon-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 5px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
+    pointer-events: none;
+  }
+  .glass-icon-btn:active { opacity: 0.82; transform: scale(0.93); }
+
+  /* ── Row helpers ── */
+  .btn-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .action-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-bottom: 2px;  /* let box-shadow breathe */
+    min-width: 0;
+  }
+  .action-row .pill { flex: 1; min-width: 0; }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border: 1px solid #E8E2D6;
+    border-radius: 16px;
+    padding: 14px 14px 18px;   /* extra bottom so button shadows aren't clipped */
+    display: flex;
+    gap: 12px;
+    max-width: 560px;
+    margin-bottom: 20px;
+  }
+  .card-body { flex: 1; min-width: 0; overflow: visible; }
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .badge-published { background: #D4EDDA; color: #155724; }
+  .badge-draft     { background: #FFDDA0; color: #D8910B; }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1C1C16;
+    margin-bottom: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .chip-sage   { background: #DBE8CD; color: #56624D; }
+  .chip-amber  { background: #FFF0C2; color: #A07010; }
+  .card-thumb {
+    width: 68px;
+    height: 68px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FFF4C2, #FFE28C);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #5C4A12;
+    flex-shrink: 0;
+  }
+
+  /* ── Backgrounds for context demo ── */
+  .bg-photo {
+    background: linear-gradient(135deg, #4a3f2f 0%, #8b6f47 50%, #c9a96e 100%);
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  .bg-white-card {
+    background: #fff;
+    border: 1px solid #E8E2D6;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .bg-parchment {
+    background: #FDF9F0;
+    border: 1px solid #E8E2D6;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .context-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 14px;
+  }
+  .context-label.dark { color: #8C8A82; }
+
+  /* ── Tooltip demo ── */
+  .tooltip-wrap { position: relative; display: inline-flex; }
+  .tooltip-wrap:hover .tooltip-bubble { opacity: 1; transform: translateY(0); }
+  .tooltip-bubble {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #1C1C16;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    pointer-events: none;
+  }
+
+  /* ── Typography ── */
+  .old-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #57534B;
+  }
+  .note {
+    font-size: 12px;
+    color: #8C8A82;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* comparison */
+  .compare-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .compare-col { flex: 1; min-width: 160px; }
+  .compare-col h4 { font-size: 11px; font-weight: 600; color: #8C8A82; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* old button style for comparison */
+  .old-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .old-btn.primary-old { background: #FFE28C; color: #78631A; border: none; }
+  .old-btn.outlined-old { background: transparent; color: #1C1C16; border: 1px solid #E8E2D6; }
+  .old-btn.danger-old   { background: transparent; color: #BA1A1A; border: 1px solid #F8D7DA; }
+</style>
+</head>
+<body>
+
+<h1>Glass Button Preview</h1>
+<p class="subtitle">Kolabing · Phase A · 2026-06-04</p>
+
+<!-- ─── ARCHETYPES ─── -->
+<section>
+  <div class="section-label">Archetype A — Glass Button (3 intents)</div>
+  <div class="btn-row">
+    <button class="glass-btn primary">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      view
+    </button>
+    <button class="glass-btn primary">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      find a kolab
+    </button>
+    <button class="glass-btn neutral">
+      my applications
+    </button>
+    <button class="glass-btn destructive">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9B3B3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      sign out
+    </button>
+  </div>
+</section>
+
+<section>
+  <div class="section-label">Archetype B — Glass Icon Button (hover for tooltip)</div>
+  <div class="btn-row">
+    <div class="tooltip-wrap">
+      <button class="glass-icon-btn" aria-label="Edit">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+      <div class="tooltip-bubble">Edit</div>
+    </div>
+    <div class="tooltip-wrap">
+      <button class="glass-icon-btn" aria-label="Share">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+      <div class="tooltip-bubble">Share</div>
+    </div>
+    <div class="tooltip-wrap">
+      <button class="glass-icon-btn" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </button>
+      <div class="tooltip-bubble">Close</div>
+    </div>
+    <div class="tooltip-wrap">
+      <button class="glass-icon-btn" aria-label="Publish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      </button>
+      <div class="tooltip-bubble">Publish</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GLASS ON DIFFERENT BACKGROUNDS ─── -->
+<section>
+  <div class="section-label">Glass effect on different backgrounds</div>
+
+  <div class="bg-photo">
+    <div class="context-label">On photo / Explore card</div>
+    <div class="btn-row">
+      <button class="glass-btn primary" style="flex:1">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        view
+      </button>
+      <button class="glass-btn primary" style="flex:1">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        apply
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white-card">
+    <div class="context-label dark">On white card (My Kolabs)</div>
+    <div class="action-row">
+      <button class="glass-btn primary pill">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        view
+      </button>
+      <div class="tooltip-wrap">
+        <button class="glass-icon-btn" aria-label="Edit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <div class="tooltip-bubble">Edit</div>
+      </div>
+      <div class="tooltip-wrap">
+        <button class="glass-icon-btn" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </button>
+        <div class="tooltip-bubble">Close</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-parchment">
+    <div class="context-label dark">On parchment (Dashboard / Profile)</div>
+    <div class="btn-row">
+      <button class="glass-btn primary">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        share referral code
+      </button>
+      <button class="glass-btn neutral">my applications</button>
+      <button class="glass-btn destructive">sign out</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FULL MY KOLABS CARD ─── -->
+<section>
+  <div class="section-label">My Kolabs Card — Full Preview</div>
+
+  <!-- Published -->
+  <div class="card">
+    <div class="card-body">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px">
+        <span class="card-badge badge-published">Published</span>
+        <span style="font-size:11px;color:#8C8A82;display:flex;align-items:center;gap:3px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8C8A82" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          3 apps
+        </span>
+      </div>
+      <div class="card-title">Summer rooftop sessions 2026</div>
+      <div class="chips">
+        <span class="chip chip-sage">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#56624D" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Jun 15 – Jul 30
+        </span>
+        <span class="chip chip-amber">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#A07010" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Madrid
+        </span>
+      </div>
+      <!-- NEW ACTION ROW -->
+      <div class="action-row">
+        <button class="glass-btn primary pill">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          view
+        </button>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <div class="tooltip-bubble">Edit</div>
+        </div>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <div class="tooltip-bubble">Share</div>
+        </div>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </button>
+          <div class="tooltip-bubble">Close</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-thumb">S</div>
+  </div>
+
+  <!-- Draft -->
+  <div class="card">
+    <div class="card-body">
+      <span class="card-badge badge-draft" style="margin-bottom:6px;display:inline-flex">Draft</span>
+      <div class="card-title">Wellness popup — Retiro Park</div>
+      <div class="chips">
+        <span class="chip chip-sage">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#56624D" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Aug 1 – Aug 15
+        </span>
+        <span class="chip chip-amber">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#A07010" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Madrid
+        </span>
+      </div>
+      <!-- Draft action row -->
+      <div class="action-row">
+        <button class="glass-btn primary pill">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          edit
+        </button>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          </button>
+          <div class="tooltip-bubble">Publish</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-thumb">W</div>
+  </div>
+</section>
+
+<!-- ─── BEFORE / AFTER ─── -->
+<section>
+  <div class="section-label">Before → After (action row)</div>
+  <div class="compare-row">
+    <div class="compare-col">
+      <h4>Before</h4>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="old-btn primary-old">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#78631A" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          VIEW
+        </button>
+        <button class="old-btn outlined-old">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1C1C16" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          EDIT
+        </button>
+        <button class="old-btn outlined-old">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1C1C16" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          SHARE
+        </button>
+        <button class="old-btn outlined-old">CLOSE</button>
+      </div>
+    </div>
+    <div class="compare-col">
+      <h4>After</h4>
+      <div class="action-row">
+        <button class="glass-btn primary pill">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          view
+        </button>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <div class="tooltip-bubble">Edit</div>
+        </div>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+          <div class="tooltip-bubble">Share</div>
+        </div>
+        <div class="tooltip-wrap">
+          <button class="glass-icon-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#57534B" stroke-width="1.9"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </button>
+          <div class="tooltip-bubble">Close</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

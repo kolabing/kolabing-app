@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kolabing_app/config/theme/color_tokens.dart';
 
-import '../config/theme/colors.dart';
 import '../l10n/app_localizations.dart';
+import 'kolabing_input.dart';
 
 class ReferralCodeField extends StatelessWidget {
   const ReferralCodeField({
@@ -23,43 +24,19 @@ class ReferralCodeField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
 
   @override
-  Widget build(BuildContext context) => TextFormField(
+  Widget build(BuildContext context) => KolabingInput(
     controller: controller,
     focusNode: focusNode,
     enabled: enabled,
+    label: AppLocalizations.of(context).referralCodeFieldLabel,
+    hint: AppLocalizations.of(context).referralCodeFieldHint,
+    errorText: errorText,
+    helperText: errorText == null ? helperText : null,
+    helperStyle: TextStyle(color: context.colors.success),
+    prefix: const Icon(Icons.card_giftcard_outlined),
+    inputFormatters: const <TextInputFormatter>[_UppercaseTextFormatter()],
     autocorrect: false,
     textCapitalization: TextCapitalization.characters,
-    inputFormatters: const <TextInputFormatter>[_UppercaseTextFormatter()],
-    decoration: InputDecoration(
-      labelText: AppLocalizations.of(context).referralCodeFieldLabel,
-      hintText: AppLocalizations.of(context).referralCodeFieldHint,
-      errorText: errorText,
-      helperText: errorText == null ? helperText : null,
-      helperStyle: const TextStyle(color: KolabingColors.success),
-      prefixIcon: const Icon(Icons.card_giftcard_outlined),
-      filled: true,
-      fillColor: KolabingColors.surface,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.darkBorder),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.darkBorder),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.primary, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: KolabingColors.error, width: 2),
-      ),
-    ),
     onChanged: onChanged,
   );
 }

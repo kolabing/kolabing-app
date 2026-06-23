@@ -37,11 +37,58 @@ void main() {
       ),
     );
 
-    for (final label in ['VIEW', 'EDIT', 'CLOSE']) {
-      final text = tester.widget<Text>(find.text(label));
-      expect(text.maxLines, 1);
-      expect(text.softWrap, isFalse);
-      expect(text.overflow, TextOverflow.fade);
-    }
+    // For a published kolab, only VIEW is rendered as a text button.
+    // EDIT and CLOSE are secondary icon-only buttons (no text label).
+    final text = tester.widget<Text>(find.text('VIEW'));
+    expect(text.maxLines, 1);
+    expect(text.softWrap, isFalse);
+    expect(text.overflow, TextOverflow.fade);
+    expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'long title, many chips and many actions do not overflow at 320px',
+    (tester) async {
+      final kolab = Kolab.empty(IntentType.communitySeeking).copyWith(
+        id: 'kolab-99',
+        status: 'published',
+        title:
+            'Sunday Morning Community Run Through Ciutadella Park And Beach Promenade',
+        preferredCity: 'Barcelona',
+        availabilityStart: DateTime(2026, 6, 14),
+        availabilityEnd: DateTime(2026, 6, 28),
+        communityTypes: const ['sports_club', 'wellness'],
+      );
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(size: Size(320, 800)),
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: SizedBox(
+                width: 320,
+                child: MyKolabCard(
+                  kolab: kolab,
+                  onView: () {},
+                  onEdit: () {},
+                  onClose: () {},
+                  onDelete: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+
+      // Title is truncated to 2 lines.
+      final titleText = tester.widget<Text>(find.text(kolab.title));
+      expect(titleText.maxLines, 2);
+      expect(titleText.overflow, TextOverflow.ellipsis);
+    },
+  );
 }

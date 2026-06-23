@@ -222,4 +222,9 @@ class _FakeWalletNotifier extends WalletNotifier {
 
   @override
   WalletState build() => _initialState;
+
+  // The fake build() skips the real one's service wiring, so short-circuit the
+  // network load the community dashboard kicks off in initState.
+  @override
+  Future<void> load() async {}
 }

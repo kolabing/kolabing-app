@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -7,10 +9,10 @@ import '../../../l10n/app_localizations.dart';
 /// User type for selection cards
 enum SelectionUserType { business, community, attendee }
 
-/// Selection card for user type (Business or Community)
+/// Compact row-style selection option for account type.
 ///
-/// Interactive card with icon, title, and description.
-/// Shows selected state with yellow border.
+/// Shows a small icon on the left, stacked title + description in the
+/// centre, and a soft check indicator on the right when selected.
 class SelectionCard extends StatefulWidget {
   const SelectionCard({
     required this.userType,
@@ -22,68 +24,33 @@ class SelectionCard extends StatefulWidget {
     this.descriptionOverride,
   });
 
-  /// The user type this card represents
   final SelectionUserType userType;
-
-  /// Callback when card is tapped
   final VoidCallback onTap;
-
-  /// Whether this card is currently selected
   final bool isSelected;
-
-  /// Whether the card is interactive
   final bool isEnabled;
-
-  /// Optional badge shown inside the card, e.g. "COMING SOON".
   final String? badgeLabel;
-
-  /// Optional override for the card description copy.
   final String? descriptionOverride;
 
   @override
   State<SelectionCard> createState() => _SelectionCardState();
 }
 
-class _SelectionCardState extends State<SelectionCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
-  late final Animation<double> _scaleAnimation;
+class _SelectionCardState extends State<SelectionCard> {
   bool _isPressed = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(TapDownDetails _) {
     if (!widget.isEnabled) return;
     setState(() => _isPressed = true);
-    _animationController.forward();
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(TapUpDetails _) {
     if (!widget.isEnabled) return;
     setState(() => _isPressed = false);
-    _animationController.reverse();
   }
 
   void _handleTapCancel() {
     if (!widget.isEnabled) return;
     setState(() => _isPressed = false);
-    _animationController.reverse();
   }
 
   void _handleTap() {
@@ -92,14 +59,14 @@ class _SelectionCardState extends State<SelectionCard>
     widget.onTap();
   }
 
-  String get _icon {
+  IconData get _icon {
     switch (widget.userType) {
       case SelectionUserType.business:
-        return '\u{1F3E2}';
+        return LucideIcons.briefcase;
       case SelectionUserType.community:
-        return '\u{1F465}';
+        return LucideIcons.users;
       case SelectionUserType.attendee:
-        return '\u{1F3AF}';
+        return LucideIcons.star;
     }
   }
 
@@ -117,9 +84,7 @@ class _SelectionCardState extends State<SelectionCard>
 
   String _description(BuildContext context) {
     final override = widget.descriptionOverride;
-    if (override != null && override.trim().isNotEmpty) {
-      return override;
-    }
+    if (override != null && override.trim().isNotEmpty) return override;
 
     final l10n = AppLocalizations.of(context);
     switch (widget.userType) {
@@ -136,13 +101,52 @@ class _SelectionCardState extends State<SelectionCard>
   Widget build(BuildContext context) {
     final hasBadge =
         widget.badgeLabel != null && widget.badgeLabel!.trim().isNotEmpty;
-    final isHighlighted = _isPressed || widget.isSelected || hasBadge;
-    final borderColor = isHighlighted
-        ? KolabingColors.primary
-        : KolabingColors.darkBorder;
-    final shadowColor = isHighlighted
-        ? KolabingColors.primary.withValues(alpha: 0.20)
-        : const Color(0xFF374957).withValues(alpha: 0.10);
+    final isActive = widget.isSelected;
+    final isDisabled = !widget.isEnabled;
+
+    // White surface for every state, in line with the Explore / My Kolabs
+    // card shells — selection and disabled states are conveyed through
+    // the border + shadow, not by tinting the whole card.
+    const bgColor = Colors.white;
+    final borderColor = isActive
+        ? context.colors.softYellowBorder
+        : const Color(0xFFEAE6DE);
+    final borderWidth = isActive ? 1.5 : 1.0;
+    final boxShadow = isActive
+        ? [
+            BoxShadow(
+              color: context.colors.softYellowBorder.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 3),
+            ),
+          ]
+        : isDisabled
+        ? [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ]
+        : [
+            BoxShadow(
+              color: Colors.black.withValues(
+                alpha: _isPressed ? 0.08 : 0.06,
+              ),
+              blurRadius: 16,
+              offset: const Offset(0, 3),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ];
 
     return Semantics(
       button: true,
@@ -157,83 +161,125 @@ class _SelectionCardState extends State<SelectionCard>
         onTapUp: _handleTapUp,
         onTapCancel: _handleTapCancel,
         onTap: _handleTap,
-        child: AnimatedBuilder(
-          animation: _scaleAnimation,
-          builder: (context, child) => Transform.scale(
-            scale: _isPressed || widget.isSelected
-                ? _scaleAnimation.value
-                : 1.0,
-            child: child,
-          ),
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 120),
+          scale: _isPressed ? 0.985 : 1.0,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 180),
             curve: Curves.easeOut,
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
             decoration: BoxDecoration(
-              color: KolabingColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: shadowColor,
-                  blurRadius: isHighlighted ? 16 : 8,
-                  offset: const Offset(0, 1.5),
-                ),
-              ],
+              color: bgColor,
+              borderRadius: KolabingRadius.borderRadiusLg,
+              border: Border.all(color: borderColor, width: borderWidth),
+              boxShadow: boxShadow,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
               children: [
-                // Icon
-                Text(_icon, style: const TextStyle(fontSize: 48)),
-                if (hasBadge) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: KolabingColors.softYellow,
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: KolabingColors.primary.withValues(alpha: 0.35),
-                      ),
-                    ),
-                    child: Text(
-                      widget.badgeLabel!,
-                      style: KolabingTextStyles.button.copyWith(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.8,
-                        color: KolabingColors.onSurface,
-                      ),
-                    ),
+                // Left icon container
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isDisabled
+                        ? context.colors.softYellow.withValues(alpha: 0.5)
+                        : context.colors.softYellow,
+                    borderRadius: KolabingRadius.borderRadiusSm,
                   ),
-                ],
-                const SizedBox(height: 16),
-
-                // Title
-                Text(
-                  _title(context),
-                  style: KolabingTextStyles.button.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: KolabingColors.onSurface,
-                    letterSpacing: 0.5,
+                  child: Icon(
+                    _icon,
+                    size: 20,
+                    color: isDisabled
+                        ? context.colors.onSurfaceVariant.withValues(alpha: 0.5)
+                        : context.colors.onSurface,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
 
-                // Description
-                Text(
-                  _description(context),
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.onSurfaceVariant,
-                    height: 1.4,
+                const SizedBox(width: 16),
+
+                // Title + description
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              _title(context),
+                              style: KolabingTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: isDisabled
+                                    ? context.colors.onSurfaceVariant
+                                    : context.colors.onSurface,
+                              ),
+                            ),
+                          ),
+                          if (hasBadge) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.colors.softYellow,
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: context.colors.softYellowBorder,
+                                ),
+                              ),
+                              child: Text(
+                                widget.badgeLabel!,
+                                style: KolabingTextStyles.button.copyWith(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.6,
+                                  color: context.colors.onSurface
+                                      .withValues(alpha: 0.7),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _description(context),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12,
+                          color: isDisabled
+                              ? context.colors.onSurfaceVariant
+                                  .withValues(alpha: 0.5)
+                              : context.colors.onSurfaceVariant,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(width: 12),
+
+                // Right indicator
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 180),
+                  opacity: isActive ? 1.0 : 0.0,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      color: context.colors.softYellowBorder,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      LucideIcons.check,
+                      size: 13,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ],
             ),

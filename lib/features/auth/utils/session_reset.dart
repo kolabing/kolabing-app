@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/providers/application_provider.dart';
@@ -48,63 +49,78 @@ import '../../rewards/providers/wallet_provider.dart';
 /// community providers are plain (non-autoDispose) Notifiers held by
 /// always-mounted widgets, so they MUST be invalidated here (see below).
 void invalidateUserScopedProviders(Ref ref) {
-  ref
-    // NOTE: dashboardProvider is intentionally NOT invalidated here. Like the
-    // other AuthScopeGuard notifiers it ref.listen()s authProvider and
-    // reloads/clears itself on every auth transition, so it self-heals on
-    // login AND logout. Invalidating it from AuthNotifier's own ref (the FX-9
-    // post-sign-in path) while it is mounted creates an auth<->dashboard
-    // CircularDependencyError — see the regression test "signInWithEmail
-    // succeeds while dashboardProvider is mounted".
+  // Invalidate each provider INDEPENDENTLY. A cascade
+  // (`ref..invalidate()..invalidate()`) aborts on the first throw — and a
+  // role-scoped provider that the AuthNotifier ref transitively depends on can
+  // throw a debug CircularDependency assertion when invalidated. That abort left
+  // every later provider (community management, kolabs, wallet, …) serving the
+  // PREVIOUS account's data after an account switch — e.g. a freshly registered
+  // community showing "another user's community". Wrap each invalidate so one
+  // failure can never short-circuit the rest.
+  void inv(void Function() invalidate) {
+    try {
+      invalidate();
+    } on Object catch (e) {
+      debugPrint('session_reset: invalidate skipped: $e');
+    }
+  }
 
-    // Explore / discovery feed (role-scoped). This was the missing reset that
-    // caused Explore to keep showing the previous account's role feed.
-    ..invalidate(discoveryListProvider)
-    ..invalidate(discoveryFiltersProvider)
+  // NOTE: dashboardProvider is intentionally NOT invalidated here. Like the
+  // other AuthScopeGuard notifiers it ref.listen()s authProvider and
+  // reloads/clears itself on every auth transition, so it self-heals on login
+  // AND logout. Invalidating it from AuthNotifier's own ref (the FX-9
+  // post-sign-in path) while it is mounted creates an auth<->dashboard
+  // CircularDependencyError — see the regression test "signInWithEmail succeeds
+  // while dashboardProvider is mounted".
 
-    // Applications + chat
-    ..invalidate(myApplicationsProvider)
-    ..invalidate(receivedApplicationsProvider)
-    ..invalidate(chatMessagesProvider)
-    ..invalidate(unreadMessagesCountProvider)
+  // Explore / discovery feed (role-scoped). This was the missing reset that
+  // caused Explore to keep showing the previous account's role feed.
+  inv(() => ref.invalidate(discoveryListProvider));
+  inv(() => ref.invalidate(discoveryFiltersProvider));
 
-    // NF-CHAT inbox (plain Notifiers held by the always-mounted app-bar inbox
-    // button — these leaked the previous account's chats across a switch).
-    ..invalidate(chatThreadsProvider)
-    ..invalidate(chatUnreadProvider)
+  // Applications + chat
+  inv(() => ref.invalidate(myApplicationsProvider));
+  inv(() => ref.invalidate(receivedApplicationsProvider));
+  inv(() => ref.invalidate(chatMessagesProvider));
+  inv(() => ref.invalidate(unreadMessagesCountProvider));
 
-    // NF-6 community management (leader) + memberships (member)
-    ..invalidate(communityManageProvider)
-    ..invalidate(myMembershipsProvider)
+  // NF-CHAT inbox (plain Notifiers held by the always-mounted app-bar inbox
+  // button — these leaked the previous account's chats across a switch).
+  inv(() => ref.invalidate(chatThreadsProvider));
+  inv(() => ref.invalidate(chatUnreadProvider));
 
-    // Posts owned by the user (both parallel post systems)
-    ..invalidate(opportunityListProvider)
-    ..invalidate(opportunityFiltersProvider)
-    ..invalidate(myOpportunitiesProvider)
-    ..invalidate(myOpportunitiesStatusProvider)
-    ..invalidate(myKolabsProvider)
-    ..invalidate(myKolabsStatusProvider)
+  // NF-6 community management (leader) + memberships (member)
+  inv(() => ref.invalidate(communityManageProvider));
+  inv(() => ref.invalidate(myMembershipsProvider));
 
-    // Notifications
-    ..invalidate(notificationProvider)
+  // Posts owned by the user (both parallel post systems)
+  inv(() => ref.invalidate(opportunityListProvider));
+  inv(() => ref.invalidate(opportunityFiltersProvider));
+  inv(() => ref.invalidate(myOpportunitiesProvider));
+  inv(() => ref.invalidate(myOpportunitiesStatusProvider));
+  inv(() => ref.invalidate(myKolabsProvider));
+  inv(() => ref.invalidate(myKolabsStatusProvider));
 
-    // Wallet / XP / badges
-    ..invalidate(walletProvider)
-    ..invalidate(discoveryProvider)
-    ..invalidate(myStatsProvider)
-    ..invalidate(myRewardsProvider)
-    ..invalidate(myRewardsPaginatedProvider)
-    ..invalidate(allBadgesProvider)
-    ..invalidate(myBadgesProvider)
-    ..invalidate(spinProvider)
-    ..invalidate(redeemQRProvider)
-    ..invalidate(confirmRedeemProvider)
-    ..invalidate(checkinProvider)
+  // Notifications
+  inv(() => ref.invalidate(notificationProvider));
 
-    // Public profile previews keyed by id (family)
-    ..invalidate(publicProfileProvider)
+  // Wallet / XP / badges
+  inv(() => ref.invalidate(walletProvider));
+  inv(() => ref.invalidate(discoveryProvider));
+  inv(() => ref.invalidate(myStatsProvider));
+  inv(() => ref.invalidate(myRewardsProvider));
+  inv(() => ref.invalidate(myRewardsPaginatedProvider));
+  inv(() => ref.invalidate(allBadgesProvider));
+  inv(() => ref.invalidate(myBadgesProvider));
+  inv(() => ref.invalidate(spinProvider));
+  inv(() => ref.invalidate(redeemQRProvider));
+  inv(() => ref.invalidate(confirmRedeemProvider));
+  inv(() => ref.invalidate(checkinProvider));
 
-    // Settings / account profile (logo, subscription, prefs)
-    ..invalidate(profileProvider)
-    ..invalidate(galleryProvider);
+  // Public profile previews keyed by id (family)
+  inv(() => ref.invalidate(publicProfileProvider));
+
+  // Settings / account profile (logo, subscription, prefs)
+  inv(() => ref.invalidate(profileProvider));
+  inv(() => ref.invalidate(galleryProvider));
 }

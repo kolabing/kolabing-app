@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
@@ -32,7 +33,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -59,7 +60,7 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
           content: Text(
             AppLocalizations.of(context).communityStep3CityRequired,
           ),
-          backgroundColor: KolabingColors.error,
+          backgroundColor: context.colors.error,
         ),
       );
       return;
@@ -77,10 +78,10 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     final l10n = AppLocalizations.of(context);
     final data = ref.watch(onboardingProvider);
     final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
-    final canContinue = data?.cityId != null;
+    final canContinue = data?.isStep3Complete ?? false;
 
     return Scaffold(
-      backgroundColor: KolabingColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -104,7 +105,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Title
                         Text(
                           l10n.communityStep3Title,
-                          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.bodyLarge.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.onSurface,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
@@ -112,7 +117,9 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                         // Subtitle
                         Text(
                           l10n.communityStep3Subtitle,
-                          style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
@@ -125,21 +132,25 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                               _searchQuery = value;
                             });
                           },
-                          style: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.onSurface),
+                          style: KolabingTextStyles.bodyMedium.copyWith(
+                            color: context.colors.onSurface,
+                          ),
                           decoration: InputDecoration(
                             hintText: l10n.communityStep3SearchHint,
-                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: KolabingColors.textTertiary),
-                            prefixIcon: const Icon(
+                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+                              color: context.colors.textTertiary,
+                            ),
+                            prefixIcon: Icon(
                               LucideIcons.search,
                               size: 20,
-                              color: KolabingColors.textTertiary,
+                              color: context.colors.textTertiary,
                             ),
                             suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       LucideIcons.x,
                                       size: 20,
-                                      color: KolabingColors.textTertiary,
+                                      color: context.colors.textTertiary,
                                     ),
                                     onPressed: () {
                                       _searchController.clear();
@@ -150,10 +161,12 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                                   )
                                 : null,
                             filled: true,
-                            fillColor: KolabingColors.surfaceVariant,
+                            fillColor: context.colors.surfaceContainerLow,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
+                              borderSide: BorderSide(
+                                color: context.colors.outlineVariant,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -169,7 +182,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               l10n.communityStep3PopularCities,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: KolabingColors.textTertiary),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.textTertiary,
+                              ),
                             ),
                           ),
                       ],
@@ -186,7 +203,9 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           return Center(
                             child: Text(
                               l10n.communityStep3NoCitiesFound,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                color: context.colors.onSurfaceVariant,
+                              ),
                             ),
                           );
                         }
@@ -206,24 +225,26 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
                           },
                         );
                       },
-                      loading: () => const Center(
+                      loading: () => Center(
                         child: CircularProgressIndicator(
-                          color: KolabingColors.primary,
+                          color: context.colors.primary,
                         ),
                       ),
                       error: (error, stack) => Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.error_outline,
-                              color: KolabingColors.error,
+                              color: context.colors.error,
                               size: 48,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               l10n.communityStep3LoadError,
-                              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                color: context.colors.onSurfaceVariant,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             TextButton(
@@ -242,28 +263,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
             // Bottom button
             Padding(
               padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: canContinue ? _handleContinue : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor:
-                        KolabingColors.primary.withValues(alpha: 0.5),
-                    disabledForegroundColor:
-                        KolabingColors.onPrimary.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    l10n.commonContinue,
-                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
-                  ),
-                ),
+              child: KolabingButton(
+                label: l10n.commonContinue,
+                onPressed: canContinue ? _handleContinue : null,
+                variant: KolabingButtonVariant.primary,
+                isDisabled: !canContinue,
               ),
             ),
           ],

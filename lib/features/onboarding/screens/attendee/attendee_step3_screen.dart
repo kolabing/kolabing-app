@@ -128,10 +128,8 @@ class _InterestChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null && icon!.isNotEmpty) ...[
-              Text(icon!, style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: 6),
-            ],
+            // NOTE: `icon` is an icon KEY (e.g. "running"), not an emoji — never
+            // render it as text. (Proper SVG icon is a follow-up; show the name.)
             Text(
               label,
               style: KolabingTextStyles.bodySmall.copyWith(

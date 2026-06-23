@@ -1,0 +1,50 @@
+<h2>Answers to your three questions</h2>
+<p class="subtitle">Before picking an approach — here's what the codebase actually shows.</p>
+
+<div class="section">
+  <h3>A — Dark as default ✓ Easy</h3>
+  <p>The <code>ThemeService</code> already defaults to <code>ThemeMode.system</code>, and <code>main.dart</code> hardcodes <code>ThemeMode.light</code> (the provider is wired but ignored). Flipping to dark-first means: default = <code>ThemeMode.dark</code>, light is an opt-in in Settings. No structural change needed.</p>
+</div>
+
+<div class="section">
+  <h3>B — Which files already use <code>colorScheme</code>?</h3>
+  <p>Of the 35 files that call <code>Theme.of(context)</code>, <strong>almost all of them only check <code>.brightness</code></strong> (to branch between light/dark manually). Only <strong>3 lines in the entire codebase</strong> actually read a <code>colorScheme</code> slot (<code>.outline</code> and a <code>copyWith</code>). Everything else is hardcoded <code>KolabingColors.xxx</code>.</p>
+  <p><strong>Conclusion:</strong> Approach B gives almost no free rides. You'd still have to migrate each widget manually — it's effectively the same effort as C, but less clean.</p>
+</div>
+
+<div class="section">
+  <h3>C — Exact migration process for a separate branch</h3>
+  <p>Yes — here's the exact recipe:</p>
+  <ol>
+    <li><code>git checkout -b feat/dark-theme-full-migration</code></li>
+    <li>Define <code>KolabingColorTokens</code> as a <code>ThemeExtension</code> with both light + night sets</li>
+    <li>Run a <strong>codemod script</strong> I write: replaces every <code>KolabingColors.xxx</code> in 144 files with <code>context.colors.xxx</code> (or <code>ref.colors.xxx</code> in Riverpod widgets)</li>
+    <li>Fix the ~20 files where static context is unavailable (non-widget classes, factories, etc.) — those stay as <code>KolabingColors.xxx</code> as fallbacks</li>
+    <li>Run <code>flutter analyze</code> + visual smoke test</li>
+    <li>Open PR → merge to main</li>
+  </ol>
+  <p>Estimated scope: ~4–6 hours of work, mostly automated. The codemod handles 90%+.</p>
+</div>
+
+<div class="section">
+  <h3>Recommendation</h3>
+  <p>Given that dark is the primary theme and you're open to the full migration — <strong>Approach C is the right call</strong>. Do it now (not deferred): define the extension, write the codemod, migrate all 144 files, wire the provider in <code>main.dart</code>, and implement all 4 night screens. One clean branch, one PR.</p>
+  <p>Approach A would leave 140 screens broken in dark mode — since dark is now the default, that's not acceptable.</p>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="c-now" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>C — Full migration, do it now in this branch</h3>
+      <p>ThemeExtension + codemod + all 4 night screens. One PR. Clean architecture.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="a-with-b" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Hybrid — A now for the 4 screens, C later in a separate branch</h3>
+      <p>Ship the 4 screens in night mode this PR. Full migration is a follow-up task.</p>
+    </div>
+  </div>
+</div>

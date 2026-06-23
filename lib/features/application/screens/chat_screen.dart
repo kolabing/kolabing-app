@@ -10,12 +10,30 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
+
+/// Destination for the chat "View opportunity" action.
+///
+/// The **opportunity creator** opens the applicant's submission
+/// (`ApplicationReviewScreen`) — what the counterparty gave us in the form.
+/// The **applicant** opens the offer they applied to, but with `canApply=false`
+/// so no "Apply now" CTA appears: the application is already accepted (the chat
+/// only exists afterwards) and the offer screen's own `has_applied`/`is_own`
+/// flags are unreliable in this payload.
+@visibleForTesting
+String chatViewOpportunityRoute({
+  required bool viewerIsCreator,
+  required String applicationId,
+  required String opportunityId,
+}) => viewerIsCreator
+    ? '/application/$applicationId'
+    : '/community/explore/offer/$opportunityId?canApply=false';
 
 /// Chat screen for application conversation
 class ChatScreen extends ConsumerStatefulWidget {
@@ -96,7 +114,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(chatState.error!),
-            backgroundColor: KolabingColors.error,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -131,7 +149,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         if (application == null) {
           return _buildScaffold(
             body: _buildErrorState(
-                AppLocalizations.of(context).chatApplicationNotFound),
+              AppLocalizations.of(context).chatApplicationNotFound,
+            ),
           );
         }
 
@@ -174,7 +193,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   /// business. Routes to the subscription plans screen.
   Widget _buildResubscribeBanner() {
     return Material(
-      color: KolabingColors.softYellow,
+      color: context.colors.softYellow,
       child: InkWell(
         onTap: () => context.push('/business/plans'),
         child: Padding(
@@ -184,11 +203,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           child: Row(
             children: [
-              const Icon(
-                LucideIcons.lock,
-                size: 16,
-                color: KolabingColors.onPrimary,
-              ),
+              Icon(LucideIcons.lock, size: 16, color: context.colors.onPrimary),
               const SizedBox(width: KolabingSpacing.sm),
               Expanded(
                 child: Text(
@@ -196,7 +211,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: KolabingColors.onSurface,
+                    color: context.colors.onSurface,
                   ),
                 ),
               ),
@@ -206,7 +221,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 style: KolabingTextStyles.labelSmall.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
-                  color: KolabingColors.onPrimary,
+                  color: context.colors.onPrimary,
                 ),
               ),
             ],
@@ -256,20 +271,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? KolabingColors.surface
-          : KolabingColors.background,
+          ? context.colors.surface
+          : context.colors.background,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: isDark
-            ? KolabingColors.darkSurface
-            : KolabingColors.surface,
+            ? context.colors.darkSurface
+            : context.colors.surface,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(LucideIcons.arrowLeft),
           onPressed: () => context.pop(),
-          color: isDark
-              ? KolabingColors.textOnDark
-              : KolabingColors.onSurface,
+          color: isDark ? context.colors.textOnDark : context.colors.onSurface,
         ),
         title: application != null
             ? Row(
@@ -286,8 +299,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark
-                                ? KolabingColors.textOnDark
-                                : KolabingColors.onSurface,
+                                ? context.colors.textOnDark
+                                : context.colors.onSurface,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -297,10 +310,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           style: KolabingTextStyles.bodySmall.copyWith(
                             fontSize: 12,
                             color: isDark
-                                ? KolabingColors.textOnDark.withValues(
+                                ? context.colors.textOnDark.withValues(
                                     alpha: 0.5,
                                   )
-                                : KolabingColors.textTertiary,
+                                : context.colors.textTertiary,
                           ),
                         ),
                       ],
@@ -313,8 +326,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 AppLocalizations.of(context).chatLoading,
                 style: TextStyle(
                   color: isDark
-                      ? KolabingColors.textOnDark
-                      : KolabingColors.onSurface,
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
                 ),
               )
             : null,
@@ -325,8 +338,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   onPressed: () =>
                       _showOptionsMenu(context, application: application),
                   color: isDark
-                      ? KolabingColors.textOnDark.withValues(alpha: 0.7)
-                      : KolabingColors.onSurfaceVariant,
+                      ? context.colors.textOnDark.withValues(alpha: 0.7)
+                      : context.colors.onSurfaceVariant,
                 ),
               ]
             : null,
@@ -339,7 +352,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     width: 36,
     height: 36,
     decoration: BoxDecoration(
-      color: KolabingColors.primary.withValues(alpha: 0.1),
+      color: context.colors.primary.withValues(alpha: 0.1),
       shape: BoxShape.circle,
     ),
     child: Center(
@@ -347,7 +360,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         name.isNotEmpty ? name[0].toUpperCase() : '?',
         style: KolabingTextStyles.bodySmall.copyWith(
           fontWeight: FontWeight.w600,
-          color: KolabingColors.primary,
+          color: context.colors.primary,
         ),
       ),
     ),
@@ -359,20 +372,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.1),
+        color: context.colors.primary.withValues(alpha: 0.1),
         border: Border(
           bottom: BorderSide(
-            color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+            color: isDark
+                ? context.colors.darkBorder
+                : context.colors.darkBorder,
           ),
         ),
       ),
       child: Row(
         children: [
-          const Icon(
-            LucideIcons.briefcase,
-            size: 16,
-            color: KolabingColors.primary,
-          ),
+          Icon(LucideIcons.briefcase, size: 16, color: context.colors.primary),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
@@ -380,8 +391,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               style: KolabingTextStyles.captionSecondary.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -438,7 +449,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Widget _buildLoadingMoreIndicator() {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
       child: Center(
         child: SizedBox(
@@ -446,7 +457,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           height: 24,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
           ),
         ),
       ),
@@ -472,8 +483,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
 
     final dividerColor = isDark
-        ? KolabingColors.darkBorder
-        : KolabingColors.darkBorder;
+        ? context.colors.darkBorder
+        : context.colors.darkBorder;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
@@ -487,8 +498,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 color: isDark
-                    ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                    : KolabingColors.textTertiary,
+                    ? context.colors.textOnDark.withValues(alpha: 0.5)
+                    : context.colors.textTertiary,
               ),
             ),
           ),
@@ -504,7 +515,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         boxShadow: isDark
             ? null
             : [
@@ -523,13 +534,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDark
-                      ? KolabingColors.surface
-                      : KolabingColors.background,
+                      ? context.colors.surface
+                      : context.colors.background,
                   borderRadius: KolabingRadius.borderRadiusRound,
                   border: Border.all(
                     color: isDark
-                        ? KolabingColors.darkBorder
-                        : KolabingColors.darkBorder,
+                        ? context.colors.darkBorder
+                        : context.colors.darkBorder,
                   ),
                 ),
                 child: TextField(
@@ -541,8 +552,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     hintText: AppLocalizations.of(context).chatMessageHint,
                     hintStyle: KolabingTextStyles.bodySmall.copyWith(
                       color: isDark
-                          ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                          : KolabingColors.textTertiary,
+                          ? context.colors.textOnDark.withValues(alpha: 0.5)
+                          : context.colors.textTertiary,
                     ),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
@@ -552,8 +563,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                   style: KolabingTextStyles.bodySmall.copyWith(
                     color: isDark
-                        ? KolabingColors.textOnDark
-                        : KolabingColors.onSurface,
+                        ? context.colors.textOnDark
+                        : context.colors.onSurface,
                   ),
                   onSubmitted: (_) => _handleSend(),
                 ),
@@ -561,7 +572,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Material(
-              color: KolabingColors.primary,
+              color: context.colors.primary,
               borderRadius: BorderRadius.circular(24),
               child: InkWell(
                 onTap: isSending ? null : _handleSend,
@@ -570,20 +581,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   width: 44,
                   height: 44,
                   child: isSending
-                      ? const Center(
+                      ? Center(
                           child: SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: KolabingColors.onPrimary,
+                              color: context.colors.onPrimary,
                             ),
                           ),
                         )
-                      : const Icon(
+                      : Icon(
                           LucideIcons.send,
                           size: 20,
-                          color: KolabingColors.onPrimary,
+                          color: context.colors.onPrimary,
                         ),
                 ),
               ),
@@ -599,11 +610,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return Shimmer.fromColors(
       baseColor: isDark
-          ? KolabingColors.darkSurface
-          : KolabingColors.surfaceVariant,
+          ? context.colors.darkSurface
+          : context.colors.surfaceVariant,
       highlightColor: isDark
-          ? KolabingColors.darkBorder
-          : KolabingColors.surface,
+          ? context.colors.darkBorder
+          : context.colors.surface,
       child: ListView.builder(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         itemCount: 5,
@@ -616,7 +627,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               width: 200,
               height: 60,
               decoration: BoxDecoration(
-                color: isDark ? KolabingColors.darkSurface : Colors.white,
+                color: isDark ? context.colors.darkSurface : Colors.white,
                 borderRadius: KolabingRadius.borderRadiusMd,
               ),
             ),
@@ -632,33 +643,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            LucideIcons.alertCircle,
-            size: 48,
-            color: KolabingColors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 48, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             error,
             style: KolabingTextStyles.bodySmall.copyWith(
-              color: KolabingColors.onSurfaceVariant,
+              color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
+          KolabingButton(
+            label: AppLocalizations.of(context).commonRetry,
             onPressed: () {
               ref.invalidate(chatDataProvider(widget.applicationId));
               ref
                   .read(chatMessagesProvider.notifier)
                   .load(widget.applicationId);
             },
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
             icon: const Icon(LucideIcons.rotateCcw, size: 16),
-            label: Text(AppLocalizations.of(context).commonRetry),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-            ),
           ),
         ],
       ),
@@ -674,40 +679,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              LucideIcons.logIn,
-              size: 48,
-              color: KolabingColors.error,
-            ),
+            Icon(LucideIcons.logIn, size: 48, color: context.colors.error),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).chatSessionExpiredTitle,
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).chatSessionExpiredBody,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            ElevatedButton.icon(
+            KolabingButton(
+              label: AppLocalizations.of(context).chatSignIn,
               onPressed: () {
                 context.go(KolabingRoutes.login);
               },
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
               icon: const Icon(LucideIcons.logIn, size: 16),
-              label: Text(AppLocalizations.of(context).chatSignIn),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-              ),
             ),
           ],
         ),
@@ -728,13 +727,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.1),
+                color: context.colors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 LucideIcons.messageCircle,
                 size: 28,
-                color: KolabingColors.primary,
+                color: context.colors.primary,
               ),
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -743,15 +742,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               style: KolabingTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               AppLocalizations.of(context).chatEmptyBody,
               style: KolabingTextStyles.bodySmall.copyWith(
-                color: KolabingColors.onSurfaceVariant,
+                color: context.colors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -773,27 +772,40 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               title: Text(AppLocalizations.of(context).chatViewOpportunity),
               onTap: () {
                 Navigator.pop(ctx);
-                if (application != null) {
-                  final authState = ref.read(authProvider);
-                  final isBusiness = authState.user?.isBusiness ?? false;
-                  final routePrefix = isBusiness
-                      ? '/business/explore/offer'
-                      : '/community/explore/offer';
-                  context.push(
-                    '$routePrefix/${application.opportunityId}',
-                    extra: application.opportunity,
-                  );
-                }
+                if (application == null) return;
+                // A chat is always between one business and one community
+                // (ROLES §2.5: chat exists only after an accepted application),
+                // so the viewer is the opportunity CREATOR exactly when their
+                // role matches the creator's. Profile-id comparison is
+                // unreliable here (user_id vs profile_id live in different id
+                // spaces — see community_offer_detail_screen). When the creator
+                // role is absent from the payload, fall back to the dominant
+                // flow: the business creates the kolab, the community applies.
+                final user = ref.read(authProvider).user;
+                final creatorType =
+                    application.opportunity?.creatorProfile?.userType
+                        .toLowerCase() ??
+                    '';
+                final viewerIsCreator = switch (creatorType) {
+                  'business' => user?.isBusiness ?? false,
+                  'community' => user?.isCommunity ?? false,
+                  _ => user?.isBusiness ?? false,
+                };
+                context.push(
+                  chatViewOpportunityRoute(
+                    viewerIsCreator: viewerIsCreator,
+                    applicationId: widget.applicationId,
+                    opportunityId: application.opportunityId,
+                  ),
+                  extra: viewerIsCreator ? null : application.opportunity,
+                );
               },
             ),
             ListTile(
-              leading: const Icon(
-                LucideIcons.xCircle,
-                color: KolabingColors.error,
-              ),
+              leading: Icon(LucideIcons.xCircle, color: context.colors.error),
               title: Text(
                 AppLocalizations.of(context).chatCancelApplication,
-                style: const TextStyle(color: KolabingColors.error),
+                style: TextStyle(color: context.colors.error),
               ),
               onTap: () {
                 Navigator.pop(ctx);
@@ -812,9 +824,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.chatCancelDialogTitle),
-        content: Text(
-          l10n.chatCancelDialogBody,
-        ),
+        content: Text(l10n.chatCancelDialogBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -831,12 +841,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(l10n.chatApplicationWithdrawn),
-                    backgroundColor: KolabingColors.success,
+                    backgroundColor: context.colors.success,
                   ),
                 );
               }
             },
-            style: TextButton.styleFrom(foregroundColor: KolabingColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(l10n.chatCancelDialogWithdraw),
           ),
         ],
@@ -867,7 +877,7 @@ class _MessageBubble extends StatelessWidget {
         children: [
           // Show avatar for received messages
           if (!isOwn) ...[
-            _buildAvatar(senderProfile),
+            _buildAvatar(context, senderProfile),
             const SizedBox(width: KolabingSpacing.xs),
           ],
           // Message bubble
@@ -882,10 +892,10 @@ class _MessageBubble extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isOwn
-                    ? KolabingColors.primary
+                    ? context.colors.primary
                     : isDark
-                    ? KolabingColors.darkSurface
-                    : KolabingColors.surface,
+                    ? context.colors.darkSurface
+                    : context.colors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -914,7 +924,7 @@ class _MessageBubble extends StatelessWidget {
                       style: KolabingTextStyles.bodySmall.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: KolabingColors.primary,
+                        color: context.colors.primary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -924,10 +934,10 @@ class _MessageBubble extends StatelessWidget {
                     message.content,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: isOwn
-                          ? KolabingColors.onPrimary
+                          ? context.colors.onPrimary
                           : isDark
-                          ? KolabingColors.textOnDark
-                          : KolabingColors.onSurface,
+                          ? context.colors.textOnDark
+                          : context.colors.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -939,16 +949,16 @@ class _MessageBubble extends StatelessWidget {
                         message.timeDisplay,
                         style: KolabingTextStyles.labelSmall.copyWith(
                           color: isOwn
-                              ? KolabingColors.onPrimary.withValues(alpha: 0.7)
+                              ? context.colors.onPrimary.withValues(alpha: 0.7)
                               : isDark
-                              ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                              : KolabingColors.textTertiary,
+                              ? context.colors.textOnDark.withValues(alpha: 0.5)
+                              : context.colors.textTertiary,
                         ),
                       ),
                       // Read receipts for own messages
                       if (isOwn) ...[
                         const SizedBox(width: 4),
-                        _buildReadReceipt(),
+                        _buildReadReceipt(context),
                       ],
                     ],
                   ),
@@ -963,7 +973,7 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(SenderProfile profile) {
+  Widget _buildAvatar(BuildContext context, SenderProfile profile) {
     if (profile.profilePhoto != null && profile.profilePhoto!.isNotEmpty) {
       return ClipOval(
         child: Image.network(
@@ -971,19 +981,19 @@ class _MessageBubble extends StatelessWidget {
           width: 28,
           height: 28,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _buildFallbackAvatar(profile),
+          errorBuilder: (_, __, ___) => _buildFallbackAvatar(context, profile),
         ),
       );
     }
-    return _buildFallbackAvatar(profile);
+    return _buildFallbackAvatar(context, profile);
   }
 
-  Widget _buildFallbackAvatar(SenderProfile profile) {
+  Widget _buildFallbackAvatar(BuildContext context, SenderProfile profile) {
     return Container(
       width: 28,
       height: 28,
       decoration: BoxDecoration(
-        color: KolabingColors.primary.withValues(alpha: 0.1),
+        color: context.colors.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Center(
@@ -992,7 +1002,7 @@ class _MessageBubble extends StatelessWidget {
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: KolabingColors.primary,
+            color: context.colors.primary,
           ),
         ),
       ),
@@ -1002,9 +1012,9 @@ class _MessageBubble extends StatelessWidget {
   /// Build read receipt indicator
   /// Single check (checkmark) = sent
   /// Double check (checkmarks) = read
-  Widget _buildReadReceipt() {
+  Widget _buildReadReceipt(BuildContext context) {
     final isRead = message.isRead;
-    final iconColor = KolabingColors.onPrimary.withValues(alpha: 0.7);
+    final iconColor = context.colors.onPrimary.withValues(alpha: 0.7);
 
     return Row(
       mainAxisSize: MainAxisSize.min,

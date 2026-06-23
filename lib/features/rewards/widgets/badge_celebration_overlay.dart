@@ -5,6 +5,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/reward_badge.dart';
 
 /// A full-screen overlay that celebrates a newly-unlocked badge with confetti,
@@ -126,14 +127,14 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                     child: Container(
                       width: 96,
                       height: 96,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: KolabingColors.softYellow,
+                        color: context.colors.softYellow,
                       ),
                       child: Icon(
                         widget.badge.slug.icon,
                         size: 44,
-                        color: KolabingColors.onSurface,
+                        color: context.colors.onSurface,
                       ),
                     ),
                   ),
@@ -151,7 +152,7 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   // Badge display name
                   Text(
                     widget.badge.slug.displayName,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: KolabingColors.primary),
+                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.primary),
                   ),
 
                   const SizedBox(height: KolabingSpacing.xs),
@@ -167,24 +168,11 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
                   const SizedBox(height: KolabingSpacing.lg),
 
                   // CTA button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: widget.onDismiss,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: KolabingColors.primary,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: KolabingRadius.borderRadiusMd,
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'SEE MY BADGES',
-                        style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
-                      ),
-                    ),
+                  KolabingButton(
+                    label: 'SEE MY BADGES',
+                    onPressed: widget.onDismiss,
+                    variant: KolabingButtonVariant.primary,
+                    size: KolabingButtonSize.compact,
                   ),
                 ],
               ),
@@ -202,9 +190,9 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
               numberOfParticles: 25,
               gravity: 0.15,
               emissionFrequency: 0.06,
-              colors: const [
-                KolabingColors.primary,
-                KolabingColors.success,
+              colors: [
+                context.colors.primary,
+                context.colors.success,
                 Color(0xFFFF6B6B),
                 Color(0xFF6BC5FF),
                 Color(0xFFFFE082),

@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../../../widgets/ui_icon.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../widgets/navigation/profile_avatar_button.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
@@ -62,7 +64,7 @@ class _BusinessDashboardScreenState
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
-        color: KolabingColors.primary,
+        color: context.colors.primary,
         child: _buildBody(dashboardState, userName, isDark),
       ),
     );
@@ -99,19 +101,19 @@ class _BusinessDashboardScreenState
 
         // Stats grid 2x2
         _buildStatsGrid(data),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Referral banner (rewards)
         const ReferralBannerCard(),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Quick actions
-        _buildQuickActions(isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        _buildQuickActions(),
+        const SizedBox(height: KolabingSpacing.xl),
 
         // Upcoming collaborations
         _buildUpcomingSection(data, isDark),
-        const SizedBox(height: KolabingSpacing.lg),
+        const SizedBox(height: KolabingSpacing.xl),
       ],
     );
   }
@@ -131,19 +133,22 @@ class _BusinessDashboardScreenState
               AppLocalizations.of(context).dashboardBusinessTitle,
               style: KolabingTextStyles.headlineLarge.copyWith(
                 color: isDark
-                    ? KolabingColors.textOnDark
-                    : KolabingColors.onSurface,
+                    ? context.colors.textOnDark
+                    : context.colors.onSurface,
+                letterSpacing: 1.0,
               ),
             ),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               AppLocalizations.of(context).dashboardWelcomeBack(userName),
-              style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
             ),
           ],
         ),
       ),
       const NotificationBell(),
+      const SizedBox(width: KolabingSpacing.xs),
+      const ProfileAvatarButton(),
     ],
   );
 
@@ -160,9 +165,8 @@ class _BusinessDashboardScreenState
               title: AppLocalizations.of(context).dashboardStatPublished,
               count: data.opportunities.published,
               icon: LucideIcons.megaphone,
-              accentColor: KolabingColors.primary,
+              accent: StatCardAccent.active,
               subtitle: '${data.opportunities.total} total requests',
-              index: 0,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -172,9 +176,8 @@ class _BusinessDashboardScreenState
               count: data.applicationsReceived.pending,
               icon: LucideIcons.clock,
               iconSlug: UiIconSlug.clock,
-              accentColor: const Color(0xFFFF9800),
+              accent: StatCardAccent.pending,
               subtitle: '${data.applicationsReceived.total} total',
-              index: 1,
             ),
           ),
         ],
@@ -187,9 +190,8 @@ class _BusinessDashboardScreenState
               title: AppLocalizations.of(context).dashboardStatActiveKolabs,
               count: data.collaborations.active,
               icon: LucideIcons.users,
-              accentColor: const Color(0xFF4CAF50),
+              accent: StatCardAccent.accepted,
               subtitle: '${data.collaborations.upcoming} upcoming',
-              index: 2,
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -199,9 +201,8 @@ class _BusinessDashboardScreenState
               count: data.collaborations.completed,
               icon: LucideIcons.checkCircle,
               iconSlug: UiIconSlug.checkCircle,
-              accentColor: KolabingColors.info,
+              accent: StatCardAccent.completed,
               subtitle: '${data.collaborations.total} total',
-              index: 3,
             ),
           ),
         ],
@@ -213,76 +214,36 @@ class _BusinessDashboardScreenState
   // Quick Actions
   // ---------------------------------------------------------------------------
 
-  Widget _buildQuickActions(bool isDark) => Row(
+  Widget _buildQuickActions() => Row(
     children: [
-      // Primary button: CREATE COLLAB REQUEST
       Expanded(
-        child: SizedBox(
-          height: 48,
-          child: ElevatedButton(
-            onPressed: () async {
-              final allowed = await SubscriptionPaywall.checkAndShow(
-                context,
-                ref,
-              );
-              if (!allowed || !mounted) {
-                return;
-              }
-
-              await context.push(KolabingRoutes.kolabNew);
-              if (mounted) {
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-                if (mounted) ref.invalidate(dashboardProvider);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                AppLocalizations.of(context).dashboardCreateKolabRequest,
-                maxLines: 1,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
-            ),
-          ),
+        child: KolabingButton(
+          label: AppLocalizations.of(context).dashboardCreateKolabRequest,
+          onPressed: () async {
+            final allowed = await SubscriptionPaywall.checkAndShow(
+              context,
+              ref,
+            );
+            if (!allowed || !mounted) return;
+            await context.push(KolabingRoutes.kolabNew);
+            if (mounted) {
+              await Future<void>.delayed(const Duration(milliseconds: 300));
+              if (mounted) ref.invalidate(dashboardProvider);
+            }
+          },
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.plus),
         ),
       ),
       const SizedBox(width: KolabingSpacing.sm),
-
-      // Outlined button: FIND A COLLAB
       Expanded(
-        child: SizedBox(
-          height: 48,
-          child: OutlinedButton(
-            onPressed: () {
-              // Switch to Explore tab (index 1)
-              widget.onSwitchTab?.call(1);
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: isDark
-                  ? KolabingColors.textOnDark
-                  : KolabingColors.onSurface,
-              side: BorderSide(
-                color: isDark
-                    ? KolabingColors.darkBorder
-                    : KolabingColors.darkBorder,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              AppLocalizations.of(context).dashboardFindAKolab,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.0),
-            ),
-          ),
+        child: KolabingButton(
+          label: AppLocalizations.of(context).dashboardFindAKolab,
+          onPressed: () => widget.onSwitchTab?.call(1),
+          variant: KolabingButtonVariant.secondary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.search),
         ),
       ),
     ],
@@ -297,7 +258,7 @@ class _BusinessDashboardScreenState
     children: [
       Text(
         AppLocalizations.of(context).dashboardUpcomingKolabs,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF0D0D0D), letterSpacing: 0.8),
+        style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
       ),
       const SizedBox(height: KolabingSpacing.sm),
 
@@ -327,15 +288,15 @@ class _BusinessDashboardScreenState
           icon: UiIconSlug.calendar,
           size: 40,
           color: isDark
-              ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-              : KolabingColors.textTertiary,
+              ? context.colors.textOnDark.withValues(alpha: 0.5)
+              : context.colors.textTertiary,
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           AppLocalizations.of(context).dashboardNoUpcomingKolabs,
           style: KolabingTextStyles.bodySmall.copyWith(color: isDark
-                ? KolabingColors.textOnDark.withValues(alpha: 0.5)
-                : KolabingColors.textTertiary),
+                ? context.colors.textOnDark.withValues(alpha: 0.5)
+                : context.colors.textTertiary),
         ),
       ],
     ),
@@ -351,38 +312,23 @@ class _BusinessDashboardScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             LucideIcons.alertCircle,
             size: 48,
-            color: KolabingColors.error,
+            color: context.colors.error,
           ),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             message,
-            style: KolabingTextStyles.bodySmall.copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            height: 48,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                ref.read(dashboardProvider.notifier).refresh();
-              },
-              icon: const Icon(LucideIcons.refreshCw, size: 18),
-              label: Text(
-                AppLocalizations.of(context).commonRetry,
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.0),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: KolabingColors.primary,
-                foregroundColor: KolabingColors.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+          KolabingButton(
+            label: AppLocalizations.of(context).commonRetry,
+            onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
+            variant: KolabingButtonVariant.primary,
+            icon: const Icon(LucideIcons.refreshCw),
           ),
         ],
       ),

@@ -47,7 +47,7 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
         height: widget.height,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(widget.height / 2),
           border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
         ),
         child: _buildContent(),

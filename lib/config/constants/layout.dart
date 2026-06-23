@@ -66,7 +66,7 @@ abstract final class KolabingLayout {
   // ---------------------------------------------------------------------------
 
   /// Primary button height
-  static const double buttonHeight = 52;
+  static const double buttonHeight = 56;
 
   /// Secondary button height
   static const double buttonHeightSecondary = 48;
@@ -119,11 +119,18 @@ abstract final class KolabingShadows {
     offset: Offset(0, 3),
   );
 
-  /// Button shadow — none (buttons are flat; no glow)
+  /// Primary button shadow — 0 12px 26px rgba(20,18,16,0.12).
   static const BoxShadow button = BoxShadow(
-    color: Color(0x00000000),
-    blurRadius: 0,
-    offset: Offset.zero,
+    color: Color(0x1F141210),
+    blurRadius: 26,
+    offset: Offset(0, 12),
+  );
+
+  /// Secondary button shadow — 0 10px 22px rgba(20,18,16,0.10).
+  static const BoxShadow buttonSecondary = BoxShadow(
+    color: Color(0x1A141210),
+    blurRadius: 22,
+    offset: Offset(0, 10),
   );
 
   /// Bottom navigation shadow — soft upward line
@@ -171,6 +178,29 @@ abstract final class KolabingShadows {
         ),
       ];
 
+  /// Design handoff card shadow — multi-layer ambient + elevated effect
+  static const List<BoxShadow> designCardShadow = [
+    BoxShadow(
+      color: Color(0x0A19150F),
+      blurRadius: 8,
+      offset: Offset(0, 2),
+    ),
+    BoxShadow(
+      color: Color(0x0619150F),
+      blurRadius: 24,
+      offset: Offset(0, 8),
+    ),
+  ];
+
+  /// Design handoff button shadow — warm dark drop shadow beneath yellow buttons
+  static const List<BoxShadow> designButtonShadow = [
+    BoxShadow(
+      color: Color(0x1F141210),
+      blurRadius: 26,
+      offset: Offset(0, 12),
+    ),
+  ];
+
   // ---------------------------------------------------------------------------
   // List helpers for decoration
   // ---------------------------------------------------------------------------
@@ -178,7 +208,8 @@ abstract final class KolabingShadows {
   static List<BoxShadow> get cardShadow => [card];
   static List<BoxShadow> get ambientShadow => [ambient];
   static List<BoxShadow> get cardHoverShadow => [cardHover];
-  static List<BoxShadow> get buttonShadow => [];
+  static List<BoxShadow> get buttonShadow => [button];
+  static List<BoxShadow> get buttonSecondaryShadow => [buttonSecondary];
   static List<BoxShadow> get bottomNavShadow => [bottomNav];
 }
 

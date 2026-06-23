@@ -321,6 +321,48 @@ class EventService {
   Future<Event> addEventPhotos(String eventId, List<String> filePaths) =>
       _addEventPhotos(eventId, filePaths, allowRetry: true);
 
+  /// Attach existing community-gallery photos to [eventId] by their ids
+  /// (instead of uploading new files). Hits the same `POST /events/{id}/photos`
+  /// endpoint with a `photo_ids[]` body. Self-gated: the backend contract for
+  /// reusing gallery photos ships in parallel — callers wrap this in try/catch
+  /// and fall back to the device picker if it isn't deployed yet.
+  Future<Event> addEventPhotosFromGallery(
+    String eventId,
+    List<String> photoIds,
+  ) =>
+      _addEventPhotosFromGallery(eventId, photoIds, allowRetry: true);
+
+  Future<Event> _addEventPhotosFromGallery(
+    String eventId,
+    List<String> photoIds, {
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/events/$eventId/photos');
+    debugPrint('EventService: POST $uri (${photoIds.length} gallery photo(s))');
+    final response = await _httpClient.post(
+      uri,
+      headers: {...await _getHeaders(), 'Content-Type': 'application/json'},
+      body: jsonEncode({'photo_ids': photoIds}),
+    );
+    debugPrint('Add gallery photos status: ${response.statusCode}');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = json['data'];
+      if (data is Map<String, dynamic>) {
+        final ev = data['event'] is Map<String, dynamic> ? data['event'] : data;
+        return Event.fromJson(ev as Map<String, dynamic>);
+      }
+      throw Exception('Unexpected response attaching gallery photos');
+    } else if (response.statusCode == 401) {
+      if (allowRetry) {
+        await _authService.refreshSession();
+        return _addEventPhotosFromGallery(eventId, photoIds, allowRetry: false);
+      }
+      throw const AuthException('Session expired. Please sign in again.');
+    }
+    throw _parseApiError(response);
+  }
+
   Future<Event> _addEventPhotos(
     String eventId,
     List<String> filePaths, {
@@ -370,6 +412,8 @@ class EventService {
     int? capacity,
     bool clearCapacity = false,
     List<String>? tierGate,
+    String? visibility,
+    String? cityId,
     String scope = 'this',
     Map<String, dynamic>? recurrence,
   }) async {
@@ -386,6 +430,10 @@ class EventService {
       else if (clearCapacity)
         'capacity': null,
       if (tierGate != null) 'tier_gate': tierGate,
+      // Self-gated (#1): only sent when the form supplies it.
+      if (visibility != null) 'visibility': visibility,
+      // Self-gated event city (events.city_id ships in parallel).
+      if (cityId != null && cityId.isNotEmpty) 'city_id': cityId,
       // Present only when converting a one-off into a recurring series.
       if (recurrence != null) 'recurrence': recurrence,
     };
@@ -439,6 +487,8 @@ class EventService {
     String? location,
     int? capacity,
     List<String>? tierGate,
+    String? visibility,
+    String? cityId,
     Map<String, dynamic>? recurrence,
   }) async {
     final payload = <String, dynamic>{
@@ -449,6 +499,10 @@ class EventService {
       if (location != null && location.isNotEmpty) 'location': location,
       if (capacity != null) 'capacity': capacity,
       if (tierGate != null && tierGate.isNotEmpty) 'tier_gate': tierGate,
+      // Self-gated (#1): only sent when the form supplies it.
+      if (visibility != null) 'visibility': visibility,
+      // Self-gated event city (events.city_id ships in parallel).
+      if (cityId != null && cityId.isNotEmpty) 'city_id': cityId,
       // Recurring → backend builds an event_series and returns the first
       // occurrence (carrying series_id). See EventSeriesService.
       if (recurrence != null) 'recurrence': recurrence,

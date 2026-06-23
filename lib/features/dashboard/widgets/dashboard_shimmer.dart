@@ -153,8 +153,8 @@ class _ShimmerBox extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: isDark
-            ? KolabingColors.darkBorder.withValues(alpha: opacity)
-            : KolabingColors.darkBorder.withValues(alpha: opacity),
+            ? context.colors.darkBorder.withValues(alpha: opacity)
+            : context.colors.darkBorder.withValues(alpha: opacity),
         borderRadius: KolabingRadius.borderRadiusSm,
       ),
     );
@@ -173,7 +173,7 @@ class _ShimmerStatCard extends StatelessWidget {
       height: 110,
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         boxShadow: isDark
             ? null
@@ -204,8 +204,8 @@ class _ShimmerStatCard extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? KolabingColors.darkBorder.withValues(alpha: opacity)
-                      : KolabingColors.darkBorder.withValues(alpha: opacity),
+                      ? context.colors.darkBorder.withValues(alpha: opacity)
+                      : context.colors.darkBorder.withValues(alpha: opacity),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -228,10 +228,10 @@ class _ShimmerListItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? KolabingColors.darkSurface : KolabingColors.surface,
+        color: isDark ? context.colors.darkSurface : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isDark ? KolabingColors.darkBorder : KolabingColors.darkBorder,
+          color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
         ),
       ),
       child: Row(
@@ -241,8 +241,8 @@ class _ShimmerListItem extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: isDark
-                  ? KolabingColors.darkBorder.withValues(alpha: opacity)
-                  : KolabingColors.darkBorder.withValues(alpha: opacity),
+                  ? context.colors.darkBorder.withValues(alpha: opacity)
+                  : context.colors.darkBorder.withValues(alpha: opacity),
               shape: BoxShape.circle,
             ),
           ),

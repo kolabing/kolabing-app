@@ -33,6 +33,20 @@
     "description": "Confirm completion."
   },
   "commonErrorGeneric": "Something went wrong. Please try again.",
+  "onboardingCompleteMissingFields": "Please complete: {fields}",
+  "@onboardingCompleteMissingFields": {
+    "description": "Error when account creation is blocked by missing onboarding fields; {fields} is a comma-separated list of field names",
+    "placeholders": { "fields": { "type": "String" } }
+  },
+  "onboardingFieldName": "Name",
+  "onboardingFieldBusinessCategory": "Business category",
+  "onboardingFieldVenueType": "Venue type",
+  "onboardingFieldVenueCapacity": "Venue capacity",
+  "onboardingFieldVenuePhotos": "Venue photos",
+  "onboardingFieldBusinessAddress": "Address",
+  "onboardingFieldTargetCities": "Cities",
+  "onboardingFieldCommunityType": "Community type",
+  "onboardingFieldCommunityCity": "City",
   "@commonErrorGeneric": {
     "description": "Fallback error message shown when an operation fails without a specific reason."
   },
@@ -55,6 +69,82 @@
   "welcomeGetStarted": "Get started",
   "@welcomeGetStarted": {
     "description": "Welcome screen primary call-to-action button."
+  },
+  "welcomeStartKolabing": "Start kolabing",
+  "@welcomeStartKolabing": {
+    "description": "Welcome screen primary CTA — redesigned version."
+  },
+  "welcomeHeroWhere": "Where",
+  "@welcomeHeroWhere": {
+    "description": "Hero sentence part 1."
+  },
+  "welcomeHeroBusinesses": "businesses",
+  "@welcomeHeroBusinesses": {
+    "description": "Hero sentence part 2."
+  },
+  "welcomeHeroAnd": "and",
+  "@welcomeHeroAnd": {
+    "description": "Hero sentence part 3."
+  },
+  "welcomeHeroCommunities": "communities",
+  "@welcomeHeroCommunities": {
+    "description": "Hero sentence part 4."
+  },
+  "welcomeHeroGrow": "grow",
+  "@welcomeHeroGrow": {
+    "description": "Hero sentence part 5."
+  },
+  "welcomeHeroTogether": "together",
+  "@welcomeHeroTogether": {
+    "description": "Hero sentence part 6."
+  },
+  "welcomeTaglineMatch": "MATCH",
+  "@welcomeTaglineMatch": {
+    "description": "Tagline first word."
+  },
+  "welcomeTaglineDot": "·",
+  "@welcomeTaglineDot": {
+    "description": "Tagline separator dot."
+  },
+  "welcomeTaglineKolab": "KOLAB",
+  "@welcomeTaglineKolab": {
+    "description": "Tagline middle word — highlighted in yellow."
+  },
+  "welcomeTaglineGrow": "GROW",
+  "@welcomeTaglineGrow": {
+    "description": "Tagline last word."
+  },
+  "welcomeFloatingEvents": "events",
+  "@welcomeFloatingEvents": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingUgc": "UGC",
+  "@welcomeFloatingUgc": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingReviews": "reviews",
+  "@welcomeFloatingReviews": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingGrowth": "growth",
+  "@welcomeFloatingGrowth": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingCommunity": "community",
+  "@welcomeFloatingCommunity": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingBrands": "brands",
+  "@welcomeFloatingBrands": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingPeople": "people",
+  "@welcomeFloatingPeople": {
+    "description": "Atmospheric floating word on welcome screen."
+  },
+  "welcomeFloatingConnection": "connection",
+  "@welcomeFloatingConnection": {
+    "description": "Atmospheric floating word on welcome screen."
   },
   "settingsLanguage": "Language",
   "@settingsLanguage": {
@@ -676,6 +766,14 @@
   "@signInWithGoogle": {
     "description": "Google sign-in button label on the sign-in screen."
   },
+  "signInWithApple": "Sign in with Apple",
+  "@signInWithApple": {
+    "description": "Apple social sign-in button label on auth screens."
+  },
+  "authOrContinueWith": "or continue with",
+  "@authOrContinueWith": {
+    "description": "Divider label above the social sign-in buttons."
+  },
   "signInNoAccount": "Don't have an account?",
   "@signInNoAccount": {
     "description": "Leading text of the sign-up footer link on the sign-in screen."
@@ -721,15 +819,15 @@
   "@kolabingLogoSemanticLabel": {
     "description": "Accessibility label for the Kolabing logo image."
   },
-  "selectionCardBusinessTitle": "I'M A BUSINESS",
+  "selectionCardBusinessTitle": "I'm a business",
   "@selectionCardBusinessTitle": {
     "description": "User-type selection card title for the Business option."
   },
-  "selectionCardCommunityTitle": "I'M A COMMUNITY",
+  "selectionCardCommunityTitle": "I'm a community",
   "@selectionCardCommunityTitle": {
     "description": "User-type selection card title for the Community option."
   },
-  "selectionCardAttendeeTitle": "I'M AN ATTENDEE",
+  "selectionCardAttendeeTitle": "I'm an attendee",
   "@selectionCardAttendeeTitle": {
     "description": "User-type selection card title for the Attendee option."
   },
@@ -1048,15 +1146,15 @@
   "@communityOfferDetailMode": {
     "description": "Location row label: availability mode"
   },
-  "communityOfferDetailPreviewMode": "PREVIEW MODE",
+  "communityOfferDetailPreviewMode": "Preview mode",
   "@communityOfferDetailPreviewMode": {
     "description": "Bottom action button when previewing"
   },
-  "communityOfferDetailAlreadyApplied": "ALREADY APPLIED",
+  "communityOfferDetailAlreadyApplied": "Already applied",
   "@communityOfferDetailAlreadyApplied": {
     "description": "Bottom action button when already applied"
   },
-  "communityOfferDetailApplyNow": "APPLY NOW",
+  "communityOfferDetailApplyNow": "Apply now",
   "@communityOfferDetailApplyNow": {
     "description": "Bottom action button to apply"
   },
@@ -1640,7 +1738,7 @@
   "@collaborationDetailQrUnavailable": {
     "description": "Snackbar when QR is not yet available."
   },
-  "collaborationDetailViewQr": "VIEW QR CODE",
+  "collaborationDetailViewQr": "View QR code",
   "@collaborationDetailViewQr": {
     "description": "Button to view the QR code."
   },
@@ -1864,6 +1962,14 @@
   "communityProfileContactInfoSection": "Contact Info",
   "@communityProfileContactInfoSection": {
     "description": "Community profile: section title for contact information"
+  },
+  "communityProfileDetailsSection": "Community Details",
+  "@communityProfileDetailsSection": {
+    "description": "Community profile: section title for editable community details"
+  },
+  "communityProfileSizeNotSet": "Not set",
+  "@communityProfileSizeNotSet": {
+    "description": "Community profile: placeholder when community size is not set"
   },
   "communityProfileNotificationsSection": "Notifications",
   "@communityProfileNotificationsSection": {
@@ -2332,7 +2438,7 @@
   "@opportunityPublishSuccessShare": {
     "description": "Opportunity publish success dialog: share button (uppercase)"
   },
-  "opportunityPublishSuccessViewOpportunities": "VIEW MY OPPORTUNITIES",
+  "opportunityPublishSuccessViewOpportunities": "View my opportunities",
   "@opportunityPublishSuccessViewOpportunities": {
     "description": "Opportunity publish success dialog: button to view my opportunities (uppercase)"
   },
@@ -2552,6 +2658,22 @@
   "attendeeNavProfile": "Profile",
   "@attendeeNavProfile": {
     "description": "Attendee bottom nav: Profile tab"
+  },
+  "attendeeMyQrTitle": "My profile QR",
+  "@attendeeMyQrTitle": {
+    "description": "Attendee: title of the sheet showing the user's own profile QR code"
+  },
+  "attendeeMyQrSubtitle": "Show this to a host to check in or connect.",
+  "@attendeeMyQrSubtitle": {
+    "description": "Attendee: helper text under the user's own profile QR code"
+  },
+  "attendeeMyQrTooltip": "My QR code",
+  "@attendeeMyQrTooltip": {
+    "description": "Attendee app bar: tooltip for the my-profile-QR action"
+  },
+  "attendeeMyQrUnavailable": "Your profile QR isn't ready yet.",
+  "@attendeeMyQrUnavailable": {
+    "description": "Attendee: shown when the user's profile id/handle is missing so no QR can be rendered"
   },
   "attendeeHomeWelcomeBack": "Welcome back",
   "@attendeeHomeWelcomeBack": {
@@ -3328,6 +3450,10 @@
   "@offeringSelectAllThatApply": {
     "description": "Offering step instruction under the header"
   },
+  "needsScreenTitle": "WHAT DO YOU NEED?",
+  "@needsScreenTitle": {
+    "description": "Community needs picker section header"
+  },
   "offeringVenueTitle": "Venue",
   "@offeringVenueTitle": {
     "description": "Offering option: venue, title"
@@ -3476,6 +3602,15 @@
   "pastEventsImported": "{count, plural, one{Imported {count} profile event.} other{Imported {count} profile events.}}",
   "@pastEventsImported": {
     "description": "Snackbar confirming how many events were imported",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "pastEventsImportedMediaTrimmed": "{count, plural, one{Imported {count} profile event. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.} other{Imported {count} profile events. Each past event keeps up to 3 photos and 1 video — extra media was trimmed.}}",
+  "@pastEventsImportedMediaTrimmed": {
+    "description": "Snackbar when imported events had media trimmed to the per-event limits",
     "placeholders": {
       "count": {
         "type": "num"
@@ -4264,11 +4399,11 @@
   "@businessFinalCopyDetails": {
     "description": "Business onboarding final: copy error details button"
   },
-  "businessFinalTitleAuthenticated": "FINISH BUSINESS ONBOARDING",
+  "businessFinalTitleAuthenticated": "Finish business onboarding",
   "@businessFinalTitleAuthenticated": {
     "description": "Business onboarding final: title when user is already authenticated"
   },
-  "businessFinalTitleNewAccount": "CREATE YOUR ACCOUNT",
+  "businessFinalTitleNewAccount": "Create your account",
   "@businessFinalTitleNewAccount": {
     "description": "Business onboarding final: title for new account creation"
   },
@@ -4356,7 +4491,7 @@
   "@businessStep2PhoneTooLong": {
     "description": "Business onboarding step 2: phone too long error"
   },
-  "businessStep2Title": "REVIEW YOUR BUSINESS DETAILS",
+  "businessStep2Title": "Review your business details",
   "@businessStep2Title": {
     "description": "Business onboarding step 2: screen title"
   },
@@ -4452,7 +4587,7 @@
   "@businessStep3NoPhotosError": {
     "description": "Business onboarding step 3: no photos added error"
   },
-  "businessStep3Title": "ADD VENUE PHOTOS",
+  "businessStep3Title": "Add venue photos",
   "@businessStep3Title": {
     "description": "Business onboarding step 3: screen title"
   },
@@ -4472,7 +4607,7 @@
   "@businessStep5ImportFallback": {
     "description": "Business onboarding step 5: Google import fallback message"
   },
-  "businessStep5Title": "CHOOSE YOUR VENUE",
+  "businessStep5Title": "Choose your venue",
   "@businessStep5Title": {
     "description": "Business onboarding step 5: screen title"
   },
@@ -4500,7 +4635,7 @@
   "@businessStep5Importing": {
     "description": "Business onboarding step 5: importing overlay message"
   },
-  "businessStep5PreviewTitle": "PHOTOS FROM GOOGLE",
+  "businessStep5PreviewTitle": "Photos from Google",
   "@businessStep5PreviewTitle": {
     "description": "Business onboarding step 5: imported photos preview title"
   },
@@ -4516,7 +4651,7 @@
   "@businessStep5SelectedAddress": {
     "description": "Business onboarding step 5: selected address card heading"
   },
-  "communityFinalTitle": "CREATE YOUR ACCOUNT",
+  "communityFinalTitle": "Create your account",
   "@communityFinalTitle": {
     "description": "Community onboarding final screen title"
   },
@@ -4588,7 +4723,7 @@
   "@communityFinalTermsNotice": {
     "description": "Terms and privacy notice below register button"
   },
-  "communityStep1Title": "TELL US ABOUT YOU",
+  "communityStep1Title": "Tell us about you",
   "@communityStep1Title": {
     "description": "Community onboarding step 1 title"
   },
@@ -4624,7 +4759,7 @@
   "@communityStep2LoadError": {
     "description": "Error message when community types fail to load"
   },
-  "communityStep3Title": "WHERE ARE YOU LOCATED?",
+  "communityStep3Title": "Where are you located?",
   "@communityStep3Title": {
     "description": "Community onboarding step 3 title"
   },
@@ -4652,7 +4787,7 @@
   "@communityStep3CityRequired": {
     "description": "Validation snackbar when city not selected"
   },
-  "communityStep4Title": "COMPLETE YOUR PROFILE",
+  "communityStep4Title": "Complete your profile",
   "@communityStep4Title": {
     "description": "Community onboarding step 4 title"
   },
@@ -5145,9 +5280,29 @@
   "@referralBannerTagline": {
     "description": "Tagline on the referral banner card"
   },
-  "referralBannerShareButton": "SHARE REFERRAL CODE",
+  "referralBannerShareButton": "Share referral code",
   "@referralBannerShareButton": {
     "description": "Button on the referral banner that opens the share sheet"
+  },
+  "referralBannerStepReferLabel": "Refer",
+  "@referralBannerStepReferLabel": {
+    "description": "Referral banner step 1 label (verb)"
+  },
+  "referralBannerStepReferValue": "3 businesses",
+  "@referralBannerStepReferValue": {
+    "description": "Referral banner step 1 value (who to refer)"
+  },
+  "referralBannerStepEarnLabel": "Earn",
+  "@referralBannerStepEarnLabel": {
+    "description": "Referral banner step 2 label (verb)"
+  },
+  "referralBannerStepEarnAmount": "€75",
+  "@referralBannerStepEarnAmount": {
+    "description": "Referral banner reward amount"
+  },
+  "referralBannerStepEarnSuffix": "cash",
+  "@referralBannerStepEarnSuffix": {
+    "description": "Referral banner reward suffix (e.g. cash)"
   },
   "referralSheetYourCode": "YOUR REFERRAL CODE",
   "@referralSheetYourCode": {
@@ -5475,7 +5630,7 @@
   "@exploreDetailUnlockToApply": {
     "description": "Primary CTA when applying requires a subscription"
   },
-  "exploreDetailApplyNow": "APPLY NOW",
+  "exploreDetailApplyNow": "Apply now",
   "@exploreDetailApplyNow": {
     "description": "Primary CTA to apply to an opportunity"
   },
@@ -5615,7 +5770,7 @@
   "@subscriptionDetailPriceLabel": {
     "description": "Detail row label: price"
   },
-  "subscriptionPriceMonthly": "29 EUR/month",
+  "subscriptionPriceMonthly": "39.99 EUR/month",
   "@subscriptionPriceMonthly": {
     "description": "Monthly price value shown in plan details"
   },
@@ -5669,7 +5824,7 @@
   "@subscriptionSubscribeButton": {
     "description": "Subscribe button label (iOS, no price)"
   },
-  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 29 EUR/MONTH",
+  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 39.99 EUR/MONTH",
   "@subscriptionSubscribePricedButton": {
     "description": "Subscribe button label with price (Android/Stripe)"
   },
@@ -5727,6 +5882,20 @@
     "description": "Paywall benefit row: manage applications"
   },
   "subscriptionPaywallPerMonth": "/ month",
+  "subscriptionPlanMonthlyLabel": "Monthly",
+  "subscriptionPlanThreeMonthsLabel": "3 months",
+  "subscriptionPlanBestValueBadge": "BEST VALUE",
+  "subscriptionPlanPer3Months": "/ 3 months",
+  "subscriptionPlanPerMonthEq": "≈ {price}/mo",
+  "@subscriptionPlanPerMonthEq": {
+    "description": "Per-month-equivalent price for a multi-month plan",
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "subscriptionPlanSavePercent": "Save {percent}%",
+  "@subscriptionPlanSavePercent": {
+    "description": "Savings percent of a multi-month plan vs paying monthly",
+    "placeholders": { "percent": { "type": "int" } }
+  },
   "@subscriptionPaywallPerMonth": {
     "description": "Per-month suffix shown after the price in the paywall"
   },
@@ -5774,8 +5943,8 @@
   "dashboardStatPending": "Pending",
   "dashboardStatAccepted": "Accepted",
   "dashboardCreateKolabRequest": "CREATE KOLAB REQUEST",
-  "dashboardFindAKolab": "FIND A KOLAB",
-  "dashboardMyApplications": "MY APPLICATIONS",
+  "dashboardFindAKolab": "Find a Kolab",
+  "dashboardMyApplications": "My applications",
   "dashboardUpcomingKolabs": "UPCOMING KOLABS",
   "dashboardNoUpcomingKolabs": "No upcoming kolabs yet",
   "dashboardDefaultBusinessName": "Business",
@@ -5809,9 +5978,13 @@
   "@eventHubOnWaitlistTapToLeave": { "description": "RSVP button: currently waitlisted, tap to leave" },
   "eventHubWaitlistPosition": "You're #{position} on the waitlist",
   "@eventHubWaitlistPosition": { "description": "Event hub: viewer waitlist position", "placeholders": { "position": { "type": "num" } } },
+  "eventDetailViewCommunity": "View community",
+  "@eventDetailViewCommunity": { "description": "Event detail: tap the host community to open its public profile" },
   "eventHubEdit": "Edit",
   "commonDelete": "Delete",
   "eventHubDelete": "Delete event",
+  "eventHubScanCheckIns": "Scan check-ins",
+  "@eventHubScanCheckIns": { "description": "Event hub leader menu: open the QR scanner to check attendees in" },
   "eventHubDeleteConfirmTitle": "Delete this event?",
   "eventHubDeleteConfirmBody": "\"{name}\" — anyone going or waitlisted will be notified it's cancelled.",
   "@eventHubDeleteConfirmBody": {
@@ -5873,6 +6046,25 @@
   "@eventFormLocationLabel": { "description": "Event form: location label" },
   "eventFormLocationHint": "Ciutadella Park",
   "@eventFormLocationHint": { "description": "Event form: location hint" },
+  "eventFormCityLabel": "City (optional)",
+  "@eventFormCityLabel": { "description": "Event form: city label (the event's location city)" },
+  "eventFormCityHint": "Select a city",
+  "@eventFormCityHint": { "description": "Event form: city picker placeholder when no city is chosen" },
+  "eventFormLocationSearchHint": "Search venue or address",
+  "@eventFormLocationSearchHint": { "description": "Event form: Google Places location search placeholder" },
+  "eventFormLocationStartTyping": "Start typing the venue or address to see suggestions.",
+  "@eventFormLocationStartTyping": { "description": "Event form: location autocomplete empty-query hint" },
+  "eventFormLocationNoMatches": "No matches yet. Try adding the city to the address.",
+  "@eventFormLocationNoMatches": { "description": "Event form: location autocomplete no-results hint" },
+  "eventFormLocationError": "We could not load location suggestions right now.",
+  "@eventFormLocationError": { "description": "Event form: location autocomplete error message" },
+  "eventFormCityDetected": "City: {city}",
+  "@eventFormCityDetected": {
+    "description": "Event form: read-only hint showing the city derived from the picked place",
+    "placeholders": { "city": { "type": "String" } }
+  },
+  "eventFormCityNotDetected": "No city detected for this place. The event won't appear in city discovery.",
+  "@eventFormCityNotDetected": { "description": "Event form: hint when the picked place has no resolvable city" },
   "eventFormCapacityLabel": "Capacity (optional)",
   "@eventFormCapacityLabel": { "description": "Event form: capacity label" },
   "eventFormLimit": "Limit",
@@ -5883,6 +6075,20 @@
   "@eventFormAllMembers": { "description": "Event form: open to all members option" },
   "eventFormSelectedTiers": "Selected tiers",
   "@eventFormSelectedTiers": { "description": "Event form: restrict to selected tiers option" },
+  "eventFormVisibilityLabel": "Visibility",
+  "@eventFormVisibilityLabel": { "description": "Event form: section label for who can see the event." },
+  "eventFormVisibilityPublic": "Public",
+  "@eventFormVisibilityPublic": { "description": "Event visibility option: anyone can see it in city discovery." },
+  "eventFormVisibilityPublicHint": "Appears in city discovery — anyone can find it.",
+  "@eventFormVisibilityPublicHint": { "description": "Helper text for the Public visibility option." },
+  "eventFormVisibilityMembers": "Members",
+  "@eventFormVisibilityMembers": { "description": "Event visibility option: visible to community members only." },
+  "eventFormVisibilityMembersHint": "Only your community members can see it.",
+  "@eventFormVisibilityMembersHint": { "description": "Helper text for the Members visibility option." },
+  "eventFormVisibilityTier": "Specific tier",
+  "@eventFormVisibilityTier": { "description": "Event visibility option: visible to selected membership tiers only." },
+  "eventFormVisibilityTierHint": "Only members on the selected tiers can see it.",
+  "@eventFormVisibilityTierHint": { "description": "Helper text for the Specific tier visibility option." },
   "eventFormPhotos": "Photos",
   "@eventFormPhotos": { "description": "Event form: photos section label" },
   "eventFormAddFromGallery": "Add from gallery",
@@ -5899,8 +6105,45 @@
   "@eventFormErrEndAfterStart": { "description": "Event form: end-before-start error" },
   "eventFormErrCapacity": "Enter a valid capacity, or turn off the limit.",
   "@eventFormErrCapacity": { "description": "Event form: invalid capacity error" },
+  "eventFormErrTier": "Select at least one tier for this event.",
+  "@eventFormErrTier": { "description": "Event form: error when 'Specific tier' visibility is chosen but no tier is selected." },
   "eventFormPhotosUploaded": "Photos uploaded.",
   "@eventFormPhotosUploaded": { "description": "Event form: photos uploaded confirmation" },
+  "eventPhotosMaxPerAdd": "You can add up to {max} photos at a time.",
+  "@eventPhotosMaxPerAdd": {
+    "description": "Gallery: too many photos selected in one batch",
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "eventPhotosTotalCapReached": "This gallery already has {count} of {max} photos.",
+  "@eventPhotosTotalCapReached": {
+    "description": "Gallery: total photo cap already reached",
+    "placeholders": { "count": { "type": "int" }, "max": { "type": "int" } }
+  },
+  "eventPhotosTotalCapPartial": "Only {allowed} more photos can be added (max {max} total).",
+  "@eventPhotosTotalCapPartial": {
+    "description": "Gallery: only some of the picked photos fit under the total cap",
+    "placeholders": { "allowed": { "type": "int" }, "max": { "type": "int" } }
+  },
+  "eventFormAddFromCommunity": "Choose from community gallery",
+  "@eventFormAddFromCommunity": { "description": "Event form: pick photos from the community's past-event gallery" },
+  "eventFormCommunityGalleryTitle": "Community gallery",
+  "@eventFormCommunityGalleryTitle": { "description": "Event form: title of the community gallery picker sheet" },
+  "eventFormCommunityGalleryEmpty": "No photos in the community gallery yet.",
+  "@eventFormCommunityGalleryEmpty": { "description": "Event form: empty state for the community gallery picker" },
+  "eventFormCommunityGalleryAdd": "Add {count} photos",
+  "@eventFormCommunityGalleryAdd": {
+    "description": "Event form: confirm button for adding selected community-gallery photos",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "communityShareInvite": "Share invite",
+  "@communityShareInvite": { "description": "Community: action to share a join-invite link" },
+  "communityShareInviteMessage": "Join {name} on Kolabing: {url}",
+  "@communityShareInviteMessage": {
+    "description": "Community: invite share message body",
+    "placeholders": { "name": { "type": "String" }, "url": { "type": "String" } }
+  },
+  "communityShareInviteCopied": "Invite link copied.",
+  "@communityShareInviteCopied": { "description": "Community: invite link copied to clipboard fallback" },
 
   "notifSettingsTitle": "Notifications",
   "@notifSettingsTitle": { "description": "Notification settings screen title" },
@@ -5929,6 +6172,8 @@
   "@chatInboxTooltip": { "description": "Tooltip on the app-bar chat inbox icon." },
   "chatThreadFallbackTitle": "Chat",
   "@chatThreadFallbackTitle": { "description": "Fallback title for a chat thread with no name or participants." },
+  "chatSenderFallback": "Member",
+  "@chatSenderFallback": { "description": "Fallback label above an incoming chat bubble when the sender's name is unknown." },
   "chatThreadTapToOpen": "Tap to open",
   "@chatThreadTapToOpen": { "description": "Subtitle for a chat thread that has messages." },
   "chatThreadNoMessagesYet": "No messages yet",
@@ -6527,6 +6772,16 @@
   "@attendeeHomeChooseCity": { "description": "City picker button label when no city is selected." },
   "attendeeHomeFilterToday": "Today",
   "@attendeeHomeFilterToday": { "description": "Events filter chip: show only today's events." },
+  "attendeeHomeFilterDate": "When",
+  "@attendeeHomeFilterDate": { "description": "Date-range dropdown chip / sheet title for the events feed." },
+  "attendeeHomeFilterUpcoming": "Upcoming",
+  "@attendeeHomeFilterUpcoming": { "description": "Events date filter chip: all future events (default)." },
+  "attendeeHomeFilterThisWeek": "This week",
+  "@attendeeHomeFilterThisWeek": { "description": "Events date filter chip: events within the current week." },
+  "attendeeHomeFilterThisWeekend": "This weekend",
+  "@attendeeHomeFilterThisWeekend": { "description": "Events date filter chip: events this weekend (Sat-Sun)." },
+  "attendeeHomeFilterThisMonth": "This month",
+  "@attendeeHomeFilterThisMonth": { "description": "Events date filter chip: events within the current calendar month." },
   "attendeeHomeFilterType": "Type",
   "@attendeeHomeFilterType": { "description": "Events filter chip / sheet title: filter by community type." },
   "attendeeHomeFilterTypeAll": "All types",
@@ -6550,5 +6805,288 @@
   "eventDateTomorrow": "Tomorrow",
   "@eventDateTomorrow": { "description": "Event card relative date: tomorrow." },
   "eventDateInDays": "In {days} days",
-  "@eventDateInDays": { "description": "Event card relative date: N days away.", "placeholders": { "days": { "type": "int" } } }
+  "@eventDateInDays": { "description": "Event card relative date: N days away.", "placeholders": { "days": { "type": "int" } } },
+
+  "attendeeCommunityProfileErrorTitle": "Couldn't load community",
+  "@attendeeCommunityProfileErrorTitle": { "description": "Error title on the attendee community profile screen." },
+  "attendeeCommunityProfileTypeFallback": "Community",
+  "@attendeeCommunityProfileTypeFallback": { "description": "Fallback label when a community's type slug can't be resolved." },
+  "attendeeCommunityProfileMemberCount": "{count, plural, =0{No members yet} one{{count} member} other{{count} members}}",
+  "@attendeeCommunityProfileMemberCount": { "description": "Member count under the community header.", "placeholders": { "count": { "type": "int" } } },
+  "attendeeCommunityProfileAboutTitle": "About",
+  "@attendeeCommunityProfileAboutTitle": { "description": "About section title on the attendee community profile." },
+  "attendeeCommunityProfileUpcomingEventsTitle": "Upcoming events",
+  "@attendeeCommunityProfileUpcomingEventsTitle": { "description": "Upcoming events section title." },
+  "attendeeCommunityProfileSeeAll": "See all →",
+  "@attendeeCommunityProfileSeeAll": { "description": "Action that opens the community detail on its Events tab." },
+  "attendeeCommunityProfileNoUpcomingEvents": "No upcoming events yet.",
+  "@attendeeCommunityProfileNoUpcomingEvents": { "description": "Empty state for the upcoming events section." },
+  "attendeeCommunityProfileJoin": "Join community",
+  "@attendeeCommunityProfileJoin": { "description": "CTA to join an open community." },
+  "attendeeCommunityProfileJoinedSnack": "Joined ✓",
+  "@attendeeCommunityProfileJoinedSnack": { "description": "Snackbar after a successful join." },
+  "attendeeCommunityProfileRequestToJoin": "Request to join",
+  "@attendeeCommunityProfileRequestToJoin": { "description": "CTA to request joining an invite-only community." },
+  "attendeeCommunityProfileRequested": "Requested",
+  "@attendeeCommunityProfileRequested": { "description": "Disabled CTA label when a join request is pending." },
+  "attendeeCommunityProfileRequestedSnack": "Request sent",
+  "@attendeeCommunityProfileRequestedSnack": { "description": "Snackbar after a join request is sent." },
+  "attendeeCommunityProfileRequestUnavailable": "Requests aren't available yet. Try again later.",
+  "@attendeeCommunityProfileRequestUnavailable": { "description": "Notice when the join-request endpoint isn't deployed yet." },
+  "attendeeCommunityProfileOpenCommunity": "Open community",
+  "@attendeeCommunityProfileOpenCommunity": { "description": "CTA for an existing member to open the community detail." },
+
+  "communityDetailTabRewards": "Rewards",
+  "@communityDetailTabRewards": { "description": "Community detail tab: Rewards (goals, rewards, badges)." },
+  "communityDetailChatsAction": "Chats →",
+  "@communityDetailChatsAction": { "description": "Header action that opens the chat screen for this community." },
+  "communityDetailTiersAction": "Tiers",
+  "@communityDetailTiersAction": { "description": "Action that opens the tier editor from the Members tab." },
+
+  "communityMembersGroupNoTier": "No tier",
+  "@communityMembersGroupNoTier": { "description": "Section header for members without an assigned tier." },
+  "communityMembersTierCount": "{count, plural, =0{No members} one{{count} member} other{{count} members}}",
+  "@communityMembersTierCount": { "description": "Member count next to a tier section header.", "placeholders": { "count": { "type": "int" } } },
+  "communityMembersYou": "★ You",
+  "@communityMembersYou": { "description": "Marker on the viewer's own roster row in member view." },
+  "communityMembersPoints": "{points, plural, =1{{points} pt} other{{points} pts}}",
+  "@communityMembersPoints": { "description": "Points shown on a member row.", "placeholders": { "points": { "type": "int" } } },
+  "communityMembersEmptyTitle": "No members yet",
+  "@communityMembersEmptyTitle": { "description": "Empty state title for the Members tab." },
+  "communityMembersEmptyBody": "Members appear here once people join this community.",
+  "@communityMembersEmptyBody": { "description": "Empty state body for the Members tab." },
+  "communityMembersLoadError": "Couldn't load members",
+  "@communityMembersLoadError": { "description": "Error title for the Members tab." },
+
+  "personalRewardsTitle": "Rewards",
+  "@personalRewardsTitle": { "description": "App bar title of the Personal Rewards Screen." },
+  "personalRewardsRedeemXpTitle": "Redeem your XP",
+  "@personalRewardsRedeemXpTitle": { "description": "Title of the global XP redemption card." },
+  "personalRewardsXpUnit": "XP",
+  "@personalRewardsXpUnit": { "description": "Unit label shown after the XP balance." },
+  "personalRewardsComingSoon": "Coming soon",
+  "@personalRewardsComingSoon": { "description": "Disabled CTA label on the Redeem your XP card (partner rewards not redeemable yet)." },
+  "personalRewardsXpCost": "{points, plural, =1{{points} XP} other{{points} XP}}",
+  "@personalRewardsXpCost": { "description": "XP cost of a partner reward.", "placeholders": { "points": { "type": "int" } } },
+  "personalRewardsMyPoints": "{points, plural, =1{{points} pt} other{{points} pts}}",
+  "@personalRewardsMyPoints": { "description": "The viewer's per-community points balance shown in a community section header.", "placeholders": { "points": { "type": "int" } } },
+  "personalRewardsNoRewards": "No rewards yet.",
+  "@personalRewardsNoRewards": { "description": "Empty state for a community with no rewards." },
+  "personalRewardsEmptyTitle": "No rewards yet",
+  "@personalRewardsEmptyTitle": { "description": "Title of the empty state when the viewer has no community reward sections." },
+  "personalRewardsEmptyBody": "Join communities and earn points to unlock rewards.",
+  "@personalRewardsEmptyBody": { "description": "Body of the empty state on the Personal Rewards Screen." },
+  "personalRewardsFailedToLoad": "Couldn't load rewards",
+  "@personalRewardsFailedToLoad": { "description": "Error title on the Personal Rewards Screen." },
+  "leaderboardEntryYou": "You",
+  "@leaderboardEntryYou": { "description": "Badge shown on the current user's leaderboard row." },
+  "leaderboardEntryBadgeCount": "{count, plural, =1{{count} badge} other{{count} badges}}",
+  "@leaderboardEntryBadgeCount": { "description": "Number of badges shown on a leaderboard row.", "placeholders": { "count": { "type": "int" } } },
+
+  "communityRewardsComingSoonTitle": "Rewards coming soon",
+  "@communityRewardsComingSoonTitle": { "description": "Title shown when the rewards-hub endpoint isn't available yet." },
+  "communityRewardsComingSoonBody": "Goals, badges and rewards for this community will appear here.",
+  "@communityRewardsComingSoonBody": { "description": "Body shown when the rewards-hub endpoint isn't available yet." },
+  "communityRewardsPointsLabel": "Your points",
+  "@communityRewardsPointsLabel": { "description": "Label on the member points card." },
+  "communityRewardsTierLabel": "Tier",
+  "@communityRewardsTierLabel": { "description": "Tier label on the member points card." },
+  "communityRewardsNoTier": "No tier yet",
+  "@communityRewardsNoTier": { "description": "Shown when the member has no tier yet." },
+  "communityRewardsGoalsTitle": "Goals",
+  "@communityRewardsGoalsTitle": { "description": "Goals section title." },
+  "communityRewardsBadgesTitle": "Badges",
+  "@communityRewardsBadgesTitle": { "description": "Badges section title." },
+  "communityRewardsRewardsTitle": "Rewards",
+  "@communityRewardsRewardsTitle": { "description": "Rewards section title." },
+  "communityRewardsGoalReward": "+{points} pts",
+  "@communityRewardsGoalReward": { "description": "Reward points a goal grants.", "placeholders": { "points": { "type": "int" } } },
+  "communityRewardsGoalProgress": "{progress} / {target}",
+  "@communityRewardsGoalProgress": { "description": "Goal progress text.", "placeholders": { "progress": { "type": "int" }, "target": { "type": "int" } } },
+  "communityRewardsBadgeEarned": "Earned",
+  "@communityRewardsBadgeEarned": { "description": "Label on an earned badge." },
+  "communityRewardsBadgeLocked": "Locked",
+  "@communityRewardsBadgeLocked": { "description": "Label on a locked badge." },
+  "communityRewardsRedeem": "Redeem",
+  "@communityRewardsRedeem": { "description": "Button to redeem a reward." },
+  "communityRewardsRewardCost": "{points, plural, =1{{points} pt} other{{points} pts}}",
+  "@communityRewardsRewardCost": { "description": "Cost of a reward in points.", "placeholders": { "points": { "type": "int" } } },
+  "communityRewardsRewardStock": "{count, plural, =0{Out of stock} other{{count} left}}",
+  "@communityRewardsRewardStock": { "description": "Remaining stock of a reward.", "placeholders": { "count": { "type": "int" } } },
+  "communityRewardsRedeemConfirmTitle": "Redeem reward?",
+  "@communityRewardsRedeemConfirmTitle": { "description": "Confirm dialog title before redeeming." },
+  "communityRewardsRedeemConfirmBody": "This will spend {points} points on \"{title}\".",
+  "@communityRewardsRedeemConfirmBody": { "description": "Confirm dialog body before redeeming.", "placeholders": { "points": { "type": "int" }, "title": { "type": "String" } } },
+  "communityRewardsRedeemedSnack": "Redeemed ✓",
+  "@communityRewardsRedeemedSnack": { "description": "Snackbar after a successful redemption." },
+  "communityRewardsGoalsEmpty": "No goals yet.",
+  "@communityRewardsGoalsEmpty": { "description": "Empty state for the goals section." },
+  "communityRewardsBadgesEmpty": "No badges yet.",
+  "@communityRewardsBadgesEmpty": { "description": "Empty state for the badges section." },
+  "communityRewardsRewardsEmpty": "No rewards yet.",
+  "@communityRewardsRewardsEmpty": { "description": "Empty state for the rewards section." },
+
+  "communityRewardsAddGoal": "Goal",
+  "@communityRewardsAddGoal": { "description": "Leader action to add a goal." },
+  "communityRewardsAddReward": "Reward",
+  "@communityRewardsAddReward": { "description": "Leader action to add a reward." },
+  "communityRewardsAddBadge": "Badge",
+  "@communityRewardsAddBadge": { "description": "Leader action to add a badge." },
+
+  "communityGoalEditorNewTitle": "New goal",
+  "@communityGoalEditorNewTitle": { "description": "Title of the goal editor when creating." },
+  "communityGoalEditorEditTitle": "Edit goal",
+  "@communityGoalEditorEditTitle": { "description": "Title of the goal editor when editing." },
+  "communityGoalTitleLabel": "Title",
+  "@communityGoalTitleLabel": { "description": "Goal title field label." },
+  "communityGoalTitleRequired": "Enter a title",
+  "@communityGoalTitleRequired": { "description": "Validation when the goal title is empty." },
+  "communityGoalEarnTypeLabel": "Earn by",
+  "@communityGoalEarnTypeLabel": { "description": "Goal earn-type field label." },
+  "communityGoalEarnTypeEventCheckIns": "Event check-ins",
+  "@communityGoalEarnTypeEventCheckIns": { "description": "Goal earn type: event check-ins." },
+  "communityGoalEarnTypeChallenge": "Challenge",
+  "@communityGoalEarnTypeChallenge": { "description": "Goal earn type: challenge." },
+  "communityGoalEarnTypeDaysInCommunity": "Days in community",
+  "@communityGoalEarnTypeDaysInCommunity": { "description": "Goal earn type: days in community." },
+  "communityGoalTargetLabel": "Target",
+  "@communityGoalTargetLabel": { "description": "Goal target field label." },
+  "communityGoalTargetRequired": "Enter a target greater than 0",
+  "@communityGoalTargetRequired": { "description": "Validation for the goal target." },
+  "communityGoalRewardPointsLabel": "Reward points",
+  "@communityGoalRewardPointsLabel": { "description": "Goal reward-points field label." },
+  "communityGoalRewardPointsRequired": "Enter reward points",
+  "@communityGoalRewardPointsRequired": { "description": "Validation for the goal reward points." },
+
+  "communityRewardEditorNewTitle": "New reward",
+  "@communityRewardEditorNewTitle": { "description": "Title of the reward editor when creating." },
+  "communityRewardEditorEditTitle": "Edit reward",
+  "@communityRewardEditorEditTitle": { "description": "Title of the reward editor when editing." },
+  "communityRewardTitleLabel": "Title",
+  "@communityRewardTitleLabel": { "description": "Reward title field label." },
+  "communityRewardTitleRequired": "Enter a title",
+  "@communityRewardTitleRequired": { "description": "Validation when the reward title is empty." },
+  "communityRewardDescriptionLabel": "Description",
+  "@communityRewardDescriptionLabel": { "description": "Reward description field label." },
+  "communityRewardCostLabel": "Cost (points)",
+  "@communityRewardCostLabel": { "description": "Reward cost field label." },
+  "communityRewardCostRequired": "Enter a cost",
+  "@communityRewardCostRequired": { "description": "Validation for the reward cost." },
+  "communityRewardStockLabel": "Stock (leave empty for unlimited)",
+  "@communityRewardStockLabel": { "description": "Reward stock field label." },
+
+  "communityBadgeEditorNewTitle": "New badge",
+  "@communityBadgeEditorNewTitle": { "description": "Title of the badge editor when creating." },
+  "communityBadgeEditorEditTitle": "Edit badge",
+  "@communityBadgeEditorEditTitle": { "description": "Title of the badge editor when editing." },
+  "communityBadgeTitleLabel": "Title",
+  "@communityBadgeTitleLabel": { "description": "Badge title field label." },
+  "communityBadgeTitleRequired": "Enter a title",
+  "@communityBadgeTitleRequired": { "description": "Validation when the badge title is empty." },
+  "communityBadgeCriteriaLabel": "Criteria",
+  "@communityBadgeCriteriaLabel": { "description": "Badge criteria-type field label." },
+  "communityBadgeCriteriaPointsThreshold": "Points threshold",
+  "@communityBadgeCriteriaPointsThreshold": { "description": "Badge criteria: points threshold." },
+  "communityBadgeCriteriaEventCheckIns": "Event check-ins",
+  "@communityBadgeCriteriaEventCheckIns": { "description": "Badge criteria: event check-ins." },
+  "communityBadgeCriteriaDaysInCommunity": "Days in community",
+  "@communityBadgeCriteriaDaysInCommunity": { "description": "Badge criteria: days in community." },
+  "communityBadgeCriteriaChallengesCompleted": "Challenges completed",
+  "@communityBadgeCriteriaChallengesCompleted": { "description": "Badge criteria: challenges completed." },
+  "communityBadgeValueLabel": "Value",
+  "@communityBadgeValueLabel": { "description": "Badge criteria-value field label." },
+  "communityBadgeValueRequired": "Enter a value",
+  "@communityBadgeValueRequired": { "description": "Validation for the badge value." },
+  "communityBadgeChallengesLabel": "Challenges",
+  "@communityBadgeChallengesLabel": { "description": "Label for the challenge picker on a badge." },
+  "communityBadgeChallengesEmpty": "No challenges available yet.",
+  "@communityBadgeChallengesEmpty": { "description": "Shown when no challenges can be picked." },
+
+  "communityRewardsDeleteTitle": "Delete?",
+  "@communityRewardsDeleteTitle": { "description": "Generic delete confirm title for goals/rewards/badges." },
+  "communityRewardsDeleteBody": "Delete \"{title}\"? This can't be undone.",
+  "@communityRewardsDeleteBody": { "description": "Generic delete confirm body.", "placeholders": { "title": { "type": "String" } } },
+
+  "communityEventsMyView": "My view",
+  "@communityEventsMyView": { "description": "Toggle option: the leader's own view of events." },
+  "communityEventsAttendeeView": "Attendee view",
+  "@communityEventsAttendeeView": { "description": "Toggle option: preview events as an attendee sees them." },
+  "communityEventVisibilityPublic": "Public",
+  "@communityEventVisibilityPublic": { "description": "Event visibility badge: public." },
+  "communityEventVisibilityMembers": "Members",
+  "@communityEventVisibilityMembers": { "description": "Event visibility badge: members only." },
+  "communityEventVisibilityTier": "Tier",
+  "@communityEventVisibilityTier": { "description": "Event visibility badge: tier-gated." },
+
+  "businessGoalTitle": "What's your goal?",
+  "@businessGoalTitle": { "description": "Business onboarding goal step: title" },
+  "businessGoalSubtitle": "We'll tailor your setup based on what you want to achieve.",
+  "@businessGoalSubtitle": { "description": "Business onboarding goal step: subtitle" },
+  "businessGoalVenueTitle": "Fill my venue",
+  "@businessGoalVenueTitle": { "description": "Business onboarding goal step: venue option title" },
+  "businessGoalVenueDescription": "I have a physical place (bar, gym, shop, studio) and want communities to come.",
+  "@businessGoalVenueDescription": { "description": "Business onboarding goal step: venue option description" },
+  "businessGoalProductTitle": "Promote a product or service",
+  "@businessGoalProductTitle": { "description": "Business onboarding goal step: product option title" },
+  "businessGoalProductDescription": "I want to reach communities in one or more cities, no physical venue needed.",
+  "@businessGoalProductDescription": { "description": "Business onboarding goal step: product option description" },
+
+  "businessProductIdentityTitle": "Tell us about your brand",
+  "@businessProductIdentityTitle": { "description": "Business product path identity step: title" },
+  "businessProductIdentitySubtitle": "Add your name, category and logo so communities know who you are.",
+  "@businessProductIdentitySubtitle": { "description": "Business product path identity step: subtitle" },
+  "businessProductIdentityIncomplete": "Please add a name and at least one category.",
+  "@businessProductIdentityIncomplete": { "description": "Business product path identity step: validation error" },
+  "businessProductNameLabel": "Brand name",
+  "@businessProductNameLabel": { "description": "Business product path: brand name field label" },
+  "businessProductNameHint": "Your brand or company name",
+  "@businessProductNameHint": { "description": "Business product path: brand name field hint" },
+  "businessProductCategoryLabel": "Category",
+  "@businessProductCategoryLabel": { "description": "Business product path: category field label" },
+  "businessProductCategoryHint": "Pick up to 3 that best describe you.",
+  "@businessProductCategoryHint": { "description": "Business product path: category field hint" },
+
+  "businessProductTypeLabel": "Product type",
+  "@businessProductTypeLabel": { "description": "Business product path: product-type picker label" },
+  "businessProductTypeHint": "What kind of product or service is it?",
+  "@businessProductTypeHint": { "description": "Business product path: product-type picker hint" },
+
+  "businessProductCitiesTitle": "Which cities do you want to reach?",
+  "@businessProductCitiesTitle": { "description": "Business product path cities step: title" },
+  "businessProductCitiesSubtitle": "Free plan: up to {limit} cities. Upgrade to Premium for unlimited reach.",
+  "@businessProductCitiesSubtitle": {
+    "description": "Business product path cities step: subtitle with free limit",
+    "placeholders": { "limit": { "type": "int" } }
+  },
+  "businessProductCitiesRequired": "Please select at least one city.",
+  "@businessProductCitiesRequired": { "description": "Business product path cities step: validation error" },
+  "businessProductCitiesLimitReached": "Free plan covers up to {limit} cities. Upgrade to Premium to add more.",
+  "@businessProductCitiesLimitReached": {
+    "description": "Business product path cities step: free limit reached toast",
+    "placeholders": { "limit": { "type": "int" } }
+  },
+  "businessProductCitiesCounter": "{selected} of {limit} cities selected",
+  "@businessProductCitiesCounter": {
+    "description": "Business product path cities step: selection counter",
+    "placeholders": { "selected": { "type": "int" }, "limit": { "type": "int" } }
+  },
+
+  "businessProductAboutTitle": "Add a few more details",
+  "@businessProductAboutTitle": { "description": "Business product path about step: title" },
+  "businessProductAboutSubtitle": "All optional, but they help communities decide to work with you.",
+  "@businessProductAboutSubtitle": { "description": "Business product path about step: subtitle" },
+  "businessProductOfferingLabel": "What you offer",
+  "@businessProductOfferingLabel": { "description": "Business product path: offering field label" },
+  "businessProductOfferingHint": "e.g., 20% off for community members, free samples, sponsored prizes",
+  "@businessProductOfferingHint": { "description": "Business product path: offering field hint" },
+  "businessProductPhotosLabel": "Photos (optional)",
+  "@businessProductPhotosLabel": { "description": "Business product path: photos field label" },
+
+  "businessProductPhotosEmptyTitle": "Add photos",
+  "@businessProductPhotosEmptyTitle": { "description": "Business product path: photos empty-state title (non-venue)" },
+  "businessProductPhotosEmptyDescription": "Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.",
+  "@businessProductPhotosEmptyDescription": { "description": "Business product path: photos empty-state description (non-venue)" },
+
+  "communityStep1SizeHelper": "Roughly how many members are in your community?",
+  "@communityStep1SizeHelper": { "description": "Community onboarding step 1: community size helper text" }
 }

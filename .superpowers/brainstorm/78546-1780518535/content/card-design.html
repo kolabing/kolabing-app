@@ -1,0 +1,251 @@
+<style>
+  .phone { background: #FDF9F0; border-radius: 20px; padding: 0; overflow: hidden; border: 1.5px solid #EAE3D4; max-width: 390px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .phone-header { background: #FDF9F0; padding: 16px 16px 0; }
+  .phone-tabs { display: flex; border-bottom: 1px solid #EAE3D4; }
+  .phone-tab { flex: 1; text-align: center; padding: 10px 0; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; color: #8C8A82; border-bottom: 3px solid transparent; }
+  .phone-tab.active { color: #1C1C16; border-bottom: 3px solid #FFE28C; }
+  .phone-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+  .kcard { background: #FFFFFF; border: 1px solid #EAE3D4; border-radius: 16px; padding: 14px; }
+  .kcard-row { display: flex; gap: 10px; align-items: flex-start; }
+  .kcard-content { flex: 1; min-width: 0; }
+  .kcard-image { width: 68px; height: 68px; border-radius: 14px; background: #F1EEE5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; overflow: hidden; }
+  .kcard-image img { width: 100%; height: 100%; object-fit: cover; }
+  .kcard-image.placeholder { background: linear-gradient(135deg, #FFF4C2, #FFE28C); font-size: 22px; }
+
+  .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 6px; }
+  .badge-published { background: #D4EDDA; color: #155724; }
+  .badge-draft { background: #F1EEE5; color: #4C4638; }
+  .badge-pending { background: #FFDAC; color: #D8910B; background: #FFDDAC; }
+  .badge-active { background: #D4EDDA; color: #155724; }
+  .badge-finished { background: #ECE8DF; color: #4C4638; }
+  .badge-declined { background: #F8D7DA; color: #721C24; }
+
+  .kcard-title { font-size: 15px; font-weight: 700; color: #1C1C16; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kcard-sub { font-size: 12px; color: #8C8A82; margin-top: 2px; }
+  .kcard-desc { font-size: 12px; color: #4C4638; margin-top: 4px; line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+  .chip { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+  .chip-amber { background: #FBE7C6; color: #A8780F; }
+  .chip-lavender { background: #E5DCF6; color: #5E5784; }
+  .chip-sage { background: #DBE8CD; color: #3A5232; }
+  .chip-blue { background: #DDE3EC; color: #3D4A5C; }
+  .chip-peach { background: #FFE9D9; color: #B05A2A; }
+
+  .kcard-footer { display: flex; align-items: center; margin-top: 8px; gap: 4px; }
+  .kcard-footer span { font-size: 11px; color: #8C8A82; }
+
+  .actions { display: flex; gap: 6px; margin-top: 10px; }
+  .btn-primary { background: #FFE28C; color: #5C4A12; border: none; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; flex: 1; }
+  .btn-outline { background: transparent; color: #1C1C16; border: 1px solid #EAE3D4; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; flex: 1; }
+  .btn-danger { background: transparent; color: #BA1A1A; border: 1px solid #F8D7DA; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; flex: 1; }
+
+  .chevron { font-size: 16px; color: #CFC6B3; }
+  .unread { background: #BA1A1A; color: white; border-radius: 10px; padding: 1px 6px; font-size: 10px; font-weight: 700; }
+
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #8C8A82; text-transform: uppercase; padding: 4px 0 2px; }
+</style>
+
+<h2>Unified Card Design — All My Kolabs Sections</h2>
+<p class="subtitle">Same base layout: content left · square image right · pastel chips · compact action row. Only the content and status vary by section.</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; margin-top: 16px;">
+
+  <!-- OFFERS -->
+  <div>
+    <h3>Offers Tab (Published)</h3>
+    <div class="phone">
+      <div class="phone-header">
+        <div class="phone-tabs">
+          <div class="phone-tab active">PUBLISHED</div>
+          <div class="phone-tab">DRAFT</div>
+        </div>
+      </div>
+      <div class="phone-body">
+        <!-- Offer card 1: Published -->
+        <div class="kcard">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge badge-published">✦ PUBLISHED</div>
+              <div class="kcard-title">Summer Terrace Collab 2024</div>
+              <div class="chips">
+                <span class="chip chip-amber">📍 Madrid</span>
+                <span class="chip chip-sage">Jun 1 – Aug 31</span>
+                <span class="chip chip-peach">Food &amp; Drink</span>
+              </div>
+              <div class="actions">
+                <button class="btn-primary">VIEW</button>
+                <button class="btn-outline">EDIT</button>
+                <button class="btn-outline">CLOSE</button>
+              </div>
+            </div>
+            <div class="kcard-image"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200&q=80" /></div>
+          </div>
+        </div>
+        <!-- Offer card 2: Draft -->
+        <div class="kcard">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge badge-draft">DRAFT</div>
+              <div class="kcard-title">Yoga Studio Partnership</div>
+              <div class="chips">
+                <span class="chip chip-amber">📍 Barcelona</span>
+                <span class="chip chip-lavender">Wellness</span>
+              </div>
+              <div class="actions">
+                <button class="btn-primary">PUBLISH</button>
+                <button class="btn-outline">EDIT</button>
+                <button class="btn-danger">DELETE</button>
+              </div>
+            </div>
+            <div class="kcard-image placeholder">🧘</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUESTS -->
+  <div>
+    <h3>Requests Tab (Sent)</h3>
+    <div class="phone">
+      <div class="phone-header">
+        <div class="phone-tabs">
+          <div class="phone-tab active">SENT</div>
+          <div class="phone-tab">RECEIVED</div>
+        </div>
+      </div>
+      <div class="phone-body">
+        <!-- Request card 1: Pending -->
+        <div class="kcard" style="cursor: pointer;">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge badge-pending">⏳ PENDING</div>
+              <div class="kcard-title">Summer Rooftop Events</div>
+              <div class="kcard-sub">To: La Comunidad BCN</div>
+              <div class="kcard-desc">We'd love to collaborate on your rooftop series — we can bring the drinks and ambiance...</div>
+              <div class="kcard-footer">
+                <span>🕐</span><span>2 days ago</span>
+                <span style="margin-left: auto;" class="chevron">›</span>
+              </div>
+            </div>
+            <div class="kcard-image"><img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=200&q=80" /></div>
+          </div>
+        </div>
+        <!-- Request card 2: With unread -->
+        <div class="kcard" style="cursor: pointer;">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge badge-pending">⏳ PENDING</div>
+              <div class="kcard-title">Fitness Community Pop-up</div>
+              <div class="kcard-sub">To: Runners Madrid</div>
+              <div class="kcard-desc">Looking to sponsor your next group run with branded water stations and giveaways.</div>
+              <div class="kcard-footer">
+                <span>🕐</span><span>5 days ago</span>
+                <span style="margin-left: auto;" class="unread">3</span>
+              </div>
+            </div>
+            <div class="kcard-image placeholder">🏃</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE -->
+  <div>
+    <h3>Active Tab</h3>
+    <div class="phone">
+      <div class="phone-body" style="padding-top: 14px;">
+        <div class="kcard" style="cursor: pointer;">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge badge-active">🟢 IN PROGRESS</div>
+              <div class="kcard-title">Terraza Verano × Comunidad BCN</div>
+              <div class="kcard-sub">Kolab underway</div>
+              <div class="chips">
+                <span class="chip chip-sage">📅 Jul 15, 2024</span>
+                <span class="chip chip-blue">🕐 19:00</span>
+              </div>
+              <div class="kcard-footer">
+                <span style="margin-left: auto;" class="chevron">›</span>
+              </div>
+            </div>
+            <div class="kcard-image"><img src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=200&q=80" /></div>
+          </div>
+        </div>
+        <div class="kcard" style="cursor: pointer;">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge" style="background:#FFDDAC;color:#D8910B;">⏳ WAITING CONFIRM</div>
+              <div class="kcard-title">Yoga Studio × Wellness Madrid</div>
+              <div class="kcard-sub">Awaiting confirmation</div>
+              <div class="chips">
+                <span class="chip chip-sage">📅 Aug 3, 2024</span>
+              </div>
+              <div class="kcard-footer">
+                <span style="margin-left: auto;" class="chevron">›</span>
+              </div>
+            </div>
+            <div class="kcard-image placeholder">🧘</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINISHED -->
+  <div>
+    <h3>Finished Tab</h3>
+    <div class="phone">
+      <div class="phone-body" style="padding-top: 14px;">
+        <div class="kcard" style="cursor: pointer;">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge badge-finished">✓ COMPLETED</div>
+              <div class="kcard-title">Spring Market × Artesanos BCN</div>
+              <div class="kcard-sub">Collaboration completed</div>
+              <div class="chips">
+                <span class="chip chip-blue">📅 May 20, 2024</span>
+              </div>
+              <div class="kcard-footer">
+                <span style="margin-left: auto;" class="chevron">›</span>
+              </div>
+            </div>
+            <div class="kcard-image"><img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=200&q=80" /></div>
+          </div>
+        </div>
+        <div class="kcard" style="cursor: pointer;">
+          <div class="kcard-row">
+            <div class="kcard-content">
+              <div class="badge" style="background:#F8D7DA;color:#721C24;">✕ CANCELLED</div>
+              <div class="kcard-title">Wine Night × Cultura Viva</div>
+              <div class="kcard-sub">Collaboration cancelled</div>
+              <div class="chips">
+                <span class="chip chip-blue">📅 Apr 5, 2024</span>
+              </div>
+              <div class="kcard-footer">
+                <span style="margin-left: auto;" class="chevron">›</span>
+              </div>
+            </div>
+            <div class="kcard-image placeholder">🍷</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top: 24px; background: #FFF4C2; border: 1px solid #FFE28C; border-radius: 12px; padding: 14px;">
+  <h3 style="margin: 0 0 8px;">Key design decisions in this proposal</h3>
+  <ul style="margin: 0; padding-left: 18px; color: #4C4638; font-size: 13px; line-height: 1.8;">
+    <li><strong>One base card layout</strong> — horizontal: content left, 68×68 square image right</li>
+    <li><strong>Image fallback</strong> — emoji/initials on warm yellow-cream gradient when no photo</li>
+    <li><strong>Pastel chips</strong> — amber (city/discount), sage (date/nature), lavender (category), blue-grey (meta), peach (food)</li>
+    <li><strong>Status badge</strong> — small pill above title, always top-left</li>
+    <li><strong>Actions row</strong> — compact 36px buttons, only shown for Offers (Requests/Active/Finished use chevron tap)</li>
+    <li><strong>Request cards</strong> — same layout, circular avatar replaced by square kolab cover image</li>
+  </ul>
+</div>
