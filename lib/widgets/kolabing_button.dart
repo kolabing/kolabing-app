@@ -253,32 +253,33 @@ class _KolabingButtonState extends State<KolabingButton>
                 color: labelColor,
               ),
             )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.icon != null) ...[
-                  IconTheme(
-                    data: IconThemeData(color: labelColor, size: iconSize),
-                    child: widget.icon!,
-                  ),
-                  const SizedBox(width: 10),
+          // FittedBox(scaleDown) shrinks the whole icon+label group to fit the
+          // button's width instead of truncating the label with an ellipsis.
+          // Keeps the full text readable in tight slots (e.g. paired row CTAs)
+          // while leaving normal-width buttons at their natural size.
+          : FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.icon != null) ...[
+                    IconTheme(
+                      data: IconThemeData(color: labelColor, size: iconSize),
+                      child: widget.icon!,
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  Text(widget.label, maxLines: 1, softWrap: false),
+                  if (widget.trailingIcon != null) ...[
+                    const SizedBox(width: 10),
+                    IconTheme(
+                      data: IconThemeData(color: labelColor, size: iconSize),
+                      child: widget.trailingIcon!,
+                    ),
+                  ],
                 ],
-                Flexible(
-                  child: Text(
-                    widget.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (widget.trailingIcon != null) ...[
-                  const SizedBox(width: 10),
-                  IconTheme(
-                    data: IconThemeData(color: labelColor, size: iconSize),
-                    child: widget.trailingIcon!,
-                  ),
-                ],
-              ],
+              ),
             ),
     );
   }
