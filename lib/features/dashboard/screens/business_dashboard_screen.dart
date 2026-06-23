@@ -8,7 +8,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/glass_button.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../widgets/navigation/profile_avatar_button.dart';
@@ -217,7 +217,7 @@ class _BusinessDashboardScreenState
   Widget _buildQuickActions() => Row(
     children: [
       Expanded(
-        child: GlassButton(
+        child: KolabingButton(
           label: AppLocalizations.of(context).dashboardCreateKolabRequest,
           onPressed: () async {
             final allowed = await SubscriptionPaywall.checkAndShow(
@@ -231,17 +231,19 @@ class _BusinessDashboardScreenState
               if (mounted) ref.invalidate(dashboardProvider);
             }
           },
-          intent: GlassButtonIntent.primary,
-          icon: LucideIcons.plus,
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.plus),
         ),
       ),
       const SizedBox(width: KolabingSpacing.sm),
       Expanded(
-        child: GlassButton(
+        child: KolabingButton(
           label: AppLocalizations.of(context).dashboardFindAKolab,
           onPressed: () => widget.onSwitchTab?.call(1),
-          intent: GlassButtonIntent.neutral,
-          icon: LucideIcons.search,
+          variant: KolabingButtonVariant.secondary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.search),
         ),
       ),
     ],
@@ -322,11 +324,11 @@ class _BusinessDashboardScreenState
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          GlassButton(
+          KolabingButton(
             label: AppLocalizations.of(context).commonRetry,
             onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
-            intent: GlassButtonIntent.primary,
-            icon: LucideIcons.refreshCw,
+            variant: KolabingButtonVariant.primary,
+            icon: const Icon(LucideIcons.refreshCw),
           ),
         ],
       ),

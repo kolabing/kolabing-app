@@ -97,9 +97,9 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor =
-        isSelected ? context.colors.charcoal : context.colors.navInactive;
+        isSelected ? context.colors.ink : context.colors.navInactive;
     final labelColor =
-        isSelected ? context.colors.charcoal : context.colors.navInactive;
+        isSelected ? context.colors.ink : context.colors.navInactive;
 
     return Expanded(
       child: GestureDetector(
@@ -140,17 +140,19 @@ class _NavBarItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                item.label.toUpperCase(),
-                style: KolabingTextStyles.labelSmall.copyWith(
-                  fontSize: 9,
-                  fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: labelColor,
-                  letterSpacing: 0.4,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  item.label.toUpperCase(),
+                  style: KolabingTextStyles.labelSmall.copyWith(
+                    fontSize: 9,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: labelColor,
+                    letterSpacing: 0.4,
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

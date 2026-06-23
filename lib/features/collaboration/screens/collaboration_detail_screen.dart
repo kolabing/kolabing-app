@@ -13,6 +13,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
 import '../providers/collaborations_list_provider.dart';
@@ -1773,23 +1774,12 @@ class _ResubscribePrompt extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 46,
-            child: ElevatedButton.icon(
-              onPressed: () => context.push(KolabingRoutes.businessPlans),
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-              icon: const Icon(LucideIcons.creditCard, size: 18),
-              label: Text(
-                l10n.collaborationDetailResubscribeCta,
-                style: KolabingTextStyles.button.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
+          KolabingButton(
+            label: l10n.collaborationDetailResubscribeCta,
+            onPressed: () => context.push(KolabingRoutes.businessPlans),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.creditCard),
           ),
         ],
       ),

@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 import '../widgets/challenge_card.dart';
@@ -407,22 +408,16 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                 const SizedBox(height: KolabingSpacing.xl),
 
                 // Initiate button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      context.push(
-                        '/attendee/events/$eventId/challenges/${challenge.id}/initiate',
-                      );
-                    },
-                    icon: const Icon(LucideIcons.userPlus),
-                    label: Text(
-                      l10n.eventChallengesStartChallenge,
-                      style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1.0),
-                    ),
-                  ),
+                KolabingButton(
+                  label: l10n.eventChallengesStartChallenge,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.push(
+                      '/attendee/events/$eventId/challenges/${challenge.id}/initiate',
+                    );
+                  },
+                  variant: KolabingButtonVariant.primary,
+                  icon: const Icon(LucideIcons.userPlus),
                 ),
 
                 const SizedBox(height: KolabingSpacing.md),

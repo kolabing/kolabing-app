@@ -11,6 +11,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
@@ -440,17 +441,12 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
+          KolabingButton(
+            label: l10n.attendeeHomeChooseCity,
             onPressed: _pickCity,
-            icon: const Icon(LucideIcons.mapPin, size: 16),
-            label: Text(l10n.attendeeHomeChooseCity),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: KolabingColors.primary,
-              foregroundColor: KolabingColors.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(KolabingRadius.md),
-              ),
-            ),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.mapPin),
           ),
         ],
       ),

@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
 
@@ -272,10 +273,11 @@ class _EventDiscoveryScreenState extends ConsumerState<EventDiscoveryScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            ElevatedButton.icon(
+            KolabingButton(
+              label: AppLocalizations.of(context).commonTryAgain,
               onPressed: _initLocation,
-              icon: const Icon(LucideIcons.refreshCw),
-              label: Text(AppLocalizations.of(context).commonTryAgain),
+              variant: KolabingButtonVariant.primary,
+              icon: const Icon(LucideIcons.refreshCw, size: 18),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             TextButton(
@@ -462,12 +464,10 @@ class _RadiusFilterSheetState extends State<_RadiusFilterSheet> {
             ],
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () => widget.onRadiusChanged(_radius),
-              child: Text(AppLocalizations.of(context).eventDiscoveryApply),
-            ),
+          KolabingButton(
+            label: AppLocalizations.of(context).eventDiscoveryApply,
+            onPressed: () => widget.onRadiusChanged(_radius),
+            variant: KolabingButtonVariant.primary,
           ),
           const SizedBox(height: KolabingSpacing.md),
         ],

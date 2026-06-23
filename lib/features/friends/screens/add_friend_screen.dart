@@ -15,6 +15,7 @@ import '../../identity/services/identity_service.dart';
 import '../models/friendship.dart';
 import '../providers/friends_provider.dart';
 import '../services/friendship_service.dart';
+import '../../../widgets/kolabing_button.dart';
 
 /// Add-friend-by-identifier screen (identity contract §5). Resolves an exact
 /// email OR `@handle` via `GET /profiles/lookup`, then shows the matched public
@@ -119,30 +120,13 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
                 ),
               ),
               const SizedBox(height: KolabingSpacing.md),
-              SizedBox(
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: _searching ? null : _search,
-                  icon: _searching
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: KolabingColors.onPrimary,
-                          ),
-                        )
-                      : const Icon(LucideIcons.search, size: 18),
-                  label: Text(l10n.addFriendSearch),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(KolabingRadius.md),
-                    ),
-                    elevation: 0,
-                  ),
-                ),
+              KolabingButton(
+                label: l10n.addFriendSearch,
+                onPressed: _searching ? null : _search,
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
+                isLoading: _searching,
+                icon: const Icon(LucideIcons.search, size: 18),
               ),
               const SizedBox(height: KolabingSpacing.lg),
               Expanded(child: _buildResult(l10n)),
@@ -309,27 +293,13 @@ class _ResultCardState extends ConsumerState<_ResultCard> {
           label: Text(l10n.friendPending),
         );
       case FriendStatus.none:
-        return ElevatedButton.icon(
+        return KolabingButton(
+          label: l10n.friendAdd,
           onPressed: _busy ? null : _add,
-          icon: _busy
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: KolabingColors.onPrimary,
-                  ),
-                )
-              : const Icon(LucideIcons.userPlus, size: 18),
-          label: Text(l10n.friendAdd),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: KolabingColors.primary,
-            foregroundColor: KolabingColors.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(KolabingRadius.md),
-            ),
-            elevation: 0,
-          ),
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          isLoading: _busy,
+          icon: const Icon(LucideIcons.userPlus, size: 18),
         );
     }
   }

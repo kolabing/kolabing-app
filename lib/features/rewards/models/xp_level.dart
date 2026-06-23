@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/theme/colors.dart';
+
 /// The five community levels based on lifetime XP.
 enum XpLevel {
   newCommunity(
@@ -35,7 +37,7 @@ enum XpLevel {
     title: 'Local Legend',
     minXp: 1000,
     maxXp: null,
-    color: Color(0xFFFFE28C),
+    color: KolabingColors.primary,
   );
 
   const XpLevel({

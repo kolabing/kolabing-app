@@ -10,6 +10,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../models/onboarding_photo.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/onboarding_header.dart';
@@ -159,24 +160,11 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
             ),
             Padding(
               padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: photos.isNotEmpty ? _handleContinue : null,
-                  style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor: context.colors.primary.withValues(
-                      alpha: 0.5,
-                    ),
-                    disabledForegroundColor: context.colors.onPrimary
-                        .withValues(alpha: 0.5),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).commonContinue,
-                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
-                  ),
-                ),
+              child: KolabingButton(
+                label: AppLocalizations.of(context).commonContinue,
+                onPressed: photos.isNotEmpty ? _handleContinue : null,
+                variant: KolabingButtonVariant.primary,
+                isDisabled: photos.isEmpty,
               ),
             ),
           ],

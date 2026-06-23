@@ -6,8 +6,10 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_input.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../providers/wallet_provider.dart';
 
 /// Withdrawal request screen where users enter IBAN and request a payout.
@@ -258,41 +260,14 @@ class _WithdrawalRequestScreenState
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextFormField(
+        KolabingInput(
           controller: _ibanController,
           maxLength: 34,
           textCapitalization: TextCapitalization.characters,
           validator: _validateIban,
           onChanged: (_) => setState(() {}),
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context).withdrawalIbanHint,
-            hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-              color: context.colors.textTertiary,
-            ),
-            filled: true,
-            fillColor: context.colors.surface,
-            counterText: '',
-            border: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.borderFocus),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.borderError),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.sm,
-            ),
-          ),
+          hint: AppLocalizations.of(context).withdrawalIbanHint,
+          counterText: '',
         ),
 
         const SizedBox(height: KolabingSpacing.md),
@@ -305,77 +280,26 @@ class _WithdrawalRequestScreenState
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextFormField(
+        KolabingInput(
           controller: _accountHolderController,
           textCapitalization: TextCapitalization.words,
           validator: _validateAccountHolder,
           onChanged: (_) => setState(() {}),
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context).withdrawalAccountHolderHint,
-            hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-              color: context.colors.textTertiary,
-            ),
-            filled: true,
-            fillColor: context.colors.surface,
-            border: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.borderFocus),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.borderError),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.sm,
-            ),
-          ),
+          hint: AppLocalizations.of(context).withdrawalAccountHolderHint,
         ),
 
         const SizedBox(height: KolabingSpacing.lg),
 
         // Submit button
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed: _isFormValid && !state.isWithdrawing
-                ? _handleSubmit
-                : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-              disabledBackgroundColor: context.colors.primary.withValues(
-                alpha: 0.4,
-              ),
-              disabledForegroundColor: context.colors.onPrimary.withValues(
-                alpha: 0.5,
-              ),
-            ),
-            child: state.isWithdrawing
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: context.colors.onPrimary,
-                    ),
-                  )
-                : Text(
-                    AppLocalizations.of(context).withdrawalSubmitButton(
-                      eurValue.toStringAsFixed(2),
-                    ),
-                    style: KolabingTextStyles.button,
-                  ),
+        KolabingButton(
+          label: AppLocalizations.of(context).withdrawalSubmitButton(
+            eurValue.toStringAsFixed(2),
           ),
+          onPressed: _isFormValid && !state.isWithdrawing
+              ? _handleSubmit
+              : null,
+          variant: KolabingButtonVariant.primary,
+          isLoading: state.isWithdrawing,
         ),
 
         // Error message

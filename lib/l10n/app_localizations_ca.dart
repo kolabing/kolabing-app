@@ -918,13 +918,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityOfferDetailMode => 'Mode';
 
   @override
-  String get communityOfferDetailPreviewMode => 'MODE VISTA PRÈVIA';
+  String get communityOfferDetailPreviewMode => 'Mode vista prèvia';
 
   @override
-  String get communityOfferDetailAlreadyApplied => 'JA T\'HI HAS POSTULAT';
+  String get communityOfferDetailAlreadyApplied => 'Ja t\'hi has postulat';
 
   @override
-  String get communityOfferDetailApplyNow => 'POSTULA\'T ARA';
+  String get communityOfferDetailApplyNow => 'Postula\'t ara';
 
   @override
   String get communityOfferDetailTitle => 'Detalls de l\'oportunitat';
@@ -2006,7 +2006,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get opportunityPublishSuccessViewOpportunities =>
-      'VEURE LES MEVES OPORTUNITATS';
+      'Veure les meves oportunitats';
 
   @override
   String get eventDetailDeleteTitle => 'Elimina l\'esdeveniment';
@@ -4303,7 +4303,22 @@ class AppLocalizationsCa extends AppLocalizations {
       'Convida 3 negocis → guanya 75 € en efectiu';
 
   @override
-  String get referralBannerShareButton => 'COMPARTEIX EL CODI';
+  String get referralBannerShareButton => 'Comparteix el codi referral';
+
+  @override
+  String get referralBannerStepReferLabel => 'Convida';
+
+  @override
+  String get referralBannerStepReferValue => '3 negocis';
+
+  @override
+  String get referralBannerStepEarnLabel => 'Guanya';
+
+  @override
+  String get referralBannerStepEarnAmount => '75 €';
+
+  @override
+  String get referralBannerStepEarnSuffix => 'en efectiu';
 
   @override
   String get referralSheetYourCode => 'EL TEU CODI DE CONVIDANÇA';
@@ -4565,7 +4580,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get exploreDetailUnlockToApply => 'DESBLOQUEJA PER INSCRIURE\'T';
 
   @override
-  String get exploreDetailApplyNow => 'INSCRIU-T\'HI ARA';
+  String get exploreDetailApplyNow => 'Inscriu-t\'hi ara';
 
   @override
   String get exploreDetailViewCreatorProfile => 'Veure el perfil del creador';
@@ -4857,10 +4872,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get dashboardCreateKolabRequest => 'CREAR SOL·LICITUD DE KOLAB';
 
   @override
-  String get dashboardFindAKolab => 'TROBAR UN KOLAB';
+  String get dashboardFindAKolab => 'Trobar un Kolab';
 
   @override
-  String get dashboardMyApplications => 'LES MEVES SOL·LICITUDS';
+  String get dashboardMyApplications => 'Les meves sol·licituds';
 
   @override
   String get dashboardUpcomingKolabs => 'PROPERS KOLABS';

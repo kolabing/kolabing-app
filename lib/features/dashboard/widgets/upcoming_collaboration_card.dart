@@ -164,13 +164,18 @@ class _StatusBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isActive
-            ? context.colors.info.withValues(alpha: 0.1)
-            : context.colors.success.withValues(alpha: 0.1),
+            ? context.colors.primary.withValues(alpha: 0.85)
+            : context.colors.categoryOrangeBg,
         borderRadius: KolabingRadius.borderRadiusXs,
       ),
       child: Text(
         status.displayName,
-        style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isActive ? context.colors.info : context.colors.activeText, letterSpacing: 0.5),
+        style: KolabingTextStyles.labelSmall.copyWith(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: isActive ? context.colors.charcoal : context.colors.categoryOrangeText,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }

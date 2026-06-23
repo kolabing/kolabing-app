@@ -910,13 +910,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityOfferDetailMode => 'Mode';
 
   @override
-  String get communityOfferDetailPreviewMode => 'PREVIEW MODE';
+  String get communityOfferDetailPreviewMode => 'Preview mode';
 
   @override
-  String get communityOfferDetailAlreadyApplied => 'ALREADY APPLIED';
+  String get communityOfferDetailAlreadyApplied => 'Already applied';
 
   @override
-  String get communityOfferDetailApplyNow => 'APPLY NOW';
+  String get communityOfferDetailApplyNow => 'Apply now';
 
   @override
   String get communityOfferDetailTitle => 'Opportunity Details';
@@ -1417,7 +1417,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get collaborationDetailViewQr => 'VIEW QR CODE';
+  String get collaborationDetailViewQr => 'View QR code';
 
   @override
   String get collaborationDetailResubscribeTitle => 'Resubscribe to continue';
@@ -1982,7 +1982,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get opportunityPublishSuccessViewOpportunities =>
-      'VIEW MY OPPORTUNITIES';
+      'View my opportunities';
 
   @override
   String get eventDetailDeleteTitle => 'Delete Event';
@@ -4232,7 +4232,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get referralBannerTagline => 'Refer 3 businesses → earn €75 cash';
 
   @override
-  String get referralBannerShareButton => 'SHARE REFERRAL CODE';
+  String get referralBannerShareButton => 'Share referral code';
+
+  @override
+  String get referralBannerStepReferLabel => 'Refer';
+
+  @override
+  String get referralBannerStepReferValue => '3 businesses';
+
+  @override
+  String get referralBannerStepEarnLabel => 'Earn';
+
+  @override
+  String get referralBannerStepEarnAmount => '€75';
+
+  @override
+  String get referralBannerStepEarnSuffix => 'cash';
 
   @override
   String get referralSheetYourCode => 'YOUR REFERRAL CODE';
@@ -4493,7 +4508,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreDetailUnlockToApply => 'UNLOCK TO APPLY';
 
   @override
-  String get exploreDetailApplyNow => 'APPLY NOW';
+  String get exploreDetailApplyNow => 'Apply now';
 
   @override
   String get exploreDetailViewCreatorProfile => 'View creator profile';
@@ -4778,10 +4793,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardCreateKolabRequest => 'CREATE KOLAB REQUEST';
 
   @override
-  String get dashboardFindAKolab => 'FIND A KOLAB';
+  String get dashboardFindAKolab => 'Find a Kolab';
 
   @override
-  String get dashboardMyApplications => 'MY APPLICATIONS';
+  String get dashboardMyApplications => 'My applications';
 
   @override
   String get dashboardUpcomingKolabs => 'UPCOMING KOLABS';

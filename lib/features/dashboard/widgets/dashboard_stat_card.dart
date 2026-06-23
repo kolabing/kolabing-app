@@ -16,11 +16,11 @@ extension _StatCardAccentColors on StatCardAccent {
   Color circleFill(BuildContext context) {
     switch (this) {
       case StatCardAccent.pending:
-        return context.colors.secondaryContainer;
+        return context.colors.surfaceContainerHigh; // warm neutral (was lavender)
       case StatCardAccent.accepted:
-        return context.colors.tertiaryContainer;
+        return context.colors.softYellow; // soft yellow (was sage green)
       case StatCardAccent.active:
-        return context.colors.softYellow;
+        return context.colors.primary;
       case StatCardAccent.completed:
         return context.colors.surfaceContainerHigh;
     }
@@ -29,11 +29,11 @@ extension _StatCardAccentColors on StatCardAccent {
   Color iconColor(BuildContext context) {
     switch (this) {
       case StatCardAccent.pending:
-        return context.colors.secondary;
+        return context.colors.onSurfaceVariant; // matches warm neutral fill
       case StatCardAccent.accepted:
-        return context.colors.tertiary;
+        return context.colors.onPrimary; // warm charcoal on soft yellow
       case StatCardAccent.active:
-        return context.colors.onSurface;
+        return context.colors.onPrimary;
       case StatCardAccent.completed:
         return context.colors.onSurfaceVariant;
     }
@@ -45,11 +45,11 @@ extension _StatCardAccentColors on StatCardAccent {
 /// Neutral cream card face — personality comes from the small icon circle only.
 class DashboardStatCard extends StatelessWidget {
   const DashboardStatCard({
-    super.key,
     required this.title,
     required this.count,
     required this.icon,
     required this.accent,
+    super.key,
     this.subtitle,
     this.iconSlug,
   });
@@ -73,14 +73,13 @@ class DashboardStatCard extends StatelessWidget {
   final String? subtitle;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: KolabingRadius.borderRadiusXl,
         border: Border.all(color: context.colors.hairline),
-        boxShadow: [KolabingShadows.card],
+        boxShadow: const [KolabingShadows.card],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,15 +104,15 @@ class DashboardStatCard extends StatelessWidget {
               Text(
                 count.toString(),
                 style: KolabingTextStyles.displaySmall.copyWith(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 38,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: -0.5,
                   color: context.colors.onSurface,
                 ),
               ),
               Container(
-                width: 36,
-                height: 36,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: accent.circleFill(context),
                   shape: BoxShape.circle,
@@ -122,10 +121,10 @@ class DashboardStatCard extends StatelessWidget {
                   child: iconSlug != null
                       ? UiIcon(
                           icon: iconSlug!,
-                          size: 18,
+                          size: 20,
                           color: accent.iconColor(context),
                         )
-                      : Icon(icon, size: 18, color: accent.iconColor(context)),
+                      : Icon(icon, size: 20, color: accent.iconColor(context)),
                 ),
               ),
             ],
@@ -145,5 +144,4 @@ class DashboardStatCard extends StatelessWidget {
         ],
       ),
     );
-  }
 }

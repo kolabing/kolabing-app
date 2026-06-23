@@ -26,10 +26,10 @@ class PrimaryContentCard extends StatelessWidget {
     final card = Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(color: context.colors.hairline),
-        boxShadow: [KolabingShadows.card],
+        boxShadow: KolabingShadows.designCardShadow,
       ),
       child: child,
     );
@@ -62,7 +62,7 @@ class CompactListCard extends StatelessWidget {
       return Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: border,
         ),
@@ -70,7 +70,7 @@ class CompactListCard extends StatelessWidget {
       );
     }
     return Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: KolabingRadius.borderRadiusMd,
       child: InkWell(
         onTap: onTap,
@@ -111,10 +111,10 @@ class EmptyStateCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(KolabingSpacing.xl),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(color: context.colors.hairline),
-        boxShadow: [KolabingShadows.card],
+        boxShadow: KolabingShadows.designCardShadow,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

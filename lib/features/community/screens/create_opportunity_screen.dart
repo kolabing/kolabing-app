@@ -18,6 +18,7 @@ import '../../opportunity/providers/opportunity_provider.dart';
 import '../../opportunity/utils/opportunity_share_launcher.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../../../widgets/category_icon.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../widgets/opportunity_publish_success_dialog.dart';
 
 /// Multi-step form for creating a collaboration opportunity.
@@ -1272,20 +1273,12 @@ class _CreateOpportunityScreenState
         ],
         Expanded(
           flex: formState.currentStep > 0 ? 2 : 1,
-          child: ElevatedButton(
+          child: KolabingButton(
+            label: l10n.createOpportunityContinueButton,
             onPressed: isBusy ? null : _handleNext,
-            style: ElevatedButton.styleFrom(
-              disabledBackgroundColor: context.colors.primary.withValues(
-                alpha: 0.7,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-            ),
-            child: Text(
-              l10n.createOpportunityContinueButton,
-              style: KolabingTextStyles.button.copyWith(
-                letterSpacing: 0.5,
-              ),
-            ),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            isDisabled: isBusy,
           ),
         ),
       ],
@@ -1298,34 +1291,12 @@ class _CreateOpportunityScreenState
       mainAxisSize: MainAxisSize.min,
       children: [
         // Publish button
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: isBusy ? null : _handlePublish,
-            style: ElevatedButton.styleFrom(
-              disabledBackgroundColor: context.colors.primary.withValues(
-                alpha: 0.7,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-            ),
-            child: formState.isPublishing
-                ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        context.colors.onPrimary,
-                      ),
-                    ),
-                  )
-                : Text(
-                    l10n.createOpportunityPublishButton,
-                    style: KolabingTextStyles.button.copyWith(
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-          ),
+        KolabingButton(
+          label: l10n.createOpportunityPublishButton,
+          onPressed: isBusy ? null : _handlePublish,
+          variant: KolabingButtonVariant.primary,
+          isLoading: formState.isPublishing,
+          isDisabled: isBusy,
         ),
         const SizedBox(height: KolabingSpacing.sm),
 

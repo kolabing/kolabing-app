@@ -46,18 +46,18 @@ class NeedsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header
+          // Section header — Anton uppercase
           Text(
             l10n.needsScreenTitle,
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
-          const SizedBox(height: KolabingSpacing.xxs),
+          const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.offeringSelectAllThatApply,
             style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
 
-          // Error
+          // Validation error
           if (state.fieldErrors['needs'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             _buildFieldError(context, state.fieldErrors['needs']!),
@@ -153,7 +153,10 @@ class NeedsScreen extends ConsumerWidget {
             Expanded(
               child: Text(
                 error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: context.colors.error,
+                ),
               ),
             ),
           ],

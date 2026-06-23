@@ -9,6 +9,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 
@@ -366,35 +367,11 @@ class _InitiateChallengeScreenState
                 const SizedBox(height: KolabingSpacing.xl),
 
                 // Submit button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: initiateState.isLoading ? null : _handleInitiate,
-                    style: ElevatedButton.styleFrom(
-                      disabledBackgroundColor: context.colors.primary
-                          .withValues(alpha: 0.5),
-                    ),
-                    child: initiateState.isLoading
-                        ? SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                context.colors.onPrimary,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            l10n.initiateChallengeSubmit,
-                            style: KolabingTextStyles.button.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                  ),
+                KolabingButton(
+                  label: l10n.initiateChallengeSubmit,
+                  onPressed: initiateState.isLoading ? null : _handleInitiate,
+                  variant: KolabingButtonVariant.primary,
+                  isLoading: initiateState.isLoading,
                 ),
               ],
             ),

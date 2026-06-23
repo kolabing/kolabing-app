@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../../../widgets/imported_photo_grid.dart';
 import '../../../auth/models/user_model.dart';
 import '../../models/business_type.dart';
@@ -387,27 +388,13 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(24),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _selectedPlace != null && !_isImporting
-                            ? _handleContinue
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          foregroundColor: context.colors.onPrimary,
-                          disabledBackgroundColor: context.colors.primary
-                              .withValues(alpha: 0.5),
-                          disabledForegroundColor: context.colors.onPrimary
-                              .withValues(alpha: 0.5),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context).commonContinue,
-                          style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
-                        ),
-                      ),
+                    child: KolabingButton(
+                      label: AppLocalizations.of(context).commonContinue,
+                      onPressed: _selectedPlace != null && !_isImporting
+                          ? _handleContinue
+                          : null,
+                      variant: KolabingButtonVariant.primary,
+                      isDisabled: _selectedPlace == null || _isImporting,
                     ),
                   ),
                 ],
@@ -542,26 +529,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
             ),
             Padding(
               padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isImporting ? null : _handleContinueFromPreview,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
-                    disabledBackgroundColor: context.colors.primary.withValues(
-                      alpha: 0.5,
-                    ),
-                    disabledForegroundColor: context.colors.onPrimary
-                        .withValues(alpha: 0.5),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).commonContinue,
-                    style: KolabingTextStyles.button.copyWith(fontSize: 16, letterSpacing: 1),
-                  ),
-                ),
+              child: KolabingButton(
+                label: AppLocalizations.of(context).commonContinue,
+                onPressed: _isImporting ? null : _handleContinueFromPreview,
+                variant: KolabingButtonVariant.primary,
+                isDisabled: _isImporting,
               ),
             ),
           ],

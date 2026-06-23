@@ -8,7 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/glass_button.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../widgets/navigation/profile_avatar_button.dart';
@@ -255,19 +255,21 @@ class _CommunityDashboardScreenState
   Widget _buildQuickActions(bool isDark) => Row(
     children: [
       Expanded(
-        child: GlassButton(
+        child: KolabingButton(
           label: AppLocalizations.of(context).dashboardFindAKolab,
           onPressed: () => widget.onSwitchTab?.call(1),
-          intent: GlassButtonIntent.primary,
-          icon: LucideIcons.search,
+          variant: KolabingButtonVariant.primary,
+          size: KolabingButtonSize.compact,
+          icon: const Icon(LucideIcons.search),
         ),
       ),
       const SizedBox(width: KolabingSpacing.sm),
       Expanded(
-        child: GlassButton(
+        child: KolabingButton(
           label: AppLocalizations.of(context).dashboardMyApplications,
           onPressed: () => widget.onSwitchTab?.call(3),
-          intent: GlassButtonIntent.neutral,
+          variant: KolabingButtonVariant.secondary,
+          size: KolabingButtonSize.compact,
         ),
       ),
     ],
@@ -362,11 +364,11 @@ class _CommunityDashboardScreenState
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            GlassButton(
+            KolabingButton(
               label: AppLocalizations.of(context).commonRetry,
               onPressed: () => ref.read(dashboardProvider.notifier).refresh(),
-              intent: GlassButtonIntent.primary,
-              icon: LucideIcons.refreshCw,
+              variant: KolabingButtonVariant.primary,
+              icon: const Icon(LucideIcons.refreshCw),
             ),
           ],
         ),

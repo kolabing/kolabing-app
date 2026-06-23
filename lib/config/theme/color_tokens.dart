@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   const KolabingColorTokens({
     required this.background,
+    required this.appBackground,
     required this.surface,
     required this.surfaceContainer,
     required this.surfaceContainerLow,
@@ -22,9 +23,15 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     required this.inverseSurface,
     required this.inverseOnSurface,
     required this.hairline,
+    required this.divider,
     required this.primary,
     required this.primaryDark,
+    required this.primaryTint,
+    required this.yellowTint,
     required this.onPrimary,
+    required this.amber,
+    required this.orange,
+    required this.orangeTint,
     required this.softYellow,
     required this.softYellowBorder,
     required this.pastelYellowBg,
@@ -32,6 +39,9 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     required this.navBarBackground,
     required this.charcoal,
     required this.titleInk,
+    required this.ink,
+    required this.inkBody,
+    required this.muted,
     required this.error,
     required this.errorBg,
     required this.errorText,
@@ -91,6 +101,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
 
   // --- surfaces & text ---
   final Color background;
+  final Color appBackground; // warm cream page background
   final Color surface;
   final Color surfaceContainer;
   final Color surfaceContainerLow;
@@ -103,11 +114,17 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   final Color inverseSurface;
   final Color inverseOnSurface;
   final Color hairline;
+  final Color divider;
 
   // --- brand yellow ---
   final Color primary;
   final Color primaryDark;
+  final Color primaryTint; // yellow tint for selected chips
+  final Color yellowTint; // alias for primaryTint
   final Color onPrimary;
+  final Color amber; // amber text on yellow backgrounds
+  final Color orange; // status/role/accent only
+  final Color orangeTint; // orange tint background
   final Color softYellow;
   final Color softYellowBorder;
   final Color pastelYellowBg;
@@ -115,6 +132,9 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   final Color navBarBackground;
   final Color charcoal;
   final Color titleInk; // large Anton display titles only
+  final Color ink; // darkest text
+  final Color inkBody; // body text
+  final Color muted; // placeholder / inactive text
 
   // --- semantic ---
   final Color error;
@@ -193,29 +213,39 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   // Light set (maps 1:1 to the legacy KolabingColors values)
   // ---------------------------------------------------------------------------
   static const KolabingColorTokens light = KolabingColorTokens(
-    background: Color(0xFFFDF9F0),
-    surface: Color(0xFFFDF9F0),
+    background: Color(0xFFFAF5EA),
+    appBackground: Color(0xFFFAF5EA),
+    surface: Color(0xFFFFFFFF),
     surfaceContainer: Color(0xFFF1EEE5),
     surfaceContainerLow: Color(0xFFF7F3EA),
     surfaceContainerHigh: Color(0xFFECE8DF),
-    surfaceVariant: Color(0xFFE6E2D9),
-    onSurface: Color(0xFF1C1C16),
-    onSurfaceVariant: Color(0xFF4C4638),
+    surfaceVariant: Color(0xFFF5EFE3),
+    onSurface: Color(0xFF19150F),
+    onSurfaceVariant: Color(0xFF3F3A32),
     outline: Color(0xFF7D7667),
-    outlineVariant: Color(0xFFCFC6B3),
+    outlineVariant: Color(0xFFE4DBCB),
     inverseSurface: Color(0xFF31302B),
     inverseOnSurface: Color(0xFFF4F0E7),
-    hairline: Color(0xFFE8E2D6),
+    hairline: Color(0xFFEDE5D5),
+    divider: Color(0xFFECE4D4),
     primary: Color(0xFFFFE28C),
     primaryDark: Color(0xFFF5D070),
+    primaryTint: Color(0xFFFFF1C6),
+    yellowTint: Color(0xFFFFF1C6),
     onPrimary: Color(0xFF78631A),
+    amber: Color(0xFF9A7C28),
+    orange: Color(0xFFFF6114),
+    orangeTint: Color(0xFFFFE7D6),
     softYellow: Color(0xFFFFF4C2),
     softYellowBorder: Color(0xFFFFE28C),
     pastelYellowBg: Color(0xFFFDF6DC),
     pastelYellowBorder: Color(0xFFF0E4A0),
     navBarBackground: Color(0xFFFFFFFF),
     charcoal: Color(0xFF1C1C16),
-    titleInk: Color(0xFF1C1C16),
+    titleInk: Color(0xFF19150F),
+    ink: Color(0xFF19150F),
+    inkBody: Color(0xFF3F3A32),
+    muted: Color(0xFF8C8474),
     error: Color(0xFFBA1A1A),
     errorBg: Color(0xFFF8D7DA),
     errorText: Color(0xFF721C24),
@@ -228,7 +258,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     success: Color(0xFF56624D),
     warning: Color(0xFFFBC02D),
     info: Color(0xFF2196F3),
-    navInactive: Color(0xFF7D7667),
+    navInactive: Color(0xFFA99E8B),
     navInactiveSubtle: Color(0xFFCFC6B3),
     xpGreen: Color(0xFF7AE7A3),
     xpGreenContainer: Color(0xFFE8F9F1),
@@ -282,6 +312,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   // ---------------------------------------------------------------------------
   static const KolabingColorTokens night = KolabingColorTokens(
     background: Color(0xFF0C0C0E),
+    appBackground: Color(0xFF0C0C0E),
     surface: Color(0xFF0C0C0E),
     surfaceContainer: Color(0xFF19191C),
     surfaceContainerLow: Color(0xFF141416),
@@ -294,9 +325,15 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     inverseSurface: Color(0xFFF5F5F7),
     inverseOnSurface: Color(0xFF0C0C0E),
     hairline: Color(0xFF26262B),
+    divider: Color(0xFF2A2A2F),
     primary: Color(0xFFFFE28C),
     primaryDark: Color(0xFFE7CE84),
+    primaryTint: Color(0xFF2C2710),
+    yellowTint: Color(0xFF2C2710),
     onPrimary: Color(0xFF5C4A12),
+    amber: Color(0xFFD4B870),
+    orange: Color(0xFFFF8A50),
+    orangeTint: Color(0xFF2E1808),
     softYellow: Color(0xFF2C2710),
     softYellowBorder: Color(0xFFFFE28C),
     pastelYellowBg: Color(0xFF2C2710),
@@ -304,6 +341,9 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     navBarBackground: Color(0xFF19191C),
     charcoal: Color(0xFFF5F5F7),
     titleInk: Color(0xCCF5F5F7), // 80% opacity white
+    ink: Color(0xFFF5F5F7),
+    inkBody: Color(0xFFA2A2A9),
+    muted: Color(0xFF6C6C74),
     error: Color(0xFFE14D3D),
     errorBg: Color(0xFF371F1B),
     errorText: Color(0xFFFBA797),
@@ -368,6 +408,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   @override
   KolabingColorTokens copyWith({
     Color? background,
+    Color? appBackground,
     Color? surface,
     Color? surfaceContainer,
     Color? surfaceContainerLow,
@@ -380,9 +421,15 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     Color? inverseSurface,
     Color? inverseOnSurface,
     Color? hairline,
+    Color? divider,
     Color? primary,
     Color? primaryDark,
+    Color? primaryTint,
+    Color? yellowTint,
     Color? onPrimary,
+    Color? amber,
+    Color? orange,
+    Color? orangeTint,
     Color? softYellow,
     Color? softYellowBorder,
     Color? pastelYellowBg,
@@ -390,6 +437,9 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     Color? navBarBackground,
     Color? charcoal,
     Color? titleInk,
+    Color? ink,
+    Color? inkBody,
+    Color? muted,
     Color? error,
     Color? errorBg,
     Color? errorText,
@@ -448,6 +498,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   }) {
     return KolabingColorTokens(
       background: background ?? this.background,
+      appBackground: appBackground ?? this.appBackground,
       surface: surface ?? this.surface,
       surfaceContainer: surfaceContainer ?? this.surfaceContainer,
       surfaceContainerLow: surfaceContainerLow ?? this.surfaceContainerLow,
@@ -460,9 +511,15 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       inverseSurface: inverseSurface ?? this.inverseSurface,
       inverseOnSurface: inverseOnSurface ?? this.inverseOnSurface,
       hairline: hairline ?? this.hairline,
+      divider: divider ?? this.divider,
       primary: primary ?? this.primary,
       primaryDark: primaryDark ?? this.primaryDark,
+      primaryTint: primaryTint ?? this.primaryTint,
+      yellowTint: yellowTint ?? this.yellowTint,
       onPrimary: onPrimary ?? this.onPrimary,
+      amber: amber ?? this.amber,
+      orange: orange ?? this.orange,
+      orangeTint: orangeTint ?? this.orangeTint,
       softYellow: softYellow ?? this.softYellow,
       softYellowBorder: softYellowBorder ?? this.softYellowBorder,
       pastelYellowBg: pastelYellowBg ?? this.pastelYellowBg,
@@ -470,6 +527,9 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       navBarBackground: navBarBackground ?? this.navBarBackground,
       charcoal: charcoal ?? this.charcoal,
       titleInk: titleInk ?? this.titleInk,
+      ink: ink ?? this.ink,
+      inkBody: inkBody ?? this.inkBody,
+      muted: muted ?? this.muted,
       error: error ?? this.error,
       errorBg: errorBg ?? this.errorBg,
       errorText: errorText ?? this.errorText,
@@ -533,6 +593,7 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     if (other is! KolabingColorTokens) return this;
     return KolabingColorTokens(
       background: Color.lerp(background, other.background, t)!,
+      appBackground: Color.lerp(appBackground, other.appBackground, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
       surfaceContainer: Color.lerp(surfaceContainer, other.surfaceContainer, t)!,
       surfaceContainerLow: Color.lerp(surfaceContainerLow, other.surfaceContainerLow, t)!,
@@ -545,9 +606,15 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       inverseSurface: Color.lerp(inverseSurface, other.inverseSurface, t)!,
       inverseOnSurface: Color.lerp(inverseOnSurface, other.inverseOnSurface, t)!,
       hairline: Color.lerp(hairline, other.hairline, t)!,
+      divider: Color.lerp(divider, other.divider, t)!,
       primary: Color.lerp(primary, other.primary, t)!,
       primaryDark: Color.lerp(primaryDark, other.primaryDark, t)!,
+      primaryTint: Color.lerp(primaryTint, other.primaryTint, t)!,
+      yellowTint: Color.lerp(yellowTint, other.yellowTint, t)!,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
+      amber: Color.lerp(amber, other.amber, t)!,
+      orange: Color.lerp(orange, other.orange, t)!,
+      orangeTint: Color.lerp(orangeTint, other.orangeTint, t)!,
       softYellow: Color.lerp(softYellow, other.softYellow, t)!,
       softYellowBorder: Color.lerp(softYellowBorder, other.softYellowBorder, t)!,
       pastelYellowBg: Color.lerp(pastelYellowBg, other.pastelYellowBg, t)!,
@@ -555,6 +622,9 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       navBarBackground: Color.lerp(navBarBackground, other.navBarBackground, t)!,
       charcoal: Color.lerp(charcoal, other.charcoal, t)!,
       titleInk: Color.lerp(titleInk, other.titleInk, t)!,
+      ink: Color.lerp(ink, other.ink, t)!,
+      inkBody: Color.lerp(inkBody, other.inkBody, t)!,
+      muted: Color.lerp(muted, other.muted, t)!,
       error: Color.lerp(error, other.error, t)!,
       errorBg: Color.lerp(errorBg, other.errorBg, t)!,
       errorText: Color.lerp(errorText, other.errorText, t)!,

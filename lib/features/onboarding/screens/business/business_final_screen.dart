@@ -894,7 +894,6 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                         ).businessFinalCreateAccountButton,
                                   style: KolabingTextStyles.button.copyWith(
                                     fontSize: 16,
-                                    letterSpacing: 1.0,
                                   ),
                                 ),
                         ),

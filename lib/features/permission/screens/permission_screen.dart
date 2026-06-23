@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../services/permission_service.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
 
 /// Permission request screen shown once after registration/login.
@@ -28,12 +29,6 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   bool _isRequestingLocation = false;
   bool _isRequestingNotification = false;
 
-  static const _cream = Color(0xFFFAF9F6);
-  static const _charcoal = Color(0xFF232323);
-  static const _softGray = Color(0xFF9CA3AF);
-  static const _yellow = Color(0xFFFFD861);
-  static const _divider = Color(0xFFEEECE8);
-  static const _green = Color(0xFF4CAF50);
 
   @override
   void initState() {
@@ -47,7 +42,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: _cream,
+        systemNavigationBarColor: KolabingColors.appBackground,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -145,7 +140,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   Widget build(BuildContext context) => PopScope(
     canPop: false,
     child: Scaffold(
-      backgroundColor: _cream,
+      backgroundColor: context.colors.appBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -159,13 +154,13 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: _yellow.withValues(alpha: 0.18),
+                  color: context.colors.primary.withValues(alpha: 0.18),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   LucideIcons.sparkles,
                   size: 20,
-                  color: Color(0xFFB89000),
+                  color: context.colors.amber,
                 ),
               ),
               const SizedBox(height: 24),
@@ -176,7 +171,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: _charcoal,
+                  color: context.colors.ink,
                   height: 1.25,
                 ),
                 textAlign: TextAlign.center,
@@ -188,7 +183,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 'Location helps us show nearby kolabs.\nNotifications keep you updated.',
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 14,
-                  color: _softGray,
+                  color: context.colors.muted,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
@@ -205,7 +200,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 isLoading: _isRequestingLocation,
                 onRequest: _requestLocation,
               ),
-              Container(height: 1, color: _divider),
+              Container(height: 1, color: context.colors.hairline),
               _buildPermissionRow(
                 icon: LucideIcons.bell,
                 title: 'Notifications',
@@ -218,22 +213,11 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               const Spacer(flex: 3),
 
               // Continue button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _continue,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Continue',
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 15,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ),
+              KolabingButton(
+                label: 'Continue',
+                onPressed: _continue,
+                variant: KolabingButtonVariant.primary,
+                size: KolabingButtonSize.compact,
               ),
               const SizedBox(height: 14),
 
@@ -242,7 +226,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 'You can change this later in settings.',
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
-                  color: _softGray,
+                  color: context.colors.muted,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -271,10 +255,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: const Color(0xFFEEECE8),
+            color: context.colors.hairline,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, size: 18, color: _charcoal),
+          child: Icon(icon, size: 18, color: context.colors.ink),
         ),
         const SizedBox(width: 14),
 
@@ -288,7 +272,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: _charcoal,
+                  color: context.colors.ink,
                 ),
               ),
               const SizedBox(height: 2),
@@ -296,7 +280,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 subtitle,
                 style: KolabingTextStyles.bodySmall.copyWith(
                   fontSize: 12,
-                  color: _softGray,
+                  color: context.colors.muted,
                 ),
               ),
             ],
@@ -308,21 +292,21 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
           Container(
             width: 28,
             height: 28,
-            decoration: const BoxDecoration(
-              color: _green,
+            decoration: BoxDecoration(
+              color: context.colors.xpGreen,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.check, size: 15, color: Colors.white),
           )
         else if (isLoading)
-          const SizedBox(
+          SizedBox(
             width: 28,
             height: 28,
             child: Padding(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(_yellow),
+                valueColor: AlwaysStoppedAnimation<Color>(context.colors.primary),
               ),
             ),
           )
