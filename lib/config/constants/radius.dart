@@ -25,6 +25,21 @@ abstract final class KolabingRadius {
   /// Fully rounded (pills) - 9999px
   static const double round = 9999;
 
+  /// Card radius - 24px for main content cards
+  static const double card = 24;
+
+  /// Option card radius - 20px for selectable option cards
+  static const double optionCard = 20;
+
+  /// Input field radius - 16px for text inputs
+  static const double input = 16;
+
+  /// Thumbnail radius - 18px for image thumbnails
+  static const double thumbnail = 18;
+
+  /// Pill radius - alias for round, fully rounded buttons/chips
+  static const double pill = 9999;
+
   // ---------------------------------------------------------------------------
   // BorderRadius convenience getters
   // ---------------------------------------------------------------------------
@@ -49,4 +64,19 @@ abstract final class KolabingRadius {
 
   /// Fully rounded BorderRadius
   static BorderRadius get borderRadiusRound => BorderRadius.circular(round);
+
+  /// Card BorderRadius - 24px all corners
+  static BorderRadius get borderRadiusCard => BorderRadius.circular(card);
+
+  /// Option card BorderRadius - 20px all corners
+  static BorderRadius get borderRadiusOptionCard => BorderRadius.circular(optionCard);
+
+  /// Input BorderRadius - 16px all corners
+  static BorderRadius get borderRadiusInput => BorderRadius.circular(input);
+
+  /// Thumbnail BorderRadius - 18px all corners
+  static BorderRadius get borderRadiusThumbnail => BorderRadius.circular(thumbnail);
+
+  /// Pill BorderRadius - fully rounded
+  static BorderRadius get borderRadiusPill => BorderRadius.circular(pill);
 }

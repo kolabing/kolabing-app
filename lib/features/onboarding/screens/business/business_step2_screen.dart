@@ -11,6 +11,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
+import '../../../../widgets/kolabing_button.dart';
 import '../../../auth/models/user_model.dart';
 import '../../../kolab/enums/venue_type.dart';
 import '../../../kolab/models/offer_option.dart';
@@ -626,30 +627,11 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
             ),
             Padding(
               padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: canContinue ? _handleContinue : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
-                    disabledBackgroundColor: context.colors.primary.withValues(
-                      alpha: 0.5,
-                    ),
-                    disabledForegroundColor: context.colors.onPrimary
-                        .withValues(alpha: 0.5),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).commonContinue,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
+              child: KolabingButton(
+                label: AppLocalizations.of(context).commonContinue,
+                onPressed: canContinue ? _handleContinue : null,
+                variant: KolabingButtonVariant.primary,
+                isDisabled: !canContinue,
               ),
             ),
           ],

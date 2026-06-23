@@ -1777,19 +1777,19 @@ abstract class AppLocalizations {
   /// Bottom action button when previewing
   ///
   /// In en, this message translates to:
-  /// **'PREVIEW MODE'**
+  /// **'Preview mode'**
   String get communityOfferDetailPreviewMode;
 
   /// Bottom action button when already applied
   ///
   /// In en, this message translates to:
-  /// **'ALREADY APPLIED'**
+  /// **'Already applied'**
   String get communityOfferDetailAlreadyApplied;
 
   /// Bottom action button to apply
   ///
   /// In en, this message translates to:
-  /// **'APPLY NOW'**
+  /// **'Apply now'**
   String get communityOfferDetailApplyNow;
 
   /// App bar title on error state
@@ -2545,7 +2545,7 @@ abstract class AppLocalizations {
   /// Button to view the QR code.
   ///
   /// In en, this message translates to:
-  /// **'VIEW QR CODE'**
+  /// **'View QR code'**
   String get collaborationDetailViewQr;
 
   /// Subscription-lapse prompt title.
@@ -3523,7 +3523,7 @@ abstract class AppLocalizations {
   /// Opportunity publish success dialog: button to view my opportunities (uppercase)
   ///
   /// In en, this message translates to:
-  /// **'VIEW MY OPPORTUNITIES'**
+  /// **'View my opportunities'**
   String get opportunityPublishSuccessViewOpportunities;
 
   /// Event detail screen: title of the delete-event confirmation dialog
@@ -7535,8 +7535,38 @@ abstract class AppLocalizations {
   /// Button on the referral banner that opens the share sheet
   ///
   /// In en, this message translates to:
-  /// **'SHARE REFERRAL CODE'**
+  /// **'Share referral code'**
   String get referralBannerShareButton;
+
+  /// Referral banner step 1 label (verb)
+  ///
+  /// In en, this message translates to:
+  /// **'Refer'**
+  String get referralBannerStepReferLabel;
+
+  /// Referral banner step 1 value (who to refer)
+  ///
+  /// In en, this message translates to:
+  /// **'3 businesses'**
+  String get referralBannerStepReferValue;
+
+  /// Referral banner step 2 label (verb)
+  ///
+  /// In en, this message translates to:
+  /// **'Earn'**
+  String get referralBannerStepEarnLabel;
+
+  /// Referral banner reward amount
+  ///
+  /// In en, this message translates to:
+  /// **'€75'**
+  String get referralBannerStepEarnAmount;
+
+  /// Referral banner reward suffix (e.g. cash)
+  ///
+  /// In en, this message translates to:
+  /// **'cash'**
+  String get referralBannerStepEarnSuffix;
 
   /// Title of the referral code bottom sheet
   ///
@@ -7985,7 +8015,7 @@ abstract class AppLocalizations {
   /// Primary CTA to apply to an opportunity
   ///
   /// In en, this message translates to:
-  /// **'APPLY NOW'**
+  /// **'Apply now'**
   String get exploreDetailApplyNow;
 
   /// Secondary link to open the creator's public profile
@@ -8477,13 +8507,13 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardFindAKolab.
   ///
   /// In en, this message translates to:
-  /// **'FIND A KOLAB'**
+  /// **'Find a Kolab'**
   String get dashboardFindAKolab;
 
   /// No description provided for @dashboardMyApplications.
   ///
   /// In en, this message translates to:
-  /// **'MY APPLICATIONS'**
+  /// **'My applications'**
   String get dashboardMyApplications;
 
   /// No description provided for @dashboardUpcomingKolabs.

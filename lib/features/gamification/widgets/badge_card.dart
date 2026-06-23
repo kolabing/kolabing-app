@@ -9,8 +9,8 @@ import '../models/badge.dart';
 /// Card displaying a badge
 class BadgeCard extends StatelessWidget {
   const BadgeCard({
-    super.key,
     required this.badge,
+    super.key,
     this.isEarned = false,
     this.earnedAt,
     this.onTap,
@@ -22,8 +22,7 @@ class BadgeCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget build(BuildContext context) => InkWell(
       onTap: onTap ?? () => _showBadgeDetail(context),
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -106,7 +105,6 @@ class BadgeCard extends StatelessWidget {
         ),
       ),
     );
-  }
 
   UiIconSlug _getBadgeIconSlug() {
     // Map badge types to icons based on name/slug
@@ -133,14 +131,12 @@ class BadgeCard extends StatelessWidget {
     return UiIconSlug.award;
   }
 
-  Widget _buildBadgeIcon({required double size, Color? color}) {
-    return UiIcon(
-      icon: _getBadgeIconSlug(),
-      size: size,
-      variant: UiIconVariant.expressive,
-      color: color,
-    );
-  }
+  Widget _buildBadgeIcon({required double size, Color? color}) => UiIcon(
+    icon: _getBadgeIconSlug(),
+    size: size,
+    variant: UiIconVariant.expressive,
+    color: color,
+  );
 
   void _showBadgeDetail(BuildContext context) {
     showModalBottomSheet<void>(
@@ -217,12 +213,13 @@ class BadgeCard extends StatelessWidget {
                 vertical: KolabingSpacing.sm,
               ),
               decoration: BoxDecoration(
-                color: context.colors.info.withValues(alpha: 0.1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: context.colors.hairline),
               ),
               child: Text(
                 'Requirement: ${badge.thresholdValue} ${badge.thresholdType}',
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.info),
+                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant),
               ),
             ),
 

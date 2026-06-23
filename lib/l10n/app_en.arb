@@ -1146,15 +1146,15 @@
   "@communityOfferDetailMode": {
     "description": "Location row label: availability mode"
   },
-  "communityOfferDetailPreviewMode": "PREVIEW MODE",
+  "communityOfferDetailPreviewMode": "Preview mode",
   "@communityOfferDetailPreviewMode": {
     "description": "Bottom action button when previewing"
   },
-  "communityOfferDetailAlreadyApplied": "ALREADY APPLIED",
+  "communityOfferDetailAlreadyApplied": "Already applied",
   "@communityOfferDetailAlreadyApplied": {
     "description": "Bottom action button when already applied"
   },
-  "communityOfferDetailApplyNow": "APPLY NOW",
+  "communityOfferDetailApplyNow": "Apply now",
   "@communityOfferDetailApplyNow": {
     "description": "Bottom action button to apply"
   },
@@ -1738,7 +1738,7 @@
   "@collaborationDetailQrUnavailable": {
     "description": "Snackbar when QR is not yet available."
   },
-  "collaborationDetailViewQr": "VIEW QR CODE",
+  "collaborationDetailViewQr": "View QR code",
   "@collaborationDetailViewQr": {
     "description": "Button to view the QR code."
   },
@@ -2438,7 +2438,7 @@
   "@opportunityPublishSuccessShare": {
     "description": "Opportunity publish success dialog: share button (uppercase)"
   },
-  "opportunityPublishSuccessViewOpportunities": "VIEW MY OPPORTUNITIES",
+  "opportunityPublishSuccessViewOpportunities": "View my opportunities",
   "@opportunityPublishSuccessViewOpportunities": {
     "description": "Opportunity publish success dialog: button to view my opportunities (uppercase)"
   },
@@ -5280,9 +5280,29 @@
   "@referralBannerTagline": {
     "description": "Tagline on the referral banner card"
   },
-  "referralBannerShareButton": "SHARE REFERRAL CODE",
+  "referralBannerShareButton": "Share referral code",
   "@referralBannerShareButton": {
     "description": "Button on the referral banner that opens the share sheet"
+  },
+  "referralBannerStepReferLabel": "Refer",
+  "@referralBannerStepReferLabel": {
+    "description": "Referral banner step 1 label (verb)"
+  },
+  "referralBannerStepReferValue": "3 businesses",
+  "@referralBannerStepReferValue": {
+    "description": "Referral banner step 1 value (who to refer)"
+  },
+  "referralBannerStepEarnLabel": "Earn",
+  "@referralBannerStepEarnLabel": {
+    "description": "Referral banner step 2 label (verb)"
+  },
+  "referralBannerStepEarnAmount": "€75",
+  "@referralBannerStepEarnAmount": {
+    "description": "Referral banner reward amount"
+  },
+  "referralBannerStepEarnSuffix": "cash",
+  "@referralBannerStepEarnSuffix": {
+    "description": "Referral banner reward suffix (e.g. cash)"
   },
   "referralSheetYourCode": "YOUR REFERRAL CODE",
   "@referralSheetYourCode": {
@@ -5610,7 +5630,7 @@
   "@exploreDetailUnlockToApply": {
     "description": "Primary CTA when applying requires a subscription"
   },
-  "exploreDetailApplyNow": "APPLY NOW",
+  "exploreDetailApplyNow": "Apply now",
   "@exploreDetailApplyNow": {
     "description": "Primary CTA to apply to an opportunity"
   },
@@ -5923,8 +5943,8 @@
   "dashboardStatPending": "Pending",
   "dashboardStatAccepted": "Accepted",
   "dashboardCreateKolabRequest": "CREATE KOLAB REQUEST",
-  "dashboardFindAKolab": "FIND A KOLAB",
-  "dashboardMyApplications": "MY APPLICATIONS",
+  "dashboardFindAKolab": "Find a Kolab",
+  "dashboardMyApplications": "My applications",
   "dashboardUpcomingKolabs": "UPCOMING KOLABS",
   "dashboardNoUpcomingKolabs": "No upcoming kolabs yet",
   "dashboardDefaultBusinessName": "Business",

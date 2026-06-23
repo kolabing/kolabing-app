@@ -734,9 +734,11 @@ class _SheetChip extends StatelessWidget {
         vertical: KolabingSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? context.colors.primary : context.colors.surface,
+        color: isSelected ? context.colors.primary : Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected ? null : Border.all(color: context.colors.darkBorder),
+        border: Border.all(
+          color: isSelected ? context.colors.primaryDark : context.colors.hairline,
+        ),
       ),
       child: Text(
         label,

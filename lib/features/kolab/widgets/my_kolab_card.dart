@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -13,6 +14,7 @@ import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
@@ -129,7 +131,7 @@ class MyKolabCard extends ConsumerWidget {
               if (_secondaryLabel.isNotEmpty)
                 KolabChip(
                   label: _secondaryLabel,
-                  variant: KolabChipVariant.lavender,
+                  variant: KolabChipVariant.neutral,
                 ),
             ],
           ),
@@ -258,48 +260,51 @@ class _PrimaryActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDestructive = !spec.isPrimary;
-    final bg = isDestructive
-        ? context.colors.glassDestructiveInk.withValues(alpha: 0.08)
-        : const Color(0xFFFFD861);
-    final borderColor = isDestructive
-        ? context.colors.glassDestructiveInk.withValues(alpha: 0.30)
-        : const Color(0xFFE8C43A);
-    final ink = isDestructive
-        ? context.colors.glassDestructiveInk
-        : const Color(0xFF1A1200);
 
-    return GestureDetector(
-      onTap: spec.onPressed,
-      child: Container(
-        width: double.infinity,
-        height: 48,
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-        ),
-        alignment: Alignment.center,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(spec.icon, size: 17, color: ink),
-            const SizedBox(width: 7),
-            Text(
-              spec.label,
-              maxLines: 1,
-              softWrap: false,
-              overflow: TextOverflow.fade,
-              style: TextStyle(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.8,
-                color: ink,
-              ),
+    if (isDestructive) {
+      // Destructive variant — glass-style: error-tinted fill, pill radius,
+      // token colors (no hardcoded values).
+      final c = context.colors;
+      return GestureDetector(
+        onTap: spec.onPressed,
+        child: Container(
+          width: double.infinity,
+          height: 48,
+          decoration: BoxDecoration(
+            color: c.glassDestructiveInk.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(KolabingRadius.pill),
+            border: Border.all(
+              color: c.glassDestructiveInk.withValues(alpha: 0.30),
             ),
-          ],
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(spec.icon, size: 17, color: c.glassDestructiveInk),
+              const SizedBox(width: 7),
+              Text(
+                spec.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: KolabingTextStyles.buttonLabelMd.copyWith(
+                  color: c.glassDestructiveInk,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      );
+    }
+
+    // Primary variant — canonical yellow pill CTA.
+    return KolabingButton(
+      label: spec.label,
+      onPressed: spec.onPressed,
+      variant: KolabingButtonVariant.primary,
+      size: KolabingButtonSize.compact,
+      icon: Icon(spec.icon, size: 16),
     );
   }
 }

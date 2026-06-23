@@ -95,7 +95,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               ),
               child: Text(
                 l10n.myKolabsHubTitle.toUpperCase(),
-                style: KolabingTextStyles.headlineLarge.copyWith(
+                style: KolabingTextStyles.displayTitle.copyWith(
                   color: context.colors.titleInk,
                 ),
               ),

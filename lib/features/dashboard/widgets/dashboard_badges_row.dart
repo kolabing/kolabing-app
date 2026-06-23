@@ -78,17 +78,16 @@ class _BadgeChip extends StatelessWidget {
         color: earned ? c.softYellow : c.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: earned
-              ? c.primaryDark.withValues(alpha: 0.6)
-              : c.hairline,
+          color: earned ? c.primaryDark.withValues(alpha: 0.6) : c.hairline,
         ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Opacity(
-            opacity: earned ? 1.0 : 0.3,
-            child: Icon(badge.slug.icon, size: 20, color: c.onSurface),
+          Icon(
+            badge.slug.icon,
+            size: 20,
+            color: earned ? c.onSurface : c.muted,
           ),
           const SizedBox(height: 4),
           Text(
@@ -98,8 +97,8 @@ class _BadgeChip extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: KolabingTextStyles.bodySmall.copyWith(
               fontSize: 8,
-              color: earned ? c.onSurfaceVariant : c.textTertiary,
-              fontWeight: FontWeight.w500,
+              color: earned ? c.onSurfaceVariant : c.muted,
+              fontWeight: earned ? FontWeight.w600 : FontWeight.w500,
               height: 1.2,
             ),
           ),

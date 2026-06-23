@@ -84,15 +84,17 @@ abstract final class KolabingTheme {
           margin: EdgeInsets.zero,
         ),
 
-        // Elevated Button (Primary) — pill shape, yellow, grey ink text
+        // Elevated Button (Primary) — pill shape, yellow, ink label, drop shadow
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: KolabingColors.primary,
             foregroundColor: KolabingColors.onPrimary,
+            disabledBackgroundColor: KolabingColors.primary.withValues(alpha: 0.5),
+            disabledForegroundColor: KolabingColors.onPrimary.withValues(alpha: 0.5),
             elevation: 0,
             shadowColor: Colors.transparent,
             minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             shape: const StadiumBorder(),
             textStyle: KolabingTextStyles.button,
           ),
@@ -332,15 +334,17 @@ abstract final class KolabingTheme {
         margin: EdgeInsets.zero,
       ),
 
-      // Elevated Button — pill, yellow, dark amber text
+      // Elevated Button — pill, yellow, ink label, drop shadow
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: n.primary,
           foregroundColor: n.onPrimary,
+          disabledBackgroundColor: const Color(0xFFFFE28C).withValues(alpha: 0.5),
+          disabledForegroundColor: const Color(0xFF19150F).withValues(alpha: 0.5),
           elevation: 0,
           shadowColor: Colors.transparent,
           minimumSize: const Size(double.infinity, KolabingLayout.buttonHeight),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: const StadiumBorder(),
           textStyle: KolabingTextStyles.button,
         ),

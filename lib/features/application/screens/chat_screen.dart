@@ -10,8 +10,9 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/blurred_identity.dart';
+import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -652,19 +653,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
+          KolabingButton(
+            label: AppLocalizations.of(context).commonRetry,
             onPressed: () {
               ref.invalidate(chatDataProvider(widget.applicationId));
               ref
                   .read(chatMessagesProvider.notifier)
                   .load(widget.applicationId);
             },
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
             icon: const Icon(LucideIcons.rotateCcw, size: 16),
-            label: Text(AppLocalizations.of(context).commonRetry),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-            ),
           ),
         ],
       ),
@@ -700,16 +699,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            ElevatedButton.icon(
+            KolabingButton(
+              label: AppLocalizations.of(context).chatSignIn,
               onPressed: () {
                 context.go(KolabingRoutes.login);
               },
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
               icon: const Icon(LucideIcons.logIn, size: 16),
-              label: Text(AppLocalizations.of(context).chatSignIn),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: context.colors.onPrimary,
-              ),
             ),
           ],
         ),

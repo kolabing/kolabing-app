@@ -18,6 +18,7 @@ import '../../dashboard/providers/dashboard_provider.dart';
 import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../opportunity/utils/opportunity_share.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../widgets/my_opportunity_card.dart';
@@ -521,14 +522,12 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton.icon(
+          KolabingButton(
+            label: l10n.myOpportunitiesEmptyCreateButton,
             onPressed: _onCreateNew,
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
             icon: const Icon(LucideIcons.plus, size: 18),
-            label: Text(l10n.myOpportunitiesEmptyCreateButton),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-            ),
           ),
         ],
       ),
@@ -571,15 +570,13 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          ElevatedButton(
+          KolabingButton(
+            label: l10n.commonRetry,
             onPressed: () {
               ref.read(myOpportunitiesProvider.notifier).refresh();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.onPrimary,
-            ),
-            child: Text(l10n.commonRetry),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
           ),
         ],
       ),

@@ -1,8 +1,8 @@
 // lib/widgets/glass_button.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config/theme/colors.dart';
+import '../config/theme/typography.dart';
 
 enum GlassButtonIntent { primary, neutral, destructive }
 
@@ -21,22 +21,21 @@ class GlassButton extends StatelessWidget {
   final IconData? icon;
 
   Color _fill(KolabingColorTokens c) => switch (intent) {
-        GlassButtonIntent.primary => c.softYellow,
-        GlassButtonIntent.neutral => c.surfaceContainerLow,
-        GlassButtonIntent.destructive =>
-          c.glassDestructiveInk.withValues(alpha: 0.10),
+        GlassButtonIntent.primary => c.primaryTint,
+        GlassButtonIntent.neutral => c.surfaceVariant,
+        GlassButtonIntent.destructive => c.errorBg,
       };
 
   Color _border(KolabingColorTokens c) => switch (intent) {
-        GlassButtonIntent.primary => c.softYellowBorder,
-        GlassButtonIntent.neutral => c.outlineVariant,
-        GlassButtonIntent.destructive =>
-          c.glassDestructiveInk.withValues(alpha: 0.35),
+        GlassButtonIntent.primary => c.primary,
+        GlassButtonIntent.neutral => c.hairline,
+        GlassButtonIntent.destructive => c.error,
       };
 
   Color _ink(KolabingColorTokens c) => switch (intent) {
-        GlassButtonIntent.primary || GlassButtonIntent.neutral => c.glassInk,
-        GlassButtonIntent.destructive => c.glassDestructiveInk,
+        GlassButtonIntent.primary => c.amber,
+        GlassButtonIntent.neutral => c.inkBody,
+        GlassButtonIntent.destructive => c.errorText,
       };
 
   @override
@@ -70,12 +69,7 @@ class GlassButton extends StatelessWidget {
                   label.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.4,
-                    color: ink,
-                  ),
+                  style: KolabingTextStyles.buttonLabelMd.copyWith(color: ink),
                 ),
               ),
             ],

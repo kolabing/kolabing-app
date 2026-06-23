@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../config/constants/layout.dart';
-import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
-import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 
 /// Bottom action bar for the Kolab creation flow.
 ///
@@ -117,7 +115,7 @@ class KolabActionBar extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Primary filled button (yellow background)
+// Primary filled button — delegates to shared KolabingButton
 // ---------------------------------------------------------------------------
 
 class _PrimaryActionButton extends StatelessWidget {
@@ -132,34 +130,18 @@ class _PrimaryActionButton extends StatelessWidget {
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: KolabingLayout.buttonHeight,
-        child: ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: ElevatedButton.styleFrom(
-            disabledBackgroundColor:
-                context.colors.primary.withValues(alpha: 0.5),
-            elevation: 0,
-          ),
-          child: isLoading
-              ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: context.colors.onPrimary,
-                  ),
-                )
-              : Text(
-                  label,
-                  style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
-                ),
-        ),
+  Widget build(BuildContext context) => KolabingButton(
+        label: label,
+        onPressed: onPressed,
+        variant: KolabingButtonVariant.primary,
+        size: KolabingButtonSize.compact,
+        isLoading: isLoading,
+        isDisabled: onPressed == null && !isLoading,
       );
 }
 
 // ---------------------------------------------------------------------------
-// Outlined button (white background, border)
+// Outlined / secondary button — delegates to shared KolabingButton
 // ---------------------------------------------------------------------------
 
 class _OutlinedActionButton extends StatelessWidget {
@@ -174,28 +156,12 @@ class _OutlinedActionButton extends StatelessWidget {
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: KolabingLayout.buttonHeight,
-        child: OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: context.colors.onSurface,
-            side: BorderSide(color: context.colors.darkBorder),
-            elevation: 0,
-          ),
-          child: isLoading
-              ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: context.colors.onSurface,
-                  ),
-                )
-              : Text(
-                  label,
-                  style: KolabingTextStyles.button.copyWith(letterSpacing: 1.0),
-                ),
-        ),
+  Widget build(BuildContext context) => KolabingButton(
+        label: label,
+        onPressed: isLoading ? null : onPressed,
+        variant: KolabingButtonVariant.secondary,
+        size: KolabingButtonSize.compact,
+        isLoading: isLoading,
+        isDisabled: !isLoading && onPressed == null,
       );
 }

@@ -13,6 +13,7 @@ import '../../opportunity/models/opportunity.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 import '../../../widgets/category_icon.dart';
+import '../../../widgets/kolabing_button.dart';
 
 /// Application review screen — shown when tapping a received application.
 /// Displays the applicant's profile like a "CV card" with their message,
@@ -472,25 +473,11 @@ class _ApplicationReviewScreenState
     // If already decided, show a "Go to Chat" button
     if (application.status.isAccepted) {
       return _buildBottomBar(
-        child: SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton.icon(
-            onPressed: () =>
-                context.push('/application/${application.id}/chat'),
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-            ),
-            icon: const Icon(LucideIcons.messageCircle, size: 18),
-            label: Text(
-              AppLocalizations.of(context).applicationReviewOpenChat,
-              style: KolabingTextStyles.button.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
+        child: KolabingButton(
+          label: AppLocalizations.of(context).applicationReviewOpenChat,
+          onPressed: () => context.push('/application/${application.id}/chat'),
+          variant: KolabingButtonVariant.primary,
+          icon: const Icon(LucideIcons.messageCircle),
         ),
       );
     }
@@ -542,33 +529,13 @@ class _ApplicationReviewScreenState
           // Accept button
           Expanded(
             flex: 3,
-            child: SizedBox(
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed:
-                    _isAccepting || _isDeclining
-                        ? null
-                        : () => _handleAccept(application),
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                ),
-                icon: _isAccepting
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: context.colors.onPrimary),
-                      )
-                    : const Icon(LucideIcons.check, size: 18),
-                label: Text(
-                  AppLocalizations.of(context).applicationReviewAccept,
-                  style: KolabingTextStyles.button.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
+            child: KolabingButton(
+              label: AppLocalizations.of(context).applicationReviewAccept,
+              onPressed: _isAccepting || _isDeclining ? null : () => _handleAccept(application),
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.check),
+              isLoading: _isAccepting,
             ),
           ),
         ],
@@ -939,32 +906,13 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
               ],
 
               // Submit button
-              SizedBox(
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: _isValid && !_isSubmitting ? _submit : null,
-                  style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor:
-                        context.colors.primary.withValues(alpha: 0.4),
-                    elevation: 0,
-                  ),
-                  icon: _isSubmitting
-                      ? SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: context.colors.onPrimary),
-                        )
-                      : const Icon(LucideIcons.check, size: 18),
-                  label: Text(
-                    AppLocalizations.of(context).acceptFormConfirm,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
+              KolabingButton(
+                label: AppLocalizations.of(context).acceptFormConfirm,
+                onPressed: _isValid && !_isSubmitting ? _submit : null,
+                variant: KolabingButtonVariant.primary,
+                icon: const Icon(LucideIcons.check),
+                isLoading: _isSubmitting,
+                isDisabled: !_isValid,
               ),
             ],
           ),

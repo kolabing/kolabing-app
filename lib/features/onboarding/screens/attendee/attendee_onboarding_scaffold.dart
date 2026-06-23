@@ -4,6 +4,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_button.dart';
 
 /// Shared chrome for the 4 attendee onboarding steps: a step counter, back +
 /// optional skip in the header, a title/subtitle, the step body, and a bottom
@@ -136,39 +137,12 @@ class AttendeeOnboardingScaffold extends StatelessWidget {
 
             Padding(
               padding: const EdgeInsets.all(KolabingSpacing.md),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: (canProceed && !busy) ? onPrimary : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: KolabingColors.primary,
-                    foregroundColor: KolabingColors.onPrimary,
-                    disabledBackgroundColor: KolabingColors.primary.withValues(
-                      alpha: 0.5,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: busy
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: KolabingColors.onPrimary,
-                          ),
-                        )
-                      : Text(
-                          primaryLabel,
-                          style: KolabingTextStyles.button.copyWith(
-                            fontSize: 16,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                ),
+              child: KolabingButton(
+                label: primaryLabel,
+                onPressed: (canProceed && !busy) ? onPrimary : null,
+                variant: KolabingButtonVariant.primary,
+                isLoading: busy,
+                isDisabled: !canProceed && !busy,
               ),
             ),
           ],

@@ -5,6 +5,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
 
@@ -463,37 +464,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         _AnimatedEntry(
           opacity: _buttonAnimation,
           slide: _buttonSlideAnimation,
-          child: SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : _handleResetPassword,
-              style: ElevatedButton.styleFrom(
-                disabledBackgroundColor: KolabingColors.primary.withValues(
-                  alpha: 0.7,
-                ),
-                elevation: 0,
-              ),
-              child: _isLoading
-                  ? SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          KolabingColors.onPrimary,
-                        ),
-                      ),
-                    )
-                  : Text(
-                      AppLocalizations.of(context).resetPasswordButton,
-                      style: KolabingTextStyles.button.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-            ),
+          child: KolabingButton(
+            label: AppLocalizations.of(context).resetPasswordButton,
+            onPressed: _isLoading ? null : _handleResetPassword,
+            variant: KolabingButtonVariant.primary,
+            isLoading: _isLoading,
           ),
         ),
 
@@ -553,23 +528,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       const SizedBox(height: 40),
 
       // Manual sign in button (in case auto-redirect fails)
-      SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: ElevatedButton(
-          onPressed: () => context.go('/auth/login'),
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-          ),
-          child: Text(
-            AppLocalizations.of(context).resetPasswordGoToSignIn,
-            style: KolabingTextStyles.button.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-            ),
-          ),
-        ),
+      KolabingButton(
+        label: AppLocalizations.of(context).resetPasswordGoToSignIn,
+        onPressed: () => context.go('/auth/login'),
+        variant: KolabingButtonVariant.primary,
       ),
 
       const SizedBox(height: 32),

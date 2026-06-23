@@ -11,6 +11,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -312,25 +313,11 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                     const SizedBox(height: KolabingSpacing.lg),
 
                     // Submit Button
-                    ElevatedButton(
+                    KolabingButton(
+                      label: l10n.addEventSubmitButton,
                       onPressed: _isLoading ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: context.colors.primary,
-                        foregroundColor: context.colors.onPrimary,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: KolabingSpacing.md,
-                        ),
-                      ),
-                      child: _isLoading
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: context.colors.onPrimary,
-                              ),
-                            )
-                          : Text(l10n.addEventSubmitButton),
+                      variant: KolabingButtonVariant.primary,
+                      isLoading: _isLoading,
                     ),
                   ],
                 ),

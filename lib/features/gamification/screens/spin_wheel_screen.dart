@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../models/event_reward.dart';
 import '../models/reward_claim.dart';
 import '../providers/reward_provider.dart';
@@ -263,32 +264,11 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
           ),
           const SizedBox(height: KolabingSpacing.md),
         ],
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: _isSpinning ? null : _spin,
-            style: ElevatedButton.styleFrom(
-              elevation: 4,
-            ),
-            child: _isSpinning
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: context.colors.onPrimary,
-                    ),
-                  )
-                : Text(
-                    'SPIN THE WHEEL',
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-          ),
+        KolabingButton(
+          label: 'SPIN THE WHEEL',
+          onPressed: _isSpinning ? null : _spin,
+          variant: KolabingButtonVariant.primary,
+          isLoading: _isSpinning,
         ),
       ],
     );
@@ -332,18 +312,11 @@ class _SpinWheelScreenState extends ConsumerState<SpinWheelScreen>
             ),
           ],
           const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(_result),
-              child: Text(
-                won ? 'View Reward' : 'Close',
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+          KolabingButton(
+            label: won ? 'View Reward' : 'Close',
+            onPressed: () => Navigator.of(context).pop(_result),
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
           ),
         ],
       ),

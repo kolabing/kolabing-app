@@ -1,15 +1,23 @@
 // lib/features/dashboard/widgets/earn_xp_action_card.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../config/constants/radius.dart';
-import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
-import '../../../config/theme/typography.dart';
 
-/// A single XP earning action row for the mission board.
+// Fixed brand colors for the status pills — intentionally identical in both
+// themes (the "Done" pill is a solid dark chip with a yellow check; both its
+// fill and label are fixed, so it stays legible in light AND dark mode).
+const _orangeAccent = Color(0xFFFF6114);
+const _softOrangeTint = Color(0xFFFFE7D6); // XP pill fill
+const _brandYellow = Color(0xFFFFE28C); // done pill text & icon
+const _donePillBg = Color(0xFF19150F); // done pill background
+
+/// A single XP mission row — compact, no icon block, orange/black pills.
 ///
-/// Shows a pastel icon, title, short description, and either a purple
-/// "+N XP" badge (pending) or a green "✓ Done" badge (completed).
+/// Incomplete missions show a soft-orange "+N XP" reward pill.
+/// Completed missions show a black "Done" pill with a yellow check.
+/// All data wiring (title, description, xpReward, isDone, tap) is unchanged.
 class EarnXpActionCard extends StatelessWidget {
   const EarnXpActionCard({
     required this.icon,
@@ -21,6 +29,7 @@ class EarnXpActionCard extends StatelessWidget {
     this.isDone = false,
   });
 
+  // icon / iconBgColor kept for API compat — no longer rendered
   final IconData icon;
   final Color iconBgColor;
   final String title;
@@ -32,87 +41,93 @@ class EarnXpActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.sm,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: KolabingRadius.borderRadiusMd,
+        color: c.surface,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: c.hairline),
       ),
       child: Row(
         children: [
-          // Icon
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, size: 18, color: c.onSurface),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          // Text
+          // Title + subtitle
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    fontSize: 13,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: c.onSurface,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   description,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    fontSize: 11,
-                    color: c.textTertiary,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: c.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: KolabingSpacing.xs),
-          // Badge
-          _Badge(xpReward: xpReward, isDone: isDone),
+          const SizedBox(width: 12),
+          // Reward / status pill
+          _Pill(xpReward: xpReward, isDone: isDone),
         ],
       ),
     );
   }
 }
 
-class _Badge extends StatelessWidget {
-  const _Badge({required this.xpReward, required this.isDone});
+class _Pill extends StatelessWidget {
+  const _Pill({required this.xpReward, required this.isDone});
 
   final int xpReward;
   final bool isDone;
 
   @override
   Widget build(BuildContext context) {
-    final c = context.colors;
-    final bg = isDone ? c.xpGreenContainer : c.categoryLavenderBg;
-    final textColor = isDone ? c.xpGreenOnContainer : c.categoryLavenderText;
-    final label = isDone ? '✓ Done' : '+$xpReward XP';
+    if (isDone) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+        decoration: const BoxDecoration(
+          color: _donePillBg,
+          borderRadius: BorderRadius.all(Radius.circular(999)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(LucideIcons.check, size: 11, color: _brandYellow),
+            const SizedBox(width: 4),
+            Text(
+              'Done',
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: _brandYellow,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: textColor.withValues(alpha: 0.2)),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+      decoration: const BoxDecoration(
+        color: _softOrangeTint,
+        borderRadius: BorderRadius.all(Radius.circular(999)),
       ),
       child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: textColor,
+        '+$xpReward XP',
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          color: _orangeAccent,
         ),
       ),
     );

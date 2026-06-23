@@ -10,6 +10,7 @@ import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/collaboration.dart';
@@ -766,32 +767,13 @@ class _PrimaryButton extends StatelessWidget {
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 52,
-        alignment: Alignment.center,
-        decoration: ShapeDecoration(
-          color: onTap != null
-              ? KolabingColors.primary
-              : context.colors.outlineVariant,
-          shape: const StadiumBorder(),
-        ),
-        child: isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: KolabingColors.onPrimary,
-                ),
-              )
-            : Text(label, style: KolabingTextStyles.button),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => KolabingButton(
+        label: label,
+        onPressed: onTap,
+        variant: KolabingButtonVariant.primary,
+        isLoading: isLoading,
+        isDisabled: onTap == null && !isLoading,
+      );
 }
 
 class _SecondaryButton extends StatelessWidget {
@@ -801,25 +783,11 @@ class _SecondaryButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 48,
-        alignment: Alignment.center,
-        decoration: const ShapeDecoration(
-          color: KolabingColors.buttonSecondary,
-          shape: StadiumBorder(),
-        ),
-        child: Text(
-          label,
-          style: KolabingTextStyles.button.copyWith(
-            color: KolabingColors.onButtonSecondary,
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => KolabingButton(
+        label: label,
+        onPressed: onTap,
+        variant: KolabingButtonVariant.secondary,
+        size: KolabingButtonSize.compact,
+      );
 }
 

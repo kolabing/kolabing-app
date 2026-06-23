@@ -20,8 +20,32 @@ abstract final class KolabingColors {
   /// Darker yellow for pressed states
   static const Color primaryDark = Color(0xFFF5D070);
 
-  /// On-primary-container — grey ink (text/icons on yellow)
-  static const Color onPrimary = Color(0xFF4C4A44);
+  /// On-primary-container — deep ink (text/icons on yellow)
+  static const Color onPrimary = Color(0xFF19150F);
+
+  /// Primary tint — yellow tint for selected chips
+  static const Color primaryTint = Color(0xFFFFF1C6);
+
+  /// Yellow tint alias — same as primaryTint
+  static const Color yellowTint = Color(0xFFFFF1C6);
+
+  /// Amber text on yellow backgrounds
+  static const Color amber = Color(0xFF9A7C28);
+
+  /// Orange — status/role/accent only
+  static const Color orange = Color(0xFFFF6114);
+
+  /// Orange tint background
+  static const Color orangeTint = Color(0xFFFFE7D6);
+
+  /// Darkest text (ink black)
+  static const Color ink = Color(0xFF19150F);
+
+  /// Body text
+  static const Color inkBody = Color(0xFF3F3A32);
+
+  /// Placeholder / inactive text
+  static const Color muted = Color(0xFF8C8474);
 
   /// Secondary button fill — Warm Mist
   static const Color buttonSecondary = Color(0xFFF0EBE1);
@@ -33,11 +57,14 @@ abstract final class KolabingColors {
   // Surface Hierarchy (M3-aligned)
   // ---------------------------------------------------------------------------
 
-  /// Main background — warm parchment
-  static const Color background = Color(0xFFFDF9F0);
+  /// Main background — warm cream
+  static const Color background = Color(0xFFFAF5EA);
 
-  /// Surface bright — same as background
-  static const Color surface = Color(0xFFFDF9F0);
+  /// App background alias — warm cream page background
+  static const Color appBackground = Color(0xFFFAF5EA);
+
+  /// Surface bright — white card surface
+  static const Color surface = Color(0xFFFFFFFF);
 
   /// Cards, modals
   static const Color surfaceContainer = Color(0xFFF1EEE5);
@@ -48,14 +75,14 @@ abstract final class KolabingColors {
   /// Elevated surfaces
   static const Color surfaceContainerHigh = Color(0xFFECE8DF);
 
-  /// Input fills
-  static const Color surfaceVariant = Color(0xFFE6E2D9);
+  /// Input fills — soft cream
+  static const Color surfaceVariant = Color(0xFFF5EFE3);
 
   /// Primary text — ink black
-  static const Color onSurface = Color(0xFF1C1C16);
+  static const Color onSurface = Color(0xFF19150F);
 
   /// Secondary/muted text
-  static const Color onSurfaceVariant = Color(0xFF4C4638);
+  static const Color onSurfaceVariant = Color(0xFF3F3A32);
 
   // ---------------------------------------------------------------------------
   // Border / Outline
@@ -65,7 +92,7 @@ abstract final class KolabingColors {
   static const Color outline = Color(0xFF7D7667);
 
   /// Subtle borders
-  static const Color outlineVariant = Color(0xFFCFC6B3);
+  static const Color outlineVariant = Color(0xFFE4DBCB);
 
   // ---------------------------------------------------------------------------
   // Inverse (dark cards / dark mode surfaces)
@@ -228,8 +255,8 @@ abstract final class KolabingColors {
   // Navigation State Colors
   // ---------------------------------------------------------------------------
 
-  /// Inactive nav icon — outline color
-  static const Color navInactive = Color(0xFF7D7667);
+  /// Inactive nav icon
+  static const Color navInactive = Color(0xFFA99E8B);
 
   /// Inactive nav label — outline-variant color
   static const Color navInactiveSubtle = Color(0xFFCFC6B3);
@@ -238,11 +265,14 @@ abstract final class KolabingColors {
   // Hairline / UI chrome
   // ---------------------------------------------------------------------------
 
-  /// Hairline border — very subtle dividers and card borders
-  static const Color hairline = Color(0xFFE8E2D6);
+  /// Hairline border — very subtle card/input borders
+  static const Color hairline = Color(0xFFEDE5D5);
+
+  /// Divider
+  static const Color divider = Color(0xFFECE4D4);
 
   /// Text/icon on yellow button surface
-  static const Color onYellowButton = Color(0xFF78631A);
+  static const Color onYellowButton = Color(0xFF19150F);
 
   // ---------------------------------------------------------------------------
   // Amber chip palette
@@ -266,6 +296,19 @@ abstract final class KolabingColors {
 
   /// @deprecated Use [surface] or [surfaceContainer]
   static const Color darkBackground = Color(0xFFFDF9F0);
+
+  /// Warm soft orange background — category/offer chips, role badges
+  static const Color categoryOrangeBg = Color(0xFFFFF0E8);
+
+  /// Dark orange text — on [categoryOrangeBg] chips
+  static const Color categoryOrangeText = Color(0xFFC54000);
+
+  /// Vibrant Kolabing orange — XP rewards, secondary accent, action pills
+  /// Matches the orange used in earn_xp_action_card and community_xp_summary_card.
+  static const Color orangeVibrant = Color(0xFFFF6114);
+
+  /// Soft orange tint — background fill for orange XP/reward chips
+  static const Color softOrangeTint = Color(0xFFFFE7D6);
 
   /// @deprecated No direct replacement — use [activeBg]/[activeText] or [tertiary]
   static const Color success = Color(0xFF56624D);

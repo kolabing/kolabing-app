@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 
 import '../config/constants/radius.dart';
+import '../config/theme/color_tokens.dart';
 
 class KolabCardShell extends StatelessWidget {
   const KolabCardShell({
@@ -83,20 +84,21 @@ class KolabCardShell extends StatelessWidget {
     if (onTap != null) {
       shell = Material(
         color: Colors.transparent,
-        borderRadius: KolabingRadius.borderRadiusLg,
+        borderRadius: KolabingRadius.borderRadiusCard,
         child: InkWell(
           onTap: onTap,
-          borderRadius: KolabingRadius.borderRadiusLg,
+          borderRadius: KolabingRadius.borderRadiusCard,
           child: shell,
         ),
       );
     }
 
+    final colors = context.colors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: const Color(0xFFEAE6DE), width: 1),
+        color: colors.surface,
+        borderRadius: KolabingRadius.borderRadiusCard,
+        border: Border.all(color: colors.hairline, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -111,7 +113,7 @@ class KolabCardShell extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: KolabingRadius.borderRadiusLg,
+        borderRadius: KolabingRadius.borderRadiusCard,
         child: shell,
       ),
     );
@@ -135,10 +137,10 @@ class _CardThumbnail extends StatelessWidget {
   final double width;
   final double height;
 
-  static const _borderRadius = BorderRadius.all(Radius.circular(20));
-
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<KolabingColorTokens>() ?? KolabingColorTokens.light;
+
     Widget imageWidget;
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       imageWidget = Image.network(
@@ -146,18 +148,18 @@ class _CardThumbnail extends StatelessWidget {
         width: width,
         height: height,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _placeholder(),
+        errorBuilder: (_, _, _) => _placeholder(colors),
       );
     } else {
-      imageWidget = _placeholder();
+      imageWidget = _placeholder(colors);
     }
 
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: _borderRadius,
-        border: Border.all(color: const Color(0xFFEAE6DE), width: 1),
+        borderRadius: KolabingRadius.borderRadiusThumbnail,
+        border: Border.all(color: colors.hairline, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -166,25 +168,25 @@ class _CardThumbnail extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(borderRadius: _borderRadius, child: imageWidget),
+      child: ClipRRect(borderRadius: KolabingRadius.borderRadiusThumbnail, child: imageWidget),
     );
   }
 
-  Widget _placeholder() => Container(
-    decoration: const BoxDecoration(
+  Widget _placeholder(KolabingColorTokens colors) => Container(
+    decoration: BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFFFF9E6), Color(0xFFFFE28C)],
+        colors: [colors.primaryTint, colors.primary],
       ),
     ),
     alignment: Alignment.center,
     child: Text(
       initials,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.w700,
-        color: Color(0xFF5C4A12),
+        color: colors.amber,
       ),
     ),
   );

@@ -9,6 +9,7 @@ import '../../../config/theme/typography.dart';
 import '../../../features/profile/providers/gallery_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../utils/remote_media_url.dart';
+import '../../../widgets/kolabing_button.dart';
 
 class ExistingPhotoPickerSheet extends ConsumerStatefulWidget {
   const ExistingPhotoPickerSheet({
@@ -132,11 +133,13 @@ class _ExistingPhotoPickerSheetState
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Expanded(
-                        child: ElevatedButton(
+                        child: KolabingButton(
+                          label: widget.confirmLabel,
                           onPressed: selectedPhotos.isEmpty
                               ? null
                               : () => Navigator.of(context).pop(selectedPhotos),
-                          child: Text(widget.confirmLabel),
+                          variant: KolabingButtonVariant.primary,
+                          size: KolabingButtonSize.compact,
                         ),
                       ),
                     ],
